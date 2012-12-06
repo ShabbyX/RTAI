@@ -9,8 +9,8 @@ in the original CVS ropository at https://gna.org/cvs/?group=rtai.
 
 I have also added the showroom of RTAI in this repository.
 
-This repository does not keep track of RTAI's history.  The initial commit of
-this repository is set at RTAI 3.9.  Currently, the `vulcano` branch tracks
+This repository does not keep track of RTAI's history before version 3.9, which
+is the initial commit of this repository.  Currently, the `vulcano` branch tracks
 any changes to the `vulcano` module of the original CVS repository, as well
 as containing its `showroom` module.  This branch will always be merged into
 `master`, so that this branch would contain the latest RTAI development, plus
