@@ -1,0 +1,4 @@
+exec("SCI/contrib/RTAI/loader.sce"); 
+
+
+

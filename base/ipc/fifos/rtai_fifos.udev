@@ -1,0 +1,2 @@
+# RTAI:rtai_fifos
+KERNEL=="rtf[0-9]*", MODE="0666"

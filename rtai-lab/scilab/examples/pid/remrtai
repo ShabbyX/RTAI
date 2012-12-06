@@ -1,0 +1,7 @@
+sync
+rmmod net_rpc
+rmmod rtai_lxrt
+rmmod rtai_sched
+rmmod rtai_shm
+rmmod rtai
+sync

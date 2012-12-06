@@ -1,0 +1,1 @@
+autocode "BLOCK_NAME",{fmarker,ipath="MATRIXX_HOME\mx_71.1\case\ACC\templates",arraymin=3,initmerge,loopmin=3,locvarblkopt,noerr,noinfo,propconst,vectormode=2,nouy,language="c",smcallout,vbcallout,namelen=48,tplsrc="RTAI_TPL_DIR\rtai.tpl",ialg=2,minsf=300,rtf="MODEL_NAME"}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" 
+          "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<article>
+  <title>RTAI 3.0 Installation Guide</title>
+
+  <para>Here is a first paragraphe</para>
+  <xi:include
+    xmlns:xi="http://www.w3.org/2001/XInclude" href="intro.xml" />
+</article>

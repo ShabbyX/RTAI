@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+          "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+
+
+<article>
+  <articleinfo>
+    <title>Here is my little testsuite</title>
+    <author>
+      <firstname>Bruno</firstname>
+      <surname>Rouchouse</surname>	
+    </author>
+    <corpauthor>RTAI</corpauthor>
+    <abstract>
+      <para>We can write the abstract of the document here.</para>
+
+      <para>&copy; 2004</para>
+
+    </abstract>
+  </articleinfo>
+
+  <sect1 id="Section1">
+    <title>Here is my first section</title>
+    <para>I am in section 1.</para>
+  </sect1>
+
+  <xi:include
+    xmlns:xi="http://www.w3.org/2001/XInclude" href="intro.xml" />
+
+</article>

@@ -1,0 +1,9 @@
+usecanvas(%t)
+exec("SCI/contrib/RTAI/loader.sce"); 
+
+disp("Scicos-RTAI Ready");
+
+
+
+
+
