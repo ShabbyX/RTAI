@@ -1,0 +1,4 @@
+sync
+rmmod shm_rt
+rmmod shm
+../remod

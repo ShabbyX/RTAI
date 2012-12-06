@@ -1,0 +1,96 @@
+Here we have a rewrite of the code used in a publication appeared on 
+Linuxdevices.com. In its first appearence such a publication wrongly stated
+that LXRT was not for real time. The error was caused by the use of a printf,
+after setting the hard real time mode, that put back the code to soft mode.
+Since this happened with RTAI-3.1 having LxrtMode=0 no hard real time mode
+was recovered afterward, as it would have been possible by setting LxrtMode=1.
+A subsequent revision of the publication, properly using LXRT, corrected the
+wrong conclusion and correctly stated that LXRT was for true hard real time.
+
+This rewrite maintains all the features of the code used for the above
+referred publication, which was related to a particular hardware, while being 
+executable on any PC.
+We profit of it since it shows the limitations of general CPUs (GCPU) for 
+real time and how one should be carefull on stating what part of the 
+scheduling latency is due to RTAI and what not.
+
+It is well known that latencies on GCPUs can vary widely in relation to many 
+architectural factors. For a few checks related to what above this test can 
+be executed in different modes, according to the following macros, defined in 
+lxrtext.h.
+
+
+DISABLE_IRQ
+
+Profits of the x86 possibility of disabling interrupts by anybody, everywhere.
+This verifies that a relatively high latency can exist even if no interrupt
+can occur on the path back to the task from the interrupt handler, which is 
+entered with all interrupts disabled from the very istant in which the CPU 
+acknowledges it in hardware. Notice that by executing with this macro you'll 
+avoid any doubt that scheduling latencies could build up because of the need 
+of registering any Linux interrupt that might come in after the process has
+resumed in kernel, but before returning to user space.
+
+
+USE_EXT_WAIT
+
+Returns all the times needed to measure scheduling latencies, taking them in 
+kernel space directly, i.e. after the process has been fully resumed but just
+before returning to user space. The only difference with respect to not using 
+it, i.e. by doing a subsequent specific call from the process to get those 
+times, is that it avoids going back and forth user/kernel space just to read 
+the timer. The differences from having this macro enabled or not far exceeds 
+the back/forth time, a worst case measure of which is a full task switching, 
+as measured from the "switches" test, plus adding the interrupts time penalty 
+that must be paid to pend any Linux own interrupt that might happen in between. 
+
+
+By combining the above two macros one can see that GPCPUs do have an intrinsic
+architectural limitations for real time, far exceeding any difference in bad 
+and good coding.
+
+All the timing is based on reading the counter of a recicling periodic timer,
+8254, so that latencies can be measured from the very instant the timer 
+interrupt was physically triggered.
+
+However at the handler module removal the average times taken (as determined 
+by reading the TSC):
+- to read the 8254 timer,
+- from the interrupt handler entering to sem signal,
+- from the interrupt handler entering to returning from sem wait in kernel,
+are printed, so that the some timing of the main phases of the latency build 
+up should be available for comparison. 
+
+To be noticed the disproportionate time required to read and ack the timer and
+the execution time of the irq handler, far higher than an estimate inferred 
+by symming the CPU time of the number of instructions to be executed, even 
+when interrupts are kept fully disabled till user space is reached. In any 
+case the whole worst case scheduling latency will far exceed the average, 
+even executing with interrupts disabled and that, again, is due to the
+hardware architecture. Clearly such a conclusion might be related to my 
+hardware. You might be a bit luckier but I doubt you'll get a far better
+outcome anyhow.
+
+The above cited intermediate measures clearly add some latency of their own,
+because of the TSC readings and some added "long long" calculations. Such a 
+penalty is nonetheless negligeable for sure.
+
+Overall this is not a good way to measure RTAI related scheduling latencies
+because of the continuous readings of 8254 and because a large part of the 
+scheduling latency itself is within the execution of the handler which, as 
+said above, is too much just because of the reading of 8254 and the, useless, 
+rt_ack_irq used. Just by commenting out the irq ack the execution time of the 
+irq handler decreases substantially. 
+
+RTAI users should trust the standard testsuite latency check much more, after
+all it too does nothing but resuming from a timer interrrupt.
+
+To execute:
+make
+./run
+
+In another shell you can do "./report xxxxx", where xxxxx is the number of 
+second for monitoring the execution. Results are reported in "latencies.txt".
+
+
+Paolo.

@@ -1,0 +1,5 @@
+****** RTAI APIs in USER SPACE EXAMPLE ******
+
+This test demonstrate user space usage of RTAI APIs by running through
+most of the available RTAI services using two Linux communicating
+processes.

@@ -1,0 +1,21 @@
+#!/bin/sh
+if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
+echo
+echo "Press <enter> to load modules:"
+read junk
+echo
+cd ..; ./ldmod; cd -
+echo
+echo "*** RTAI MAGIC RESUMEs FROM LINUX INTERRUPTS, USING RTAI ONLY ***"
+echo "Now start the realtime process <enter>, <ctrl-C> to end it."
+read junk
+sync
+sync
+sync
+if (`rtai-config --linux-version | grep -q 2.6`);
+then insmod ./rsmfromlnxintr_rt.ko;
+else insmod ./rsmfromlnxintr.o; fi
+echo
+echo "Done. Press <enter> to remove the modules."
+read junk
+./rem

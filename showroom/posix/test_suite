@@ -1,0 +1,5 @@
+cd kern
+./test_suite
+cd ../user
+./test_suite
+cd -

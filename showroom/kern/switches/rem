@@ -1,0 +1,5 @@
+rmmod switches_rt
+rmmod switches
+dmesg
+ps
+../remod

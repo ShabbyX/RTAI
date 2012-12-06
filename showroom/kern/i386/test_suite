@@ -1,0 +1,11 @@
+cd calibration
+./run
+cd ../heartbeat
+./run
+cd ../resumefromintr
+./run
+cd ../scb
+./run
+cd ../sound
+./run
+cd -

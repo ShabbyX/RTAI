@@ -1,0 +1,9 @@
+sync
+rmmod task_code_rt
+rmmod start_task_rt
+rmmod comnode_rt
+rmmod task_code
+rmmod start_task
+rmmod comnode
+rmmod rtai_netrpc
+../remod

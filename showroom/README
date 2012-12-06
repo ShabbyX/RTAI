@@ -1,0 +1,17 @@
+RTAI examples for 3.x
+
+Its aim is to avoid bloating the main RTAI development thread while
+keeping valuable examples for users and for testing newly RTAI
+developed features.
+
+In order to compile examples from the showroom, you have to add
+$prefix/bin to your PATH variable, with $prefix pointing to RTAI's
+installation root (by default, prefix = /usr/realtime), so that the
+rtai-config utility can be found by the various Makefiles.
+
+Then the usage is quite simple, i.e. in each directory:
+make-run-rem-make clean. There is also a Makefile at each top branch
+directory, obviously without the possibility of any "run". Instead you
+could run "test_suite", though they are mostly for quick testing by
+developers, so use them with care and due timing between each
+execution.

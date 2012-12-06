@@ -1,0 +1,4 @@
+sync
+rmmod rwlocks
+rmmod rwlocks_rt
+../remod

@@ -1,0 +1,44 @@
+#!/bin/sh
+
+prefix=`rtai-config --prefix`
+arch=`rtai-config --arch`
+insmod=/sbin/insmod
+
+MODULES=$prefix/modules
+
+sync
+if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
+echo
+echo "*** RAW IRQ LATENCY CHECKER ***"
+echo "Press <enter> to load modules then ..."
+read junk
+
+if [ "$prefix" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+if [ "$arch" = "i386" ]; then
+if (`rtai-config --linux-version | grep -q 2.6`);
+then
+$insmod $MODULES/rtai_hal.ko;
+$insmod $MODULES/rtai_ksched.ko;
+$insmod $MODULES/rtai_sem.ko;
+$insmod $MODULES/rtai_rtdm.ko;
+else
+$insmod $MODULES/rtai_hal.o;
+$insmod $MODULES/rtai_ksched.o;
+$insmod $MODULES/rtai_sem.o;
+$insmod $MODULES/rtai_rtdm.o;
+fi
+fi
+
+echo
+echo "... <enter> again to end and to remove the modules."
+sync
+if (`rtai-config --linux-version | grep -q 2.6`);
+then insmod ./irqlat_rt.ko;
+else insmod ./irqlat.o; fi
+echo
+read junk
+#./rem

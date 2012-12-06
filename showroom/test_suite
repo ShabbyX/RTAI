@@ -1,0 +1,6 @@
+cd user
+./test_suite
+cd ../kern
+./test_suite
+cd ../posix
+./test_suite

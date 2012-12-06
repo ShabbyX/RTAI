@@ -1,0 +1,8 @@
+This is example shows raw irq latencies due just to your hardware.
+In fact there is nothing of RTAI in it. Even if you have to load rtai_hal
+the checked interrupt, 8254 timer, is handled directly at the descriptor
+table level only.
+So if they are too high there is nothing RTAI can do for you.
+You should try the SMI helper or play with BIOS and Linux configs.
+
+Paolo Mantegazza.

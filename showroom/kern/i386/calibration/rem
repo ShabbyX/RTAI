@@ -1,0 +1,4 @@
+sync
+rmmod calmod_rt
+rmmod calmod
+../../remod

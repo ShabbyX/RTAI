@@ -1,0 +1,4 @@
+****** NAMED OBJECTS ******
+
+This example demonstrates the use of named tasks, semaphores and mail boxes.
+It is a mere adaption of "jepplin" example.

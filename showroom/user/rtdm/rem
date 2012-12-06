@@ -1,0 +1,5 @@
+rmmod rtai_16550A
+rmmod -f rtai_16550A
+rmmod rtai_rtdm
+rmmod -f rtai_rtdm
+../remod

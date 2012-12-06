@@ -1,0 +1,36 @@
+#!/bin/sh
+
+prefix=`rtai-config --prefix`
+
+if [ "$prefix" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+MODULES=$prefix/modules
+
+libpath=`rtai-config --library-dir`
+
+if test "$libpath" = ""; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
+
+if test $UID -ne 0; then SUDO="sudo "; else SUDO=""; fi
+echo
+echo "*** PREEMPTION CHECK (user) ***"
+echo "Press <enter> to load LXRT modules:"
+read junk
+cd ..; ./ldmod; cd -
+if (`rtai-config --linux-version | grep -q 2.6`);
+then insmod $MODULES/rtai_wd.ko wd_OneShot=1;
+else insmod $MODULES/rtai_wd.o wd_OneShot=1; fi
+echo
+echo "Now start the realtime process <enter> and wait for its end:"
+read junk
+$SUDO ./wd &
+echo
+echo "Done. Press <enter> to remove the modules."
+read junk

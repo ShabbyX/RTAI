@@ -1,0 +1,3 @@
+rmmod irqlat_rt
+rmmod irqlat
+rmmod rtai_hal

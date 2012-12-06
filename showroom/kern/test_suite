@@ -1,0 +1,58 @@
+cd bitstest
+./run
+cd ../condtest
+./run
+cd ../edf
+./run
+cd ../fastick
+./run
+cd ../fp
+./run
+cd ../i386
+./test_suite
+cd ../latency
+./run
+cd ../mbx
+./run
+cd ../mbx_del
+./run
+cd ../msg_clock
+./run
+cd ../mupspecific
+cd msg_clock
+./run
+cd ../sem_clock
+./run
+cd ../../namedstuff
+./run
+cd ../netrpc
+./run
+cd ../pqueue
+./run
+cd ../prioinher
+./run 0
+./run 1
+cd ../res-mtx_sem
+./run
+cd ../rndrob
+./run
+cd ../rwlocks
+./run
+cd ../sem_clock
+./run
+cd ../shm
+./run
+cd ../splocks
+./run
+cd ../switches
+./run
+cd ../sysreq
+./run
+cd ../tasklets
+./krun
+./kcrun
+cd ../tbx
+./run1
+./run2
+./run3
+cd ../

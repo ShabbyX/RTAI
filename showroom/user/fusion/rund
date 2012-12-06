@@ -1,0 +1,30 @@
+#!/bin/sh
+
+libpath=`rtai-config --library-dir`
+
+if [ "$libpath" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
+
+if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
+echo
+echo "*** LATENCY MEASUREMENT WITH ALTERNATE DISPLAY THROUGH MQUEU (user) ***"
+echo "Press <enter> to load LXRT modules ..."
+read junk
+cd ..; ./ldmod; cd -
+echo
+echo "Now start the realtime process, <enter> twice to end them all"
+read junk
+$SUDO ./latwdisp &
+sleep 1
+$SUDO ./display &
+read junk
+read junk
+TASK=`ps -a |grep display | awk '{ print $1 }'`
+kill -9 $TASK
+TASK=`ps -a |grep latwdisp | awk '{ print $1 }'`
+kill -9 $TASK
+../remod

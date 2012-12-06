@@ -1,0 +1,7 @@
+rmmod resumefromintr_rt
+rmmod resumefromintr
+rmmod rtai_rtdm
+rmmod rtai_msg
+rmmod rtai_sem
+rmmod rtai_sched
+rmmod rtai_hal

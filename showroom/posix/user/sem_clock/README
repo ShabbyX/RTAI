@@ -1,0 +1,5 @@
+****** POSIX SEM_CLOCK EXAMPLE ******
+
+This example implements a digital wrist clock in the way detailed in: Andre' Schiper, Programmation Concurrent, Presses Polytechnique et Universitaires Romandes, Geneve, using posix APIs.
+
+Look at the startup frame for execution control keys.

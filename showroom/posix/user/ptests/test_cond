@@ -1,0 +1,38 @@
+sync
+./run tst-cond1.c
+sync
+./run tst-cond2.c
+sync
+./run tst-cond3.c
+sync
+./run tst-cond4.c
+sync
+./run tst-cond5.c
+sync
+./run tst-cond6.c
+sync
+./run tst-cond7.c
+sync
+./run tst-cond8.c
+sync
+./run tst-cond9.c
+sync
+./run tst-cond10.c
+sync
+./run tst-cond11.c
+sync
+./run tst-cond14.c
+sync
+./run tst-cond15.c
+sync
+./run tst-cond16.c
+sync
+./run tst-cond17.c
+sync
+./run tst-cond18.c
+sync
+./run tst-cond19.c
+sync
+./run tst-cond20.c
+sync
+./run tst-cond21.c

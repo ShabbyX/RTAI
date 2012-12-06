@@ -1,0 +1,14 @@
+****** MBX EXAMPLE ******
+
+This example demonstrates the release of tasks blocked on RTAI mailboxes.
+
+To use it just type:
+
+make
+./run
+
+To stop it type:
+
+./rem
+
+Alternatively use your own insmod/rmmod after make.

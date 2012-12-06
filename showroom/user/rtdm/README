@@ -1,0 +1,13 @@
+RTDM serial tests.
+
+1)
+test.c is the original RTAI test, probing almost all of RTDM + serial.
+Usage:
+make
+./run
+
+2)
+ftest.c is an adaption of an equivalent test found at RTDM developers site.
+Usage:
+make
+./frun

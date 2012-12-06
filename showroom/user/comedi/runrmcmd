@@ -1,0 +1,49 @@
+#!/bin/sh
+
+prefix=`rtai-config --prefix`
+
+if [ "$prefix" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+MODULES=$prefix/modules
+
+comedi_dir=`rtai-config --comedi-dir`
+
+COMEDI_DIR=$comedi_dir
+
+libpath=`rtai-config --library-dir`
+
+if [ "$libpath" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
+
+if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
+echo
+echo "*** COMEDI REMOTE ASYNC AI (user) ***"
+echo "Press <enter> to load LXRT modules:"
+read junk
+insmod $COMEDI_DIR/comedi.ko
+insmod $COMEDI_DIR/kcomedilib/kcomedilib.ko
+insmod $COMEDI_DIR/drivers/comedi_fc.ko
+cd ../; ./ldmod; cd -
+insmod $MODULES/rtai_netrpc.ko ThisNode="127.0.0.1";
+/sbin/insmod $MODULES/rtai_comedi.ko
+insmod $COMEDI_DIR/drivers/mite.ko
+insmod $COMEDI_DIR/drivers/ni_tio.ko
+insmod $COMEDI_DIR/drivers/ni_tiocmd.ko
+insmod $COMEDI_DIR/drivers/ni_pcimio.ko
+/usr/local/sbin/comedi_config /dev/comedi0 ni_pcimio
+/usr/local/bin/comedi_calibrate -f /dev/comedi0
+echo
+echo "Now start the realtime process <enter>:"
+read junk
+$SUDO ./rmcmd
+echo
+echo "Done. Press <enter> to remove the modules."
+read junk
+./rem

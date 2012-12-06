@@ -1,0 +1,23 @@
+****** SHARED LEVEL INTERRUPTS ******
+
+This example shows how level triggered interrupts could be shared between real
+and non real time applications.
+
+It must be noted that such a sharing should be avoided as far as possible.
+In fact the related PIC interrupt cannot be enabled till all the shared
+interrupts are processed and so it might end with the real time ones having
+to wait Linux.
+
+That said it is here, at least is yet another good test for the core RTAI stuff.
+
+It uses the ethernet interrupt number of the machine on which it has been 
+tested first. It is defined through the static variable ETHIRQ. You might have 
+to change it or insmod with "ETHIRQ=myirq".
+
+To run the example type:
+
+make clean
+make
+./run
+
+To stop it type enter.
