@@ -461,6 +461,7 @@ static inline void xntimer_init(xntimer_t *timer, void (*handler)(xntimer_t *))
         memset(timer, 0, sizeof(struct rtdm_timer_struct));
         timer->handler = (void *)handler;
         timer->data    = (unsigned long)timer;
+	timer->next    =  timer->prev = timer;
 }
 
 #define xntimer_set_name(timer, name)
