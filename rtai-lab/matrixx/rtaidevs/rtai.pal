@@ -1,0 +1,9 @@
+blockdirectory="rtaidevs\Scope" title="RTAI-Scope" icon="rtaidevs\icons\rtai_scope.bmp" 
+blockdirectory="rtaidevs\Log" title="RTAI-Log" icon="rtaidevs\icons\rtai_log.bmp" 
+blockdirectory="rtaidevs\Meter" title="RTAI-Meter" icon="rtaidevs\icons\rtai_meter.bmp" 
+blockdirectory="rtaidevs\Led" title="RTAI-Led" icon="rtaidevs\icons\rtai_led.bmp" 
+blockdirectory="rtaidevs\AnalogInput" title="RTAI-AnalogInput" icon="rtaidevs\icons\rtai_comedi_datain.bmp" 
+blockdirectory="rtaidevs\AnalogOutput" title="RTAI-AnalogOutput" icon="rtaidevs\icons\rtai_comedi_dataout.bmp" 
+blockdirectory="rtaidevs\DigitalInput" title="RTAI-DigitalInput" icon="rtaidevs\icons\rtai_comedi_dioin.bmp" 
+blockdirectory="rtaidevs\DigitalOutput" title="RTAI-DigitalOutput" icon="rtaidevs\icons\rtai_comedi_dioout.bmp" 
+
