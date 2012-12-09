@@ -13,5 +13,5 @@ This repository does not keep track of RTAI's history before version 3.9, which
 is the initial commit of this repository.  Currently, the `vulcano` branch tracks
 any changes to the `vulcano` module of the original CVS repository, as well
 as containing its `showroom` module.  This branch will always be merged into
-`master`, so that this branch would contain the latest RTAI development, plus
+`master`, so that `master` would contain the latest RTAI development, plus
 other changes, if any.
