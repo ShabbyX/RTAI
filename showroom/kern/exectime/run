@@ -1,0 +1,17 @@
+#!/bin/sh
+if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
+echo
+echo "*** RTAI GET EXECUTION TIME ***"
+echo "Press <enter> to load modules:"
+read junk
+cd ..; ./ldmod; cd -
+echo
+echo "Now insert the test module <enter>."
+read junk
+sync
+insmod ./exectime_rt.ko;
+echo
+echo "Done. Press <enter> to remove the module and see kernel logs"
+read junk
+dmesg
+./rem

@@ -2211,6 +2211,7 @@ EXPORT_SYMBOL(rt_get_time_ns_cpuid);
 EXPORT_SYMBOL(rt_get_cpu_time_ns);
 EXPORT_SYMBOL(rt_get_real_time);
 EXPORT_SYMBOL(rt_get_real_time_ns);
+EXPORT_SYMBOL(rt_get_exectime);
 EXPORT_SYMBOL(rt_get_base_linux_task);
 EXPORT_SYMBOL(rt_alloc_dynamic_task);
 EXPORT_SYMBOL(rt_register_watchdog);

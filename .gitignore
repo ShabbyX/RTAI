@@ -22,6 +22,7 @@ Makefile
 
 # Config Temp Files
 .cfok
+.cfchanged
 .rtai_config*
 addons/rtdm/FORCE
 autom4te.cache/
@@ -53,6 +54,7 @@ base/config/kconfig/mconf
 base/config/kconfig/zconf.tab.c
 
 # Documentation Files
+doc/doxygen/api
 doc/docbook/catalog
 doc/docbook/custom-stylesheets/xsl/html/chunk.xsl
 doc/doxygen/Doxyfile
