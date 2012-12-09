@@ -52,7 +52,7 @@ Latency Calibration
 ===================
 
 Calibrates the scheduling latency of RTAI schedulers with oneshot timers, to
-allow a more precise scheduling of timed tasks. Chose the one (kernel/user 
+allow a more precise scheduling of timed tasks. Choose the one (kernel/user 
 space) more appropriate to the applications mix you are using.
 
 
@@ -77,7 +77,7 @@ higher play with your system configuration parameters and with those of Linux
 as well, to end in buying another board eventually.
 The worst interrupt latency is displayed at the end of the run, which comes
 when you type "Ctrl-C". Worsening latencies are displayed as they happen.
-Notice that is possible to check it also on a scope by defining using "-sy" 
+Notice that it is also possible to check it on a scope by using "-sy" 
 and connecting the scope to the first output bit of the parallel port.
 See also README.SMI in this directory for some clues that might help with
 some INTEL chipsets.
