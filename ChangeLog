@@ -1,3 +1,13 @@
+2012-12-10 Shahbaz Youssefi <shahbaz.youssefi@unige.it>
+
+	* configure.in: modified for build against new libc versions.
+	* base/math/GNUmakefile.am: modified for build against new libc
+	  versions.
+	* base/include/rtai_rwl.h: fixed a missing nam2num in
+	  rt_named_rwl_init.
+	* base/include/rtai_spl.h: fixed a missing nam2num in
+	  rt_named_spl_init.
+
 2012-08-03 Mark Fortescue <mark@mtfhpc.demon.co.uk>
 
         * base/addons/rtdm/module.c: split the loop initializing the timers 

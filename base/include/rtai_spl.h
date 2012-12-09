@@ -78,7 +78,7 @@ RTAI_PROTO(int, rt_spl_delete,(struct rtai_spl *spl))
 
 RTAI_PROTO(struct rtai_spl *, rt_named_spl_init,(const char *name))
 {
-        struct { const char *name; } arg = { name };
+        struct { unsigned long name; } arg = { nam2num(name) };
        	return (struct rtai_spl *)rtai_lxrt(BIDX, SIZARG, NAMED_SPL_INIT, &arg).v[LOW];
 }
 
