@@ -18801,7 +18801,7 @@ if [ $ac_cv_gcc33 = no ]; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 else
-  RTAI_FP_CFLAGS="-D_FORTIFY_SOURCE=0"
+  RTAI_FP_CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0"
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
 fi
