@@ -1449,7 +1449,7 @@ static unsigned long hal_request_apic_freq(void);
 
 static void rtai_install_archdep (void)
 {
-	ipipe_select_timers(&CPU_MASK_ALL);
+	ipipe_select_timers(cpu_present_mask);
 	hal_catch_event(hal_root_domain, HAL_SYSCALL_PROLOGUE, (void *)intercept_syscall_prologue);
 
 	if (rtai_cpufreq_arg == 0) {
