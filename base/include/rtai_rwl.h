@@ -91,7 +91,7 @@ RTAI_PROTO(int, rt_rwl_delete,(struct rtai_rwlock *rwl))
 
 RTAI_PROTO(struct rtai_rwlock *, rt_named_rwl_init,(const char *name))
 {
-        struct { unsigned long name; } arg = { nam2num(name) };
+	struct { unsigned long name; } arg = { nam2num(name) };
        	return (struct rtai_rwlock *)rtai_lxrt(BIDX, SIZARG, NAMED_RWL_INIT, &arg).v[LOW];
 }
 

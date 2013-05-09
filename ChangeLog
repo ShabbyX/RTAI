@@ -1,20 +1,16 @@
-2012-12-12 John Morris <john@zultron.com>
+2013-04-08 Pierangelo Masarati <masarati@aero.polimi.it>
 
-	* base/sched/sched.c: changed set_cpu_alllowed to set_cpu_allowed_ptr
-	  to allow compilation against kernels that have
-	  CONFIG_CPUMASK_OFFSTACK=y
+	* RTAI 3.9.1
 
-2012-12-10 Shahbaz Youssefi <shahbaz.youssefi@unige.it>
+2013-04-07 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* configure.in: modified for build against new glibc versions.
-	* base/math/GNUmakefile.am: modified for build against new glibc
-	  versions.
-	* base/include/rtai_rwl.h: fixed a missing nam2num in
-	  rt_named_rwl_init.
-	* base/include/rtai_spl.h: fixed a missing nam2num in
-	  rt_named_spl_init.
-	* base/sched: added rt_get_exectime for kernel (and updated for
-	  user) to give precise execution time.  Also added in showroom.
+        * base/isched/sched.c: make the setting of linux shot atomic a bit 
+	  more, so to avoid undue hard timers shots.
+
+2013-02-28 Shahbaz Youssefi <ShabbyX@gmail.com>
+
+	* base/include/rtai_rwl.h: fixed a missing nam2num in rt_named_rwl_init.
+	* base/include/rtai_spl.h: fixed a missing nam2num in rt_named_spl_init.
 
 2012-08-03 Mark Fortescue <mark@mtfhpc.demon.co.uk>
 

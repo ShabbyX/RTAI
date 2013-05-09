@@ -1,9 +1,0 @@
-install-data-local:
-
-SUBDIRS = utility
-
-EXTRA_DIST = devices examples scilab Makefile README RTAI rtmain.c 
-
-install-exec-local: rtmain.c
-	$(mkinstalldirs) $(DESTDIR)/$(pkgdatadir)/scicos
-	$(INSTALL_DATA) $< $(DESTDIR)/$(pkgdatadir)/scicos
