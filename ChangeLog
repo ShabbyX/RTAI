@@ -1,3 +1,17 @@
+2013-04-08 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* RTAI 3.9.1
+
+2013-04-07 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/isched/sched.c: make the setting of linux shot atomic a bit 
+	  more, so to avoid undue hard timers shots.
+
+2013-02-28 Shahbaz Youssefi <ShabbyX@gmail.com>
+
+	* base/include/rtai_rwl.h: fixed a missing nam2num in rt_named_rwl_init.
+	* base/include/rtai_spl.h: fixed a missing nam2num in rt_named_spl_init.
+
 2012-08-03 Mark Fortescue <mark@mtfhpc.demon.co.uk>
 
         * base/addons/rtdm/module.c: split the loop initializing the timers 

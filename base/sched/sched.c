@@ -1472,19 +1472,19 @@ static void _rt_linux_hrt_set_mode(enum clock_event_mode mode, struct ipipe_tick
 static int _rt_linux_hrt_next_shot(unsigned long deltat, struct ipipe_tick_device *hrt_dev)
 {
 	int cpuid = rtai_cpuid();
+	unsigned long deltas;
 	RTIME linux_time;
 
 	deltat = nano2count_cpuid(deltat, cpuid);
-	linux_time = rt_get_time_cpuid(cpuid) + deltat;
-	deltat = deltat > (tuned.setup_time_TIMER_CPUNIT + tuned.latency) ? imuldiv(deltat - tuned.latency, TIMER_FREQ, tuned.cpu_freq) : 0;
+	deltas = deltat > (tuned.setup_time_TIMER_CPUNIT + tuned.latency) ? imuldiv(deltat - tuned.latency, TIMER_FREQ, tuned.cpu_freq) : 0;
 
 	rtai_cli();
-	rt_times.linux_time = linux_time;
+	rt_times.linux_time = linux_time = rt_get_time_cpuid(cpuid) + deltat;
 	if (oneshot_running) {
 		if (linux_time < rt_times.intr_time) {
-			if (deltat > 0) {
+			if (deltas > 0) {
 				rt_times.intr_time = linux_time;
-				rt_set_timer_delay(deltat);
+				rt_set_timer_delay(deltas);
 				timer_shot_fired = 1;
 			} else {
 				rt_times.linux_time = RT_TIME_END;
@@ -2850,10 +2850,7 @@ static struct rt_native_fun_entry rt_sched_entries[] = {
 
 extern void *rtai_lxrt_dispatcher;
 
-DECLARE_FUSION_WAKE_UP_STUFF;
-
 static int lxrt_init(void)
-
 {
 	void init_fun_ext(void);
 	int cpuid;
