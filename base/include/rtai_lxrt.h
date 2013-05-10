@@ -68,7 +68,6 @@
 
 #include <rtai_sched.h>
 #include <rtai_nam2num.h>
-#include <linux/sched.h>
 
 // scheduler
 #define YIELD				 0
