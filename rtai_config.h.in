@@ -1,4 +1,4 @@
-/* rtai_config.h.in.  Generated from configure.in by autoheader.  */
+/* rtai_config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Kconfig */
 #undef CONFIG_KBUILD
@@ -314,8 +314,17 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
+/* Define to 1 if you have the <GL/glu.h> header file. */
+#undef HAVE_GL_GLU_H
+
+/* Define to 1 if you have the <GL/gl.h> header file. */
+#undef HAVE_GL_GL_H
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `GL' library (-lGL). */
+#undef HAVE_LIBGL
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
