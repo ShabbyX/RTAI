@@ -9,5 +9,6 @@ cd "$srcdir"
 autoreconf -v --install || exit 1
 cd $ORIGDIR || exit $?
 
-echo -e "\nYou can now run make menuconfig"
-echo -e "or at your option ./configure\n"
+if test -z "$NOCONFIGURE"; then
+    "$srcdir"/configure "$@"
+fi
