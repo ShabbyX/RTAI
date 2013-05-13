@@ -1081,5 +1081,3 @@ config RTAI_EFLTK_DIR
 	directory here.
 
 endmenu
-
-source rtai-sim/Kconfig
