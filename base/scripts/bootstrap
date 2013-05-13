@@ -21,7 +21,7 @@ if test -r acinclude.m4 ; then
    touch acinclude.m4
    $ACLOCAL
 else
-   $ACLOCAL -I base/config/autoconf
+   $ACLOCAL -I m4
 fi
 if [ "$?" != "0" ] ; then die "running aclocal"; fi
 echo "done"

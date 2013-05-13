@@ -31,7 +31,6 @@ addons/drivers/16550A/FORCE
 # Generated Makefiles
 GNUmakefile.in
 GNUmakefile
-Makefile.in
 Makefile
 
 # Config Temp Files

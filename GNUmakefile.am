@@ -1,5 +1,3 @@
-ACLOCAL_AMFLAGS=-I base/config/autoconf
-
 OPTDIRS =
 
 if CONFIG_RTAI_TESTSUITE
@@ -27,7 +25,7 @@ DIST_SUBDIRS = \
 	rtai-py
 
 EXTRA_DIST = \
-makefile \
+Makefile \
 README.INSTALL \
 README.ISOLCPUS \
 README.LINUX_SERVER \
@@ -35,7 +33,7 @@ README.LXRT_EXTS_IN_USE \
 README.SMI \
 @RTAI_MAYBE_SIMDIR@
 
-DISTCLEANFILES = .rtai_config .rtai_config.old .cfok .cfchanged Module.symvers
+DISTCLEANFILES = .rtai_config .rtai_config.old .cfok .cfchanged Module.symvers configure
 
 moduledir = @RTAI_MODULE_DIR@
 
