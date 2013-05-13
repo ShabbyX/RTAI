@@ -36,13 +36,6 @@ moduledir = @RTAI_MODULE_DIR@
 
 all-recursive install-recursive: base/GNUmakefile clean-if-reconfigured
 
-base/GNUmakefile: @RTAI_LINUX_DIR@/.config
-	@echo "*****************************************" ; \
-	 echo "*  The Linux configuration has changed  *" ; \
-	 echo "*  forcing 'make reconfig' ...          *" ; \
-	 echo "*****************************************" ; \
-	$(MAKE) reconfig
-
 clean-if-reconfigured:
 	@if test -r .cfchanged ; then \
 	   rm -f .cfchanged ; \
@@ -154,4 +147,4 @@ dev devices:
 	    done ; \
 	fi
 
-.PHONY: reconfig xconfig gconfig mconfig menuconfig config oldconfig clean-if-reconfigured dev devices
+.PHONY: menuconfig clean-if-reconfigured dev devices
