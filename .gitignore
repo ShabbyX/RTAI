@@ -18,6 +18,10 @@ rtai_config.h
 
 # Generated Makefiles
 GNUmakefile
+Makefile
+
+# Generated configure file
+configure
 
 # Config Temp Files
 .cfok

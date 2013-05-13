@@ -46,7 +46,7 @@ noinst_LIBRARIES = librtdm.a
 
 librtdm_a_AR = $(CROSS_COMPILE)ar cru
 
-INCLUDES = \
+AM_CXXFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
 	-I$(top_srcdir)/base/include \
 	-I$(top_srcdir)/addons \
