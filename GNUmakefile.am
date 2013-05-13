@@ -14,10 +14,9 @@ endif
 
 OPTDIRS += rtai-py
 
-SUBDIRS = base @RTAI_MAYBE_DOCDIR@ $(OPTDIRS)
+SUBDIRS = base $(OPTDIRS)
 
 DIST_SUBDIRS = \
-	@RTAI_MAYBE_DOCDIR@ \
 	base \
 	testsuite \
 	addons \
@@ -25,13 +24,11 @@ DIST_SUBDIRS = \
 	rtai-py
 
 EXTRA_DIST = \
-Makefile \
 README.INSTALL \
 README.ISOLCPUS \
 README.LINUX_SERVER \
 README.LXRT_EXTS_IN_USE \
-README.SMI \
-@RTAI_MAYBE_SIMDIR@
+README.SMI
 
 DISTCLEANFILES = .rtai_config .rtai_config.old .cfok .cfchanged Module.symvers configure
 
