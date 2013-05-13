@@ -16,12 +16,16 @@ base/scripts/rtai-config
 base/scripts/rtai-load
 rtai_config.h
 
-# Generated Makefiles
-GNUmakefile
-Makefile
-
-# Generated configure file
+# Auto-generated files
 configure
+aclocal.m4
+bin/
+
+# Generated Makefiles
+GNUmakefile.in
+GNUmakefile
+Makefile.in
+Makefile
 
 # Config Temp Files
 .cfok
