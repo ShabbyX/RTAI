@@ -53,6 +53,7 @@ testsuite/*/*/preempt
 testsuite/*/*/switches
 
 # KConfig Generated files
+base/config/kconfig/.config*
 base/config/kconfig/.ncurses
 base/config/kconfig/lex.zconf.c
 base/config/kconfig/libkconfig.so
