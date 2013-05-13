@@ -24,7 +24,7 @@ noinst_LIBRARIES = libtasklets.a
 
 libtasklets_a_AR = $(CROSS_COMPILE)ar cru
 
-AM_CXXFLAGS = \
+AM_CPPFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
 	-I$(top_srcdir)/base/include \
 	-I../include

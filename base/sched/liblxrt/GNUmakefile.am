@@ -9,7 +9,7 @@ endif
 
 liblxrt_la_LDFLAGS = -module -version-info 1:0:0
 
-AM_CXXFLAGS = \
+AM_CPPFLAGS = \
 	@RTAI_USER_CFLAGS@ \
 	-D_GNU_SOURCE \
 	-fno-inline \
@@ -17,5 +17,5 @@ AM_CXXFLAGS = \
 	-I../../include
 
 if CONFIG_RTAI_DRIVERS_SERIAL
-AM_CXXFLAGS += -I$(top_srcdir)/addons/drivers/serial
+AM_CPPFLAGS += -I$(top_srcdir)/addons/drivers/serial
 endif

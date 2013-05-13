@@ -53,9 +53,41 @@ clean-if-reconfigured:
 	   $(MAKE) clean ; \
 	fi
 
-reconfig xconfig gconfig mconfig menuconfig config oldconfig:
-	@$(MAKE) -f $(srcdir)/makefile $@ \
-	srctree=$(srcdir) ARCH=@RTAI_HOST_STRING@ CROSS_COMPILE=@CROSS_COMPILE@
+menuconfig: mconf config-status
+
+config-status: .rtai_config
+	@test -r config.status && recf=yes || recf=no ; \
+	eval `grep ^CONFIG_RTAI_INSTALLDIR $<`; \
+	eval `grep ^CONFIG_RTAI_MAINTAINER $<`; \
+	test x$$CONFIG_RTAI_MAINTAINER_AUTOTOOLS = xy && confopts=--enable-maintainer-mode; \
+	CROSS_COMPILE=$(CROSS_COMPILE) \
+	CC="$(CROSS_COMPILE)$(CC)" \
+	CXX="$(CROSS_COMPILE)$(CXX)" \
+	LD="$(CROSS_COMPILE)$(LD)" \
+	AR="$(CROSS_COMPILE)$(AR)" \
+	RANLIB=$(CROSS_COMPILE)ranlib \
+	STRIP=$(CROSS_COMPILE)strip \
+	NM=$(CROSS_COMPILE)nm \
+	$(srctree)./configure \
+	--build=$(build_alias) \
+	--host=$(host_alias) \
+	--with-kconfig-file=./$< \
+	--with-linux-dir=$(RTAI_LINUX_DIR) \
+	--prefix=$$CONFIG_RTAI_INSTALLDIR \
+	$$confopts ; \
+	if test $$? = 0; then \
+	   touch .cfok ; \
+	   if test x$$recf = xyes ; then \
+	      touch .cfchanged ; \
+	   fi ; \
+	else \
+	   rm -f .cfok ; false; \
+	fi
+
+mconf: $(KCONFIG_DIR)
+	$(MAKE) -C base/config/kconfig \
+	-f Makefile.kconfig menuconfig \
+	srctree=$(PWD) ARCH=`uname -m`
 
 if CONFIG_RTAI_OLD_FASHIONED_BUILD
 clean-local:
