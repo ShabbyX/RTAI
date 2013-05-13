@@ -60,14 +60,13 @@ config-status: .rtai_config
 	eval `grep ^CONFIG_RTAI_INSTALLDIR $<`; \
 	eval `grep ^CONFIG_RTAI_MAINTAINER $<`; \
 	test x$$CONFIG_RTAI_MAINTAINER_AUTOTOOLS = xy && confopts=--enable-maintainer-mode; \
-	CROSS_COMPILE=$(CROSS_COMPILE) \
-	CC="$(CROSS_COMPILE)$(CC)" \
-	CXX="$(CROSS_COMPILE)$(CXX)" \
-	LD="$(CROSS_COMPILE)$(LD)" \
-	AR="$(CROSS_COMPILE)$(AR)" \
-	RANLIB=$(CROSS_COMPILE)ranlib \
-	STRIP=$(CROSS_COMPILE)strip \
-	NM=$(CROSS_COMPILE)nm \
+	CC="$(CC)" \
+	CXX="$(CXX)" \
+	LD="$(LD)" \
+	AR="$(AR)" \
+	RANLIB=ranlib \
+	STRIP=strip \
+	NM=nm \
 	$(srctree)./configure \
 	--build=$(build_alias) \
 	--host=$(host_alias) \
