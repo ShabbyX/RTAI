@@ -27,25 +27,6 @@ AC_ARG_WITH(CC,
 	CC="$withval"
     ])
 
-dnl set only if undefined
-if test x"$CROSS_COMPILE" = x ; then
-	CROSS_COMPILE=
-	using_crosscompile=n
-else
-	using_crosscompile=y
-fi
-case "$host" in
- m68knommu-*)
-	enable_shared=no
-	if test "$using_crosscompile" = y; then
-		LDFLAGS="-Wl,-elf2flt"
-		CROSSCOMPILE_TEST="tools/ucfront-gcc "$CROSS_COMPILE"gcc"
-	fi
-	;;
-esac
-AC_MSG_CHECKING([for CROSS_COMPILE])
-AC_MSG_RESULT([$CROSS_COMPILE])
-
 AC_PROG_CC
 CFLAGS=""
 
@@ -1646,7 +1627,7 @@ else
    RTAI_KBUILD_BOTTOM=
    RTAI_KBUILD_CMD="for src in \$^; do if test \\! -r \`basename \$\$src\`; then \$(LN_S) \$\$src; fi; done; \
 		    rm -f $RTAI_LINUX_DIR/.tmp_versions/rtai_*.mod $RTAI_LINUX_DIR/.tmp_versions/*_rt.mod; \
-                    \$(MAKE) -C $RTAI_LINUX_DIR CROSS_COMPILE=\$(CROSS_COMPILE) CC=$CC ARCH=$RTAI_TARGET_ARCH_NAME \
+                    \$(MAKE) -C $RTAI_LINUX_DIR CC=$CC ARCH=$RTAI_TARGET_ARCH_NAME \
 		    SUBDIRS=\$\$PWD M=\$\$PWD rtai_srctree=\`cd \$(top_srcdir) && pwd\` rtai_srcdir=\`cd \$(srcdir) && pwd\` V=\$(V) modules \
 		    rtai_objs='\$(call src2obj,c,\$^) \$(call src2obj,S,\$^) \$(call src2obj,cc,\$^) \$(call src2obj,cpp,\$^)' rtai_target=\$(basename \$@)"
    RTAI_KBUILD_CLEAN='rm -f *.ko *.mod.c .*.cmd *.o Module.symvers Module.markers modules.order && rm -Rf .tmp_versions'
@@ -1760,9 +1741,6 @@ case $RTAI_TARGET_ARCH in
 		CFLAGS="-m5407 -Wa,-m5407"
 	elif test "$CONFIG_M532x" = y; then
 		RTAI_TARGET_SUBARCH=MCF5329
-		if test "$using_crosscompile" = y; then
-			CFLAGS="-m5307 -Wa,-m5307"
-		fi
 	elif test "$CONFIG_M54455" = y; then
 		RTAI_TARGET_SUBARCH=MCF54455
 	else
@@ -1872,7 +1850,6 @@ dnl
 dnl Build the Makefiles
 dnl
 
-AC_SUBST(CROSS_COMPILE)
 AC_SUBST(DOXYGEN_SHOW_INCLUDE_FILES)
 AC_SUBST(DOXYGEN_HAVE_DOT)
 AC_SUBST(DOXYGEN)
@@ -1909,7 +1886,6 @@ AC_SUBST(RTAI_KBUILD_DISTCLEAN)
 AC_SUBST(RTAI_POSIX_WRAP)
 
 AC_SUBST(CONFIG_RTAI_LINUXDIR)
-AC_SUBST(CROSSCOMPILE_TEST)
 
 
 AC_CONFIG_FILES([ \

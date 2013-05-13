@@ -3,8 +3,6 @@ moduledir = @RTAI_MODULE_DIR@
 
 modext = @RTAI_MODULE_EXT@
 
-CROSS_COMPILE = @CROSS_COMPILE@
-
 libcalibrate_rt_a_SOURCES = calibrate-module.c calibrate.h
 libsmi_rt_a_SOURCES = smi-module.c
 
@@ -29,7 +27,7 @@ distclean-local:
 else
 noinst_LIBRARIES = libcalibrate_rt.a libsmi_rt.a
 
-libcalibrate_rt_a_AR = $(CROSS_COMPILE)ar cru
+libcalibrate_rt_a_AR = ar cru
 
 libcalibrate_rt_a_CPPFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
@@ -37,9 +35,9 @@ libcalibrate_rt_a_CPPFLAGS = \
 	-I../../../include
 
 rtai_calibrate.o: libcalibrate_rt.a
-	$(CROSS_COMPILE)$(LD) --whole-archive $< -r -o $@
+	$(LD) --whole-archive $< -r -o $@
 
-libsmi_rt_a_AR = $(CROSS_COMPILE)ar cru
+libsmi_rt_a_AR = ar cru
 
 libsmi_rt_a_CPPFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
@@ -47,7 +45,7 @@ libsmi_rt_a_CPPFLAGS = \
 	-I../../../include
 
 rtai_smi.o: libsmi_rt.a
-	$(CROSS_COMPILE)$(LD) --whole-archive $< -r -o $@
+	$(LD) --whole-archive $< -r -o $@
 endif
 
 calibration_PROGRAMS = calibrate

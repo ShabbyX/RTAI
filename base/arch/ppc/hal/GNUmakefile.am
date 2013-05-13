@@ -2,8 +2,6 @@ moduledir = @RTAI_MODULE_DIR@
 
 modext = @RTAI_MODULE_EXT@
 
-CROSS_COMPILE = @CROSS_COMPILE@
-
 libhal_a_SOURCES = hal.c cswitch.S
 
 if CONFIG_KBUILD
@@ -21,7 +19,7 @@ distclean-local:
 else
 noinst_LIBRARIES = libhal.a
 
-libhal_a_AR = $(CROSS_COMPILE)ar cru
+libhal_a_AR = ar cru
 
 AM_CPPFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
@@ -29,7 +27,7 @@ AM_CPPFLAGS = \
 	-I../../../include
 
 rtai_hal.o: libhal.a
-	$(CROSS_COMPILE)$(LD) --whole-archive $< -r -o $@
+	$(LD) --whole-archive $< -r -o $@
 endif
 
 all-local: rtai_hal$(modext)

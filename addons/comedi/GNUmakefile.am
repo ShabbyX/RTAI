@@ -2,8 +2,6 @@ moduledir = @RTAI_MODULE_DIR@
 
 modext = @RTAI_MODULE_EXT@
 
-CROSS_COMPILE = @CROSS_COMPILE@
-
 libmodule_a_SOURCES = kcomedi-module.c
 
 include_HEADERS = rtai_comedi.h
@@ -20,7 +18,7 @@ clean-local:
 else
 noinst_LIBRARIES = libmodule.a
 
-libmodule_a_AR = $(CROSS_COMPILE)ar cru
+libmodule_a_AR = ar cru
 
 libmodule_a_CFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
@@ -29,7 +27,7 @@ libmodule_a_CFLAGS = \
 	-I@COMEDI_DIR@/include
 
 rtai_comedi.o: libmodule.a
-	$(CROSS_COMPILE)$(LD) --whole-archive $< -r -o $@
+	$(LD) --whole-archive $< -r -o $@
 endif
 
 all-local: rtai_comedi$(modext)
@@ -54,6 +52,6 @@ libkcomedilxrt_a_CFLAGS = \
 
 libkcomedilxrt_a_SOURCES = kcomedi.c
 
-libkcomedilxrt_a_AR = $(CROSS_COMPILE)ar cru
+libkcomedilxrt_a_AR = ar cru
 
 EXTRA_DIST = Makefile.kbuild patchlinuxcomedi

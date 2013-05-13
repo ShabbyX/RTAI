@@ -3,8 +3,6 @@ testdir = $(prefix)/testsuite/kern/preempt
 moduledir = @RTAI_MODULE_DIR@
 modext = @RTAI_MODULE_EXT@
 
-CROSS_COMPILE = @CROSS_COMPILE@
-
 libpreempt_rt_a_SOURCES = preempt-module.c
 
 if CONFIG_KBUILD
@@ -19,7 +17,7 @@ clean-local:
 else
 noinst_LIBRARIES = libpreempt_rt.a
 
-libpreempt_rt_a_AR = $(CROSS_COMPILE)ar cru
+libpreempt_rt_a_AR = ar cru
 
 libpreempt_rt_a_CPPFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
@@ -27,7 +25,7 @@ libpreempt_rt_a_CPPFLAGS = \
 	-I../../../base/include
 
 preempt_rt.o: libpreempt_rt.a
-	$(CROSS_COMPILE)ld --whole-archive $< -r -o $@
+	ld --whole-archive $< -r -o $@
 endif
 
 test_PROGRAMS = display

@@ -3,8 +3,6 @@ testdir = $(prefix)/testsuite/kern/switches
 moduledir = @RTAI_MODULE_DIR@
 modext = @RTAI_MODULE_EXT@
 
-CROSS_COMPILE = @CROSS_COMPILE@
-
 libswitches_rt_a_SOURCES = switches-module.c
 
 if CONFIG_KBUILD
@@ -19,7 +17,7 @@ clean-local:
 else
 noinst_LIBRARIES = libswitches_rt.a
 
-libswitches_rt_a_AR = $(CROSS_COMPILE)ar cru
+libswitches_rt_a_AR = ar cru
 
 libswitches_rt_a_CPPFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
@@ -27,7 +25,7 @@ libswitches_rt_a_CPPFLAGS = \
 	-I../../../base/include
 
 switches_rt.o: libswitches_rt.a
-	$(CROSS_COMPILE)ld --whole-archive $< -r -o $@
+	ld --whole-archive $< -r -o $@
 endif
 
 all-local: switches_rt$(modext)
