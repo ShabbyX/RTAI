@@ -5,7 +5,7 @@ This is a clone of RTAI from https://www.rtai.org.  **The master branch of this
 repository has many additional features and bug fixes that are not supported
 by Paolo Mantegazza (the main developer and owner of RTAI).**  However, I try
 to keep branches named after the RTAI modules up-to-date with their development
-in the original CVS ropository at https://gna.org/cvs/?group=rtai.
+in the original CVS repository at https://gna.org/cvs/?group=rtai.
 
 I have also added the showroom of RTAI in this repository.
 
