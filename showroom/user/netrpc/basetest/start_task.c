@@ -79,46 +79,46 @@ printf("START TASK GOT ITS EXEC COMNODE PORT %lx, %d\n", comnode, srvport);
 	for (i = 0; i < NUM_TASKS; ++i) {
 		RT_sem_wait(comnode, srvport, sync_sem);
 	}
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk(sync_str);
 	GIVE_PRINT;
 	for (i = 0; i < NUM_TASKS; ++i) {
 		RT_SEM_SIGNAL(comnode, -srvport, prio_sem);
 	}
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk("\n");
 	GIVE_PRINT;
 	for (i = 0; i < NUM_TASKS; ++i) {
 		RT_sem_wait(comnode, srvport, sync_sem);
 	}
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk(sync_str);
 	GIVE_PRINT;
 
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk("testing message queues\n");
 	GIVE_PRINT;
 	for (i = 0; i < NUM_TASKS; ++i) {
 		if (RT_mbx_send(comnode, srvport, mbx_in, strs[i], 8)) {
-			TAKE_PRINT; 
+			TAKE_PRINT;
 			rt_printk("RT_mbx_send() failed\n");
 			GIVE_PRINT;
 		}
 	}
 	for (i = 0; i < NUM_TASKS; ++i) {
 		RT_mbx_receive(comnode, srvport, mbx_out, buf, 8);
-		TAKE_PRINT; 
-		rt_printk("\nreceived from mbx_out: %s", buf); 
+		TAKE_PRINT;
+		rt_printk("\nreceived from mbx_out: %s", buf);
 		GIVE_PRINT;
 	}
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk("\n");
 	GIVE_PRINT;
 	for (i = 0; i < NUM_TASKS; ++i) {
 		RT_SEM_SIGNAL(comnode, -srvport, sync_sem);
 	}
-	TAKE_PRINT; 
-	rt_printk("\ninit task complete\n"); 
+	TAKE_PRINT;
+	rt_printk("\ninit task complete\n");
 	GIVE_PRINT;
 	rt_make_soft_real_time();
 printf("START TASK REL ITS EXEC COMNODE PORT %lx, %d\n", comnode, srvport);
@@ -162,7 +162,7 @@ printf("START TASK GOT INIT COMNODE PORT %lx, %d\n", comnode, srvport);
 
 	for (i = 0; i < NUM_TASKS; ++i) {
 		sems[i] = RT_get_adr(comnode, srvport, sem[i]);
-	}     
+	}
 printf("START TASK REL INIT COMNODE PORT %lx, %d\n", comnode, srvport);
 	rt_release_port(comnode, srvport);
         thread = rt_thread_create(start_task_code, NULL, 10000);

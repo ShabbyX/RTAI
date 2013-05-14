@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 --------------------------------------------------------------------------
 Acknowledgements
 - Paolo Mantegazza	(mantegazza@aero.polimi.it)
-	creator of RTAI 
+	creator of RTAI
 */
 
 #include <linux/sched.h>
@@ -117,7 +117,7 @@ int rtai_calibrate_TC (void)
 	flags = rtai_critical_enter(NULL);
 	rt_set_timer_delay(LATCH);
 	t = rtai_rdtsc();
-	for (i = 0; i < 10000; i++) { 
+	for (i = 0; i < 10000; i++) {
 		rt_set_timer_delay(LATCH);
 	}
 	dt = rtai_rdtsc() - t;

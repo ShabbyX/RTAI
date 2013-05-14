@@ -110,7 +110,7 @@ static void mdlInitializeSampleTimes(SimStruct *S)
   ssSetOffsetTime(S, 0, 0.0);
 }
 
-#define MDL_START 
+#define MDL_START
 #if defined(MDL_START)
 static void mdlStart(SimStruct *S)
 {
@@ -150,7 +150,7 @@ static void mdlStart(SimStruct *S)
     }
     else subdev_type =COMEDI_SUBD_DIO;
   }
-  else subdev_type =COMEDI_SUBD_DI; 
+  else subdev_type =COMEDI_SUBD_DI;
 
   if (!ComediDev_DIOInUse[index] && comedi_lock(dev, subdev) < 0) {
     sprintf(errMsg, "Comedi lock failed for subdevice %d\n",subdev);

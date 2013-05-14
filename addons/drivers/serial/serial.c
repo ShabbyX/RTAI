@@ -29,7 +29,7 @@
 #include <linux/spinlock.h>
 #include <linux/slab.h>
 
-#include <asm/uaccess.h> 
+#include <asm/uaccess.h>
 #include <asm/system.h>
 #include <asm/io.h>
 
@@ -43,22 +43,22 @@ MODULE_DESCRIPTION("RTAI real time serial ports driver with multiport support");
 MODULE_LICENSE("GPL");
 
 static unsigned long spconfig[2*CONFIG_SIZE] = RT_SP_CONFIG_INIT;
-static int spconfig_size = 2*CONFIG_SIZE; 
+static int spconfig_size = 2*CONFIG_SIZE;
 RTAI_MODULE_PARM_ARRAY(spconfig, ulong, &spconfig_size, 2*CONFIG_SIZE);
-struct base_adr_irq_s { unsigned long base_adr, irq; } *sp_config = (void *)spconfig; 
+struct base_adr_irq_s { unsigned long base_adr, irq; } *sp_config = (void *)spconfig;
 
 static int spbufsiz = SPBUFSIZ;
 RTAI_MODULE_PARM(spbufsiz, int);
 
 static int sptxdepth[CONFIG_SIZE] = { 0 };
-static int sptxdepth_size = CONFIG_SIZE; 
+static int sptxdepth_size = CONFIG_SIZE;
 RTAI_MODULE_PARM_ARRAY(sptxdepth, int, &sptxdepth_size, CONFIG_SIZE);
 
 struct rt_spct_t *spct;
 
 static int spcnt;	// number of available serial ports
-static int spbuflow;	// received buffer low level threshold for 
-                        // RTS-CTS hardware flow control    
+static int spbuflow;	// received buffer low level threshold for
+                        // RTS-CTS hardware flow control
 static int spbufhi;	// received buffer high level threshold for
                         // RTS-CTS hardware flow control
 static int spbufull;	// threshold for receive buffer to have the
@@ -76,7 +76,7 @@ static void mbx_init(struct rt_spmbx *mbx);
  *
  * Clear all received chars in buffer and inside UART FIFO
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  *
  * Return Value:
@@ -84,7 +84,7 @@ static void mbx_init(struct rt_spmbx *mbx);
  * 		-ENODEV		if wrong tty number
  * 		-EACCES		if rx occupied
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spclear_rx(unsigned int tty)
 {
 //	static void mbx_init(struct rt_spmbx *mbx);
@@ -114,7 +114,7 @@ RTAI_SYSCALL_MODE int rt_spclear_rx(unsigned int tty)
  *
  * Clear all chars in buffer to be transmitted and inside TX UART FIFO
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  *
  * Return Value:
@@ -122,7 +122,7 @@ RTAI_SYSCALL_MODE int rt_spclear_rx(unsigned int tty)
  * 		-ENODEV		if wrong tty number
  * 		-EACCES		if tx occupied
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spclear_tx(unsigned int tty)
 {
 //	static void mbx_init(struct rt_spmbx *mbx);
@@ -150,20 +150,20 @@ RTAI_SYSCALL_MODE int rt_spclear_tx(unsigned int tty)
  *
  * Set the handshaking mode for serial line
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  * 		
- * 		mode		RT_SP_NO_HAND_SHAKE 
+ * 		mode		RT_SP_NO_HAND_SHAKE
  * 				RT_SP_DSR_ON_TX 	transmitter enabled if DSR active
  * 				RT_SP_HW_FLOW		RTS-CTS flow control
  * 					
  *				Note: RT_SP_DSR_ON_TX and RT_SP_HW_FLOW can
- *				      be ORed together 
+ *				      be ORed together
  * Return Value:
  * 		0		if success
  * 		-ENODEV		if wrong tty number
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spset_mode(unsigned int tty, int mode)
 {
 	CHECK_SPINDX(tty);
@@ -181,7 +181,7 @@ RTAI_SYSCALL_MODE int rt_spset_mode(unsigned int tty, int mode)
  *
  * Set the trigger level for UART RX FIFO
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  * 		
  *		fifotrig	RT_SP_FIFO_DISABLE
@@ -196,7 +196,7 @@ RTAI_SYSCALL_MODE int rt_spset_mode(unsigned int tty, int mode)
  * 		-ENODEV		if wrong tty number
  * 		-EINVAL		if wrong fifotrig value
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spset_fifotrig(unsigned int tty, int fifotrig)
 {
 	CHECK_SPINDX(tty);
@@ -214,7 +214,7 @@ RTAI_SYSCALL_MODE int rt_spset_fifotrig(unsigned int tty, int fifotrig)
  * Set MODEM Control Register MCR
  * -> DTR, RTS bits
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  * 		
  *		mask		RT_SP_DTR | RT_SP_RTS
@@ -227,7 +227,7 @@ RTAI_SYSCALL_MODE int rt_spset_fifotrig(unsigned int tty, int fifotrig)
  * 		-ENODEV		if wrong tty number
  * 		-EINVAL		if wrong mask value
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spset_mcr(unsigned int tty, int mask, int setbits)
 {
 	CHECK_SPINDX(tty);
@@ -243,9 +243,9 @@ RTAI_SYSCALL_MODE int rt_spset_mcr(unsigned int tty, int mask, int setbits)
  * rt_spget_msr
  *
  * Get MODEM Status Register MSR
- * -> CTS, DSR, RI, DCD 
+ * -> CTS, DSR, RI, DCD
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  * 		
  *		mask		RT_SP_CTS | RT_SP_DSR | RT_SP_RI | RT_SP_DCD
@@ -255,7 +255,7 @@ RTAI_SYSCALL_MODE int rt_spset_mcr(unsigned int tty, int mask, int setbits)
  * 		or
  * 		-ENODEV		if wrong tty number
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spget_msr(unsigned int tty, int mask)
 {
 	CHECK_SPINDX(tty);
@@ -266,10 +266,10 @@ RTAI_SYSCALL_MODE int rt_spget_msr(unsigned int tty, int mask)
 /*
  * rt_spget_err
  *
- * Return and reset last error detected by UART inside interrupt 
+ * Return and reset last error detected by UART inside interrupt
  * service routine
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  *      			
  * Return Value:
@@ -283,7 +283,7 @@ RTAI_SYSCALL_MODE int rt_spget_msr(unsigned int tty, int mask)
  * 		RT_SP_FRAMING_ERR
  * 		RT_SP_BREAK
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spget_err(unsigned int tty)
 {
    	int tmp;
@@ -381,9 +381,9 @@ static inline int mbxevdrp(struct rt_spmbx *mbx, char **msg, int msg_size)
 /*
  * rt_spwrite
  *
- * Send one or more bytes 
+ * Send one or more bytes
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  * 		
  * 		msg		pointer to the chars to send
@@ -396,7 +396,7 @@ static inline int mbxevdrp(struct rt_spmbx *mbx, char **msg, int msg_size)
  * 		or
  * 		-ENODEV		if wrong tty number
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spwrite(unsigned int tty, char *msg, int msg_size)
 {
 	struct rt_spct_t *p;
@@ -404,7 +404,7 @@ RTAI_SYSCALL_MODE int rt_spwrite(unsigned int tty, char *msg, int msg_size)
 	if (!test_and_set_bit(0, &(p = spct + tty)->just_onew)) {
 		if (msg_size > 0 || (msg_size = -msg_size) <= p->obuf.frbs) {
 			msg_size = mbxput(&p->obuf, &msg, msg_size);
-			// enable Transmitter Holding Register Empty to 
+			// enable Transmitter Holding Register Empty to
 			// start transmission if not running already
 			outb(p->ier |= IER_ETBEI, p->base_adr + RT_SP_IER);
 		}
@@ -420,13 +420,13 @@ RTAI_SYSCALL_MODE int rt_spwrite(unsigned int tty, char *msg, int msg_size)
  * Get one or more bytes from what received removing them
  * from buffer
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  * 		
  * 		msg		pointer to the buffer where to put chars received
  *
- *		msg_size	abs(msg_size) is the number of bytes to read. 
- *				If >0, read all the bytes up to msg_size 
+ *		msg_size	abs(msg_size) is the number of bytes to read.
+ *				If >0, read all the bytes up to msg_size
  *				If <0, read bytes only if possible to read them all together.
  *      			
  * Return Value:
@@ -434,7 +434,7 @@ RTAI_SYSCALL_MODE int rt_spwrite(unsigned int tty, char *msg, int msg_size)
  * 		or
  * 		-ENODEV		if wrong tty number
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spread(unsigned int tty, char *msg, int msg_size)
 {
 	struct rt_spct_t *p;
@@ -460,13 +460,13 @@ RTAI_SYSCALL_MODE int rt_spread(unsigned int tty, char *msg, int msg_size)
  * Get one or more bytes from what received WITHOUT removing them
  * from buffer
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  * 		
  * 		msg		pointer to the buffer where to put chars received
  *
- *		msg_size	abs(msg_size) is the number of bytes to read. 
- *				If >0, read all the bytes up to msg_size 
+ *		msg_size	abs(msg_size) is the number of bytes to read.
+ *				If >0, read all the bytes up to msg_size
  *				If <0, read bytes only if possible to read them all together.
  *      			
  * Return Value:
@@ -474,7 +474,7 @@ RTAI_SYSCALL_MODE int rt_spread(unsigned int tty, char *msg, int msg_size)
  * 		or
  * 		-ENODEV		if wrong tty number
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spevdrp(unsigned int tty, char *msg, int msg_size)
 {
 	struct rt_spct_t *p;
@@ -495,7 +495,7 @@ RTAI_SYSCALL_MODE int rt_spevdrp(unsigned int tty, char *msg, int msg_size)
  *
  * Send one or more bytes with timeout
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number.
  * 		
  * 		msg		pointer to the chars to send.
@@ -511,7 +511,7 @@ RTAI_SYSCALL_MODE int rt_spevdrp(unsigned int tty, char *msg, int msg_size)
  * 		one of the semaphores error messages;
  * 		0, message sent succesfully.
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spwrite_timed(unsigned int tty, char *msg, int msg_size, RTIME delay)
 {
 	struct rt_spct_t *p;
@@ -544,7 +544,7 @@ RTAI_SYSCALL_MODE int rt_spwrite_timed(unsigned int tty, char *msg, int msg_size
  *
  * Receive one or more bytes with timeout
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number.
  * 		
  * 		msg		pointer to the chars to receive.
@@ -560,7 +560,7 @@ RTAI_SYSCALL_MODE int rt_spwrite_timed(unsigned int tty, char *msg, int msg_size
  * 		one of the semaphores error messages;
  * 		0, message received succesfully.
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spread_timed(unsigned int tty, char *msg, int msg_size, RTIME delay)
 {
 	struct rt_spct_t *p;
@@ -595,7 +595,7 @@ RTAI_SYSCALL_MODE int rt_spread_timed(unsigned int tty, char *msg, int msg_size,
  *
  * Get how many chars are in receive buffer
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  * 		
  * Return Value:
@@ -603,7 +603,7 @@ RTAI_SYSCALL_MODE int rt_spread_timed(unsigned int tty, char *msg, int msg_size,
  * 		or
  * 		-ENODEV		if wrong tty number
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spget_rxavbs(unsigned int tty)
 {
 	CHECK_SPINDX(tty);
@@ -616,7 +616,7 @@ RTAI_SYSCALL_MODE int rt_spget_rxavbs(unsigned int tty)
  *
  * Get how many chars are in transmit buffer waiting to be sent by UART
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  * 		
  * Return Value:
@@ -624,7 +624,7 @@ RTAI_SYSCALL_MODE int rt_spget_rxavbs(unsigned int tty)
  * 		or
  * 		-ENODEV		if wrong tty number
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spget_txfrbs(unsigned int tty)
 {
 	CHECK_SPINDX(tty);
@@ -687,7 +687,7 @@ static int rt_spisr(int irq, struct rt_spct_t *pp)
 		//rt_printk("rt_spisr irq=%d, iir=0x%02x\n",irq,iir);	
 			switch (iir & 0x0f) {
 				case 0x06: // Receiver Line Status
-				   // Overrun Error or Parity Error or 
+				   // Overrun Error or Parity Error or
 				   // Framing Error or Break Interrupt
 				
 				if ((lsr = inb(base_adr + RT_SP_LSR)) & 0x1e) {
@@ -725,12 +725,12 @@ static int rt_spisr(int irq, struct rt_spct_t *pp)
 	
 				/* if possible, put data to base_adr */
 				msr = inb(base_adr + RT_SP_MSR);
-				if ( (p->mode == RT_SP_NO_HAND_SHAKE) || 
-					 ((p->mode == RT_SP_DSR_ON_TX) && (MSR_DSR & msr)) || 
+				if ( (p->mode == RT_SP_NO_HAND_SHAKE) ||
+					 ((p->mode == RT_SP_DSR_ON_TX) && (MSR_DSR & msr)) ||
 					 ((p->mode == RT_SP_HW_FLOW) && (MSR_CTS & msr)) ||
 					 ((p->mode == (RT_SP_HW_FLOW|RT_SP_DSR_ON_TX)) &&
                                           (MSR_CTS & msr) && (MSR_DSR & msr)) ) {
-			    	// if there are data to transmit 
+			    	// if there are data to transmit
 					if (!(data_to_tx = rt_spget_irq(p, &data))) {
 						txed = 1;	
 						do {
@@ -835,16 +835,16 @@ again:
  *
  * Open the serial port
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  *
  * 		baud		50 .. 115200
  *
  *      numbits		5,6,7,8
- *      
+ *
  *      stopbits	1,2
  *					
- *      
+ *
  *      parity		RT_SP_PARITY_NONE
  *      		RT_SP_PARITY_EVEN
  *      		RT_SP_PARITY_ODD
@@ -867,7 +867,7 @@ again:
  * 		-EINVAL		if wrong parameter value
  * 		-EADDRINUSE	if trying to open an openend port
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spopen(unsigned int tty, unsigned int baud, unsigned int numbits,
               unsigned int stopbits, unsigned int parity, int mode,
 			  int fifotrig)
@@ -905,7 +905,7 @@ RTAI_SYSCALL_MODE int rt_spopen(unsigned int tty, unsigned int baud, unsigned in
 	outb((RT_SP_BASE_BAUD/baud) & 0xFF, base_adr + RT_SP_DLL);
 	outb((RT_SP_BASE_BAUD/baud) >> 8, base_adr + RT_SP_DLM);
 
-	// set numbits, stopbits and parity and reset DLAB 
+	// set numbits, stopbits and parity and reset DLAB
 	outb((numbits - 5) | ((stopbits - 1) << 2) | (parity & 0x38), base_adr + RT_SP_LCR);
 
 	// DTR, RTS, OUT1 and OUT2 active
@@ -920,9 +920,9 @@ RTAI_SYSCALL_MODE int rt_spopen(unsigned int tty, unsigned int baud, unsigned in
 		p->fifotrig = fifotrig;
 	}
 
-	// Enable fifo 
+	// Enable fifo
 	outb(FCR_FIFO_ENABLE | p->fifotrig, base_adr + RT_SP_FCR);
-	// reset error 
+	// reset error
 	p->error = 0;
 	// initialize received and transmit buffers
 	mbx_init(&p->ibuf);
@@ -942,14 +942,14 @@ RTAI_SYSCALL_MODE int rt_spopen(unsigned int tty, unsigned int baud, unsigned in
  *
  * Close the serial port
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  *
  * Return Value:
  * 		0		if success
  * 		-ENODEV		if wrong tty number
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spclose(unsigned int tty)
 {
 	int base_adr=spct[tty].base_adr;
@@ -981,7 +981,7 @@ RTAI_SYSCALL_MODE int rt_spclose(unsigned int tty)
  *
  * Open the serial port
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  *
  * 		rxthrs		number of chars in receive buffer trhreshold
@@ -993,7 +993,7 @@ RTAI_SYSCALL_MODE int rt_spclose(unsigned int tty)
  * 		-ENODEV		if wrong tty number
  * 		-EINVAL		if wrong parameter value
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spset_thrs(unsigned int tty, int rxthrs, int txthrs)
 {
 	CHECK_SPINDX(tty);
@@ -1009,15 +1009,15 @@ RTAI_SYSCALL_MODE int rt_spset_thrs(unsigned int tty, int rxthrs, int txthrs)
  * rt_spset_callback_fun
  *
  * Define the callback function to be called when the chars in the receive
- * buffer or the free chars in the transmit buffer have reached the 
+ * buffer or the free chars in the transmit buffer have reached the
  * specified thresholds
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  *
  * 		callback_fun	pointer to the callback function
  * 				the two int parameters passed to this funcion
- * 				are the number 
+ * 				are the number
  *
  * 		rxthrs		number of chars in receive buffer trhreshold
  *
@@ -1028,8 +1028,8 @@ RTAI_SYSCALL_MODE int rt_spset_thrs(unsigned int tty, int rxthrs, int txthrs)
  * 		-ENODEV		if wrong tty number
  * 		-EINVAL		if wrong parameter value
  *
- */ 
-long rt_spset_callback_fun(unsigned int tty, void (*callback_fun)(int, int), 
+ */
+long rt_spset_callback_fun(unsigned int tty, void (*callback_fun)(int, int),
                           int rxthrs, int txthrs)
 {
 	long prev_callback_fun;
@@ -1047,22 +1047,22 @@ long rt_spset_callback_fun(unsigned int tty, void (*callback_fun)(int, int),
 /*
  * rt_spset_err_callback_fun
  *
- * Define the callback function to be called when the interrupt 
+ * Define the callback function to be called when the interrupt
  * service routine detect an error
  *
- * Arguments: 
+ * Arguments:
  * 		tty		serial port number
  *
  * 		err_callback_fun 	pointer to the callback function
  * 					the int parameter passed to this funcion
- * 					will contain the error code 
+ * 					will contain the error code
  *
  * Return Value:
  * 		0		if success
  * 		-ENODEV		if wrong tty number
  * 		-EINVAL		if wrong parameter value
  *
- */ 
+ */
 long rt_spset_err_callback_fun(unsigned int tty, void (*err_callback_fun)(int))
 {
 	long prev_err_callback_fun;
@@ -1079,7 +1079,7 @@ long rt_spset_err_callback_fun(unsigned int tty, void (*err_callback_fun)(int))
  *
  * Define the callback function to be called from user space
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spset_callback_fun_usr(unsigned int tty, unsigned long callback_fun_usr, int rxthrs, int txthrs, int code, void *task)
 {
 	int prev_callback_fun_usr;
@@ -1108,7 +1108,7 @@ RTAI_SYSCALL_MODE int rt_spset_callback_fun_usr(unsigned int tty, unsigned long 
  *
  * Define the err callback function to be called from user space
  *
- */ 
+ */
 RTAI_SYSCALL_MODE int rt_spset_err_callback_fun_usr(unsigned int tty, unsigned long err_callback_fun_usr, int dummy1, int dummy2, int code, void *task)
 {
 	int prev_err_callback_fun_usr;
@@ -1137,7 +1137,7 @@ RTAI_SYSCALL_MODE int rt_spset_err_callback_fun_usr(unsigned int tty, unsigned l
  *
  * Wait for user space callback
  *
- */ 
+ */
 RTAI_SYSCALL_MODE void rt_spwait_usr_callback(unsigned int tty, unsigned long *retvals)
 {
 	rt_task_suspend(spct[tty].callback_task);
@@ -1224,7 +1224,7 @@ int __rtai_serial_init(void)
 				printk("IRQ NOT AVAILABLE (TTY INDEX: %d).\n", i);
 				newirq = 0;
 			}
-		    
+		
 			p = &spct[i];
 			do {
 				if (!newirq || !(p->ibuf.bufadr = kmalloc(2*spbufsiz, GFP_KERNEL))) {
@@ -1258,11 +1258,11 @@ int __rtai_serial_init(void)
 		spct[i].opened = 0;
 		// set base address for UART
 		spct[i].base_adr = sp_config[i].base_adr;
-		// set irq 
+		// set irq
 		spct[i].irq      = sp_config[i].irq;
 		// set default values for RX FIFO trigger level
 		spct[i].fifotrig = RT_SP_FIFO_SIZE_DEFAULT;
-		// sef default thresholds for callback function 
+		// sef default thresholds for callback function
 		spct[i].rxthrs = spct[i].txthrs = 0;
 		if (!(spct[i].tx_fifo_depth = sptxdepth[i])) {
 			spct[i].tx_fifo_depth = 16;

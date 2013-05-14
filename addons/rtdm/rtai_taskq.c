@@ -49,7 +49,7 @@ void rt_schedule_readied(void)
 	}
 }
 EXPORT_SYMBOL(rt_schedule_readied);
- 
+
 void rt_taskq_init(TASKQ *taskq, unsigned long type)
 {
 	taskq->qtype = (type & TASKQ_FIFO) ? 1 : 0;
@@ -117,8 +117,8 @@ void rt_taskq_wait(TASKQ *taskq)
 	rem_ready_current(rt_current);
 	enqueue_blocked(rt_current, &taskq->queue, taskq->qtype);
 	rt_schedule();
-	if (unlikely((retp = rt_current->blocked_on) != NULL)) { 
-		if (likely(retp != RTP_OBJREM)) { 
+	if (unlikely((retp = rt_current->blocked_on) != NULL)) {
+		if (likely(retp != RTP_OBJREM)) {
 			dequeue_blocked(rt_current);
 			rt_current->retval  = XNBREAK;
 		} else {

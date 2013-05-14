@@ -8,24 +8,24 @@
 <a class="qindex" href="main.html">Main&nbsp;Page</a> | <a class="qindex" href="modules.html">Modules</a> | <a class="qindex" href="files.html">File&nbsp;List</a> | <a class="qindex" href="globals.html">Globals</a> | <a class="qindex" href="pages.html">Related&nbsp;Pages</a>  | <span class="search"><u>S</u>earch&nbsp;for&nbsp;<input class="search" type="text" name="query" value="" size="20" accesskey="s"/></span></form></div>
 <div class="nav">
 <a class="el" href="dir_000000.html">base</a>&nbsp;/&nbsp;<a class="el" href="dir_000012.html">config</a>&nbsp;/&nbsp;<a class="el" href="dir_000013.html">kconfig</a></div>
-<h1>lkc_proto.h</h1><div class="fragment"><pre class="fragment">00001 
+<h1>lkc_proto.h</h1><div class="fragment"><pre class="fragment">00001
 00002 <span class="comment">/* confdata.c */</span>
 00003 P(conf_parse,<span class="keywordtype">void</span>,(<span class="keyword">const</span> <span class="keywordtype">char</span> *name));
 00004 P(conf_read,<span class="keywordtype">int</span>,(<span class="keyword">const</span> <span class="keywordtype">char</span> *name));
 00005 P(conf_write,<span class="keywordtype">int</span>,(<span class="keyword">const</span> <span class="keywordtype">char</span> *name));
-00006 
+00006
 00007 <span class="comment">/* menu.c */</span>
 00008 P(rootmenu,<span class="keyword">struct</span> menu,);
-00009 
+00009
 00010 P(menu_is_visible,<span class="keywordtype">bool</span>,(<span class="keyword">struct</span> menu *menu));
 00011 P(menu_get_prompt,<span class="keyword">const</span> <span class="keywordtype">char</span> *,(<span class="keyword">struct</span> menu *menu));
 00012 P(menu_get_root_menu,<span class="keyword">struct</span> menu *,(<span class="keyword">struct</span> menu *menu));
 00013 P(menu_get_parent_menu,<span class="keyword">struct</span> menu *,(<span class="keyword">struct</span> menu *menu));
-00014 
+00014
 00015 <span class="comment">/* symbol.c */</span>
 00016 P(symbol_hash,<span class="keyword">struct</span> symbol *,[SYMBOL_HASHSIZE]);
 00017 P(sym_change_count,<span class="keywordtype">int</span>,);
-00018 
+00018
 00019 P(sym_lookup,<span class="keyword">struct</span> symbol *,(<span class="keyword">const</span> <span class="keywordtype">char</span> *name, <span class="keywordtype">int</span> isconst));
 00020 P(sym_find,<span class="keyword">struct</span> symbol *,(<span class="keyword">const</span> <span class="keywordtype">char</span> *name));
 00021 P(sym_type_name,<span class="keyword">const</span> <span class="keywordtype">char</span> *,(<span class="keyword">enum</span> symbol_type type));
@@ -41,9 +41,9 @@
 00031 P(sym_get_choice_prop,<span class="keyword">struct</span> property *,(<span class="keyword">struct</span> symbol *sym));
 00032 P(sym_get_default_prop,<span class="keyword">struct</span> property *,(<span class="keyword">struct</span> symbol *sym));
 00033 P(sym_get_string_value,<span class="keyword">const</span> <span class="keywordtype">char</span> *,(<span class="keyword">struct</span> symbol *sym));
-00034 
+00034
 00035 P(prop_get_type_name,<span class="keyword">const</span> <span class="keywordtype">char</span> *,(<span class="keyword">enum</span> prop_type type));
-00036 
+00036
 00037 <span class="comment">/* expr.c */</span>
 00038 P(expr_compare_type,<span class="keywordtype">int</span>,(<span class="keyword">enum</span> expr_type t1, <span class="keyword">enum</span> expr_type t2));
 00039 P(expr_print,<span class="keywordtype">void</span>,(<span class="keyword">struct</span> expr *e, <span class="keywordtype">void</span> (*fn)(<span class="keywordtype">void</span> *, <span class="keyword">const</span> <span class="keywordtype">char</span> *), <span class="keywordtype">void</span> *data, <span class="keywordtype">int</span> prevtoken));

@@ -63,7 +63,7 @@ Count Count::end(){
 
 long long Count::to_time() const {
 	return count2nano( m_Count );
-} 
+}
 
 Count Count::from_time(long long time) {
 	Count tmp( nano2count(time) );
@@ -71,12 +71,12 @@ Count Count::from_time(long long time) {
 	return tmp;
 }
 
-bool Count::operator==(const Count& count) const 
+bool Count::operator==(const Count& count) const
 {
 	return m_Count == count.m_Count;
 }
 
-bool Count::operator==(long long count) const 
+bool Count::operator==(long long count) const
 {
 	return m_Count == count;
 }
@@ -114,7 +114,7 @@ Count& Count::operator-=(const Count& count) {
 
 Count& Count::operator-=(long long count){
 	m_Count -= count;
-	return *this;  
+	return *this;
 }
 
 Count  Count::operator+(const Count& count) const {

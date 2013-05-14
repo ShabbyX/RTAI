@@ -80,7 +80,7 @@ int lock_all(int stk, int heap) {
 
 	dynamically tunable      *
 	mmap threshold      128k *
-    mmap threshold max  512k  
+    mmap threshold max  512k
 	mmap max           1024k *
 	trim threshold      128k *
 	top pad               0k *	
@@ -98,7 +98,7 @@ int lock_all(int stk, int heap) {
 	if (!err) {
 		printf("mallopt(M_MMAP_THRESHOLD, heap) failed\n");
 		exit(-1);
-	}	 
+	}	
 
 	err = mallopt(M_TOP_PAD,        heap ? heap : GROW_HEAP);
     if (!err) {

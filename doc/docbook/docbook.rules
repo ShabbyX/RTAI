@@ -8,7 +8,7 @@ DBX_DIST_ROOT=$(dbx_top_distdir)/$(DBX_GEN_DOC_ROOT)
 
 DBX_XSLTPROC_FLAGS=--catalogs --xinclude $(DBX_MAYBE_NONET)
 
-if !DBX_DOC 
+if !DBX_DOC
 DBX_HTML_TRANSFORM=cat
 HTML_DOCSDIR=$(top_srcdir)/$(DBX_GEN_DOC_ROOT)/html/
 PDF_DOCSDIR=$(top_srcdir)/$(DBX_GEN_DOC_ROOT)/pdf/
@@ -58,7 +58,7 @@ DBX_SGML_CATALOG_FILES=$(DBX_BUILD_ROOT)/catalog
 #
 # We use xsltproc with a docbook-xsl stylesheet to generate the xhtml
 # output.
-# 
+#
 # DBX_HTML_STYLESHEET is the relative path to the docbook-xsl stylesheet. Thanks
 #     to make's VPATH, it may be relative to the current build or sources
 #     directory.
@@ -83,7 +83,7 @@ DBX_SGML_CATALOG_FILES=$(DBX_BUILD_ROOT)/catalog
 #
 # We use xsltproc with a docbook-xsl stylesheet to generate the output in the
 # .fo format, which is then converted to pdf by FOP.
-# 
+#
 # DBX_HTML_STYLESHEET is the relative path to the docbook-xsl stylesheet. Thanks
 #     to make's VPATH, it may be relative to the current build or sources
 #     directory.

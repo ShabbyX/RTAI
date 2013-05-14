@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 --------------------------------------------------------------------------
 Acknowledgements
 - Paolo Mantegazza	(mantegazza@aero.polimi.it)
-	creator of RTAI 
+	creator of RTAI
 */
 
 #ifndef _ASM_ARCH_RTAI_TIMER_H_
@@ -91,7 +91,7 @@ static inline void rt_set_timer_delay(unsigned long delay)
 		__ipipe_mach_set_dec(delay);
 	} else {
 		/*
-		 * periodic mode: at91's TC reload itself 
+		 * periodic mode: at91's TC reload itself
 		 * so nothing to do
 		 */
 	}

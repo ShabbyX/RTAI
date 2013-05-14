@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 --------------------------------------------------------------------------
 Acknowledgements
 - Paolo Mantegazza	(mantegazza@aero.polimi.it)
-	creator of RTAI 
+	creator of RTAI
 - port to imx architecture using both pxa-timer.c and ep9301-timer.c
   20060613: Torsten Koschorrek (koschorrek@synertronixx.de)
 */

@@ -104,7 +104,7 @@ static void tmr_irq_handler(int irq)
 			rtai_cli();  // to be safe whatever ADEOS does
 			timer_isr_count[timer] = _timer_get_count(timer);
 //			rt_ack_irq(irq);  // not needed, just a latency maker
-// the line below is wrong, we want to check overruns by using a counting sem 
+// the line below is wrong, we want to check overruns by using a counting sem
 //			rt_sem_wait_if(&tmr_sema[timer]);
 			thandler += (rdtsc() - tirq);
 			cntirq++;

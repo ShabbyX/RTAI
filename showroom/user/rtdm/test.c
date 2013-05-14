@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  * ================
  *
  * Adaptation of rtai_spdrv test provided in RTAI.
- * 
+ *
  */
 
 #include <stdio.h>
@@ -66,8 +66,8 @@ static const struct rtser_config read_config = {
 
 static int sfd, rfd, end;
 
-static void endme(int dummy) 
-{ 
+static void endme(int dummy)
+{
 	end = 1;
 	rt_dev_close(sfd);
 	rt_dev_close(rfd);
@@ -143,7 +143,7 @@ struct rtser_event rx_event;
 		rt_dev_ioctl(1000000, RTSER_RTIOC_WAIT_EVENT, NULL)
 		);
 		PRINT("hello_world_lxrt: rtser0 and rtser1 test finished\n");
-	}    
+	}
 
 	rt_make_soft_real_time();
 	rt_task_delete(testcomtsk);

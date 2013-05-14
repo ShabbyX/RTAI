@@ -27,18 +27,18 @@
 00017 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00018 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00019 <span class="comment"> */</span>
-00020 
+00020
 00021 <span class="preprocessor">#ifndef _RTAI_TRACE_H</span>
 00022 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_TRACE_H</span>
 00023 <span class="preprocessor"></span>
 00024 <span class="preprocessor">#include &lt;rtai_types.h&gt;</span>
-00025 
+00025
 00026 <span class="preprocessor">#if defined(CONFIG_RTAI_TRACE) &amp;&amp; defined(__KERNEL__)</span>
 00027 <span class="preprocessor"></span>
 00028 <span class="preprocessor">#include &lt;linux/trace.h&gt;</span>
-00029 
+00029
 00030 <span class="comment">/* Is RTAI tracing enabled */</span>
-00031 
+00031
 00032 <span class="comment">/* The functions to the tracer management code */</span>
 00033 <span class="keywordtype">int</span> rt_register_tracer
 00034        (tracer_call   <span class="comment">/* The tracer function */</span>);
@@ -47,7 +47,7 @@
 00037 <span class="keywordtype">int</span> rt_trace_event
 00038        (uint8_t       <span class="comment">/* Event ID (as defined in this header file) */</span>,
 00039         <span class="keywordtype">void</span>*         <span class="comment">/* Structure describing the event */</span>);
-00040 
+00040
 00041 <span class="comment">/* Generic macros */</span>
 00042 <span class="preprocessor">#define RT_TRACE_EVENT(ID, DATA) rt_trace_event(ID, DATA)</span>
 00043 <span class="preprocessor"></span>
@@ -78,7 +78,7 @@
 00068 <span class="preprocessor">#define TRACE_RTAI_EV_POSIX              TRACE_RTAI_START + 22   </span><span class="comment">/* Hit key part of Posix services */</span>
 00069 <span class="preprocessor">#define TRACE_RTAI_EV_LXRT               TRACE_RTAI_START + 23   </span><span class="comment">/* Hit key part of LXRT services */</span>
 00070 <span class="preprocessor">#define TRACE_RTAI_EV_LXRTI              TRACE_RTAI_START + 24   </span><span class="comment">/* Hit key part of LXRT-Informed services */</span>
-00071 
+00071
 00072 <span class="comment">/* Max number of traced events */</span>
 00073 <span class="preprocessor">#define TRACE_RTAI_EV_MAX               TRACE_RTAI_EV_LXRTI</span>
 00074 <span class="preprocessor"></span>
@@ -174,7 +174,7 @@
 00164 <span class="comment">           __asm__ __volatile__("pushl %%ip; pop %0": "=g" (eip)); \</span>
 00165 <span class="comment">           trap_event.address = eip;\</span>
 00166 <span class="comment">*/</span>
-00167 
+00167
 00168 <span class="comment">/*  TRACE_RTAI_TRAP_EXIT */</span>
 00169 <span class="preprocessor">#define TRACE_RTAI_TRAP_EXIT() rt_trace_event(TRACE_RTAI_EV_TRAP_EXIT, NULL)</span>
 00170 <span class="preprocessor"></span>
@@ -237,7 +237,7 @@
 00227 <span class="preprocessor">           rt_trace_event(TRACE_RTAI_EV_SWITCHTO_RT, &amp;switch_event); \</span>
 00228 <span class="preprocessor">           } while(0)</span>
 00229 <span class="preprocessor"></span>
-00230 <span class="comment">/*  TRACE_RTAI_SCHED_CHANGE */</span> 
+00230 <span class="comment">/*  TRACE_RTAI_SCHED_CHANGE */</span>
 00231 <span class="keyword">typedef</span> <span class="keyword">struct </span>_trace_rtai_sched_change
 00232 {
 00233   uint32_t  out;         <span class="comment">/* Outgoing process */</span>
@@ -394,7 +394,7 @@
 00384   uint8_t   event_sub_id;  <span class="comment">/* Message Box event ID */</span>
 00385   uint32_t  event_data1;   <span class="comment">/* Event data 1 */</span>
 00386   uint32_t  event_data2;   <span class="comment">/* Event data 2 */</span>
-00387   uint64_t  event_data3;   <span class="comment">/* Event data 3 */</span>  
+00387   uint64_t  event_data3;   <span class="comment">/* Event data 3 */</span>
 00388 } LTT_PACKED_STRUCT trace_rtai_mbx;
 00389 <span class="preprocessor">#define TRACE_RTAI_MBX(ID, DATA1, DATA2, DATA3) \</span>
 00390 <span class="preprocessor">           do \</span>
@@ -453,7 +453,7 @@
 00443 <span class="comment">/*  TRACE_RTAI_SHM */</span>
 00444 <span class="preprocessor">#define TRACE_RTAI_EV_SHM_MALLOC                       1  </span><span class="comment">/* Allocate shared memory */</span>
 00445 <span class="preprocessor">#define TRACE_RTAI_EV_SHM_KMALLOC                      2  </span><span class="comment">/* Allocate shared memory in kernel space */</span>
-00446 <span class="preprocessor">#define TRACE_RTAI_EV_SHM_GET_SIZE                     3  </span><span class="comment">/* Get the size of the shared memory area */</span> 
+00446 <span class="preprocessor">#define TRACE_RTAI_EV_SHM_GET_SIZE                     3  </span><span class="comment">/* Get the size of the shared memory area */</span>
 00447 <span class="preprocessor">#define TRACE_RTAI_EV_SHM_FREE                         4  </span><span class="comment">/* Free shared memory */</span>
 00448 <span class="preprocessor">#define TRACE_RTAI_EV_SHM_KFREE                        5  </span><span class="comment">/* Free kernel space shared memory */</span>
 00449 <span class="keyword">typedef</span> <span class="keyword">struct </span>_trace_rtai_shm
@@ -551,7 +551,7 @@
 00541   uint8_t   event_sub_id;  <span class="comment">/* LXRT event ID */</span>
 00542   uint32_t  event_data1;   <span class="comment">/* Event data 1 */</span>
 00543   uint32_t  event_data2;   <span class="comment">/* Event data 2 */</span>
-00544   uint32_t  event_data3;   <span class="comment">/* Event data 3 */</span>  
+00544   uint32_t  event_data3;   <span class="comment">/* Event data 3 */</span>
 00545 } LTT_PACKED_STRUCT trace_rtai_lxrt;
 00546 <span class="preprocessor">#define TRACE_RTAI_LXRT(ID, DATA1, DATA2, DATA3) \</span>
 00547 <span class="preprocessor">           do \</span>
@@ -580,7 +580,7 @@
 00570   uint8_t   event_sub_id;  <span class="comment">/* LXRT event ID */</span>
 00571   uint32_t  event_data1;   <span class="comment">/* Event data 1 */</span>
 00572   uint32_t  event_data2;   <span class="comment">/* Event data 2 */</span>
-00573   uint64_t  event_data3;   <span class="comment">/* Event data 3 */</span>  
+00573   uint64_t  event_data3;   <span class="comment">/* Event data 3 */</span>
 00574 } LTT_PACKED_STRUCT trace_rtai_lxrti;
 00575 <span class="preprocessor">#define TRACE_RTAI_LXRTI(ID, DATA1, DATA2, DATA3) \</span>
 00576 <span class="preprocessor">           do \</span>
@@ -624,7 +624,7 @@
 00614 <span class="preprocessor"></span><span class="preprocessor">#define TRACE_RTAI_LXRT(ID, DATA1, DATA2, DATA3)</span>
 00615 <span class="preprocessor"></span><span class="preprocessor">#define TRACE_RTAI_LXRTI(ID, DATA1, DATA2, DATA3)</span>
 00616 <span class="preprocessor"></span><span class="preprocessor">#endif </span><span class="comment">/* CONFIG_RTAI_TRACE &amp;&amp; __KERNEL__ */</span>
-00617 
+00617
 00618 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_TRACE_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

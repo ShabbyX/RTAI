@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: crt.c,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -15,9 +15,9 @@
  * Copyright (C) 2002 Erwin Rol (erwin@muffin.org).
  *
  * Licence:
- *           
+ *
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 
+ * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either
  * version 2 of the License, or (at your option) any later version.
  *
@@ -34,7 +34,7 @@
  * compiled with GCC to produce an executable, this does not cause
  * the resulting executable to be covered by the GNU General Public License.
  * This exception does not however invalidate any other reasons why
- * the executable file might be covered by the GNU General Public License.  
+ * the executable file might be covered by the GNU General Public License.
  *
  */
 
@@ -50,7 +50,7 @@ static int errno;
 #include <linux/vmalloc.h>
 
 #include <rtai_malloc.h>
- 
+
 extern int rt_printk(const char *format, ...);
 extern void __do_atexit( void );
 extern int __init_atexit( int max_size );
@@ -90,7 +90,7 @@ __do_global_dtors(void)
 	static func_ptr *p = __DTOR_LIST__ + 1;
 	static int completed = 0;
 
-	rt_printk("GLOBAL DTORS START\n");	  
+	rt_printk("GLOBAL DTORS START\n");	
 
 	while (*p)
 	{
@@ -98,7 +98,7 @@ __do_global_dtors(void)
 		(*(p-1)) ();
 	}
 
-	rt_printk("GLOBAL DTORS END\n");	  
+	rt_printk("GLOBAL DTORS END\n");	
 	
 	completed = 1;
 }
@@ -110,7 +110,7 @@ __do_global_ctors(void)
 	unsigned long nptrs = (unsigned long) __CTOR_LIST__[0];
 	unsigned i;
 
-	rt_printk("GLOBAL CTORS START\n");	  
+	rt_printk("GLOBAL CTORS START\n");	
 
 	if (nptrs == (unsigned long)-1)
 		for (nptrs = 0; __CTOR_LIST__[nptrs + 1] != 0; nptrs++);
@@ -118,7 +118,7 @@ __do_global_ctors(void)
 	for (i = nptrs; i >= 1; i--)
 		__CTOR_LIST__[i] ();
 
-	rt_printk("GLOBAL CTORS END\n");	  
+	rt_printk("GLOBAL CTORS END\n");	
 }
 
 #endif /* ! (__GNUC__ > 3) */
@@ -213,11 +213,11 @@ static func_ptr __CTOR_LIST__[1] __attribute__ ((__unused__))
   = { (func_ptr) (-1) };
 
 asm (DTORS_SECTION_ASM_OP);     /* cc1 doesn't know that we are switching! */
-static func_ptr __DTOR_LIST__[1] __attribute__ ((__unused__)) 
+static func_ptr __DTOR_LIST__[1] __attribute__ ((__unused__))
   = { (func_ptr) (-1) };
 
 #endif /* ! (__GNUC__ > 3) */
- 
+
 #else // CRT_BEGIN
 
 #if (__GNUC__ <= 2)
@@ -226,7 +226,7 @@ static func_ptr __DTOR_LIST__[1] __attribute__ ((__unused__))
 static func_ptr force_to_data[0] __attribute__ ((__unused__)) = { };
 
 asm (CTORS_SECTION_ASM_OP);     /* cc1 doesn't know that we are switching! */
-static func_ptr __CTOR_END__[1] __attribute__ ((__unused__)) 
+static func_ptr __CTOR_END__[1] __attribute__ ((__unused__))
   = { (func_ptr) 0 };
 
 asm (DTORS_SECTION_ASM_OP);     /* cc1 doesn't know that we are switching! */

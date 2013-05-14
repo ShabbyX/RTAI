@@ -925,7 +925,7 @@ void rlg_logs_mgr_cb(Fl_Widget *, void *)
 	RLG_Main_Menu->redraw();
 	RLG_Main_Window->redraw();
 }
-void rlg_alogs_mgr_cb(Fl_Widget *, void *)                     
+void rlg_alogs_mgr_cb(Fl_Widget *, void *)
 {
 	if (RLG_Main_Menu_Table[12].checked()) {
 		if (ALogs_Manager) ALogs_Manager->hide();
@@ -1507,7 +1507,7 @@ static void *rt_get_alog_data(void *arg)
 					for (i = 0; i < ALogs[index].nrow; i++) {
 						j = n*ALogs[index].nrow*ALogs[index].ncol + i;
 						for (k = 0; k < ALogs[index].ncol; k++) {
-							fprintf(saving,"%1.5f ",MsgBuf[j]); 
+							fprintf(saving,"%1.5f ",MsgBuf[j]);
 							j += ALogs[index].nrow;
 						}
 						fprintf(saving, "\n");
@@ -2227,7 +2227,7 @@ static void *rt_target_interface(void *args)
 					Args_T thr_args;
 					thr_args.index = n;
 					thr_args.mbx_id = strdup(Preferences.Target_Scope_Mbx_ID);
-					thr_args.x = 500; 
+					thr_args.x = 500;
 					thr_args.y = 290;
 					thr_args.w = 250;
 					thr_args.h = 250;
@@ -2260,7 +2260,7 @@ static void *rt_target_interface(void *args)
 					Args_T thr_args;
 					thr_args.index = n;
 					thr_args.mbx_id = strdup(Preferences.Target_Led_Mbx_ID);
-					thr_args.x = 500; 
+					thr_args.x = 500;
 					thr_args.y = 290;
 					thr_args.w = 250;
 					thr_args.h = 250;
@@ -2273,7 +2273,7 @@ static void *rt_target_interface(void *args)
 					Args_T thr_args;
 					thr_args.index = n;
 					thr_args.mbx_id = strdup(Preferences.Target_Meter_Mbx_ID);
-					thr_args.x = 0; 
+					thr_args.x = 0;
 					thr_args.y = 0;
 					thr_args.w = 300;
 					thr_args.h = 200;
@@ -2286,7 +2286,7 @@ static void *rt_target_interface(void *args)
 					Args_T thr_args;
 					thr_args.index = n;
 					thr_args.mbx_id = strdup(Preferences.Target_Synch_Mbx_ID);
-					thr_args.x = 0; 
+					thr_args.x = 0;
 					thr_args.y = 0;
 					thr_args.w = 300;
 					thr_args.h = 200;
@@ -2431,10 +2431,10 @@ static void *rt_target_interface(void *args)
 					Scopes_Manager->g_color(n, Profile[p_idx].S_Grid_C[n]);
 					if (!Profile[p_idx].S_Mgr_Grid[n]) {
 						Scopes_Manager->grid_on_off(n, false);
-					} 
+					}
 					if (!Profile[p_idx].S_Mgr_PT[n]) {
 						Scopes_Manager->points_time(n, false);
-					} 
+					}
 					Scopes_Manager->sec_div(n, Profile[p_idx].S_Mgr_SecDiv[n]);
 					Scopes_Manager->p_save(n, Profile[p_idx].S_Mgr_PSave[n]);
 					Scopes_Manager->t_save(n, Profile[p_idx].S_Mgr_TSave[n]);
@@ -2465,7 +2465,7 @@ static void *rt_target_interface(void *args)
 					Fl::lock();
 					if (!Profile[p_idx].Log_Mgr_PT[n]) {
 						Logs_Manager->points_time(n, false);
-					} 
+					}
 					Logs_Manager->p_save(n, Profile[p_idx].Log_Mgr_PSave[n]);
 					Logs_Manager->t_save(n, Profile[p_idx].Log_Mgr_TSave[n]);
 					Logs_Manager->file_name(n, Profile[p_idx].Log_Mgr_File[n]);

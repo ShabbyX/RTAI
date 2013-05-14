@@ -291,7 +291,7 @@ RTAI_PROTO(SEM *, rt_typed_sem_init,(unsigned long name, int value, int type))
  *
  * @return a pointer to the semaphore to be used in related calls or 0 if an
  * error has occured.
- */ 
+ */
 #define rt_sem_init(name, value) rt_typed_sem_init(name, value, CNT_SEM)
 
 #define rt_named_sem_init(sem_name, value) \
@@ -377,7 +377,7 @@ RTAI_PROTO(int, rt_sem_count,(SEM *sem))
  *
  * @return a pointer to the condition variable to be used in related calls or 0
  * if an error has occured.
- */ 
+ */
 #define rt_cond_init(name)                 rt_typed_sem_init(name, 0, BIN_SEM)
 #define rt_cond_delete(cnd)                rt_sem_delete(cnd)
 #define rt_cond_destroy(cnd)               rt_sem_delete(cnd)

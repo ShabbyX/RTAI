@@ -30,7 +30,7 @@ setserial /dev/ttyS0 uart none
 setserial /dev/ttyS1 uart none
 cd ..; ./ldmod; cd -
 if (`rtai-config --linux-version | grep -q 2.6`);
-then 
+then
 insmod $MODULES/rtai_rtdm.ko
 insmod $MODULES/rtai_16550A.ko io=0x2f8,0x3f8 irq=3,4 tx_fifo=1,1
 else

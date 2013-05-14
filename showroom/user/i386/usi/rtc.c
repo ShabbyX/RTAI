@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
 /*
-   For an easy use in user space made independent from 
+   For an easy use in user space made independent from
    Linux includes by copying from it all of what needed
 */
 

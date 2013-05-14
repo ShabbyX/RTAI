@@ -67,7 +67,7 @@ int main(void)
 		puts(" ERROR IN SETTING THE SCHEDULER UP");
 		perror("errno");
 		exit(0);
- 	}       
+ 	}
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
         mem = rt_shm_alloc(0xabcd, 0, 0);

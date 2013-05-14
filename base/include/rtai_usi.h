@@ -33,25 +33,25 @@ static inline int rt_startup_irq(unsigned int irq)
 {
         return (int)rtai_srq(USI_SRQ_MASK | _STARTUP_IRQ, irq);
 }
- 
+
 #define rt_shutdown_irq(irq) \
 	do { rtai_srq(USI_SRQ_MASK | _SHUTDOWN_IRQ, irq); } while (0)
- 
+
 #define rt_enable_irq(irq) \
 	do { rtai_srq(USI_SRQ_MASK | _ENABLE_IRQ, irq); } while (0)
- 
+
 #define rt_disable_irq(irq) \
 	do { rtai_srq(USI_SRQ_MASK | _DISABLE_IRQ, irq); } while (0)
- 
+
 #define rt_mask_and_ack_irq(irq) \
 	do { rtai_srq(USI_SRQ_MASK | _MASK_AND_ACK_IRQ, irq); } while (0)
- 
+
 #define rt_ack_irq(irq) \
 	do { rtai_srq(USI_SRQ_MASK | _ACK_IRQ, irq); } while (0)
- 
+
 #define rt_unmask_irq(irq) \
 	do { rtai_srq(USI_SRQ_MASK | _UNMASK_IRQ, irq); } while (0)
- 
+
 #define rtai_cli() \
 	do { rtai_srq(USI_SRQ_MASK | _DISINT, 0); } while (0)
 
@@ -60,7 +60,7 @@ static inline int rt_startup_irq(unsigned int irq)
 
 #define rtai_save_flags_and_cli(flags) \
 	do { flags = (unsigned long)rtai_srq(USI_SRQ_MASK | _SAVE_FLAGS_CLI, 0); } while(0)
- 
+
 #define rtai_restore_flags(flags) \
 	do { rtai_srq(USI_SRQ_MASK | _RESTORE_FLAGS, flags); } while (0)
 
@@ -81,7 +81,7 @@ static inline unsigned long usi_atomic_cmpxchg(volatile void *ptr, unsigned long
 
 #define rt_spin_lock(lock) \
 	do { while (usi_atomic_cmpxchg(lock, 0, 1)); } while (0)
- 
+
 #define rt_spin_unlock(lock) \
 	do { *(volatile int *)lock = 0; } while (0)
 
@@ -90,16 +90,16 @@ static inline unsigned long usi_atomic_cmpxchg(volatile void *ptr, unsigned long
 
 #define rt_spin_unlock(lock);
 #endif
- 
+
 #define rt_spin_lock_init(lock) \
 	do { *(volatile int *)lock = 0; } while (0)
 
 #define rt_spin_lock_irq(lock) \
 	do { rtai_cli(); rt_spin_lock(lock); } while (0)
- 
+
 #define rt_spin_unlock_irq(lock) \
 	do { rt_spin_unlock(lock); rtai_sti(); } while (0)
- 
+
 static inline unsigned long rt_spin_lock_irqsave(void *lock)
 {
 	unsigned long flags;
@@ -107,10 +107,10 @@ static inline unsigned long rt_spin_lock_irqsave(void *lock)
 	rt_spin_lock(lock);
 	return flags;
 }
- 
+
 #define rt_spin_unlock_irqrestore(flags, lock) \
 	do { rt_spin_unlock(lock); rtai_restore_flags(flags); } while (0)
- 
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

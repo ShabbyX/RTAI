@@ -380,7 +380,7 @@ static inline int rt_task_receive(RT_TASK_MCB *mcb_r, RTIME timeout)
 static inline int rt_task_reply(int flowid, RT_TASK_MCB *mcb_s)
 {
 	struct { struct rt_task_struct *task; void *msg; long size; } arg = { (void *)(unsigned long)((unsigned long)flowid | 0xFFFFFFFF80000000ULL), mcb_s->data, mcb_s->size };
-	return rtai_lxrt(BIDX, SIZARG, RETURNX, &arg).v[LOW] <= MSG_ERR ? -EIDRM: 0; 
+	return rtai_lxrt(BIDX, SIZARG, RETURNX, &arg).v[LOW] <= MSG_ERR ? -EIDRM: 0;
 }
 
 static inline int rt_task_spawn(RT_TASK *task, const char *name, int stksize, int prio, int mode, void (*entry)(void *cookie), void *cookie)

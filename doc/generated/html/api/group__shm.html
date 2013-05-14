@@ -131,7 +131,7 @@
     <td>
 
 <p>
-Close the global real time heap being shared inter-intra kernel modules and Linux processes. 
+Close the global real time heap being shared inter-intra kernel modules and Linux processes.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -165,7 +165,7 @@ Closing a global heap in user space has just the effect of deregistering its use
     <td>
 
 <p>
-Open the global real time heap to be shared inter-intra kernel modules and Linux processes. 
+Open the global real time heap to be shared inter-intra kernel modules and Linux processes.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -202,7 +202,7 @@ The global heap is created by the shared memory module and its opening is needed
     <td>
 
 <p>
-Close a real time group heap being shared inter-intra kernel modules and Linux processes. 
+Close a real time group heap being shared inter-intra kernel modules and Linux processes.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -253,7 +253,7 @@ Analogously to what done by any allocation function this group real time heap cl
     <td>
 
 <p>
-Allocate a chunk of memory to be shared inter-intra kernel modules and Linux processes. 
+Allocate a chunk of memory to be shared inter-intra kernel modules and Linux processes.
 <p>
 rt_shm_alloc_adr is used to allocate in user space.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -302,7 +302,7 @@ It must be remarked that only the very first call does a real allocation, any su
     <td>
 
 <p>
-Free a chunk of shared memory being shared inter-intra kernel modules and Linux processes. 
+Free a chunk of shared memory being shared inter-intra kernel modules and Linux processes.
 <p>
 rtai_free is used to free a shared memory chunk from user space.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -341,7 +341,7 @@ rtai_free is a legacy helper macro, the real job is carried out by a call to rt_
     <td>
 
 <p>
-Free a chunk of shared memory being shared inter-intra kernel modules and Linux processes. 
+Free a chunk of shared memory being shared inter-intra kernel modules and Linux processes.
 <p>
 rtai_kfree is used to free a shared memory chunk from kernel space.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -382,7 +382,7 @@ rtai_kfree is a legacy helper macro, the real job is carried out by a call to rt
     <td>
 
 <p>
-Allocate a chunk of memory to be shared inter-intra kernel modules and Linux processes. 
+Allocate a chunk of memory to be shared inter-intra kernel modules and Linux processes.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -427,7 +427,7 @@ rtai_kmalloc is a legacy helper macro, the real job is carried out by a call to 
     <td>
 
 <p>
-Allocate a chunk of memory to be shared inter-intra kernel modules and Linux processes. 
+Allocate a chunk of memory to be shared inter-intra kernel modules and Linux processes.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -475,7 +475,7 @@ rtai_malloc is a legacy helper macro, the real job is carried out by a call to <
     <td>
 
 <p>
-Allocate a chunk of memory to be shared inter-intra kernel modules and Linux processes. 
+Allocate a chunk of memory to be shared inter-intra kernel modules and Linux processes.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -519,7 +519,7 @@ rtai_malloc_adr is a legacy helper macro, the real job is carried out by a call 
     <td>
 
 <p>
-Allocate a chunk of a group real time heap in kernel/user space. 
+Allocate a chunk of a group real time heap in kernel/user space.
 <p>
 Since it is not named there is no chance to retrieve and share it elsewhere.<p><b>For internal use only.</b></p>
 <p>
@@ -575,7 +575,7 @@ A process/task must have opened the real time group heap to use and can use just
     <td>
 
 <p>
-Open/create a named group real time heap to be shared inter-intra kernel modules and Linux processes. 
+Open/create a named group real time heap to be shared inter-intra kernel modules and Linux processes.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -622,7 +622,7 @@ It must be remarked that only the very first open does a real allocation, any su
     <td>
 
 <p>
-Free a chunk of a group real time heap. 
+Free a chunk of a group real time heap.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -661,7 +661,7 @@ rt_hfree is used to free a previously allocated chunck of a group real time heap
     <td>
 
 <p>
-Free a named chunk of the global real time heap. 
+Free a named chunk of the global real time heap.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -709,7 +709,7 @@ Analogously to what done by all the named allocation functions the freeing calls
     <td>
 
 <p>
-Allocate a chunk of a group real time heap in kernel/user space. 
+Allocate a chunk of a group real time heap in kernel/user space.
 <p>
 Since it is named it can be retrieved and shared everywhere among the group peers, i.e all processes/tasks that have opened the same group heap.<p><b>For internal use only.</b></p>
 <p>
@@ -753,7 +753,7 @@ A process/task must have opened the real time group heap to use and can use just
     <td>
 
 <p>
-Free a chunk of a group real time heap. 
+Free a chunk of a group real time heap.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -801,7 +801,7 @@ Analogously to what done by all the named allocation functions the freeing calls
     <td>
 
 <p>
-Allocate a chunk of the global real time heap in kernel/user space. 
+Allocate a chunk of the global real time heap in kernel/user space.
 <p>
 Since it is named it can be retrieved and shared everywhere.<p><b>For internal use only.</b></p>
 <p>
@@ -860,7 +860,7 @@ It must be remarked that only the very first call does a real allocation, any su
     <td>
 
 <p>
-Allocate a chunk of memory to be shared inter-intra kernel modules and Linux processes. 
+Allocate a chunk of memory to be shared inter-intra kernel modules and Linux processes.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -907,7 +907,7 @@ It must be remarked that only the very first call does a real allocation, any fo
     <td>
 
 <p>
-Free a chunk of shared memory being shared inter-intra kernel modules and Linux processes. 
+Free a chunk of shared memory being shared inter-intra kernel modules and Linux processes.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -963,7 +963,7 @@ Analogously to what done by all the named allocation functions the freeing calls
     <td>
 
 <p>
-Allocate a memory block from a memory heap. 
+Allocate a memory block from a memory heap.
 <p>
 Allocates a contiguous region of memory from an active memory heap. Such allocation is guaranteed to be time-bounded if the heap is non-extendable (see <a class="el" href="group__shm.html#ga51">rtheap_init()</a>). Otherwise, it might trigger a dynamic extension of the storage area through an internal request to the Linux allocation service (kmalloc/vmalloc).<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -1003,7 +1003,7 @@ Context: This routine can always be called on behalf of a thread context. It can
     <td>
 
 <p>
-Destroys a memory heap. 
+Destroys a memory heap.
 <p>
 Destroys a memory heap. Dynamically allocated extents are returned to Linux.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -1049,7 +1049,7 @@ Context: This routine must be called on behalf of a thread context.     </td>
     <td>
 
 <p>
-Release a memory block to a memory heap. 
+Release a memory block to a memory heap.
 <p>
 Releases a memory region to the memory heap it was previously allocated from.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -1109,7 +1109,7 @@ Context: This routine can be called on behalf of a thread or IST context     </t
     <td>
 
 <p>
-Initialize a memory heap. 
+Initialize a memory heap.
 <p>
 Initializes a memory heap suitable for dynamic memory allocation requests. The heap manager can operate in two modes, whether time-bounded if the heap storage area and size are statically defined at initialization time, or dynamically extendable at the expense of a less deterministic behaviour.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>

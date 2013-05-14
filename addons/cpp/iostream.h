@@ -43,18 +43,18 @@ public:
 	ostream& put(signed char c) { return put((char)c); }
 
 	ostream& write(const char *s);
-	ostream& write(const unsigned char *s) { 
+	ostream& write(const unsigned char *s) {
 		return write((const char*)s);
 	}
-	ostream& write(const signed char *s) { 
+	ostream& write(const signed char *s) {
 		return write((const char*)s);
 	}
 
 	ostream& write(const char *s, int n);
-	ostream& write(const unsigned char *s, int n) { 
+	ostream& write(const unsigned char *s, int n) {
 		return write((const char*)s,n);
 	}
-	ostream& write(const signed char *s, int n) { 
+	ostream& write(const signed char *s, int n) {
 		return write((const char*)s,n);
 	}
 

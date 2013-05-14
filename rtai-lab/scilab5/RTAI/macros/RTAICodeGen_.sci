@@ -15,13 +15,13 @@ function RTAICodeGen_()
 //** ------------- Preliminary I/O section ___________________________________________________________________________
     k = [] ; //** index of the CodeGen source superbloc candidate
 
-    xc = %pt(1); //** last valid click position 
-    yc = %pt(2); 
-    
+    xc = %pt(1); //** last valid click position
+    yc = %pt(2);
+
     %pt = []   ;
     Cmenu = [] ;
 
-    k  = getobj(scs_m,[xc;yc]) ; //** look for a block 
+    k  = getobj(scs_m,[xc;yc]) ; //** look for a block
     //** check if we have clicked near an object
     if k==[] then
       return
@@ -30,22 +30,22 @@ function RTAICodeGen_()
       return
     end
 
-    //** If the clicked/selected block is really a superblock 
+    //** If the clicked/selected block is really a superblock
     //**         <k>
     if scs_m.objs(k).model.sim(1)=="super" then
-      
-        XX = scs_m.objs(k); //** isolate the super block to use 
-        
+
+        XX = scs_m.objs(k); //** isolate the super block to use
+
 //---------------------------------------------------->       THE REAL CODE GEN IS HERE --------------------------------
-        //** the real code generator is here 
+        //** the real code generator is here
         [ok, XX, alreadyran, flgcdgen, szclkINTemp, freof] =  do_compile_superblock42(XX, scs_m, k, alreadyran);
-        
-        
+
+
         //**quick fix for sblock that contains scope
         gh_curwin = scf(curwin)
-    
+
     else
-      //** the clicked/selected block is NOT a superblock 
+      //** the clicked/selected block is NOT a superblock
       message("Generation Code only work for a Super Block ! ")
     end
 
@@ -484,7 +484,7 @@ function t1=cformatline(t ,l)
   t=part(t,nw+1:length(t));
   bl=part(' ',ones(1,nw))
   l1=l-nw;first=%t
-  while %t 
+  while %t
     if length(t)<=l then t1=[t1;bl+t],return,end
     k=strindex(t,sep);
     if k==[] then t1=[t1;bl+t],return,end
@@ -544,13 +544,13 @@ endfunction
 
 function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock42(XX,all_scs_m,numk,alreadyran)
 
-  scs_m = XX.model.rpar ; //** isolate the super block scs_m data structure 
+  scs_m = XX.model.rpar ; //** isolate the super block scs_m data structure
   par = scs_m.props;
-  
-  //** SAFETY : terminate current simulation 
+
+  //** SAFETY : terminate current simulation
   if alreadyran then
     //** terminate current simulation
-    do_terminate() ; 
+    do_terminate() ;
     alreadyran  = %f ;
   end
 
@@ -561,7 +561,7 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
   //***********************************************************
 
 
-  //**  These blocks are not ALLOWED for Emb code generation 
+  //**  These blocks are not ALLOWED for Emb code generation
   vorbidden_items=["CLKOUT_f","activation (events) output ports";
                    "IN_f","input ports";
                    "OUT_f","output ports";
@@ -576,11 +576,11 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
                    "WRITEC_f","Write block"]
 
   clkIN = [];
-  
-  //** scan 
+
+  //** scan
   for i=1:size(scs_m.objs)
 
-    //** BLOCKS 
+    //** BLOCKS
     if typeof(scs_m.objs(i))=="Block" then
       ind=find(vorbidden_items==scs_m.objs(i).gui);
       if(ind~=[]) then
@@ -588,8 +588,8 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
         %cpr = list();
         message(vorbidden_items(ind(1),2)+" not allowed in Superblock");
         return; // EXIT point
-      
-      elseif scs_m.objs(i).gui=="CLKINV_f" then //** input clock from external diagram 
+
+      elseif scs_m.objs(i).gui=="CLKINV_f" then //** input clock from external diagram
         //** replace event input ports by  fictious block
         scs_m.objs(i).gui="EVTGEN_f";
         scs_m.objs(i).model.sim(1)="bidon"
@@ -605,20 +605,20 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
     end
   end
 
-  
-  szclkIN = size(clkIN,2);
-  
 
-  flgcdgen = szclkIN; //** pass the clock 
-  
-  //** 
-  //** BEWARE : the Scicos compiler is called here ! 
+  szclkIN = size(clkIN,2);
+
+
+  flgcdgen = szclkIN; //** pass the clock
+
+  //**
+  //** BEWARE : the Scicos compiler is called here !
   //**
   [bllst,connectmat,clkconnect,cor,corinv,ok,scs_m,flgcdgen,freof] = c_pass1(scs_m,flgcdgen);
 
   if ~ok then
     message("Sorry: problem in the pre-compilation step.")
-    return ; //** EXIT point 
+    return ; //** EXIT point
   end
 
   szclkINTemp = szclkIN;
@@ -626,25 +626,25 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
 
 
   for i=1:size(bllst)
-    if (bllst(i).sim(1)=="bidon") then //** clock input 
+    if (bllst(i).sim(1)=="bidon") then //** clock input
       howclk = i;
     end
   end
 
-  
-  //** BEWARE : update to new graphics instructions ! 
-  %windo = xget('window') ; 
-  
+
+  //** BEWARE : update to new graphics instructions !
+  %windo = xget('window') ;
+
   cpr = c_pass2(bllst,connectmat,clkconnect,cor,corinv)
 
   if cpr==list() then
       ok = %f
-      return ; //** exit point 
+      return ; //** exit point
   end
 
   //** Alan's patch 5/07/07: try to solve
   //   which blocks use work
-  //** 
+  //**
   funs_save = cpr.sim.funs           ;
   funtyp_save = cpr.sim.funtyp       ;
   with_work = zeros(cpr.sim.nblk,1)  ;
@@ -656,7 +656,7 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
   //** retrieve all open Scilab windows with winsid()
   //**
 
-  BeforeCG_WinList = winsid(); 
+  BeforeCG_WinList = winsid();
 
   ierr=execstr('[state,t]=scicosim(cpr.state,0,0,cpr.sim,'+..
                '''start'',scs_m.props.tol)','errcatch')
@@ -673,17 +673,17 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
   //**
   //** retrieve all open Scilab windows with winsid
   //** and close the additional windows open since first
-  //** 
- 
-  //** This code does not cover 100% of the possible situations because the user can 
+  //**
+
+  //** This code does not cover 100% of the possible situations because the user can
   //** destroy one or more Scicos wins manually during this intermediate phase
   //** This code is 100% functional if the the user does not close manually any win.
   //** TO BE updated in Scilab 5.0
 
   AfterCG_WinList = winsid();
-  
+
   AfterCG_size = size(AfterCG_WinList); //** matrix
-  AfterCG_size = AfterCG_size(2) ; //** vector lenght 
+  AfterCG_size = AfterCG_size(2) ; //** vector lenght
 
   BeforeCG_size = size(BeforeCG_WinList); //** matrix
   BeforeCG_size = BeforeCG_size(2) ; //** vector lenght
@@ -692,24 +692,24 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
      //** means that a scope or other scicos object has created some
      //** output window
 
-     DiffCG_Winlist = AfterCG_WinList<>BeforeCG_WinList ; //** T/F mismatch 
-     DiffCG_Index = find(DiffCG_Winlist); //** recover the mismatched indexes only 
+     DiffCG_Winlist = AfterCG_WinList<>BeforeCG_WinList ; //** T/F mismatch
+     DiffCG_Index = find(DiffCG_Winlist); //** recover the mismatched indexes only
 
      for win_idx = DiffCG_Index
-         delete( scf( AfterCG_WinList(win_idx) ) ) ; //** clear the spurious windows   
-     end 
-     
-  end  
+         delete( scf( AfterCG_WinList(win_idx) ) ) ; //** clear the spurious windows
+     end
+
+  end
   //**------------- end of windows cleaning for internal scopes -------------------------------
 
   cpr.sim.funs=funs_save;
   cpr.sim.funtyp=funtyp_save;
 
   //** BEWARE: replace this OLD graphics instruction !
-  xset('window',%windo) ; 
+  xset('window',%windo) ;
 
   ///////////////////
-  //** %cpr pointers 
+  //** %cpr pointers
   x = cpr.state.x;
   z = cpr.state.z;
   outtb = cpr.state.outtb;
@@ -727,9 +727,9 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
   inplnk = cpr.sim.inplnk;
   outptr = cpr.sim.outptr;
   outlnk = cpr.sim.outlnk;
-  
+
   // @l@n lnkptr = cpr.sim.lnkptr; ???
-  
+
   ordclk = cpr.sim.ordclk;
   funtyp = cpr.sim.funtyp;
   cord   = cpr.sim.cord;
@@ -737,7 +737,7 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
   nblk   = cpr.sim.nb;
   ztyp   = cpr.sim.ztyp;
   clkptr = cpr.sim.clkptr
-  
+
   // taille totale de z : nztotal
   nztotal = size(z,1);
 
@@ -750,22 +750,22 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
 
     if funtyp(i)==3 then
       msg = [msg;"Type 3 block''s not allowed"] ;
-   
+
 // Bubu 18.03.2008
     elseif funtyp(i)==0 & funs(i)~="bidon"  then
       msg = [msg;"Type 0 block''s"+" ''"+funs(i)+"''"+" not allowed"] ;
 //end
-   
+
     elseif (clkptr(i+1)-clkptr(i))<>0 &funtyp(i)>-1 &funs(i)~="bidon" then
 
       //Alan // msg=[msg;'Regular block generating activation not allowed yet']
 
     end
 
-    if msg<>[] then 
+    if msg<>[] then
          message(msg) ;
          ok = %f ;
-         return ; //** 
+         return ; //**
     end
 
   end
@@ -774,12 +774,12 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
   //** Find the clock connected to the SuperBlock and retreive
   //** the sampling time
   //** Modified for use with external clock by Henrik Slotholt
-  
+
   useInternTimer = 1;
   extClockCode = ['void rtextclk(void) { }']
 
   if XX.graphics.pein==[] | XX.graphics.pein(1)==0 then
-    sTsamp="0.001"; //** default value is ONE millisecond 
+    sTsamp="0.001"; //** default value is ONE millisecond
   else
     o_ev = XX.graphics.pein(1);
     o_ev=all_scs_m.objs(o_ev).from(1);
@@ -816,39 +816,39 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
   //***********************************
   // Get the name of the file
   //***********************************
-  foo = 3; //** probably this variable is never used ? 
-  okk = %f; 
-  rdnom='foo'; 
-  rpat = getcwd(); 
-  archname=''; 
+  foo = 3; //** probably this variable is never used ?
+  okk = %f;
+  rdnom='foo';
+  rpat = getcwd();
+  archname='';
   Tsamp = sci2exp(eval(sTsamp));
-  
-  template = ''; //** default values for this version 
-  
+
+  template = ''; //** default values for this version
+
   if XX.model.rpar.props.void3 == [] then
-	target = 'rtai'; //** default compilation chain 
-	odefun = 'ode4';  //** default solver 
-	odestep = '10';   //** default continous step size 
+	target = 'rtai'; //** default compilation chain
+	odefun = 'ode4';  //** default solver
+	odestep = '10';   //** default continous step size
   else
-	target  = XX.model.rpar.props.void3(1); //** user defined parameters 
+	target  = XX.model.rpar.props.void3(1); //** user defined parameters
 	odefun  = XX.model.rpar.props.void3(2);
 	odestep = XX.model.rpar.props.void3(3);
   end
 
   libs='';
 
-  //** dialog box default variables 
+  //** dialog box default variables
   label1=[hname;getcwd()+'/'+hname+"_scig";target;template];
   label2=[hname;getcwd()+'/'+hname+"_scig";target;template;odefun;odestep];
-  
-  ode_x=['ode1';'ode2';'ode4']; //** available continous solver 
-  
-  //** Open a dialog box 
+
+  ode_x=['ode1';'ode2';'ode4']; //** available continous solver
+
+  //** Open a dialog box
   while %t do
     ok = %t ;
     if x==[] then
-      //** Pure discrete system NO CONTINOUS blocks 
-     
+      //** Pure discrete system NO CONTINOUS blocks
+
       [okk, rdnom, rpat,target,template,label1] = getvalue(..
 	            'Embedded Code Generation',..
 		        ['New block''s name :';
@@ -868,10 +868,10 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
 		         "ODE solver steps betw. samples: "],..
 		         list('str',1,'str',1,'str',1,'str',1,'str',1,'str',1),label2);
     end
-  
+
     if okk==%f then
       ok = %f
-      return ; //** EXIT point 
+      return ; //** EXIT point
     end
     rpat = stripblanks(rpat);
 
@@ -895,14 +895,14 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
                '""-"" chars will be automatically substituted by ""_"" '])
     end
 
-    rdnom = strsubst(rdnom,'-','_'); 
+    rdnom = strsubst(rdnom,'-','_');
 
     dirinfo = fileinfo(rpat)
-    
+
     if dirinfo==[] then
-      [pathrp, fnamerp, extensionrp] = fileparts(rpat); 
-      ok = mkdir(pathrp, fnamerp+extensionrp) ; 
-      if ~ok then 
+      [pathrp, fnamerp, extensionrp] = fileparts(rpat);
+      ok = mkdir(pathrp, fnamerp+extensionrp) ;
+      if ~ok then
         message("Directory '+rpat+' cannot be created");
       end
     elseif filetype(dirinfo(2))<>'Directory' then
@@ -910,25 +910,25 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
       message(rpat+" is not a directory");
     end
 
-    if stripblanks(rdnom)==emptystr() then 
+    if stripblanks(rdnom)==emptystr() then
       ok = %f;
       message("Sorry: C file name not defined");
     end
 
 
-    //** This comments will be moved in the documentation 
+    //** This comments will be moved in the documentation
 
     //** /contrib/RT_templates/pippo.gen
 
-    //** 1: pippo.mak 
+    //** 1: pippo.mak
     //** 2: pippo.cmd
 
-    //** pippo.mak : scheletro del Makefile 
+    //** pippo.mak : scheletro del Makefile
     //**             - GNU/Linux : Makefile template
     //**             - Windows/Erika : conf.oil
     //**                               erika.cmd
- 
-    //** pippo.cmd : sequenza di comandi Scilab 
+
+    //** pippo.cmd : sequenza di comandi Scilab
 
 
     TARGETDIR = SCI+"/contrib/RTAI/RT_templates";
@@ -942,7 +942,7 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
       ok = %f;
       message("Target not valid " + target + ".gen");
     end
-    
+
     if ok then
       target_t = mgetl(TARGETDIR+'/'+target+'.gen');
       makfil = target_t(1);
@@ -993,16 +993,16 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
   Protostalone = [];
   Protos       = [];
   dfuns        = [] ;
-  
 
 
-  //** scan the data structure and call the generating functions 
+
+  //** scan the data structure and call the generating functions
   //** Substitute previous code!!!!
-  
+
   for i=1:length(funs)
-    ki= find(funs(i) == dfuns) ; //** 
-    dfuns = [dfuns; funs(i)] ; 
-      
+    ki= find(funs(i) == dfuns) ; //**
+    dfuns = [dfuns; funs(i)] ;
+
     if ki==[] then
       Protostalone=[Protostalone;'';BlockProto(i)];
     end
@@ -1017,13 +1017,13 @@ function  [ok,XX,alreadyran,flgcdgen,szclkINTemp,freof] = do_compile_superblock4
   n_cmd = size(cmdseq,1);
 
   for i=1:n_cmd
-  
+
     if (cmdseq(i)~="") then
-         disp("Executing " + """" +cmdseq(i)+ """" + '...'); 
+         disp("Executing " + """" +cmdseq(i)+ """" + '...');
     end;
-    
+
     execstr(cmdseq(i));
-  
+
   end
 
   disp("----> Target generation terminated!");
@@ -1057,7 +1057,7 @@ function [CCode,FCode]=gen_blocks()
                          //200X : C blocks
 
   if (size(kdyn,'*') >1)
-    kfuns=[]; 
+    kfuns=[];
     //get the block data structure in the initial scs_m structure
     if size(corinv(kdyn(1)),'*')==1 then
       O=scs_m.objs(corinv(kdyn(1)));
@@ -1593,7 +1593,7 @@ function [Code,Code_common]=make_standalone42()
 	     szCode;
 	    ]
     end
-    
+
     //***************************** output port *****************************//
     if flex_nout <> 0 then
       flex_str = rdnom +'_'+string(kf-1)+'_outptr'
@@ -1637,7 +1637,7 @@ function [Code,Code_common]=make_standalone42()
       szCode=part(szCode,1:length(szCode)-1)+'};'
       Code1=[Code1;
 	     szCode;
-	    ]    
+	    ]
     end
 
     //**********************************************************************//
@@ -1702,7 +1702,7 @@ function [Code,Code_common]=make_standalone42()
         szCode=part(szCode,1:length(szCode)-1)+'};'
         Code1=[Code1;
 	       szCode;
-	      ]    
+	      ]
 
         //** typ **//
 	szCode='const int '+rdnom+'_'+string(kf-1)+'_opartyp['+string(flex_nopar)+']={';
@@ -1712,7 +1712,7 @@ function [Code,Code_common]=make_standalone42()
         szCode=part(szCode,1:length(szCode)-1)+'};'
         Code1=[Code1;
 	       szCode;
-	      ]    
+	      ]
       end
 
       //**********************************************************************//
@@ -1755,7 +1755,7 @@ function [Code,Code_common]=make_standalone42()
         szCode=part(szCode,1:length(szCode)-1)+'};'
         Code1=[Code1;
 	       szCode;
-	      ]    
+	      ]
 
         //** typ **//
 	szCode='int '+rdnom+'_'+string(kf-1)+'_oztyp['+string(flex_noz)+']={';
@@ -1765,7 +1765,7 @@ function [Code,Code_common]=make_standalone42()
         szCode=part(szCode,1:length(szCode)-1)+'};'
         Code1=[Code1;
 	       szCode;
-	      ]    
+	      ]
       end
     end
     Code2=[Code2;
@@ -1906,7 +1906,7 @@ function [Code,Code_common]=make_standalone42()
           ''
           '  tout=t;'
 	  '  dt='+rdnom+'_get_tsamp();'
-          '  h=dt/'+odestep+';' 
+          '  h=dt/'+odestep+';'
           '  while (tout+h<t+dt){'
           '    '+odefun+'(C2F('+rdnom+'simblk),tout,h);'
           '     tout=tout+h;'
@@ -2307,7 +2307,7 @@ function txt=make_static_standalone42()
         ]
   txt($+1) = 'int NRPAR = '+string(nbrpa)+';';
   txt($+1) = 'int NTOTRPAR = '+string(ntot_r)+';';
-    
+
   strRCode = 'char * strRPAR[' + string(nbrpa) + '] = {' + ..
              part(strRCode,[1:length(strRCode)-1]) + '};';
 
@@ -3168,7 +3168,7 @@ endfunction
 
 
 function [txt]=write_code_odoit(flag)
- 
+
   txt=[];
 
   for j=1:noord

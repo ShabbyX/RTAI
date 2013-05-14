@@ -32,12 +32,12 @@ typedef SEM * SEM_ID;
 #define SEM_Q_FIFO      (FIFO_Q)
 #define SEM_Q_PRIORITY  (PRIO_Q)
 
-static inline SEM_ID semBCreate(int options, int initialState) 
+static inline SEM_ID semBCreate(int options, int initialState)
 {
 	return rt_typed_sem_init(rt_get_name(NULL), initialState, BIN_SEM | options);
 }
 
-static inline SEM_ID semCCreate(int options, int initialCount) 
+static inline SEM_ID semCCreate(int options, int initialCount)
 {
 	return rt_typed_sem_init(rt_get_name(NULL), initialCount, CNT_SEM | options);
 }

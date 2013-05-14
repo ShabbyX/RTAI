@@ -10,7 +10,7 @@ DEVICEDIR  = $(CONTRIBDIR)/routines
 TEMPLDIR   = $(CONTRIBDIR)/RT_templates
 
 DEVSRC = *.c *.h *.tmp Makefile
-MACROSRC = *.sci *.cosf 
+MACROSRC = *.sci *.cosf
 TEMPLSRC = rtai.gen rtai.mak standalone.cmd
 RTAISRC  = builder.sce loader.sce
 

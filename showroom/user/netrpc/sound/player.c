@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 	mbx = RT_get_adr(spknode, spkport, "SNDMBX");
 
         for (i = 0; i < 100; i++) {
-		RT_rpc(spknode, spkport, spktsk, msg, &msg); 
+		RT_rpc(spknode, spkport, spktsk, msg, &msg);
         }
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	printf("\nPLAYER TASK RUNNING\n\n(TYPE ENTER TO END EVERYTHING)\n");
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	RT_rpc(spknode, spkport, spktsk, msg, &msg); 
+	RT_rpc(spknode, spkport, spktsk, msg, &msg);
 	rt_release_port(spknode, spkport);
 	rt_task_delete(plrtsk);
 	close(player);

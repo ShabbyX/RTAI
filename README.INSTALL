@@ -4,23 +4,23 @@ Installing RTAI-3.x
 0. RTAI 3.9.1
 ================================
 
-RTAI uses only the leanest and fastest RTAI+Linux combination now, i.e. it 
-dispatches real time interrupts immediately. Moreover within such a scheme 
-i386 has the possibility of completely avoiding the dispatching of critical 
-internal timers and interprocessor scheduling interrupts by vectoring them 
+RTAI uses only the leanest and fastest RTAI+Linux combination now, i.e. it
+dispatches real time interrupts immediately. Moreover within such a scheme
+i386 has the possibility of completely avoiding the dispatching of critical
+internal timers and interprocessor scheduling interrupts by vectoring them
 directly to their handlers. Such an option strongly enhances performances
-on low end machines and comes by default. You can disable it while configuring 
+on low end machines and comes by default. You can disable it while configuring
 RTAI though. See the related configuration helper.
-What above requires you to patch Linux just with patches found within this 
-distribution. 
+What above requires you to patch Linux just with patches found within this
+distribution.
 Notice also that this release is for use with:
 - i386,
 - x86_64,
 - PPC.
 
-On recent distributions, managing udev/sysfs, devices created by following 
-this installation procedure will disappear at each machine halting. Then they 
-will be available no more at the next reboot. RTAI should manage udev/sysfs 
+On recent distributions, managing udev/sysfs, devices created by following
+this installation procedure will disappear at each machine halting. Then they
+will be available no more at the next reboot. RTAI should manage udev/sysfs
 support but in case something weird will impede it you can solve your problem
 quickly by restoring RTAI devices before running your application. For that
 the following short script containing:
@@ -110,7 +110,7 @@ The RTAI-specific switches are:
  --enable-cpus		Enable CPUs
  --enable-dox-doc       Build Doxygen documentation
  --enable-dbx           Build Docbook XML documentation.
- --enable-dbx-network   Try to access Docbook DTD and XSL stylesheets through 
+ --enable-dbx-network   Try to access Docbook DTD and XSL stylesheets through
                         network.
  --enable-latex-doc     Build LaTeX documentation
  --enable-verbose-latex Uses LaTeX non-stop mode

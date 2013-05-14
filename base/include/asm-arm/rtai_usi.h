@@ -35,7 +35,7 @@
 
 #ifdef __KERNEL__
 
-static void usi_cli(unsigned long arg, unsigned long *eflags) 
+static void usi_cli(unsigned long arg, unsigned long *eflags)
 {
 	set_bit(RTAI_IFLAG, eflags);
 }

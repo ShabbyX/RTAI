@@ -8,14 +8,14 @@
 <a class="qindex" href="main.html">Main&nbsp;Page</a> | <a class="qindex" href="modules.html">Modules</a> | <a class="qindex" href="files.html">File&nbsp;List</a> | <a class="qindex" href="globals.html">Globals</a> | <a class="qindex" href="pages.html">Related&nbsp;Pages</a>  | <span class="search"><u>S</u>earch&nbsp;for&nbsp;<input class="search" type="text" name="query" value="" size="20" accesskey="s"/></span></form></div>
 <div class="nav">
 <a class="el" href="dir_000000.html">base</a>&nbsp;/&nbsp;<a class="el" href="dir_000015.html">include</a></div>
-<h1>rtai_registry.h</h1><a href="rtai__registry_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment">00001 
+<h1>rtai_registry.h</h1><a href="rtai__registry_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment">00001
 00027 <span class="preprocessor">#ifndef _RTAI_REGISTRY_H</span>
 00028 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_REGISTRY_H</span>
 00029 <span class="preprocessor"></span>
 00030 <span class="preprocessor">#include &lt;<a class="code" href="rtai__nam2num_8h.html">rtai_nam2num.h</a>&gt;</span>
-00031 
+00031
 00032 <span class="keyword">struct </span>task_struct;
-00033 
+00033
 00034 <span class="keyword">struct </span>rt_registry_entry_struct {
 00035         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name;      <span class="comment">// Numerical representation of resource name</span>
 00036         <span class="keywordtype">void</span> *adr;               <span class="comment">// Physical rt memory address of resource</span>
@@ -24,7 +24,7 @@
 00039         <span class="keywordtype">int</span> type;                <span class="comment">// Type of resource</span>
 00040         <span class="keywordtype">int</span> count;               <span class="comment">// Usage registry</span>
 00041 };
-00042 
+00042
 00043 <span class="preprocessor">#define MAX_SLOTS  CONFIG_RTAI_SCHED_LXRT_NUMSLOTS // Max number of registered objects</span>
 00044 <span class="preprocessor"></span>
 00045 <span class="preprocessor">#define IS_TASK  0               // Used to identify registered resources</span>
@@ -40,39 +40,39 @@
 00055 <span class="preprocessor">#ifdef __cplusplus</span>
 00056 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00057 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00058 
+00058
 00059 <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> is_process_registered(<span class="keyword">struct</span> task_struct *tsk);
-00060 
+00060
 00061 <span class="keywordtype">int</span> <a class="code" href="group__lxrt.html#ga83">rt_register</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> nam,
 00062                 <span class="keywordtype">void</span> *adr,
 00063                 <span class="keywordtype">int</span> typ,
 00064                 <span class="keyword">struct</span> task_struct *tsk);
-00065 
+00065
 00066 <span class="keywordtype">int</span> <a class="code" href="group__lxrt.html#ga84">rt_drg_on_name</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name);
-00067 
+00067
 00068 <span class="keywordtype">int</span> rt_drg_on_name_cnt(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name);
-00069 
+00069
 00070 <span class="keywordtype">int</span> <a class="code" href="group__lxrt.html#ga85">rt_drg_on_adr</a>(<span class="keywordtype">void</span> *adr);
-00071 
+00071
 00072 <span class="keywordtype">int</span> rt_drg_on_adr_cnt(<span class="keywordtype">void</span> *adr);
-00073 
+00073
 00074 <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <a class="code" href="group__lxrt.html#ga1">rt_get_name</a>(<span class="keywordtype">void</span> *adr);
-00075 
+00075
 00076 <span class="keywordtype">void</span> *<a class="code" href="group__lxrt.html#ga0">rt_get_adr</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name);
-00077 
+00077
 00078 <span class="keywordtype">void</span> *rt_get_adr_cnt(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name);
-00079 
+00079
 00080 <span class="keywordtype">int</span> rt_get_type(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name);
-00081 
+00081
 00082 <span class="preprocessor">#ifdef CONFIG_PROC_FS</span>
 00083 <span class="preprocessor"></span><span class="keywordtype">int</span> rt_get_registry_slot(<span class="keywordtype">int</span> slot,
 00084                          <span class="keyword">struct</span> rt_registry_entry_struct *entry);
 00085 <span class="preprocessor">#endif </span><span class="comment">/* CONFIG_PROC_FS */</span>
-00086 
+00086
 00087 <span class="preprocessor">#ifdef __cplusplus</span>
 00088 <span class="preprocessor"></span>}
 00089 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00090 
+00090
 00091 <span class="preprocessor">#define exist(name)  rt_get_adr(nam2num(name))</span>
 00092 <span class="preprocessor"></span>
 00093 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_REGISTRY_H */</span>

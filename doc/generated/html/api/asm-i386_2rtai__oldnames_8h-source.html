@@ -38,7 +38,7 @@
 00028 <span class="comment"> *   along with this program; if not, write to the Free Software</span>
 00029 <span class="comment"> *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00030 <span class="comment"> */</span>
-00031 
+00031
 00032 <span class="preprocessor">#ifndef _RTAI_ASM_I386_OLDNAMES_H</span>
 00033 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_ASM_I386_OLDNAMES_H</span>
 00034 <span class="preprocessor"></span>
@@ -53,7 +53,7 @@
 00043 <span class="preprocessor"></span><span class="preprocessor">#define hard_cpu_id                  adeos_processor_id</span>
 00044 <span class="preprocessor"></span>
 00045 <span class="preprocessor">#endif </span><span class="comment">/* __KERNEL__ */</span>
-00046 
+00046
 00047 <span class="preprocessor">#ifndef __RTAI_HAL__</span>
 00048 <span class="preprocessor"></span>
 00049 <span class="preprocessor">#define tuned           rtai_tunables</span>
@@ -95,9 +95,9 @@
 00085 <span class="preprocessor"></span>
 00086 <span class="preprocessor">#include &lt;linux/irq.h&gt;</span>
 00087 <span class="preprocessor">#include &lt;asm/desc.h&gt;</span>
-00088 
+00088
 00089 <span class="keyword">extern</span> <span class="keyword">struct </span>desc_struct idt_table[];
-00090 
+00090
 00091 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">struct </span>desc_struct rt_set_full_intr_vect (unsigned vector,
 00092                                                         int type,
 00093                                                         int dpl,
@@ -107,63 +107,63 @@
 00097     idt_table[vector].b = ((unsigned)handler &amp; 0xFFFF0000) | (0x8000 + (dpl &lt;&lt; 13) + (type &lt;&lt; 8));
 00098     <span class="keywordflow">return</span> e;
 00099 }
-00100 
+00100
 00101 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> rt_reset_full_intr_vect(<span class="keywordtype">unsigned</span> vector,
 00102                                            <span class="keyword">struct</span> desc_struct e) {
 00103     idt_table[vector] = e;
 00104 }
-00105 
+00105
 00106 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> rt_request_cpu_own_irq (<span class="keywordtype">unsigned</span> irq, <span class="keywordtype">void</span> (*handler)(<span class="keywordtype">void</span>)) {
-00107 
+00107
 00108     <span class="keywordflow">return</span> rt_request_irq(irq, (rt_irq_handler_t)handler, NULL, 0);
 00109 }
-00110 
+00110
 00111 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> rt_free_cpu_own_irq (<span class="keywordtype">unsigned</span> irq) {
-00112 
+00112
 00113     <span class="keywordflow">return</span> rt_release_irq(irq);
 00114 }
-00115 
+00115
 00116 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> *get_intr_handler (<span class="keywordtype">unsigned</span> vector) {
-00117 
-00118     <span class="keywordflow">return</span> (<span class="keywordtype">void</span> *)((idt_table[vector].b &amp; 0xFFFF0000) | 
+00117
+00118     <span class="keywordflow">return</span> (<span class="keywordtype">void</span> *)((idt_table[vector].b &amp; 0xFFFF0000) |
 00119                     (idt_table[vector].a &amp; 0x0000FFFF));
 00120 }
-00121 
+00121
 00122 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> set_intr_vect (<span class="keywordtype">unsigned</span> vector,
 00123                                   <span class="keywordtype">void</span> (*handler)(<span class="keywordtype">void</span>)) {
-00124 
-00125     idt_table[vector].a = (idt_table[vector].a &amp; 0xFFFF0000) | 
+00124
+00125     idt_table[vector].a = (idt_table[vector].a &amp; 0xFFFF0000) |
 00126         ((unsigned)handler &amp; 0x0000FFFF);
-00127     idt_table[vector].b = ((unsigned)handler &amp; 0xFFFF0000) | 
+00127     idt_table[vector].b = ((unsigned)handler &amp; 0xFFFF0000) |
 00128         (idt_table[vector].b &amp; 0x0000FFFF);
 00129 }
-00130 
+00130
 00131 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> *rt_set_intr_handler (<span class="keywordtype">unsigned</span> vector,
 00132                                          <span class="keywordtype">void</span> (*handler)(<span class="keywordtype">void</span>)) {
-00133 
+00133
 00134     void (*saved_handler)(void) = get_intr_handler(vector);
 00135     set_intr_vect(vector, handler);
 00136     <span class="keywordflow">return</span> saved_handler;
 00137 }
-00138 
+00138
 00139 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> rt_reset_intr_handler (<span class="keywordtype">unsigned</span> vector,
 00140                                           <span class="keywordtype">void</span> (*handler)(<span class="keywordtype">void</span>)) {
 00141     set_intr_vect(vector, handler);
 00142 }
-00143 
+00143
 00144 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> get_cr2 (<span class="keywordtype">void</span>) {
-00145 
+00145
 00146     <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> address;
 00147     __asm__(<span class="stringliteral">"movl %%cr2,%0"</span>:<span class="stringliteral">"=r"</span> (address));
 00148     <span class="keywordflow">return</span> address;
 00149 }
-00150 
+00150
 00151 <span class="preprocessor">#endif </span><span class="comment">/* __KERNEL__ */</span>
-00152 
+00152
 00153 <span class="preprocessor">#endif </span><span class="comment">/* !__cplusplus */</span>
-00154 
+00154
 00155 <span class="preprocessor">#endif </span><span class="comment">/* !__RTAI_HAL__ */</span>
-00156 
+00156
 00157 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_ASM_I386_OLDNAMES_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

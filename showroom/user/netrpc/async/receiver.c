@@ -60,7 +60,7 @@ if (SERVER) {
 			break;
 		}
 } else {
-		rt_sleep(nano2count(100000000)); 
+		rt_sleep(nano2count(100000000));
 }
 	}
 	rt_task_delete(asynctsk);
@@ -111,10 +111,10 @@ int main(int argc, char *argv[])
 		r = RT_mbx_receive(sndnode, -sndport, sndmbx, &i, sizeof(long));
 		rt_printk("RECEIVE %ld %ld\n", r, i);
 if (SERVER) {
-		rt_sleep(nano2count(100000000)); 
+		rt_sleep(nano2count(100000000));
 } else {
 		while (!end && rt_waiting_return(sndnode, sndport)) {
-			rt_sleep(nano2count(1000000)); 
+			rt_sleep(nano2count(1000000));
 		}
 		if (!end) {
 			unsigned long long retval;

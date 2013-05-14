@@ -105,7 +105,7 @@ static void rt_timer_handler(void)
 			rt_times.linux_time += rt_times.linux_tick;
 		}
 		rt_pend_linux_irq(TIMER_8254_IRQ);
-	} 
+	}
 #endif
 
 	return;
@@ -126,7 +126,7 @@ int init_module(void)
 		rt_request_apic_timers(rt_timer_handler, setup_data);
 	} while (0);
 #else
-	rt_request_timer(rt_timer_handler, imuldiv(TICK, USE_APIC ? FREQ_APIC : FREQ_8254, 1000000000), USE_APIC); 
+	rt_request_timer(rt_timer_handler, imuldiv(TICK, USE_APIC ? FREQ_APIC : FREQ_8254, 1000000000), USE_APIC);
 #endif
 
 #ifdef CONFIG_SMP

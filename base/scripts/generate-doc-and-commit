@@ -28,7 +28,7 @@ make clean
 mkdir tmp-dist
 make doc_top_distdir=`pwd`/tmp-dist distdir=./tmp-dist distdir
 
-if ! [ -d tmp-dist/doc/generated ]; then 
+if ! [ -d tmp-dist/doc/generated ]; then
     die Something went wrong when generating the documentation.
 fi
 

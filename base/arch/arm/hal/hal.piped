@@ -186,7 +186,7 @@ rt_set_irq_cookie(unsigned irq, void *cookie)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the functions below do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time

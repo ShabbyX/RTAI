@@ -6,7 +6,7 @@ is copied below.
 
 .....
        --wrap symbol
-           Use a wrapper function for symbol.  Any undefined reference to 
+           Use a wrapper function for symbol.  Any undefined reference to
            symbol will be resolved to "__wrap_symbol". Any undefined reference
            to "__real_symbol" will be resolved to symbol.
 
@@ -36,7 +36,7 @@ is copied below.
 .....
 
 In case you suspect the need to use a __real POSIX-something function you should
-know that it should happen just for the functions listed in POSIX_WRAPS, found 
+know that it should happen just for the functions listed in POSIX_WRAPS, found
 in this subdirectory.
 
 Hard real time service are only those listed in POSIX_WRAPS and include:
@@ -64,11 +64,11 @@ A lot of examples showing RTAI POSIX at work can be found in:
 "showroom/v3.x/posix/user" and related subdirectories therof.
 
 It is important to remark that it has been chosen to not enable threads for
-RTAI directly, but you have to do it specifically, either by calling the 
+RTAI directly, but you have to do it specifically, either by calling the
 standard rt_task_init_schmod or the specific pthread_setschedparam_np. The
 latter is an overall container for RTAI scheduling management, is up to you
 to possibly mate it with standard POSIX calls to keep Linux and RTAI aligned,
-but beware that doing so you'll be sent in soft real time, while 
+but beware that doing so you'll be sent in soft real time, while
 pthread_setschedparam_np is hard real time, except for hard/soft/switches
 naturally. "Showroom/v3.x/posix/user" can be your helper once more.
 

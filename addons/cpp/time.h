@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: time.h,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -45,19 +45,19 @@ public:
      * The time in nanoseconds
      */
     typedef long long nsecs;
-    
+
     /**
      * Initialise a time instance denoting zero nanoseconds
      */
 	Time();
-    
+
     /**
      * Make a deep copy of a Time instance
      */
 	Time(const Time& time);
     /**
-     * Initialise a time instance with <time> 
-     * 
+     * Initialise a time instance with <time>
+     *
      * @param time The time in nanoseconds
      */
 	explicit Time(nsecs time);
@@ -69,7 +69,7 @@ public:
      * Returns the current system time in nanoseconds
      */
 	static Time now();
-    
+
     /**
      * Returns the largest system time (==infinity)
      */

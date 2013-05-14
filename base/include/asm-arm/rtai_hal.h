@@ -68,7 +68,7 @@
 #ifndef __LINUX_ARM_ARCH__
 #define __LINUX_ARM_ARCH__ 5
 #endif
-#else 
+#else
 #ifndef __LINUX_ARM_ARCH__
 #warning "by default, __LINUX_ARM_ARCH__ is setted to 4 in order to ensure compatibility with all other arm arch."
 #define __LINUX_ARM_ARCH__ 4
@@ -139,7 +139,7 @@ ffnz(unsigned long word)
 
 #ifndef rtai_ullmul
 extern inline unsigned long long
-__rtai_generic_ullmul(const unsigned m0, 
+__rtai_generic_ullmul(const unsigned m0,
                        const unsigned m1)
 {
     return (unsigned long long) m0 * m1;
@@ -148,7 +148,7 @@ __rtai_generic_ullmul(const unsigned m0,
 #endif /* !rtai_ullmul */
 
 #ifndef rtai_ulldiv
-static inline unsigned long long 
+static inline unsigned long long
 __rtai_generic_ulldiv (unsigned long long ull,
                         const unsigned uld,
                         unsigned long *const rp)
@@ -181,7 +181,7 @@ __rtai_generic_imuldiv (int i,
 #endif /* !rtai_imuldiv */
 
 #ifndef rtai_llimd
-/* Division of an unsigned 96 bits ((h << 32) + l) by an unsigned 32 bits. 
+/* Division of an unsigned 96 bits ((h << 32) + l) by an unsigned 32 bits.
    Building block for llimd. Without const qualifiers, gcc reload registers
    after each call to uldivrem. */
 static inline unsigned long long
@@ -198,7 +198,7 @@ __rtai_generic_div96by32 (const unsigned long long h,
     return __rtai_u64fromu32(qh, ql);
 }
 
-extern inline unsigned long long 
+extern inline unsigned long long
 __rtai_generic_ullimd (const unsigned long long op,
                         const unsigned m,
                         const unsigned d)
@@ -215,7 +215,7 @@ __rtai_generic_ullimd (const unsigned long long op,
     return __rtai_generic_div96by32(th, tll, d, NULL);
 }
 
-extern inline  long long 
+extern inline  long long
 __rtai_generic_llimd (long long op,
                        unsigned m,
                        unsigned d)

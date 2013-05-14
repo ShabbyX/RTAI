@@ -219,11 +219,11 @@ struct rtai_switch_data rtai_linux_context[RTAI_NR_CPUS];
 struct rt_times rt_smp_times[RTAI_NR_CPUS];
 
 
-/* 
+/*
  * rtai_critical_enter
  */
 
-unsigned long rtai_critical_enter (void (*synch)(void)) 
+unsigned long rtai_critical_enter (void (*synch)(void))
 {
 	unsigned long flags;
 
@@ -684,7 +684,7 @@ int rt_request_timer (void (*handler)(void), unsigned tick, int use_apic)
 }
 
 
-/* 
+/*
  * rt_free_timer
  */
 
@@ -815,7 +815,7 @@ static int rtai_trap_fault (unsigned event, void *evdata)
 		0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0
-	}; 
+	};
 
 	TRACE_RTAI_TRAP_ENTRY(evdata->event, 0);
 
@@ -825,7 +825,7 @@ static int rtai_trap_fault (unsigned event, void *evdata)
 
 	if (event == 2) { /* if Altivec unavailable */
 /*
-		rtai_hw_cli(); // in task context, so we can be preempted 
+		rtai_hw_cli(); // in task context, so we can be preempted
 		if (lnxtsk_uses_fpu(linux_task)) {
 			restore_fpu(linux_task);
 			if (PrintFpuTrap) {
@@ -1432,8 +1432,8 @@ EXPORT_SYMBOL(IsolCpusMask);
 void (*rt_linux_hrt_set_mode)(enum clock_event_mode, struct ipipe_tick_device *);
 int (*rt_linux_hrt_next_shot)(unsigned long, struct ipipe_tick_device *);
 
-/* 
- * _rt_linux_hrt_set_mode and _rt_linux_hrt_next_shot below should serve 
+/*
+ * _rt_linux_hrt_set_mode and _rt_linux_hrt_next_shot below should serve
  * RTAI examples only and assume that RTAI is in periodic mode always
  */
 

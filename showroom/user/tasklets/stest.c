@@ -113,7 +113,7 @@ int main(void)
 		puts(" ERROR IN SETTING THE SCHEDULER UP");
 		perror("errno");
 		exit(0);
- 	}       
+ 	}
 	rt_grow_and_lock_stack(20000);
 
 #ifdef ONE_SHOT

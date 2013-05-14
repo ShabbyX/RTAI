@@ -2,7 +2,7 @@ function [x,y,typ] = rtai4_square(job,arg1,arg2)
   x=[];y=[];typ=[];
   select job
   case 'plot' then
-    exprs=arg1.graphics.exprs;    
+    exprs=arg1.graphics.exprs;
     standard_draw(arg1)
   case 'getinputs' then
     [x,y,typ]=standard_inputs(arg1)

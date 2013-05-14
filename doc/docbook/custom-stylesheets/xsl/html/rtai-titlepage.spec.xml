@@ -4,9 +4,9 @@
 
 <!-- ==================================================================== -->
 
-<t:titlepage t:element="article" t:wrapper="div" class="titlepage">  
-  <t:titlepage-content t:side="recto">  
-    <title/> 
+<t:titlepage t:element="article" t:wrapper="div" class="titlepage">
+  <t:titlepage-content t:side="recto">
+    <title/>
     <subtitle/>
     <releaseinfo/>
     <author/>

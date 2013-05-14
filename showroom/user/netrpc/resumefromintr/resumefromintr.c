@@ -98,14 +98,14 @@ int main(int argc, char *argv[])
 			}
 			t0 = t;
 			switch (run) {
-				case 1: rt_sem_wait(sem); 
+				case 1: rt_sem_wait(sem);
 					break;
 				case 2: rt_task_suspend(task);
 					break;
 				case 3: rt_receive(0, &run);
 					break;
 			}
-		} 
+		}
 	}
 
 	run = 0;

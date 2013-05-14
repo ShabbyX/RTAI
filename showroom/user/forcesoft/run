@@ -24,7 +24,7 @@ $SUDO ./rt_task &
 $SUDO ./spv
 TASKPID=`ps -a |grep rt_task | awk '{ print $1 }'`
 sleep 1
-kill -9 $TASKPID 
+kill -9 $TASKPID
 echo
 echo "Done. Press <enter> to remove the modules."
 read junk

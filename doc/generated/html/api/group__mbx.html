@@ -116,7 +116,7 @@
     <td>
 
 <p>
-Receives bytes as many as possible leaving the message available for another receive. 
+Receives bytes as many as possible leaving the message available for another receive.
 <p>
 rt_mbx_evdrp receives at most <em>msg_size</em> of bytes of message from the mailbox <em>mbx</em> and then returns immediately. Does what rt_mbx_receive_wp does while keeping the message in the mailbox buffer. Useful if one needs to just preview the mailbox content, without actually receiving it.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -176,7 +176,7 @@ rt_mbx_evdrp receives at most <em>msg_size</em> of bytes of message from the mai
     <td>
 
 <p>
-Sends a message overwriting what already in the buffer if there is no place for the message. 
+Sends a message overwriting what already in the buffer if there is no place for the message.
 <p>
 rt_mbx_ovrwr_send sends the message <em>msg</em> of <em>msg_size</em> bytes to the mailbox <em>mbx</em> overwriting what already in the mailbox buffer if there is no place for the message. Useful for logging purposes. It returns immediately and the caller is never blocked.<p>
 <dl compact><dt><b>Returns:</b></dt><dd>On success, 0 is returned. On failure a negative value is returned as described below:<ul>
@@ -231,7 +231,7 @@ rt_mbx_ovrwr_send sends the message <em>msg</em> of <em>msg_size</em> bytes to t
     <td>
 
 <p>
-Receives a message unconditionally. 
+Receives a message unconditionally.
 <p>
 rt_mbx_receive receives a message of <em>msg_size</em> bytes from the mailbox <em>mbx</em>. The caller will be blocked until all bytes of the message arrive or an error occurs.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -293,7 +293,7 @@ rt_mbx_receive receives a message of <em>msg_size</em> bytes from the mailbox <e
     <td>
 
 <p>
-Receives a message only if the whole message can be passed without blocking the calling task. 
+Receives a message only if the whole message can be passed without blocking the calling task.
 <p>
 rt_mbx_receive_if receives a message from the mailbox <em>mbx</em> if the whole message of <em>msg_size</em> bytes is available immediately.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -361,7 +361,7 @@ rt_mbx_receive_if receives a message from the mailbox <em>mbx</em> if the whole 
     <td>
 
 <p>
-Receives a message with relative timeout. 
+Receives a message with relative timeout.
 <p>
 rt_mbx_receive_timed receives a message of <em>msg_size</em> bytes from the mailbox <em>mbx</em>. The caller will be blocked until all bytes of the message arrive, timeout expires or an error occurs.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -430,7 +430,7 @@ See also: notes under rt_mbx_received_until().     </td>
     <td>
 
 <p>
-Receives a message with absolute timeout. 
+Receives a message with absolute timeout.
 <p>
 rt_mbx_receive_until receives a message of <em>msg_size</em> bytes from the mailbox <em>mbx</em>. The caller will be blocked until all bytes of the message arrive, timeout expires or an error occurs.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -493,7 +493,7 @@ See also: notes under rt_mbx_received_timed().     </td>
     <td>
 
 <p>
-Receives bytes as many as possible, without blocking the calling task. 
+Receives bytes as many as possible, without blocking the calling task.
 <p>
 rt_mbx_receive_wp receives at most <em>msg_size</em> of bytes of message from the mailbox <em>mbx</em> then returns immediately.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -555,7 +555,7 @@ rt_mbx_receive_wp receives at most <em>msg_size</em> of bytes of message from th
     <td>
 
 <p>
-Sends a message unconditionally. 
+Sends a message unconditionally.
 <p>
 rt_mbx_send sends a message <em>msg</em> of <em>msg_size</em> bytes to the mailbox <em>mbx</em>. The caller will be blocked until the whole message is copied into the mailbox or an error occurs. Even if the message can be sent in a single shot, the sending task can be blocked if there is a task of higher priority waiting to receive from the mailbox.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -617,7 +617,7 @@ rt_mbx_send sends a message <em>msg</em> of <em>msg_size</em> bytes to the mailb
     <td>
 
 <p>
-Sends a message, only if the whole message can be passed without blocking the calling task. 
+Sends a message, only if the whole message can be passed without blocking the calling task.
 <p>
 rt_mbx_send_if tries to atomically send the message <em>msg</em> of <em>msg_size</em> bytes to the mailbox <em>mbx</em>. It returns immediately and the caller is never blocked.<p>
 <dl compact><dt><b>Returns:</b></dt><dd>On success, the number of unsent bytes (0 or <em>msg_size</em>) is returned. On failure a negative value is returned as described below:<ul>
@@ -678,7 +678,7 @@ rt_mbx_send_if tries to atomically send the message <em>msg</em> of <em>msg_size
     <td>
 
 <p>
-Sends a message with relative timeout. 
+Sends a message with relative timeout.
 <p>
 rt_mbx_send_timed send a message <em>msg</em> of <em>msg_size</em> bytes to the mailbox <em>mbx</em>. The caller will be blocked until all bytes of message is enqueued, timeout expires or an error occurs.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -747,7 +747,7 @@ See also: notes under <a class="el" href="group__mbx.html#ga16">_rt_mbx_send_unt
     <td>
 
 <p>
-Sends a message with absolute timeout. 
+Sends a message with absolute timeout.
 <p>
 rt_mbx_send_until sends a message <em>msg</em> of <em>msg_size</em> bytes to the mailbox <em>mbx</em>. The caller will be blocked until all bytes of message is enqueued, timeout expires or an error occurs.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -810,7 +810,7 @@ See also: notes under <a class="el" href="group__mbx.html#ga17">_rt_mbx_send_tim
     <td>
 
 <p>
-Sends as many bytes as possible without blocking the calling task. 
+Sends as many bytes as possible without blocking the calling task.
 <p>
 rt_mbx_send_wp atomically sends as many bytes of message <em>msg</em> as possible to the mailbox <em>mbx</em> then returns immediately.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -866,7 +866,7 @@ rt_mbx_send_wp atomically sends as many bytes of message <em>msg</em> as possibl
     <td>
 
 <p>
-Initializes a specifically typed (fifo queued, priority queued or resource queued) mailbox identified by a name. 
+Initializes a specifically typed (fifo queued, priority queued or resource queued) mailbox identified by a name.
 <p>
 _rt_typed_named_mbx_init initializes a mailbox of type <em>qtype</em> and size <em>size</em> identified by <em>name</em>. Named mailboxed are useful for use among different processes, kernel/user space and in distributed applications, see netrpc.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -905,7 +905,7 @@ See also: notes under <a class="el" href="group__lxrt.html#ga381">rt_mbx_init()<
     <td>
 
 <p>
-Deletes a mailbox. 
+Deletes a mailbox.
 <p>
 rt_mbx_delete removes a mailbox previously created with <a class="el" href="group__lxrt.html#ga381">rt_mbx_init()</a>.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -953,7 +953,7 @@ rt_mbx_delete removes a mailbox previously created with <a class="el" href="grou
     <td>
 
 <p>
-Initializes a mailbox. 
+Initializes a mailbox.
 <p>
 rt_mbx_init initializes a mailbox of size <em>size</em>. <em>mbx</em> must point to a user allocated MBX structure. Using mailboxes is a flexible method for inter task communications. Tasks are allowed to send arbitrarily sized messages by using any mailbox buffer size. There is even no need to use a buffer sized at least as the largest message you envisage, even if efficiency is likely to suffer from such a decision. However if you expect a message larger than the average message size very rarely you can use a smaller buffer without much loss of efficiency. In such a way you can set up your own mailbox usage protocol, e.g. using fix sized messages with a buffer that is an integer multiple of such a size guarantees maximum efficiency by having each message sent/received atomically to/from the mailbox. Multiple senders and receivers are allowed and each will get the service it requires in turn, according to its priority. Thus mailboxes provide a flexible mechanism to allow you to freely implement your own policy.<p>
 rt_mbx_init is equivalent to rt_typed_mbx_init(mbx, size, PRIO_Q).<p>
@@ -994,7 +994,7 @@ See also: notes under <a class="el" href="group__mbx.html#ga10">rt_typed_mbx_ini
     <td>
 
 <p>
-Deletes a named mailbox. 
+Deletes a named mailbox.
 <p>
 rt_named_mbx_delete removes a mailbox previously created with <a class="el" href="group__mbx.html#ga24">_rt_typed_named_mbx_init()</a>.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -1049,7 +1049,7 @@ See also: notes under <a class="el" href="group__mbx.html#ga12">rt_mbx_delete()<
     <td>
 
 <p>
-Initializes a fully typed mailbox queueing tasks according to the specified type. 
+Initializes a fully typed mailbox queueing tasks according to the specified type.
 <p>
 rt_typed_mbx_init initializes a mailbox of size <em>size</em>. <em>mbx</em> must point to a user allocated MBX structure. Tasks are queued in FIFO order (FIFO_Q), priority order (PRIO_Q) or resource order (RES_Q).<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>

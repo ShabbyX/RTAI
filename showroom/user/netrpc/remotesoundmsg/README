@@ -1,12 +1,12 @@
 This test shows the use of RTAI distributed processing in user space.
-It implements the sound example, found both in kernel space examples and in 
+It implements the sound example, found both in kernel space examples and in
 LXRT, on one/two machines. So you can have it played everywhere under control
 of a remote process. The sound track is passed between tasks by using RTAI
 extended messages. See example usound for an implementation based on a mailbox.
 
-There are three speaker implementations: 
+There are three speaker implementations:
 - one using generic rt_receivex/rt_returnx (speaker1.c);
-- one using specific remote RT_receivex/RT_returnx (speaker2.c); 
+- one using specific remote RT_receivex/RT_returnx (speaker2.c);
 - one using the optimized specific receive on the local stub (speaker3.c).
 
 They aim at clarifying the technicalities explained in net_rpc/README.
@@ -17,6 +17,6 @@ make
 ./run[1|2|3], or simply ./run to run them all, type ENTER to end
 ./rem, after ending it by pressing ENTER.
 
-To run them on different machines comment out the line executing the process 
+To run them on different machines comment out the line executing the process
 to be run on onother node, in files run/Run, and set the appropriate dotted
 decimal notation IP address of the speaker task on its command line.

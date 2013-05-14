@@ -50,7 +50,7 @@ int main(void)
 
 	mytask_name = TASKBASE;
 	mytask_indx = 0;
-	sem = rt_sem_init(10000, 0); 
+	sem = rt_sem_init(10000, 0);
 
 	for (i = 1; i < NTASKS; i++) {
 		if (!fork()) {
@@ -64,7 +64,7 @@ int main(void)
 	if( sched_setscheduler( 0, SCHED_FIFO, &mysched ) == -1 ) {
 		printf("ERROR IN SETTING THE POSIX SCHEDULER\n");
 		exit(1);
- 	}       
+ 	}
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
  	if (!(mytask = rt_task_init(mytask_name, 1, 0, 0))) {

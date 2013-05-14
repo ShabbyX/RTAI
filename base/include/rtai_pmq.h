@@ -2,7 +2,7 @@
  * pqueues interface for Real Time Linux.
  *
  * Copyright (©) 1999 Zentropic Computing, All rights reserved
- *  
+ *
  * Authors:         Trevor Woolven (trevw@zentropix.com)
  *
  * Original date:   Thu 15 Jul 1999
@@ -43,7 +43,7 @@
 #define MQ_MIN_MSG_PRIORITY 0			/* Lowest priority message */
 #define MQ_MAX_MSG_PRIORITY MQ_PRIO_MAX		/* Highest priority message */
 
-#define MAX_PQUEUES     4       /* Maximum number of message queues in module, 
+#define MAX_PQUEUES     4       /* Maximum number of message queues in module,
 				   remember to update rtai_mq.h too.          */
 #define MAX_MSGSIZE     50      /* Maximum message size per queue (bytes) */
 #define MAX_MSGS        10      /* Maximum number of messages per queue */
@@ -260,7 +260,7 @@ RTAI_PROTO(mqd_t, mq_open,(char *mq_name, int oflags, mode_t permissions, struct
 	mqd_t ret;
 	struct {char *mq_name; long oflags; long permissions; struct mq_attr *mq_attr; long namesize, attrsize; long space; } arg = { mq_name, oflags, permissions, mq_attr, strlen(mq_name) + 1, sizeof(struct mq_attr), 1 };
 	if ((ret = (mqd_t)rtai_lxrt(MQIDX, SIZARG, MQ_OPEN, &arg).i[LOW]) >= 0) {
-		// Prepare notify task 
+		// Prepare notify task
 		if (oflags & O_NOTIFY_NP)	{
 			rt_request_signal_mq (ret);
 		}

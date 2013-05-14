@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #include <rtai_msg.h>
 
 int main (int argc, char **argv)
-{ 
+{
 	rt_allow_nonroot_hrt();
 	rt_task_init_schmod(nam2num("LOOPER"), 1, 0, 0, SCHED_FIFO, 0x2);
 	rt_make_hard_real_time();
@@ -40,5 +40,5 @@ int main (int argc, char **argv)
 	}
 	rt_make_soft_real_time();
 	rt_task_delete(NULL);
-	return 0; 
+	return 0;
 }

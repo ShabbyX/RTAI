@@ -3,7 +3,7 @@ function [x,y,typ] = rtai4_sinus(job,arg1,arg2)
   select job
   case 'plot' then
     exprs=arg1.graphics.exprs;
-    
+
     standard_draw(arg1)
   case 'getinputs' then
     [x,y,typ]=standard_inputs(arg1)

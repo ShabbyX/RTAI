@@ -80,13 +80,13 @@ static struct desc_struct rtai_rtc_timer_sysvec;
 
 #endif /* CONFIG_RTAI_DONT_DISPATCH_CORE_IRQS */
 
-/* 
+/*
  * NOTE FOR USE IN RTAI_TRIOSS.
  * "rtc_freq" must be a power of 2 & (MIN_RTC_FREQ <= rtc_freq <= MAX_RTC_FREQ).
- * So the best thing to do is to load this module and your skin of choice 
+ * So the best thing to do is to load this module and your skin of choice
  * setting "rtc_freq" in this module and "rtc_freq" in the skin specific module
  * to the very same power of 2 that best fits your needs.
- */ 
+ */
 
 static void rtc_handler(int irq, int rtc_freq)
 {
@@ -116,9 +116,9 @@ static void fusion_rtc_handler(void)
 		hal_pend_domain_uncond(RTAI_APIC_TIMER_VECTOR, fusion_domain, cpuid);
 	}
 #ifdef CONFIG_SMP
-	send_IPI_allbutself(RESCHEDULE_VECTOR);  // any unharmful ipi suffices 
+	send_IPI_allbutself(RESCHEDULE_VECTOR);  // any unharmful ipi suffices
 #endif
-#else 
+#else
 	hal_pend_domain_uncond(RTAI_TIMER_8254_IRQ, fusion_domain, rtai_cpuid());
 #endif
 }

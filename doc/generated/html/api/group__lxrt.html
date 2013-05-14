@@ -7,12 +7,12 @@
 <div class="qindex">  <form class="search" action="search.php" method="get">
 <a class="qindex" href="main.html">Main&nbsp;Page</a> | <a class="qindex" href="modules.html">Modules</a> | <a class="qindex" href="files.html">File&nbsp;List</a> | <a class="qindex" href="globals.html">Globals</a> | <a class="qindex" href="pages.html">Related&nbsp;Pages</a>  | <span class="search"><u>S</u>earch&nbsp;for&nbsp;<input class="search" type="text" name="query" value="" size="20" accesskey="s"/></span></form></div>
 <h1>LXRT module.</h1><hr><a name="_details"></a><h2>Detailed Description</h2>
-LXRT services (soft-hard real time in user space). 
+LXRT services (soft-hard real time in user space).
 <p>
 LXRT is a module that allows you to use all the services made available by RTAI and its schedulers in user space, both for soft and hard real time. At the moment it is a feature youll find nowhere but with RTAI. For an explanation of how it works see <a class="el" href="lxrt_faq.html">Pierre Cloutiers LXRT-INFORMED FAQs</a>, and the explanation of <a class="el" href="whatis_lxrt.html">the implementation of hard real time in user space</a> (contributed by: Pierre Cloutier, Paolo Mantegazza, Steve Papacharalambous).<p>
 LXRT-INFORMED should be the production version of LXRT, the latter being the development version. So it can happen that LXRT-INFORMED could be lagging slightly behind LXRT. If you need to hurry to the services not yet ported to LXRT-INFORMED do it without pain. Even if you are likely to miss some useful services found only in LXRT-INFORMED, we release only when a feature is relatively stable.<p>
 From what said above there should be no need for anything specific as all the functions you can use in user space have been already documented in this manual. There are however a few exceptions that need to be explained.<p>
-Note also that, as already done for the shared memory services in user space, the function calls for Linux processes are inlined in the file rtai_lxrt.h. This approach has been preferred to a library since it is simpler, more effective, the calls are short and simple so that, even if it is likely that there can be more than just a few per process, they could never be charged of making codes too bigger. Also common to shared memory is the use of unsigned int to identify LXRT objects. If you want to use string identifiers the same support functions, i.e. <a class="el" href="rtai__nam2num_8h.html#a0">nam2num()</a> and <a class="el" href="rtai__nam2num_8h.html#a1">num2nam()</a>, can be used. 
+Note also that, as already done for the shared memory services in user space, the function calls for Linux processes are inlined in the file rtai_lxrt.h. This approach has been preferred to a library since it is simpler, more effective, the calls are short and simple so that, even if it is likely that there can be more than just a few per process, they could never be charged of making codes too bigger. Also common to shared memory is the use of unsigned int to identify LXRT objects. If you want to use string identifiers the same support functions, i.e. <a class="el" href="rtai__nam2num_8h.html#a0">nam2num()</a> and <a class="el" href="rtai__nam2num_8h.html#a1">num2nam()</a>, can be used.
 <p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
@@ -212,7 +212,7 @@ It is important to remark that the returned task pointer cannot be used directly
     <td>
 
 <p>
-Allows a non root user to use the Linux POSIX soft real time process management and memory lock functions, and allows it to do any input-output operation from user space. 
+Allows a non root user to use the Linux POSIX soft real time process management and memory lock functions, and allows it to do any input-output operation from user space.
 <p>
 Only the process itself can use this functions, it is not possible to impose the related transition from another process.     </td>
   </tr>
@@ -304,7 +304,7 @@ rt_drg_on_name deregisters the object identified by its <em>name</em>.<p>
     <td>
 
 <p>
-Get an object address by its name. 
+Get an object address by its name.
 <p>
 rt_get_adr returns the address associated to <em>name</em>.<p>
 <dl compact><dt><b>Returns:</b></dt><dd>the address associated to <em>name</em> on success, 0 on failure </dd></dl>
@@ -336,7 +336,7 @@ rt_get_adr returns the address associated to <em>name</em>.<p>
     <td>
 
 <p>
-Get an object name by its address. 
+Get an object name by its address.
 <p>
 rt_get_name returns the name pointed by the address <em>adr</em>.<p>
 <dl compact><dt><b>Returns:</b></dt><dd>the identifier pointed by the address <em>adr</em> on success, 0 on failure. </dd></dl>
@@ -368,7 +368,7 @@ rt_get_name returns the name pointed by the address <em>adr</em>.<p>
     <td>
 
 <p>
-Give a Linux process, or pthread, hard real time execution capabilities allowing full kernel preemption. 
+Give a Linux process, or pthread, hard real time execution capabilities allowing full kernel preemption.
 <p>
 rt_make_hard_real_time makes the soft Linux POSIX real time process, from which it is called, a hard real time LXRT process. It is important to remark that this function must be used only with soft Linux POSIX processes having their memory locked in memory. See Linux man pages.<p>
 Only the process itself can use this functions, it is not possible to impose the related transition from another process.<p>
@@ -401,7 +401,7 @@ After all it is pure nonsense to use a non hard real time Operating System, i.e.
     <td>
 
 <p>
-Return a hard real time Linux process, or pthread to the standard Linux behavior. 
+Return a hard real time Linux process, or pthread to the standard Linux behavior.
 <p>
 rt_make_soft_real_time returns to soft Linux POSIX real time a process, from which it is called, that was made hard real time by a call to rt_make_hard_real_time.<p>
 Only the process itself can use this functions, it is not possible to impose the related transition from another process.     </td>
@@ -505,7 +505,7 @@ rt_register registers the object to be identified with <em>name</em>, which is p
     <td>
 
 <p>
-Create a new real time task in user space. 
+Create a new real time task in user space.
 <p>
 rt_task_init provides a real time buddy, also called proxy, task to the Linux process that wants to access RTAI scheduler services. It needs no task function as none is used, but it does need to setup a task structure and initialize it appropriately as the provided services are carried out as if the Linux process has become an RTAI task. Because of that it requires less arguments and returns the pointer to the task that is to be used in related calls.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>

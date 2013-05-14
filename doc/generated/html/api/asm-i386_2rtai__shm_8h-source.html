@@ -25,7 +25,7 @@
 00015 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00016 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00017 <span class="comment"> */</span>
-00018 
+00018
 00019 <span class="preprocessor">#ifndef _RTAI_ASM_I386_SHM_H</span>
 00020 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_ASM_I386_SHM_H</span>
 00021 <span class="preprocessor"></span>
@@ -33,11 +33,11 @@
 00023 <span class="preprocessor">#include &lt;asm/io.h&gt;</span>
 00024 <span class="preprocessor">#include &lt;asm/rtai_vectors.h&gt;</span>
 00025 <span class="preprocessor">#include &lt;rtai_wrappers.h&gt;</span>
-00026 
+00026
 00027 <span class="preprocessor">#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,6,0)</span>
 00028 <span class="preprocessor"></span><span class="preprocessor">#define VMALLOC_VMADDR(x) ((unsigned long)(x))</span>
 00029 <span class="preprocessor"></span><span class="preprocessor">#endif </span><span class="comment">/* &gt;= 2.6.0 */</span>
-00030 
+00030
 00031 <span class="preprocessor">#ifndef __KERNEL__</span>
 00032 <span class="preprocessor"></span>
 00033 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> rtai_shmrq(<span class="keywordtype">int</span> srq, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> args)
@@ -46,18 +46,18 @@
 00036         RTAI_DO_TRAP(RTAI_SYS_VECTOR, retval, srq, args);
 00037         <span class="keywordflow">return</span> retval;
 00038 }
-00039 
+00039
 00040 <span class="preprocessor">#endif </span><span class="comment">/* __KERNEL__ */</span>
-00041 
+00041
 00042 <span class="comment">/* convert virtual user memory address to physical address */</span>
 00043 <span class="comment">/* (virt_to_phys only works for kmalloced kernel memory) */</span>
-00044 
+00044
 00045 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> uvirt_to_kva(pgd_t *pgd, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> adr)
 00046 {
 00047         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> ret = 0UL;
 00048         pmd_t *pmd;
 00049         pte_t *ptep, pte;
-00050 
+00050
 00051         <span class="keywordflow">if</span>(!pgd_none(*pgd)) {
 00052                 pmd = pmd_offset(pgd, adr);
 00053                 <span class="keywordflow">if</span> (!pmd_none(*pmd)) {
@@ -75,39 +75,39 @@
 00065         }
 00066         <span class="keywordflow">return</span> ret;
 00067 }
-00068 
+00068
 00069 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> uvirt_to_bus(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> adr)
 00070 {
 00071         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> kva, ret;
-00072 
+00072
 00073         kva = uvirt_to_kva(pgd_offset(current-&gt;mm, adr), adr);
 00074         ret = virt_to_bus((<span class="keywordtype">void</span> *)kva);
-00075 
+00075
 00076         <span class="keywordflow">return</span> ret;
 00077 }
-00078 
+00078
 00079 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> kvirt_to_bus(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> adr)
 00080 {
 00081         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> va, kva, ret;
-00082 
+00082
 00083         va = VMALLOC_VMADDR(adr);
 00084         kva = uvirt_to_kva(pgd_offset_k(va), va);
 00085         ret = virt_to_bus((<span class="keywordtype">void</span> *)kva);
-00086 
+00086
 00087         <span class="keywordflow">return</span> ret;
 00088 }
-00089 
+00089
 00090 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> kvirt_to_pa(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> adr)
 00091 {
 00092         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> va, kva, ret;
-00093 
+00093
 00094         va = VMALLOC_VMADDR(adr);
 00095         kva = uvirt_to_kva(pgd_offset_k(va), va);
 00096         ret = __pa(kva);
-00097 
+00097
 00098         <span class="keywordflow">return</span> ret;
 00099 }
-00100 
+00100
 00101 <span class="preprocessor">#endif  </span><span class="comment">/* !_RTAI_ASM_I386_SHM_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

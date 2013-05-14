@@ -25,14 +25,14 @@
 00015 <span class="comment">License along with this library; if not, write to the Free Software</span>
 00016 <span class="comment">Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.</span>
 00017 <span class="comment">*/</span>
-00018 
+00018
 00019 <span class="preprocessor">#ifndef _RTAI_ASM_PPC_FPU_H_</span>
 00020 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_ASM_PPC_FPU_H_</span>
 00021 <span class="preprocessor"></span>
 00022 <span class="preprocessor">#include &lt;asm/processor.h&gt;</span>
-00023 
+00023
 00024 <span class="keyword">typedef</span> <span class="keyword">struct </span>ppc_fpu_env { <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> fpu_reg[66]; } FPU_ENV;
-00025 
+00025
 00026 <span class="preprocessor">#define save_cr0_and_clts(x)</span>
 00027 <span class="preprocessor"></span><span class="preprocessor">#define restore_cr0(x)</span>
 00028 <span class="preprocessor"></span><span class="preprocessor">#define enable_fpu()</span>
@@ -44,7 +44,7 @@
 00034 <span class="comment"> * always enable FP, i.e. MSR flag FP set to 1, for real time tasks and accept default actions for faulty FLOPs, i.e. MSR </span>
 00035 <span class="comment"> * flags FE0 and FE1 are set to zero.</span>
 00036 <span class="comment"> */</span>
-00037 
+00037
 00038 <span class="preprocessor">#define stringize(a) #a</span>
 00039 <span class="preprocessor"></span><span class="preprocessor">#define str(a) stringize(a)</span>
 00040 <span class="preprocessor"></span>
@@ -149,7 +149,7 @@
 00139 <span class="preprocessor"></span>
 00140 <span class="preprocessor">#endif</span>
 00141 <span class="preprocessor"></span>
-00142 
+00142
 00143 <span class="preprocessor">#endif</span>
 00144 <span class="preprocessor"></span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;

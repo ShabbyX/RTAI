@@ -16,8 +16,8 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-/* 
-Simple SHM demo program: The application program "display.c"  
+/*
+Simple SHM demo program: The application program "display.c"
 lists a counter incremented by the RTAI kernel modue "shm.c".
 */
 

@@ -27,8 +27,8 @@
 00017 <span class="comment"> *  along with this program; if not, write to the Free Software</span>
 00018 <span class="comment"> *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</span>
 00019 <span class="comment"> */</span>
-00020 
-00021 
+00020
+00021
 00022 <span class="comment">/*</span>
 00023 <span class="comment"> *   Default color definitions</span>
 00024 <span class="comment"> *</span>
@@ -153,7 +153,7 @@
 00143 <span class="preprocessor"></span><span class="preprocessor">#define DARROW_HL                    TRUE</span>
 00144 <span class="preprocessor"></span>
 00145 <span class="comment">/* End of default color definitions */</span>
-00146 
+00146
 00147 <span class="preprocessor">#define C_ATTR(x,y)                  ((x ? A_BOLD : 0) | COLOR_PAIR((y)))</span>
 00148 <span class="preprocessor"></span><span class="preprocessor">#define COLOR_NAME_LEN               10</span>
 00149 <span class="preprocessor"></span><span class="preprocessor">#define COLOR_COUNT                  8</span>
@@ -161,12 +161,12 @@
 00151 <span class="comment">/*</span>
 00152 <span class="comment"> * Global variables</span>
 00153 <span class="comment"> */</span>
-00154 
+00154
 00155 <span class="keyword">typedef</span> <span class="keyword">struct </span>{
 00156     <span class="keywordtype">char</span> name[COLOR_NAME_LEN];
 00157     <span class="keywordtype">int</span> value;
 00158 } color_names_st;
-00159 
+00159
 00160 <span class="keyword">extern</span> color_names_st color_names[];
 00161 <span class="keyword">extern</span> <span class="keywordtype">int</span> color_table[][3];
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:51 2005 for RTAI API by&nbsp;

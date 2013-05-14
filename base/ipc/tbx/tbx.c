@@ -326,7 +326,7 @@ static int _broadcast(RT_MSGQ *mq, void *msg, int msg_size, int msgpri, int broa
 		rt_copy_from_user(p ? p : msg_ptr->msg, msg, msg_size);
 	}
 	rt_typed_sem_init(&mq->broadcast, broadcast + 1, CNT_SEM | PRIO_Q);
-	msg_ptr->hdr.broadcast = broadcast; 
+	msg_ptr->hdr.broadcast = broadcast;
 	flags = rt_spin_lock_irqsave(&mq->lock);
 	enq_msg(mq, &msg_ptr->hdr);
 	rt_spin_unlock_irqrestore(flags, &mq->lock);
@@ -417,13 +417,13 @@ struct rt_native_fun_entry rt_msg_queue_entries[] = {
 extern int set_rt_fun_entries(struct rt_native_fun_entry *entry);
 extern void reset_rt_fun_entries(struct rt_native_fun_entry *entry);
 
-int __rtai_msg_queue_init(void) 
+int __rtai_msg_queue_init(void)
 {
 	printk(KERN_INFO "RTAI[rtai_msgq]: loaded.\n");
 	return set_rt_fun_entries(rt_msg_queue_entries);
 }
 
-void __rtai_msg_queue_exit(void) 
+void __rtai_msg_queue_exit(void)
 {
 	reset_rt_fun_entries(rt_msg_queue_entries);
 	printk(KERN_INFO "RTAI[rtai_msgq]: unloaded.\n");

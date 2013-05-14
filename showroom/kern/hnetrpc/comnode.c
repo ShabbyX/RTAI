@@ -45,7 +45,7 @@ int init_module(void)
 	}
 	for (i = 0; i < NUM_TASKS; ++i) {
 		sems[i] = rt_named_sem_init(sem[i], 0);
-	}     
+	}
 	print_sem = rt_typed_named_sem_init("PRTSEM", 1, BIN_SEM);
 	return 0;
 }

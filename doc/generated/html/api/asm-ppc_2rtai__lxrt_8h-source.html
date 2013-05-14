@@ -27,18 +27,18 @@
 00017 <span class="comment"> * License along with this library; if not, write to the Free Software</span>
 00018 <span class="comment"> * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.</span>
 00019 <span class="comment"> */</span>
-00020 
+00020
 00021 <span class="preprocessor">#ifndef _RTAI_ASM_PPC_LXRT_H</span>
 00022 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_ASM_PPC_LXRT_H</span>
 00023 <span class="preprocessor"></span>
 00024 <span class="preprocessor">#include &lt;asm/rtai_vectors.h&gt;</span>
-00025 
+00025
 00026 <span class="preprocessor">#define LOW 1</span>
 00027 <span class="preprocessor"></span>
 00028 <span class="preprocessor">#ifndef __KERNEL__</span>
 00029 <span class="preprocessor"></span>
 00030 <span class="keyword">union </span>rtai_lxrt_t { RTIME rt; <span class="keywordtype">int</span> i[2]; <span class="keywordtype">void</span> *v[2]; };
-00031 
+00031
 00032 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">union </span>rtai_lxrt_t rtai_lxrt(short dynx, short lsize, unsigned long srq, void *arg)
 00033 {
 00034     <span class="comment">/* LXRT is not yet available on PPC. */</span>
@@ -47,9 +47,9 @@
 00037     retval.i[1] = -1;
 00038     <span class="keywordflow">return</span> retval;
 00039 }
-00040 
+00040
 00041 <span class="preprocessor">#endif </span><span class="comment">/* !__KERNEL__ */</span>
-00042 
+00042
 00043 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_ASM_PPC_LXRT_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

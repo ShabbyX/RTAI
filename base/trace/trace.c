@@ -107,7 +107,7 @@ int rt_unregister_tracer(tracer_call pmTraceFunction)
  *   -ENOMEDIUM, there isn't a registered tracer
  *   -EBUSY, tracing hasn't started yet
  *******************************************************/
-int rt_trace_event(uint8_t  pmEventID, 
+int rt_trace_event(uint8_t  pmEventID,
 		   void*    pmEventStruct)
 {
   /* Is there a tracer registered */

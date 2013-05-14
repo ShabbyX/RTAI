@@ -10,7 +10,7 @@
 <small>
 [<a class="el" href="group__fifos.html">RTAI FIFO module</a>]</small>
 </h1><hr><a name="_details"></a><h2>Detailed Description</h2>
-RTAI FIFO communication functions. 
+RTAI FIFO communication functions.
 <p>
 RTAI fifos maintain full compatibility with those available in NMT_RTLinux while adding many other useful services that avoid the clumsiness of Unix/Linux calls. So if you need portability you should bent yourself to the use of select for timing out IO operations, while if you have not to satisfy such constraints use the available simpler, and more direct, RTAI fifos specific services.<p>
 In the table below the standard Unix/Linux services in user space are enclosed in []. See standard Linux man pages if you want to use them, they need not be explained here.<p>
@@ -44,7 +44,7 @@ In the table below the standard Unix/Linux services in user space are enclosed i
 In Linux, fifos have to be created by : <div class="fragment"><pre class="fragment"> $ mknod /dev/rtf&lt;x&gt; c 150 &lt;x&gt; </pre></div>where &lt;x&gt; is the minor device number, from 0 to 63; thus on the Linux side RTL fifos can be used as standard character devices. As it was said above to use standard IO operations on such devices there is no need to explain anything, go directly to Linux man pages. RTAI fifos specific services available in kernel and user space are instead explained here.<p>
 What is important to remember is that in the user space side you address fifos through the file descriptor you get at fifo device opening while in kernel space you directly address them by their minor number. So you will mate the <em>fd</em> you get in user space by using <div class="fragment"><pre class="fragment"> open(/dev/rtfxx,...) </pre></div>to the integer <code>xx</code> you will use in kernel space.<p>
 <dl compact><dt><b>Note:</b></dt><dd>RTAI fifos should be used just with applications that use only real time interrupt handlers, so that no RTAI scheduler is installed, or if you need compatibility with NMT RTL. If you are working with any RTAI scheduler already installed you are strongly invited to think about avoiding them, use LXRT instead.</dd></dl>
-It is far better and flexible, and if you really like it the fifos way mailboxes are a one to one, more effective, substitute. After all RTAI fifos are implemented on top of them. 
+It is far better and flexible, and if you really like it the fifos way mailboxes are a one to one, more effective, substitute. After all RTAI fifos are implemented on top of them.
 <p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>

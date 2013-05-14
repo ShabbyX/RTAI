@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 
 #ifndef __BITS_H__
 #define __BITS_H__
@@ -31,7 +31,7 @@ namespace RTAI {
 /**
  * Bits a wrapper class around the RTAI BITS
  */
-class Bits 
+class Bits
 {
 public:
 	/**
@@ -66,7 +66,7 @@ public:
 	Bits();
 	/**
 	 *Contructor
-	 *@param mask The masked 
+	 *@param mask The masked
 	 * This constructor will automaticly call init
 	 */
 	Bits( unsigned long mask );
@@ -87,7 +87,7 @@ public:
 	unsigned long get_bits();
 	/**
 	 * Reset the bits
-	 * @param mask the mask 
+	 * @param mask the mask
 	 * @return ?
 	 */
 	int reset( unsigned long mask );
@@ -95,7 +95,7 @@ public:
 	 * Signal the bits
 	 * @param setfun The set function
 	 * @param masks the mask
-	 * @return ? 
+	 * @return ?
 	 */
 	unsigned long signal( Function setfun, unsigned long masks );
 	/**
@@ -106,7 +106,7 @@ public:
 	 * @param exitmask ?
 	 * @return ?
 	 */
-	int wait(Function testfun, unsigned long testmasks, 
+	int wait(Function testfun, unsigned long testmasks,
 		Function exitfun, unsigned long exitmasks,
 		unsigned long *resulting_mask );
 	/**
@@ -117,7 +117,7 @@ public:
 	 * @param exitmasks
 	 * @return ?
 	 */
-	int wait_if(Function testfun, unsigned long testmasks, 
+	int wait_if(Function testfun, unsigned long testmasks,
 		Function exitfun, unsigned long exitmasks,
 		unsigned long *resulting_mask );
 	/**
@@ -128,7 +128,7 @@ public:
 	 * @param exitmasks
 	 * @return ?
 	 */
-	int wait_until(Function testfun, unsigned long testmasks, 
+	int wait_until(Function testfun, unsigned long testmasks,
 		Function exitfun, unsigned long exitmasks, const Count& time,
 		unsigned long *resulting_mask );
 	/**
@@ -139,7 +139,7 @@ public:
 	 * @param exitmasks
 	 * @return ?
 	 */
-	int wait_timed(Function testfun, unsigned long testmasks, 
+	int wait_timed(Function testfun, unsigned long testmasks,
 		Function exitfun, unsigned long exitmasks, const Count& delay,
 		unsigned long *resulting_mask);
 protected:

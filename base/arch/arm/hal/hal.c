@@ -27,7 +27,7 @@
  *   Copyright (c) 2005 Stefano Gafforelli (stefano.gafforelli@tiscali.it)
  *   Copyright (c) 2005 Luca Pizzi (lucapizzi@hotmail.com)
  *
- * RTAI/ARM over Adeos : 
+ * RTAI/ARM over Adeos :
  *   Copyright (C) 2007 Adeneo
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -137,7 +137,7 @@ struct proc_dir_entry	*rtai_proc_root = NULL;
 
 #ifdef CONFIG_RTAI_SCHED_ISR_LOCK
 static void (*rtai_isr_hook)(int cpuid);
-#endif 
+#endif
 
 #define CHECK_KERCTX()
 
@@ -266,7 +266,7 @@ void rt_release_rtc(void)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the functions below do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -680,7 +680,7 @@ static int rtai_trap_fault (unsigned event, void *evdata)
 		0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0
-	}; 
+	};
 
 	TRACE_RTAI_TRAP_ENTRY(evdata->event, 0);
 

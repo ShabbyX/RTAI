@@ -18,9 +18,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-/* 
-ACKNOWLEDGMENTS (LIKELY JUST A PRELIMINARY DRAFT): 
-- Steve Papacharalambous (stevep@zentropix.com) has contributed an informative 
+/*
+ACKNOWLEDGMENTS (LIKELY JUST A PRELIMINARY DRAFT):
+- Steve Papacharalambous (stevep@zentropix.com) has contributed an informative
   proc filesystem procedure.
 */
 
@@ -91,8 +91,8 @@ static void rtai_proc_unregister(void);
 #define IRQ_DESC irq_desc
 
 /*
- * This allows LINUX to handle IRQs requested with the function 
- * rt_request_global_irq(). By default it's off for compatibility  
+ * This allows LINUX to handle IRQs requested with the function
+ * rt_request_global_irq(). By default it's off for compatibility
  * with the i386 port.
  */
 #undef GLOBAL_PEND_LINUX_IRQ
@@ -189,7 +189,7 @@ static inline void unmap_ppc_irq(int irq)
 			global_irq[rirq].ppc_irq = 0;
 			rtai_irq[irq] = -1;
 		} else {
-			printk("unmap_ppc_irq: oops, conistency error!\n"); 
+			printk("unmap_ppc_irq: oops, conistency error!\n");
 		}
 	} else {
 		printk("unmap_ppc_irq: IRQ %d is not mapped!\n", irq);
@@ -243,11 +243,11 @@ static struct cpu_own_status {
 	volatile unsigned int activ_irqs;
 	void (*rt_timer_handler)(void);
 	void (*trailing_irq_handler)(int irq, void *dev_id, struct pt_regs *regs);
-} processor[NR_RT_CPUS]; 
+} processor[NR_RT_CPUS];
 
 #ifdef CONFIG_SMP
 
-/* Our interprocessor messaging */ 
+/* Our interprocessor messaging */
 
 void send_ipi_shorthand(unsigned int shorthand, int irq)
 {
@@ -331,7 +331,7 @@ static inline unsigned long hard_lock_all(void)
 #endif
 
 static void linux_cli(void)
-{ 
+{
 	set_intr_flag(processor[hard_cpu_id()].intr_flag,0);
 }
 
@@ -412,7 +412,7 @@ static void run_pending_irqs(void)
 			}
 		}
 		clear_bit(cpuid, &global.cpu_in_sti);
-	} 
+	}
 	/* We _should_ do this, but it doesn't work correctly */
 	//if(atomic_read(&ppc_n_lost_interrupts))do_lost_interrupts(MSR_EE);
 }
@@ -549,7 +549,7 @@ static int dispatch_irq(struct pt_regs *regs, int isfake)
 
 		TRACE_RTAI_GLOBAL_IRQ_ENTRY(irq, !user_mode(regs));
 
-		if ((rirq = rtai_irq[irq]) < 0) { 
+		if ((rirq = rtai_irq[irq]) < 0) {
 			rirq = map_global_ppc_irq(irq); /* not yet mapped */
 		}
 
@@ -603,7 +603,7 @@ static int dispatch_timer_irq(struct pt_regs *regs)
 {
 	int cpuid;
 	
-	/* 
+	/*
 	 * TRACE_RTAI_TRAP_ENTRY is not yet handled correctly by LTT.
 	 * Therefore we treat the decrementer trap like an IRQ 255
 	 */
@@ -635,7 +635,7 @@ static unsigned long long (*idt_table[MAX_IDT_VEC - MIN_IDT_VEC + 1])(int srq, u
 
 static int dispatch_srq(struct pt_regs *regs)
 {
-	unsigned long vec, srq, whatever; 
+	unsigned long vec, srq, whatever;
 	long long retval;
 
 	if (regs->gpr[0] && regs->gpr[0] == ((srq = regs->gpr[3]) + (whatever = regs->gpr[4]))) {
@@ -732,7 +732,7 @@ static void trpd_end_irq(unsigned int irq)
 	rt_spin_unlock_irq(&global.ic_lock);
 }
 
-static struct hw_interrupt_type trapped_linux_irq_type = { 
+static struct hw_interrupt_type trapped_linux_irq_type = {
 	typename:	"RT SPVISD",
 	startup:	rt_startup_irq,
 	shutdown:	rt_shutdown_irq,
@@ -744,7 +744,7 @@ static struct hw_interrupt_type trapped_linux_irq_type = {
 };
 
 #ifndef GLOBAL_PEND_LINUX_IRQ
-static struct hw_interrupt_type real_time_irq_type = { 
+static struct hw_interrupt_type real_time_irq_type = {
 	typename:	"REAL TIME",
 	startup:	(unsigned int (*)(unsigned int))do_nothing_picfun,
 	shutdown:	do_nothing_picfun,
@@ -795,8 +795,8 @@ int rt_request_global_irq(unsigned int irq, void (*handler)(unsigned int irq))
 	}
 	global_irq[rirq].handler = handler;
 #ifndef GLOBAL_PEND_LINUX_IRQ
-	/* 
-	 * If you use rt_pend_linux_irq(), this might not be what 
+	/*
+	 * If you use rt_pend_linux_irq(), this might not be what
 	 * you expect or want especially with level sensitive IRQ.
 	 * We keep this part mainly for compatibility with i386.
 	 */
@@ -807,8 +807,8 @@ int rt_request_global_irq(unsigned int irq, void (*handler)(unsigned int irq))
 	return 0;
 }
 
-int rt_request_global_irq_ext(unsigned int irq, 
-			      int (*handler)(unsigned int irq, unsigned long data), 
+int rt_request_global_irq_ext(unsigned int irq,
+			      int (*handler)(unsigned int irq, unsigned long data),
 			      unsigned long data)
 {
 	int rirq, ret;
@@ -853,15 +853,15 @@ int rt_free_global_irq(unsigned int irq)
 	global_irq[rirq].dest_status = 0;
 #endif
 	global_irq[rirq].handler = 0;
-	global_irq[rirq].ext = 0; 
-	global_irq[rirq].irq_count = 0; 
+	global_irq[rirq].ext = 0;
+	global_irq[rirq].irq_count = 0;
 	hard_unlock_all(flags);
 
 	return 0;
 }
 
 int rt_request_linux_irq(unsigned int irq,
-	void (*linux_handler)(int irq, void *dev_id, struct pt_regs *regs), 
+	void (*linux_handler)(int irq, void *dev_id, struct pt_regs *regs),
 	char *linux_handler_id, void *dev_id)
 {
 	unsigned long flags;
@@ -970,8 +970,8 @@ int rt_free_srq(unsigned int srq)
 		rt_spin_unlock_irqrestore(flags, &global.data_lock);
 		return -EINVAL;
 	}
-	sysrq[srq].rtai_handler = 0; 
-	sysrq[srq].user_handler = 0; 
+	sysrq[srq].rtai_handler = 0;
+	sysrq[srq].user_handler = 0;
 	sysrq[srq].label = 0;
 	for (srq = 2; srq < NR_SYSRQS; srq++) {
 		if (sysrq[srq].user_handler) {
@@ -1023,9 +1023,9 @@ static int rtai_mounted;
 #endif
 
 // Trivial, but we do things carefully, the blocking part is relatively short,
-// should cause no troubles in the transition phase. 
-// All the zeroings are strictly not required as mostly related to static data. 
-// Done esplicitly for emphasis. Simple, just block other processors and grab 
+// should cause no troubles in the transition phase.
+// All the zeroings are strictly not required as mostly related to static data.
+// Done esplicitly for emphasis. Simple, just block other processors and grab
 // everything from Linux.  To this aim first block all the other cpus by using
 // a dedicated HARD_LOCK_IPI and its vector without any protection.
 
@@ -1242,7 +1242,7 @@ MODULE_PARM(CpuFreq, "i");
 static void rt_printk_sysreq_handler(void);
 
 // Let's prepare our side without any problem, so that there remain just a few
-// things to be done when mounting RTAI. All the zeroings are strictly not 
+// things to be done when mounting RTAI. All the zeroings are strictly not
 // required as mostly related to static data. Done esplicitly for emphasis.
 int init_module(void)
 {
@@ -1367,7 +1367,7 @@ static int rtai_read_rtai(char *page, char **start, off_t off, int count,
         PROC_PRINT("\nGlobal irqs used by RTAI:\n");
         for (i = 0; i <= LAST_GLOBAL_RTAI_IRQ; i++) {
           if (global_irq[i].handler) {
-            PROC_PRINT("%3d: %10i\n", 
+            PROC_PRINT("%3d: %10i\n",
 		       global_irq[i].ppc_irq, global_irq[i].irq_count);
           }
         }
@@ -1516,7 +1516,7 @@ void rt_request_apic_timers(void (*handler)(void), struct apic_timer_setup_data 
 		p->mode = 1;
 		rt_times->linux_tick = tb_ticks_per_jiffy;
 		rt_times->tick_time = llimd(t + tb_ticks_per_jiffy, FREQ_DECR, tuned.cpu_freq);
-		rt_times->periodic_tick = 
+		rt_times->periodic_tick =
 		p->count = p->mode > 0 ? imuldiv(p->count, FREQ_DECR, 1000000000) : tb_ticks_per_jiffy;
 		rt_times->intr_time = rt_times->tick_time + rt_times->periodic_tick;
 		rt_times->linux_time = rt_times->tick_time + rt_times->linux_tick;

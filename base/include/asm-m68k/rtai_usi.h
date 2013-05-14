@@ -37,7 +37,7 @@
 
 #ifdef CONFIG_RTAI_USI
 
-static void usi_cli(unsigned long arg, unsigned long *eflags) 
+static void usi_cli(unsigned long arg, unsigned long *eflags)
 {
 	*eflags |= ~ALLOWINT;
 }

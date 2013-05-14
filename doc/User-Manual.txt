@@ -46,7 +46,7 @@ exhaustive:
 
 We won't mention the price in the list given above since we know that
 all proprietary RTOS are not free and that RTAI naturally turns out to
-be out of the competition due to the fact that it belongs to the free 
+be out of the competition due to the fact that it belongs to the free
 software category (s. RTAI Licensing.)
 
 However, what is important to notice is that RTAI is now able to meet
@@ -68,7 +68,7 @@ the new RTAI release based on Adeos just supports the i386
 platform. Other ports should be available soon. Finally, since RTAI is
 supported by a community effort, the support is ensured by a
 mailing-list system where it is possible to find some help in the
-range of newbie to high qualified real-time developers questions.  
+range of newbie to high qualified real-time developers questions.
 
 
 1.3/ Typographical conventions

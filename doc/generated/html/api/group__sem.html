@@ -155,7 +155,7 @@
     <td>
 
 <p>
-Initialize a multi readers single writer lock identified by a name. 
+Initialize a multi readers single writer lock identified by a name.
 <p>
 <a class="anchor" name="_rt_named_rwl_init"></a><p>
 _rt_named_rwl_init allocate and initializes a multi readers single writer lock (RWL) identified by <em>name</em>. Once the lock structure is allocated the initialization is as for rt_rwl_init. The function returns the handle pointing to the allocated multi readers single writer lock o structure, to be used as the usual lock address in all rwl based services. Named objects are useful for use among different processes, kernel/user space and in distributed applications, see netrpc.<p>
@@ -196,7 +196,7 @@ As for all the named initialization functions it must be remarked that only the 
     <td>
 
 <p>
-Initialize a spinlock identified by a name. 
+Initialize a spinlock identified by a name.
 <p>
 <a class="anchor" name="_rt_named_spl_init"></a><p>
 _rt_named_spl_init allocate and initializes a spinlock (SPL) identified by <em>name</em>. Once the spinlock structure is allocated the initialization is as for rt_spl_init. The function returns the handle pointing to the allocated spinlock structure, to be used as the usual spinlock address in all spinlock based services. Named objects are useful for use among different processes and kernel/user space.<p>
@@ -252,7 +252,7 @@ As for all the named initialization functions it must be remarked that only the 
     <td>
 
 <p>
-Initialize a specifically typed (counting, binary, resource) semaphore identified by a name. 
+Initialize a specifically typed (counting, binary, resource) semaphore identified by a name.
 <p>
 <a class="anchor" name="_rt_typed_named_sem_init"></a><p>
 _rt_typed_named_sem_init allocate and initializes a semaphore identified by <em>name</em> of type <em>type</em>. Once the semaphore structure is allocated the initialization is as for rt_typed_sem_init. The function returns the handle pointing to the allocated semaphore structure, to be used as the usual semaphore address in all semaphore based services. Named objects are useful for use among different processes, kernel/user space and in distributed applications, see netrpc.<p>
@@ -296,7 +296,7 @@ As for all the named initialization functions it must be remarked that only the 
     <td>
 
 <p>
-Wait for a signal to a conditional variable. 
+Wait for a signal to a conditional variable.
 <p>
 <a class="anchor" name="rt_cond_signal"></a><p>
 rt_cond_signal resumes one of the tasks that are waiting on the condition semaphore cnd. Nothing happens if no task is waiting on <em>cnd</em>, while it resumed the first queued task blocked on cnd, according to the queueing method set at rt_cond_init.<p>
@@ -343,7 +343,7 @@ rt_cond_signal resumes one of the tasks that are waiting on the condition semaph
     <td>
 
 <p>
-Wait for a signal to a conditional variable. 
+Wait for a signal to a conditional variable.
 <p>
 <a class="anchor" name="rt_cond_wait"></a><p>
 rt_cond_wait atomically unlocks mtx (as for using rt_sem_signal) and waits for the condition semaphore cnd to be signaled. The task execution is suspended until the condition semaphore is signalled. Mtx must be obtained by the calling task, before calling rt_cond_wait is called. Before returning to the calling task rt_cond_wait reacquires mtx by calling rt_sem_wait.<p>
@@ -397,7 +397,7 @@ rt_cond_wait atomically unlocks mtx (as for using rt_sem_signal) and waits for t
     <td>
 
 <p>
-Wait a semaphore with timeout. 
+Wait a semaphore with timeout.
 <p>
 <a class="anchor" name="rt_cond_wait_timed"></a><p>
 rt_cond_wait_timed atomically unlocks mtx (as for using rt_sem_signal) and waits for the condition semaphore cnd to be signalled. The task execution is suspended until the condition semaphore is either signaled or a timeout expires. Mtx must be obtained by the calling task, before calling rt_cond_wait is called. Before returning to the calling task rt_cond_wait_until reacquires mtx by calling rt_sem_wait and returns a value to indicate if it has been signalled pr timedout.<p>
@@ -452,7 +452,7 @@ rt_cond_wait_timed atomically unlocks mtx (as for using rt_sem_signal) and waits
     <td>
 
 <p>
-Wait a semaphore with timeout. 
+Wait a semaphore with timeout.
 <p>
 <a class="anchor" name="rt_cond_wait_until"></a><p>
 rt_cond_wait_until atomically unlocks mtx (as for using rt_sem_signal) and waits for the condition semaphore cnd to be signalled. The task execution is suspended until the condition semaphore is either signaled or a timeout expires. Mtx must be obtained by the calling task, before calling rt_cond_wait is called. Before returning to the calling task rt_cond_wait_until reacquires mtx by calling rt_sem_wait and returns a value to indicate if it has been signalled pr timedout.<p>
@@ -492,7 +492,7 @@ rt_cond_wait_until atomically unlocks mtx (as for using rt_sem_signal) and waits
     <td>
 
 <p>
-Delete a multi readers single writer lock in named mode. 
+Delete a multi readers single writer lock in named mode.
 <p>
 <a class="anchor" name="rt_named_rwl_delete"></a><p>
 rt_named_rwl_delete deletes a multi readers single writer lock previously created with <a class="el" href="group__sem.html#_rt_named_rwl_init">_rt_named_rwl_init</a>().<p>
@@ -531,7 +531,7 @@ As it is done by all the named allocation functions delete calls have just the e
     <td>
 
 <p>
-Delete a semaphore initialized in named mode. 
+Delete a semaphore initialized in named mode.
 <p>
 <a class="anchor" name="rt_named_sem_delete"></a><p>
 rt_named_sem_delete deletes a semaphore previously created with <a class="el" href="group__sem.html#_rt_typed_named_sem_init">_rt_typed_named_sem_init</a>().<p>
@@ -570,7 +570,7 @@ Any tasks blocked on this semaphore is returned in error and allowed to run when
     <td>
 
 <p>
-Delete a spinlock in named mode. 
+Delete a spinlock in named mode.
 <p>
 <a class="anchor" name="rt_named_spl_delete"></a><p>
 rt_named_spl_delete deletes a spinlock previously created with <a class="el" href="group__sem.html#_rt_named_spl_init">_rt_named_spl_init</a>().<p>
@@ -609,7 +609,7 @@ As it is done by all the named allocation functions delete calls have just the e
     <td>
 
 <p>
-destroys a multi readers single writer lock. 
+destroys a multi readers single writer lock.
 <p>
 <a class="anchor" name="rt_rwl_delete"></a><p>
 rt_rwl_init destroys a multi readers single writer lock <em>rwl</em>.<p>
@@ -647,7 +647,7 @@ rt_rwl_init destroys a multi readers single writer lock <em>rwl</em>.<p>
     <td>
 
 <p>
-Initialize a multi readers single writer lock. 
+Initialize a multi readers single writer lock.
 <p>
 <a class="anchor" name="rt_rwl_init"></a><p>
 rt_rwl_init initializes a multi readers single writer lock <em>rwl</em>.<p>
@@ -686,7 +686,7 @@ A multi readers single writer lock (RWL) is a synchronization mechanism that all
     <td>
 
 <p>
-acquires a multi readers single writer lock for reading. 
+acquires a multi readers single writer lock for reading.
 <p>
 <a class="anchor" name="rt_rwl_rdlock"></a><p>
 rt_rwl_rdlock acquires a multi readers single writer lock <em>rwl</em> for reading. The calling task will block only if any writer owns the lock already or there are writers with higher priority waiting to acquire write access.<p>
@@ -724,7 +724,7 @@ rt_rwl_rdlock acquires a multi readers single writer lock <em>rwl</em> for readi
     <td>
 
 <p>
-try to acquire a multi readers single writer lock just for reading. 
+try to acquire a multi readers single writer lock just for reading.
 <p>
 <a class="anchor" name="rt_rwl_rdlock_if"></a><p>
 rt_rwl_rdlock_if tries to acquire a multi readers single writer lock <em>rwl</em> for reading immediately, i.e. without blocking if a writer owns the lock or there are writers with higher priority waiting to acquire write access.<p>
@@ -771,7 +771,7 @@ rt_rwl_rdlock_if tries to acquire a multi readers single writer lock <em>rwl</em
     <td>
 
 <p>
-try to acquire a multi readers single writer lock for reading within a relative deadline time. 
+try to acquire a multi readers single writer lock for reading within a relative deadline time.
 <p>
 <a class="anchor" name="rt_rwl_rdlock_timed"></a><p>
 rt_rwl_rdlock_timed tries to acquire a multi readers single writer lock <em>rwl</em> for reading, as for rt_rwl_rdlock, but timing out if the lock has not been acquired within an assigned deadline.<p>
@@ -819,7 +819,7 @@ rt_rwl_rdlock_timed tries to acquire a multi readers single writer lock <em>rwl<
     <td>
 
 <p>
-try to acquire a multi readers single writer lock for reading within an absolute deadline time. 
+try to acquire a multi readers single writer lock for reading within an absolute deadline time.
 <p>
 <a class="anchor" name="rt_rwl_rdlock_until"></a><p>
 rt_rwl_rdlock_untill tries to acquire a multi readers single writer lock <em>rwl</em> for reading, as for rt_rwl_rdlock, but timing out if the lock has not been acquired within an assigned deadline.<p>
@@ -858,7 +858,7 @@ rt_rwl_rdlock_untill tries to acquire a multi readers single writer lock <em>rwl
     <td>
 
 <p>
-unlock an acquired multi readers single writer lock. 
+unlock an acquired multi readers single writer lock.
 <p>
 <a class="anchor" name="rt_rwl_unlock"></a><p>
 rt_rwl_unlock unlocks an acquired multi readers single writer lock <em>rwl</em>. After releasing the lock any task waiting to acquire it will own the lock according to its priority, whether it is a reader or a writer, otherwise the lock will be fully unlocked.<p>
@@ -896,7 +896,7 @@ rt_rwl_unlock unlocks an acquired multi readers single writer lock <em>rwl</em>.
     <td>
 
 <p>
-acquires a multi readers single writer lock for wrtiting. 
+acquires a multi readers single writer lock for wrtiting.
 <p>
 <a class="anchor" name="rt_rwl_wrlock"></a><p>
 rt_rwl_rwlock acquires a multi readers single writer lock <em>rwl</em> for writing. The calling task will block if any other task, reader or writer, owns the lock already.<p>
@@ -934,7 +934,7 @@ rt_rwl_rwlock acquires a multi readers single writer lock <em>rwl</em> for writi
     <td>
 
 <p>
-acquires a multi readers single writer lock for writing. 
+acquires a multi readers single writer lock for writing.
 <p>
 <a class="anchor" name="rt_rwl_wrlock_if"></a><p>
 rt_rwl_wrlock_if try to acquire a multi readers single writer lock <em>rwl</em> for writing immediately, i.e without blocking if the lock is owned already.<p>
@@ -981,7 +981,7 @@ rt_rwl_wrlock_if try to acquire a multi readers single writer lock <em>rwl</em> 
     <td>
 
 <p>
-try to acquire a multi readers single writer lock for writing within a relative deadline time. 
+try to acquire a multi readers single writer lock for writing within a relative deadline time.
 <p>
 <a class="anchor" name="rt_rwl_wrlock_timed"></a><p>
 rt_rwl_wrlock_timed tries to acquire a multi readers single writer lock <em>rwl</em> for writing, as for rt_rwl_wrlock, timing out if the lock has not been acquired within an assigned deadline.<p>
@@ -1029,7 +1029,7 @@ rt_rwl_wrlock_timed tries to acquire a multi readers single writer lock <em>rwl<
     <td>
 
 <p>
-try to acquire a multi readers single writer lock for writing within an absolute deadline time. 
+try to acquire a multi readers single writer lock for writing within an absolute deadline time.
 <p>
 <a class="anchor" name="rt_rwl_wrlock_until"></a><p>
 rt_rwl_rwlock_until tries to acquire a multi readers single writer lock <em>rwl</em> for writing, as for rt_rwl_rwlock, but timing out if the lock has not been acquired within an assigned deadline.<p>
@@ -1068,7 +1068,7 @@ rt_rwl_rwlock_until tries to acquire a multi readers single writer lock <em>rwl<
     <td>
 
 <p>
-Signaling a semaphore. 
+Signaling a semaphore.
 <p>
 <a class="anchor" name="rt_sem_broadcast"></a><p>
 rt_sem_broadcast signals an event to a semaphore that unblocks all tasks waiting on it. It is used as a support for RTAI proper conditional variables but can be of help in many other instances. After the broadcast the semaphore counts is set to zero, thus all tasks waiting on it will blocked.<p>
@@ -1106,7 +1106,7 @@ rt_sem_broadcast signals an event to a semaphore that unblocks all tasks waiting
     <td>
 
 <p>
-Delete a semaphore. 
+Delete a semaphore.
 <p>
 <a class="anchor" name="rt_sem_delete"></a><p>
 rt_sem_delete deletes a semaphore previously created with <a class="el" href="group__sem.html#rt_sem_init">rt_sem_init</a>().<p>
@@ -1157,7 +1157,7 @@ Any tasks blocked on this semaphore is returned in error and allowed to run when
     <td>
 
 <p>
-Initialize a counting semaphore. 
+Initialize a counting semaphore.
 <p>
 <a class="anchor" name="rt_sem_init"></a><p>
 rt_sem_init initializes a counting fifo queueing semaphore <em>sem</em>.<p>
@@ -1198,7 +1198,7 @@ Positive values of the semaphore variable show how many tasks can do a <a class=
     <td>
 
 <p>
-Signaling a semaphore. 
+Signaling a semaphore.
 <p>
 <a class="anchor" name="rt_sem_signal"></a><p>
 rt_sem_signal signals an event to a semaphore. It is typically called when the task leaves a critical region. The semaphore value is incremented and tested. If the value is not positive, the first task in semaphore's waiting queue is allowed to run. rt_sem_signal never blocks the caller task.<p>
@@ -1239,7 +1239,7 @@ rt_sem_signal signals an event to a semaphore. It is typically called when the t
     <td>
 
 <p>
-Take a semaphore. 
+Take a semaphore.
 <p>
 <a class="anchor" name="rt_sem_wait"></a><p>
 rt_sem_wait waits for a event to be signaled to a semaphore. It is typically called when a task enters a critical region. The semaphore value is decremented and tested. If it is still non-negative rt_sem_wait returns immediately. Otherwise the caller task is blocked and queued up. Queuing may happen in priority order or on FIFO base. This is determined by the compile time option <em>SEM_PRIORD</em>. In this case rt_sem_wait returns if:<ul>
@@ -1285,7 +1285,7 @@ rt_sem_wait waits for a event to be signaled to a semaphore. It is typically cal
     <td>
 
 <p>
-Wait on a semaphore barrier. 
+Wait on a semaphore barrier.
 <p>
 <a class="anchor" name="rt_sem_wait_barrier"></a><p>
 rt_sem_wait_barrier is a gang waiting in that a task issuing such a request will be blocked till a number of tasks equal to the semaphore count set at rt_sem_init is reached.<p>
@@ -1318,7 +1318,7 @@ rt_sem_wait_barrier is a gang waiting in that a task issuing such a request will
     <td>
 
 <p>
-Take a semaphore, only if the calling task is not blocked. 
+Take a semaphore, only if the calling task is not blocked.
 <p>
 <a class="anchor" name="rt_sem_wait_if"></a><p>
 rt_sem_wait_if is a version of the semaphore wait operation is similar to <a class="el" href="group__sem.html#rt_sem_wait">rt_sem_wait</a>() but it is never blocks the caller. If the semaphore is not free, rt_sem_wait_if returns immediately and the semaphore value remains unchanged.<p>
@@ -1368,7 +1368,7 @@ rt_sem_wait_if is a version of the semaphore wait operation is similar to <a cla
     <td>
 
 <p>
-Wait a semaphore with timeout. 
+Wait a semaphore with timeout.
 <p>
 <a class="anchor" name="rt_sem_wait_timed"></a><p>
 rt_sem_wait_timed, like <a class="el" href="group__sem.html#rt_sem_wait_until">rt_sem_wait_until</a>(), is a timed version of the standard semaphore wait call. The semaphore value is decremented and tested. If it is still non-negative these functions return immediately. Otherwise the caller task is blocked and queued up. Queuing may happen in priority order or on FIFO base. This is determined by the compile time option <em>SEM_PRIORD</em>. In this case the function returns if:<ul>
@@ -1422,7 +1422,7 @@ In case of a timeout, the semaphore value is incremented before return.<p>
     <td>
 
 <p>
-Wait a semaphore with timeout. 
+Wait a semaphore with timeout.
 <p>
 <a class="anchor" name="rt_sem_wait_until"></a><p>
 rt_sem_wait_until, like <a class="el" href="group__sem.html#rt_sem_wait_timed">rt_sem_wait_timed</a>() is a timed version of the standard semaphore wait call. The semaphore value is decremented and tested. If it is still non-negative these functions return immediately. Otherwise the caller task is blocked and queued up. Queuing may happen in priority order or on FIFO base. This is determined by the compile time option <em>SEM_PRIORD</em>. In this case the function returns if:<ul>
@@ -1467,7 +1467,7 @@ In case of a timeout, the semaphore value is incremented before return.<p>
     <td>
 
 <p>
-Initialize a spinlock. 
+Initialize a spinlock.
 <p>
 <a class="anchor" name="rt_spl_delete"></a><p>
 rt_spl_delete destroies a spinlock <em>spl</em>.<p>
@@ -1505,7 +1505,7 @@ rt_spl_delete destroies a spinlock <em>spl</em>.<p>
     <td>
 
 <p>
-Initialize a spinlock. 
+Initialize a spinlock.
 <p>
 <a class="anchor" name="rt_spl_init"></a><p>
 rt_spl_init initializes a spinlock <em>spl</em>.<p>
@@ -1544,7 +1544,7 @@ A spinlock is an active wait synchronization mechanism useful for multi processo
     <td>
 
 <p>
-Acquire a spinlock. 
+Acquire a spinlock.
 <p>
 <a class="anchor" name="rt_spl_lock"></a><p>
 rt_spl_lock acquires a spinlock <em>spl</em>.<p>
@@ -1583,7 +1583,7 @@ rt_spl_lock spins on lock till it can be acquired. If a tasks asks for lock it o
     <td>
 
 <p>
-Acquire a spinlock without waiting. 
+Acquire a spinlock without waiting.
 <p>
 <a class="anchor" name="rt_spl_lock_if"></a><p>
 rt_spl_lock_if acquires a spinlock <em>spl</em> without waiting.<p>
@@ -1631,7 +1631,7 @@ rt_spl_lock_if tries to acquire a spinlock but will not spin on it if it is owne
     <td>
 
 <p>
-Acquire a spinlock with timeout. 
+Acquire a spinlock with timeout.
 <p>
 <a class="anchor" name="rt_spl_lock_timed"></a><p>
 rt_spl_lock_timed acquires a spinlock <em>spl</em>, but waiting spinning only for an allowed time.<p>
@@ -1671,7 +1671,7 @@ rt_spl_lock spins on lock till it can be acquired, as for rt_spl_lock, but only 
     <td>
 
 <p>
-Release an owned spinlock. 
+Release an owned spinlock.
 <p>
 <a class="anchor" name="rt_spl_unlock"></a><p>
 rt_spl_lock releases an owned spinlock <em>spl</em>.<p>
@@ -1725,7 +1725,7 @@ rt_spl_unlock releases an owned lock. The spinlock can remain locked and its own
     <td>
 
 <p>
-Initialize a specifically typed (counting, binary, resource) semaphore. 
+Initialize a specifically typed (counting, binary, resource) semaphore.
 <p>
 <a class="anchor" name="rt_typed_sem_init"></a><p>
 rt_typed_sem_init initializes a semaphore <em>sem</em> of type <em>type</em>. A semaphore can be used for communication and synchronization among real time tasks. Negative value of a semaphore shows how many tasks are blocked on the semaphore queue, waiting to be awaken by calls to rt_sem_signal.<p>

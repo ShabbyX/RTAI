@@ -184,8 +184,8 @@ rt_set_irq_cookie(unsigned irq, void *cookie)
 }
 
 
-/* The stuff within "#if 0/#else/#endif" below is kept both in view of 
-   a possible unified version of hal.c and because its documention is 
+/* The stuff within "#if 0/#else/#endif" below is kept both in view of
+   a possible unified version of hal.c and because its documention is
    the same as the new implementation */
 
 #if 0
@@ -206,7 +206,7 @@ rt_set_irq_cookie(unsigned irq, void *cookie)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the functions below do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -282,7 +282,7 @@ rt_ack_irq(unsigned irq)
 
 #else
 
-/* We use what follows in place of ADEOS ones to play safely with 
+/* We use what follows in place of ADEOS ones to play safely with
  * Linux preemption and to quickly manage Linux interrupt state. */
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)

@@ -25,7 +25,7 @@
 00015 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00016 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00017 <span class="comment"> */</span>
-00018 
+00018
 00019 <span class="preprocessor">#ifndef _RTAI_SCHEDCORE_H</span>
 00020 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_SCHEDCORE_H</span>
 00021 <span class="preprocessor"></span>
@@ -50,7 +50,7 @@
 00040 <span class="preprocessor">#include &lt;rtai_netrpc.h&gt;</span>
 00041 <span class="preprocessor">#include &lt;<a class="code" href="rtai__shm_8h.html">rtai_shm.h</a>&gt;</span>
 00042 <span class="preprocessor">#include &lt;rtai_usi.h&gt;</span>
-00043 
+00043
 00044 <span class="preprocessor">#ifdef __KERNEL__</span>
 00045 <span class="preprocessor"></span>
 00046 <span class="preprocessor">#include &lt;linux/module.h&gt;</span>
@@ -64,15 +64,15 @@
 00054 <span class="preprocessor">#include &lt;asm/param.h&gt;</span>
 00055 <span class="preprocessor">#include &lt;asm/system.h&gt;</span>
 00056 <span class="preprocessor">#include &lt;asm/io.h&gt;</span>
-00057 
+00057
 00058 <span class="keyword">extern</span> RT_TASK rt_smp_linux_task[];
-00059 
+00059
 00060 <span class="keyword">extern</span> RT_TASK *rt_smp_current[];
-00061 
+00061
 00062 <span class="keyword">extern</span> RTIME rt_smp_time_h[];
-00063 
+00063
 00064 <span class="keyword">extern</span> <span class="keywordtype">int</span> rt_smp_oneshot_timer[];
-00065 
+00065
 00066 <span class="preprocessor">#ifdef CONFIG_RTAI_MALLOC</span>
 00067 <span class="preprocessor"></span><span class="preprocessor">#define sched_malloc(size)              rt_malloc((size))</span>
 00068 <span class="preprocessor"></span><span class="preprocessor">#define sched_free(adr)                 rt_free((adr))</span>
@@ -96,7 +96,7 @@
 00086 <span class="preprocessor"></span><span class="preprocessor">#define call_exit_handlers(task)</span>
 00087 <span class="preprocessor"></span><span class="preprocessor">#define set_exit_handler(task, fun, arg1, arg2)</span>
 00088 <span class="preprocessor"></span><span class="preprocessor">#endif </span><span class="comment">/* CONFIG_RTAI_MALLOC */</span>
-00089 
+00089
 00090 <span class="preprocessor">#define RT_SEM_MAGIC 0xaabcdeff</span>
 00091 <span class="preprocessor"></span>
 00092 <span class="preprocessor">#define SEM_ERR (0xFfff)</span>
@@ -121,7 +121,7 @@
 00111 <span class="preprocessor">#ifdef CONFIG_RTAI_SCHED_ISR_LOCK</span>
 00112 <span class="preprocessor"></span><span class="keywordtype">void</span> rtai_handle_isched_lock(<span class="keywordtype">int</span> nesting);
 00113 <span class="preprocessor">#endif </span><span class="comment">/* CONFIG_RTAI_SCHED_ISR_LOCK */</span>
-00114 
+00114
 00115 <span class="preprocessor">#ifdef CONFIG_SMP</span>
 00116 <span class="preprocessor"></span><span class="preprocessor">#define rt_time_h (rt_smp_time_h[cpuid])</span>
 00117 <span class="preprocessor"></span><span class="preprocessor">#define oneshot_timer (rt_smp_oneshot_timer[cpuid])</span>
@@ -138,7 +138,7 @@
 00128 {
 00129         _send_sched_ipi(dest);
 00130 }
-00131 
+00131
 00132 <span class="preprocessor">#define RT_SCHEDULE_MAP(schedmap) \</span>
 00133 <span class="preprocessor">        do { if (schedmap) send_sched_ipi(schedmap); } while (0)</span>
 00134 <span class="preprocessor"></span>
@@ -163,7 +163,7 @@
 00153 <span class="preprocessor">        }</span>
 00154 <span class="preprocessor"></span>
 00155 <span class="preprocessor">#else </span><span class="comment">/* !CONFIG_SMP */</span>
-00156 
+00156
 00157 <span class="preprocessor">#define send_sched_ipi(dest)</span>
 00158 <span class="preprocessor"></span>
 00159 <span class="preprocessor">#define RT_SCHEDULE_MAP_BOTH(schedmap)  rt_schedule()</span>
@@ -175,7 +175,7 @@
 00165 <span class="preprocessor">#define RT_SCHEDULE_BOTH(task, cpuid)   rt_schedule()</span>
 00166 <span class="preprocessor"></span>
 00167 <span class="preprocessor">#endif </span><span class="comment">/* CONFIG_SMP */</span>
-00168 
+00168
 00169 <span class="preprocessor">#define BASE_SOFT_PRIORITY 1000000000</span>
 00170 <span class="preprocessor"></span>
 00171 <span class="preprocessor">#define TASK_HARDREALTIME  TASK_UNINTERRUPTIBLE</span>
@@ -194,12 +194,12 @@
 00184         task-&gt;rprev = (ready_task-&gt;rprev = task-&gt;rprev)-&gt;rnext = ready_task;
 00185         ready_task-&gt;rnext = task;
 00186 }
-00187 
+00187
 00188 <span class="preprocessor">#define MAX_WAKEUP_SRQ (2 &lt;&lt; 6)</span>
 00189 <span class="preprocessor"></span>
 00190 <span class="keyword">struct </span>klist_t { <span class="keyword">volatile</span> <span class="keywordtype">int</span> srq, in, out; <span class="keywordtype">void</span> *task[MAX_WAKEUP_SRQ]; };
 00191 <span class="keyword">extern</span> <span class="keyword">struct </span>klist_t wake_up_srq;
-00192 
+00192
 00193 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> enq_ready_task(RT_TASK *ready_task)
 00194 {
 00195         RT_TASK *task;
@@ -221,7 +221,7 @@
 00211                 <a class="code" href="group__hal.html#ga87">rt_pend_linux_srq</a>(wake_up_srq.srq);
 00212         }
 00213 }
-00214 
+00214
 00215 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> renq_ready_task(RT_TASK *ready_task, <span class="keywordtype">int</span> priority)
 00216 {
 00217         <span class="keywordtype">int</span> retval;
@@ -235,7 +235,7 @@
 00225         }
 00226         <span class="keywordflow">return</span> retval;
 00227 }
-00228 
+00228
 00229 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> renq_current(RT_TASK *rt_current, <span class="keywordtype">int</span> priority)
 00230 {
 00231         <span class="keywordtype">int</span> retval;
@@ -247,7 +247,7 @@
 00237         }
 00238         <span class="keywordflow">return</span> retval;
 00239 }
-00240 
+00240
 00241 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> rem_ready_task(RT_TASK *task)
 00242 {
 00243         <span class="keywordflow">if</span> (task-&gt;state == RT_SCHED_READY) {
@@ -258,7 +258,7 @@
 00248                 (task-&gt;rnext)-&gt;rprev = task-&gt;rprev;
 00249         }
 00250 }
-00251 
+00251
 00252 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> rem_ready_current(RT_TASK *rt_current)
 00253 {
 00254         <span class="keywordflow">if</span> (!rt_current-&gt;is_hard) {
@@ -267,7 +267,7 @@
 00257         (rt_current-&gt;rprev)-&gt;rnext = rt_current-&gt;rnext;
 00258         (rt_current-&gt;rnext)-&gt;rprev = rt_current-&gt;rprev;
 00259 }
-00260 
+00260
 00261 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> enq_timed_task(RT_TASK *timed_task)
 00262 {
 00263         RT_TASK *task;
@@ -282,7 +282,7 @@
 00272         task-&gt;tprev = (timed_task-&gt;tprev = task-&gt;tprev)-&gt;tnext = timed_task;
 00273         timed_task-&gt;tnext = task;
 00274 }
-00275 
+00275
 00276 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> wake_up_timed_tasks(<span class="keywordtype">int</span> cpuid)
 00277 {
 00278         RT_TASK *task;
@@ -309,7 +309,7 @@
 00299         task-&gt;tprev = &amp;rt_smp_linux_task[0];
 00300 <span class="preprocessor">#endif</span>
 00301 <span class="preprocessor"></span>}
-00302 
+00302
 00303 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> rem_timed_task(RT_TASK *task)
 00304 {
 00305         <span class="keywordflow">if</span> ((task-&gt;state &amp; RT_SCHED_DELAYED)) {
@@ -317,7 +317,7 @@
 00307                 (task-&gt;tnext)-&gt;tprev = task-&gt;tprev;
 00308         }
 00309 }
-00310 
+00310
 00311 <span class="preprocessor">#define get_time() rt_get_time()</span>
 00312 <span class="preprocessor"></span><span class="preprocessor">#if 0</span>
 00313 <span class="preprocessor"></span><span class="keyword">static</span> <span class="keyword">inline</span> RTIME get_time(<span class="keywordtype">void</span>)
@@ -341,8 +341,8 @@
 00331         q-&gt;prev = (task-&gt;queue.prev = q-&gt;prev)-&gt;next  = &amp;(task-&gt;queue);
 00332         task-&gt;queue.next = q;
 00333 }
-00334 
-00335 
+00334
+00335
 00336 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> dequeue_blocked(RT_TASK *task)
 00337 {
 00338         task-&gt;prio_passed_to     = NOTHING;
@@ -350,7 +350,7 @@
 00340         (task-&gt;queue.next)-&gt;prev = task-&gt;queue.prev;
 00341         task-&gt;blocked_on         = NOTHING;
 00342 }
-00343 
+00343
 00344 <span class="keyword">static</span> __volatile__ <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> pass_prio(RT_TASK *to, RT_TASK *from)
 00345 {
 00346         QUEUE *q;
@@ -384,7 +384,7 @@
 00374 <span class="preprocessor"></span>        <span class="keywordflow">return</span> 0;
 00375 <span class="preprocessor">#endif</span>
 00376 <span class="preprocessor"></span>}
-00377 
+00377
 00378 <span class="keyword">static</span> <span class="keyword">inline</span> RT_TASK *_rt_whoami(<span class="keywordtype">void</span>)
 00379 {
 00380 <span class="preprocessor">#ifdef CONFIG_SMP</span>
@@ -398,11 +398,11 @@
 00388 <span class="preprocessor"></span>        <span class="keywordflow">return</span> rt_smp_current[0];
 00389 <span class="preprocessor">#endif</span>
 00390 <span class="preprocessor"></span>}
-00391 
+00391
 00392 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> __call_exit_handlers(RT_TASK *task)
 00393 {
 00394         XHDL *pt, *tmp;
-00395 
+00395
 00396         pt = task-&gt;ExitHook; <span class="comment">// Initialise ExitHook in rt_task_init()</span>
 00397         <span class="keywordflow">while</span> ( pt ) {
 00398                 (*pt-&gt;fun) (pt-&gt;arg1, pt-&gt;arg2);
@@ -412,11 +412,11 @@
 00402         }
 00403         task-&gt;ExitHook = 0;
 00404 }
-00405 
+00405
 00406 <span class="keyword">static</span> <span class="keyword">inline</span> XHDL *__set_exit_handler(RT_TASK *task, <span class="keywordtype">void</span> (*fun) (<span class="keywordtype">void</span> *, <span class="keywordtype">int</span>), <span class="keywordtype">void</span> *arg1, <span class="keywordtype">int</span> arg2)
 00407 {
 00408         XHDL *p;
-00409 
+00409
 00410         <span class="comment">// exit handler functions are automatically executed at terminattion time by rt_task_delete()</span>
 00411         <span class="comment">// in the reverse order they were created (like C++ destructors behave).</span>
 00412         <span class="keywordflow">if</span> (task-&gt;magic != RT_TASK_MAGIC) <span class="keywordflow">return</span> 0;
@@ -427,9 +427,9 @@
 00417         p-&gt;nxt  = task-&gt;ExitHook;
 00418         <span class="keywordflow">return</span> (task-&gt;ExitHook = p);
 00419 }
-00420 
+00420
 00421 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> rtai_init_features (<span class="keywordtype">void</span>)
-00422 
+00422
 00423 {
 00424 <span class="preprocessor">#ifdef CONFIG_RTAI_LEDS_BUILTIN</span>
 00425 <span class="preprocessor"></span>    __rtai_leds_init();
@@ -470,12 +470,12 @@
 00460 <span class="preprocessor">#ifdef CONFIG_RTAI_MATH_BUILTIN</span>
 00461 <span class="preprocessor"></span>    __rtai_math_init();
 00462 <span class="preprocessor">#endif </span><span class="comment">/* CONFIG_RTAI_MATH_BUILTIN */</span>
-00463 
+00463
 00464         <span class="keywordflow">return</span> 0;
 00465 }
-00466 
+00466
 00467 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> rtai_cleanup_features (<span class="keywordtype">void</span>) {
-00468 
+00468
 00469 <span class="preprocessor">#ifdef CONFIG_RTAI_MATH_BUILTIN</span>
 00470 <span class="preprocessor"></span>    __rtai_math_exit();
 00471 <span class="preprocessor">#endif </span><span class="comment">/* CONFIG_RTAI_MATH_BUILTIN */</span>
@@ -516,9 +516,9 @@
 00506 <span class="preprocessor"></span>    __rtai_leds_exit();
 00507 <span class="preprocessor">#endif </span><span class="comment">/* CONFIG_RTAI_LEDS_BUILTIN */</span>
 00508 }
-00509 
+00509
 00510 <span class="keywordtype">int</span> rt_check_current_stack(<span class="keywordtype">void</span>);
-00511 
+00511
 00512 <span class="keywordtype">int</span> rt_kthread_init(RT_TASK *task,
 00513                     <span class="keywordtype">void</span> (*rt_thread)(<span class="keywordtype">int</span>),
 00514                     <span class="keywordtype">int</span> data,
@@ -526,7 +526,7 @@
 00516                     <span class="keywordtype">int</span> priority,
 00517                     <span class="keywordtype">int</span> uses_fpu,
 00518                     <span class="keywordtype">void</span>(*signal)(<span class="keywordtype">void</span>));
-00519 
+00519
 00520 <span class="keywordtype">int</span> rt_kthread_init_cpuid(RT_TASK *task,
 00521                           <span class="keywordtype">void</span> (*rt_thread)(<span class="keywordtype">int</span>),
 00522                           <span class="keywordtype">int</span> data,
@@ -535,9 +535,9 @@
 00525                           <span class="keywordtype">int</span> uses_fpu,
 00526                           <span class="keywordtype">void</span>(*signal)(<span class="keywordtype">void</span>),
 00527                           <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> cpuid);
-00528 
+00528
 00529 <span class="preprocessor">#endif </span><span class="comment">/* __KERNEL__ */</span>
-00530 
+00530
 00531 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_SCHEDCORE_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

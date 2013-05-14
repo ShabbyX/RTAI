@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: mbx.h,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -67,7 +67,7 @@ private:
 	Mailbox& operator=(const Mailbox&);
 };
 
-/** 
+/**
  * templated Mailbox class
  */
 template <class Type>

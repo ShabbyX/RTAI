@@ -396,7 +396,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +	int **psp = &adp->esp[_cpuid];
 +
 +	adp->estackbase[_cpuid] = (int *)kmalloc(estacksz,GFP_KERNEL);
-+    
++
 +	if (adp->estackbase[_cpuid] == NULL)
 +	    panic("Adeos: No memory for domain stack on CPU #%d",_cpuid);
 +
@@ -864,7 +864,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +int adeos_free_ptdkey (int key)
 +
 +{
-+    unsigned long flags; 
++    unsigned long flags;
 +
 +    if (key < 0 || key >= adp_current->ptd_keymax)
 +	return -EINVAL;
@@ -1190,7 +1190,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  fi
  if [ "$CONFIG_CPU_ARM926T" = "y" -o "$CONFIG_CPU_ARM1020" = "y" -o \
       "$CONFIG_CPU_ARM1026" = "y" ]; then
-@@ -555,10 +555,17 @@ if [ "$CONFIG_SA1100_ACCELENT" = "y" ]; 
+@@ -555,10 +555,17 @@ if [ "$CONFIG_SA1100_ACCELENT" = "y" ];
     if [ "$CONFIG_PCMCIA" != "n" ]; then
        bool '  Use second PCMCIA/CF slot (disables on-board IDE)' CONFIG_SA_PCMCIA_SLOT_1 y
     fi
@@ -1219,11 +1219,11 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +	define_bool CONFIG_FRAME_POINTER y
 +    fi
  fi
- 
+
  bool 'Verbose user fault messages' CONFIG_DEBUG_USER
  bool 'Include debugging information in kernel binary' CONFIG_DEBUG_INFO
  dep_bool 'Disable pgtable cache' CONFIG_NO_PGT_CACHE $CONFIG_CPU_26
- 
+
  bool 'Kernel debugging' CONFIG_DEBUG_KERNEL
 +if [ "$CONFIG_ARCH_EP9301" = "y" ]; then
 +    dep_bool '  Compile Kernel with frame pointers' CONFIG_FRAME_POINTER $CONFIG_DEBUG_KERNEL
@@ -1751,7 +1751,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +	adeos_hw_cli();
 +	__clear_bit(IPIPE_STALL_FLAG,&adp_root->cpudata[cpuid].status);
 +
-+	/* Sync all IRQs here, who knows when the next interrupt will happen 
++	/* Sync all IRQs here, who knows when the next interrupt will happen
 +	 * (only then will the stage be synced!). */
 +	if (adp_root->cpudata[cpuid].irq_pending_hi != 0)
 +	    __adeos_sync_stage(IPIPE_IRQMASK_ANY);
@@ -1788,7 +1788,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   const struct module_symbol __ksymtab_##sym	\
    __attribute__((section("__ksymtab"))) =	\
      { (unsigned long)&orig, __kstrtab_##sym };
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +#ifdef CONFIG_ADEOS_MODULE
 +EXPORT_SYMBOL(adp_pipelined);
@@ -1826,7 +1826,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  EXPORT_SYMBOL_ALIAS(kern_fp_enter,fp_enter);
 @@ -225,10 +256,11 @@ EXPORT_SYMBOL_NOVERS(__put_user_4);
  EXPORT_SYMBOL_NOVERS(__put_user_8);
- 
+
  	/* gcc lib functions */
  EXPORT_SYMBOL_NOVERS(__ashldi3);
  EXPORT_SYMBOL_NOVERS(__ashrdi3);
@@ -1858,19 +1858,19 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  #include <linux/config.h>
  #include <asm/kgdb.h>
  #include "entry-header.S"
- 
+
 -
  #ifdef IOC_BASE
  /* IOC / IOMD based hardware */
  #include <asm/hardware/iomd.h>
- 
+
  		.equ	ioc_base_high, IOC_BASE & 0xff000000
 @@ -457,33 +459,78 @@ ENTRY(soft_irq_mask)
  #elif defined(CONFIG_ARCH_EP93XX)
- 
+
  		.macro  disable_fiq
  		.endm
- 
+
 +		@ get number of irq from PIC
 +		@ is irq <=> Z flag is 0 (ne), number of interrupt to be
 +		@ handled is in \irqnr
@@ -1962,13 +1962,13 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +		strne	\tmp, [\base]
 +#endif
  		.endm
- 
+
  		.macro  irq_prio_table
  		.endm
- 
+
 @@ -654,10 +701,13 @@ ENTRY(anakin_active_irqs)
  #endif
- 
+
  /*
   * Invalid mode handlers
   */
@@ -2031,7 +2031,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		ldr	r0, [sp, #S_PSR]
  		msr	spsr, r0
  		ldmia	sp, {r0 - pc}^			@ load r0 - pc, cpsr
- 
+
  		.align	5
 @@ -744,11 +812,15 @@ __irq_svc:	sub	sp, sp, #S_FRAME_SIZE
  		movne	r1, sp
@@ -2047,7 +2047,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		ldr	r0, [sp, #S_PSR]		@ irqs are already disabled
  		msr	spsr, r0
  		ldmia	sp, {r0 - pc}^			@ load r0 - pc, cpsr
- 
+
  		.ltorg
 @@ -757,15 +829,25 @@ __irq_svc:	sub	sp, sp, #S_FRAME_SIZE
  __und_svc:	sub	sp, sp, #S_FRAME_SIZE
@@ -2069,7 +2069,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		add	r5, sp, #S_FRAME_SIZE
  		add	r4, sp, #S_SP
  		stmia	r4, {r5 - r9}			@ save sp_SVC, lr_SVC, pc, cpsr, old_ro
- 
+
 -
  #ifdef	CONFIG_KGDB
  		/*
@@ -2078,10 +2078,10 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		 * time it is called, the FPE has been initalized.
 @@ -799,19 +881,28 @@ __und_svc:	sub	sp, sp, #S_FRAME_SIZE
  #endif
- 
+
  		adrsvc	al, r9, 1f			@ r9  = normal FP return
  		bl	call_fpe			@ lr  = undefined instr return
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +		@ undefined instruction -> inform Adeos about it (this is *not* the
 +		@ "FPU usage" event because there is no FPU support in Adeos for ARM)
@@ -2098,14 +2098,14 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		mov	r0, r5				@ unsigned long pc
  		mov	r1, sp				@ struct pt_regs *regs
  		bl	SYMBOL_NAME(do_undefinstr)
- 
+
 -1:		mov	r0, #I_BIT | MODE_SVC
 -		msr	cpsr_c, r0
 +1:		disable_irq r0
  		ldr	lr, [sp, #S_PSR]		@ Get SVC cpsr
  		msr	spsr, lr
  		ldmia	sp, {r0 - pc}^			@ Restore SVC registers
- 
+
  #ifdef	CONFIG_KGDB
 @@ -824,22 +915,36 @@ kgdb_trap_instr:	.word	KGDB_COMPILED_BRE
  __pabt_svc:	sub	sp, sp, #S_FRAME_SIZE
@@ -2144,7 +2144,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		ldr	r0, [sp, #S_PSR]
  		msr	spsr, r0
  		ldmia	sp, {r0 - pc}^			@ load r0 - pc, cpsr
- 
+
  		.align	5
 @@ -848,10 +953,16 @@ __pabt_svc:	sub	sp, sp, #S_FRAME_SIZE
  .LCabt:		.word	__temp_abt
@@ -2158,9 +2158,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +SYMBOL_NAME(adeos_irq_entry):
 +		.word	SYMBOL_NAME(__adeos_handle_irq)	@ Adeos default irq handler
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  		irq_prio_table
- 
+
  /*
   * User mode handlers
 @@ -862,22 +973,39 @@ __dabt_usr:	sub	sp, sp, #S_FRAME_SIZE		@
@@ -2203,7 +2203,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		mov	r2, sp
  		adrsvc	al, lr, ret_from_exception
  		b	SYMBOL_NAME(do_DataAbort)
- 
+
  		.align	5
 @@ -889,19 +1017,50 @@ __irq_usr:	sub	sp, sp, #S_FRAME_SIZE
  		stmia	r8, {r5 - r7}			@ save pc, psr, old_r0
@@ -2252,12 +2252,12 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		get_current_task tsk
  		b	ret_to_user
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  		.ltorg
- 
+
  		.align	5
  __und_usr:	sub	sp, sp, #S_FRAME_SIZE		@ Allocate frame size in one go
-@@ -909,10 +1068,18 @@ __und_usr:	sub	sp, sp, #S_FRAME_SIZE		@ 
+@@ -909,10 +1068,18 @@ __und_usr:	sub	sp, sp, #S_FRAME_SIZE		@
  		ldr	r4, .LCund
  		add	r8, sp, #S_PC
  		ldmia	r4, {r5 - r7}
@@ -2276,12 +2276,12 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		bl	crunch_opcode
  		cmp	r0, #1
  		beq	ret_from_exception
-@@ -922,20 +1089,32 @@ __und_usr:	sub	sp, sp, #S_FRAME_SIZE		@ 
+@@ -922,20 +1089,32 @@ __und_usr:	sub	sp, sp, #S_FRAME_SIZE		@
  		tst	r6, #T_BIT			@ Thumb mode
  		bne	fpundefinstr
  		adrsvc	al, r9, ret_from_exception	@ r9  = normal FP return
  		adrsvc	al, lr, fpundefinstr		@ lr  = undefined instr return
- 
+
 +
  call_fpe:	get_current_task r10
  		mov	r8, #1
@@ -2289,7 +2289,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		ldr	r4, .LCfp
  		add	r10, r10, #TSS_FPESAVE		@ r10 = workspace
  		ldr	pc, [r4]			@ Call FP module USR entry point
- 
+
 -fpundefinstr:	mov	r0, #MODE_SVC
 -		msr	cpsr_c, r0			@ Enable interrupts
 +fpundefinstr:	enable_irq r0				@ Enable interrupts
@@ -2309,7 +2309,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		mov	r1, sp
  		adrsvc	al, lr, ret_from_exception
  		b	SYMBOL_NAME(do_undefinstr)
- 
+
  		.align	5
 @@ -944,23 +1123,39 @@ __pabt_usr:	sub	sp, sp, #S_FRAME_SIZE		@
  		ldr	r4, .LCabt
@@ -2351,7 +2351,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		mov	why, #0
  		get_current_task tsk
  		b	ret_to_user
- 
+
  		.data
 @@ -970,10 +1165,15 @@ ENTRY(fp_enter)
  /*
@@ -2374,7 +2374,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		mcr	p15, 0, r2, c3, c0		@ Set domain register
  		msr	spsr, ip			@ Save tasks CPSR into SPSR for this return
  		ldmfd	sp!, {r4 - sl, fp, pc}^		@ Load all regs saved previously
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +#ifdef CONFIG_ADEOS_THREADS
 +/*
@@ -2409,11 +2409,11 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   * and we rely on each stub being exactly 48 (1.5 cache lines) in size.  This
   * means that we only ever load two cache lines for this code, or one if we're
 @@ -1204,10 +1432,23 @@ vector_addrexcptn:
- 
+
  __stubs_end:
- 
+
  		.equ	__real_stubs_start, .LCvectors + 0x200
- 
+
 +/*
 + * Exception vectors (see ARM Architecture Reference Manual, 2.6 Exceptions)
 + * Vector base is either 0x00000000 or 0xffff0000.
@@ -2454,7 +2454,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	stmfd	sp!, {r0 - r3, ip, lr}
  	bl	do_softirq
  	ldmfd	sp!, {r0 - r3, ip, pc}
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +/*
 + * This is how user mode exceptions are handled under Adeos (i.e. when
@@ -2540,7 +2540,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +	@ hw-irqs must be disabled here!
 +#endif /* CONFIG_ADEOS_CORE */
  	fast_restore_user_regs
- 
+
  /*
   * Ok, we need to do extra processing, enter the slow path.
   */
@@ -2571,7 +2571,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +	@ comes back with hw-irqs disabled
 +#endif /* CONFIG_ADEOS_CORE */
  	restore_user_regs
- 
+
  __do_signal:
  	enable_irq r1
  	mov	r0, #0				@ NULL 'oldset'
@@ -2582,7 +2582,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	disable_irq r1				@ ensure IRQs are disabled
 +#endif /* !CONFIG_ADEOS_CORE */
  	b	restore
- 
+
  /*
   * This is how we return from a fork.  __switch_to will be calling us
   * with r0 pointing at the previous task that was running (ready for
@@ -2601,9 +2601,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	tst	ip, #PT_TRACESYS		@ are we tracing syscalls?
 @@ -141,13 +230,31 @@ ENTRY(vector_swi)
  	enable_irq ip
- 
+
  	str	r4, [sp, #-S_OFF]!		@ push fifth arg
- 
+
  	get_current_task tsk
 -	ldr	ip, [tsk, #TSK_PTRACE]		@ check for syscall tracing
  	bic	scno, scno, #0xff000000		@ mask off SWI op-code
@@ -2630,14 +2630,14 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	adr	tbl, sys_call_table		@ load syscall table pointer
  	tst	ip, #PT_TRACESYS		@ are we tracing syscalls?
  	bne	__sys_trace
- 
+
  	adrsvc	al, lr, ret_fast_syscall	@ return address
 @@ -159,10 +266,31 @@ ENTRY(vector_swi)
  	cmp	scno, #ARMSWI_OFFSET
  	eor	r0, scno, #OS_NUMBER << 20	@ put OS number back
  	bcs	SYMBOL_NAME(arm_syscall)	
  	b	SYMBOL_NAME(sys_ni_syscall)	@ not private func
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +handle_adeos_syscall:
 +	@ handle Adeos syscall (used by RTAI for LXRT calls and SRQs)
@@ -2668,7 +2668,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	ldmccia	r1, {r0 - r3}			@ have to reload r0 - r3
  	ldrcc	pc, [tbl, scno, lsl #2]		@ call sys_* routine
  	b	2b
- 
+
  __sys_trace_return:
 +#ifdef CONFIG_ADEOS_CORE
 +	enable_irq ip				@ should already be enabled, be paranoid
@@ -2693,18 +2693,18 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +SYMBOL_NAME(adeos_syscall_entry):
 +	.word	SYMBOL_NAME(__adeos_handle_syscall)	@ Adeos default syscall handler
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  	.type	sys_call_table, #object
  ENTRY(sys_call_table)
  #include "calls.S"
- 
+
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/kernel/entry-header.S linux-2.4.21_rmk-1_crus-1.4.2-adeos/arch/arm/kernel/entry-header.S
 --- linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/kernel/entry-header.S	2005-05-09 11:10:36.000000000 +0200
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/arch/arm/kernel/entry-header.S	2005-01-30 00:38:20.000000000 +0100
 @@ -69,15 +69,16 @@
  #define S_R0		0
  #define S_OFF		8
- 
+
  #ifdef CONFIG_CPU_32
  	.macro	set_cpsr_c, reg, mode
 -#if 1
@@ -2717,14 +2717,14 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	msr	cpsr_c, \mode
  #endif
  	.endm
- 
+
  	.macro	disable_irq, temp
 @@ -86,10 +87,20 @@
- 
+
  	.macro	enable_irq, temp
  	set_cpsr_c \temp, #MODE_SVC
  	.endm
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	.macro	set_cpsr_c_cond, cond, mode
 +	msr\cond cpsr_c, \mode
@@ -2748,7 +2748,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	p += sprintf(p, "Err: %10lu\n", irq_err_count);
  	return p - buf;
  }
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +/* increase performance by disabling IRQ lock detection */
 +#define check_irq_lock(desc, irq, regs)		(0)
@@ -2765,13 +2765,13 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	return 0;
  }
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  static void
  __do_irq(unsigned int irq, struct irqaction *action, struct pt_regs *regs)
  {
  	unsigned int status;
 @@ -218,10 +223,13 @@ void do_IRQ(int irq, struct pt_regs * re
- 
+
  	/*
  	 * Acknowledge and clear the IRQ, but (if its
  	 * a level-based IRQ, don't mask it)
@@ -2780,7 +2780,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +    if (!adp_pipelined)
 +#endif /* CONFIG_ADEOS_CORE */
  	desc->mask_ack(irq);
- 
+
  	/*
  	 * If we're currently running this IRQ, or its disabled,
  	 * we shouldn't process the IRQ.  Instead, turn on the
@@ -2796,30 +2796,30 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +    if (!adp_pipelined)
 +#endif /* CONFIG_ADEOS_CORE */
  	irq = fixup_irq(irq);
- 
+
  	/*
  	 * Some hardware gives randomly wrong interrupts.  Rather
  	 * than crashing, do something sensible.
 @@ -344,10 +357,11 @@ asmlinkage void asm_do_IRQ(int irq, stru
- 
+
  	irq_finish(irq);
  	return;
  }
- 
+
 +#ifndef CONFIG_ADEOS_CORE /* increase performance by disabling IRQ lock detection */
  static void irqlck_timeout(unsigned long _data)
  {
  	struct irqdesc *desc = (struct irqdesc *)_data;
- 
+
  	spin_lock(&irq_controller_lock);
 @@ -362,10 +376,11 @@ static void irqlck_timeout(unsigned long
  	if (desc->disable_depth == 0)
  		desc->unmask(desc - irq_desc);
- 
+
  	spin_unlock(&irq_controller_lock);
  }
 +#endif /* !CONFIG_ADEOS_CORE */
- 
+
  #ifdef CONFIG_ARCH_ACORN
  void do_ecard_IRQ(int irq, struct pt_regs *regs)
  {
@@ -2836,7 +2836,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		irq_desc[irq].lck_timer.function = irqlck_timeout;
 +#endif /* !CONFIG_ADEOS_CORE */
  	}
- 
+
  	init_arch_irq();
  	init_dma();
  }
@@ -2848,20 +2848,20 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  obj-m		:=
  obj-n		:=
  obj-		:=
- 
+
 -export-objs	:= armksyms.o dma.o ecard.o fiq.o io.o oldlatches.o time.o
 +export-objs	:= adeos.o armksyms.o dma.o ecard.o fiq.o io.o oldlatches.o time.o
- 
+
  no-irq-arch	:= $(CONFIG_ARCH_INTEGRATOR) $(CONFIG_ARCH_CLPS711X) \
  		   $(CONFIG_FOOTBRIDGE) $(CONFIG_ARCH_EBSA110) \
  		   $(CONFIG_ARCH_SA1100) $(CONFIG_ARCH_CAMELOT) \
  		   $(CONFIG_ARCH_MX1ADS) $(CONFIG_ARCH_OMAHA) \
 @@ -53,10 +53,11 @@ endif
- 
+
  obj-$(CONFIG_KGDB)		+= kgdb-stub.o kgdb-jmp.o
  obj-$(CONFIG_KGDB_SERIAL)	+= kgdb-serial.o
  obj-$(CONFIG_KGDB_UDP)		+= kgdb-udp.o
- 
+
 +obj-$(CONFIG_ADEOS_CORE) += adeos.o
  obj-$(CONFIG_ARCH_ACORN) += ecard.o fiq.o time-acorn.o
  obj-$(CONFIG_ARCH_CLPS7500) += time-acorn.o
@@ -2894,7 +2894,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	local_irq_enable();
 +#endif
  }
- 
+
  /*
   * The idle thread.  We try to conserve power, while trying to keep
   * overall latency low.  The architecture specific idle is passed
@@ -2902,7 +2902,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	init_idle();
  	current->nice = 20;
  	current->counter = -100;
- 
+
  	while (1) {
 +#ifdef CONFIG_ADEOS_CORE
 +		adeos_suspend_domain();
@@ -2946,7 +2946,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +	outl(inl(GPIO_PBDR)   & ~3UL, GPIO_PBDR);        /* set value to 0 */
 +#endif
  }
- 
+
  static const char *hwcap_str[] = {
  	"swp",
  	"half",
@@ -2955,7 +2955,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	seq_printf(m, "Revision\t: %04x\n", system_rev);
  	seq_printf(m, "Serial\t\t: %08x%08x\n",
  		   system_serial_high, system_serial_low);
- 
+
 +#if 0
 +	/* *DEBUG* */
 +	static struct { char *n; unsigned long o; } x[] = {
@@ -2975,7 +2975,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +#endif
  	return 0;
  }
- 
+
  static void *c_start(struct seq_file *m, loff_t *pos)
  {
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/kernel/time.c linux-2.4.21_rmk-1_crus-1.4.2-adeos/arch/arm/kernel/time.c
@@ -2984,7 +2984,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 @@ -222,5 +222,17 @@ void __init time_init(void)
  	xtime.tv_usec = 0;
  	xtime.tv_sec  = 0;
- 
+
  	setup_timer();
  }
 +
@@ -3005,9 +3005,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 @@ -44,10 +44,11 @@ const char *processor_modes[]=
    "UK8_32" , "UK9_32" , "UK10_32", "UND_32" , "UK12_32", "UK13_32", "UK14_32", "SYS_32"
  };
- 
+
  static const char *handler[]= { "prefetch abort", "data abort", "address exception", "interrupt" };
- 
+
 +#ifdef CONFIG_FRAME_POINTER
  /*
   * Stack pointers should always be within the kernels view of
@@ -3017,11 +3017,11 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 @@ -56,10 +57,11 @@ static int verify_stack(unsigned long sp
  	if (sp < PAGE_OFFSET || (sp > (unsigned long)high_memory && high_memory != 0))
  		return -EFAULT;
- 
+
  	return 0;
  }
 +#endif
- 
+
  /*
   * Dump out the contents of some memory nicely...
   */
@@ -3031,14 +3031,14 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  NORET_TYPE void die(const char *str, struct pt_regs *regs, int err)
  {
  	struct task_struct *tsk = current;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +       if (adp_current != adp_root)
 +           adeos_set_printk_sync(adp_current);
 +#endif /* CONFIG_ADEOS_CORE */
  	console_verbose();
  	spin_lock_irq(&die_lock);
- 
+
  	printk("Internal error: %s: %x\n", str, err);
  	printk("CPU: %d\n", smp_processor_id());
  	show_regs(regs);
@@ -3049,7 +3049,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +#endif /* CONFIG_ADEOS_CORE */
  	printk("Process %s (pid: %d, stack limit = 0x%p)\n",
  		current->comm, current->pid, tsk + 1);
- 
+
  	if (!user_mode(regs) || in_interrupt()) {
  		I_really_mean_dump_stack_so_dont_mess_with_me(tsk, (unsigned long)(regs + 1));
 @@ -310,10 +321,14 @@ asmlinkage void do_unexp_fiq (struct pt_
@@ -3057,41 +3057,41 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  asmlinkage void bad_mode(struct pt_regs *regs, int reason, int proc_mode)
  {
  	unsigned int vectors = vectors_base();
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +       if (adp_current != adp_root)
 +           adeos_set_printk_sync(adp_current);
 +#endif /* CONFIG_ADEOS_CORE */
  	console_verbose();
- 
+
  	printk(KERN_CRIT "Bad mode in %s handler detected: mode %s\n",
  		handler[reason], processor_modes[proc_mode]);
- 
-@@ -574,13 +589,14 @@ static struct sysrq_key_op sysrq_gdb_op 
+
+@@ -574,13 +589,14 @@ static struct sysrq_key_op sysrq_gdb_op
  };
  #endif
- 
+
  static int kgdb_halt = 1;
- 
+
 -void __init nohalt_setup(char *line)
 +int __init nohalt_setup(char *line)
  {
  	kgdb_halt = 0;
 +	return 1;
  }
- 
+
  __setup("nohalt", nohalt_setup);
  #endif
- 
+
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/lib/udivdi3.c linux-2.4.21_rmk-1_crus-1.4.2-adeos/arch/arm/lib/udivdi3.c
 --- linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/lib/udivdi3.c	2005-05-09 11:10:36.000000000 +0200
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/arch/arm/lib/udivdi3.c	2004-11-26 20:31:49.000000000 +0100
 @@ -238,5 +238,44 @@ __umoddi3 (UDItype u, UDItype v)
    (void) __udivmoddi4 (u ,v, &w);
- 
+
    return w;
  }
- 
+
 +/* added signed variant for RTAI */
 +
 +static inline DItype
@@ -3142,9 +3142,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	}
 +	return 0;
  }
- 
+
  __initcall(ep93xx_init);
- 
+
  /* Machine Descriptor created by macros in asm-arm/mach/arch.h
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/mach-ep93xx/irq.c linux-2.4.21_rmk-1_crus-1.4.2-adeos/arch/arm/mach-ep93xx/irq.c
 --- linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/mach-ep93xx/irq.c	2005-05-09 11:10:42.000000000 +0200
@@ -3154,29 +3154,29 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  {
  	outl( (1 << (irq - 32)), VIC1INTENABLE );
  }
-  
+
 +static void ep93xx_mask_ack_irq_timer1(unsigned int irq)
 +{
 +	outl((1 << IRQ_TIMER1), VIC0INTENCLEAR);
 +	outl(1, TIMER1CLEAR);
 +}
-+ 
++
 +static void ep93xx_mask_ack_irq_timer2(unsigned int irq)
 +{
 +	outl((1 << IRQ_TIMER2), VIC0INTENCLEAR);
 +	outl(1, TIMER2CLEAR);
 +}
-+ 
++
 +static void ep93xx_mask_ack_irq_timer3(unsigned int irq)
 +{
 +	outl((1 << (IRQ_TIMER3 - 32)), VIC1INTENCLEAR );
 +	outl(1, TIMER3CLEAR);
 +}
-+ 
++
  void __init ep93xx_init_irq(void)
  {
  	unsigned int i;
- 
+
  	for (i = 0; i < NR_IRQS; i++) {
 @@ -88,7 +106,13 @@ void __init ep93xx_init_irq(void)
  			irq_desc[i].mask_ack	= ep93xx_mask_irq2;
@@ -3185,8 +3185,8 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		}
  	}
 -}
- 
-+	/* let mask_ack of selected irqs really ack on hardware level 
+
++	/* let mask_ack of selected irqs really ack on hardware level
 +	 * (makes live a lot easier with Adeos) */
 +	irq_desc[IRQ_TIMER1].mask_ack = ep93xx_mask_ack_irq_timer1;
 +	irq_desc[IRQ_TIMER2].mask_ack = ep93xx_mask_ack_irq_timer2;
@@ -3196,18 +3196,18 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/mach-ep93xx/Makefile linux-2.4.21_rmk-1_crus-1.4.2-adeos/arch/arm/mach-ep93xx/Makefile
 --- linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/mach-ep93xx/Makefile	2005-05-09 11:10:42.000000000 +0200
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/arch/arm/mach-ep93xx/Makefile	2004-11-18 12:29:57.000000000 +0100
-@@ -15,11 +15,11 @@ O_TARGET		:= ep93xx.o 
+@@ -15,11 +15,11 @@ O_TARGET		:= ep93xx.o
  obj-y			:= arch.o irq.o mm.o time.o ssp.o dma_ep93xx.o pcmcia_io.o
  obj-m			:=
  obj-n			:=
  obj-			:=
- 
+
 -export-objs		:= pcipool.o
 +export-objs		:= time.o ssp.o
- 
+
  obj-$(CONFIG_EP93XX_CRUNCH) += crunch.o
  obj-$(CONFIG_KGDB_SERIAL) += kgdb-serial.o
- 
+
  include $(TOPDIR)/Rules.make
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/mach-ep93xx/ssp.c linux-2.4.21_rmk-1_crus-1.4.2-adeos/arch/arm/mach-ep93xx/ssp.c
 --- linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/mach-ep93xx/ssp.c	2005-05-09 11:10:42.000000000 +0200
@@ -3221,7 +3221,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +#include <linux/module.h>
  #include <linux/delay.h>
  #include <asm/irq.h>
- 
+
  #include <asm/semaphore.h>
  #include <asm/uaccess.h>
 @@ -960,5 +961,7 @@ static int SSP_Write_I2SCodec
@@ -3253,15 +3253,15 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  #include <linux/sched.h>
  #include <linux/init.h>
 +#include <linux/module.h>
- 
+
  #include <asm/hardware.h>
  #include <asm/io.h>
 +#include <asm/arch-ep93xx/ep93xx_tsc.h>
- 
+
 -extern unsigned long (*gettimeoffset)(void);
 +/* EP93XX-based 64 bit TSC (overflow time: ~600000 years) */
 +volatile ep93xx_tsc_t ep93xx_tsc;
- 
+
 -/*
 - * gettimeoffset() returns time since last timer tick, in usecs.
 - *
@@ -3286,7 +3286,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +    unsigned long long tsc_offset = ep93xx_rdtsc() - (ep93xx_jiffies_done * FREQ_EP93XX_TSC) / HZ;
 +    return (tsc_offset * 1000000LLU) / (unsigned long long)FREQ_EP93XX_TSC;
  }
- 
+
 -void __init ep93xx_setup_timer(void)
 +/* set up EP93xx timers */
 +void __init
@@ -3295,7 +3295,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 -	gettimeoffset = ep93xx_gettimeoffset;
 +    extern unsigned long (*gettimeoffset)(void);
 +    gettimeoffset = ep93xx_gettimeoffset;
- 
+
 -	outl(0, TIMER1CONTROL);
 -	outl(LATCH - 1, TIMER1LOAD);
 -	outl(0xc8, TIMER1CONTROL);
@@ -3309,7 +3309,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +     * RTAI) and the wall-clock time-offset is also calculated from it (so RTAI
 +     * can change timer 1's load-value without effecting the wall-clock).
 +     */
- 
+
 -	xtime.tv_sec = inl(RTCDR);
 +    /* set up 64 bit tsc and jiffies handling */
 +    ep93xx_tsc.ll = 0;
@@ -3341,19 +3341,19 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  OBJCOPYFLAGS	:=-O binary -R .note -R .comment -S
  GZFLAGS		:=-9
  CFLAGS		+=-Uarm -fno-common -pipe
- 
+
  ifeq ($(CONFIG_FRAME_POINTER),y)
 -CFLAGS		:=$(CFLAGS:-fomit-frame-pointer=-mapcs -mno-sched-prolog)
 +CFLAGS		+=-fno-omit-frame-pointer -mapcs -mno-sched-prolog
  endif
- 
+
  CFLAGS		:=$(CFLAGS:-O2=-Os)
- 
+
  ifeq ($(CONFIG_DEBUG_INFO),y)
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/mm/ioremap.c linux-2.4.21_rmk-1_crus-1.4.2-adeos/arch/arm/mm/ioremap.c
 --- linux-2.4.21_rmk-1_crus-1.4.2/arch/arm/mm/ioremap.c	2005-05-09 11:10:38.000000000 +0200
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/arch/arm/mm/ioremap.c	2005-01-10 15:11:45.000000000 +0100
-@@ -105,10 +105,13 @@ remap_area_pages(unsigned long address, 
+@@ -105,10 +105,13 @@ remap_area_pages(unsigned long address,
  		if (!pmd)
  			break;
  		if (remap_area_pmd(pmd, address, end - address,
@@ -3383,7 +3383,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	mcr	p15, 0, r0, c2, c0, 0		@ load page table pointer
  	mcr	p15, 0, ip, c8, c7, 0		@ invalidate I & D TLBs
  	mov	pc, lr
- 
+
 @@ -572,10 +572,17 @@ __arm920_setup:
  	orr	r0, r0, #0x0004			@ .... .... .... .1..
  #endif
@@ -3398,9 +3398,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +#endif /* CONFIG_ADEOS_CORE */
 +#endif
  	mov	pc, lr
- 
+
  	.text
- 
+
  /*
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/Documentation/adeos.txt linux-2.4.21_rmk-1_crus-1.4.2-adeos/Documentation/adeos.txt
 --- linux-2.4.21_rmk-1_crus-1.4.2/Documentation/adeos.txt	1970-01-01 01:00:00.000000000 +0100
@@ -3582,7 +3582,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 --- linux-2.4.21_rmk-1_crus-1.4.2/drivers/char/tty_io.c	2005-05-09 11:10:42.000000000 +0200
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/drivers/char/tty_io.c	2004-12-07 21:44:32.000000000 +0100
 @@ -1943,24 +1943,21 @@ static void flush_to_ldisc(void *private
- 
+
  	if (test_bit(TTY_DONT_FLIP, &tty->flags)) {
  		queue_task(&tty->flip.tqueue, &tq_timer);
  		return;
@@ -3612,7 +3612,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/drivers/serial/ep93xx_amba.c	2005-01-25 11:03:14.000000000 +0100
 @@ -266,15 +266,34 @@ csambauart_rx_chars(struct uart_port *po
  	unsigned int status, ch, rsr, max_count = 256;
- 
+
  	status = UART_GET_FR(port);
  	while (UART_RX_DATA(status) && max_count--) {
  		if (tty->flip.count >= TTY_FLIPBUF_SIZE) {
@@ -3642,9 +3642,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  			}
 +#endif
  		}
- 
+
  		ch = UART_GET_CHAR(port);
- 
+
  		*tty->flip.char_buf_ptr = ch;
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/FirmixChangeLog linux-2.4.21_rmk-1_crus-1.4.2-adeos/FirmixChangeLog
 --- linux-2.4.21_rmk-1_crus-1.4.2/FirmixChangeLog	1970-01-01 01:00:00.000000000 +0100
@@ -4360,7 +4360,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +{
 +    register ep93xx_tsc_t tsc;
 +    register unsigned long low_now;
-+    
++
 +    /* get snapshot of global tsc (ldm is irq-safe!) */
 +    __asm__(
 +	"ldmia %[glbl_tsc], %M[tsc]\n"
@@ -4442,20 +4442,20 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   */
  #ifndef __ASM_ARCH_SYSTEM_H
  #define __ASM_ARCH_SYSTEM_H
- 
+
 +#include <linux/config.h>
  #include <asm/arch/platform.h>
  #include <asm/hardware.h>
  #include <asm/io.h>
- 
+
 -static void arch_idle(void)
 +static inline void arch_idle(void)
  {
  	unsigned long ulTemp;
- 
+
  	ulTemp = inl(SYSCON_HALT);
  }
- 
+
 -extern __inline__ void arch_reset(char mode)
 +extern inline void arch_reset(char mode)
  {
@@ -4487,9 +4487,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  #include <asm/leds.h>
  #include <asm/arch/hardware.h>
 +#include <asm/arch/ep93xx_tsc.h>
- 
+
  extern void ep93xx_setup_timer(void);
- 
+
  /*
   * IRQ handler for the timer
 + *
@@ -4524,7 +4524,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +    }
 +    do_profile(regs);
  }
- 
+
  /*
 - * Set up timer interrupt, and return the current time in seconds.
 + * Set up timer interrupt
@@ -4540,7 +4540,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +    timer_irq.handler = ep93xx_timer_interrupt;
 +    setup_arm_irq(IRQ_TIMER1, &timer_irq);
  }
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +static inline void
 +__adeos_set_timer(unsigned long hz)
@@ -4562,7 +4562,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   *
 + * Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
 + * 	corrected CLOCK_TICK_RATE, added defines for exact frequency
-+ *  
++ *
   * This program is free software; you can redistribute it and/or modify
   * it under the terms of the GNU General Public License as published by
   * the Free Software Foundation; either version 2 of the License, or
@@ -4573,7 +4573,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   * along with this program; if not, write to the Free Software
   * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
   */
- 
+
 -#define CLOCK_TICK_RATE 508000
 +#ifndef _ASM_ARM_ARCH_EP93XX_H
 +#define _ASM_ARM_ARCH_EP93XX_H
@@ -4597,17 +4597,17 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 --- linux-2.4.21_rmk-1_crus-1.4.2/include/asm-arm/atomic.h	2005-05-09 11:10:41.000000000 +0200
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/include/asm-arm/atomic.h	2005-05-09 13:16:06.000000000 +0200
 @@ -24,90 +24,100 @@
- 
+
  typedef struct { volatile int counter; } atomic_t;
- 
+
  #define ATOMIC_INIT(i)	{ (i) }
- 
+
 -#ifdef __KERNEL__
 +/* RTAI needs some atomic functions in user-space (for liblxrt) */
 +#if defined(__KERNEL__) || defined(CONFIG_ADEOS_CORE)
 +
  #include <asm/proc/system.h>
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +#define _atomic_save_flags_cli(x)	adeos_hw_local_irq_save(flags)
 +#define _atomic_restore_flags(x)	adeos_hw_local_irq_restore(flags)
@@ -4618,98 +4618,98 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +
  #define atomic_read(v)	((v)->counter)
  #define atomic_set(v,i)	(((v)->counter) = (i))
- 
+
  static inline void atomic_add(int i, volatile atomic_t *v)
  {
  	unsigned long flags;
- 
+
 -	local_irq_save(flags);
 +	_atomic_save_flags_cli(flags);
  	v->counter += i;
 -	local_irq_restore(flags);
 +	_atomic_restore_flags(flags);
  }
- 
+
  static inline void atomic_sub(int i, volatile atomic_t *v)
  {
  	unsigned long flags;
- 
+
 -	local_irq_save(flags);
 +	_atomic_save_flags_cli(flags);
  	v->counter -= i;
 -	local_irq_restore(flags);
 +	_atomic_restore_flags(flags);
  }
- 
+
  static inline void atomic_inc(volatile atomic_t *v)
  {
  	unsigned long flags;
- 
+
 -	local_irq_save(flags);
 +	_atomic_save_flags_cli(flags);
  	v->counter += 1;
 -	local_irq_restore(flags);
 +	_atomic_restore_flags(flags);
  }
- 
+
  static inline void atomic_dec(volatile atomic_t *v)
  {
  	unsigned long flags;
- 
+
 -	local_irq_save(flags);
 +	_atomic_save_flags_cli(flags);
  	v->counter -= 1;
 -	local_irq_restore(flags);
 +	_atomic_restore_flags(flags);
  }
- 
+
  static inline int atomic_dec_and_test(volatile atomic_t *v)
  {
  	unsigned long flags;
  	int val;
- 
+
 -	local_irq_save(flags);
 +	_atomic_save_flags_cli(flags);
  	val = v->counter;
  	v->counter = val -= 1;
 -	local_irq_restore(flags);
 +	_atomic_restore_flags(flags);
- 
+
  	return val == 0;
  }
- 
+
  static inline int atomic_add_negative(int i, volatile atomic_t *v)
  {
  	unsigned long flags;
  	int val;
- 
+
 -	local_irq_save(flags);
 +	_atomic_save_flags_cli(flags);
  	val = v->counter;
  	v->counter = val += i;
 -	local_irq_restore(flags);
 +	_atomic_restore_flags(flags);
- 
+
  	return val < 0;
  }
- 
+
  static inline void atomic_clear_mask(unsigned long mask, unsigned long *addr)
  {
  	unsigned long flags;
- 
+
 -	local_irq_save(flags);
 +	_atomic_save_flags_cli(flags);
  	*addr &= ~mask;
 -	local_irq_restore(flags);
 +	_atomic_restore_flags(flags);
  }
- 
+
  /* Atomic operations are already serializing on ARM */
  #define smp_mb__before_atomic_dec()	barrier()
  #define smp_mb__after_atomic_dec()	barrier()
  #define smp_mb__before_atomic_inc()	barrier()
  #define smp_mb__after_atomic_inc()	barrier()
- 
+
 -#endif
 +#endif /* defined(__KERNEL__) || defined(CONFIG_ADEOS_CORE) */
  #endif
@@ -4718,7 +4718,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/include/asm-arm/bitops.h	2004-12-29 18:06:51.000000000 +0100
 @@ -84,11 +84,11 @@ extern int find_first_zero_bit(void * ad
  extern int find_next_zero_bit(void * addr, int size, int offset);
- 
+
  /*
   * This routine doesn't need to be atomic.
   */
@@ -4727,7 +4727,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  {
      return (((unsigned char *) addr)[nr >> 3] >> (nr & 7)) & 1;
  }	
- 
+
  /*
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/include/asm-arm/hw_irq.h linux-2.4.21_rmk-1_crus-1.4.2-adeos/include/asm-arm/hw_irq.h
 --- linux-2.4.21_rmk-1_crus-1.4.2/include/asm-arm/hw_irq.h	1970-01-01 01:00:00.000000000 +0100
@@ -4746,21 +4746,21 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 @@ -1,8 +1,9 @@
  #ifndef __ASM_ARM_IRQ_H
  #define __ASM_ARM_IRQ_H
- 
+
 +#include <linux/linkage.h>
  #include <asm/arch/irqs.h>
- 
+
  #ifndef irq_cannonicalize
  #define irq_cannonicalize(i)	(i)
  #endif
 @@ -21,8 +22,8 @@
- 
+
  #define disable_irq_nosync(i) disable_irq(i)
- 
+
  extern void disable_irq(unsigned int);
  extern void enable_irq(unsigned int);
 +extern asmlinkage void asm_do_IRQ(int irq, struct pt_regs *regs);
- 
+
  #endif
 -
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/include/asm-arm/mach/irq.h linux-2.4.21_rmk-1_crus-1.4.2-adeos/include/asm-arm/mach/irq.h
@@ -4771,7 +4771,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   */
  #ifndef __ASM_ARM_MACH_IRQ_H
  #define __ASM_ARM_MACH_IRQ_H
- 
+
 +#include <linux/config.h>
 +
  struct irqdesc {
@@ -4784,7 +4784,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	void (*mask)(unsigned int irq);		/* Mask IRQ		      */
  	void (*unmask)(unsigned int irq);	/* Unmask IRQ		      */
  	struct irqaction *action;
- 
+
 +#ifndef CONFIG_ADEOS_CORE			/* no IRQ lock detection to increase performance */
  	/*
  	 * IRQ lock detection
@@ -4796,19 +4796,19 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	struct timer_list	lck_timer;
 +#endif /* !CONFIG_ADEOS_CORE */
  };
- 
+
  extern struct irqdesc irq_desc[];
- 
+
  extern void (*init_arch_irq)(void);
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/include/asm-arm/pgalloc.h linux-2.4.21_rmk-1_crus-1.4.2-adeos/include/asm-arm/pgalloc.h
 --- linux-2.4.21_rmk-1_crus-1.4.2/include/asm-arm/pgalloc.h	2001-08-12 20:14:00.000000000 +0200
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/include/asm-arm/pgalloc.h	2005-05-09 13:26:42.000000000 +0200
 @@ -136,6 +136,35 @@ static inline pgd_t *pgd_alloc(struct mm
- 
+
  #define pgd_free(pgd)			free_pgd_fast(pgd)
- 
+
  extern int do_check_pgt_cache(int, int);
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +extern inline void set_pgdir(unsigned long address, pgd_t entry)
 +{
@@ -4847,12 +4847,12 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   */
  #ifndef __ASM_PROC_PROCESSOR_H
  #define __ASM_PROC_PROCESSOR_H
- 
+
 +#include <linux/config.h>
  #include <asm/proc/domain.h>
- 
+
  #define KERNEL_STACK_SIZE	PAGE_SIZE
- 
+
  struct context_save_struct {
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/include/asm-arm/proc-armv/system.h linux-2.4.21_rmk-1_crus-1.4.2-adeos/include/asm-arm/proc-armv/system.h
 --- linux-2.4.21_rmk-1_crus-1.4.2/include/asm-arm/proc-armv/system.h	2005-05-09 11:10:41.000000000 +0200
@@ -4862,7 +4862,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  #else
  #define vectors_base()	(0)
  #endif
- 
+
 +/* ========================================================================= */
 +#if defined(CONFIG_ADEOS_CORE)
 +
@@ -4979,7 +4979,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	:							\
  	: "r" (x)						\
  	: "memory")
- 
+
 +#endif /* CONFIG_ADEOS_CORE */
 +/* ========================================================================= */
 +
@@ -4997,7 +4997,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +#else
 +#undef swp_is_buggy
  #endif
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +
 +#define _xchg_save_flags_cli(flags)	adeos_hw_local_irq_save(flags)
@@ -5017,7 +5017,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  #ifdef swp_is_buggy
 @@ -176,21 +299,21 @@ static inline unsigned long __xchg(unsig
  #endif
- 
+
  	switch (size) {
  #ifdef swp_is_buggy
  		case 1:
@@ -5028,7 +5028,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 -			local_irq_restore(flags);
 +			_xchg_restore_flags(flags);
  			break;
- 
+
  		case 4:
 -			local_irq_save(flags);
 +			_xchg_save_flags_cli(flags);
@@ -5049,7 +5049,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  #define set_mb(var, value)  do { var = value; mb(); } while (0)
  #define set_wmb(var, value) do { var = value; wmb(); } while (0)
  #define nop() __asm__ __volatile__("mov\tr0,r0\t@ nop\n\t");
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +
 +#define prepare_to_switch(prev, next) \
@@ -5061,7 +5061,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +#else /* !CONFIG_ADEOS_CORE */
 +
  #define prepare_to_switch()    do { } while(0)
- 
+
 +#endif /* CONFIG_ADEOS_CORE */
 +
  #ifdef CONFIG_EP93XX_CRUNCH
@@ -5074,7 +5074,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  #define sti()			local_irq_enable()
  #define clf()			__clf()
  #define stf()			__stf()
- 
+
 +#ifndef CONFIG_ADEOS_CORE
  #define irqs_disabled()			\
  ({					\
@@ -5083,17 +5083,17 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	flags & PSR_I_BIT;		\
  })
 +#endif /* !CONFIG_ADEOS_CORE */
- 
+
  #define save_flags(x)		local_save_flags(x)
  #define restore_flags(x)	local_irq_restore(x)
  #define save_flags_cli(x)	local_irq_save(x)
  #define save_and_cli(x)		local_irq_save(x)
 @@ -125,6 +139,10 @@ extern struct task_struct *__switch_to(s
- 
+
  #endif /* CONFIG_SMP */
- 
+
  #endif /* __KERNEL__ */
- 
+
 +#define HAVE_DISABLE_HLT
 +void disable_hlt(void);
 +void enable_hlt(void);
@@ -5487,7 +5487,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +{
 +    unsigned long flags, s;
 +    adeos_declare_cpuid;
-+    
++
 +    adeos_get_cpu(flags);
 +    s = test_bit(IPIPE_STALL_FLAG,&adp->cpudata[cpuid].status);
 +    adeos_put_cpu(flags);
@@ -5515,7 +5515,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +    if (__adeos_pipeline_head_p(adp))
 +	adeos_hw_cli();
 +#endif /* CONFIG_SMP */
-+    
++
 +    return s;
 +}
 +
@@ -5526,7 +5526,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +{
 +    unsigned long flags, s;
 +    adeos_declare_cpuid;
-+    
++
 +    adeos_get_cpu(flags);
 +    s = test_bit(IPIPE_STALL_FLAG,&adp->cpudata[cpuid].status);
 +    adeos_unstall_pipeline_from(adp);
@@ -5650,11 +5650,11 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 --- linux-2.4.21_rmk-1_crus-1.4.2/include/linux/sched.h	2005-05-09 11:10:50.000000000 +0200
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/include/linux/sched.h	2005-05-09 13:26:42.000000000 +0200
 @@ -123,10 +123,14 @@ struct completion;
- 
+
  #ifdef __KERNEL__
- 
+
  #include <linux/spinlock.h>
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +#include <linux/adeos.h>
 +#endif /* CONFIG_ADEOS_CORE */
@@ -5667,7 +5667,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 @@ -413,10 +417,14 @@ struct task_struct {
  /* Protection of (de-)allocation: mm, files, fs, tty */
  	spinlock_t alloc_lock;
- 
+
  /* journalling filesystem info */
  	void *journal_info;
 +
@@ -5675,7 +5675,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +        void *ptd[ADEOS_ROOT_NPTDKEYS];
 +#endif /* CONFIG_ADEOS_CORE */
  };
- 
+
  /*
   * Per process flags
   */
@@ -5684,7 +5684,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   * The default (Linux) execution domain.
   */
  extern struct exec_domain	default_exec_domain;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +#define INIT_TASK_ADEOS		ptd: { [0 ... ADEOS_ROOT_NPTDKEYS - 1] = 0 },
 +#else
@@ -5704,8 +5704,8 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
      journal_info:	NULL,						\
 +    INIT_TASK_ADEOS							\
  }
- 
- 
+
+
  #ifndef INIT_TASK_SIZE
  # define INIT_TASK_SIZE	2048*sizeof(long)
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/init/main.c linux-2.4.21_rmk-1_crus-1.4.2-adeos/init/main.c
@@ -5723,7 +5723,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	sched_init();
  	softirq_init();
  	time_init();
- 
+
  	/*
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/kernel/adeos.c linux-2.4.21_rmk-1_crus-1.4.2-adeos/kernel/adeos.c
 --- linux-2.4.21_rmk-1_crus-1.4.2/kernel/adeos.c	1970-01-01 01:00:00.000000000 +0100
@@ -5835,9 +5835,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +    list_add_tail(&adp->p_link,&__adeos_pipeline);
 +
 +    __adeos_printk_virq = adeos_alloc_irq(); /* Cannot fail here. */
-+    adp->irqs[__adeos_printk_virq].handler = &__adeos_sync_console; 
-+    adp->irqs[__adeos_printk_virq].acknowledge = NULL; 
-+    adp->irqs[__adeos_printk_virq].control = IPIPE_HANDLE_MASK; 
++    adp->irqs[__adeos_printk_virq].handler = &__adeos_sync_console;
++    adp->irqs[__adeos_printk_virq].acknowledge = NULL;
++    adp->irqs[__adeos_printk_virq].control = IPIPE_HANDLE_MASK;
 +
 +    printk(KERN_INFO "Adeos %s: Root domain %s registered.\n",
 +	   ADEOS_VERSION_STRING,
@@ -5900,7 +5900,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +
 +	    /* Let the prioritary domain process the event. */
 +	    __adeos_switch_to(this_domain,next_domain,cpuid);
-+	    
++	
 +	    adeos_load_cpuid();	/* Processor might have changed. */
 +
 +	    if (!next_domain->cpudata[cpuid].event_info.propagate)
@@ -6127,7 +6127,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +		    this_domain->cpudata[cpuid].irq_pending_hi != 0)
 +		    __adeos_sync_stage(IPIPE_IRQMASK_ANY);
 +		}
-+	    
++	
 +	    break;
 +	    }
 +	else if (next_domain == this_domain)
@@ -6516,7 +6516,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 --- linux-2.4.21_rmk-1_crus-1.4.2/kernel/exit.c	2005-05-09 11:10:41.000000000 +0200
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/kernel/exit.c	2005-01-10 15:17:39.000000000 +0100
 @@ -437,10 +437,13 @@ NORET_TYPE void do_exit(long code)
- 
+
  fake_volatile:
  #ifdef CONFIG_BSD_PROCESS_ACCT
  	acct_process(code);
@@ -6525,7 +6525,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +	__adeos_exit_process(tsk);
 +#endif /* CONFIG_ADEOS_CORE */
  	__exit_mm(tsk);
- 
+
  	lock_kernel();
  	sem_exit();
  	__exit_files(tsk);
@@ -6567,14 +6567,14 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	destroy_context(mm);
  	free_mm(mm);
  }
- 
+
  /*
 @@ -777,10 +790,19 @@ int do_fork(unsigned long clone_flags, u
  	SET_LINKS(p);
  	hash_pid(p);
  	nr_threads++;
  	write_unlock_irq(&tasklist_lock);
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	{
 +	int k;
@@ -6586,7 +6586,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +
  	if (p->ptrace & PT_PTRACED)
  		send_sig(SIGSTOP, p, 1);
- 
+
  	wake_up_process(p);		/* do this last */
  	++total_forks;
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/kernel/ksyms.c linux-2.4.21_rmk-1_crus-1.4.2-adeos/kernel/ksyms.c
@@ -6597,7 +6597,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  #ifdef CONFIG_KMOD
  #include <linux/kmod.h>
  #endif
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +EXPORT_SYMBOL(adeos_suspend_domain);
 +EXPORT_SYMBOL(adp_cpu_current);
@@ -6627,9 +6627,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +#endif /* CONFIG_ADEOS_CORE */
 +
  extern void set_device_ro(kdev_t dev,int flag);
- 
+
  extern void *sys_call_table;
- 
+
  extern struct timezone sys_tz;
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/kernel/Makefile linux-2.4.21_rmk-1_crus-1.4.2-adeos/kernel/Makefile
 --- linux-2.4.21_rmk-1_crus-1.4.2/kernel/Makefile	2005-05-09 11:10:41.000000000 +0200
@@ -6637,13 +6637,13 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 @@ -7,11 +7,11 @@
  #
  # Note 2! The CFLAGS definitions are now in the main makefile...
- 
+
  O_TARGET := kernel.o
- 
+
 -export-objs = signal.o sys.o kmod.o context.o ksyms.o pm.o exec_domain.o \
 +export-objs = adeos.o signal.o sys.o kmod.o context.o ksyms.o pm.o exec_domain.o \
  	      printk.o fork.o cpufreq.o
- 
+
  obj-y     = sched.o fork.o exec_domain.o panic.o printk.o \
  	    module.o exit.o itimer.o info.o time.o softirq.o resource.o \
  	    sysctl.o acct.o capability.o ptrace.o timer.o user.o \
@@ -6654,7 +6654,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  obj-$(CONFIG_PM) += pm.o
  obj-$(CONFIG_CPU_FREQ) += cpufreq.o
 +obj-$(CONFIG_ADEOS_CORE) += adeos.o
- 
+
  ifneq ($(CONFIG_IA64),y)
  # According to Alan Modra <alan@linuxcare.com.au>, the -fno-omit-frame-pointer is
  # needed for x86 only.  Why this used to be enabled for all architectures is beyond
@@ -6662,7 +6662,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/kernel/panic.c linux-2.4.21_rmk-1_crus-1.4.2-adeos/kernel/panic.c
 --- linux-2.4.21_rmk-1_crus-1.4.2/kernel/panic.c	2002-11-29 00:53:15.000000000 +0100
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/kernel/panic.c	2004-11-23 16:01:58.000000000 +0100
-@@ -58,10 +58,13 @@ NORET_TYPE void panic(const char * fmt, 
+@@ -58,10 +58,13 @@ NORET_TYPE void panic(const char * fmt,
  		printk(KERN_EMERG "In interrupt handler - not syncing\n");
  	else if (!current->pid)
  		printk(KERN_EMERG "In idle task - not syncing\n");
@@ -6672,7 +6672,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +	__adeos_dump_state();
 +#endif /* CONFIG_ADEOS_CORE */
  	bust_spinlocks(0);
- 
+
  #ifdef CONFIG_SMP
  	smp_send_stop();
  #endif
@@ -6682,9 +6682,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 @@ -27,10 +27,21 @@
  #include <linux/interrupt.h>			/* For in_interrupt() */
  #include <linux/config.h>
- 
+
  #include <asm/uaccess.h>
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +#undef spin_lock_irq
 +#define	spin_lock_irq(lock)                 adeos_spin_lock_disable(lock)
@@ -6706,7 +6706,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  		if (*p == '\n')
  			log_level_unknown = 1;
  	}
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	if (adp_current != adp_root && !test_bit(ADEOS_SPRINTK_FLAG,&adp_current->flags)) {
 +	    /* When operating in asynchronous printk() mode, ensure
@@ -6761,7 +6761,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	if (must_wake_klogd && !oops_in_progress)
  		wake_up_interruptible(&log_wait);
  }
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +void __adeos_sync_console (unsigned virq) {
 +
@@ -6789,7 +6789,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/kernel/sched.c	2005-01-30 17:59:30.000000000 +0100
 @@ -530,10 +530,13 @@ needs_resched:
  }
- 
+
  asmlinkage void schedule_tail(struct task_struct *prev)
  {
  	__schedule_tail(prev);
@@ -6797,7 +6797,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +	__adeos_enter_process();
 +#endif /* CONFIG_ADEOS_EVENT_ENTER_PROCESS */
  }
- 
+
  /*
   *  'schedule()' is the scheduler function. It's a very simple and nice
   * scheduler: it's not perfect, but certainly works for most things.
@@ -6806,14 +6806,14 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	struct task_struct *prev, *next, *p;
  	struct list_head *tmp;
  	int this_cpu, c;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	if (adp_current != adp_root) /* Let's be helpful and conservative. */
 +	    return;
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  	spin_lock_prefetch(&runqueue_lock);
- 
+
  	BUG_ON(!current->active_mm);
  need_resched_back:
 @@ -666,11 +673,17 @@ repeat_schedule:
@@ -6848,14 +6848,14 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +	    return;
 +#endif /* CONFIG_ADEOS_CORE */
  	__schedule_tail(prev);
- 
+
  same_process:
  	reacquire_kernel_lock(current);
  	if (current->need_resched)
  		goto need_resched_back;
  	return;
  }
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +
 +void __adeos_schedule_back_root (struct task_struct *prev)
@@ -6879,7 +6879,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	if ((current->euid != p->euid) && (current->euid != p->uid) &&
  	    !capable(CAP_SYS_NICE))
  		goto out_unlock;
- 
+
  	retval = 0;
 +#ifdef CONFIG_ADEOS_EVENT_RENICE_PROCESS
 +	{
@@ -6890,9 +6890,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +#endif /* CONFIG_ADEOS_EVENT_RENICE_PROCESS */
  	p->policy = policy;
  	p->rt_priority = lp.sched_priority;
- 
+
  	current->need_resched = 1;
- 
+
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/kernel/signal.c linux-2.4.21_rmk-1_crus-1.4.2-adeos/kernel/signal.c
 --- linux-2.4.21_rmk-1_crus-1.4.2/kernel/signal.c	2005-05-09 11:10:41.000000000 +0200
 +++ linux-2.4.21_rmk-1_crus-1.4.2-adeos/kernel/signal.c	2005-01-10 15:19:09.000000000 +0100
@@ -6901,7 +6901,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  static inline void signal_wake_up(struct task_struct *t)
  {
  	t->sigpending = 1;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	{
 +	struct { struct task_struct *t; } evdata = { t };
@@ -6911,7 +6911,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +
  #ifdef CONFIG_SMP
  	/*
- 	 * If the task is running on a different CPU 
+ 	 * If the task is running on a different CPU
  	 * force a reschedule on the other CPU to make
  	 * it notice the new signal quickly.
 @@ -552,10 +559,21 @@ printk("SIG queue (%s:%d): %d ", t->comm
@@ -6919,7 +6919,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  	ret = 0;
  	if (!sig || !t->sig)
  		goto out_nolock;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	/* If some domain handler in the pipeline doesn't ask for
 +	   propagation, return success pretending that 'sig' was
@@ -6933,7 +6933,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +
  	spin_lock_irqsave(&t->sigmask_lock, flags);
  	handle_stop_signal(sig, t);
- 
+
  	/* Optimize away the signal, if it's a signal that can be
  	   handled immediately (ie non-blocked and untraced) and
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/kernel/sysctl.c linux-2.4.21_rmk-1_crus-1.4.2-adeos/kernel/sysctl.c
@@ -6950,7 +6950,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +#endif /* CONFIG_ADEOS_CORE */
  #endif
  }
- 
+
  int do_sysctl(int *name, int nlen, void *oldval, size_t *oldlenp,
  	       void *newval, size_t newlen)
 diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2/Makefile linux-2.4.21_rmk-1_crus-1.4.2-adeos/Makefile
@@ -6962,25 +6962,25 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
  SUBLEVEL = 21
 -EXTRAVERSION =-rmk1-crus1.4.2
 +EXTRAVERSION = -rmk1-crus1.4.2-adeos
- 
+
  KERNELRELEASE=$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)
- 
+
  ARCH := arm
  KERNELPATH=kernel-$(shell echo $(KERNELRELEASE) | sed -e "s/-//g")
 @@ -123,17 +123,18 @@ export SVGA_MODE = -DSVGA_MODE=NORMAL_VG
- 
+
  CORE_FILES	=kernel/kernel.o mm/mm.o fs/fs.o ipc/ipc.o
  NETWORKS	=net/network.o
- 
+
  LIBS		=$(TOPDIR)/lib/lib.a
 -SUBDIRS		=kernel drivers mm fs net ipc lib
 +SUBDIRS		=kernel adeos drivers mm fs net ipc lib
- 
+
  DRIVERS-n :=
  DRIVERS-y :=
  DRIVERS-m :=
  DRIVERS-  :=
- 
+
 +DRIVERS-$(CONFIG_ADEOS) += adeos/built-in.o
  DRIVERS-$(CONFIG_ACPI) += drivers/acpi/acpi.o
  DRIVERS-$(CONFIG_PARPORT) += drivers/parport/driver.o
@@ -6993,9 +6993,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 @@ -490,17 +490,36 @@ int get_user_pages(struct task_struct *t
  	do {
  		struct vm_area_struct *	vma;
- 
+
  		vma = find_extend_vma(mm, start);
- 
+
 +#if 0
  		if ( !vma || (pages && vma->vm_flags & VM_IO) || !(flags & vma->vm_flags) )
 +#else
@@ -7005,7 +7005,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +		if (!vma || (pages && vm_io) || !(flags & vma->vm_flags))
 +#endif
  			return i ? : -EFAULT;
- 
+
  		spin_lock(&mm->page_table_lock);
  		do {
 +#if 0
@@ -7020,7 +7020,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +			 * have no pageframes. And the caller passed NULL
 +			 * for `pages' anyway.
 +			 */
-+			while (!vm_io && !(map = follow_page(mm,start,write))) { 
++			while (!vm_io && !(map = follow_page(mm,start,write))) {
 +#endif
  				spin_unlock(&mm->page_table_lock);
  				switch (handle_mm_fault(mm, vma, start, write)) {

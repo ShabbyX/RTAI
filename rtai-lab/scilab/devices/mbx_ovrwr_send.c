@@ -105,7 +105,7 @@ void rtai_mbx_ovrwr_send(scicos_block *block,int flag)
   if (flag==1){          /* get input */
     inout(block);
   }
-  else if (flag==5){     /* termination */ 
+  else if (flag==5){     /* termination */
     end(block);
   }
   else if (flag ==4){    /* initialisation */

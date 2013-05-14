@@ -5,7 +5,7 @@
  * @file
  *
  * Conversion between characters strings and unsigned long identifiers.
- * 
+ *
  * Convert a 6 characters string to un unsigned long, and vice versa, to be used
  * as an identifier for RTAI services symmetrically available in user and kernel
  * space, e.g. @ref shm "shared memory" and @ref lxrt "LXRT and LXRT-INFORMED".
@@ -90,18 +90,18 @@ NAM2NUM_PROTO(unsigned long, nam2num, (const char *name))
  *
  * @param num is the unsigned long identifier whose alphanumeric name string has
  * to be evaluated;
- * 
+ *
  * @param name is a pointer to a 6 characters buffer where the identifier will
  * be returned.
  */
 NAM2NUM_PROTO(void, num2nam, (unsigned long num, char *name))
 {
-        int c, i, k, q; 
+        int c, i, k, q;
 	if (num == 0xFFFFFFFF) {
 		name[0] = 0;
 		return;
 	}
-        i = 5; 
+        i = 5;
 	num -= 2;
 	while (num && i >= 0) {
 		q = num/39;

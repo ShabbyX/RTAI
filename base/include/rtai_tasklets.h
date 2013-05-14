@@ -170,7 +170,7 @@ RTAI_SYSCALL_MODE struct rt_task_struct *rt_tasklet_use_fpu(struct rt_tasklet_st
  * use to access all its related services.
  *
  */
-#define rt_init_timer rt_init_tasklet 
+#define rt_init_timer rt_init_tasklet
 
 /**
  * Delete, in kernel space, a timed tasklet, simply called timer, structure
@@ -278,7 +278,7 @@ do { \
 RTAI_SYSCALL_MODE int rt_wait_tasklet_is_hard(struct rt_tasklet_struct *tasklet, long thread);
 
 RTAI_SYSCALL_MODE void rt_register_task(struct rt_tasklet_struct *tasklet, struct rt_tasklet_struct *usptasklet, struct rt_task_struct *task);
- 
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

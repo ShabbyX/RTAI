@@ -8,13 +8,13 @@
 <a class="qindex" href="main.html">Main&nbsp;Page</a> | <a class="qindex" href="modules.html">Modules</a> | <a class="qindex" href="files.html">File&nbsp;List</a> | <a class="qindex" href="globals.html">Globals</a> | <a class="qindex" href="pages.html">Related&nbsp;Pages</a>  | <span class="search"><u>S</u>earch&nbsp;for&nbsp;<input class="search" type="text" name="query" value="" size="20" accesskey="s"/></span></form></div>
 <div class="nav">
 <a class="el" href="dir_000000.html">base</a>&nbsp;/&nbsp;<a class="el" href="dir_000015.html">include</a></div>
-<h1>rtai_shm.h</h1><a href="rtai__shm_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment">00001 
+<h1>rtai_shm.h</h1><a href="rtai__shm_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment">00001
 00026 <span class="comment">/*</span>
 00027 <span class="comment">ACKNOWLEDGMENTS:</span>
 00028 <span class="comment">- The suggestion and the code for mmapping at a user specified address is due to  Trevor Woolven (trevw@zentropix.com).</span>
 00029 <span class="comment">*/</span>
-00030 
-00031 
+00030
+00031
 00032 <span class="preprocessor">#ifndef _RTAI_SHM_H</span>
 00033 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_SHM_H</span>
 00034 <span class="preprocessor"></span>
@@ -43,82 +43,82 @@
 00098 <span class="preprocessor">#define mem_map_reserve(p)   SetPageReserved(p)</span>
 00099 <span class="preprocessor"></span><span class="preprocessor">#define mem_map_unreserve(p) ClearPageReserved(p)</span>
 00100 <span class="preprocessor"></span><span class="preprocessor">#endif </span><span class="comment">/* &lt; 2.6.0 */</span>
-00101 
+00101
 00102 <span class="preprocessor">#include &lt;rtai_malloc.h&gt;</span>
-00103 
+00103
 00104 <span class="preprocessor">#include &lt;asm/rtai_shm.h&gt;</span>
-00105 
+00105
 00106 <span class="preprocessor">#ifdef __cplusplus</span>
 00107 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00108 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00109 
+00109
 00110 <span class="keywordtype">int</span> __rtai_shm_init(<span class="keywordtype">void</span>);
-00111 
+00111
 00112 <span class="keywordtype">void</span> __rtai_shm_exit(<span class="keywordtype">void</span>);
-00113 
+00113
 00114 <span class="keywordtype">void</span> *<a class="code" href="group__shm.html#ga24">rt_shm_alloc</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name,
 00115                    <span class="keywordtype">int</span> size,
 00116                    <span class="keywordtype">int</span> suprt);
-00117 
+00117
 00118 <span class="preprocessor">#define rt_shm_alloc_adr(adr, name, size) \</span>
 00119 <span class="preprocessor">        rt_shm_alloc(name, size, suprt)</span>
 00120 <span class="preprocessor"></span>
 00121 <span class="keywordtype">int</span> <a class="code" href="group__shm.html#ga12">rt_shm_free</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name);
-00122 
+00122
 00123 <span class="keywordtype">void</span> *<a class="code" href="group__shm.html#ga42">rt_heap_open</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name,
 00124                    <span class="keywordtype">int</span> size,
 00125                    <span class="keywordtype">int</span> suprt);
-00126 
+00126
 00127 <span class="preprocessor">#define rt_heap_open_adr(adr, name, size, suprt) \</span>
 00128 <span class="preprocessor">        rt_heap_open(name, size, suprt)</span>
 00129 <span class="preprocessor"></span>
 00130 <span class="keywordtype">void</span> *<a class="code" href="group__shm.html#ga13">rt_halloc</a>(<span class="keywordtype">int</span> size);
-00131 
+00131
 00132 <span class="keywordtype">void</span> <a class="code" href="group__shm.html#ga14">rt_hfree</a>(<span class="keywordtype">void</span> *addr);
-00133 
+00133
 00134 <span class="keywordtype">void</span> *<a class="code" href="group__shm.html#ga15">rt_named_halloc</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name,
 00135                       <span class="keywordtype">int</span> size);
-00136 
+00136
 00137 <span class="keywordtype">void</span> <a class="code" href="group__shm.html#ga16">rt_named_hfree</a>(<span class="keywordtype">void</span> *addr);
-00138 
+00138
 00139 <span class="keywordtype">void</span> *<a class="code" href="group__shm.html#ga19">rt_named_malloc</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name,
 00140                       <span class="keywordtype">int</span> size);
-00141 
+00141
 00142 <span class="keywordtype">void</span> <a class="code" href="group__shm.html#ga20">rt_named_free</a>(<span class="keywordtype">void</span> *addr);
-00143 
+00143
 00144 <span class="keywordtype">void</span> *rvmalloc(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> size);
-00145 
+00145
 00146 <span class="keywordtype">void</span> rvfree(<span class="keywordtype">void</span> *mem,
 00147             <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> size);
-00148 
+00148
 00149 <span class="keywordtype">int</span> rvmmap(<span class="keywordtype">void</span> *mem,
 00150            <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> memsize,
 00151            <span class="keyword">struct</span> vm_area_struct *vma);
-00152 
+00152
 00153 <span class="keywordtype">void</span> *rkmalloc(<span class="keywordtype">int</span> *size,
 00154                <span class="keywordtype">int</span> suprt);
-00155 
+00155
 00156 <span class="keywordtype">void</span> rkfree(<span class="keywordtype">void</span> *mem,
 00157             <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> size);
-00158 
+00158
 00159 <span class="keywordtype">int</span> rkmmap(<span class="keywordtype">void</span> *mem,
 00160            <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> memsize,
 00161            <span class="keyword">struct</span> vm_area_struct *vma);
-00162 
+00162
 00163 <span class="preprocessor">#ifdef __cplusplus</span>
 00164 <span class="preprocessor"></span>}
 00165 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00166 
+00166
 00167 <span class="preprocessor">#else </span><span class="comment">/* !__KERNEL__ */</span>
-00168 
+00168
 00169 <span class="preprocessor">#include &lt;fcntl.h&gt;</span>
 00170 <span class="preprocessor">#include &lt;unistd.h&gt;</span>
 00171 <span class="preprocessor">#include &lt;sys/mman.h&gt;</span>
 00172 <span class="preprocessor">#include &lt;sys/ioctl.h&gt;</span>
 00173 <span class="preprocessor">#include &lt;<a class="code" href="rtai__lxrt_8h.html">rtai_lxrt.h</a>&gt;</span>
-00174 
+00174
 00175 <span class="comment">//#define SHM_USE_LXRT</span>
-00176 
+00176
 00177 <span class="preprocessor">#define RTAI_SHM_DEV  "/dev/rtai_shm"</span>
 00178 <span class="preprocessor"></span>
 00179 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> *_rt_shm_alloc(<span class="keywordtype">void</span> *start, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name, <span class="keywordtype">int</span> size, <span class="keywordtype">int</span> suprt, <span class="keywordtype">int</span> isheap)
@@ -141,7 +141,7 @@
 00196 <span class="preprocessor"></span>                                ioctl(hook, SHM_FREE, &amp;name);
 00197 <span class="preprocessor">#endif</span>
 00198 <span class="preprocessor"></span>                                adr = 0;
-00199                         } 
+00199                         }
 00200                         <span class="keywordflow">if</span> (isheap) {
 00201                                 arg.arg = (<span class="keywordtype">unsigned</span> long)adr;
 00202 <span class="preprocessor">#ifdef SHM_USE_LXRT</span>
@@ -157,7 +157,7 @@
 00212         close(hook);
 00213         <span class="keywordflow">return</span> adr;
 00214 }
-00215 
+00215
 00216 <span class="preprocessor">#define rt_shm_alloc(name, size, suprt)  \</span>
 00217 <span class="preprocessor">        _rt_shm_alloc(0, name, size, suprt, 0)</span>
 00218 <span class="preprocessor"></span>
@@ -176,7 +176,7 @@
 <a name="l00315"></a><a class="code" href="group__shm.html#ga71">00315</a> <span class="preprocessor">#define rtai_malloc_adr(start_address, name, size)  \</span>
 00316 <span class="preprocessor">        _rt_shm_alloc(start_address, name, size, USE_VMALLOC, 0)  // legacy</span>
 00317 <span class="preprocessor"></span>
-<a name="l00318"></a><a class="code" href="group__shm.html#ga12">00318</a> <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="group__shm.html#ga12">rt_shm_free</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name) 
+<a name="l00318"></a><a class="code" href="group__shm.html#ga12">00318</a> <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="group__shm.html#ga12">rt_shm_free</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name)
 00319 {
 00320         <span class="keywordtype">int</span> hook, size;
 00321         <span class="keyword">struct </span>{ <span class="keywordtype">void</span> *nameadr; } arg = { &amp;name };
@@ -197,7 +197,7 @@
 00336         close(hook);
 00337         <span class="keywordflow">return</span> size;
 00338 }
-00339 
+00339
 <a name="l00359"></a><a class="code" href="group__shm.html#ga72">00359</a> <span class="preprocessor">#define rtai_free(name, adr)  \</span>
 00360 <span class="preprocessor">        rt_shm_free(name)  // legacy</span>
 00361 <span class="preprocessor"></span>
@@ -206,51 +206,51 @@
 00364         <span class="keyword">struct </span>{ <span class="keywordtype">int</span> size; } arg = { size };
 00365         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, HEAP_ALLOC, &amp;arg).v[LOW];
 00366 }
-00367 
+00367
 <a name="l00368"></a><a class="code" href="group__shm.html#ga14">00368</a> RTAI_PROTO(<span class="keywordtype">void</span>, rt_hfree, (<span class="keywordtype">void</span> *addr))
 00369 {
 00370         <span class="keyword">struct </span>{ <span class="keywordtype">void</span> *addr; } arg = { addr };
 00371         rtai_lxrt(BIDX, SIZARG, HEAP_FREE, &amp;arg);
 00372 }
-00373 
+00373
 <a name="l00374"></a><a class="code" href="group__shm.html#ga15">00374</a> RTAI_PROTO(<span class="keywordtype">void</span> *, rt_named_halloc, (<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name, <span class="keywordtype">int</span> size))
 00375 {
 00376         <span class="keyword">struct </span>{ <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name; <span class="keywordtype">int</span> size; } arg = { name, size };
 00377         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, HEAP_NAMED_ALLOC, &amp;arg).v[LOW];
 00378 }
-00379 
+00379
 <a name="l00380"></a><a class="code" href="group__shm.html#ga16">00380</a> RTAI_PROTO(<span class="keywordtype">void</span>, rt_named_hfree, (<span class="keywordtype">void</span> *addr))
 00381 {
 00382         <span class="keyword">struct </span>{ <span class="keywordtype">void</span> *addr; } arg = { addr };
 00383         rtai_lxrt(BIDX, SIZARG, HEAP_NAMED_FREE, &amp;arg);
 00384 }
-00385 
+00385
 00386 RTAI_PROTO(<span class="keywordtype">void</span> *, rt_malloc, (<span class="keywordtype">int</span> size))
 00387 {
 00388         <span class="keyword">struct </span>{ <span class="keywordtype">int</span> size; } arg = { size };
 00389         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, MALLOC, &amp;arg).v[LOW];
 00390 }
-00391 
+00391
 00392 RTAI_PROTO(<span class="keywordtype">void</span>, rt_free, (<span class="keywordtype">void</span> *addr))
 00393 {
 00394         <span class="keyword">struct </span>{ <span class="keywordtype">void</span> *addr; } arg = { addr };
 00395         rtai_lxrt(BIDX, SIZARG, FREE, &amp;arg);
 00396 }
-00397 
+00397
 <a name="l00398"></a><a class="code" href="group__shm.html#ga19">00398</a> RTAI_PROTO(<span class="keywordtype">void</span> *, rt_named_malloc, (<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name, <span class="keywordtype">int</span> size))
 00399 {
 00400         <span class="keyword">struct </span>{ <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name; <span class="keywordtype">int</span> size; } arg = { name, size };
 00401         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, NAMED_MALLOC, &amp;arg).v[LOW];
 00402 }
-00403 
+00403
 <a name="l00404"></a><a class="code" href="group__shm.html#ga20">00404</a> RTAI_PROTO(<span class="keywordtype">void</span>, rt_named_free, (<span class="keywordtype">void</span> *addr))
 00405 {
 00406         <span class="keyword">struct </span>{ <span class="keywordtype">void</span> *addr; } arg = { addr };
 00407         rtai_lxrt(BIDX, SIZARG, NAMED_FREE, &amp;arg);
 00408 }
-00409 
+00409
 00410 <span class="preprocessor">#endif </span><span class="comment">/* __KERNEL__ */</span>
-00411 
+00411
 <a name="l00433"></a><a class="code" href="group__shm.html#ga73">00433</a> <span class="preprocessor">#define rt_heap_close(name, adr)  rt_shm_free(name)</span>
 00434 <span class="preprocessor"></span>
 00435 <span class="comment">// aliases in use already, different heads different choices</span>
@@ -266,7 +266,7 @@
 00445 <span class="preprocessor"></span><span class="preprocessor">#define rt_heap_release      rt_heap_close</span>
 00446 <span class="preprocessor"></span>
 00447 <span class="comment">// these have no aliases, and never will</span>
-00448 
+00448
 <a name="l00464"></a><a class="code" href="group__shm.html#ga83">00464</a> <span class="preprocessor">#define rt_global_heap_open()  rt_heap_open(GLOBAL_HEAP_ID, 0, 0)</span>
 00465 <span class="preprocessor"></span>
 <a name="l00482"></a><a class="code" href="group__shm.html#ga84">00482</a> <span class="preprocessor">#define rt_global_heap_close()  rt_heap_close(GLOBAL_HEAP_ID, 0)</span>

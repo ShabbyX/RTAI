@@ -102,13 +102,13 @@ typedef struct xnarchtcb {
     union i387_union fpuenv __attribute__ ((aligned (16)));
     unsigned stacksize;
     unsigned long *stackbase;
-    unsigned long esp; 
+    unsigned long esp;
     unsigned long eip;
     struct task_struct *user_task;
     struct task_struct *active_task;
-    unsigned long *espp; 
+    unsigned long *espp;
     unsigned long *eipp;
-    union i387_union *fpup; 
+    union i387_union *fpup;
 } xnarchtcb_t;
 
 typedef struct xnthread { xnarchtcb_t tcb; unsigned long status; } xnthread_t;
@@ -278,7 +278,7 @@ void rtai_handle_isched_lock(int nesting);
 #endif
 
 /*
- * WATCH OUT for the max expected number of arguments of rtai funs and 
+ * WATCH OUT for the max expected number of arguments of rtai funs and
  * their scattered around different calling ways.
  */
 
@@ -367,7 +367,7 @@ struct epoch_struct { spinlock_t lock; volatile int touse; volatile RTIME time[2
 	if (rtime > boot_epoch.time[boot_epoch.touse][0]) { \
 		rtime -= boot_epoch.time[boot_epoch.touse][0]; \
 	}
-#else 
+#else
 #define REALTIME2COUNT(rtime)
 #endif
 

@@ -11,9 +11,9 @@
  * corresponding to RTAI mailboxes non blocking atomic send/receive of
  * messages, i.e. the equivalents of rt_mbx_send_if and
  * rt_mbx_receive_if. Moreover the circular buffer size must be >= to
- * the largest message to be sent/received. At least the double of the 
+ * the largest message to be sent/received. At least the double of the
  * largest message to be sent/received is strongly recommended.
- * Thus sending/receiving a message either succeeds of fails. However 
+ * Thus sending/receiving a message either succeeds of fails. However
  * thanks to the use of shared memory it should be more efficient than
  * mailboxes in atomic exchanges of messages from kernel to user space.
  * So it is a good candidate for supporting drivers development.
@@ -78,7 +78,7 @@ struct task_struct;
  * - USE_GFP_KERNEL, use kmalloc with GFP_KERNEL;
  * - USE_GFP_ATOMIC, use kmalloc with GFP_ATOMIC;
  * - USE_GFP_DMA, use kmalloc with GFP_DMA.
- * - for use in kernel/(multi-threaded)user space only applications the 
+ * - for use in kernel/(multi-threaded)user space only applications the
  *   user can use "suprt" to pass the address of any memory area (s)he has
  *   allocated on her/his own. In such a case the actual buffer should be
  *   greater than the requested size by the amount HDRSIZ at least.
@@ -90,7 +90,7 @@ struct task_struct;
  *
  * It must be remarked that only the very first call does a real allocation,
  * any following call to allocate with the same name, from anywhere, will just
- * increase the usage count and map the circular buffer to the user space, or 
+ * increase the usage count and map the circular buffer to the user space, or
  * return the related pointer to the already allocated buffer in kernel/user
  * space.
  * In any case the functions return a pointer to the circular buffer,
@@ -132,7 +132,7 @@ RTAI_SCB_PROTO(void *, rt_scb_init, (unsigned long name, int size, unsigned long
  */
 
 RTAI_SCB_PROTO(void, rt_scb_reset, (void *scb))
-{ 
+{
 	LBYTE = FBYTE = 0;
 }
 
@@ -141,7 +141,7 @@ RTAI_SCB_PROTO(void, rt_scb_reset, (void *scb))
  *
  * @internal
  *
- * rt_scb_delete is used to release a previously allocated shared memory 
+ * rt_scb_delete is used to release a previously allocated shared memory
  * circular buffer.
  *
  * @param name is the unsigned long identifier used when the buffer was
@@ -155,12 +155,12 @@ RTAI_SCB_PROTO(void, rt_scb_reset, (void *scb))
  * @returns the size of the succesfully freed buffer, 0 on failure.
  *
  * No need to call this function if you provided your own memory for the
- * circular buffer. 
+ * circular buffer.
  *
  */
 
 RTAI_SCB_PROTO(int, rt_scb_delete, (unsigned long name))
-{ 
+{
 	return rt_shm_free(name);
 }
 
@@ -169,7 +169,7 @@ RTAI_SCB_PROTO(int, rt_scb_delete, (unsigned long name))
  *
  * @internal
  *
- * rt_scb_avbs is used to get the number of bytes avaiable in a shared 
+ * rt_scb_avbs is used to get the number of bytes avaiable in a shared
  * memory circular buffer.
  *
  * @param scb is the pointer handle returned when the buffer was initted.
@@ -179,7 +179,7 @@ RTAI_SCB_PROTO(int, rt_scb_delete, (unsigned long name))
  */
 
 RTAI_SCB_PROTO (int, rt_scb_avbs, (void *scb))
-{ 
+{
 	int size = SIZE, fbyte = FBYTE, lbyte = LBYTE;
 	return (lbyte >= fbyte ? lbyte - fbyte : size + lbyte - fbyte);
 }
@@ -189,7 +189,7 @@ RTAI_SCB_PROTO (int, rt_scb_avbs, (void *scb))
  *
  * @internal
  *
- * rt_scb_bytes is used to get the number of bytes avaiable in a shared 
+ * rt_scb_bytes is used to get the number of bytes avaiable in a shared
  * memory circular buffer; legacy alias for rt_scb_avbs.
  *
  * @param scb is the pointer handle returned when the buffer was initted.
@@ -199,7 +199,7 @@ RTAI_SCB_PROTO (int, rt_scb_avbs, (void *scb))
  */
 
 RTAI_SCB_PROTO (int, rt_scb_bytes, (void *scb))
-{ 
+{
 	return rt_scb_avbs(scb);
 }
 
@@ -208,7 +208,7 @@ RTAI_SCB_PROTO (int, rt_scb_bytes, (void *scb))
  *
  * @internal
  *
- * rt_scb_frbs is used to get the number of free bytes space avaiable in a 
+ * rt_scb_frbs is used to get the number of free bytes space avaiable in a
  * shared memory circular buffer.
  *
  * @param scb is the pointer handle returned when the buffer was initted.
@@ -218,13 +218,13 @@ RTAI_SCB_PROTO (int, rt_scb_bytes, (void *scb))
  */
 
 RTAI_SCB_PROTO (int, rt_scb_frbs, (void *scb))
-{ 
+{
 	int size = SIZE, fbyte = FBYTE, lbyte = LBYTE;
 	return (fbyte <= lbyte ? size + fbyte - lbyte : size - lbyte);
 }
 
 /**
- * @brief Gets (receives) a message, only if the whole message can be passed 
+ * @brief Gets (receives) a message, only if the whole message can be passed
  * all at once.
  *
  * rt_scb_get tries to atomically receive the message @e msg of @e
@@ -236,7 +236,7 @@ RTAI_SCB_PROTO (int, rt_scb_frbs, (void *scb))
  */
 
 RTAI_SCB_PROTO(int, rt_scb_get, (void *scb, void *msg, int msg_size))
-{ 
+{
 	int size = SIZE, fbyte = FBYTE, lbyte = LBYTE;
 	if (msg_size > 0 && ((lbyte -= fbyte) >= 0 ? lbyte : size + lbyte) >= msg_size) {
 		int tocpy;
@@ -258,7 +258,7 @@ RTAI_SCB_PROTO(int, rt_scb_get, (void *scb, void *msg, int msg_size))
  *
  * rt_scb_evdrp atomically spies the message @e msg of @e
  * msg_size bytes from the shared memory circular buffer @e scb.
- * It returns immediately and the caller is never blocked. It is like 
+ * It returns immediately and the caller is never blocked. It is like
  * rt_scb_get but leaves the message in the shared memory circular buffer.
  *
  * @return On success, i.e. message got, it returns 0, msg_size on failure.
@@ -266,7 +266,7 @@ RTAI_SCB_PROTO(int, rt_scb_get, (void *scb, void *msg, int msg_size))
  */
 
 RTAI_SCB_PROTO(int, rt_scb_evdrp, (void *scb, void *msg, int msg_size))
-{ 
+{
 	int size = SIZE, fbyte = FBYTE, lbyte = LBYTE;
 	if (msg_size > 0 && ((lbyte -= fbyte) >= 0 ? lbyte : size + lbyte) >= msg_size) {
 		int tocpy;
@@ -286,7 +286,7 @@ RTAI_SCB_PROTO(int, rt_scb_evdrp, (void *scb, void *msg, int msg_size))
  * at once.
  *
  * rt_scb_put tries to atomically send the message @e msg of @e
- * msg_size bytes to the shared memory circular buffer @e scb. 
+ * msg_size bytes to the shared memory circular buffer @e scb.
  * It returns immediately and the caller is never blocked.
  *
  * @return On success, i.e. message put, it returns 0, msg_size on failure.
@@ -294,7 +294,7 @@ RTAI_SCB_PROTO(int, rt_scb_evdrp, (void *scb, void *msg, int msg_size))
  */
 
 RTAI_SCB_PROTO(int, rt_scb_put, (void *scb, void *msg, int msg_size))
-{ 
+{
 	int size = SIZE, fbyte = FBYTE, lbyte = LBYTE;
 	if (msg_size > 0 && ((fbyte -= lbyte) <= 0 ? size + fbyte : fbyte) > msg_size) {
 		int tocpy;
@@ -312,7 +312,7 @@ RTAI_SCB_PROTO(int, rt_scb_put, (void *scb, void *msg, int msg_size))
 }
 
 RTAI_SCB_PROTO(int, rt_scb_ovrwr, (void *scb, void *msg, int msg_size))
-{ 
+{
 	int size = SIZE, lbyte = LBYTE;
 	if (msg_size > 0 && msg_size < size) {
 		int tocpy;

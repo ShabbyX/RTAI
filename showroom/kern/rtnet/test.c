@@ -17,7 +17,7 @@
 */
 
 
-/* 
+/*
  * RtnetTest core module
  */
 #include <linux/kernel.h>

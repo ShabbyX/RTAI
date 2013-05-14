@@ -14,7 +14,7 @@ prefix=`rtai-config --prefix`
 arch=`rtai-config --arch`
 insmod=/sbin/insmod
 
-if [ "$prefix" == "" ]; then 
+if [ "$prefix" == "" ]; then
 echo "ERROR: please set your PATH variable to <rtai-install>/bin"
 exit
 fi
@@ -25,7 +25,7 @@ MODULES=$prefix/modules
 
 sync
 if (`rtai-config --linux-version | grep -q 2.6`);
-then 
+then
 
 $insmod $MODULES/rtai_hal.ko IsolCpusMask=0;
 sync

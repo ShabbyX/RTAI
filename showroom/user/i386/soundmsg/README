@@ -1,13 +1,13 @@
-The running of this test is self contained. Nonetheless you need to have 
+The running of this test is self contained. Nonetheless you need to have
 compiled and installed: rtai.c and a scheduler appropriate to your PC.
-To have them all available just follow the usual RTAI installation procedure, 
+To have them all available just follow the usual RTAI installation procedure,
 do "make all" and then install the needed scheduler.
-Note that "make clean"s are repeated just to make it safe, please do them at 
+Note that "make clean"s are repeated just to make it safe, please do them at
 least once after installing. There is the possibility of doing it all at once
 from within directory "newlxrt" by: "making cleanall", just to be sure, followed
 by "make all".
 
-This sound test mimics the one already used in RTAI examples and in LXRT, 
+This sound test mimics the one already used in RTAI examples and in LXRT,
 executing an endless loop till you type CTRL-C. The only difference with those
 example being that it is implemented by using RTAI specific extended intertask
 messaging in place of a communication mailbox.

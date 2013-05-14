@@ -325,7 +325,7 @@ extern inline int
 rt_request_global_irq(unsigned irq, void (*handler)(void))
 {
     /* cast is okay because retmode is 0 (i.e. irq-handling doesn't use return
-     * value of handler, so it does not need to have one) */ 
+     * value of handler, so it does not need to have one) */
     return rt_request_irq(irq, (rt_irq_handler_t)handler, NULL, 0);
 }
 
@@ -333,7 +333,7 @@ extern inline int
 rt_request_global_irq_ext(unsigned irq, void (*handler)(void), unsigned long cookie)
 {
     /* cast is okay because retmode is 0 (i.e. irq-handling doesn't use return
-     * value of handler, so it does not need to have one) */ 
+     * value of handler, so it does not need to have one) */
     return rt_request_irq(irq, (rt_irq_handler_t)handler, (void *)cookie, 0);
 }
 

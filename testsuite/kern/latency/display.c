@@ -1,21 +1,21 @@
 /*
  * COPYRIGHT (C) 2001  Paolo Mantegazza <mantegazza@aero.polimi.it>
  *               2002  Robert Schwebel  <robert@schwebel.de>
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
- * 
+ *
  */
 
 #include <stdio.h>
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 	while (!end) {
 		if ((n++ % 21)==0) {
 #if 0
-			time(&timestamp); 
+			time(&timestamp);
 			tm_timestamp=localtime(&timestamp);
 			printf("%04d/%02d/%0d %02d:%02d:%02d\n", tm_timestamp->tm_year+1900, tm_timestamp->tm_mon+1, tm_timestamp->tm_mday, tm_timestamp->tm_hour, tm_timestamp->tm_min, tm_timestamp->tm_sec);
 #endif

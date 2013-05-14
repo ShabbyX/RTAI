@@ -59,11 +59,11 @@ static void task_code(long task_no)
 	buf[8] = 0;
 	for (i = 0; i < 5; ++i)	{
 		rt_sem_wait(sems[task_no]);
-		TAKE_PRINT; 
+		TAKE_PRINT;
 		rt_printk(strs[task_no]);
 		GIVE_PRINT;
 		if (task_no == NUM_TASKS-1) {
-			TAKE_PRINT; 
+			TAKE_PRINT;
 			rt_printk("\n");
 			GIVE_PRINT;
 		}
@@ -71,12 +71,12 @@ static void task_code(long task_no)
 	}
 	rt_sem_signal(sync_sem);
 	rt_sem_wait(prio_sem);
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk(strs[task_no]);
 	GIVE_PRINT;
 	rt_sleep(nano2count(1000000000LL));
 	rt_sem_wait_timed(prio_sem, nano2count((task_no + 1)*1000000000LL));
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk("sem timeout, task %d, %s\n", task_no, strs[task_no]);
 	GIVE_PRINT;
 	rt_sem_signal(sync_sem);
@@ -84,13 +84,13 @@ static void task_code(long task_no)
 /* message queue stuff */
 	poll_mbx(mbx_in, RT_POLL_MBX_RECV);
 	if ((ret = rt_mbx_receive(mbx_in, buf, 8)) != 0) {
-		TAKE_PRINT; 
+		TAKE_PRINT;
 		rt_printk("rt_mbx_receive() failed with %d\n", ret);
 		GIVE_PRINT;
 	}
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk("\nreceived by task %d ", task_no);
-	rt_printk(buf); 
+	rt_printk(buf);
 	GIVE_PRINT;
 	poll_mbx(mbx_out, RT_POLL_MBX_SEND);
 	rt_mbx_send(mbx_out, strs[task_no], 8);
@@ -101,8 +101,8 @@ static void task_code(long task_no)
 		rt_printk("mbx timeout, task %d, %s\n", task_no, strs[task_no]);
 		GIVE_PRINT;
 	}
-	TAKE_PRINT; 
-	rt_printk("\ntask %d complete\n", task_no); 
+	TAKE_PRINT;
+	rt_printk("\ntask %d complete\n", task_no);
 	GIVE_PRINT;
 	rt_task_suspend(tasks[task_no]);
 }
@@ -125,7 +125,7 @@ static void start_task_code(long notused)
 	for (i = 0; i < NUM_TASKS; ++i) {
 		rt_sem_wait(sync_sem);
 	}
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk(sync_str);
 	GIVE_PRINT;
   /* post the priority-test semaphore -- the tasks should then run */
@@ -133,24 +133,24 @@ static void start_task_code(long notused)
 	for (i = 0; i < NUM_TASKS; ++i) {
 		rt_sem_signal(prio_sem);
 	}
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk("\n");
 	GIVE_PRINT;
 	for (i = 0; i < NUM_TASKS; ++i) {
 		rt_sem_wait(sync_sem);
 	}
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk(sync_str);
 	GIVE_PRINT;
 
   /* now, test message queues */
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk("testing message queues\n");
 	GIVE_PRINT;
 	for (i = 0; i < NUM_TASKS; ++i) {
 		poll_mbx(mbx_in, RT_POLL_MBX_SEND);
 		if (rt_mbx_send(mbx_in, strs[i], 8)) {
-			TAKE_PRINT; 
+			TAKE_PRINT;
 			rt_printk("rt_mbx_send() failed\n");
 			GIVE_PRINT;
 		}
@@ -158,18 +158,18 @@ static void start_task_code(long notused)
 	for (i = 0; i < NUM_TASKS; ++i) {
 		poll_mbx(mbx_out, RT_POLL_MBX_RECV);
 		rt_mbx_receive(mbx_out, buf, 8);
-		TAKE_PRINT; 
-		rt_printk("\nreceived from mbx_out: %s", buf); 
+		TAKE_PRINT;
+		rt_printk("\nreceived from mbx_out: %s", buf);
 		GIVE_PRINT;
 	}
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk("\n");
 	GIVE_PRINT;
 	for (i = 0; i < NUM_TASKS; ++i) {
 		rt_sem_signal(sync_sem);
 	}
-	TAKE_PRINT; 
-	rt_printk("\ninit task complete\n"); 
+	TAKE_PRINT;
+	rt_printk("\ninit task complete\n");
 	GIVE_PRINT;
 	cleanup = 1;
 	rt_task_suspend(start_task);
@@ -192,7 +192,7 @@ int init_module(void)
 			printk("rt_task_ipc_init failed\n");
 			return 1;
 		}
-	}     
+	}
 #ifdef ONE_SHOT
 	rt_set_oneshot_mode();
 #endif
@@ -202,7 +202,7 @@ int init_module(void)
 	rt_task_resume(start_task);
 	for (i = 0; i < NUM_TASKS; ++i) {
 		rt_task_resume(tasks[i]);
-	}     
+	}
 	return 0;
 }
 

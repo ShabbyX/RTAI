@@ -80,7 +80,7 @@ int main(void)
 		}
 		if (!rt_mbx_receive_if(mbx, &data, 1)) {
 			data = filter(data);
-			temp = inb(PORT_ADR);            
+			temp = inb(PORT_ADR);
 			temp &= 0xfd;
 			temp |= (data & 1) << 1;
 			outb(temp, PORT_ADR);
@@ -89,7 +89,7 @@ int main(void)
 		if ((plrtsk = rt_receive_if(0, &msg))) {
 			rt_return(plrtsk, msg);
 			break;
-		} 
+		}
 	}
 
 	rt_sleep(nano2count(100000000));

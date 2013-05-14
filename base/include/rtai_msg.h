@@ -68,7 +68,7 @@ RTAI_SYSCALL_MODE struct rt_task_struct *rt_send_if(struct rt_task_struct *task,
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_send_until(struct rt_task_struct *task,
 				     unsigned long msg,
 				     RTIME time);
-    
+
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_send_timed(struct rt_task_struct *task,
 				     unsigned long msg,
 				     RTIME delay);
@@ -526,7 +526,7 @@ RTAI_PROTO(unsigned long, rt_qDynAlloc,(unsigned long n))
 {
 	struct { unsigned long n; } arg = { n };
 	return (unsigned long) rtai_lxrt(BIDX, SIZARG, RT_QDYNALLOC, &arg).i[LOW];
-} 
+}
 
 RTAI_PROTO(unsigned long, rt_qDynFree,(int n))
 {

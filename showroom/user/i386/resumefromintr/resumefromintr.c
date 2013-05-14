@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 			rt_sem_wait(sem);
 		} else {
 			rt_task_suspend(mytask);
-		} 
+		}
 		if (!t0) {
 			t0 = rt_get_cpu_time_ns();
 		} else {
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 				rt_printk("AT COUNT = %d, MAXJ = %d\n", count, maxj);
 			}
 			t0 = t;
-		} 
+		}
 //		rt_printk("> COUNT = %d\n", count);
 	}
 

@@ -227,7 +227,7 @@ typedef struct _trace_rtai_switchto_rt
            rt_trace_event(TRACE_RTAI_EV_SWITCHTO_RT, &switch_event); \
            } while(0)
 
-/*  TRACE_RTAI_SCHED_CHANGE */ 
+/*  TRACE_RTAI_SCHED_CHANGE */
 typedef struct _trace_rtai_sched_change
 {
   uint32_t  out;         /* Outgoing process */
@@ -384,7 +384,7 @@ typedef struct _trace_rtai_mbx
   uint8_t   event_sub_id;  /* Message Box event ID */
   uint32_t  event_data1;   /* Event data 1 */
   uint32_t  event_data2;   /* Event data 2 */
-  uint64_t  event_data3;   /* Event data 3 */  
+  uint64_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_mbx;
 #define TRACE_RTAI_MBX(ID, DATA1, DATA2, DATA3) \
            do \
@@ -443,7 +443,7 @@ typedef struct _trace_rtai_fifo
 /*  TRACE_RTAI_SHM */
 #define TRACE_RTAI_EV_SHM_MALLOC                       1  /* Allocate shared memory */
 #define TRACE_RTAI_EV_SHM_KMALLOC                      2  /* Allocate shared memory in kernel space */
-#define TRACE_RTAI_EV_SHM_GET_SIZE                     3  /* Get the size of the shared memory area */ 
+#define TRACE_RTAI_EV_SHM_GET_SIZE                     3  /* Get the size of the shared memory area */
 #define TRACE_RTAI_EV_SHM_FREE                         4  /* Free shared memory */
 #define TRACE_RTAI_EV_SHM_KFREE                        5  /* Free kernel space shared memory */
 typedef struct _trace_rtai_shm
@@ -541,7 +541,7 @@ typedef struct _trace_rtai_lxrt
   uint8_t   event_sub_id;  /* LXRT event ID */
   uint32_t  event_data1;   /* Event data 1 */
   uint32_t  event_data2;   /* Event data 2 */
-  uint32_t  event_data3;   /* Event data 3 */  
+  uint32_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_lxrt;
 #define TRACE_RTAI_LXRT(ID, DATA1, DATA2, DATA3) \
            do \
@@ -570,7 +570,7 @@ typedef struct _trace_rtai_lxrti
   uint8_t   event_sub_id;  /* LXRT event ID */
   uint32_t  event_data1;   /* Event data 1 */
   uint32_t  event_data2;   /* Event data 2 */
-  uint64_t  event_data3;   /* Event data 3 */  
+  uint64_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_lxrti;
 #define TRACE_RTAI_LXRTI(ID, DATA1, DATA2, DATA3) \
            do \

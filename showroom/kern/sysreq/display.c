@@ -47,7 +47,7 @@ int main(void)
 		puts(" ERROR IN SETTING THE SCHEDULER UP");
 		perror( "errno" );
 		exit( 0 );
- 	}       
+ 	}
 
 	srq = rtai_open_srq(0xcacca);
 	rtai_srq(srq, (unsigned long)&time0);

@@ -26,7 +26,7 @@
 00016 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00017 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00018 <span class="comment"> */</span>
-00019 
+00019
 00020 <span class="preprocessor">#ifndef _RTAI_ASM_I386_SCHED_H</span>
 00021 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_ASM_I386_SCHED_H</span>
 00022 <span class="preprocessor"></span>
@@ -84,7 +84,7 @@
 00074         <span class="keyword">asm</span> <span class="keyword">volatile</span> (<span class="stringliteral">"movl %%esp, %0"</span> : <span class="stringliteral">"=r"</span> (sp));
 00075         <span class="keywordflow">return</span> sp;
 00076 }
-00077 
+00077
 00078 <span class="preprocessor">#define RT_SET_RTAI_TRAP_HANDLER(x)  rt_set_rtai_trap_handler(x)</span>
 00079 <span class="preprocessor"></span>
 00080 <span class="preprocessor">#define DO_TIMER_PROPER_OP();</span>

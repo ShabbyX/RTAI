@@ -1,5 +1,5 @@
 %% SYSTLC: Linux RTAI Real-Time Target\
-%%    TMF: rtai.tmf MAKE: make_rtw EXTMODE: ext_comm  
+%%    TMF: rtai.tmf MAKE: make_rtw EXTMODE: ext_comm
 %%
 %% $RCSfile: rtai.tlc,v $
 %%
@@ -19,8 +19,8 @@
 %include "codegenentry.tlc"
 
 
-%% The contents between 'BEGIN_RTW_OPTIONS' and 'END_RTW_OPTIONS' are strictly 
-%% written by the standard format. We need to use this structure in RTW 
+%% The contents between 'BEGIN_RTW_OPTIONS' and 'END_RTW_OPTIONS' are strictly
+%% written by the standard format. We need to use this structure in RTW
 %% options GUI function rtwoptionsdlg.m file.
 %%
 /%
@@ -29,10 +29,10 @@
   %----------------------------------------%
   % Configure RTW code generation settings %
   %----------------------------------------%
-  
+
   rtwgensettings.BuildDirSuffix = '_rtai';
-  
-  END_RTW_OPTIONS 
+
+  END_RTW_OPTIONS
  %/
 
 

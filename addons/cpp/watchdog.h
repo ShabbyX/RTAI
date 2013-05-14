@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: watchdog.h,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -36,10 +36,10 @@ extern "C" {
 
 namespace RTAI {
 
-/** 
+/**
  * Watchdog namesapce
  */
-namespace Watchdog 
+namespace Watchdog
 {
 
 	int set_grace(int new_value);

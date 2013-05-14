@@ -28,12 +28,12 @@
 00018 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00019 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00020 <span class="comment"> */</span>
-00021 
+00021
 00022 <span class="preprocessor">#ifndef _RTAI_WD_H</span>
 00023 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_WD_H</span>
 00024 <span class="preprocessor"></span>
 00025 <span class="preprocessor">#include &lt;rtai_types.h&gt;</span>
-00026 
+00026
 00027 <span class="comment">// Useful bits and pieces</span>
 00028 <span class="preprocessor">#define NSECS_PER_SEC 1000000000</span>
 00029 <span class="preprocessor"></span>
@@ -41,7 +41,7 @@
 00031 <span class="preprocessor">#define WDLOG(fmt, args...) rt_printk("RTAI[watchdog]: " fmt, ##args)</span>
 00032 <span class="preprocessor"></span>
 00033 <span class="comment">// What should happen to misbehaving tasks</span>
-00034 <span class="keyword">typedef</span> <span class="keyword">enum</span> watchdog_policy { 
+00034 <span class="keyword">typedef</span> <span class="keyword">enum</span> watchdog_policy {
 00035     WD_NOTHING,                                 <span class="comment">// Not recommended</span>
 00036     WD_RESYNC,                          <span class="comment">// Good for occasional overruns</span>
 00037     WD_DEBUG,                           <span class="comment">// Good for debugging oneshot tasks</span>
@@ -50,7 +50,7 @@
 00040     WD_SUSPEND,                                 <span class="comment">// Good for most things</span>
 00041     WD_KILL                             <span class="comment">// Death sentence</span>
 00042 } wd_policy;
-00043 
+00043
 00044 <span class="comment">// Information about a misbehaving task</span>
 00045 <span class="keyword">typedef</span> <span class="keyword">struct </span>bad_rt_task {
 00046     RT_TASK             *task;          <span class="comment">// Pointer to the bad task</span>
@@ -64,34 +64,34 @@
 00054     wd_policy            policy;        <span class="comment">// Policy at time of last offence</span>
 00055     <span class="keyword">struct </span>bad_rt_task  *next;          <span class="comment">// Next in list</span>
 00056 } BAD_RT_TASK;
-00057 
+00057
 00058 <span class="preprocessor">#ifdef __cplusplus</span>
 00059 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00060 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00061 
+00061
 00062 <span class="keywordtype">int</span> __rtai_wd_init(<span class="keywordtype">void</span>);
-00063 
+00063
 00064 <span class="keywordtype">void</span> __rtai_wd_exit(<span class="keywordtype">void</span>);
-00065 
+00065
 00066 <span class="comment">// API for setting parameters</span>
 00067 <span class="keywordtype">int</span> rt_wdset_grace(<span class="keywordtype">int</span> new_value);
-00068 
+00068
 00069 <span class="keywordtype">int</span> rt_wdset_gracediv(<span class="keywordtype">int</span> new_value);
-00070 
+00070
 00071 wd_policy rt_wdset_policy(wd_policy new_value);
-00072 
+00072
 00073 <span class="keywordtype">int</span> rt_wdset_slip(<span class="keywordtype">int</span> new_value);
-00074 
+00074
 00075 <span class="keywordtype">int</span> rt_wdset_stretch(<span class="keywordtype">int</span> new_value);
-00076 
+00076
 00077 <span class="keywordtype">int</span> rt_wdset_limit(<span class="keywordtype">int</span> new_value);
-00078 
+00078
 00079 <span class="keywordtype">int</span> rt_wdset_safety(<span class="keywordtype">int</span> new_value);
-00080 
+00080
 00081 <span class="preprocessor">#ifdef __cplusplus</span>
 00082 <span class="preprocessor"></span>}
 00083 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00084 
+00084
 00085 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_WD_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

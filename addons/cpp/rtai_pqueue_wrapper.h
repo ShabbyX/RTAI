@@ -59,7 +59,7 @@ struct mq_attr {
     long mq_maxmsg;		//Maximum number of messages in queue
     long mq_msgsize;		//Maximum size of a message (in bytes)
     long mq_flags;		//Blocking/Non-blocking behaviour specifier
-				// not used in mq_open only relevant for 
+				// not used in mq_open only relevant for
 				// mq_getattrs and mq_setattrs
     long mq_curmsgs;		//Number of messages currently in queue
 };
@@ -72,8 +72,8 @@ typedef union sigval {
 
 /*
  * sigevent definitions
- * 
- * It seems likely that SIGEV_THREAD will have to be handled from 
+ *
+ * It seems likely that SIGEV_THREAD will have to be handled from
  * userspace, libpthread transmuting it to SIGEV_SIGNAL, which the
  * thread manager then catches and does the appropriate nonsense.
  * However, everything is written out here so as to not get lost.
@@ -116,7 +116,7 @@ struct msg_hdr {
 };
 typedef struct msg_hdr MSG_HDR;
 
-//Generic queue header 
+//Generic queue header
 struct queue_control {
     void *base;		//Pointer to the base of the queue in memory
     void *head;		//Pointer to the element at the front of the queue
@@ -125,7 +125,7 @@ struct queue_control {
 };
 typedef struct queue_control Q_CTRL;
 
-//Data messages 
+//Data messages
 struct msg {
     MSG_HDR hdr;
     char data;			//Anchor point for message data
@@ -140,7 +140,7 @@ struct _pqueue_descr_struct {
 				// 'opened' the queue for access
     char q_name[MQ_NAME_MAX];	//Name supplied for queue
     uint q_id;			//Queue Id (index into static list of queues)
-    BOOL marked_for_deletion;	//Queue can be deleted once all tasks have 
+    BOOL marked_for_deletion;	//Queue can be deleted once all tasks have
 				// closed it	
     Q_CTRL data;		//Data queue (real messages)
     mode_t permissions;		//Permissions granted by creator (ugo, rwx)
@@ -193,11 +193,11 @@ QUEUE_TYPE set_queue_type(QUEUE_TYPE type);
 
 //--------------------------------< mq_open >----------------------------------
 // Create and/or open a message queue
-// 
+//
 // Return codes:	>= 0 	valid Posix Queue Id
 //			< 0	error
 //
-extern mqd_t mq_open(char *mq_name, int oflags, mode_t permissions, 
+extern mqd_t mq_open(char *mq_name, int oflags, mode_t permissions,
 						struct mq_attr *mq_attr);
 
 //------------------------------< mq_receive >---------------------------------
@@ -206,7 +206,7 @@ extern mqd_t mq_open(char *mq_name, int oflags, mode_t permissions,
 // Return codes:	>= 0	number of bytes received
 //			< 0	error
 //
-extern size_t mq_receive(mqd_t mq, char *msg_buffer, 
+extern size_t mq_receive(mqd_t mq, char *msg_buffer,
 				size_t buflen, unsigned int *msgprio);
 
 //--------------------------------< mq_send >----------------------------------
@@ -214,7 +214,7 @@ extern size_t mq_receive(mqd_t mq, char *msg_buffer,
 //
 // Return codes:	>= 0	number of bytes sent
 //			< 0	error
-extern int mq_send(mqd_t mq, const char *msg, size_t msglen, 
+extern int mq_send(mqd_t mq, const char *msg, size_t msglen,
 						unsigned int msgprio);
 
 //--------------------------------< mq_close >---------------------------------
@@ -257,7 +257,7 @@ extern int mq_notify(mqd_t mq, const struct sigevent *notification);
 // Destroy a message queue
 //
 // Returns:		= 0 	queue was successfully unlinked
-//			< 0	error 
+//			< 0	error
 //			> 0 	'n' tasks still have the queue 'open'
 //
 extern int mq_unlink(char *mq_name);

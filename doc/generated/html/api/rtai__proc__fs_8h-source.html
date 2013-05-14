@@ -25,16 +25,16 @@
 00015 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00016 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00017 <span class="comment"> */</span>
-00018 
+00018
 00019 <span class="preprocessor">#ifndef _RTAI_PROC_FS_H</span>
 00020 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_PROC_FS_H</span>
 00021 <span class="preprocessor"></span>
 00022 <span class="preprocessor">#define LIMIT (PAGE_SIZE - 80)</span>
 00023 <span class="preprocessor"></span>
 00024 <span class="keyword">extern</span> <span class="keyword">struct </span>proc_dir_entry *rtai_proc_root;
-00025 
+00025
 00026 <span class="comment">// proc print macros - Contributed by: Erwin Rol (erwin@muffin.org)</span>
-00027 
+00027
 00028 <span class="comment">// macro that holds the local variables that</span>
 00029 <span class="comment">// we use in the PROC_PRINT_* macros. We have</span>
 00030 <span class="comment">// this macro so we can add variables with out</span>
@@ -43,14 +43,14 @@
 00033 <span class="preprocessor">#define PROC_PRINT_VARS                                 \</span>
 00034 <span class="preprocessor">    off_t pos = 0;                                      \</span>
 00035 <span class="preprocessor">    off_t begin = 0;                                    \</span>
-00036 <span class="preprocessor">    int len = 0 </span><span class="comment">/* no ";" */</span>            
-00037 
+00036 <span class="preprocessor">    int len = 0 </span><span class="comment">/* no ";" */</span>
+00037
 00038 <span class="comment">// macro that prints in the procfs read buffer.</span>
 00039 <span class="comment">// this macro expects the function arguments to be </span>
 00040 <span class="comment">// named as follows.</span>
 00041 <span class="comment">// static int FOO(char *page, char **start, </span>
 00042 <span class="comment">//                off_t off, int count, int *eof, void *data)</span>
-00043 
+00043
 00044 <span class="preprocessor">#define PROC_PRINT(fmt,args...) \</span>
 00045 <span class="preprocessor">do {    \</span>
 00046 <span class="preprocessor">    len += sprintf(page + len , fmt, ##args);           \</span>
@@ -88,7 +88,7 @@
 00078 <span class="preprocessor">} while(0)</span>
 00079 <span class="preprocessor"></span>
 00080 <span class="comment">// End of proc print macros</span>
-00081 
+00081
 00082 <span class="preprocessor">#endif  </span><span class="comment">/* !_RTAI_PROC_FS_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

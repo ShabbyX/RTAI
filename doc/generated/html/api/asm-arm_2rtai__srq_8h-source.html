@@ -27,8 +27,8 @@
 00017 <span class="comment">License along with this library; if not, write to the Free Software</span>
 00018 <span class="comment">Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.</span>
 00019 <span class="comment">*/</span>
-00020 
-00021 
+00020
+00021
 00022 <span class="preprocessor">#ifndef _RTAI_SRQ_H_</span>
 00023 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_SRQ_H_</span>
 00024 <span class="preprocessor"></span>
@@ -39,7 +39,7 @@
 00029         <span class="keywordtype">long</span> <span class="keywordtype">long</span> retval;
 00030         <span class="keyword">register</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> __sc_0 __asm__ (<span class="stringliteral">"r0"</span>) = srq;
 00031         <span class="keyword">register</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> __sc_1 __asm__ (<span class="stringliteral">"r1"</span>) = whatever;
-00032 
+00032
 00033         __asm__ __volatile__ (
 00034         <span class="stringliteral">"swi\t"</span> RTAI_SRQ_MAGIC <span class="stringliteral">"\n\t"</span>
 00035                 : <span class="stringliteral">"=r"</span> (__sc_0), <span class="stringliteral">"=r"</span> (__sc_1)
@@ -49,7 +49,7 @@
 00039         ((<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *)&amp;retval)[1] = __sc_1;
 00040         <span class="keywordflow">return</span> retval;
 00041 }
-00042 
+00042
 00043 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> rtai_open_srq(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> label)
 00044 {
 00045         <span class="keywordflow">return</span> (int)rtai_srq(0, label);

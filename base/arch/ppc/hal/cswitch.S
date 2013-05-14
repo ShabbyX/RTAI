@@ -16,7 +16,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-#include <rtai_config.h> 
+#include <rtai_config.h>
 
 /*
  * Saving: a series of push (stw reg,-ofst(1)) of the general purpose registers, followed by push of some machine registers
@@ -126,9 +126,9 @@ up_task_sw:
 
 #ifdef CONFIG_RTAI_FPU_SUPPORT
 /*
- * Saving/restoring the FPU environment in PPC is like eating a cake, very simple. Just save/restore all of the floating 
+ * Saving/restoring the FPU environment in PPC is like eating a cake, very simple. Just save/restore all of the floating
  * point registers, recall they are always 64 bits long, and the floating point state register. Remark: at task init we
- * always enable FP, i.e. MSR flag FP set to 1, for real time tasks and accept default actions for faulty FLOPs, i.e. MSR 
+ * always enable FP, i.e. MSR flag FP set to 1, for real time tasks and accept default actions for faulty FLOPs, i.e. MSR
  * flags FE0 and FE1 are set to zero.
  */
 

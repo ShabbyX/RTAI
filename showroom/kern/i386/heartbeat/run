@@ -20,10 +20,10 @@ echo "Now start the realtime process <enter> and wait for its end."
 read junk
 sync
 if (`rtai-config --linux-version | grep -q 2.6`);
-then 
+then
 insmod $MODULES/rtai_rtdm.ko
 insmod ./heartbeat_rt.ko;
-else 
+else
 insmod $MODULES/rtai_rtdm.o
 insmod ./heartbeat.o;
 fi

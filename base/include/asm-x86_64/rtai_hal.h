@@ -103,7 +103,7 @@ static inline unsigned long long rtai_ulldiv(unsigned long long ull, unsigned lo
 static inline long rtai_imuldiv (long i, long mult, long div) {
 
     /* Returns (int)i = (int)i*(int)(mult)/(int)div. */
-    
+
     int dummy;
 
     __asm__ __volatile__ ( \
@@ -222,7 +222,7 @@ static inline int ext_irq_vector(int irq)
 #define RTAI_APIC_ICOUNT	  ((RTAI_FREQ_APIC + HZ/2)/HZ)
 #define RTAI_COUNTER_2_LATCH      0xfffe
 #define RTAI_LATENCY_8254         CONFIG_RTAI_SCHED_8254_LATENCY
-#define RTAI_SETUP_TIME_8254      2011 
+#define RTAI_SETUP_TIME_8254      2011
 
 #define RTAI_CALIBRATED_APIC_FREQ 0
 #define RTAI_FREQ_APIC            (rtai_tunables.apic_freq)

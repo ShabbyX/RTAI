@@ -227,7 +227,7 @@ int main(void)
         rt_mbx_send(mbx, &start, 1);
 
 	MaxCount = Item_Length/Encoder;
-	while (Pressed_Items < Item_Qty && !end) { 
+	while (Pressed_Items < Item_Qty && !end) {
 		if (encoder_count >= Item_Length/Encoder) {
 			encoder_count = 0;
 			Pressed_Items++;

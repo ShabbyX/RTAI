@@ -36,7 +36,7 @@
 00026 <span class="comment">- Paolo Mantegazza      (mantegazza@aero.polimi.it)</span>
 00027 <span class="comment">        creator of RTAI </span>
 00028 <span class="comment">*/</span>
-00029 
+00029
 00030 <span class="preprocessor">#ifndef _ASM_ARCH_RTAI_ARCH_H_</span>
 00031 <span class="preprocessor"></span><span class="preprocessor">#define _ASM_ARCH_RTAI_ARCH_H_</span>
 00032 <span class="preprocessor"></span>
@@ -54,7 +54,7 @@
 00044         rtai_tsc.tsc = 0LL;                     \
 00045         rtai_lasttsc = ( unsigned long) (clps_readl(TC1D) &amp; 0xffff); \
 00046 }
-00047 
+00047
 00048 <span class="preprocessor">#define arch_umount_rtai()      // nothing to do for umount</span>
 00049 <span class="preprocessor"></span>
 00050 <span class="preprocessor">#define ARCH_EXPORTS EXPORT_SYMBOL(rtai_lasttsc); \</span>

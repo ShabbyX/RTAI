@@ -1,7 +1,7 @@
 /*
  * Taken from:
  * linux/ipc/msg.c
- * Copyright (C) 1992 Krishna Balasubramanian 
+ * Copyright (C) 1992 Krishna Balasubramanian
  *
  * 2.16.2004: adapted to RTAI hard real time by:
  * Paolo Mantegazza (mantegazza@aero.polimi.it)
@@ -46,8 +46,8 @@ struct msg_msgseg {
 };
 /* one msg_msg structure for each message */
 struct msg_msg {
-	struct list_head m_list; 
-	long  m_type;          
+	struct list_head m_list;
+	long  m_type;
 	int m_ts;           /* message text size */
 	struct msg_msgseg* next;
 	/* the actual message follows immediately */
@@ -105,7 +105,7 @@ static int newque (key_t key, int msgflg)
 	struct msg_queue *msq;
 
 	msq  = (struct msg_queue *) kmalloc (sizeof (*msq), GFP_KERNEL);
-	if (!msq) 
+	if (!msq)
 		return -ENOMEM;
 	id = ipc_addid(&msg_ids, &msq->q_perm, msg_ctlmni);
 	if(id == -1) {
@@ -312,7 +312,7 @@ int rt_msgget (key_t key, int msgflg)
 	struct msg_queue *msq;
 	
 	down(&msg_ids.sem);
-	if (key == IPC_PRIVATE) 
+	if (key == IPC_PRIVATE)
 		ret = newque(key, msgflg);
 	else if ((id = ipc_findkey(&msg_ids, key)) == -1) { /* key not used */
 		if (!(msgflg & IPC_CREAT))
@@ -457,9 +457,9 @@ int _rt_msgctl (int msqid, int cmd, struct msqid_ds *buf, int space)
 	version = ipc_parse_version(&cmd);
 
 	switch (cmd) {
-	case IPC_INFO: 
-	case MSG_INFO: 
-	{ 
+	case IPC_INFO:
+	case MSG_INFO:
+	{
 		struct msginfo msginfo;
 		int max_id;
 		if (!buf)
@@ -560,7 +560,7 @@ int _rt_msgctl (int msqid, int cmd, struct msqid_ds *buf, int space)
 		goto out_unlock_up;
 	ipcp = &msq->q_perm;
 	err = -EPERM;
-	if (current->euid != ipcp->cuid && 
+	if (current->euid != ipcp->cuid &&
 	    current->euid != ipcp->uid && !capable(CAP_SYS_ADMIN))
 	    /* We _could_ check for CAP_CHOWN above, but we don't */
 		goto out_unlock_up;
@@ -574,7 +574,7 @@ int _rt_msgctl (int msqid, int cmd, struct msqid_ds *buf, int space)
 
 		ipcp->uid = setbuf.uid;
 		ipcp->gid = setbuf.gid;
-		ipcp->mode = (ipcp->mode & ~S_IRWXUGO) | 
+		ipcp->mode = (ipcp->mode & ~S_IRWXUGO) |
 			(S_IRWXUGO & setbuf.mode);
 		msq->q_ctime = get_seconds();
 		/* sleeping receivers might be excluded by
@@ -595,7 +595,7 @@ int _rt_msgctl (int msqid, int cmd, struct msqid_ds *buf, int space)
 		break;
 	}
 	case IPC_RMID:
-		freeque (msqid); 
+		freeque (msqid);
 		break;
 	}
 	err = 0;
@@ -686,7 +686,7 @@ retry:
 		goto out_unlock_free;
 
 	err=-EACCES;
-	if (ipcperms(&msq->q_perm, S_IWUGO)) 
+	if (ipcperms(&msq->q_perm, S_IWUGO))
 		goto out_unlock_free;
 
 	if(msgsz + msq->q_cbytes > msq->q_qbytes ||
@@ -743,11 +743,11 @@ out_free:
 
 static int inline convert_mode(long* msgtyp, int msgflg)
 {
-	/* 
+	/*
 	 *  find message of correct type.
 	 *  msgtyp = 0 => get first.
 	 *  msgtyp > 0 => get first message of matching type.
-	 *  msgtyp < 0 => get message with least type must be < abs(msgtype).  
+	 *  msgtyp < 0 => get message with least type must be < abs(msgtype).
 	 */
 	if(*msgtyp==0)
 		return SEARCH_ANY;
@@ -864,7 +864,7 @@ out_success:
 		/* This introduces a race so we must always take
 		   the slow path
 		msg = (struct msg_msg*) msr_d.r_msg;
-		if(!IS_ERR(msg)) 
+		if(!IS_ERR(msg))
 			goto out_success;
 		*/
 		t = msg_lock(msqid);

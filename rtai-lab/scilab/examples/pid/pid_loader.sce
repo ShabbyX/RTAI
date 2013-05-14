@@ -12,9 +12,9 @@ end
 archname=emptystr()
 Makename = DIR+rdnom+'_Makefile';
 select getenv('COMPILER','NO');
-case 'VC++'   then 
+case 'VC++'   then
   Makename = strsubst(Makename,'/','\')+'.mak';
-case 'ABSOFT' then 
+case 'ABSOFT' then
   Makename = strsubst(Makename,'/','\')+'.amk';
 end
 libn=ilib_compile('libpid',Makename)

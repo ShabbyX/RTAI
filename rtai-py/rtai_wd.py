@@ -29,12 +29,12 @@ WD_SUSPEND = 6	 	# Good for most things
 WD_KILL    = 7 		# Death sentence
 
 WD_SET_GRACE    = 1
-WD_SET_GRACEDIV = 2 
-WD_SET_SAFETY   = 3 
+WD_SET_GRACEDIV = 2
+WD_SET_SAFETY   = 3
 WD_SET_POLICY   = 4
 WD_SET_SLIP     = 5
 WD_SET_STRETCH  = 6
-WD_SET_LIMIT    = 7 
+WD_SET_LIMIT    = 7
 
 rt_wdset_grace = rtai.rt_wdset_grace
 

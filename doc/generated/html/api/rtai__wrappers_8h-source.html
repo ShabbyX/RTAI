@@ -25,7 +25,7 @@
 00015 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00016 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00017 <span class="comment"> */</span>
-00018 
+00018
 00019 <span class="preprocessor">#ifndef _RTAI_WRAPPERS_H</span>
 00020 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_WRAPPERS_H</span>
 00021 <span class="preprocessor"></span>
@@ -36,7 +36,7 @@
 00026 <span class="preprocessor">#ifndef __cplusplus</span>
 00027 <span class="preprocessor"></span><span class="preprocessor">#include &lt;linux/module.h&gt;</span>
 00028 <span class="preprocessor">#endif </span><span class="comment">/* !__cplusplus */</span>
-00029 
+00029
 00030 <span class="preprocessor">#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,6,0)</span>
 00031 <span class="preprocessor"></span>
 00032 <span class="preprocessor">#define PID_MAX_LIMIT     PID_MAX</span>
@@ -60,7 +60,7 @@
 00050 <span class="preprocessor">#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,4,23) || __cplusplus</span>
 00051 <span class="preprocessor"></span><span class="keyword">typedef</span> <span class="keywordtype">void</span> irqreturn_t;
 00052 <span class="preprocessor">#endif  </span><span class="comment">/* LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,4,23) || __cplusplus */</span>
-00053 
+00053
 00054 <span class="preprocessor">#define set_tsk_used_fpu(t)  do { \</span>
 00055 <span class="preprocessor">    (t)-&gt;flags |= PF_USEDFPU; \</span>
 00056 <span class="preprocessor">} while(0)</span>
@@ -77,9 +77,9 @@
 00067 <span class="preprocessor">#define get_thread_ptr(t)  (t)</span>
 00068 <span class="preprocessor"></span>
 00069 <span class="preprocessor">#define RTAI_LINUX_IRQ_HANDLED  </span><span class="comment">/* i.e. "void" return */</span>
-00070 
+00070
 00071 <span class="preprocessor">#else </span><span class="comment">/* LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,6,0) */</span>
-00072 
+00072
 00073 <span class="preprocessor">#define mm_remap_page_range(vma,from,to,size,prot) remap_page_range(vma,from,to,size,prot)</span>
 00074 <span class="preprocessor"></span>
 00075 <span class="preprocessor">#define set_tsk_used_fpu(t)  do { \</span>
@@ -97,9 +97,9 @@
 00087 <span class="preprocessor">#ifndef MODULE_LICENSE</span>
 00088 <span class="preprocessor"></span><span class="preprocessor">#define MODULE_LICENSE(s)       </span><span class="comment">/* For really old 2.4 kernels. */</span>
 00089 <span class="preprocessor">#endif </span><span class="comment">/* !MODULE_LICENSE */</span>
-00090 
+00090
 00091 <span class="preprocessor">#endif </span><span class="comment">/* LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,6,0) */</span>
-00092 
+00092
 00093 <span class="preprocessor">#if LINUX_VERSION_CODE &lt;= KERNEL_VERSION(2,6,7)</span>
 00094 <span class="preprocessor"></span><span class="preprocessor">#define CPUMASK_T(name) (name)</span>
 00095 <span class="preprocessor"></span><span class="preprocessor">#define CPUMASK(name)   (name)</span>
@@ -107,9 +107,9 @@
 00097 <span class="preprocessor">#define CPUMASK_T(name)  ((cpumask_t){ { name } })</span>
 00098 <span class="preprocessor"></span><span class="preprocessor">#define CPUMASK(name)    (name.bits[0])</span>
 00099 <span class="preprocessor"></span><span class="preprocessor">#endif </span><span class="comment">/* LINUX_VERSION_CODE &lt;= KERNEL_VERSION(2,6,7) */</span>
-00100 
+00100
 00101 <span class="preprocessor">#endif </span><span class="comment">/* __KERNEL__ */</span>
-00102 
+00102
 00103 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_WRAPPERS_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

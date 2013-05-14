@@ -31,7 +31,7 @@
 #define WDLOG(fmt, args...) rt_printk("RTAI[watchdog]: " fmt, ##args)
 
 // What should happen to misbehaving tasks
-typedef enum watchdog_policy { 
+typedef enum watchdog_policy {
     WD_NOTHING, 				// Not recommended
     WD_RESYNC,				// Good for occasional overruns
     WD_DEBUG,				// Good for debugging oneshot tasks
@@ -58,12 +58,12 @@ typedef struct bad_rt_task {
 #define WD_INDX          2
 
 #define WD_SET_GRACE     1
-#define WD_SET_GRACEDIV  2 
-#define WD_SET_SAFETY    3 
+#define WD_SET_GRACEDIV  2
+#define WD_SET_SAFETY    3
 #define WD_SET_POLICY    4
 #define WD_SET_SLIP      5
 #define WD_SET_STRETCH   6
-#define WD_SET_LIMIT     7 
+#define WD_SET_LIMIT     7
 
 #ifdef __KERNEL__
 

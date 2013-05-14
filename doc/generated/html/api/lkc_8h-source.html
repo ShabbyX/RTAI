@@ -12,12 +12,12 @@
 00002 <span class="comment"> * Copyright (C) 2002 Roman Zippel &lt;zippel@linux-m68k.org&gt;</span>
 00003 <span class="comment"> * Released under the terms of the GNU GPL v2.0.</span>
 00004 <span class="comment"> */</span>
-00005 
+00005
 00006 <span class="preprocessor">#ifndef LKC_H</span>
 00007 <span class="preprocessor"></span><span class="preprocessor">#define LKC_H</span>
 00008 <span class="preprocessor"></span>
 00009 <span class="preprocessor">#include "expr.h"</span>
-00010 
+00010
 00011 <span class="preprocessor">#ifdef __cplusplus</span>
 00012 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00013 <span class="preprocessor">#endif</span>
@@ -35,7 +35,7 @@
 00025 <span class="preprocessor"></span>
 00026 <span class="keywordtype">int</span> zconfparse(<span class="keywordtype">void</span>);
 00027 <span class="keywordtype">void</span> zconfdump(FILE *out);
-00028 
+00028
 00029 <span class="keyword">extern</span> <span class="keywordtype">int</span> zconfdebug;
 00030 <span class="keywordtype">void</span> zconf_starthelp(<span class="keywordtype">void</span>);
 00031 FILE *zconf_fopen(<span class="keyword">const</span> <span class="keywordtype">char</span> *name);
@@ -43,16 +43,16 @@
 00033 <span class="keywordtype">void</span> zconf_nextfile(<span class="keyword">const</span> <span class="keywordtype">char</span> *name);
 00034 <span class="keywordtype">int</span> zconf_lineno(<span class="keywordtype">void</span>);
 00035 <span class="keywordtype">char</span> *zconf_curname(<span class="keywordtype">void</span>);
-00036 
+00036
 00037 <span class="comment">/* confdata.c */</span>
 00038 <span class="keyword">extern</span> <span class="keyword">const</span> <span class="keywordtype">char</span> conf_def_filename[];
 00039 <span class="keyword">extern</span> <span class="keywordtype">char</span> conf_filename[];
-00040 
+00040
 00041 <span class="keywordtype">char</span> *conf_get_default_confname(<span class="keywordtype">void</span>);
-00042 
+00042
 00043 <span class="comment">/* kconfig_load.c */</span>
 00044 <span class="keywordtype">void</span> kconfig_load(<span class="keywordtype">void</span>);
-00045 
+00045
 00046 <span class="comment">/* menu.c */</span>
 00047 <span class="keywordtype">void</span> menu_init(<span class="keywordtype">void</span>);
 00048 <span class="keywordtype">void</span> menu_add_menu(<span class="keywordtype">void</span>);
@@ -68,10 +68,10 @@
 00058 <span class="keywordtype">void</span> menu_set_type(<span class="keywordtype">int</span> type);
 00059 <span class="keyword">struct </span>file *file_lookup(<span class="keyword">const</span> <span class="keywordtype">char</span> *name);
 00060 <span class="keywordtype">int</span> file_write_dep(<span class="keyword">const</span> <span class="keywordtype">char</span> *name);
-00061 
+00061
 00062 <span class="keyword">extern</span> <span class="keyword">struct </span>menu *current_entry;
 00063 <span class="keyword">extern</span> <span class="keyword">struct </span>menu *current_menu;
-00064 
+00064
 00065 <span class="comment">/* symbol.c */</span>
 00066 <span class="keywordtype">void</span> sym_init(<span class="keywordtype">void</span>);
 00067 <span class="keywordtype">void</span> sym_clear_all_valid(<span class="keywordtype">void</span>);
@@ -79,43 +79,43 @@
 00069 <span class="keyword">struct </span>symbol *sym_check_deps(<span class="keyword">struct</span> symbol *sym);
 00070 <span class="keyword">struct </span>property *prop_alloc(<span class="keyword">enum</span> prop_type type, <span class="keyword">struct</span> symbol *sym);
 00071 <span class="keyword">struct </span>symbol *prop_get_symbol(<span class="keyword">struct</span> property *prop);
-00072 
+00072
 00073 <span class="keyword">static</span> <span class="keyword">inline</span> tristate sym_get_tristate_value(<span class="keyword">struct</span> symbol *sym)
 00074 {
 00075         <span class="keywordflow">return</span> sym-&gt;curr.tri;
 00076 }
-00077 
-00078 
+00077
+00078
 00079 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">struct </span>symbol *sym_get_choice_value(<span class="keyword">struct</span> symbol *sym)
 00080 {
 00081         <span class="keywordflow">return</span> (<span class="keyword">struct </span>symbol *)sym-&gt;curr.val;
 00082 }
-00083 
+00083
 00084 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> sym_set_choice_value(<span class="keyword">struct</span> symbol *ch, <span class="keyword">struct</span> symbol *chval)
 00085 {
 00086         <span class="keywordflow">return</span> sym_set_tristate_value(chval, yes);
 00087 }
-00088 
+00088
 00089 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> sym_is_choice(<span class="keyword">struct</span> symbol *sym)
 00090 {
 00091         <span class="keywordflow">return</span> sym-&gt;flags &amp; SYMBOL_CHOICE ? <span class="keyword">true</span> : <span class="keyword">false</span>;
 00092 }
-00093 
+00093
 00094 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> sym_is_choice_value(<span class="keyword">struct</span> symbol *sym)
 00095 {
 00096         <span class="keywordflow">return</span> sym-&gt;flags &amp; SYMBOL_CHOICEVAL ? <span class="keyword">true</span> : <span class="keyword">false</span>;
 00097 }
-00098 
+00098
 00099 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> sym_is_optional(<span class="keyword">struct</span> symbol *sym)
 00100 {
 00101         <span class="keywordflow">return</span> sym-&gt;flags &amp; SYMBOL_OPTIONAL ? <span class="keyword">true</span> : <span class="keyword">false</span>;
 00102 }
-00103 
+00103
 00104 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> sym_has_value(<span class="keyword">struct</span> symbol *sym)
 00105 {
 00106         <span class="keywordflow">return</span> sym-&gt;flags &amp; SYMBOL_NEW ? <span class="keyword">false</span> : <span class="keyword">true</span>;
 00107 }
-00108 
+00108
 00109 <span class="preprocessor">#ifdef __cplusplus</span>
 00110 <span class="preprocessor"></span>}
 00111 <span class="preprocessor">#endif</span>

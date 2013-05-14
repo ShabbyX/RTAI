@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 
 #include <rtai_sched.h>
 #include <rtai_malloc.h>
@@ -63,7 +63,7 @@ __default_terminate(void)
 	while(1)
 		rt_task_suspend(rt_whoami());
 }
-  
+
 void (*__terminate_func)(void) = __default_terminate;
 
 void
@@ -71,7 +71,7 @@ __terminate(void)
 {
 	(*__terminate_func)();
 }
-    
+
 void
 __pure_virtual(void)
 {

@@ -258,7 +258,7 @@ Fl_Parameters_Manager::Fl_Parameters_Manager(int x, int y, int width, int height
 	Download = new Fl_Button(width-150, height-60, 70, 25, "Download");
 	Download->callback((Fl_Callback *)rlg_batch_update_parameters_cb);
 	Download->deactivate();
-	Upload = new Fl_Button(width-75, height-60, 70, 25, "Upload"); 
+	Upload = new Fl_Button(width-75, height-60, 70, 25, "Upload");
 	Upload->callback((Fl_Callback *)rlg_upload_parameters_cb);
 //	Upload->deactivate();
 	Help = new Fl_Button(width-150, height-30, 70, 25, "Help");

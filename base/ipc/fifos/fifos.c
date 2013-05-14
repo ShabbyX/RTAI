@@ -25,12 +25,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* 
-ACKNOWLEDGEMENTS: 
+/*
+ACKNOWLEDGEMENTS:
 - nice proc file contributed by Steve Papacharalambous (stevep@zentropix.com);
 - added proc handler info contributed by Rich Walker (rw@shadow.org.uk)
 - 11-19-2001, Truxton Fulton (trux@truxton.com) fixed a race in mbx_get.
-- 10-23-2003 added atomic send contributed by Jan Kiszka 
+- 10-23-2003 added atomic send contributed by Jan Kiszka
   (kiszka@rts.uni-hannover.de) and expanded it to rtf_get_if.
 - 12-10-2003 a fix of rtf_resize odds contributed by Abramo Bagnara
   (abramo.bagnara@tin.it).
@@ -112,7 +112,7 @@ ACKNOWLEDGEMENTS:
  * for such a purpose can be clumsy. So RTAI fifos have binary semaphores for
  * that purpose. Note that, as for put and get fifos functions, only nonblocking
  * functions are available in kernel space.
- * 
+ *
  * <CENTER><TABLE>
  * <TR><TD> Called from RT task </TD><TD> Called from Linux process </TD></TR>
  * <TR><TD> #rtf_sem_init       </TD><TD> #rtf_sem_init             </TD></TR>
@@ -326,7 +326,7 @@ static inline int mbx_sem_wait(F_SEM *sem)
 			ret = -ERESTARTSYS;
 		}
 		rtf_save_flags_and_cli(flags);
-		if (task.blocked) { 
+		if (task.blocked) {
 			dequeue_blocked(&task);
 			if (!(sem->queue.next)->task) {
 				sem->free = 1;
@@ -384,7 +384,7 @@ static inline int mbx_sem_wait_timed(F_SEM *sem, int delay)
 			return -ERESTARTSYS;
 		}
 		rtf_save_flags_and_cli(flags);
-		if (task.blocked) { 
+		if (task.blocked) {
 			dequeue_blocked(&task);
 			if (!((sem->queue.next)->task)) {
 				sem->free = 1;
@@ -791,7 +791,7 @@ static void rtf_sysrq_handler(void)
 		if (waitqueue_active(&(fifop = pol_asyn_q.fifo[pol_asyn_q.out])->pollq)) {
 			wake_up_interruptible(&(fifop->pollq));
 		}
-		if (fifop->asynq) { 
+		if (fifop->asynq) {
 			kill_fasync(&fifop->asynq, async_sig, POLL_IN);
 		}
 		pol_asyn_q.out = (pol_asyn_q.out + 1) & (MAXREQS - 1);
@@ -940,8 +940,8 @@ RTAI_SYSCALL_MODE int rtf_resize(unsigned int minor, int size)
  * @param minor is a positive integer that identifies the fifo on further
  * operations. It has to be less than RTF_NO.
  *
- * @param size is the requested size for the fifo. 
- * 
+ * @param size is the requested size for the fifo.
+ *
  * @a fifo may refer to an existing RT-FIFO. In this case the size is adjusted
  * if necessary.
  *
@@ -1035,9 +1035,9 @@ RTAI_SYSCALL_MODE int rtf_destroy(unsigned int minor)
 
 	if (atomic_dec_and_test((atomic_t *)&fifo[minor].opncnt)) {
 		if (fifo[minor].malloc_type == 'k') {
-			kfree(fifo[minor].mbx.bufadr); 
+			kfree(fifo[minor].mbx.bufadr);
 		} else {
-			vfree(fifo[minor].mbx.bufadr); 
+			vfree(fifo[minor].mbx.bufadr);
 		}
 		fifo[minor].handler = do_nothing;
 		mbx_delete(&(fifo[minor].mbx));
@@ -1578,7 +1578,7 @@ static int rtf_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, u
 		case FIONREAD: {
 			return put_user(fifo[minor].mbx.avbs, (int *)arg);
 	        }
-		/* 
+		/*
 		 * Support for named FIFOS : Ian Soanes (ians@zentropix.com)
 		 * Based on ideas from Stuart Hughes and David Schleef
 		 */
@@ -1590,8 +1590,8 @@ static int rtf_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, u
 			int i, n;
 
 			rt_copy_from_user(&req, (void *)arg, sizeof(req));
-			for ( i = req.fifo, n = 0; 
-			      i < MAX_FIFOS && n < req.n; 
+			for ( i = req.fifo, n = 0;
+			      i < MAX_FIFOS && n < req.n;
 			      i++, n++
 			      ) {
 				struct rt_fifo_info_struct info;
@@ -1852,7 +1852,7 @@ static int rtai_read_fifos(char* buf, char** start, off_t offset,
                         	        fifo[i].opncnt, fifo[i].mbx.size,
 					fifo[i].handler,
 					fifo[i].malloc_type == 'v'
-					    ? "vmalloc" : "kmalloc" 
+					    ? "vmalloc" : "kmalloc"
 					);
 			if (len > LIMIT) {
 				return(len);
@@ -1867,10 +1867,10 @@ static int rtai_read_fifos(char* buf, char** start, off_t offset,
 
 }  /* End function - rtai_read_fifos */
 
-static int rtai_proc_fifo_register(void) 
+static int rtai_proc_fifo_register(void)
 {
         struct proc_dir_entry *proc_fifo_ent;
-        proc_fifo_ent = create_proc_entry("fifos", S_IFREG|S_IRUGO|S_IWUSR, 
+        proc_fifo_ent = create_proc_entry("fifos", S_IFREG|S_IRUGO|S_IWUSR,
 								rtai_proc_root);
         if (!proc_fifo_ent) {
                 printk("Unable to initialize /proc/rtai/fifos\n");
@@ -1880,7 +1880,7 @@ static int rtai_proc_fifo_register(void)
 	return 0;
 }
 
-static void rtai_proc_fifo_unregister(void) 
+static void rtai_proc_fifo_unregister(void)
 {
 	remove_proc_entry("fifos", rtai_proc_root);
 }
@@ -1888,7 +1888,7 @@ static void rtai_proc_fifo_unregister(void)
 /* ------------------< end of proc filesystem section >------------------*/
 #endif /* CONFIG_PROC_FS */
 
-/* 
+/*
  * Support for named FIFOS : Ian Soanes (ians@zentropix.com)
  * Based on ideas from Stuart Hughes and David Schleef
  */
@@ -1931,7 +1931,7 @@ RTAI_SYSCALL_MODE int rtf_getfifobyname(const char *name)
 	    	return -EINVAL;
 	}
 	for (minor = 0; minor < MAX_FIFOS; minor++) {
-	    	if ( fifo[minor].opncnt && 
+	    	if ( fifo[minor].opncnt &&
 		     !strncmp(name, fifo[minor].name, RTF_NAMELEN)
 		     ) {
 		    	return minor;

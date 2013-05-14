@@ -124,7 +124,7 @@ void c_handler (void)
 		if (rt_times.tick_time >= rt_times.linux_time) {
 			rt_times.linux_time += rt_times.linux_tick;
 			rt_pend_linux_irq(IRQ);
-		} 
+		}
 	} else {
 		cnt = 1;
 		t0 = rdtsc();

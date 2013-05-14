@@ -70,23 +70,23 @@ static void *slow_fun(void *arg)
 	period = nano2count(SLOWMUL*TICK_TIME);
 	expected = start + 9*nano2count(TICK_TIME);
 	rt_task_make_periodic(Slow_Task, expected, period);
-	while (!end) {  
+	while (!end) {
 		jit = abs(count2nano(rt_get_time() - expected));
 		if (jit > slowjit) {
 			slowjit = jit;
 		}
 		rt_busy_sleep((SLOWMUL*TICK_TIME*USEDFRAC)/100);
 		expected += period;
-		rt_task_wait_period();                                        
+		rt_task_wait_period();
 	}
 	rt_sem_wait_barrier(barrier);
 	rt_make_soft_real_time();
 	rt_thread_delete(Slow_Task);
 	return 0;
-}                                        
+}
 
-static void *fast_fun(void *arg) 
-{                             
+static void *fast_fun(void *arg)
+{
 	int jit, period;
 	RTIME expected;
 
@@ -101,15 +101,15 @@ static void *fast_fun(void *arg)
 	period = nano2count(FASTMUL*TICK_TIME);
 	expected = start + 6*nano2count(TICK_TIME);
 	rt_task_make_periodic(Fast_Task, expected, period);
-	while (!end) {  
+	while (!end) {
 		jit = abs(count2nano(rt_get_time() - expected));
 		if (jit > fastjit) {
 			fastjit = jit;
 		}
 		rt_busy_sleep((FASTMUL*TICK_TIME*USEDFRAC)/100);
 		expected += period;
-		rt_task_wait_period();                                        
-	}                      
+		rt_task_wait_period();
+	}
 	rt_sem_wait_barrier(barrier);
 	rt_make_soft_real_time();
 	rt_thread_delete(Fast_Task);
@@ -140,7 +140,7 @@ static void *latency_fun(void *arg)
 	period = nano2count(TICK_TIME);
 	expected = start + 3*period;
 	rt_task_make_periodic(Latency_Task, expected, period);
-	while (!end) {  
+	while (!end) {
 		average = 0;
 		for (skip = 0; skip < NAVRG && !end; skip++) {
 			expected += period;

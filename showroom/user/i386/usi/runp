@@ -9,7 +9,7 @@ fi
 
 libpath=`rtai-config --library-dir`
 export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
- 
+
 MODULES=$prefix/modules
 
 if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi

@@ -83,10 +83,10 @@ static void rtc_handler(int irq, unsigned long rtc_freq)
 		switch(run) {
 			case 1: RT_sem_signal(tasknode, -taskport, rmt_sem);
 				break;
-			case 2: 
+			case 2:
 				RT_task_resume(tasknode, -taskport, rmt_task);
 				break;
-			case 3: 
+			case 3:
 				RT_send_if(tasknode, -taskport, rmt_task, run);
 				break;
 		}

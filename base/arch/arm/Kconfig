@@ -29,7 +29,7 @@ config RTAI_LINUXDIR
 	This variable contains the directory of your previously
 	patched Linux kernel. As explained before, you can changed the
 	value of the Linux source tree which is fixed by default to
-	/usr/src/linux.  
+	/usr/src/linux.
 
 menu "RTAI Documentation"
 
@@ -47,10 +47,10 @@ config RTAI_DOC_LATEX_NONSTOP
         bool "Enable LaTeX verbose output"
         default n
         help
-        By default, all documentation generated with LaTeX uses the 
-        silent (batchmode) of LaTeX. If this option is enabled, the 
-        verbose (nonstopmode) of LaTeX will be used instead. This 
-        option is mainly intended for people writing RTAI 
+        By default, all documentation generated with LaTeX uses the
+        silent (batchmode) of LaTeX. If this option is enabled, the
+        verbose (nonstopmode) of LaTeX will be used instead. This
+        option is mainly intended for people writing RTAI
         documentation.
 
 config RTAI_DBX_DOC
@@ -68,7 +68,7 @@ config RTAI_DBX_NET
         default n
         help
         Let the DocBook tools use internet to fetch the DTD and XSL stylesheets.
-        If disabled, the documentation generation will fail if the necessary 
+        If disabled, the documentation generation will fail if the necessary
         DTD(s) and XSL stylesheets can not be found on the local computer.
 
 config RTAI_DBX_ROOT
@@ -224,7 +224,7 @@ config RTAI_SCHED_LXRT
 	user-space. Since LXRT provides the faculty to switch an
 	application process to real-time, a real-time agent task is
 	created and executes the real-time services on behalf of the
-	LXRT process. 
+	LXRT process.
 	
 	The NEWLXRT scheduler unifies U/MP and kernel/user space by
 	scheduling Linux tasks/kernel threads natively, along with
@@ -501,14 +501,14 @@ config RTAI_WD
 
 	The following watchdog policies are possible:
 	- do nothing other than log some messages and keep a record of
-	  the bad task; 
+	  the bad task;
 	- resynchronise the task's frame time and nothing more;
 	- debug policy which is a special case of the above
-	  resynchronisation policy; 
+	  resynchronisation policy;
 	- stretch the period of the offending task until it no longer
-	  overruns; 
+	  overruns;
 	- slip the offending task by forcibly suspending it for a
-	  percentage of its period; 
+	  percentage of its period;
 	- suspend the offending task so that it no longer threaten the system;
 	- kill the offending task and remove all traces.
 

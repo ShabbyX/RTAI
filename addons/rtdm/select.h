@@ -35,7 +35,7 @@
 #define XNSELECT_EXCEPT    2
 #define XNSELECT_MAX_TYPES 3
 
-struct xnselector { 
+struct xnselector {
         xnsynch_t synchbase;
 	struct fds {
 		fd_set expected;
@@ -77,13 +77,13 @@ int xnselect_bind(struct xnselect *select_block,
 
 int __xnselect_signal(struct xnselect *select_block, unsigned state);
 
-/** 
+/**
  * Signal a file descriptor state change.
- * 
+ *
  * @param select_block pointer to an @a xnselect structure representing the file
  * descriptor whose state changed;
  * @param state new value of the state.
- * 
+ *
  * @retval 1 if rescheduling is needed;
  * @retval 0 otherwise.
  */

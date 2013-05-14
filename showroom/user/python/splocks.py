@@ -16,7 +16,7 @@ end = NTASKS
 spl = c_void_p(NULL)
 
 def fun(idx, null) :
-	global spl, end 
+	global spl, end
 	loops = LOOPS
 	task = rt_task_init_schmod(0xcacca + idx, 0, 0, 0, 0, 0xF)
 	while loops > 0 :

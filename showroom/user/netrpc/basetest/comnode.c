@@ -45,7 +45,7 @@ static int init_module(void)
 	}
 	for (i = 0; i < NUM_TASKS; ++i) {
 		sems[i] = rt_sem_init(nam2num(sem[i]), 0);
-	}     
+	}
 	end_sem = rt_typed_sem_init(nam2num("ENDSEM"), 0, CNT_SEM);
 	print_sem = rt_typed_sem_init(nam2num("PRTSEM"), 1, BIN_SEM);
 	return 0;

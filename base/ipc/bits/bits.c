@@ -132,7 +132,7 @@ static void nop_fun(BITS *bits, unsigned long mask)
 }
 
 static int (*test_fun[])(BITS *, unsigned long) = {
-	all_set, any_set,             all_clr,             any_clr, 
+	all_set, any_set,             all_clr,             any_clr,
 	         all_set_and_any_set, all_set_and_all_clr, all_set_and_any_clr,
 	                              any_set_and_all_clr, any_set_and_any_clr,
 	                                                   all_clr_and_any_clr,

@@ -25,82 +25,82 @@
 00015 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00016 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00017 <span class="comment"> */</span>
-00018 
+00018
 00019 <span class="preprocessor">#ifndef __RTNET_RTNETP_H</span>
 00020 <span class="preprocessor"></span><span class="preprocessor">#define __RTNET_RTNETP_H</span>
 00021 <span class="preprocessor"></span>
 00022 <span class="keywordtype">int</span> soft_rt_bind(<span class="keywordtype">int</span> s,
 00023                  <span class="keyword">struct</span> sockaddr *my_addr,
 00024                  <span class="keywordtype">int</span> addrlen);
-00025 
+00025
 00026 <span class="keywordtype">int</span> soft_rt_close(<span class="keywordtype">int</span> s);
-00027 
+00027
 00028 <span class="keywordtype">int</span> soft_rt_recvfrom(<span class="keywordtype">int</span> s,
 00029                      <span class="keywordtype">void</span> *buf,
 00030                      <span class="keywordtype">int</span> len,
 00031                      <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> flags,
 00032                      <span class="keyword">struct</span> sockaddr *from,
 00033                      <span class="keywordtype">int</span> *fromlen);
-00034 
+00034
 00035 <span class="keywordtype">int</span> soft_rt_sendto(<span class="keywordtype">int</span> s,
 00036                    <span class="keyword">const</span> <span class="keywordtype">void</span> *buf,
 00037                    <span class="keywordtype">int</span> len,
 00038                    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> flags,
 00039                    <span class="keyword">struct</span> sockaddr *to,
 00040                    <span class="keywordtype">int</span> tolen);
-00041 
+00041
 00042 <span class="keywordtype">int</span> soft_rt_socket(<span class="keywordtype">int</span> domain,
 00043                    <span class="keywordtype">int</span> type,
 00044                    <span class="keywordtype">int</span> protocol);
-00045 
+00045
 00046 <span class="keywordtype">int</span> soft_rt_socket_callback(<span class="keywordtype">int</span> s,
 00047                             <span class="keywordtype">int</span> (*func)(<span class="keywordtype">int</span> s, <span class="keywordtype">void</span> *arg),
 00048                             <span class="keywordtype">void</span> *arg);
-00049 
-00050 <span class="keyword">struct </span>sock_t { 
-00051         <span class="keywordtype">int</span> sock, opnd; 
-00052         <span class="keywordtype">int</span> tosend, recvd; 
-00053         <span class="keyword">struct </span>sockaddr addr; 
-00054         <span class="keywordtype">int</span> addrlen; 
-00055         int (*callback)(<span class="keywordtype">int</span> sock, <span class="keywordtype">void</span> *arg); 
-00056         <span class="keywordtype">void</span> *arg; 
-00057         <span class="keywordtype">char</span> msg[MAX_MSG_SIZE]; 
+00049
+00050 <span class="keyword">struct </span>sock_t {
+00051         <span class="keywordtype">int</span> sock, opnd;
+00052         <span class="keywordtype">int</span> tosend, recvd;
+00053         <span class="keyword">struct </span>sockaddr addr;
+00054         <span class="keywordtype">int</span> addrlen;
+00055         int (*callback)(<span class="keywordtype">int</span> sock, <span class="keywordtype">void</span> *arg);
+00056         <span class="keywordtype">void</span> *arg;
+00057         <span class="keywordtype">char</span> msg[MAX_MSG_SIZE];
 00058 };
-00059 
+00059
 00060 <span class="preprocessor">#ifdef COMPILE_ANYHOW</span>
 00061 <span class="preprocessor"></span>
 00062 <span class="comment">/* the hard RTNet external interface, used just to check netrpc compiles */</span>
-00063 
+00063
 00064 <span class="keywordtype">int</span> rt_socket(<span class="keywordtype">int</span> domain,
 00065               <span class="keywordtype">int</span> type,
 00066               <span class="keywordtype">int</span> protocol);
-00067 
+00067
 00068 <span class="keywordtype">int</span> rt_bind(<span class="keywordtype">int</span> s,
 00069             <span class="keyword">struct</span> sockaddr *my_addr,
 00070             <span class="keywordtype">int</span> addrlen);
-00071 
+00071
 00072 <span class="keywordtype">int</span> rt_close(<span class="keywordtype">int</span> s);
-00073 
+00073
 00074 <span class="keywordtype">int</span> rt_recvfrom(<span class="keywordtype">int</span> s,
 00075                 <span class="keywordtype">void</span> *buf,
 00076                 <span class="keywordtype">int</span> len,
 00077                 <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> flags,
 00078                 <span class="keyword">struct</span> sockaddr *from,
 00079                 <span class="keywordtype">int</span> *fromlen);
-00080 
+00080
 00081 <span class="keywordtype">int</span> rt_sendto(<span class="keywordtype">int</span> s,
 00082               <span class="keyword">const</span> <span class="keywordtype">void</span> *buf,
 00083               <span class="keywordtype">int</span> len,
 00084               <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> flags,
 00085               <span class="keyword">struct</span> sockaddr *to,
 00086               <span class="keywordtype">int</span> tolen);
-00087 
+00087
 00088 <span class="keywordtype">int</span> rt_socket_callback(<span class="keywordtype">int</span> s,
 00089                        <span class="keywordtype">int</span> (*func)(<span class="keywordtype">int</span> s, <span class="keywordtype">void</span> *arg),
 00090                        <span class="keywordtype">void</span> *arg);
-00091 
+00091
 00092 <span class="preprocessor">#endif </span><span class="comment">/* COMPILE_ANYHOW */</span>
-00093 
+00093
 00094 <span class="preprocessor">#endif </span><span class="comment">/* !__RTNET_RTNETP_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

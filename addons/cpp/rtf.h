@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: rtf.h,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -58,7 +58,7 @@ protected:
 
 template <class Type>
 class fifoT
-:	public fifo 
+:	public fifo
 {
 public:
 	fifoT(){}

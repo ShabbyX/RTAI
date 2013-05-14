@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: watchdog_init.c,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -48,4 +48,4 @@ void rtai_cpp_watchdog_cleanup(void)
 
 module_init(rtai_cpp_watchdog_init)
 module_exit(rtai_cpp_watchdog_cleanup)
-  
+

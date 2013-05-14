@@ -99,7 +99,7 @@ static int rt_timer_tick_ext(int irq, unsigned long data)
 	} else {
 		t = rdtsc();
 		if (use_parport) {
-			outb(bit = 1 - bit, PARPORT); 
+			outb(bit = 1 - bit, PARPORT);
 		}
 		if ((jit = abs((int)(t - t0) - bus_period)) > maxj) {
 			maxj = jit;
@@ -119,7 +119,7 @@ static int rt_timer_tick_ext(int irq, unsigned long data)
 		hard_sti();
 		rt_pend_linux_irq(TIMER_8254_IRQ);
 		return 0;
-	} 
+	}
 	hard_sti();
 	return 1;
 }
@@ -189,7 +189,7 @@ static long long user_srq(unsigned long whatever)
 			rtf_put(0, &params, sizeof(params));
 			break;
 		}
-	} 
+	}
 	return 0;
 }
 

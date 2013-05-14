@@ -15,7 +15,7 @@ EXTRA_INST_SRC = rtmain.c \
 		sa_utils.h \
 		Makefile
 
-EXTRA_DIST_SRC = $(EXTRA_INST_SRC) 
+EXTRA_DIST_SRC = $(EXTRA_INST_SRC)
 
 EXTRA_DIST = $(EXTRA_DIST_SRC) $(EXTRA_DIST_DIR)
 

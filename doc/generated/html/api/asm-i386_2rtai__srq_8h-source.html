@@ -25,12 +25,12 @@
 00015 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00016 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00017 <span class="comment"> */</span>
-00018 
+00018
 00019 <span class="preprocessor">#ifndef _RTAI_ASM_I386_SRQ_H</span>
 00020 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_ASM_I386_SRQ_H</span>
 00021 <span class="preprocessor"></span>
 00022 <span class="preprocessor">#include &lt;asm/rtai_vectors.h&gt;</span>
-00023 
+00023
 00024 <span class="preprocessor">#ifndef __KERNEL__</span>
 00025 <span class="preprocessor"></span>
 00026 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> rtai_srq(<span class="keywordtype">int</span> srq, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> args)
@@ -39,14 +39,14 @@
 00029         RTAI_DO_TRAP(RTAI_SYS_VECTOR, retval, srq, args);
 00030         <span class="keywordflow">return</span> retval;
 00031 }
-00032 
+00032
 00033 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> rtai_open_srq(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> label)
 00034 {
 00035         <span class="keywordflow">return</span> (int)rtai_srq(0, label);
 00036 }
-00037 
+00037
 00038 <span class="preprocessor">#endif </span><span class="comment">/* !__KERNEL__ */</span>
-00039 
+00039
 00040 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_ASM_I386_SRQ_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

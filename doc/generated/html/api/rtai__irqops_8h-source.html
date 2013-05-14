@@ -25,7 +25,7 @@
 00015 <span class="comment">License along with this library; if not, write to the Free Software</span>
 00016 <span class="comment">Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.</span>
 00017 <span class="comment">*/</span>
-00018 
+00018
 00019 <span class="preprocessor">#ifndef _ASM_IRQOPS_H</span>
 00020 <span class="preprocessor"></span><span class="preprocessor">#define _ASM_IRQOPS_H</span>
 00021 <span class="preprocessor"></span>
@@ -33,9 +33,9 @@
 00023         <span class="keyword">struct </span>list_head pending;
 00024         <span class="keyword">volatile</span> <span class="keywordtype">int</span> pend_count;
 00025 } linux_irq_t;
-00026 
+00026
 00027 <span class="keyword">static</span> linux_irq_t linux_irqs[NR_IRQS];
-00028 
+00028
 00029 <span class="preprocessor">#define INC_WRAP(x,y) do { x = ++(x) &amp; ((y)-1); } while (0)</span>
 00030 <span class="preprocessor"></span>
 00031 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> llffnz( <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> ull )
@@ -46,7 +46,7 @@
 00036                   ffnz( ((unsigned long *)&amp;ull)[1] ) + 32 :
 00037                   -1 );
 00038 }
-00039 
+00039
 00040 <span class="preprocessor">#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,4,19)</span>
 00041 <span class="preprocessor"></span><span class="preprocessor">#define linux_unmasked(desc) ((desc)-&gt;enabled)</span>
 00042 <span class="preprocessor"></span><span class="preprocessor">#else</span>
@@ -60,7 +60,7 @@
 00050         <span class="keyword">struct </span>list_head *listhead_p;
 00051         <span class="keyword">struct </span>irqdesc *desc;
 00052         <span class="keywordtype">int</span> irq;
-00053 
+00053
 00054         list_for_each(listhead_p, &amp;global.pending_linux_irq) {
 00055                 irq_p = list_entry(listhead_p, linux_irq_t, pending);
 00056                 irq = irq_p - linux_irqs;
@@ -71,44 +71,44 @@
 00061         }
 00062         <span class="keywordflow">return</span> NO_IRQ;
 00063 }
-00064 
+00064
 00065 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> have_pending_srq( <span class="keywordtype">void</span> )
 00066 {
 00067         <span class="keywordflow">return</span> ((global.pending_srqs &amp; ~global.active_srqs) != 0);
 00068 }
-00069 
+00069
 00070 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> active_irq(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> irq)
 00071 {
 00072         <span class="keywordflow">return</span> !linux_unmasked(irq_desc + irq);
 00073 }
-00074 
+00074
 00075 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> pending_srq( <span class="keywordtype">void</span> )
 00076 {
 00077         <span class="keywordflow">return</span> llffnz(global.pending_srqs &amp; ~global.active_srqs);
 00078 }
-00079 
+00079
 00080 <span class="keywordtype">void</span> <a class="code" href="group__hal.html#ga84">rt_pend_linux_irq</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> irq)
 00081 {
 00082         <span class="keywordflow">if</span> (!linux_irqs[irq].pend_count++)
 00083                 list_add_tail(&amp;linux_irqs[irq].pending, &amp;global.pending_linux_irq);
 00084 }
-00085 
+00085
 00086 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> clear_pending_irq( <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> irq )
 00087 {
 00088         linux_irqs[irq].pend_count = 0;
 00089         list_del(&amp;linux_irqs[irq].pending);
 00090 }
-00091 
+00091
 00092 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> activate_srq( <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> srq )
 00093 {
 00094         set_bit(srq, &amp;global.active_srqs);
 00095 }
-00096 
+00096
 00097 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> deactivate_srq( <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> srq )
 00098 {
 00099         clear_bit(srq, &amp;global.active_srqs);
 00100 }
-00101 
+00101
 00102 <span class="keywordtype">void</span> <a class="code" href="group__hal.html#ga87">rt_pend_linux_srq</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> srq)
 00103 {
 00104         <span class="keywordflow">if</span> ( srq &lt; 0 || srq &gt;= NR_SYSRQS ) {
@@ -117,7 +117,7 @@
 00107         }
 00108         set_bit(srq, &amp;global.pending_srqs);
 00109 }
-00110 
+00110
 00111 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> clear_pending_srq( <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> srq )
 00112 {
 00113         <span class="keywordflow">if</span> ( srq &lt; 0 || srq &gt;= NR_SYSRQS ) {
@@ -126,7 +126,7 @@
 00116         }
 00117         clear_bit(srq, &amp;global.pending_srqs);
 00118 }
-00119 
+00119
 00120 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> init_pending_srqs( <span class="keywordtype">void</span> )
 00121 {
 00122         global.pending_srqs = global.active_srqs = 0;

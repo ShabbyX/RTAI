@@ -31,7 +31,7 @@
 00021 <span class="comment">- Paolo Mantegazza      (mantegazza@aero.polimi.it)</span>
 00022 <span class="comment">        creator of RTAI </span>
 00023 <span class="comment">*/</span>
-00024 
+00024
 00025 <span class="preprocessor">#ifndef _ASM_ARM_RTAI_SCHED_H_</span>
 00026 <span class="preprocessor"></span><span class="preprocessor">#define _ASM_ARM_RTAI_SCHED_H_</span>
 00027 <span class="preprocessor"></span>
@@ -45,7 +45,7 @@
 00035         <span class="keyword">asm</span> <span class="keyword">volatile</span> (<span class="stringliteral">"mrc p15, 0, %0, c3, c0"</span> : <span class="stringliteral">"=r"</span> (domain_access_control));
 00036         <span class="keywordflow">return</span> domain_access_control;
 00037 }
-00038 
+00038
 00039 <span class="preprocessor">#define init_arch_stack()                                               \</span>
 00040 <span class="preprocessor">do {                                                                    \</span>
 00041 <span class="preprocessor">        unsigned long init_arch_flags;                                  \</span>
@@ -79,7 +79,7 @@
 00069 <span class="comment">//      |               +02     r0              void rt_thread(int data) { user defined }</span>
 00070 <span class="comment">//      V               +01     cpsr_SVC        unsigned long init_arch_flags</span>
 00071 <span class="comment">//      task-&gt;stack     +00     domain_..._...  unsigned long init_domain_access_control</span>
-00072 
+00072
 00073 <span class="preprocessor">#define DEFINE_LINUX_CR0</span>
 00074 <span class="preprocessor"></span>
 00075 <span class="preprocessor">#define DEFINE_LINUX_SMP_CR0</span>
@@ -99,7 +99,7 @@
 00089         <span class="keyword">asm</span> <span class="keyword">volatile</span> (<span class="stringliteral">"mov %0, sp"</span> : <span class="stringliteral">"=r"</span> (sp));
 00090         <span class="keywordflow">return</span> sp;
 00091 }
-00092 
+00092
 00093 <span class="preprocessor">#define RT_SET_RTAI_TRAP_HANDLER(x)</span>
 00094 <span class="preprocessor"></span>
 00095 <span class="comment">/* Handle spurious timer interrupts */</span>

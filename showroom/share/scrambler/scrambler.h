@@ -57,7 +57,7 @@ DECLARE int RT_netrpc_errenq(unsigned long node, int port)
 	struct { int port; } arg = { port };
 	struct { unsigned long node, port; long long type; void *args; int argsize; } args = { node, PACKPORT(port, 1, 1, 0), 0LL, &arg, SIZARG };
 	return rtai_lxrt(NET_RPC_IDX, SIZARGS, 0, &args).i[LOW];
-} 
+}
 
 /*
  * ... then create the illusion of a having the related non distributed API

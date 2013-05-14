@@ -105,7 +105,7 @@
     <td>
 
 <p>
-Eavedrop (spy) the content of a message. 
+Eavedrop (spy) the content of a message.
 <p>
 <a class="anchor" name="rt_evdrp"></a> <p>
 rt_evdrp spies the content of a message from the task specified by <em>task</em> while leaving it on the queue. To actually receive the message any of the rt_receive function must be used specifically. If task is equal to 0, the caller eavdrops the first message of its receive queue, if any. rt_evdrp never blocks.<p>
@@ -169,7 +169,7 @@ rt_evdrp spies the content of a message from the task specified by <em>task</em>
     <td>
 
 <p>
-Eavedrop (spy) the content of an extended message. 
+Eavedrop (spy) the content of an extended message.
 <p>
 <a class="anchor" name="rt_evdrpx"></a> <p>
 rt_evdrpx spies the content of a message from the task specified by <em>task</em> while leaving it on the queue. To actually receive the message any of the rt_receivex function must be used specifically. If task is equal to 0, the caller eavdrops the first message of its receive queue, if any. rt_evdrpix never blocks.<p>
@@ -223,7 +223,7 @@ rt_evdrpx spies the content of a message from the task specified by <em>task</em
     <td>
 
 <p>
-Receive a message. 
+Receive a message.
 <p>
 <a class="anchor" name="rt_receive"></a> <p>
 rt_receive gets a message from the task specified by task. If task is equal to 0, the caller accepts messages from any task. If there is a pending message, rt_receive does not block but can be preempted if the task that rt_sent the just received message has a higher priority. The task will not block if it receives rpced messages since rpcing tasks always waits for a returned message. Moreover it inheredits the highest priority of any rpcing task waiting on the receive queue. The receiving task will then recover its priority as explained in rt_return. Otherwise the caller task is blocked waiting for any message to be sent/rpced.<p>
@@ -276,7 +276,7 @@ rt_receive gets a message from the task specified by task. If task is equal to 0
     <td>
 
 <p>
-Receive a message, only if the calling task is not blocked. 
+Receive a message, only if the calling task is not blocked.
 <p>
 <a class="anchor" name="rt_receive_if"></a> <p>
 rt_receive_if tries to get a message from the task specified by task. If task is equal to 0, the caller accepts messages from any task. The caller task is never blocked but can be preempted if the task that rt_sent the just received message has a higher priority. The task will not block if it receives rpced messages since rpcing tasks always waits for a returned message. Moreover it inheredits the highest priority of any rpcing task waiting on the receive queue. The receiving task will then recover its priority as explained in rt_return. Otherwise the caller task is blocked waiting for any message to be sent/rpced.<p>
@@ -333,7 +333,7 @@ Since all the messaging functions return a task address 0xFFFF could seem an ina
     <td>
 
 <p>
-Receive a message with a relative timeout. 
+Receive a message with a relative timeout.
 <p>
 <a class="anchor" name="rt_receive_timed"></a> <p>
 rt_receive_timed receives a message from the task specified by task. If task is equal to 0, the caller accepts messages from any task. If there is a pending message, rt_receive does not block but but can be preempted if the task that rt_sent the just received message has a higher priority. The task will not block if it receives rpced messages since rpcing tasks always waits for a returned message. Moreover it inheredits the highest priority of any rpcing task waiting on the receive queue. The receiving task will then recover its priority as explained in rt_return. Otherwise the caller task is blocked waiting for any message to be sent/rpced. In this case these functions return if: a sender sends a message and has a lower priority; any rpced message is received;<ul>
@@ -393,7 +393,7 @@ See also: <a class="el" href="group__msg.html#rt_receive_until">rt_receive_until
     <td>
 
 <p>
-Receive a message with an absolute timeout. 
+Receive a message with an absolute timeout.
 <p>
 <a class="anchor" name="rt_receive_until"></a> <p>
 rt_receive_until receives a message from the task specified by task. If task is equal to 0, the caller accepts messages from any task. If there is a pending message, rt_receive does not block but but can be preempted if the task that rt_sent the just received message has a higher priority. The task will not block if it receives rpced messages since rpcing tasks always waits for a returned message. Moreover it inheredits the highest priority of any rpcing task waiting on the receive queue. The receiving task will then recover its priority as explained in rt_return. Otherwise the caller task is blocked waiting for any message to be sent/rpced. In this case these functions return if: a sender sends a message and has a lower priority; any rpced message is received;<ul>
@@ -459,7 +459,7 @@ See also: <a class="el" href="group__msg.html#rt_receive_timed">rt_receive_timed
     <td>
 
 <p>
-Receive an extended message. 
+Receive an extended message.
 <p>
 <a class="anchor" name="rt_receivex"></a> <p>
 rt_receivex gets an extended message <em>msg</em> of size <em>size</em> from the task specified by <em>task</em> task. If task is equal to 0, the caller accepts messages from any task. If there is a pending message, rt_receivex does not block but can be preempted if the task that rt_sent the just received message has a higher priority. The task will not block if it receives rpcxed messages since rpcxing tasks always wait for a returned message. Moreover it inheredits the highest priority of any rpcxing task waiting on the receive queue. The receiving task will then recover its priority as explained in rt_returnx. Otherwise the caller task is blocked waiting for any message to be sentx/rpcxed.<p>
@@ -526,7 +526,7 @@ rt_receivex gets an extended message <em>msg</em> of size <em>size</em> from the
     <td>
 
 <p>
-Receive an extended message, only if the calling task is not blocked. 
+Receive an extended message, only if the calling task is not blocked.
 <p>
 <a class="anchor" name="rt_receivex_if"></a> <p>
 rt_receivex gets an extended message <em>msg</em> of size <em>size</em> from the task specified by <em>task</em> task. If task is equal to 0, the caller accepts messages from any task. The caller task is never blocked but can be preempted if the task that rt_sentx the just received message has a higher priority. The task will not block if it receives rpcxed messages since rpcxing tasks always wait for a returned message. Moreover it inheredits the highest priority of any rpcxing task waiting on the receive queue. The receiving task will then recover its priority as explained in rt_returnx. Otherwise the caller task is blocked waiting for any message to be sentx/rpcxed.<p>
@@ -599,7 +599,7 @@ rt_receivex gets an extended message <em>msg</em> of size <em>size</em> from the
     <td>
 
 <p>
-Receive an extended message with a relative timeout. 
+Receive an extended message with a relative timeout.
 <p>
 <a class="anchor" name="rt_receivex_timed"></a> <p>
 rt_receivex_until gets an extended message <em>msg</em> of size <em>size</em> from the task specified by <em>task</em> task. If task is equal to 0, the caller accepts messages from any task. If there is a pending message, rt_receivex does not block but can be preempted if the task that rt_sent the just received message has a higher priority. The task will not block if it receives rpcxed messages since rpcxing tasks always wait for a returned message. Moreover it inheredits the highest priority of any rpcxing task waiting on the receive queue. The receiving task will then recover its priority as explained in rt_returnx. Otherwise the caller task is blocked waiting for any message to be sentx/rpcxed.<p>
@@ -674,7 +674,7 @@ In this case these functions return if: a sender sendxs a message and has a lowe
     <td>
 
 <p>
-Receive an extended message with an absolute timeout. 
+Receive an extended message with an absolute timeout.
 <p>
 <a class="anchor" name="rt_receivex_until"></a> <p>
 rt_receivex_until gets an extended message <em>msg</em> of size <em>size</em> from the task specified by <em>task</em> task. If task is equal to 0, the caller accepts messages from any task. If there is a pending message, rt_receivex does not block but can be preempted if the task that rt_sent the just received message has a higher priority. The task will not block if it receives rpcxed messages since rpcxing tasks always wait for a returned message. Moreover it inheredits the highest priority of any rpcxing task waiting on the receive queue. The receiving task will then recover its priority as explained in rt_returnx. Otherwise the caller task is blocked waiting for any message to be sentx/rpcxed.<p>
@@ -731,7 +731,7 @@ In this case these functions return if: a sender sendxs a message and has a lowe
     <td>
 
 <p>
-Send a message. 
+Send a message.
 <p>
 <a class="anchor" name="rt_send"></a> <p>
 rt_send sends the message <em>msg</em> to the task <em>task</em>. If the receiver task is ready to get the message rt_send does not block the sending task, but its execution can be preempted if the receiving task has a higher priority. Otherwise the caller task is blocked and queued up in priority order on the receive list of the sent task.<p>
@@ -784,7 +784,7 @@ rt_send sends the message <em>msg</em> to the task <em>task</em>. If the receive
     <td>
 
 <p>
-Send a message, only if the calling task will not be blocked. 
+Send a message, only if the calling task will not be blocked.
 <p>
 <a class="anchor" name="rt_send_if"></a> <p>
 rt_send_if sends the message <em>msg</em> to the task <em>task</em> if the latter is ready to receive, so that the caller task is never blocked, but its execution can be preempted if the receiving task is ready to receive and has a higher priority.<p>
@@ -966,7 +966,7 @@ See also: <a class="el" href="group__msg.html#rt_send_timed">rt_send_timed</a>()
     <td>
 
 <p>
-Send an extended message. 
+Send an extended message.
 <p>
 <a class="anchor" name="rt_sendx"></a> <p>
 rt_sendx sends an arbitrary message <em>msg</em> of size <em>size</em> bytes to the task <em>task</em>. If the receiver task is ready to get the message rt_sendx does not block the sending task, but its execution can be preempted if the receiving task has a higher priority. Otherwise the caller task is blocked and queued up in priority order on the receive list of the sent task.<p>
@@ -1026,7 +1026,7 @@ rt_sendx sends an arbitrary message <em>msg</em> of size <em>size</em> bytes to 
     <td>
 
 <p>
-Send an extended message, only if the calling task will not be blocked. 
+Send an extended message, only if the calling task will not be blocked.
 <p>
 <a class="anchor" name="rt_sendx_if"></a> <p>
 rt_sendx_if sends an arbitrary message <em>msg</em> of size <em>size</em> bytes to the task <em>task</em> if the latter is ready to receive. So the caller task in never blocked but its execution can be preempted if the receiving task has a higher priority.<p>
@@ -1092,7 +1092,7 @@ rt_sendx_if sends an arbitrary message <em>msg</em> of size <em>size</em> bytes 
     <td>
 
 <p>
-Send an extended message with relative timeout. 
+Send an extended message with relative timeout.
 <p>
 <a class="anchor" name="rt_sendx_timed"></a> <p>
 rt_sendx_until sends an arbitrary message <em>msg</em> of size <em>size</em> bytes to the task <em>task</em>. If the receiver task is ready to get the message rt_sendx_until does not block the sending task, but its execution can be preempted if the receiving task has a higher priority. Otherwise the caller task is blocked and queued up in priority order on the receive list of the sent task. In this case the function returns if:<ul>
@@ -1161,7 +1161,7 @@ rt_sendx_until sends an arbitrary message <em>msg</em> of size <em>size</em> byt
     <td>
 
 <p>
-Send an extended message with absolute timeout. 
+Send an extended message with absolute timeout.
 <p>
 <a class="anchor" name="rt_sendx_until"></a> <p>
 rt_sendx_until sends an arbitrary message <em>msg</em> of size <em>size</em> bytes to the task <em>task</em>. If the receiver task is ready to get the message rt_sendx_until does not block the sending task, but its execution can be preempted if the receiving task has a higher priority. Otherwise the caller task is blocked and queued up in priority order on the receive list of the sent task. In this case the function returns if:<ul>

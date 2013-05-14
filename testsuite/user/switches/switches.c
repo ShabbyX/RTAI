@@ -45,7 +45,7 @@ static SEM *sem;
 
 static int volatile hrt[NR_RT_TASKS], change, end;
 
-static int indx[NR_RT_TASKS];       
+static int indx[NR_RT_TASKS];
 
 static void *thread_fun(void *arg)
 {
@@ -93,7 +93,7 @@ int main(void)
 {
 	RTIME tsr, tss, tsm;
 	RT_TASK *mainbuddy;
-	int i, k, s;       
+	int i, k, s;
 	unsigned long msg;
 
 	printf("\n\nWait for it ...\n");
@@ -102,7 +102,7 @@ int main(void)
 		exit(1);
 	}
 
-	sem = rt_sem_init(nam2num("SEMAPH"), 1); 
+	sem = rt_sem_init(nam2num("SEMAPH"), 1);
 	change =  0;
 	
 	for (i = 0; i < NR_RT_TASKS; i++) {
@@ -110,8 +110,8 @@ int main(void)
 		if (!(thread[i] = rt_thread_create(thread_fun, indx + i, 0))) {
 			printf("ERROR IN CREATING THREAD %d\n", indx[i]);
 			exit(1);
- 		}       
- 	} 
+ 		}
+ 	}
 
 	do {
 		msleep(50);
@@ -127,15 +127,15 @@ int main(void)
 	for (i = 0; i < LOOPS; i++) {
 		for (k = 0; k < NR_RT_TASKS; k++) {
 			rt_task_resume(mytask[k]);
-		} 
-	} 
+		}
+	}
 	tsr = rt_get_cpu_time_ns() - tsr;
 
 	change = 1;
 
 	for (k = 0; k < NR_RT_TASKS; k++) {
 		rt_task_resume(mytask[k]);
-	} 
+	}
 
 	tss = rt_get_cpu_time_ns();
 	for (i = 0; i < LOOPS; i++) {
@@ -178,7 +178,7 @@ int main(void)
 	end = 1;
 	for (i = 0; i < NR_RT_TASKS; i++) {
 		rt_rpc(mytask[i], 0, &msg);
-	} 
+	}
 	do {
 		msleep(50);
 		s = 0;	

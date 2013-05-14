@@ -152,7 +152,7 @@ int main(void)
 				break;
 			}
 
-			case 'a': 
+			case 'a':
 				if (!params.mp) {
 					printf("*** APIC FREQUENCY CALIBRATION NOT AVAILABLE UNDER UP ***\n");	
 					break;	

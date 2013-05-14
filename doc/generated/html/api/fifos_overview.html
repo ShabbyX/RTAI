@@ -33,7 +33,7 @@ To avoid such problems you have available the functions:<p>
 </pre></div><p>
 that blocks till all count bytes are available;<p>
 <div class="fragment"><pre class="fragment"><a class="code" href="group__fifos__ipc.html#ga3">rtf_read_timed</a>(fd, buf, count, ms_delay);
-        
+
 <a class="code" href="group__fifos__ipc.html#ga4">rtf_write_timed</a>(fd, buf, count, ms_delay);
 </pre></div><p>
 that block just for the specified delay in milliseconds but are queued in real time Linux process priority order. If <em>ms_delay</em> is zero they return immediately with all the data they could get, even if you did not set <code>O_NONBLOCK</code> at fifo opening.<p>

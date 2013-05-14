@@ -26,7 +26,7 @@ if (`rtai-config --linux-version | grep -q 2.6`);
 then
 insmod $MODULES/rtai_rtdm.ko;
 insmod ./handler_rt.ko;
-else 
+else
 insmod $MODULES/rtai_rtdm.o;
 insmod ./rt_handler.o;
 fi

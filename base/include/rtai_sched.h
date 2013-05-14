@@ -116,8 +116,8 @@
 
 struct rt_task_struct;
 
-typedef struct rt_task_info { 
-	RTIME period; long base_priority, priority; 
+typedef struct rt_task_info {
+	RTIME period; long base_priority, priority;
 } RT_TASK_INFO;
 
 #ifdef __KERNEL__
@@ -319,7 +319,7 @@ RTAI_SYSCALL_MODE int rt_task_signal_handler(struct rt_task_struct *task,
 
 RTAI_SYSCALL_MODE int rt_task_use_fpu(struct rt_task_struct *task,
 		    int use_fpu_flag);
-  
+
 void rt_linux_use_fpu(int use_fpu_flag);
 
 RTAI_SYSCALL_MODE int rt_hard_timer_tick_count(void);
@@ -329,11 +329,11 @@ RTAI_SYSCALL_MODE int rt_hard_timer_tick_count_cpuid(int cpuid);
 RTAI_SYSCALL_MODE RTIME count2nano(RTIME timercounts);
 
 RTAI_SYSCALL_MODE RTIME nano2count(RTIME nanosecs);
-  
+
 RTAI_SYSCALL_MODE RTIME count2nano_cpuid(RTIME timercounts, unsigned cpuid);
 
 RTAI_SYSCALL_MODE RTIME nano2count_cpuid(RTIME nanosecs, unsigned cpuid);
-  
+
 RTIME rt_get_time(void);
 
 RTAI_SYSCALL_MODE RTIME rt_get_time_cpuid(unsigned cpuid);

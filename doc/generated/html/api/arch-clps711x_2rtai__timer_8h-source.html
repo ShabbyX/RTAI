@@ -48,7 +48,7 @@
 00038 <span class="preprocessor"></span>
 00039 <span class="preprocessor">#include &lt;asm/proc/hard_system.h&gt;</span>
 00040 <span class="preprocessor">#include &lt;linux/sched.h&gt;</span>
-00041 
+00041
 00042 <span class="preprocessor">#define CPU_FREQ (tuned.cpu_freq)</span>
 00043 <span class="preprocessor"></span><span class="preprocessor">#define CHECK_TC2_BOUNDS</span>
 00044 <span class="preprocessor"></span><span class="preprocessor">#define DEBUG_INLINE 0</span>
@@ -61,17 +61,17 @@
 00051 <span class="keyword">extern</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> rtai_lasttsc;
 00052 <span class="keyword">extern</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> rtai_TC2latch;
 00053 <span class="keyword">extern</span> <span class="keyword">union </span>rtai_tsc rtai_tsc;
-00054 
+00054
 00055 <span class="keyword">union </span>rtai_tsc {
 00056         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> tsc;
 00057         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> hltsc[2];
 00058 };
-00059 
+00059
 00060 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> timer_irq_ack( <span class="keywordtype">void</span> )
 00061 {
 00062         <span class="keywordflow">return</span> 0;
 00063 }
-00064 
+00064
 00065 <span class="comment">/*</span>
 00066 <span class="comment">*       rdtsc reads RTAI's timestampcounter. We use Timer/Counter TC1 on</span>
 00067 <span class="comment">*       cpls711x (Cirrus Logic) ARM7 cpu's. This timer is not used by </span>
@@ -84,7 +84,7 @@
 00074 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> rdtsc(<span class="keywordtype">void</span>)
 00075 {
 00076         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> flags, ticks, act;
-00077  
+00077
 00078         <span class="comment">// we read the 16 bit timer and calc ts on this value</span>
 00079         hard_save_flags_and_cli(flags);
 00080         act = ( <span class="keywordtype">unsigned</span> long) (clps_readl(TC1D) &amp; 0xffff);
@@ -95,49 +95,49 @@
 00085         hard_restore_flags(flags);
 00086         <span class="keywordflow">return</span> rtai_tsc.tsc;
 00087 }
-00088 
-00089 
+00088
+00089
 00090 <span class="comment">/*</span>
 00091 <span class="comment">*       set the timer latch for timer/counter TC2 </span>
 00092 <span class="comment">*       we check the bounds, as long as we are in testphase</span>
 00093 <span class="comment">*       Switch this off by undef CHECK_TC2_BOUNDS</span>
-00094 <span class="comment">*/</span> 
+00094 <span class="comment">*/</span>
 00095 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> rt_set_timer_latch(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> delay)
 00096 {
 00097         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> flags;
 00098         RTIME diff;
-00099  
+00099
 00100         <span class="comment">// set 16 bit LATCH</span>
 00101         hard_save_flags_cli(flags);
-00102 
+00102
 00103         diff = rt_times.intr_time - rdtsc();
 00104         <span class="comment">/* we have missed the deadline already */</span>
-00105         <span class="keywordflow">if</span> (diff &lt; 0)   
-00106                 diff = 1;           
-00107 
+00105         <span class="keywordflow">if</span> (diff &lt; 0)
+00106                 diff = 1;
+00107
 00108         DI1( <span class="keywordflow">if</span> (delay &gt; LATCH) {
 00109                 printk(<span class="stringliteral">"rt_set_timer_latch delay &gt; LATCH :%ld\n"</span>,delay);
 00110                 delay = LATCH;
-00111         });     
-00112 
+00111         });
+00112
 00113         rtai_TC2latch = (!delay ? ((<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>*)(&amp;diff))[0] : delay);
 00114 <span class="preprocessor">#ifdef CHECK_TC2_BOUNDS</span>
 00115 <span class="preprocessor"></span>        <span class="keywordflow">if</span> (rtai_TC2latch &gt; LATCH) {
 00116                 DI1(printk(<span class="stringliteral">"rt_set_timer_latch &gt; LATCH :%ld\n"</span>,rtai_TC2latch));
 00117                 rtai_TC2latch = LATCH;
-00118         }       
+00118         }
 00119 <span class="preprocessor">#endif</span>
 00120 <span class="preprocessor"></span>        <span class="comment">/* This bound check is essential, remove it and you get in trouble */</span>
 00121         <span class="keywordflow">if</span> (!rtai_TC2latch) {
 00122                 DI1(printk(<span class="stringliteral">"rt_set_timer_latch &lt; 1 :%ld\n"</span>,rtai_TC2latch));
 00123                 rtai_TC2latch = 1;
-00124         }       
+00124         }
 00125         clps_writel(0,TC2EOI);
 00126         clps_writel(rtai_TC2latch, TC2D);
 00127         clps_writel((clps_readl(INTMR1)|0x200), INTMR1);
 00128         hard_restore_flags(flags);
-00129 }   
-00130 
+00129 }
+00130
 00131 <span class="preprocessor">#define rt_set_timer_delay(x)  rt_set_timer_latch(x)</span>
 00132 <span class="preprocessor"></span>
 00133 <span class="preprocessor">#endif</span>

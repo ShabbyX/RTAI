@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #include <linux/config.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -74,4 +74,4 @@ void rtai_cpp_bits_cleanup(void)
 
 module_init(rtai_cpp_bits_init)
 module_exit(rtai_cpp_bits_cleanup)
-  
+

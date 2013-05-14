@@ -212,7 +212,7 @@ ostream& ostream::operator<<( long double f)
 }; // namespace std
 
 // doing a placement new with the address of the two global
-// objects. This is a dirty hack to have just these two 
+// objects. This is a dirty hack to have just these two
 // constructors called, because at the moment the rtai_cpp
 // modules only support one module doing global constructors/destructors
 // and atexit handling
@@ -223,5 +223,5 @@ void init_iostream()
 	new( (void*)&std::cout ) std::ostream;
 }
 
-} // end extern "C" 
+} // end extern "C"
 

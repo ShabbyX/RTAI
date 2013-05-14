@@ -162,5 +162,5 @@ target directory and there is only one example or test, "rtai-load"
 should be the only thing to run.
 
 "rtai-load" automatically attempts to "sudo" all commands needing the
-super-user privileges (e.g. insmod/rmmod or actions prefixed by a '!' 
+super-user privileges (e.g. insmod/rmmod or actions prefixed by a '!'
 sign) if it is found on the system.

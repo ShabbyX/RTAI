@@ -25,14 +25,14 @@
 00015 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00016 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00017 <span class="comment"> */</span>
-00018 
+00018
 00019 <span class="preprocessor">#ifndef _RTAI_RWL_H</span>
 00020 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_RWL_H</span>
 00021 <span class="preprocessor"></span>
 00022 <span class="preprocessor">#include &lt;<a class="code" href="rtai__sem_8h.html">rtai_sem.h</a>&gt;</span>
-00023 
+00023
 00024 <span class="keyword">struct </span>rtai_rwlock;
-00025 
+00025
 00026 <span class="preprocessor">#ifdef __KERNEL__</span>
 00027 <span class="preprocessor"></span>
 00028 <span class="preprocessor">#ifndef __cplusplus</span>
@@ -42,139 +42,139 @@
 00032         wrsem,
 00033         rdsem;
 00034 } RWL;
-00035 
+00035
 00036 <span class="preprocessor">#else </span><span class="comment">/* __cplusplus */</span>
 00037 <span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00038 <span class="preprocessor">#endif </span><span class="comment">/* !__cplusplus */</span>
-00039 
+00039
 00040 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga18">rt_rwl_init</a>(<span class="keyword">struct</span> rtai_rwlock *rwl);
-00041 
+00041
 00042 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga19">rt_rwl_delete</a>(<span class="keyword">struct</span> rtai_rwlock *rwl);
-00043 
+00043
 00044 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga20">rt_rwl_rdlock</a>(<span class="keyword">struct</span> rtai_rwlock *rwl);
-00045 
+00045
 00046 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga21">rt_rwl_rdlock_if</a>(<span class="keyword">struct</span> rtai_rwlock *rwl);
-00047 
+00047
 00048 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga22">rt_rwl_rdlock_until</a>(<span class="keyword">struct</span> rtai_rwlock *rwl,
 00049                         RTIME time);
-00050 
+00050
 00051 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga23">rt_rwl_rdlock_timed</a>(<span class="keyword">struct</span> rtai_rwlock *rwl,
 00052                         RTIME delay);
-00053 
+00053
 00054 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga24">rt_rwl_wrlock</a>(<span class="keyword">struct</span> rtai_rwlock *rwl);
-00055 
+00055
 00056 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga25">rt_rwl_wrlock_if</a>(<span class="keyword">struct</span> rtai_rwlock *rwl);
-00057 
+00057
 00058 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga26">rt_rwl_wrlock_until</a>(<span class="keyword">struct</span> rtai_rwlock *rwl,
 00059                         RTIME time);
-00060 
+00060
 00061 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga27">rt_rwl_wrlock_timed</a>(<span class="keyword">struct</span> rtai_rwlock *rwl,
 00062                         RTIME delay);
-00063 
+00063
 00064 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga28">rt_rwl_unlock</a>(<span class="keyword">struct</span> rtai_rwlock *rwl);
-00065 
+00065
 00066 <span class="preprocessor">#ifdef __cplusplus</span>
 00067 <span class="preprocessor"></span>}
 00068 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00069 
+00069
 00070 <span class="preprocessor">#else </span><span class="comment">/* !__KERNEL__ */</span>
-00071 
+00071
 00072 <span class="preprocessor">#ifdef __cplusplus</span>
 00073 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00074 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00075 
+00075
 00076 RTAI_PROTO(<span class="keyword">struct</span> rtai_rwlock *, rt_rwl_init,(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name))
 00077 {
 00078         <span class="keyword">struct </span>{ <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name; } arg = { name };
 00079         <span class="keywordflow">return</span> (<span class="keyword">struct </span>rtai_rwlock *)rtai_lxrt(BIDX, SIZARG, LXRT_RWL_INIT, &amp;arg).v[LOW];
 00080 }
-00081 
+00081
 00082 RTAI_PROTO(<span class="keywordtype">int</span>, rt_rwl_delete,(<span class="keyword">struct</span> rtai_rwlock *rwl))
 00083 {
 00084         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_rwlock *rwl; } arg = { rwl };
 00085         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, LXRT_RWL_DELETE, &amp;arg).i[LOW];
 00086 }
-00087 
+00087
 00088 RTAI_PROTO(<span class="keyword">struct</span> rtai_rwlock *, rt_named_rwl_init,(<span class="keyword">const</span> <span class="keywordtype">char</span> *name))
 00089 {
 00090         <span class="keyword">struct </span>{ <span class="keyword">const</span> <span class="keywordtype">char</span> *name; } arg = { name };
 00091         <span class="keywordflow">return</span> (<span class="keyword">struct </span>rtai_rwlock *)rtai_lxrt(BIDX, SIZARG, NAMED_RWL_INIT, &amp;arg).v[LOW];
 00092 }
-00093 
+00093
 00094 RTAI_PROTO(<span class="keywordtype">int</span>, rt_named_rwl_delete,(<span class="keyword">struct</span> rtai_rwlock *rwl))
 00095 {
 00096         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_rwlock *rwl; } arg = { rwl };
 00097         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, NAMED_RWL_DELETE, &amp;arg).i[LOW];
 00098 }
-00099 
+00099
 00100 RTAI_PROTO(<span class="keywordtype">int</span>, rt_rwl_rdlock,(<span class="keyword">struct</span> rtai_rwlock *rwl))
 00101 {
 00102         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_rwlock *rwl; } arg = { rwl };
 00103         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, RWL_RDLOCK, &amp;arg).i[LOW];
 00104 }
-00105 
+00105
 00106 RTAI_PROTO(<span class="keywordtype">int</span>, rt_rwl_rdlock_if,(<span class="keyword">struct</span> rtai_rwlock *rwl))
 00107 {
 00108         <span class="keyword">struct </span>{ <span class="keywordtype">void</span> *rwl; } arg = { rwl };
 00109         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, RWL_RDLOCK_IF, &amp;arg).i[LOW];
 00110 }
-00111 
+00111
 00112 RTAI_PROTO(<span class="keywordtype">int</span>, rt_rwl_rdlock_until,(<span class="keyword">struct</span> rtai_rwlock *rwl, RTIME time))
 00113 {
 00114         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_rwlock *rwl; RTIME time; } arg = { rwl, time };
 00115         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, RWL_RDLOCK_UNTIL, &amp;arg).i[LOW];
 00116 }
-00117 
+00117
 00118 RTAI_PROTO(<span class="keywordtype">int</span>, rt_rwl_rdlock_timed,(<span class="keyword">struct</span> rtai_rwlock *rwl, RTIME delay))
 00119 {
 00120         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_rwlock *rwl; RTIME delay; } arg = { rwl, delay };
 00121         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, RWL_RDLOCK_TIMED, &amp;arg).i[LOW];
 00122 }
-00123 
+00123
 00124 RTAI_PROTO(<span class="keywordtype">int</span>, rt_rwl_wrlock,(<span class="keyword">struct</span> rtai_rwlock *rwl))
 00125 {
 00126         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_rwlock *rwl; } arg = { rwl };
 00127         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, RWL_WRLOCK, &amp;arg).i[LOW];
 00128 }
-00129 
+00129
 00130 RTAI_PROTO(<span class="keywordtype">int</span>, rt_rwl_wrlock_if,(<span class="keyword">struct</span> rtai_rwlock *rwl))
 00131 {
 00132         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_rwlock *rwl; } arg = { rwl };
 00133         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, RWL_WRLOCK_IF, &amp;arg).i[LOW];
 00134 }
-00135 
+00135
 00136 RTAI_PROTO(<span class="keywordtype">int</span>, rt_rwl_wrlock_until,(<span class="keyword">struct</span> rtai_rwlock *rwl, RTIME time))
 00137 {
 00138         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_rwlock *rwl; RTIME time; } arg = { rwl, time };
 00139         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, RWL_WRLOCK_UNTIL, &amp;arg).i[LOW];
 00140 }
-00141 
+00141
 00142 RTAI_PROTO(<span class="keywordtype">int</span>, rt_rwl_wrlock_timed,(<span class="keyword">struct</span> rtai_rwlock *rwl, RTIME delay))
 00143 {
 00144         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_rwlock *rwl; RTIME delay; } arg = { rwl, delay };
 00145         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, RWL_WRLOCK_TIMED, &amp;arg).i[LOW];
 00146 }
-00147 
+00147
 00148 RTAI_PROTO(<span class="keywordtype">int</span>, rt_rwl_unlock,(<span class="keyword">struct</span> rtai_rwlock *rwl))
 00149 {
 00150         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_rwlock *rwl; } arg = { rwl };
 00151         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, RWL_UNLOCK, &amp;arg).i[LOW];
 00152 }
-00153 
+00153
 00154 <span class="preprocessor">#ifdef __cplusplus</span>
 00155 <span class="preprocessor"></span>}
 00156 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00157 
+00157
 00158 <span class="preprocessor">#endif </span><span class="comment">/* __KERNEL__ */</span>
-00159 
+00159
 00160 <span class="preprocessor">#if !defined(__KERNEL__) || defined(__cplusplus)</span>
 00161 <span class="preprocessor"></span>
 00162 <span class="keyword">typedef</span> <span class="keyword">struct </span>rtai_rwlock {
 00163     <span class="keywordtype">int</span> opaque;
 00164 } RWL;
-00165 
+00165
 00166 <span class="preprocessor">#endif </span><span class="comment">/* !__KERNEL__ || __cplusplus */</span>
-00167 
+00167
 00168 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_RWL_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

@@ -1,20 +1,20 @@
 ****** RESOURCE SEMAPHORE EXAMPLE ******
 
 This program tests that the resource semaphore priority inheritance, including
-inheritance nesting, is working correctly. It is a naive rewriting of 
+inheritance nesting, is working correctly. It is a naive rewriting of
 mutexprio.c found in posix/test (authored by Steve Papacharalambous).
-It creates a control task with a low priority (1000) which initialises a 
+It creates a control task with a low priority (1000) which initialises a
 resource semaphore and then acquires it. The control task then creates NUM_TASKS
-application tasks having higher priorities in reversed creation order, i.e.: 
+application tasks having higher priorities in reversed creation order, i.e.:
 NUM_TASKS - task_#.
-Then each application task attempt to gain the resource semaphore to fill a 
-data buffer. As the resource semaphore is already locked they block on it and 
+Then each application task attempt to gain the resource semaphore to fill a
+data buffer. As the resource semaphore is already locked they block on it and
 the priority of the control task is gradually raised to that of the highest
-application task. The control task eventually signals the resource semaphore 
-allowing the application tasks to proceed. The tasks priorities are displayed 
+application task. The control task eventually signals the resource semaphore
+allowing the application tasks to proceed. The tasks priorities are displayed
 at relevant points to verify that the priorities are manipulated correctly.
-This program also shows that tasks are inserted into the resource semaphore 
-queue in priority order and the capability of allowing NESTING recursive/nested 
+This program also shows that tasks are inserted into the resource semaphore
+queue in priority order and the capability of allowing NESTING recursive/nested
 waits from the resource owner.
 
 To use it type:

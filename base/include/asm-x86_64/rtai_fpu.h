@@ -44,7 +44,7 @@ typedef union thread_xstate FPU_ENV;
 typedef union thread_xstate FPU_ENV;
 #define TASK_FPENV(tsk)  (&(tsk)->thread.fpu.state->fxsave)
 #endif
-   
+
 #ifdef CONFIG_RTAI_FPU_SUPPORT
 
 // RAW FPU MANAGEMENT FOR USAGE FROM WHAT/WHEREVER RTAI DOES IN KERNEL
@@ -85,8 +85,8 @@ typedef union thread_xstate FPU_ENV;
 
 /* taken from Linux i387.h */
 
-static inline int __save_fpenv(struct i387_fxsave_struct __user *fx) 
-{ 
+static inline int __save_fpenv(struct i387_fxsave_struct __user *fx)
+{
 	int err;
 
 	asm volatile("1:  rex64/fxsave (%[fx])\n\t"
@@ -103,10 +103,10 @@ static inline int __save_fpenv(struct i387_fxsave_struct __user *fx)
 		     : [fx] "cdaSDb" (fx), "0" (0));
 
 	return err;
-} 
+}
 
-static inline int __restore_fpenv(struct i387_fxsave_struct *fx) 
-{ 
+static inline int __restore_fpenv(struct i387_fxsave_struct *fx)
+{
 	int err;
 
 	asm volatile("1:  rex64/fxrstor (%[fx])\n\t"
@@ -123,7 +123,7 @@ static inline int __restore_fpenv(struct i387_fxsave_struct *fx)
 		     : [fx] "cdaSDb" (fx), "m" (*fx), "0" (0));
 
 	return err;
-} 
+}
 
 #define init_fpenv(fpenv)     do { __init_fpenv(&(fpenv).fxsave); } while (0)
 #define save_fpenv(fpenv)     do { __save_fpenv(&(fpenv).fxsave); } while (0)

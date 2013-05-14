@@ -8,7 +8,7 @@ exit
 fi
 
 libpath=`rtai-config --library-dir`
- 
+
 export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
 
 MODULES=$prefix/modules

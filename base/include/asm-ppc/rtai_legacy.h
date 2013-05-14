@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #include <rtai_types.h>
 
 // These are truly PPC specific.
-#define LATENCY_DECR 2500 
-#define SETUP_TIME_DECR	500 
+#define LATENCY_DECR 2500
+#define SETUP_TIME_DECR	500
 
 // CPU frequency calibration
 #define CPU_FREQ (tuned.cpu_freq)
@@ -156,8 +156,8 @@ extern int  rt_request_global_irq(unsigned int irq, void (*handler)(unsigned int
 extern int  rt_request_global_irq_arg(unsigned int irq,
 		int (*handler)(int,void *,struct pt_regs *),
 		unsigned long flags,const char *dev,void *dev_id);
-extern int rt_request_global_irq_ext(unsigned int irq, 
-				     int (*handler)(unsigned int irq, unsigned long handler), 
+extern int rt_request_global_irq_ext(unsigned int irq,
+				     int (*handler)(unsigned int irq, unsigned long handler),
 				     unsigned long data);
 extern void rt_set_global_irq_ext(unsigned int irq, int ext, unsigned long data);
 extern int  rt_free_global_irq(unsigned int irq);
@@ -169,7 +169,7 @@ extern void rt_shutdown_irq(unsigned int irq);
 extern void rt_enable_irq(unsigned int irq);
 extern void rt_disable_irq(unsigned int irq);
 extern int rt_request_linux_irq(unsigned int irq,
-	void (*linux_handler)(int irq, void *dev_id, struct pt_regs *regs), 
+	void (*linux_handler)(int irq, void *dev_id, struct pt_regs *regs),
 	char *linux_handler_id, void *dev_id);
 extern int rt_free_linux_irq(unsigned int irq, void *dev_id);
 extern void rt_pend_linux_irq(unsigned int irq);
@@ -254,7 +254,7 @@ static inline void __hard_save_flags(unsigned long *flags)
 
 #define rt_spin_unlock(lock) spin_unlock((lock))
 
-#define hard_cpu_id()  hard_smp_processor_id() 
+#define hard_cpu_id()  hard_smp_processor_id()
 
 static inline void rt_get_global_lock(void)
 {
@@ -276,7 +276,7 @@ static inline void rt_release_global_lock(void)
 // If NR_RT_CPUS > 8 RTAI must be changed as it cannot use APIC flat delivery
 // and the way processor[?].intr_flag is used must be changed (right now it
 // exploits the fact that the IF flags is at bit 16 so that bits 0-7 are used
-// to mark a cpu as Linux soft irq enabled/disabled. Bad but comfortable, it 
+// to mark a cpu as Linux soft irq enabled/disabled. Bad but comfortable, it
 // will take a very very long time before I'll have available SMP with more
 // than 8 cpus. Right now they are only:
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -284,7 +284,7 @@ static inline void rt_release_global_lock(void)
 
 #else  /* !CONFIG_SMP */
 
-#define rt_spin_lock(whatever)  
+#define rt_spin_lock(whatever)
 #define rt_spin_unlock(whatever)
 
 #define rt_get_global_lock()  hard_cli()
@@ -296,9 +296,9 @@ static inline void rt_release_global_lock(void)
 
 #endif	/* CONFIG_SMP */
 
-static inline void rt_spin_lock_irq(spinlock_t *lock)          
+static inline void rt_spin_lock_irq(spinlock_t *lock)
 {
-	hard_cli(); 
+	hard_cli();
 	rt_spin_lock(lock);
 }
 
@@ -308,14 +308,14 @@ static inline void rt_spin_unlock_irq(spinlock_t *lock)
 	hard_sti();
 }
 
-// Note that the spinlock calling convention below for irqsave/restore is 
-// sligtly different from the one used in Linux. Done on purpose to get an 
+// Note that the spinlock calling convention below for irqsave/restore is
+// sligtly different from the one used in Linux. Done on purpose to get an
 // error if you use Linux spinlocks in real time applications as they do not
-// guaranty any protection because of the soft irq disable. Be careful and 
-// sure to call the other spinlocks the right way, as they are compatible 
+// guaranty any protection because of the soft irq disable. Be careful and
+// sure to call the other spinlocks the right way, as they are compatible
 // with Linux.
 
-static inline unsigned int rt_spin_lock_irqsave(spinlock_t *lock)          
+static inline unsigned int rt_spin_lock_irqsave(spinlock_t *lock)
 {
 	unsigned long flags;
 	hard_save_flags_and_cli(flags);

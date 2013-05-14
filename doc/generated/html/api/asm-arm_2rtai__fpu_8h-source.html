@@ -14,7 +14,7 @@
 00004 <span class="comment"> * Just a dummy for RTAI now, because our ARM has no FPU</span>
 00005 <span class="comment"> * If you have an ARM-processor with FPU, add the necessary code to up_task_sw ...</span>
 00006 <span class="comment"> */</span>
-00007 
+00007
 00008 <span class="preprocessor">#ifndef RTAI_FPU_ASM_H</span>
 00009 <span class="preprocessor"></span><span class="preprocessor">#define RTAI_FPU_ASM_H</span>
 00010 <span class="preprocessor"></span>
@@ -22,14 +22,14 @@
 00012 <span class="preprocessor"></span>
 00013 <span class="keyword">extern</span> <span class="keywordtype">void</span> save_fpenv(<span class="keywordtype">long</span> *fpu_reg);
 00014 <span class="keyword">extern</span> <span class="keywordtype">void</span> restore_fpenv(<span class="keywordtype">long</span> *fpu_reg);
-00015 
+00015
 00016 <span class="preprocessor">#else </span><span class="comment">/* notdef CONFIG_RTAI_FPU_SUPPORT */</span>
-00017 
+00017
 00018 <span class="preprocessor">#define save_fpenv(x)</span>
 00019 <span class="preprocessor"></span><span class="preprocessor">#define restore_fpenv(x)</span>
 00020 <span class="preprocessor"></span>
 00021 <span class="preprocessor">#endif </span><span class="comment">/* CONFIG_RTAI_FPU_SUPPORT */</span>
-00022 
+00022
 00023 <span class="preprocessor">#endif </span><span class="comment">/* RTAI_FPU_ASM_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

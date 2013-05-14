@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: time.cc,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -65,7 +65,7 @@ Time Time::end(){
 
 long long Time::to_count() const {
 	return nano2count(m_Time);
-} 
+}
 
 Time Time::from_count(long long count) {
 	Time tmp( count2nano(count) );
@@ -73,12 +73,12 @@ Time Time::from_count(long long count) {
 	return tmp;
 }
 
-bool Time::operator==(const Time& time) const 
+bool Time::operator==(const Time& time) const
 {
 	return m_Time == time.m_Time;
 }
 
-bool Time::operator==(long long time) const 
+bool Time::operator==(long long time) const
 {
 	return m_Time == time;
 }
@@ -116,7 +116,7 @@ Time& Time::operator-=(const Time& time) {
 
 Time& Time::operator-=(long long time){
 	m_Time -= time;
-	return *this;  
+	return *this;
 }
 
 Time  Time::operator+(const Time& time) const {

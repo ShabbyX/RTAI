@@ -4,7 +4,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -41,10 +41,10 @@
 
 #if (__BYTE_ORDER == __BIG_ENDIAN) || defined(__arm__)
 
-typedef union 
+typedef union
 {
   double value;
-  struct 
+  struct
   {
     u_int32_t msw;
     u_int32_t lsw;
@@ -55,10 +55,10 @@ typedef union
 
 #if (__BYTE_ORDER == __LITTLE_ENDIAN) && !defined(__arm__)
 
-typedef union 
+typedef union
 {
   double value;
-  struct 
+  struct
   {
     u_int32_t lsw;
     u_int32_t msw;

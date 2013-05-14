@@ -21,7 +21,7 @@ MODULES=$prefix/modules
 
 sync;
 if (`rtai-config --linux-version | grep -q 2.6`);
-then 
+then
 
 insmod $MODULES/rtai_hal.ko  IsolCpusMask=0;
 sync;

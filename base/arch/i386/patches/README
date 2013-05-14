@@ -1,25 +1,25 @@
-These are RTAI own patches but they can be used also as any of their standard 
+These are RTAI own patches but they can be used also as any of their standard
 ADEOS counterpart, the opposite being not true.
 
 FOR COMEDI USERS:
-patches for 2.4.32/2.6.13/2.6.14 do not contain a config parameter that is 
+patches for 2.4.32/2.6.13/2.6.14 do not contain a config parameter that is
 understood by COMEDI.
 In order to allow using the most recent patches with COMEDE here is a suggestion from Roberto Bucher <roberto.bucher@supsi.ch>:
 
-"in order to compile the COMEDI drivers for RTAI-3.3, the user must simply add 
+"in order to compile the COMEDI drivers for RTAI-3.3, the user must simply add
 the line:
- 
+
 CONFIG_RTHAL=y
 
-to the .config file in the kernel directory. This should solve temporarily the 
+to the .config file in the kernel directory. This should solve temporarily the
 problem.
 
-The COMEDI "configure" file is looking for "CONFIG_RTHAL" or "CONFIG_ADEOS" in 
+The COMEDI "configure" file is looking for "CONFIG_RTHAL" or "CONFIG_ADEOS" in
 the ".config" kernel file."
 
 Note also that Andreas Leuner <al14@inf.tu-dresden.de> has pointed out that
 the most recent snapshots of COMEDI CVS do care of using the latest patches
-(IPIPEd) natively. To such an aim he suggests that those not wanting to 
+(IPIPEd) natively. To such an aim he suggests that those not wanting to
 modify .config in Linux should use what found in COMEDI CVS newer than
 2005-12-14.
 

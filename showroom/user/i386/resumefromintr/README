@@ -1,7 +1,7 @@
 This test shows two ways for waking up user space hard real time processes
-directly from interrupt handlers. The process itself can then act, partly or 
+directly from interrupt handlers. The process itself can then act, partly or
 as a whole, as an interrupt handler. Do not confuse it with bottom halves,
-it is better, more direct, effective and true real time. It is based on using 
+it is better, more direct, effective and true real time. It is based on using
 either suspend/resume or semaphore wait/signal.
 
 You can control period, duration and wakeup method through macros in period.h.

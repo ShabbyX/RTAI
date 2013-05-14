@@ -59,19 +59,19 @@ static void Slow_Thread(long dummy)
 	int jit;
 	RTIME svt, t;
 	svt = rt_get_cpu_time_ns() - SLOWMUL*TICK_TIME;
-        while (1) {  
+        while (1) {
 		jit = (int) ((t = rt_get_cpu_time_ns()) - svt - SLOWMUL*TICK_TIME);
 		svt = t;
 		if (jit) { jit = - jit; }
 		if (jit > slowjit) { slowjit = jit; }
 		cpu_used[hard_cpu_id()]++;
                 rt_busy_sleep(SLOWMUL/2*TICK_TIME);
-                rt_task_wait_period();                                        
+                rt_task_wait_period();
         }
-}                                        
+}
 
-static void Fast_Thread(long dummy) 
-{                             
+static void Fast_Thread(long dummy)
+{
 	int jit;
 	RTIME svt, t;
 	svt = rt_get_cpu_time_ns() - FASTMUL*TICK_TIME;
@@ -82,8 +82,8 @@ static void Fast_Thread(long dummy)
 		if (jit > fastjit) { fastjit = jit; }
 		cpu_used[hard_cpu_id()]++;
                 rt_busy_sleep(FASTMUL/2*TICK_TIME);
-                rt_task_wait_period();                                        
-        }                      
+                rt_task_wait_period();
+        }
 }
 
 static void fun(long thread) {

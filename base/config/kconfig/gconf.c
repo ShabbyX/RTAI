@@ -327,7 +327,7 @@ void init_left_tree(void)
 					    renderer,
 					    "active", COL_BTNACT,
 					    "inconsistent", COL_BTNINC,
-					    "visible", COL_BTNVIS, 
+					    "visible", COL_BTNVIS,
 					    "radio", COL_BTNRAD, NULL);
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(GTK_TREE_VIEW_COLUMN(column),
@@ -379,7 +379,7 @@ void init_right_tree(void)
 					    renderer,
 					    "active", COL_BTNACT,
 					    "inconsistent", COL_BTNINC,
-					    "visible", COL_BTNVIS, 
+					    "visible", COL_BTNVIS,
 					    "radio", COL_BTNRAD, NULL);
 	/*g_signal_connect(G_OBJECT(renderer), "toggled",
 	   G_CALLBACK(renderer_toggled), NULL); */
@@ -1425,7 +1425,7 @@ static void update_tree(struct menu *src, GtkTreeIter * dst)
 								 child2);
 				gtk_tree_store_remove(tree2, &tmp);
 				if (!valid)
-					return;	// next parent 
+					return;	// next parent
 				else
 					goto reparse;	// next child
 			} else
@@ -1450,7 +1450,7 @@ static void update_tree(struct menu *src, GtkTreeIter * dst)
 								 child2);
 				gtk_tree_store_remove(tree2, &tmp);
 				if (!valid)
-					return;	// next parent 
+					return;	// next parent
 				else
 					goto reparse;	// next child
 			}
@@ -1518,7 +1518,7 @@ static void display_tree(struct menu *menu)
 		if (((menu != &rootmenu) && !(menu->flags & MENU_ROOT)) ||
 		    (view_mode == FULL_VIEW)
 		    || (view_mode == SPLIT_VIEW))*/
-		if ((view_mode == SINGLE_VIEW) && (menu->flags & MENU_ROOT) 
+		if ((view_mode == SINGLE_VIEW) && (menu->flags & MENU_ROOT)
 		|| (view_mode == FULL_VIEW) || (view_mode == SPLIT_VIEW)) {
 			indent++;
 			display_tree(child);

@@ -41,7 +41,7 @@ int main(void)
 		puts("ERROR IN SETTING THE SCHEDULER");
 		perror("errno");
 		exit(0);
- 	}       
+ 	}
  	if (!(hrttsk = rt_task_init(hrttsk_name, 1, 0, 0))) {
 		printf("CANNOT INIT TESTB MASTER TASK\n");
 		exit(1);

@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #include <rtai_msg.h>
 
 int main (void)
-{ 
+{
 	rt_allow_nonroot_hrt();
 	rt_task_init_schmod(nam2num("KILLER"), 1, 0, 0, SCHED_FIFO, 0xF);
 	if (rt_get_adr(nam2num("LOOPER"))) {
@@ -40,5 +40,5 @@ int main (void)
 		}
 	}
 	rt_task_delete(NULL);
-	return 0; 
+	return 0;
 }

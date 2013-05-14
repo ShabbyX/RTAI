@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: mbx.cc,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -63,7 +63,7 @@ Mailbox::~Mailbox(){
 
 	if(m_Mailbox != 0){
                 if( m_Owner ){
-                        if( m_Named){ 
+                        if( m_Named){
                                 rt_named_mbx_delete(m_Mailbox);
                         } else {
                                 rt_mbx_delete(m_Mailbox);

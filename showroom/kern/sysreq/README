@@ -2,9 +2,9 @@
 
 This directory shows how you can use the module rtai to install an
 interrupt handler to simulate a higher tick for a Linux process communicating
-with RTAI by using full two way rtai system requests. It is similar to 
+with RTAI by using full two way rtai system requests. It is similar to
 rt_process2 in fastick directory but does not need to use fifos.
-Since rtai does just a few things per tick you can run this at very high rates 
+Since rtai does just a few things per tick you can run this at very high rates
 without killing your machine, for just a few tasks that need a tighter timing.
 The new ticking is determined by the macro TICK in rt_process.c.
 

@@ -50,7 +50,7 @@ int main(void)
 		if (!samp.tx) {
 			printf("%lu - MAXJ = %lld\n", samp.cnt, samp.rx);
 		} else {
-			time(&timestamp); 
+			time(&timestamp);
 			tm_timestamp=localtime(&timestamp);
 			printf("%lu - TM: %04d/%02d/%0d %02d:%02d:%02d.\n", samp.cnt, tm_timestamp->tm_year+1900, tm_timestamp->tm_mon+1, tm_timestamp->tm_mday, tm_timestamp->tm_hour, tm_timestamp->tm_min, tm_timestamp->tm_sec);
 			timestamp = samp.tx/1000000000;  // let's see ours

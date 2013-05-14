@@ -77,7 +77,7 @@ int do_cmd(void)
 	comedi_cmd cmd;
 	unsigned int chanlist[NCHAN];
 	unsigned int buf_read[NCHAN] = { 2, 3, 4, 5, 6 };
-  
+
 	memset(&cmd, 0, sizeof(cmd));
 	for (i = 0; i < NCHAN; i++) {
 		chanlist[i] = CR_PACK(buf_read[i], AI_RANGE, AREF_GROUND);
@@ -90,7 +90,7 @@ int do_cmd(void)
 	cmd.start_arg = 0;
 
 	cmd.scan_begin_src = TRIG_TIMER;
-	cmd.scan_begin_arg = SAMP_TIME; 
+	cmd.scan_begin_arg = SAMP_TIME;
 
 	cmd.convert_src = TRIG_TIMER;
 	cmd.convert_arg = 2000;

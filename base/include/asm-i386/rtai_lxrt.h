@@ -261,7 +261,7 @@ static union rtai_lxrt_t _rtai_lxrt(int srq, void *arg)
 	union rtai_lxrt_t retval;
 #ifdef USE_LINUX_SYSCALL
 	syscall(RTAI_SYSCALL_NR, srq, arg, &retval);
-#else 
+#else
 	RTAI_DO_TRAP(RTAI_SYS_VECTOR, retval, srq, arg);
 #endif
 	return retval;

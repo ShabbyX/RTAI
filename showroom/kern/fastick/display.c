@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 		puts(" ERROR IN SETTING THE SCHEDULER UP");
 		perror( "errno" );
 		exit( 0 );
- 	}       
+ 	}
 
 	fifosize = argc > 1 ? atoi(argv[1]) : 100;
 	if ((cmd = rtf_open_sized("/dev/rtf0", O_RDONLY, abs(fifosize))) < 0) {

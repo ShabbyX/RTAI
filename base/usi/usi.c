@@ -39,7 +39,7 @@ MODULE_LICENSE("GPL");
 static void *rt_spin_lock_init(void)
 {
 	spinlock_t *lock;
- 
+
 	if ((lock = rt_malloc(sizeof(spinlock_t)))) {
 		spin_lock_init(lock);
 		return lock;
@@ -52,18 +52,18 @@ static inline int rt_spin_lock_delete(void *lock)
 	rt_free(lock);
 	return 0;
 }
-                                                                               
-static void usi_spin_lock(spinlock_t *lock)          
+
+static void usi_spin_lock(spinlock_t *lock)
 {
 	rt_spin_lock(lock);
 }
 
-static void usi_spin_unlock(spinlock_t *lock)          
+static void usi_spin_unlock(spinlock_t *lock)
 {
 	rt_spin_unlock(lock);
 }
 
-static void usi_spin_lock_irq(spinlock_t *lock)          
+static void usi_spin_lock_irq(spinlock_t *lock)
 {
 	rt_spin_lock_irq(lock);
 }
@@ -73,7 +73,7 @@ static void usi_spin_unlock_irq(spinlock_t *lock)
 	rt_spin_unlock_irq(lock);
 }
 
-static unsigned long usi_spin_lock_irqsave(spinlock_t *lock)          
+static unsigned long usi_spin_lock_irqsave(spinlock_t *lock)
 {
 	return rt_spin_lock_irqsave(lock);
 }

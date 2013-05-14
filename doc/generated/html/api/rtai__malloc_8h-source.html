@@ -30,12 +30,12 @@
 00020 <span class="comment"> * Purpose Memory Allocator for the 4.3BSD Unix Kernel" by Marshall</span>
 00021 <span class="comment"> * K. McKusick and Michael J. Karels.</span>
 00022 <span class="comment"> */</span>
-00023 
+00023
 00024 <span class="preprocessor">#ifndef _RTAI_MALLOC_H</span>
 00025 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_MALLOC_H</span>
 00026 <span class="preprocessor"></span>
 00027 <span class="preprocessor">#include &lt;rtai_types.h&gt;</span>
-00028 
+00028
 00029 <span class="preprocessor">#ifdef __KERNEL__</span>
 00030 <span class="preprocessor"></span>
 00031 <span class="preprocessor">#ifndef __cplusplus</span>
@@ -43,7 +43,7 @@
 00033 <span class="preprocessor">#include &lt;linux/kernel.h&gt;</span>
 00034 <span class="preprocessor">#include &lt;linux/list.h&gt;</span>
 00035 <span class="preprocessor">#include &lt;linux/spinlock.h&gt;</span>
-00036 
+00036
 00037 <span class="comment">/*</span>
 00038 <span class="comment"> * LIMITS:</span>
 00039 <span class="comment"> *</span>
@@ -63,7 +63,7 @@
 00053 <span class="comment"> * RTHEAP_MINLOG2 and RTHEAP_MAXLOG2 inclusive, plus one to honor</span>
 00054 <span class="comment"> * requests ranging from the maximum page size to twice this size.</span>
 00055 <span class="comment"> */</span>
-00056 
+00056
 00057 <span class="preprocessor">#define RTHEAP_MINLOG2    4</span>
 00058 <span class="preprocessor"></span><span class="preprocessor">#define RTHEAP_MAXLOG2    22</span>
 00059 <span class="preprocessor"></span><span class="preprocessor">#define RTHEAP_MINALLOCSZ (1 &lt;&lt; RTHEAP_MINLOG2)</span>
@@ -82,17 +82,17 @@
 00072 <span class="preprocessor"></span><span class="preprocessor">#define RTHEAP_PARAM   (-2)</span>
 00073 <span class="preprocessor"></span>
 00074 <span class="keyword">typedef</span> <span class="keyword">struct </span>rtextent {
-00075 
+00075
 00076     <span class="keyword">struct </span>list_head link;
-00077 
+00077
 00078     caddr_t membase,    <span class="comment">/* Base address of the page array */</span>
 00079             memlim,     <span class="comment">/* Memory limit of page array */</span>
 00080             freelist;   <span class="comment">/* Head of the free page list */</span>
-00081 
+00081
 00082     u_char pagemap[1];  <span class="comment">/* Beginning of page map */</span>
-00083 
+00083
 00084 } rtextent_t;
-00085 
+00085
 00086 <span class="comment">/* Creation flag */</span>
 00087 <span class="preprocessor">#define RTHEAP_EXTENDABLE 0x1</span>
 00088 <span class="preprocessor"></span>
@@ -100,11 +100,11 @@
 00090 <span class="preprocessor">#define RTHEAP_EXTEND    0x1</span>
 00091 <span class="preprocessor"></span>
 00092 <span class="keyword">typedef</span> <span class="keyword">struct </span>rtheap {
-00093 
+00093
 00094     spinlock_t lock;
-00095 
+00095
 00096     <span class="keywordtype">int</span> flags;
-00097 
+00097
 00098     u_long extentsize,
 00099            pagesize,
 00100            pageshift,
@@ -112,23 +112,23 @@
 00102            npages,      <span class="comment">/* Number of pages per extent */</span>
 00103            ubytes,
 00104            maxcont;
-00105 
+00105
 00106     <span class="keyword">struct </span>list_head extents;
-00107 
+00107
 00108     caddr_t buckets[RTHEAP_NBUCKETS];
-00109 
+00109
 00110 } rtheap_t;
-00111 
+00111
 00112 <span class="preprocessor">#else </span><span class="comment">/* __cplusplus */</span>
-00113 
+00113
 00114 <span class="keyword">struct </span>rtheap;
-00115 
+00115
 00116 <span class="keyword">typedef</span> <span class="keyword">struct </span>rtheap rtheap_t;
-00117 
+00117
 00118 <span class="preprocessor">#endif </span><span class="comment">/* !__cplusplus */</span>
-00119 
+00119
 00120 <span class="keyword">extern</span> rtheap_t rtai_global_heap;
-00121 
+00121
 00122 <span class="preprocessor">#define rtheap_page_size(heap)   ((heap)-&gt;pagesize)</span>
 00123 <span class="preprocessor"></span><span class="preprocessor">#define rtheap_page_count(heap)  ((heap)-&gt;npages)</span>
 00124 <span class="preprocessor"></span><span class="preprocessor">#define rtheap_used_mem(heap)    ((heap)-&gt;ubytes)</span>
@@ -141,29 +141,29 @@
 00131 <span class="preprocessor">#endif</span>
 00132 <span class="preprocessor"></span>
 00133 <span class="keywordtype">int</span> __rtai_heap_init(<span class="keywordtype">void</span>);
-00134 
+00134
 00135 <span class="keywordtype">void</span> __rtai_heap_exit(<span class="keywordtype">void</span>);
-00136 
+00136
 00137 <span class="keywordtype">int</span> <a class="code" href="group__shm.html#ga51">rtheap_init</a>(rtheap_t *heap,
 00138                 <span class="keywordtype">void</span> *heapaddr,
 00139                 u_long heapsize,
 00140                 u_long pagesize);
-00141 
+00141
 00142 <span class="keywordtype">void</span> <a class="code" href="group__shm.html#ga52">rtheap_destroy</a>(rtheap_t *heap);
-00143 
+00143
 00144 <span class="keywordtype">void</span> *<a class="code" href="group__shm.html#ga54">rtheap_alloc</a>(rtheap_t *heap,
 00145                    u_long size,
 00146                    <span class="keywordtype">int</span> flags);
-00147 
+00147
 00148 <span class="keywordtype">int</span> <a class="code" href="group__shm.html#ga55">rtheap_free</a>(rtheap_t *heap,
 00149                 <span class="keywordtype">void</span> *block);
-00150 
+00150
 00151 <span class="preprocessor">#ifdef __cplusplus</span>
 00152 <span class="preprocessor"></span>}
 00153 <span class="preprocessor">#endif</span>
 00154 <span class="preprocessor"></span>
 00155 <span class="preprocessor">#endif </span><span class="comment">/* __KERNEL__ */</span>
-00156 
+00156
 00157 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_MALLOC_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

@@ -144,13 +144,13 @@ static struct rt_fun_entry rtdm[] = {
 
 /* This is needed because RTDM interrupt handlers:
  * - do no want immediate in handler rescheduling, RTAI can be configured
- *   to act in the same way but might not have been enabled to do so; 
+ *   to act in the same way but might not have been enabled to do so;
  * - may not reenable the PIC directly, assuming it will be done here;
  * - may not propagate, assuming it will be done here as well.
  * - might use shared interrupts its own way;
- * REMARK: RTDM irqs management is as generic as its pet system dictates 
- *         and there is no choice but doing the same as closely as possible; 
- *         so this is an as verbatim as possible copy of what is needed from 
+ * REMARK: RTDM irqs management is as generic as its pet system dictates
+ *         and there is no choice but doing the same as closely as possible;
+ *         so this is an as verbatim as possible copy of what is needed from
  *         the RTDM pet system.
  * REMINDER: the RTAI dispatcher cares mask/ack-ing anyhow, but RTDM will
  *           (must) provide the most suitable one for the shared case. */
@@ -659,7 +659,7 @@ extern struct epoch_struct boot_epoch;
 static struct rtdm_timer_struct timers_list[NUM_CPUS] =
 { { &timers_list[0], &timers_list[0], RT_SCHED_LOWEST_PRIORITY, 0, RT_TIME_END, 0LL, NULL, 0UL,
 #ifdef  CONFIG_RTAI_LONG_TIMED_LIST
-{ NULL } 
+{ NULL }
 #endif
 }, };
 

@@ -32,7 +32,7 @@ void cleanup_rtai_proxy( void )
 {
 	rt_free_global_irq(TIMER_IRQ);
 	rt_reset_irq_to_sym_mode(TIMER_IRQ);
-	printk("MAX INTERRUPT LATENCY: %d\n", tmrcnt); 
+	printk("MAX INTERRUPT LATENCY: %d\n", tmrcnt);
 }
 
 module_init(init_rtai_proxy);

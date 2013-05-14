@@ -44,7 +44,7 @@
 #define RT_SP_FIFO_SIZE_DEFAULT  RT_SP_FIFO_SIZE_8
 
 #define RT_SP_DTR            0x01
-#define RT_SP_RTS            0x02 
+#define RT_SP_RTS            0x02
 
 #define RT_SP_CTS            0x10
 #define RT_SP_DSR            0x20
@@ -62,8 +62,8 @@
 
 #define  FUN_EXT_RTAI_SP  14
 
-#define _SPOPEN      	  	 0 
-#define _SPCLOSE    	  	 1	 
+#define _SPOPEN      	  	 0
+#define _SPCLOSE    	  	 1	
 #define _SPREAD     	  	 2
 #define _SPEVDRP      	  	 3
 #define _SPWRITE     	  	 4
@@ -133,7 +133,7 @@ RTAI_SYSCALL_MODE int rt_spwrite_timed(unsigned int tty, char *msg, int msg_size
 
 /*
  * rt_com compatibility functions.
- */ 
+ */
 
 static inline int rt_com_setup(unsigned int tty,
 			       int baud, int mode,
@@ -188,13 +188,13 @@ static inline int rt_com_write(unsigned int tty,
 
 RTAI_PROTO(int, rt_spopen, (unsigned int tty, unsigned int baud, unsigned int numbits, unsigned int stopbits, unsigned int parity, int mode, int fifotrig))
 {
-	struct { unsigned long tty, baud, numbits, stopbits, parity; long mode, fifotrig; } arg = { tty, baud, numbits, stopbits, parity, mode, fifotrig }; 
+	struct { unsigned long tty, baud, numbits, stopbits, parity; long mode, fifotrig; } arg = { tty, baud, numbits, stopbits, parity, mode, fifotrig };
 	return rtai_lxrt(FUN_EXT_RTAI_SP, SIZARG, _SPOPEN, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rt_spclose, (unsigned int tty))
 {
-	struct { unsigned long tty; } arg = { tty }; 
+	struct { unsigned long tty; } arg = { tty };
 	return rtai_lxrt(FUN_EXT_RTAI_SP, SIZARG, _SPCLOSE, &arg).i[LOW];
 }
 

@@ -42,7 +42,7 @@ static void inout(scicos_block *block)
   int ntraces=block->nout;
   int count;
   struct {
-    float u[ntraces]; 
+    float u[ntraces];
   } data;
   int i;
 
@@ -68,7 +68,7 @@ void rt_fifoin(scicos_block *block,int flag)
   if (flag==1){          /* set output */
     inout(block);
   }
-  else if (flag==5){     /* termination */ 
+  else if (flag==5){     /* termination */
     end(block);
   }
   else if (flag ==4){    /* initialisation */

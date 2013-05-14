@@ -66,7 +66,7 @@ void CommandChrono_Get(char *command)
 {
 	switch (Chronostatus) {
 		case stoppedInitial:
-			if (buffered) { 
+			if (buffered) {
 				buffered = FALSE;
 			} else {
 				rt_sem_wait(&notEmpty);

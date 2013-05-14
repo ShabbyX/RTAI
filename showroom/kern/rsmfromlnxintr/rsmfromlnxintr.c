@@ -34,10 +34,10 @@ MODULE_LICENSE("GPL");
 /*
 THIS IS A BIT CRYPTIC AND REQUIRES SOME CARE, QUITE GENERAL THOUGH.
 MAKING IT EASIER TO USE IS JUST A MATTER OF APPROPRIATE WRAPPERS.
-NONE HAS SHOWN INTEREST IN SUCH A THING, SO LET"S KEEP THE TRUE MAGIC 
-FOR THE TRUE RTAI MAGICIANS ONLY. 
+NONE HAS SHOWN INTEREST IN SUCH A THING, SO LET"S KEEP THE TRUE MAGIC
+FOR THE TRUE RTAI MAGICIANS ONLY.
 */
-  
+
 int get_min_tasks_cpuid(void);
 int set_rtext(RT_TASK *, int, int, void(*)(void), unsigned int, void *);
 int clr_rtext(RT_TASK *);
@@ -108,7 +108,7 @@ static int soft_kthread_delete(RT_TASK *task)
 struct msg_s { char test[8]; int cnt; };
 
 /*
-try playing the game even with BUFSIZ < sizeof(struct msg_s), down to a 
+try playing the game even with BUFSIZ < sizeof(struct msg_s), down to a
 single byte buffer. It's fun, not effcient though.
 */
 #define BUFSIZ (10*sizeof(struct msg_s))

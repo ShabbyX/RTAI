@@ -370,7 +370,7 @@ if (rtai_irq_desc_chip(irq)->irq_eoi) rtai_irq_desc_chip(irq)->irq_eoi(&(rtai_ir
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -405,7 +405,7 @@ unsigned rt_startup_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -444,7 +444,7 @@ static inline void _rt_enable_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -476,7 +476,7 @@ void rt_enable_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -513,7 +513,7 @@ void rt_disable_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -561,7 +561,7 @@ static inline void _rt_end_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -597,7 +597,7 @@ void rt_unmask_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -824,7 +824,7 @@ irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_reg
 	rtai_hw_restore_flags(flags);
 
 	return RTAI_LINUX_IRQ_HANDLED;
-} 
+}
 
 #ifdef CONFIG_GENERIC_CLOCKEVENTS
 
@@ -848,7 +848,7 @@ static inline int REQUEST_LINUX_IRQ_BROADCAST_TO_APIC_TIMERS(void)
 irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_regs *regs)
 {
 	return RTAI_LINUX_IRQ_HANDLED;
-} 
+}
 
 #define REQUEST_LINUX_IRQ_BROADCAST_TO_APIC_TIMERS()  0
 
@@ -1141,7 +1141,7 @@ static struct desc_struct rtai_8254_timer_sysvec;
 
 #else /* !CONFIG_RTAI_DONT_DISPATCH_CORE_IRQS */
 
-#define SET_INTR_GATE(vector, handler, save) 
+#define SET_INTR_GATE(vector, handler, save)
 #define RESET_INTR_GATE(vector, save)
 
 void rt_set_sched_ipi_gate(void) { }
@@ -1331,7 +1331,7 @@ int rt_assign_irq_to_cpu (int irq, unsigned long cpumask)
  * reset IRQ->CPU assignment
  *
  * rt_reset_irq_to_sym_mode resets the interrupt irq to the symmetric interrupts
- * management, whatever that means, existing before the very first use of RTAI 
+ * management, whatever that means, existing before the very first use of RTAI
  * rt_assign_irq_to_cpu. This function applies to external interrupts only.
  *
  * @the mask of the interrupts routing before its call.
@@ -1533,7 +1533,7 @@ void rt_setup_8254_tsc (void)
 	outb_p(RTAI_COUNTER_2_LATCH & 0xff, 0x42);
 	outb_p(RTAI_COUNTER_2_LATCH >> 8, 0x42);
 	rtai_ts_8254 = c + ((RTIME)LATCH)*jiffies;
-	rtai_last_8254_counter2 = 0; 
+	rtai_last_8254_counter2 = 0;
 	outb_p((inb_p(0x61) & 0xFD) | 1, 0x61);
 	rtai_critical_exit(flags);
 }
@@ -1581,10 +1581,10 @@ static int rtai_hirq_dispatcher (struct pt_regs regs)
 #endif
 		unsigned long sflags;
 #ifdef RTAI_SYSCALLS_USE_HIRQ_DISPATCHER
-		if (irq == RTAI_SYS_IRQ) { 
+		if (irq == RTAI_SYS_IRQ) {
 			asmlinkage int rtai_syscall_dispatcher(struct pt_regs *);
 			return rtai_syscall_dispatcher(&regs);
-		} 
+		}
 #endif
 		HAL_LOCK_LINUX();
 		RTAI_IRQ_ACK(irq);
@@ -1732,12 +1732,12 @@ static int rtai_trap_fault (unsigned event, void *evdata)
 		struct task_struct *linux_task = current;
 
 	/* We need to keep this to avoid going through Linux in case users
-	   do not set the FPU, for hard real time operations, either by 
+	   do not set the FPU, for hard real time operations, either by
 	   calling the appropriate LXRT function or by doing any FP operation
 	   before going to hard mode. Notice that after proper initialization
 	   LXRT anticipate restoring the hard FP context at any task switch.
 	   So just the initialisation should be needed, but we do what Linux
-	   does in math_state_restore anyhow, to stay on the safe side. 
+	   does in math_state_restore anyhow, to stay on the safe side.
 	   In any case we this we keep it now mostly as a diagnostic and so
 	   let inform the user always. */
 		rtai_hw_cli(); /* in task context, so we can be preempted */
@@ -1951,7 +1951,7 @@ int rtai_calibrate_8254 (void)
 	flags = rtai_critical_enter(NULL);
 	outb(0x34,0x43);
 	t = rtai_rdtsc();
-	for (i = 0; i < 10000; i++) { 
+	for (i = 0; i < 10000; i++) {
 		outb(LATCH & 0xff,0x40);
 		outb(LATCH >> 8,0x40);
 	}
@@ -2038,7 +2038,7 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	PROC_PRINT("    APIC Latency: %d ns\n",RTAI_LATENCY_APIC);
 	PROC_PRINT("    APIC Setup: %d ns\n",RTAI_SETUP_TIME_APIC);
 #endif /* CONFIG_X86_LOCAL_APIC */
-    
+
 	none = 1;
 	PROC_PRINT("\n** Real-time IRQs used by RTAI: ");
     	for (i = 0; i < RTAI_NR_IRQS; i++) {
@@ -2308,7 +2308,7 @@ asmlinkage int rt_sync_printk(const char *fmt, ...)
 
 
 /*
- *  support for decoding long long numbers in kernel space, somebody may need 
+ *  support for decoding long long numbers in kernel space, somebody may need
  *  it in 2.4.xx; no problem nowadays on the latest kernels.
  */
 
@@ -2424,8 +2424,8 @@ EXPORT_SYMBOL(IsolCpusMask);
 void (*rt_linux_hrt_set_mode)(enum clock_event_mode, struct ipipe_tick_device *);
 int (*rt_linux_hrt_next_shot)(unsigned long, struct ipipe_tick_device *);
 
-/* 
- * _rt_linux_hrt_set_mode and _rt_linux_hrt_next_shot below should serve 
+/*
+ * _rt_linux_hrt_set_mode and _rt_linux_hrt_next_shot below should serve
  * RTAI examples only and assume that RTAI is in periodic mode always
  */
 
@@ -2489,7 +2489,7 @@ static void hal_request_apic_freq(unsigned long *apic_freq)
 	}
 	if (avrg_freq) {
 		if ((avrg_freq /= num_online_cpus()) != freq) {
-			printk("*** APICs FREQs DIFFER ***\n"); 
+			printk("*** APICs FREQs DIFFER ***\n");
 		}
 		*apic_freq = avrg_freq;
 	}

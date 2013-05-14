@@ -1,7 +1,7 @@
 /*
  *   ARTI -- RTAI-compatible Adeos-based Real-Time Interface. Based on
  *   the original RTAI layer for PPC and the RTAI/x86 rewrite over ADEOS.
- *   This file provides user-visible definitions for compatibility purpose 
+ *   This file provides user-visible definitions for compatibility purpose
  *   with the legacy RTHAL. Must be included from rtai_hal.h only.
  *
  *   Original RTAI/PPC layer implementation: \n
@@ -241,16 +241,16 @@ static inline void send_ipi_logical (unsigned long dest,
 #ifdef FIXME
 static inline void *get_intr_handler (unsigned vector) {
 
-    return (void *)((idt_table[vector].b & 0xFFFF0000) | 
+    return (void *)((idt_table[vector].b & 0xFFFF0000) |
 		    (idt_table[vector].a & 0x0000FFFF));
 }
 
 static inline void set_intr_vect (unsigned vector,
 				  void (*handler)(void)) {
 
-    idt_table[vector].a = (idt_table[vector].a & 0xFFFF0000) | 
+    idt_table[vector].a = (idt_table[vector].a & 0xFFFF0000) |
 	((unsigned)handler & 0x0000FFFF);
-    idt_table[vector].b = ((unsigned)handler & 0xFFFF0000) | 
+    idt_table[vector].b = ((unsigned)handler & 0xFFFF0000) |
 	(idt_table[vector].b & 0x0000FFFF);
 }
 

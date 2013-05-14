@@ -27,8 +27,8 @@ namespace RTAI {
 
 /**
  * Tick Count helper class
- * 
- * Ticks are sometimes needed by the system calls. 
+ *
+ * Ticks are sometimes needed by the system calls.
  * For human readable time keeping, use the Time class.
  */
 class Count {
@@ -42,7 +42,7 @@ public:
      * The time in nanoseconds
      */
     typedef long long nsecs;
-    
+
     /**
      * Instantiates a Count object with count zero
      */

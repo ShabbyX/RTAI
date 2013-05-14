@@ -5,10 +5,10 @@ Here you'll find the portable RTAI fifo services. Have a look at
 README.FIFOS in the ../Documentation directory to see what's new in this
 fifos implementation.
 
-To make the fifos, type: 
+To make the fifos, type:
 
   make
 
-To test the fifos, as root type: 
+To test the fifos, as root type:
 
   ./REGRESSION from within testing/fifos.

@@ -34,14 +34,14 @@
 00024 <span class="comment">- Paolo Mantegazza      (mantegazza@aero.polimi.it)</span>
 00025 <span class="comment">        creator of RTAI </span>
 00026 <span class="comment">*/</span>
-00027 
+00027
 00028 <span class="preprocessor">#ifndef _ASM_ARCH_RTAI_TIMER_H_</span>
 00029 <span class="preprocessor"></span><span class="preprocessor">#define _ASM_ARCH_RTAI_TIMER_H_</span>
 00030 <span class="preprocessor"></span>
 00031 <span class="preprocessor">#include &lt;asm/proc/hard_system.h&gt;</span>
 00032 <span class="preprocessor">#include &lt;linux/time.h&gt;</span>
 00033 <span class="preprocessor">#include &lt;linux/timex.h&gt;</span>
-00034 
+00034
 00035 <span class="preprocessor">#define CPU_FREQ (tuned.cpu_freq)</span>
 00036 <span class="preprocessor"></span>
 00037 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> timer_irq_ack( <span class="keywordtype">void</span> )
@@ -56,29 +56,29 @@
 00046                 OSMR0 = OSCR - 1;
 00047         <span class="keywordflow">return</span> 0;
 00048 }
-00049 
+00049
 00050 <span class="keyword">union </span>rtai_tsc {
 00051         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> tsc;
 00052         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> hltsc[2];
 00053 };
 00054 <span class="keyword">extern</span> <span class="keyword">volatile</span> <span class="keyword">union </span>rtai_tsc rtai_tsc;
-00055 
+00055
 00056 <span class="keyword">static</span> <span class="keyword">inline</span> RTIME rdtsc(<span class="keywordtype">void</span>)
 00057 {
 00058         RTIME ts;
 00059         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> flags, count;
-00060 
+00060
 00061         hard_save_flags_and_cli(flags);
-00062 
+00062
 00063         <span class="keywordflow">if</span> ( ( count = OSCR ) &lt; rtai_tsc.hltsc[0] )
 00064                 rtai_tsc.hltsc[1]++;
 00065         rtai_tsc.hltsc[0] = count;
 00066         ts = rtai_tsc.tsc;
 00067         hard_restore_flags(flags);
-00068 
+00068
 00069         <span class="keywordflow">return</span> ts;
 00070 }
-00071 
+00071
 00072 <span class="preprocessor">#define PROTECT_TIMER</span>
 00073 <span class="preprocessor"></span>
 00074 <span class="preprocessor">#if 0</span>
@@ -90,9 +90,9 @@
 00080 <span class="preprocessor"></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> rt_set_timer_match_reg(<span class="keywordtype">int</span> delay)
 00081 {
 00082         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> flags;
-00083 
+00083
 00084         hard_save_flags_cli( flags );
-00085 
+00085
 00086         __asm__ __volatile__ (
 00087         <span class="stringliteral">"mov    r2, #0xfa000000         @ REG_BASE\n"</span>
 00088 #ifdef PROTECT_TIMER
@@ -108,31 +108,31 @@
 00098                 :
 00099                 : <span class="stringliteral">"r"</span> (delay), <span class="stringliteral">"r"</span> (rt_times.periodic_tick), <span class="stringliteral">"r"</span> (LATCH)
 00100                 : <span class="stringliteral">"r0"</span>, <span class="stringliteral">"r1"</span>, <span class="stringliteral">"r2"</span>, <span class="stringliteral">"memory"</span>, <span class="stringliteral">"cc"</span> );
-00101 
+00101
 00102         hard_restore_flags( flags );
 00103 }
-00104 
+00104
 00105 <span class="preprocessor">#else</span>
 00106 <span class="preprocessor"></span><span class="comment">/* Current version */</span>
 00107 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> rt_set_timer_match_reg(<span class="keywordtype">int</span> delay)
 00108 {
 00109         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> flags;
 00110         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> next_match;
-00111 
+00111
 00112 <span class="preprocessor">#ifdef PROTECT_TIMER</span>
 00113 <span class="preprocessor"></span>        <span class="keywordflow">if</span> ( delay &gt; LATCH )
 00114                 delay = LATCH;
 00115 <span class="preprocessor">#endif</span>
 00116 <span class="preprocessor"></span>
 00117         hard_save_flags_cli(flags);
-00118 
+00118
 00119         <span class="keywordflow">if</span> ( delay )
 00120                 next_match = OSMR0 = delay + OSCR;
 00121 <span class="comment">//              next_match = OSMR0 = delay + rtai_tsc.hltsc[0];</span>
 00122         <span class="keywordflow">else</span>
 00123                 next_match = ( OSMR0 += rt_times.periodic_tick );
 00124 <span class="comment">//              next_match = OSMR0 = ((unsigned long *)&amp;rt_times.intr_time)[0];</span>
-00125 
+00125
 00126 <span class="preprocessor">#ifdef PROTECT_TIMER</span>
 00127 <span class="preprocessor"></span>        <span class="keywordflow">while</span> ((int)(next_match - OSCR) &lt; SETUP_TIME_TICKS ) {
 00128                 OSSR = OSSR_M0;  <span class="comment">/* Clear match on timer 0 */</span>

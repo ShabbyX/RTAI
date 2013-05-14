@@ -25,14 +25,14 @@
 00015 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00016 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00017 <span class="comment"> */</span>
-00018 
+00018
 00019 <span class="preprocessor">#ifndef _RTAI_SPL_H</span>
 00020 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_SPL_H</span>
 00021 <span class="preprocessor"></span>
 00022 <span class="preprocessor">#include &lt;<a class="code" href="rtai__sem_8h.html">rtai_sem.h</a>&gt;</span>
-00023 
+00023
 00024 <span class="keyword">struct </span>rtai_spl;
-00025 
+00025
 00026 <span class="preprocessor">#ifdef __KERNEL__</span>
 00027 <span class="preprocessor"></span>
 00028 <span class="preprocessor">#ifndef __cplusplus</span>
@@ -42,96 +42,96 @@
 00032     <span class="keywordtype">int</span> count;
 00033     <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> flags;
 00034 } SPL;
-00035 
+00035
 00036 <span class="preprocessor">#else </span><span class="comment">/* __cplusplus */</span>
 00037 <span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00038 <span class="preprocessor">#endif </span><span class="comment">/* !__cplusplus */</span>
-00039 
+00039
 00040 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga29">rt_spl_init</a>(<span class="keyword">struct</span> rtai_spl *spl);
-00041 
+00041
 00042 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga30">rt_spl_delete</a>(<span class="keyword">struct</span> rtai_spl *spl);
-00043 
+00043
 00044 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga31">rt_spl_lock</a>(<span class="keyword">struct</span> rtai_spl *spl);
-00045 
+00045
 00046 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga32">rt_spl_lock_if</a>(<span class="keyword">struct</span> rtai_spl *spl);
-00047 
+00047
 00048 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga33">rt_spl_lock_timed</a>(<span class="keyword">struct</span> rtai_spl *spl,
 00049                       <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> ns);
-00050 
+00050
 00051 <span class="keywordtype">int</span> <a class="code" href="group__sem.html#ga34">rt_spl_unlock</a>(<span class="keyword">struct</span> rtai_spl *spl);
-00052 
+00052
 00053 <span class="preprocessor">#ifdef __cplusplus</span>
 00054 <span class="preprocessor"></span>}
 00055 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00056 
+00056
 00057 <span class="preprocessor">#else </span><span class="comment">/* !__KERNEL__ */</span>
-00058 
+00058
 00059 <span class="preprocessor">#ifdef __cplusplus</span>
 00060 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00061 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00062 
+00062
 00063 RTAI_PROTO(<span class="keyword">struct</span> rtai_spl *, rt_spl_init,(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name))
 00064 {
 00065         <span class="keyword">struct </span>{ <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name; } arg = { name };
 00066         <span class="keywordflow">return</span> (<span class="keyword">struct </span>rtai_spl *)rtai_lxrt(BIDX, SIZARG, LXRT_SPL_INIT, &amp;arg).v[LOW];
 00067 }
-00068 
+00068
 00069 RTAI_PROTO(<span class="keywordtype">int</span>, rt_spl_delete,(<span class="keyword">struct</span> rtai_spl *spl))
 00070 {
 00071         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_spl *spl; } arg = { spl };
 00072         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, LXRT_SPL_DELETE, &amp;arg).i[LOW];
 00073 }
-00074 
+00074
 00075 RTAI_PROTO(<span class="keyword">struct</span> rtai_spl *, rt_named_spl_init,(<span class="keyword">const</span> <span class="keywordtype">char</span> *name))
 00076 {
 00077         <span class="keyword">struct </span>{ <span class="keyword">const</span> <span class="keywordtype">char</span> *name; } arg = { name };
 00078         <span class="keywordflow">return</span> (<span class="keyword">struct </span>rtai_spl *)rtai_lxrt(BIDX, SIZARG, NAMED_SPL_INIT, &amp;arg).v[LOW];
 00079 }
-00080 
+00080
 00081 RTAI_PROTO(<span class="keywordtype">int</span>, rt_named_spl_delete,(<span class="keyword">struct</span> rtai_spl *spl))
 00082 {
 00083         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_spl *spl; } arg = { spl };
 00084         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, NAMED_SPL_DELETE, &amp;arg).i[LOW];
 00085 }
-00086 
+00086
 00087 RTAI_PROTO(<span class="keywordtype">int</span>, rt_spl_lock,(<span class="keyword">struct</span> rtai_spl *spl))
 00088 {
 00089         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_spl *spl; } arg = { spl };
 00090         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, SPL_LOCK, &amp;arg).i[LOW];
 00091 }
-00092 
+00092
 00093 RTAI_PROTO(<span class="keywordtype">int</span>, rt_spl_lock_if,(<span class="keyword">struct</span> rtai_spl *spl))
 00094 {
 00095         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_spl *spl; } arg = { spl };
 00096         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, SPL_LOCK_IF, &amp;arg).i[LOW];
 00097 }
-00098 
+00098
 00099 RTAI_PROTO(<span class="keywordtype">int</span>, rt_spl_lock_timed,(<span class="keyword">struct</span> rtai_spl *spl, RTIME delay))
 00100 {
 00101         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_spl *spl; RTIME delay; } arg = { spl, delay };
 00102         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, SPL_LOCK_TIMED, &amp;arg).i[LOW];
 00103 }
-00104 
+00104
 00105 RTAI_PROTO(<span class="keywordtype">int</span>, rt_spl_unlock,(<span class="keyword">struct</span> rtai_spl *spl))
 00106 {
 00107         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rtai_spl *spl; } arg = { spl };
 00108         <span class="keywordflow">return</span> rtai_lxrt(BIDX, SIZARG, SPL_UNLOCK, &amp;arg).i[LOW];
 00109 }
-00110 
+00110
 00111 <span class="preprocessor">#ifdef __cplusplus</span>
 00112 <span class="preprocessor"></span>}
 00113 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00114 
+00114
 00115 <span class="preprocessor">#endif </span><span class="comment">/* __KERNEL__ */</span>
-00116 
+00116
 00117 <span class="preprocessor">#if !defined(__KERNEL__) || defined(__cplusplus)</span>
 00118 <span class="preprocessor"></span>
 00119 <span class="keyword">typedef</span> <span class="keyword">struct </span>rtai_spl {
 00120     <span class="keywordtype">int</span> opaque;
 00121 } SPL;
-00122 
+00122
 00123 <span class="preprocessor">#endif </span><span class="comment">/* !__KERNEL__ || __cplusplus */</span>
-00124 
+00124
 00125 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_SPL_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

@@ -156,8 +156,8 @@ int init_module(void)
 {
 	printk("TESTING RTDM MUTEXes [LOOPs %d, TIMEOUTs %d (ns)].\n", LOOPS, DELAY);
 	start_rt_timer(0);
-	rtdm_sem_init(&sem, 0);    
-	rtdm_mutex_init(&mutex);    
+	rtdm_sem_init(&sem, 0);
+	rtdm_mutex_init(&mutex);
 	rtdm_task_init_cpuid(&stask1, "task1", task1, NULL, 0, 0, 0);
 	rtdm_task_init_cpuid(&stask2, "task2", task2, NULL, 1, 0, 0);
 	return 0;
@@ -168,7 +168,7 @@ void cleanup_module(void)
 {
 	rtdm_task_destroy(&stask1);
 	rtdm_task_destroy(&stask2);
-	rtdm_sem_destroy(&sem);    
-	rtdm_mutex_destroy(&mutex);    
+	rtdm_sem_destroy(&sem);
+	rtdm_mutex_destroy(&mutex);
 	stop_rt_timer();
 }

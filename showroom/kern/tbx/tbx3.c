@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USAr.
  */
 
- 
+
 #include <linux/module.h>
 
 #include <asm/io.h>
@@ -38,7 +38,7 @@ typedef struct {
 
 
 #define BASE_PRIO 100
-#define TBXSIZE (5*sizeof(MSG))  //big tbx stress!       
+#define TBXSIZE (5*sizeof(MSG))  //big tbx stress!
 #define ORDER PRIO_Q             //FIFO ordered
 #define MAXCOUNT 500
 #define TIMEBASE 1000000
@@ -52,7 +52,7 @@ static void Task1(long t)
 {
 	int unsent;
 	MSG msg;
-    
+
 	rt_printk("\nTask1 (%p) starting\n", rt_whoami());
 	while (count < MAXCOUNT) {
 		count++;
@@ -64,20 +64,20 @@ static void Task1(long t)
 	}
 	rt_printk("\nTask1 suspends itself\n");
 	rt_task_suspend(rt_whoami());
-}                                        
+}
 
-static void Task2(long t) 
-{   
+static void Task2(long t)
+{
 	int status;
 	MSG buf;
-    
+
 	rt_printk("\nTask2 (%p) starting\n", rt_whoami());
 	while (count < MAXCOUNT) {
-		memset((char*)&buf, 0, sizeof(buf));  
-		status = rt_tbx_receive_timed(&bx, (char*)&buf, sizeof(buf),nano2count(TIMEOUT)); 
+		memset((char*)&buf, 0, sizeof(buf));
+		status = rt_tbx_receive_timed(&bx, (char*)&buf, sizeof(buf),nano2count(TIMEOUT));
 		if (status == sizeof(buf)) {
 			rt_printk("\nTask2 receive timed out\n");
-		} else {    
+		} else {
 			rt_printk("\nTask2 received msgnr %u from task %u, status=%d\n", buf.progressive, buf.sending_task, status);
 		}
 		rt_sleep(nano2count(DELAY));
@@ -86,14 +86,14 @@ static void Task2(long t)
 	rt_task_suspend(rt_whoami());
 }
 
-static void Task3(long t) 
-{   
+static void Task3(long t)
+{
 	int status;
 	MSG buf;
-    
+
 	rt_printk("\nTask3 (%p) starting\n", rt_whoami());
 	while (count < MAXCOUNT) {
-		memset((char*)&buf, 0, sizeof(buf));    
+		memset((char*)&buf, 0, sizeof(buf));
 		status = rt_tbx_receive_if(&bx, (char*)&buf, sizeof(buf));
 		if (status == 0) {
 			rt_printk("\nTask3 received msgnr %u from task %u, status=%d\n", buf.progressive, buf.sending_task, status);
@@ -103,12 +103,12 @@ static void Task3(long t)
 	rt_printk("\nTask3 suspends itself\n");
 	rt_task_suspend(rt_whoami());
 }
-                                                                                   
+
 static void Task4(long t)
 {
 	int wakedup;
 	MSG msg;
-    
+
 	rt_printk("\nTask4 (%p) starting\n", rt_whoami());
 	while (count < MAXCOUNT) {
 		count++;
@@ -117,8 +117,8 @@ static void Task4(long t)
 	        /*
         	 * Please note that tasks using rt_receive_if() will not receive
 	         * this message because they aren't sleeping
-		 
-		 */ 
+		
+		 */
 		wakedup = rt_tbx_broadcast_if(&bx, (char*)&msg, sizeof(msg));
 		if (wakedup > 0) {
 			rt_printk("\nTask4=%lu, sent broadcast, wakedup=%d\n", count, wakedup);
@@ -127,17 +127,17 @@ static void Task4(long t)
 	}
 	rt_printk("\nTask4 suspends itself\n");
 	rt_task_suspend(rt_whoami());
-}                                        
+}
 
-static void Task5(long t) 
-{   
+static void Task5(long t)
+{
 	int status;
 	MSG buf;
-    
+
 	rt_printk("\nTask5 (%p) starting\n", rt_whoami());
 	while (count < MAXCOUNT) {
-		memset((char*)&buf, 0, sizeof(buf));    
-		status = rt_tbx_receive_timed(&bx, (char*)&buf, sizeof(buf), nano2count(TIMEOUT)); 
+		memset((char*)&buf, 0, sizeof(buf));
+		status = rt_tbx_receive_timed(&bx, (char*)&buf, sizeof(buf), nano2count(TIMEOUT));
 		if (status == sizeof(buf)) {
 			rt_printk("\nTask5 receive timed out\n");
 		} else {
@@ -149,15 +149,15 @@ static void Task5(long t)
 	rt_task_suspend(rt_whoami());
 }
 
-static void Task6(long t) 
-{   
+static void Task6(long t)
+{
 	int status;
 	MSG buf;
-    
+
 	rt_printk("\nTask6 (%p) starting\n", rt_whoami());
 	while (count < MAXCOUNT) {
-		memset((char*)&buf, 0, sizeof(buf));    
-		status = rt_tbx_receive_if(&bx, (char*)&buf, sizeof(buf)); 
+		memset((char*)&buf, 0, sizeof(buf));
+		status = rt_tbx_receive_if(&bx, (char*)&buf, sizeof(buf));
 		if (status == 0) {
 			rt_printk("\nTask6 received msgnr %u from task %u, status=%d\n", buf.progressive, buf.sending_task, status);
 		}
@@ -171,7 +171,7 @@ static void Task7(long t)
 {
 	int unsent;
 	MSG msg;
-    
+
 	rt_printk("\nTask7 (%p) starting\n", rt_whoami());
 	while (count < MAXCOUNT) {
 		count++;
@@ -188,10 +188,10 @@ static void Task7(long t)
 	rt_printk("\nTask7 suspends itself\n");
 	cleanup = 1;
 	rt_task_suspend(rt_whoami());
-}                                        
+}
 
 int init_module(void)
-{                   
+{
 	rt_task_init(&t1, Task1, 0, 2000, BASE_PRIO, 0, 0);
 	rt_task_init(&t2, Task2, 0, 2000, BASE_PRIO, 0, 0);
 	rt_task_init(&t3, Task3, 0, 2000, BASE_PRIO, 0, 0);

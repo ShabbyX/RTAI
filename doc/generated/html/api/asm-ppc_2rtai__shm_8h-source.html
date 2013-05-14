@@ -25,15 +25,15 @@
 00015 <span class="comment">License along with this library; if not, write to the Free Software</span>
 00016 <span class="comment">Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.</span>
 00017 <span class="comment">*/</span>
-00018 
-00019 
+00018
+00019
 00020 <span class="preprocessor">#ifndef _RTAI_ASM_PPC_SHM_H</span>
 00021 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_ASM_PPC_SHM_H</span>
 00022 <span class="preprocessor"></span>
 00023 <span class="preprocessor">#include &lt;asm/pgtable.h&gt;</span>
 00024 <span class="preprocessor">#include &lt;asm/io.h&gt;</span>
 00025 <span class="preprocessor">#include &lt;asm/rtai_vectors.h&gt;</span>
-00026 
+00026
 00027 <span class="preprocessor">#undef __SHM_USE_VECTOR</span>
 00028 <span class="preprocessor"></span>
 00029 <span class="preprocessor">#ifndef __KERNEL__</span>
@@ -46,7 +46,7 @@
 00036         <span class="keyword">register</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> __sc_0 __asm__ (<span class="stringliteral">"r0"</span>);
 00037         <span class="keyword">register</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> __sc_3 __asm__ (<span class="stringliteral">"r3"</span>);
 00038         <span class="keyword">register</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> __sc_4 __asm__ (<span class="stringliteral">"r4"</span>);
-00039 
+00039
 00040         __sc_0 = (__sc_3 = srq | (RTAI_SHM_VECTOR &lt;&lt; 24)) + (__sc_4 = whatever);
 00041         __asm__ __volatile__
 00042                 (<span class="stringliteral">"trap         \n\t"</span>
@@ -58,26 +58,26 @@
 00048         ((<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *)&amp;retval)[1] = __sc_4;
 00049         <span class="keywordflow">return</span> retval;
 00050 }
-00051 
+00051
 00052 <span class="preprocessor">#else  </span><span class="comment">/* __KERNEL__ */</span>
-00053 
+00053
 00054 <span class="preprocessor">#define RTAI_SHM_HANDLER shm_handler</span>
 00055 <span class="preprocessor"></span>
 00056 <span class="preprocessor">#define DEFINE_SHM_HANDLER</span>
 00057 <span class="preprocessor"></span>
 00058 <span class="preprocessor">#endif </span><span class="comment">/* __SHM_USE_VECTOR */</span>
-00059 
+00059
 00060 <span class="preprocessor">#endif </span><span class="comment">/* __KERNEL__ */</span>
-00061 
+00061
 00062 <span class="comment">/* convert virtual user memory address to physical address */</span>
 00063 <span class="comment">/* (virt_to_phys only works for kmalloced kernel memory) */</span>
-00064 
+00064
 00065 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> uvirt_to_kva(pgd_t *pgd, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> adr)
 00066 {
 00067         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> ret = 0UL;
 00068         pmd_t *pmd;
 00069         pte_t *ptep, pte;
-00070 
+00070
 00071         <span class="keywordflow">if</span>(!pgd_none(*pgd)) {
 00072                 pmd = pmd_offset(pgd, adr);
 00073                 <span class="keywordflow">if</span> (!pmd_none(*pmd)) {
@@ -91,39 +91,39 @@
 00081         }
 00082         <span class="keywordflow">return</span> ret;
 00083 }
-00084 
+00084
 00085 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> uvirt_to_bus(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> adr)
 00086 {
 00087         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> kva, ret;
-00088 
+00088
 00089         kva = uvirt_to_kva(pgd_offset(current-&gt;mm, adr), adr);
 00090         ret = virt_to_bus((<span class="keywordtype">void</span> *)kva);
-00091 
+00091
 00092         <span class="keywordflow">return</span> ret;
 00093 }
-00094 
+00094
 00095 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> kvirt_to_bus(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> adr)
 00096 {
 00097         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> va, kva, ret;
-00098 
+00098
 00099         va = VMALLOC_VMADDR(adr);
 00100         kva = uvirt_to_kva(pgd_offset_k(va), va);
 00101         ret = virt_to_bus((<span class="keywordtype">void</span> *)kva);
-00102 
+00102
 00103         <span class="keywordflow">return</span> ret;
 00104 }
-00105 
+00105
 00106 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> kvirt_to_pa(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> adr)
 00107 {
 00108         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> va, kva, ret;
-00109 
+00109
 00110         va = VMALLOC_VMADDR(adr);
 00111         kva = uvirt_to_kva(pgd_offset_k(va), va);
 00112         ret = __pa(kva);
-00113 
+00113
 00114         <span class="keywordflow">return</span> ret;
 00115 }
-00116 
+00116
 00117 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_ASM_PPC_SHM_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

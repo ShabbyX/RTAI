@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	int isr_cnt[isr_lat_range + 1], sched_cnt[sched_lat_range + 1];
 	int i, k;
 	struct { int isr; int sched; } latency;
-	FILE *latency_file; 
+	FILE *latency_file;
 
 	signal(SIGINT, endme);
 

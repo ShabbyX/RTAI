@@ -107,16 +107,16 @@ static inline int rt_free_cpu_own_irq (unsigned irq) {
 /*
 static inline void *get_intr_handler (unsigned vector) {
 
-    return (void *)((idt_table[vector].b & 0xFFFF0000) | 
+    return (void *)((idt_table[vector].b & 0xFFFF0000) |
 		    (idt_table[vector].a & 0x0000FFFF));
 }
 
 static inline void set_intr_vect (unsigned vector,
 				  void (*handler)(void)) {
 
-    idt_table[vector].a = (idt_table[vector].a & 0xFFFF0000) | 
+    idt_table[vector].a = (idt_table[vector].a & 0xFFFF0000) |
 	((unsigned)handler & 0x0000FFFF);
-    idt_table[vector].b = ((unsigned)handler & 0xFFFF0000) | 
+    idt_table[vector].b = ((unsigned)handler & 0xFFFF0000) |
 	(idt_table[vector].b & 0x0000FFFF);
 }
 

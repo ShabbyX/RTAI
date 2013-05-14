@@ -97,7 +97,7 @@ following tools :
 - xsltproc for HTML and FO generation;
 - FOP for conversion from FO to PDF, fop is a java program and uses the JAI
   library (JAI stands for Java Advanced Imaging), so you will need a working
-  JRE, the JAI library 
+  JRE, the JAI library
   (http://java.sun.com/products/java-media/jai/current.html) and, of course FOP,
   (ftp://ftp.inria.fr/pub/Apache/xml/fop);
 - Docbook XML DTD (RTAI documentation uses the 4.2 DTD version);
@@ -224,9 +224,9 @@ them in the distribution specific directories (the list of distribution-specific
 directories may be extended by modifying the docbook.m4 file). Finally, a
 configure option let the XML tools use the network (not used by default, and if
 you plan to activate this option, you should install a web cache or be prepared
-for long compilations). 
+for long compilations).
 
-If configure does not find a way to access the DocBook XML DTD and XSL, it 
+If configure does not find a way to access the DocBook XML DTD and XSL, it
 fails. Otherwise the directories where the XML DTD and XSL files may be found
 are used by configure to produce a catalog file (doc/docbook/catalog) in
 the build tree. docbook.rules then defines the SGML_CATALOG_FILES environment

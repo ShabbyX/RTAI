@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: tld_key.h,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -31,7 +31,7 @@
 extern "C"  {
 #endif
 
-extern int cpp_key;       
+extern int cpp_key;
 
 #if 0
 void rt_get_global_lock(void);
@@ -52,4 +52,4 @@ void * __rt_tld_get_data(RT_TASK *task,int key);
 }
 #endif
 
-#endif 
+#endif

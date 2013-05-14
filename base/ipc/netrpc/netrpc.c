@@ -170,7 +170,7 @@ static inline void check_portslot(unsigned long node, int port, struct portslot_
 	int i;
 	struct portslot_t *p_old;
 	
-	p_old = *p; 
+	p_old = *p;
 //	flags = rt_spin_lock_irqsave(&portslot_lock);
 	for (i = MaxStubs; i < portslotsp; i++) {
 		if (portslot[i].p->addr.sin_port == htons(port) && portslot[i].p->addr.sin_addr.s_addr == node) {
@@ -234,7 +234,7 @@ static inline int argconv(void *ain, void *aout, int send_mach, int argsize, uns
 			argsize -= 4;
 			argsizeout += 8;
 			switch(partypes & WDWMSK) {
-				case SINT: 
+				case SINT:
 					*out++ = *in++;
 					break;
 				case UINT:
@@ -243,7 +243,7 @@ static inline int argconv(void *ain, void *aout, int send_mach, int argsize, uns
 				case VADR:
 					*out++ = reset_kadr(*in++);
 					break;
-				case RTIM: 
+				case RTIM:
 					*out++ = (long)*in++;
 					in++;
 					argsize -= 4;
@@ -258,12 +258,12 @@ static inline int argconv(void *ain, void *aout, int send_mach, int argsize, uns
 			argsize -= 8;
 			argsizeout += 4;
 			switch(partypes & WDWMSK) {
-				case SINT: 
+				case SINT:
 				case UINT:
 				case VADR:
 					*out++ = *in++;
 					break;
-				case RTIM: 
+				case RTIM:
 					*((unsigned long long *)out++) = *in++;
 					out++;
 					argsizeout += 4;
@@ -496,7 +496,7 @@ recvrys:
 			rt_spin_unlock_irqrestore(flags, &recovery_lock);
 			rt_sem_signal(&portslot[0].sem);
 		} else {
-			int argsize; 
+			int argsize;
 			long a[par->argsize/sizeof(long) + 1];
 			if(par->priority >= 0 && par->priority < RT_SCHED_LINUX_PRIORITY) {
 				if ((wsize = par->priority) < task->priority) {

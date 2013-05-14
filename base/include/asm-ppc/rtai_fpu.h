@@ -25,9 +25,9 @@ typedef struct ppc_fpu_env { unsigned long fpu_reg[66]; } FPU_ENV;
 
 #ifdef CONFIG_RTAI_FPU_SUPPORT
 /*
- * Saving/restoring the FPU environment in PPC is like eating a cake, very simple. Just save/restore all of the floating 
+ * Saving/restoring the FPU environment in PPC is like eating a cake, very simple. Just save/restore all of the floating
  * point registers, recall they are always 64 bits long, and the floating point state register. Remark: at task init we
- * always enable FP, i.e. MSR flag FP set to 1, for real time tasks and accept default actions for faulty FLOPs, i.e. MSR 
+ * always enable FP, i.e. MSR flag FP set to 1, for real time tasks and accept default actions for faulty FLOPs, i.e. MSR
  * flags FE0 and FE1 are set to zero.
  */
 

@@ -110,7 +110,7 @@ static void mdlInitializeSampleTimes(SimStruct *S)
   ssSetOffsetTime(S, 0, 0.0);
 }
 
-#define MDL_START 
+#define MDL_START
 #if defined(MDL_START)
 static void mdlStart(SimStruct *S)
 {
@@ -148,7 +148,7 @@ static void mdlStart(SimStruct *S)
       return;
     } else
       subdev_type =COMEDI_SUBD_DIO;
-  }else 
+  }else
     subdev_type =COMEDI_SUBD_DO;
 
   if (!ComediDev_DIOInUse[index] && comedi_lock(dev, subdev) < 0) {

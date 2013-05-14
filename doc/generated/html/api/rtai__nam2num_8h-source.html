@@ -8,17 +8,17 @@
 <a class="qindex" href="main.html">Main&nbsp;Page</a> | <a class="qindex" href="modules.html">Modules</a> | <a class="qindex" href="files.html">File&nbsp;List</a> | <a class="qindex" href="globals.html">Globals</a> | <a class="qindex" href="pages.html">Related&nbsp;Pages</a>  | <span class="search"><u>S</u>earch&nbsp;for&nbsp;<input class="search" type="text" name="query" value="" size="20" accesskey="s"/></span></form></div>
 <div class="nav">
 <a class="el" href="dir_000000.html">base</a>&nbsp;/&nbsp;<a class="el" href="dir_000015.html">include</a></div>
-<h1>rtai_nam2num.h</h1><a href="rtai__nam2num_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment">00001 
+<h1>rtai_nam2num.h</h1><a href="rtai__nam2num_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment">00001
 00032 <span class="preprocessor">#ifndef _RTAI_NAM2NUM_H</span>
 00033 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_NAM2NUM_H</span>
 00034 <span class="preprocessor"></span>
 00035 <span class="preprocessor">#include &lt;rtai_types.h&gt;</span>
-00036 
+00036
 <a name="l00053"></a><a class="code" href="rtai__nam2num_8h.html#a0">00053</a> <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <a class="code" href="rtai__nam2num_8h.html#a0">nam2num</a> (<span class="keyword">const</span> <span class="keywordtype">char</span> *name)
 00054 {
 00055         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> retval = 0;
 00056         <span class="keywordtype">int</span> c, i;
-00057 
+00057
 00058         <span class="keywordflow">for</span> (i = 0; i &lt; 6; i++) {
 00059                 <span class="keywordflow">if</span> (!(c = name[i]))
 00060                         <span class="keywordflow">break</span>;
@@ -38,15 +38,15 @@
 00074         <span class="keywordflow">else</span>
 00075                 <span class="keywordflow">return</span> 0xFFFFFFFF;
 00076 }
-00077 
+00077
 <a name="l00087"></a><a class="code" href="rtai__nam2num_8h.html#a1">00087</a> <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="rtai__nam2num_8h.html#a1">num2nam</a> (<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> num, <span class="keywordtype">char</span> *name)
 00088 {
-00089         <span class="keywordtype">int</span> c, i, k, q; 
+00089         <span class="keywordtype">int</span> c, i, k, q;
 00090         <span class="keywordflow">if</span> (num == 0xFFFFFFFF) {
 00091                 name[0] = 0;
 00092                 <span class="keywordflow">return</span>;
 00093         }
-00094         i = 5; 
+00094         i = 5;
 00095         <span class="keywordflow">while</span> (num &amp;&amp; i &gt;= 0) {
 00096                 q = num/39;
 00097                 c = num - q*39;
@@ -62,7 +62,7 @@
 00107         }
 00108         name[k] = 0;
 00109 }
-00110 
+00110
 00111 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_NAM2NUM_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

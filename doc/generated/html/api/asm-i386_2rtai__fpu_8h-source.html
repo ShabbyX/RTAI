@@ -35,16 +35,16 @@
 00025 <span class="comment"> *   along with this program; if not, write to the Free Software</span>
 00026 <span class="comment"> *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00027 <span class="comment"> */</span>
-00028 
+00028
 00029 <span class="preprocessor">#ifndef _RTAI_ASM_I386_FPU_H</span>
 00030 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_ASM_I386_FPU_H</span>
 00031 <span class="preprocessor"></span>
 00032 <span class="preprocessor">#ifndef __cplusplus</span>
 00033 <span class="preprocessor"></span><span class="preprocessor">#include &lt;asm/processor.h&gt;</span>
 00034 <span class="preprocessor">#endif </span><span class="comment">/* !__cplusplus */</span>
-00035 
+00035
 00036 <span class="keyword">typedef</span> <span class="keyword">union </span>i387_union FPU_ENV;
-00037    
+00037
 00038 <span class="preprocessor">#ifdef CONFIG_RTAI_FPU_SUPPORT</span>
 00039 <span class="preprocessor"></span>
 00040 <span class="preprocessor">#define init_fpu(tsk) \</span>
@@ -115,7 +115,7 @@
 00105 <span class="preprocessor">#define restore_fpenv_lxrt(t) restore_task_fpenv(t)</span>
 00106 <span class="preprocessor"></span>
 00107 <span class="preprocessor">#else </span><span class="comment">/* !CONFIG_RTAI_FPU_SUPPORT */</span>
-00108 
+00108
 00109 <span class="keyword">static</span> <span class="keywordtype">void</span> init_fpu(<span class="keyword">struct</span> task_struct *tsk) { }
 00110 <span class="preprocessor">#define restore_fpu(tsk)</span>
 00111 <span class="preprocessor"></span><span class="preprocessor">#define save_cr0_and_clts(x)</span>
@@ -129,7 +129,7 @@
 00119 <span class="preprocessor"></span><span class="preprocessor">#define restore_fpenv_lxrt(t)</span>
 00120 <span class="preprocessor"></span>
 00121 <span class="preprocessor">#endif </span><span class="comment">/* CONFIG_RTAI_FPU_SUPPORT */</span>
-00122 
+00122
 00123 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_ASM_I386_FPU_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

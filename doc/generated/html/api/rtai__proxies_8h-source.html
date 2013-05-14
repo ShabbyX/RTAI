@@ -26,39 +26,39 @@
 00016 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00017 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00018 <span class="comment"> */</span>
-00019 
+00019
 00020 <span class="preprocessor">#ifndef _RTAI_PROXIES_H</span>
 00021 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_PROXIES_H</span>
 00022 <span class="preprocessor"></span>
 00023 <span class="preprocessor">#include &lt;rtai_sched.h&gt;</span>
-00024 
+00024
 00025 <span class="preprocessor">#ifdef __cplusplus</span>
 00026 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00027 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00028 
+00028
 00029 <span class="comment">// Create a generic proxy task.</span>
 00030 RT_TASK *__rt_proxy_attach(<span class="keywordtype">void</span> (*func)(<span class="keywordtype">int</span>),
 00031                            RT_TASK *task,
 00032                            <span class="keywordtype">void</span> *msg,
 00033                            <span class="keywordtype">int</span> nbytes,
 00034                            <span class="keywordtype">int</span> priority);
-00035 
+00035
 00036 <span class="comment">// Create a raw proxy task.</span>
 00037 RT_TASK *rt_proxy_attach(RT_TASK *task,
 00038                          <span class="keywordtype">void</span> *msg,
 00039                          <span class="keywordtype">int</span> nbytes,
 00040                          <span class="keywordtype">int</span> priority);
-00041 
+00041
 00042 <span class="comment">// Delete a proxy task (a simplified specific rt_task_delete).</span>
 00043 <span class="keywordtype">int</span> rt_proxy_detach(RT_TASK *proxy);
-00044 
+00044
 00045 <span class="comment">//Trigger a proxy.</span>
 00046 RT_TASK *rt_trigger(RT_TASK *proxy);
-00047 
+00047
 00048 <span class="preprocessor">#ifdef __cplusplus</span>
 00049 <span class="preprocessor"></span>}
 00050 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00051 
+00051
 00052 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_PROXIES_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

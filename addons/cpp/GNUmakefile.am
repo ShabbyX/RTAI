@@ -203,7 +203,7 @@ crtend.o : $(srcdir)/crt.c
 crtmbegin.o : $(srcdir)/crt.c
 	$(CC) $(CRTFLAGS) -DCRT_BEGIN -DUSE_MAIN -c $< -o $@
 
-crtmend.o : $(srcdir)/crt.c 
+crtmend.o : $(srcdir)/crt.c
 	$(CC) $(CRTFLAGS) -DCRT_END -DUSE_MAIN -c $< -o $@
 
 rtai_%.o: lib%.a

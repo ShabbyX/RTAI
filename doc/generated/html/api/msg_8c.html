@@ -9,7 +9,7 @@
 <div class="nav">
 <a class="el" href="dir_000000.html">base</a>&nbsp;/&nbsp;<a class="el" href="dir_000022.html">ipc</a>&nbsp;/&nbsp;<a class="el" href="dir_000027.html">msg</a></div>
 <h1>msg.c File Reference</h1><hr><a name="_details"></a><h2>Detailed Description</h2>
-Message handling functions. 
+Message handling functions.
 <p>
 <dl compact><dt><b>Author:</b></dt><dd>Paolo Mantegazza</dd></dl>
 <dl compact><dt><b>Note:</b></dt><dd>Copyright (C) 1999-2003 Paolo Mantegazza &lt;<a href="mailto:mantegazza@aero.polimi.it">mantegazza@aero.polimi.it</a>&gt; [ Specific COPYRIGHTS follow along the code ]</dd></dl>
@@ -167,7 +167,7 @@ Include dependency graph for msg.c:<p><center><img src="msg_8c__incl.png" border
     <td>
 
 <p>
-Make an extended remote procedure call. 
+Make an extended remote procedure call.
 <p>
 <a class="anchor" name="rt_rpcx"></a> <p>
 rt_rpcx makes an extended Remote Procedure Call (RPC). rt_rpcx is used for synchronous inter task messaging. It sends an arbitrary <em>smsg</em> of size <em>ssize</em> bytes to the task <em>task</em> then it always blocks waiting until a message, of size <em>rsize</em> bytes at most, is returned in <em>rmsg</em> from the called task. If the returned message is greater tha rsize it will be truncated. So the caller task is always blocked on the receiver priority queue while the receiver inheredits the blocked sender priority if it is higher (lower in value) than its. The receiver task may get the message with any rt_receivex function. It can send an answer with <a class="el" href="group__rpc.html#rt_returnx">rt_returnx</a>().<p>
@@ -238,7 +238,7 @@ See also: rt_receivex_*, <a class="el" href="group__rpc.html#rt_returnx">rt_retu
     <td>
 
 <p>
-Make an extended remote procedure call, only if the calling task will not be blocked. 
+Make an extended remote procedure call, only if the calling task will not be blocked.
 <p>
 <a class="anchor" name="rt_rpcx_if"></a> <p>
 rt_rpcx_if tries to make an extended Remote Procedure Call (RPC). If the receiver task is ready to accept a message rt_rpcx_if sends the message as it will be done by rt_rpcx. If the receiver is not ready rt_rpcx_if returns immediately. The receiver task may get the message with any rt_receivex function. It can send the answer with * <a class="el" href="group__rpc.html#rt_returnx">rt_returnx</a>().<p>

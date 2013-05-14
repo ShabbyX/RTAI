@@ -4,7 +4,7 @@
  * COPYRIGHT (C) 2004 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
  *
  * Acknowledgements:
- *	Paolo Mantegazza <mantegazza@aero.polimi.it>, creator of RTAI 
+ *	Paolo Mantegazza <mantegazza@aero.polimi.it>, creator of RTAI
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of version 2 of the GNU General Public License as published by the

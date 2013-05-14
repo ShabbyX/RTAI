@@ -25,12 +25,12 @@
 00015 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00016 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00017 <span class="comment"> */</span>
-00018 
+00018
 00019 <span class="preprocessor">#ifndef _RTAI_BITS_H</span>
 00020 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_BITS_H</span>
 00021 <span class="preprocessor"></span>
 00022 <span class="preprocessor">#include &lt;rtai_types.h&gt;</span>
-00023 
+00023
 00024 <span class="preprocessor">#define ALL_SET               0</span>
 00025 <span class="preprocessor"></span><span class="preprocessor">#define ANY_SET               1</span>
 00026 <span class="preprocessor"></span><span class="preprocessor">#define ALL_CLR               2</span>
@@ -59,111 +59,111 @@
 00049 <span class="preprocessor"></span><span class="preprocessor">#define BITS_TIMOUT  0xFffe  // same as semaphores</span>
 00050 <span class="preprocessor"></span>
 00051 <span class="keyword">struct </span>rt_bits_struct;
-00052 
+00052
 00053 <span class="preprocessor">#ifdef __KERNEL__</span>
 00054 <span class="preprocessor"></span>
 00055 <span class="preprocessor">#ifndef __cplusplus</span>
 00056 <span class="preprocessor"></span>
 00057 <span class="keyword">typedef</span> <span class="keyword">struct </span>rt_bits_struct {
-00058 
+00058
 00059     <span class="keyword">struct </span>rt_queue queue;  <span class="comment">/* &lt;= Must be first in struct. */</span>
 00060     <span class="keywordtype">int</span> magic;
 00061     <span class="keywordtype">int</span> type;  <span class="comment">// to align mask to semaphore count, for easier uspace init</span>
 00062     <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> mask;
-00063 
+00063
 00064 } BITS;
-00065 
+00065
 00066 <span class="preprocessor">#else </span><span class="comment">/* __cplusplus */</span>
 00067 <span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00068 <span class="preprocessor">#endif </span><span class="comment">/* !__cplusplus */</span>
-00069 
+00069
 00070 <span class="keywordtype">int</span> __rtai_bits_init(<span class="keywordtype">void</span>);
-00071 
+00071
 00072 <span class="keywordtype">void</span> __rtai_bits_exit(<span class="keywordtype">void</span>);
-00073 
+00073
 00074 <span class="keywordtype">void</span> rt_bits_init(<span class="keyword">struct</span> rt_bits_struct *bits,
 00075                   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> mask);
-00076 
+00076
 00077 <span class="keywordtype">int</span> rt_bits_delete(<span class="keyword">struct</span> rt_bits_struct *bits);
-00078 
+00078
 00079 <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> rt_get_bits(<span class="keyword">struct</span> rt_bits_struct *bits);
-00080 
+00080
 00081 <span class="keywordtype">int</span> rt_bits_reset(<span class="keyword">struct</span> rt_bits_struct *bits,
 00082                   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> mask);
-00083 
+00083
 00084 <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> rt_bits_signal(<span class="keyword">struct</span> rt_bits_struct *bits,
 00085                              <span class="keywordtype">int</span> setfun,
 00086                              <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> masks);
-00087 
+00087
 00088 <span class="keywordtype">int</span> _rt_bits_wait(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> testfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> testmasks, <span class="keywordtype">int</span> exitfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> exitmasks, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *resulting_mask, <span class="keywordtype">int</span> space);
 00089 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> rt_bits_wait(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> testfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> testmasks, <span class="keywordtype">int</span> exitfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> exitmasks, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *resulting_mask)
 00090 {
 00091         <span class="keywordflow">return</span>  _rt_bits_wait(bits, testfun, testmasks, exitfun, exitmasks, resulting_mask, 1);
 00092 }
-00093 
+00093
 00094 <span class="keywordtype">int</span> _rt_bits_wait_if(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> testfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> testmasks, <span class="keywordtype">int</span> exitfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> exitmasks, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *resulting_mask, <span class="keywordtype">int</span> space);
 00095 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> rt_bits_wait_if(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> testfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> testmasks, <span class="keywordtype">int</span> exitfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> exitmasks, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *resulting_mask)
 00096 {
 00097         <span class="keywordflow">return</span>  _rt_bits_wait_if(bits, testfun, testmasks, exitfun, exitmasks, resulting_mask, 1);
 00098 }
-00099 
+00099
 00100 <span class="keywordtype">int</span> _rt_bits_wait_until(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> testfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> testmasks, <span class="keywordtype">int</span> exitfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> exitmasks, RTIME time, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *resulting_mask, <span class="keywordtype">int</span> space);
 00101 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> rt_bits_wait_until(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> testfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> testmasks, <span class="keywordtype">int</span> exitfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> exitmasks, RTIME time, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *resulting_mask)
 00102 {
 00103         <span class="keywordflow">return</span>  _rt_bits_wait_until(bits, testfun, testmasks, exitfun, exitmasks, time, resulting_mask, 1);
 00104 }
-00105 
+00105
 00106 <span class="keywordtype">int</span> _rt_bits_wait_timed(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> testfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> testmasks, <span class="keywordtype">int</span> exitfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> exitmasks, RTIME delay, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *resulting_mask, <span class="keywordtype">int</span> space);
 00107 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> rt_bits_wait_timed(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> testfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> testmasks, <span class="keywordtype">int</span> exitfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> exitmasks, RTIME delay, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *resulting_mask)
 00108 {
 00109         <span class="keywordflow">return</span>  _rt_bits_wait_timed(bits, testfun, testmasks, exitfun, exitmasks, delay, resulting_mask, 1);
 00110 }
-00111 
-00112 
+00111
+00112
 00113 <span class="preprocessor">#ifdef __cplusplus</span>
 00114 <span class="preprocessor"></span>}
 00115 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00116 
+00116
 00117 <span class="preprocessor">#else </span><span class="comment">/* !__KERNEL__ */</span>
-00118 
+00118
 00119 <span class="preprocessor">#include &lt;<a class="code" href="rtai__lxrt_8h.html">rtai_lxrt.h</a>&gt;</span>
-00120 
+00120
 00121 <span class="preprocessor">#define BITSIDX 0</span>
 00122 <span class="preprocessor"></span>
 00123 <span class="preprocessor">#ifdef __cplusplus</span>
 00124 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00125 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00126 
+00126
 00127 RTAI_PROTO(<span class="keyword">struct</span> rt_bits_struct *,rt_bits_init,(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> mask))
 00128 {
 00129         <span class="keyword">struct </span>{ <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> name, mask; } arg = { name, mask };
 00130         <span class="keywordflow">return</span> (<span class="keyword">struct </span>rt_bits_struct *)rtai_lxrt(BITSIDX, SIZARG, BITS_INIT, &amp;arg).v[LOW];
 00131 }
-00132 
+00132
 00133 RTAI_PROTO(<span class="keywordtype">int</span>, rt_bits_delete,(<span class="keyword">struct</span> rt_bits_struct *bits))
 00134 {
 00135         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rt_bits_struct *bits; } arg = { bits };
 00136         <span class="keywordflow">return</span> rtai_lxrt(BITSIDX, SIZARG, BITS_DELETE, &amp;arg).i[LOW];
 00137 }
-00138 
+00138
 00139 RTAI_PROTO(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>, rt_get_bits,(<span class="keyword">struct</span> rt_bits_struct *bits))
 00140 {
 00141         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rt_bits_struct *bits; } arg = { bits };
 00142         <span class="keywordflow">return</span> rtai_lxrt(BITSIDX, SIZARG, BITS_GET, &amp;arg).i[LOW];
 00143 }
-00144 
+00144
 00145 RTAI_PROTO(<span class="keywordtype">int</span>, rt_bits_reset,(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> mask))
 00146 {
 00147         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rt_bits_struct *bits; <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> mask; } arg = { bits, mask };
 00148         <span class="keywordflow">return</span> rtai_lxrt(BITSIDX, SIZARG, BITS_RESET, &amp;arg).i[LOW];
 00149 }
-00150 
+00150
 00151 RTAI_PROTO(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>, rt_bits_signal,(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> setfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> masks))
 00152 {
 00153         <span class="keyword">struct </span>{ <span class="keyword">struct </span>rt_bits_struct *bits; <span class="keywordtype">int</span> setfun; <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> masks; } arg = { bits, setfun, masks };
 00154         <span class="keywordflow">return</span> rtai_lxrt(BITSIDX, SIZARG, BITS_SIGNAL, &amp;arg).i[LOW];
 00155 }
-00156 
+00156
 00157 RTAI_PROTO(<span class="keywordtype">int</span>, rt_bits_wait,(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> testfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> testmasks, <span class="keywordtype">int</span> exitfun,
 00158                               <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> exitmasks, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *resulting_mask))
 00159 {
@@ -172,7 +172,7 @@
 00162                 { bits, testfun, testmasks, exitfun, exitmasks, resulting_mask, 0 };
 00163         <span class="keywordflow">return</span> rtai_lxrt(BITSIDX, SIZARG, BITS_WAIT, &amp;arg).i[LOW];
 00164 }
-00165 
+00165
 00166 RTAI_PROTO(<span class="keywordtype">int</span>, rt_bits_wait_if,(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> testfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> testmasks, <span class="keywordtype">int</span> exitfun,
 00167                                  <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> exitmasks, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *resulting_mask))
 00168 {
@@ -181,7 +181,7 @@
 00171                 { bits, testfun, testmasks, exitfun, exitmasks, resulting_mask, 0 };
 00172         <span class="keywordflow">return</span> rtai_lxrt(BITSIDX, SIZARG, BITS_WAIT_IF, &amp;arg).i[LOW];
 00173 }
-00174 
+00174
 00175 RTAI_PROTO(<span class="keywordtype">int</span>, rt_bits_wait_until,(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> testfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> testmasks, <span class="keywordtype">int</span> exitfun,
 00176                                     <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> exitmasks, RTIME time, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *resulting_mask))
 00177 {
@@ -190,7 +190,7 @@
 00180                 { bits, testfun, testmasks, exitfun, exitmasks, time, resulting_mask, 0 };
 00181         <span class="keywordflow">return</span> rtai_lxrt(BITSIDX, SIZARG, BITS_WAIT_UNTIL, &amp;arg).i[LOW];
 00182 }
-00183 
+00183
 00184 RTAI_PROTO(<span class="keywordtype">int</span>, rt_bits_wait_timed,(<span class="keyword">struct</span> rt_bits_struct *bits, <span class="keywordtype">int</span> testfun, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> testmasks, <span class="keywordtype">int</span> exitfun,
 00185                                     <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> exitmasks, RTIME delay, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> *resulting_mask))
 00186 {
@@ -199,21 +199,21 @@
 00189                 { bits, testfun, testmasks, exitfun, exitmasks, delay, resulting_mask, 0 };
 00190         <span class="keywordflow">return</span> rtai_lxrt(BITSIDX, SIZARG, BITS_WAIT_TIMED, &amp;arg).i[LOW];
 00191 }
-00192 
+00192
 00193 <span class="preprocessor">#ifdef __cplusplus</span>
 00194 <span class="preprocessor"></span>}
 00195 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00196 
+00196
 00197 <span class="preprocessor">#endif </span><span class="comment">/* __KERNEL__ */</span>
-00198 
+00198
 00199 <span class="preprocessor">#if !defined(__KERNEL__) || defined(__cplusplus)</span>
 00200 <span class="preprocessor"></span>
 00201 <span class="keyword">typedef</span> <span class="keyword">struct </span>rt_bits_struct {
 00202     <span class="keywordtype">int</span> opaque;
 00203 } BITS;
-00204 
+00204
 00205 <span class="preprocessor">#endif </span><span class="comment">/* !__KERNEL__ || __cplusplus */</span>
-00206 
+00206
 00207 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_BITS_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

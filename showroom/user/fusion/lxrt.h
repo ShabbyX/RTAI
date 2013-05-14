@@ -48,9 +48,9 @@
 #define PREEMPT_ALWAYS_GEN		18
 #define GET_TIME_NS			19
 #define GET_CPU_TIME_NS			20
-#define SET_RUNNABLE_ON_CPUS		21 
-#define SET_RUNNABLE_ON_CPUID		22	 
-#define GET_TIMER_CPU			23	 
+#define SET_RUNNABLE_ON_CPUS		21
+#define SET_RUNNABLE_ON_CPUID		22	
+#define GET_TIMER_CPU			23	
 #define START_RT_APIC_TIMERS		24
 #define PREEMPT_ALWAYS_CPUID		25
 #define COUNT2NANO_CPUID		26
@@ -274,8 +274,8 @@
 
 #define MAX_LXRT_FUN                   215
 
-// not recovered yet 
-// Qblk's 
+// not recovered yet
+// Qblk's
 #define RT_INITTICKQUEUE		69
 #define RT_RELEASETICKQUEUE     	70
 #define RT_QDYNALLOC            	71

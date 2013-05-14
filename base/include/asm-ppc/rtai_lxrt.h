@@ -167,7 +167,7 @@ static inline void kthread_fun_long_jump(struct task_struct *lnxtsk)
 #include <unistd.h>
 
 static inline union rtai_lxrt_t __rtai_lxrt(unsigned long arg0, unsigned long arg1, unsigned long arg2)
-{ 
+{
 	union rtai_lxrt_t __sc_ret;
 	{
 		register unsigned long __sc_0  __asm__ ("r0");
@@ -182,7 +182,7 @@ static inline union rtai_lxrt_t __rtai_lxrt(unsigned long arg0, unsigned long ar
 			("sc           \n\t"
 			: "=&r" (__sc_0),
 			  "=&r" (__sc_3),  "=&r" (__sc_4)
-			: "0" (__sc_0), 
+			: "0" (__sc_0),
 			  "1" (__sc_3), "2" (__sc_4)
 			: "cr0", "ctr", "memory",
 			  "r9", "r10","r11", "r12");

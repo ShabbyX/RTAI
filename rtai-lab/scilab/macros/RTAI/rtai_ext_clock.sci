@@ -71,9 +71,9 @@ function [ok,code]=clkCode(code)
 	[src]=x_dialog(['Define External Clock function';
 	                'Do NOT change the name of the function!'],..
 	               tmp);
-  
+
 	if src<>[] then
 		code=src
-	end  
+	end
 endfunction
 

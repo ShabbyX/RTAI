@@ -47,7 +47,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #define Keyboard 0
 #define Screen   1
 
-#define TICK_PERIOD     20000LL    /*  0.1 msec (  1  tick) */ 
+#define TICK_PERIOD     20000LL    /*  0.1 msec (  1  tick) */
 #define POLLING_DELAY  1000000LL    /*    1 msec ( 10 ticks) */
 #define ONE_UNIT      10000000LL    /*   10 msec (100 ticks) */
 #define FIVE_SECONDS  5000000000LL
@@ -145,11 +145,11 @@ static void ClockChrono_Clock(long t)
 				rt_fractionated_sleep(OneUnit);
 				MenageHmsh_PlusOneUnit(&hour, &display);
 				break;
-			case 'T': 
+			case 'T':
 				MenageHmsh_InitialiseHundredthes(&hour);
 				display = FALSE;
 				break;
-			case 'H': 
+			case 'H':
 				MenageHmsh_AdvanceHours(&hour);
 				display = TRUE;
 				break;
@@ -204,7 +204,7 @@ static void ClockChrono_Chrono(long t)
 			case 'I':
 				Intermediatetimes = TRUE;
 				endIntermediateTimes = times;
-				MenageHmsh_PlusNSeconds(3, 
+				MenageHmsh_PlusNSeconds(3,
 							&endIntermediateTimes);
 				display = TRUE;
 				hundredthes = TRUE;
@@ -251,9 +251,9 @@ static void ClockChrono_Write(long t)
 }
 
 static struct apic_timer_setup_data apic_setup_data[NR_RT_CPUS] = {
-	{0, TICK_PERIOD}, 
+	{0, TICK_PERIOD},
 #if NR_RT_CPUS > 1
-	{1, TICK_PERIOD} 
+	{1, TICK_PERIOD}
 #endif
 };
 
@@ -265,7 +265,7 @@ int init_module(void)
 	rtf_create_handler(Keyboard, keybrd_handler);
 	rtf_create(Screen, 10000);
 	rt_sem_init(&keybrd_sem, 0);
-	rt_task_init_cpuid(&read, ClockChrono_Read, 0, 2000, 0, 0, 0, READ_RUN_ON_CPU); 
+	rt_task_init_cpuid(&read, ClockChrono_Read, 0, 2000, 0, 0, 0, READ_RUN_ON_CPU);
 	rt_task_init_cpuid(&chrono, ClockChrono_Chrono, 0, 2000, 0, 0, 0, CHRONO_RUN_ON_CPU);
 	rt_task_init_cpuid(&clock, ClockChrono_Clock, 0, 2000, 0, 0, 0, CLOCK_RUN_ON_CPU);
 	rt_task_init_cpuid(&write, ClockChrono_Write, 0, 2000, 0, 0, 0, WRITE_RUN_ON_CPU);

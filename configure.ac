@@ -284,7 +284,7 @@ case "$RTAI_LINUX_VERSION" in
 	dnl and RTAI Adeos-newgen HAL is supported since 2.6.13 included
 	CONFIG_KBUILD=y
     ;;
-  *) 
+  *)
     AC_MSG_ERROR([Unsupported kernel version $RTAI_LINUX_VERSION])
 esac
 
@@ -1023,7 +1023,7 @@ dnl
 dnl Check for additional build options.
 dnl
 
-if test \! -d $srcdir/doc; then 
+if test \! -d $srcdir/doc; then
     unset RTAI_MAYBE_DOCDIR
 else
     RTAI_MAYBE_DOCDIR=doc
@@ -1039,7 +1039,7 @@ AC_ARG_ENABLE(doc,
 	esac])
 
 if test \! -d $srcdir/doc; then
-    if test x$CONFIG_RTAI_DOX_DOC = xy ; 
+    if test x$CONFIG_RTAI_DOX_DOC = xy ;
     then
         AC_MSG_ERROR([documentation tree is missing.])
     fi

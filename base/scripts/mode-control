@@ -53,9 +53,9 @@
 # source code files that are affected by dispatching mode (currently, only .c &
 # .h files will work with the code below)
 files='../arch/arm/hal/hal.c
-    ../arch/i386/hal/hal.c 
+    ../arch/i386/hal/hal.c
     ../include/asm-arm/rtai_hal.h
-    ../include/asm-i386/rtai_hal.h 
+    ../include/asm-i386/rtai_hal.h
     ../sched/sched.c'
 
 function get_current_mode() {
@@ -79,7 +79,7 @@ function get_current_mode() {
 	fi
 	if [ -z "$overall_mode" ]; then
 	    # overall mode was never set
-	    overall_mode=$file_mode 
+	    overall_mode=$file_mode
 	else
 	    # overall mode was set at least once
 	    case $overall_mode in

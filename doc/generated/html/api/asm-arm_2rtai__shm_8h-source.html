@@ -27,8 +27,8 @@
 00017 <span class="comment">License along with this library; if not, write to the Free Software</span>
 00018 <span class="comment">Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.</span>
 00019 <span class="comment">*/</span>
-00020 
-00021 
+00020
+00021
 00022 <span class="preprocessor">#ifndef RTAI_SHM_ASM_H</span>
 00023 <span class="preprocessor"></span><span class="preprocessor">#define RTAI_SHM_ASM_H</span>
 00024 <span class="preprocessor"></span>
@@ -45,7 +45,7 @@
 00035         <span class="keywordtype">long</span> <span class="keywordtype">long</span> retval;
 00036         <span class="keyword">register</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> __sc_0 __asm__ (<span class="stringliteral">"r0"</span>) = srq | (RTAI_SHM_VECTOR &lt;&lt; 24);
 00037         <span class="keyword">register</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> __sc_1 __asm__ (<span class="stringliteral">"r1"</span>) = whatever;
-00038 
+00038
 00039         __asm__ __volatile__ (
 00040         <span class="stringliteral">"swi\t"</span> RTAI_SRQ_MAGIC <span class="stringliteral">"\n\t"</span>
 00041                 : <span class="stringliteral">"=&amp;r"</span> (__sc_0), <span class="stringliteral">"=&amp;r"</span> (__sc_1)

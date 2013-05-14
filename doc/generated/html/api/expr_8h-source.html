@@ -12,7 +12,7 @@
 00002 <span class="comment"> * Copyright (C) 2002 Roman Zippel &lt;zippel@linux-m68k.org&gt;</span>
 00003 <span class="comment"> * Released under the terms of the GNU GPL v2.0.</span>
 00004 <span class="comment"> */</span>
-00005 
+00005
 00006 <span class="preprocessor">#ifndef EXPR_H</span>
 00007 <span class="preprocessor"></span><span class="preprocessor">#define EXPR_H</span>
 00008 <span class="preprocessor"></span>
@@ -32,7 +32,7 @@
 00022         <span class="keywordtype">int</span> lineno;
 00023         <span class="keywordtype">int</span> flags;
 00024 };
-00025 
+00025
 00026 <span class="preprocessor">#define FILE_BUSY               0x0001</span>
 00027 <span class="preprocessor"></span><span class="preprocessor">#define FILE_SCANNED            0x0002</span>
 00028 <span class="preprocessor"></span><span class="preprocessor">#define FILE_PRINTED            0x0004</span>
@@ -40,21 +40,21 @@
 00030 <span class="keyword">typedef</span> <span class="keyword">enum</span> tristate {
 00031         no, mod, yes
 00032 } tristate;
-00033 
+00033
 00034 <span class="keyword">enum</span> expr_type {
 00035         E_NONE, E_OR, E_AND, E_NOT, E_EQUAL, E_UNEQUAL, E_CHOICE, E_SYMBOL, E_RANGE
 00036 };
-00037 
+00037
 00038 <span class="keyword">union </span>expr_data {
 00039         <span class="keyword">struct </span>expr *expr;
 00040         <span class="keyword">struct </span>symbol *sym;
 00041 };
-00042 
+00042
 00043 <span class="keyword">struct </span>expr {
 00044         <span class="keyword">enum</span> expr_type type;
 00045         <span class="keyword">union </span>expr_data left, right;
 00046 };
-00047 
+00047
 00048 <span class="preprocessor">#define E_OR(dep1, dep2)        (((dep1)&gt;(dep2))?(dep1):(dep2))</span>
 00049 <span class="preprocessor"></span><span class="preprocessor">#define E_AND(dep1, dep2)       (((dep1)&lt;(dep2))?(dep1):(dep2))</span>
 00050 <span class="preprocessor"></span><span class="preprocessor">#define E_NOT(dep)              (2-(dep))</span>
@@ -63,16 +63,16 @@
 00053         <span class="keyword">struct </span>expr *expr;
 00054         tristate tri;
 00055 };
-00056 
+00056
 00057 <span class="keyword">struct </span>symbol_value {
 00058         <span class="keywordtype">void</span> *val;
 00059         tristate tri;
 00060 };
-00061 
+00061
 00062 <span class="keyword">enum</span> symbol_type {
 00063         S_UNKNOWN, S_BOOLEAN, S_TRISTATE, S_INT, S_HEX, S_STRING, S_OTHER
 00064 };
-00065 
+00065
 00066 <span class="keyword">struct </span>symbol {
 00067         <span class="keyword">struct </span>symbol *next;
 00068         <span class="keywordtype">char</span> *name;
@@ -85,7 +85,7 @@
 00075         <span class="keyword">struct </span>expr *dep, *dep2;
 00076         <span class="keyword">struct </span>expr_value rev_dep;
 00077 };
-00078 
+00078
 00079 <span class="preprocessor">#define for_all_symbols(i, sym) for (i = 0; i &lt; 257; i++) for (sym = symbol_hash[i]; sym; sym = sym-&gt;next) if (sym-&gt;type != S_OTHER)</span>
 00080 <span class="preprocessor"></span>
 00081 <span class="preprocessor">#define SYMBOL_YES              0x0001</span>
@@ -113,7 +113,7 @@
 00103 <span class="keyword">enum</span> prop_type {
 00104         P_UNKNOWN, P_PROMPT, P_COMMENT, P_MENU, P_DEFAULT, P_CHOICE, P_SELECT, P_RANGE
 00105 };
-00106 
+00106
 00107 <span class="keyword">struct </span>property {
 00108         <span class="keyword">struct </span>property *next;
 00109         <span class="keyword">struct </span>symbol *sym;
@@ -125,7 +125,7 @@
 00115         <span class="keyword">struct </span>file *file;
 00116         <span class="keywordtype">int</span> lineno;
 00117 };
-00118 
+00118
 00119 <span class="preprocessor">#define for_all_properties(sym, st, tok) \</span>
 00120 <span class="preprocessor">        for (st = sym-&gt;prop; st; st = st-&gt;next) \</span>
 00121 <span class="preprocessor">                if (st-&gt;type == (tok))</span>
@@ -148,7 +148,7 @@
 00138         <span class="keywordtype">int</span> lineno;
 00139         <span class="keywordtype">void</span> *data;
 00140 };
-00141 
+00141
 00142 <span class="preprocessor">#define MENU_CHANGED            0x0001</span>
 00143 <span class="preprocessor"></span><span class="preprocessor">#define MENU_ROOT               0x0002</span>
 00144 <span class="preprocessor"></span>
@@ -157,7 +157,7 @@
 00147 <span class="keyword">extern</span> <span class="keyword">struct </span>file *file_list;
 00148 <span class="keyword">extern</span> <span class="keyword">struct </span>file *current_file;
 00149 <span class="keyword">struct </span>file *lookup_file(<span class="keyword">const</span> <span class="keywordtype">char</span> *name);
-00150 
+00150
 00151 <span class="keyword">extern</span> <span class="keyword">struct </span>symbol symbol_yes, symbol_no, symbol_mod;
 00152 <span class="keyword">extern</span> <span class="keyword">struct </span>symbol *modules_sym;
 00153 <span class="keyword">extern</span> <span class="keywordtype">int</span> cdebug;
@@ -182,15 +182,15 @@
 00172 <span class="keyword">struct </span>expr *expr_extract_eq_or(<span class="keyword">struct</span> expr **ep1, <span class="keyword">struct</span> expr **ep2);
 00173 <span class="keywordtype">void</span> expr_extract_eq(<span class="keyword">enum</span> expr_type type, <span class="keyword">struct</span> expr **ep, <span class="keyword">struct</span> expr **ep1, <span class="keyword">struct</span> expr **ep2);
 00174 <span class="keyword">struct </span>expr *expr_trans_compare(<span class="keyword">struct</span> expr *e, <span class="keyword">enum</span> expr_type type, <span class="keyword">struct</span> symbol *sym);
-00175 
+00175
 00176 <span class="keywordtype">void</span> expr_fprint(<span class="keyword">struct</span> expr *e, FILE *out);
 00177 <span class="keywordtype">void</span> print_expr(<span class="keywordtype">int</span> mask, <span class="keyword">struct</span> expr *e, <span class="keywordtype">int</span> prevtoken);
-00178 
+00178
 00179 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> expr_is_yes(<span class="keyword">struct</span> expr *e)
 00180 {
 00181         <span class="keywordflow">return</span> !e || (e-&gt;type == E_SYMBOL &amp;&amp; e-&gt;left.sym == &amp;symbol_yes);
 00182 }
-00183 
+00183
 00184 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> expr_is_no(<span class="keyword">struct</span> expr *e)
 00185 {
 00186         <span class="keywordflow">return</span> e &amp;&amp; (e-&gt;type == E_SYMBOL &amp;&amp; e-&gt;left.sym == &amp;symbol_no);

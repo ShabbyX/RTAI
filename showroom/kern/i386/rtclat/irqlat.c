@@ -98,13 +98,13 @@ static void rtc_handler (int irq, unsigned long rtc_freq)
 		pasd = 1;
 		t0 = rdtsc();
 	}
-#if USETHIS 
+#if USETHIS
  	CMOS_READ(RTC_INTR_FLAGS);
 	rt_enable_irq(RTC_IRQ);
 #endif
 }
 
-#if USETHIS 
+#if USETHIS
 
 #define MIN_RTC_FREQ  2
 
@@ -178,7 +178,7 @@ int _init_module(void)
 	mod_timer(&timer, jiffies + ECHO_PERIOD*HZ/1000);
 	printk("\nCHECKING WITH PERIOD: %d (us)\n\n", PERIOD/1000);
 	tsc_period = imuldiv(PERIOD, rtai_tunables.cpu_freq, 1000000000);
-#if USETHIS 
+#if USETHIS
 	rtc_start(RTC_FREQ);
 #else
 	rt_request_rtc(RTC_FREQ, (void *)rtc_handler);
@@ -190,7 +190,7 @@ void _cleanup_module(void)
 {
 	int t;
 
-#if USETHIS 
+#if USETHIS
 	rtc_stop();
 #else
 	rt_release_rtc();

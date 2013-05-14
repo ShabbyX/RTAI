@@ -194,7 +194,7 @@ dialog_checklist (const char *title, const char *prompt, int height, int width,
 
     /* Find length of longest item in order to center checklist */
     check_x = 0;
-    for (i = 0; i < item_no; i++) 
+    for (i = 0; i < item_no; i++)
 	check_x = MAX (check_x, + strlen (items[i * 3 + 1]) + 4);
 
     check_x = (list_width - check_x) / 2;
@@ -228,7 +228,7 @@ dialog_checklist (const char *title, const char *prompt, int height, int width,
                 break;
 
 
-	if ( i < max_choice || key == KEY_UP || key == KEY_DOWN || 
+	if ( i < max_choice || key == KEY_UP || key == KEY_DOWN ||
 	    key == '+' || key == '-' ) {
 	    if (key == KEY_UP || key == '-') {
 		if (!choice) {
@@ -336,7 +336,7 @@ dialog_checklist (const char *title, const char *prompt, int height, int width,
 		}
 		wnoutrefresh (list);
 		wrefresh (dialog);
-            
+
 		for (i = 0; i < item_no; i++) {
 		    if (status[i]) {
 			if (flag == FLAG_CHECK) {
@@ -361,7 +361,7 @@ dialog_checklist (const char *title, const char *prompt, int height, int width,
 	/* Now, update everything... */
 	doupdate ();
     }
-    
+
 
     delwin (dialog);
     free (status);

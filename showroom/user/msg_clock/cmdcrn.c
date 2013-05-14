@@ -89,7 +89,7 @@ void *CommandChrono_task(void *args)
 				ackn += command;
 				break;
 		}
-	} 
+	}
 	rt_return(put, command);
 	rt_return(get, command);
 

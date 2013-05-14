@@ -26,10 +26,10 @@
 00016 <span class="preprocessor"></span><span class="preprocessor">#define FIFOBUFSIZE   1000</span>
 00017 <span class="preprocessor"></span><span class="preprocessor">#define INILOOPS      100</span>
 00018 <span class="preprocessor"></span>
-00019 <span class="keyword">struct </span>params_t { <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> 
+00019 <span class="keyword">struct </span>params_t { <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>
 00020         mp,
-00021         setup_time_8254, 
-00022         latency_8254,  
+00021         setup_time_8254,
+00022         latency_8254,
 00023         freq_apic,
 00024         latency_apic,
 00025         setup_time_apic,
@@ -39,8 +39,8 @@
 00029         clock_tick_rate,
 00030         latch;
 00031 };
-00032 
-00033 <span class="keyword">struct </span>times_t { 
+00032
+00033 <span class="keyword">struct </span>times_t {
 00034         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> cpu_time;
 00035         <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> apic_time;
 00036         <span class="keywordtype">int</span> intrs;

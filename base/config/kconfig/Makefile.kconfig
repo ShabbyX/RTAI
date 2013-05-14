@@ -24,8 +24,8 @@ srcdir := $(srctree)/base/config/kconfig
 this_dir := $(shell pwd)
 MOC = $(QTDIR)/bin/moc
 
-CFLAGS := -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer 
-LXDIALOG_EXTRACFLAGS := -DLOCALE 
+CFLAGS := -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer
+LXDIALOG_EXTRACFLAGS := -DLOCALE
 LXDIALOG_LOADLIBES   := -lncurses
 
 ifeq (/usr/include/ncurses/ncurses.h, $(wildcard /usr/include/ncurses/ncurses.h))

@@ -336,9 +336,9 @@ inline void Fl_Scopes_Manager::enter_options_i(Fl_Menu_Button *b, void *v)
  	
         for(i=0;i<b->children();i++) { // loop through all menu items, and add checked items to the value
 	  if( b->child(i)->value() ) val |= (int)(long)b->child(i)->user_data();
-	} 
+	}
 	if ( b->label() == "Options " ) { // callback is used for trace and scope flags, if there is a space after "Options" set trace flags
-	  Scope_Windows[idx->scope_idx]->Plot->trace_flags(idx->trace_idx, val); 
+	  Scope_Windows[idx->scope_idx]->Plot->trace_flags(idx->trace_idx, val);
 	} else {
 	  Scope_Windows[(int)(long)v]->Plot->scope_flags(val);
 	}
@@ -487,9 +487,9 @@ inline void Fl_Scopes_Manager::oneshot_scope_i(Fl_Check_Button *b, void *v)
 {
 	long n = (long)v;
 	Scope_Windows[n]->Plot->oneshot(b->value() != 0);
-        if ( b->value() ) 
+        if ( b->value() )
   	  Scope_Pause[n]->activate();
-	else 
+	else
 	  Scope_Pause[n]->deactivate();
 }
 
@@ -815,7 +815,7 @@ Fl_Scopes_Manager::Fl_Scopes_Manager(int x, int y, int width, int height, Fl_MDI
 		  Trace_Pos[i] = new Fl_Dial*[Scopes[i].ntraces];
   		  Trace_Width[i] = new Fl_Dial*[Scopes[i].ntraces];
 		  Trace_Options[i] = new Fl_Menu_Button*[Scopes[i].ntraces];
-		  
+		
 
 		  for (int j = 0; j < Scopes[i].ntraces; j++) {
 			s_idx_T *idx = new s_idx_T;
@@ -857,8 +857,8 @@ Fl_Scopes_Manager::Fl_Scopes_Manager(int x, int y, int width, int height, Fl_MDI
 			  o->when(FL_WHEN_ENTER_KEY);
 		    	  o->callback((Fl_Callback *)enter_options, (void *)idx);
 			 // for(i=0;i<o->children();i++) { // loop through all menu items, and add checked items to the value
-	  		 //   o->child(i)->set_value(); 
-			 // } 
+	  		 //   o->child(i)->set_value();
+			 // }
 		  	}
 		  }
 		  o->end();

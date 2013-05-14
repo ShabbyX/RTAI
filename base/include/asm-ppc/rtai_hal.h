@@ -66,7 +66,7 @@ static inline unsigned long long rtai_ullmul(unsigned long m0, unsigned long m1)
 {
 	unsigned long long res;
 	__asm__ __volatile__ ("mulhwu %0, %1, %2"
-			       : "=r" (((unsigned long *)(void *)&res)[0]) 
+			       : "=r" (((unsigned long *)(void *)&res)[0])
 			       : "%r" (m0), "r" (m1));
 	((unsigned long *)(void *)&res)[1] = m0*m1;
 	return res;
@@ -77,7 +77,7 @@ static inline unsigned long long rtai_ulldiv(unsigned long long ull, unsigned lo
 {
 	unsigned long long q, rf;
 	unsigned long qh, rh, ql, qf;
-    
+
 	q = 0;
 	rf = (unsigned long long)(0xFFFFFFFF - (qf = 0xFFFFFFFF / uld) * uld) + 1ULL;
 	while (ull >= uld) {
@@ -103,12 +103,12 @@ static inline unsigned long long rtai_llimd(unsigned long long ull, unsigned lon
     /* Returns (long long)ll = (int)ll*(int)(mult)/(int)div. */
 	unsigned long long low;
 	unsigned long q, r;
-    
+
 	low  = rtai_ullmul(((unsigned long *)(void *)&ull)[1], mult);	
 	q = rtai_ulldiv(rtai_ullmul(((unsigned long *)(void *)&ull)[0], mult) + ((unsigned long *)(void *)&low)[0], div, (unsigned long *)(void *)&low);
 	low = rtai_ulldiv(low, div, &r);
 	((unsigned long *)(void *)&low)[0] += q;
-    
+
 	return (r + r) > div ? low + 1 : low;
 }
 
@@ -595,7 +595,7 @@ static inline int rt_save_switch_to_real_time(int cpuid)
 	if (!rtai_linux_context[cpuid].sflags) {
 		_rt_switch_to_real_time(cpuid);
 		return 0;
-	} 
+	}
 	return 1;
 }
 
@@ -625,8 +625,8 @@ static inline unsigned long long rtai_rdtsc (void)
 			      "   mftbu %2\n"
 			      "   cmpw %2,%0\n"
 			      "   bne 1b\n"
-			      : "=r" (((unsigned long *)&ts)[0]), 
-			        "=r" (((unsigned long *)&ts)[1]), 
+			      : "=r" (((unsigned long *)&ts)[0]),
+			        "=r" (((unsigned long *)&ts)[1]),
 			        "=r" (chk));
 	return ts;
 }
@@ -685,7 +685,7 @@ struct apic_timer_setup_data {
 #ifdef __KERNEL__
 
 #include <linux/kernel.h>
- 
+
 #define rtai_print_to_screen rt_printk
 
 void *ll2a(long long ll, char *s);

@@ -69,7 +69,7 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 	ssSetOffsetTime(S, 0, 0.0);
 }
 
-#define MDL_START 
+#define MDL_START
 static void mdlStart(SimStruct *S)
 {
 #ifndef MATLAB_MEX_FILE

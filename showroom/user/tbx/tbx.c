@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USAr.
  */
 
- 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -41,7 +41,7 @@ typedef struct {
 } MSG;
 
 #define BASE_PRIO 1
-#define TBXSIZE (sizeof(MSG) + 1)       //big tbx stress!       
+#define TBXSIZE (sizeof(MSG) + 1)       //big tbx stress!
 #define ORDER FIFO_Q                    //FIFO ordered
 #define MAXCOUNT 20
 #define TIMEBASE 10000000
@@ -53,7 +53,7 @@ static void *Task1(void *arg)
 	RT_TASK *t1;
 	int unsent;
 	MSG msg;
-    
+
 	t1 = rt_task_init_schmod(nam2num("T1"), BASE_PRIO + 1, 0, 0, SCHED_FIFO, 0xF);
 	printf("\nTask1 (%p) starting\n", t1);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
@@ -69,21 +69,21 @@ static void *Task1(void *arg)
 	rt_task_delete(t1);
 	printf("\nTask1 ends itself\n");
 	return 0;
-}                                        
+}
 
 static void *Task2(void *arg)
-{   
+{
 	RT_TASK *t2;
 	int status;
 	MSG buf;
-    
+
 	t2 = rt_task_init_schmod(nam2num("T2"), BASE_PRIO + 3, 0, 0, SCHED_FIFO, 0xF);
 	printf("\nTask2 (%p) starting\n", t2);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
 	while (!endall) {
-		memset((char*)&buf, 0, sizeof(buf));    
-		status = rt_tbx_receive(bx, (char*)&buf, sizeof(buf)); 
+		memset((char*)&buf, 0, sizeof(buf));
+		status = rt_tbx_receive(bx, (char*)&buf, sizeof(buf));
 		printf("\nTask2 received msgnr %u from task %u, status=%d\n", buf.progressive, buf.sending_task, status);
 	}
 	printf("\nTask2 ends itself\n");
@@ -91,20 +91,20 @@ static void *Task2(void *arg)
 }
 
 static void *Task3(void *arg)
-{   
+{
 	RT_TASK *t3;
 	int status;
 	MSG buf;
-    
+
 	t3 = rt_task_init_schmod(nam2num("T3"), BASE_PRIO + 2, 0, 0, SCHED_FIFO, 0xF);
 	printf("\nTask3 (%p) starting\n", t3);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
 	while (!endall) {
-		memset((char*)&buf, 0, sizeof(buf));    
-		status = rt_tbx_receive(bx, (char*)&buf, sizeof(buf)); 
+		memset((char*)&buf, 0, sizeof(buf));
+		status = rt_tbx_receive(bx, (char*)&buf, sizeof(buf));
 		printf("\nTask3 received msgnr %u from task %u, status=%d\n", buf.progressive, buf.sending_task, status);
-        
+
 	}
 	rt_task_delete(t3);
 	printf("\nTask3 ends itself\n");
@@ -116,7 +116,7 @@ static void *Task4(void *arg)
 	RT_TASK *t4;
 	int wakedup;
 	MSG msg;
-    
+
 	t4 = rt_task_init_schmod(nam2num("T4"), BASE_PRIO + 6, 0, 0, SCHED_FIFO, 0xF);
 	printf("\nTask4 (%p) starting\n", t4);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
@@ -132,21 +132,21 @@ static void *Task4(void *arg)
 	rt_task_delete(t4);
 	printf("\nTask4 ends itself\n");
 	return 0;
-}                                        
+}
 
 static void *Task5(void *arg)
-{   
+{
 	RT_TASK *t5;
 	int status;
 	MSG buf;
-    
+
 	t5 = rt_task_init_schmod(nam2num("T5"), BASE_PRIO + 4, 0, 0, SCHED_FIFO, 0xF);
 	printf("\nTask5 (%p) starting\n", t5);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
 	while (!endall) {
-		memset((char*)&buf, 0, sizeof(buf));    
-		status = rt_tbx_receive(bx, (char*)&buf, sizeof(buf)); 
+		memset((char*)&buf, 0, sizeof(buf));
+		status = rt_tbx_receive(bx, (char*)&buf, sizeof(buf));
 		printf("\nTask5 received msgnr %u from task %u, status=%d\n", buf.progressive, buf.sending_task, status);
 	}
 	rt_task_delete(t5);
@@ -155,18 +155,18 @@ static void *Task5(void *arg)
 }
 
 static void *Task6(void *arg)
-{   
+{
 	RT_TASK *t6;
 	int status;
 	MSG buf;
-    
+
 	t6 = rt_task_init_schmod(nam2num("T6"), BASE_PRIO + 5, 0, 0, SCHED_FIFO, 0xF);
 	printf("\nTask6 (%p) starting\n", t6);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
 	while (!endall) {
-		memset((char*)&buf, 0, sizeof(buf));    
-		status = rt_tbx_receive(bx, (char*)&buf, sizeof(buf)); 
+		memset((char*)&buf, 0, sizeof(buf));
+		status = rt_tbx_receive(bx, (char*)&buf, sizeof(buf));
 		printf("\nTask6 received msgnr %u from task %u, status=%d\n", buf.progressive, buf.sending_task, status);
 	}
 	rt_task_delete(t6);
@@ -179,7 +179,7 @@ static void *Task7(void *arg)
 	RT_TASK *t7;
 	int unsent;
 	MSG msg;
-    
+
 	t7 = rt_task_init_schmod(nam2num("T7"), BASE_PRIO + 0, 0, 0, SCHED_FIFO, 0xF);
 	printf("\nTask7 (%p) starting\n", t7);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
@@ -195,12 +195,12 @@ static void *Task7(void *arg)
 	rt_task_delete(t7);
 	printf("\nTask7 ends itself\n");
 	return 0;
-}                                        
+}
 
 static pthread_t pt1, pt2, pt3, pt4, pt5, pt6, pt7;
 
 int main(void)
-{                   
+{
 	RT_TASK *maint;
 	MSG msg = { 0, 0 };
 

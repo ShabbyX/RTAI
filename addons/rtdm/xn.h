@@ -17,7 +17,7 @@
  */
 
 
-// Wrappers and inlines to avoid too much an editing of RTDM code. 
+// Wrappers and inlines to avoid too much an editing of RTDM code.
 // The core stuff is just RTAI in disguise.
 
 #ifndef _RTAI_XNSTUFF_H
@@ -50,7 +50,7 @@
 		xnpod_fatal("bug at %s:%d (%s)", __FILE__, __LINE__, (#cond)); */ \
  } while(0)
 
-/* 
+/*
   With what above we let some assertion diagnostic. Here below we keep knowledge
   of specific assertions we care of.
  */
@@ -58,7 +58,7 @@
 #define xnpod_root_p()          (!current->rtai_tskext(TSKEXT0) || !((RT_TASK *)(current->rtai_tskext(TSKEXT0)))->is_hard)
 #define xnshadow_thread(t)      ((xnthread_t *)current->rtai_tskext(TSKEXT0))
 #define rthal_local_irq_test()  (!rtai_save_flags_irqbit())
-#define rthal_local_irq_enable  rtai_sti 
+#define rthal_local_irq_enable  rtai_sti
 #define rthal_domain rtai_domain
 #define rthal_local_irq_disabled()                              \
 ({                                                              \

@@ -27,16 +27,16 @@
 00017 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00018 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00019 <span class="comment"> */</span>
-00020 
+00020
 00021 <span class="preprocessor">#ifndef _RTAI_ASM_I386_LEDS_H</span>
 00022 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_ASM_I386_LEDS_H</span>
 00023 <span class="preprocessor"></span>
 00024 <span class="preprocessor">#include &lt;asm/io.h&gt;</span>
-00025 
+00025
 00026 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> leds_parport_func(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> port, <span class="keywordtype">unsigned</span> leds) {
 00027     outb(~leds,port);
 00028 }
-00029 
+00029
 00030 <span class="preprocessor">#define LEDS_DEFAULT_FUNC leds_parport_func</span>
 00031 <span class="preprocessor"></span><span class="preprocessor">#define LEDS_DEFAULT_PORT 0x378</span>
 00032 <span class="preprocessor"></span>

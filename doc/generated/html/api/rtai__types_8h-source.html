@@ -25,13 +25,13 @@
 00015 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00016 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00017 <span class="comment"> */</span>
-00018 
+00018
 00019 <span class="preprocessor">#ifndef _RTAI_TYPES_H</span>
 00020 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_TYPES_H</span>
 00021 <span class="preprocessor"></span>
 00022 <span class="preprocessor">#include &lt;rtai_config.h&gt;</span>
 00023 <span class="preprocessor">#include &lt;rtai_wrappers.h&gt;</span>
-00024 
+00024
 00025 <span class="preprocessor">#define PRIO_Q    0 </span>
 00026 <span class="preprocessor"></span><span class="preprocessor">#define FIFO_Q    4 </span>
 00027 <span class="preprocessor"></span><span class="preprocessor">#define RES_Q     3</span>
@@ -44,13 +44,13 @@
 00034 <span class="preprocessor"></span><span class="preprocessor">#define RT_SCHED_RR    1 </span>
 00035 <span class="preprocessor"></span>
 00036 <span class="keyword">struct </span>pt_regs;
-00037 
+00037
 00038 <span class="keyword">struct </span>rt_task_struct;
-00039 
+00039
 00040 <span class="keyword">typedef</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> RTIME;
-00041 
+00041
 00042 <span class="keyword">typedef</span> int (*RT_TRAP_HANDLER)(int, int, <span class="keyword">struct </span>pt_regs *,<span class="keywordtype">void</span> *);
-00043 
+00043
 00044 <span class="keyword">struct </span>rt_times {
 00045         <span class="keywordtype">int</span> linux_tick;
 00046         <span class="keywordtype">int</span> periodic_tick;
@@ -58,7 +58,7 @@
 00048         RTIME linux_time;
 00049         RTIME intr_time;
 00050 };
-00051 
+00051
 00052 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_TYPES_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

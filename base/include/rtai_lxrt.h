@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  *
  * ACKNOWLEDGMENTS:
- * Pierre Cloutier (pcloutier@poseidoncontrols.com) has suggested the 6 
+ * Pierre Cloutier (pcloutier@poseidoncontrols.com) has suggested the 6
  * characters names and fixed many inconsistencies within this file.
  */
 
@@ -92,9 +92,9 @@
 #define HARD_TIMER_COUNT		18
 #define GET_TIME_NS			19
 #define GET_CPU_TIME_NS			20
-#define SET_RUNNABLE_ON_CPUS		21 
-#define SET_RUNNABLE_ON_CPUID		22	 
-#define GET_TIMER_CPU			23	 
+#define SET_RUNNABLE_ON_CPUS		21
+#define SET_RUNNABLE_ON_CPUID		22	
+#define GET_TIMER_CPU			23	
 #define START_RT_APIC_TIMERS		24
 #define HARD_TIMER_COUNT_CPUID		25
 #define COUNT2NANO_CPUID		26
@@ -337,8 +337,8 @@
 
 #define MAX_LXRT_FUN		       230
 
-// not recovered yet 
-// Qblk's 
+// not recovered yet
+// Qblk's
 #define RT_INITTICKQUEUE		69
 #define RT_RELEASETICKQUEUE     	70
 #define RT_QDYNALLOC            	71
@@ -442,15 +442,15 @@ struct linux_syscalls_list { int in, out, nr, id, mode; void (*cbfun)(long, long
 
 /*
      Encoding of system call argument
-            31                                    0  
+            31                                    0
 soft SRQ    .... |||| |||| |||| .... .... .... ....  0 - 4095 max
-int  NARG   .... .... .... .... |||| |||| |||| ||||  
+int  NARG   .... .... .... .... |||| |||| |||| ||||
 arg  INDX   |||| .... .... .... .... .... .... ....
 */
 
 /*
-These USP (unsigned long) type fields allow to read and write up to 2 arguments.  
-                                               
+These USP (unsigned long) type fields allow to read and write up to 2 arguments.
+
 The high part of the unsigned long encodes writes
 W ARG1 BF .... .... ..|| |... .... .... .... ....
 W ARG1 SZ .... ...| ||.. .... .... .... .... ....
@@ -519,7 +519,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #if 1 // needs CONFIG_RTAI_INTERNAL_LXRT_SUPPORT no more
- 
+
 static inline struct rt_task_struct *pid2rttask(long pid)
 {
 	struct task_struct *lnxtsk = find_task_by_pid(pid);
@@ -614,7 +614,7 @@ RTAI_PROTO(void *, rt_get_adr, (unsigned long name))
 {
 	struct { unsigned long name; } arg = { name };
 	return rtai_lxrt(BIDX, SIZARG, LXRT_GET_ADR, &arg).v[LOW];
-} 
+}
 
 /**
  * Get an object name by its address.
@@ -743,20 +743,20 @@ RTAI_PROTO(int, rt_set_linux_syscall_mode, (int mode, void (*cbfun)(long, long))
 
 RTAI_PROTO(int, rt_linux_syscall_mode, (struct linux_syscalls_list *syscalls, int mode))
 {
-	int retval; 
+	int retval;
 	if (syscalls == NULL) {
 		return EINVAL;
 	}
-	retval = syscalls->mode; 
+	retval = syscalls->mode;
 	if (mode == SYNC_LINUX_SYSCALL || mode == ASYNC_LINUX_SYSCALL) {
-		syscalls->mode = mode; 
+		syscalls->mode = mode;
 	}
 	return retval;
 }
 
 RTAI_PROTO(void *, rt_linux_syscall_cbfun, (struct linux_syscalls_list *syscalls, void (*cbfun)(long, long)))
 {
-	void *retval; 
+	void *retval;
 	if (syscalls == NULL) {
 		return (void *)EINVAL;
 	}
@@ -841,12 +841,12 @@ RTAI_PROTO(RT_TASK *, rt_thread_init, (unsigned long name, int priority, int max
 
 /**
  * Create an RTAI task extension for a Linux process/task in user space.
- * 
+ *
  * rt_task_init extends the Linux task structure, making it possible to use
  * RTAI APIs that wants to access RTAI scheduler services.   It needs no task
  * function as none is used, but it does need to setup an RTAI task structure
  * and initialize it appropriately as the provided services are carried out as
- * if the Linux process has become an RTAI task also.   Because of that it 
+ * if the Linux process has become an RTAI task also.   Because of that it
  * requires less arguments and returns the pointer to the RTAI task extension
  * that is to be used in related calls.
  *
@@ -855,23 +855,23 @@ RTAI_PROTO(RT_TASK *, rt_thread_init, (unsigned long name, int priority, int max
  *
  * @param priority is the priority of the RTAI task extension.
  *
- * @param stack_size, a legacy parameter used nomore; kept for portability 
- * reasons only. (It was just what is implied by such a name and referred to 
+ * @param stack_size, a legacy parameter used nomore; kept for portability
+ * reasons only. (It was just what is implied by such a name and referred to
  * the stack size used by the buddy in the very first implementation of LXRT).
  *
  * @param max_msg_size is a hint for the size of the most lengthy intertask
  * message that is likely to be exchanged.
  *
  * @a max_msg_size can be zero, in which case a default internal value is
- * used.  Keep an eye on such a default message (256) size. It could be 
- * possible that a larger size is required to suite your needs best. In such 
- * a case either recompile sys.c with the macro MSG_SIZE set appropriately, 
- * or assign a larger size here esplicitly.  Note that the message size is 
- * not critical though. In fact the module reassigns it, dynamically and 
- * appropriately sized, whenever it is needed.  The cost is a real time 
+ * used.  Keep an eye on such a default message (256) size. It could be
+ * possible that a larger size is required to suite your needs best. In such
+ * a case either recompile sys.c with the macro MSG_SIZE set appropriately,
+ * or assign a larger size here esplicitly.  Note that the message size is
+ * not critical though. In fact the module reassigns it, dynamically and
+ * appropriately sized, whenever it is needed.  The cost is a real time
  * allocation of the new buffer.
  * Note also that @a max_msg_size is for a buffer to be used to copy whatever
- * intertask message from user to kernel space, as intertask messages are not 
+ * intertask message from user to kernel space, as intertask messages are not
  * necessarily used immediately.
  *
  * It is important to remark that the returned task pointers cannot be used
@@ -880,7 +880,7 @@ RTAI_PROTO(RT_TASK *, rt_thread_init, (unsigned long name, int priority, int max
  *
  * @return On success a pointer to the task structure initialized in kernel
  * space.
- * @return On failure a NULL value is returned if it was not possible to setup 
+ * @return On failure a NULL value is returned if it was not possible to setup
  * the RTAI task extension or something using the same name was found.
  */
 RTAI_PROTO(RT_TASK *,rt_task_init,(unsigned long name, int priority, int stack_size, int max_msg_size))
@@ -1396,7 +1396,7 @@ RTAI_PROTO(int, rt_gettid, (void))
 }
 
 /**
- * Give a Linux process, or pthread, hard real time execution capabilities 
+ * Give a Linux process, or pthread, hard real time execution capabilities
  * allowing full kernel preemption.
  *
  * rt_make_hard_real_time makes the soft Linux POSIX real time process, from
@@ -1413,7 +1413,7 @@ RTAI_PROTO(int, rt_gettid, (void))
  * process that was made hard real time with a Linux buddy server, either
  * standard or POSIX soft real time.   To communicate and synchronize with the
  * buddy you can use the wealth of available RTAI, and its schedulers, services.
- * 
+ *
  * After all it is pure nonsense to use a non hard real time Operating System,
  * i.e. Linux, from within hard real time processes.
  */
@@ -1424,7 +1424,7 @@ RTAI_PROTO(void,rt_make_hard_real_time,(void))
 }
 
 /**
- * Allows a non root user to use the Linux POSIX soft real time process 
+ * Allows a non root user to use the Linux POSIX soft real time process
  * management and memory lock functions, and allows it to do any input-output
  * operation from user space.
  *
@@ -1479,7 +1479,7 @@ RTAI_PROTO(int, rt_task_masked_unblock, (RT_TASK *task, unsigned long mask))
 
 /**
  * Get execution time of task.
- * 
+ *
  * If RTAI is configured to monitor task execution times, then this function
  * can be used to retrieve such information.
  *

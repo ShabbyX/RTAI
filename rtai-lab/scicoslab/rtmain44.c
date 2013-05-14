@@ -114,7 +114,7 @@ RTIME RTTSKinit=0, RTTSKper;
 #endif
 
 #define SS_DOUBLE  0
-#define rt_SCALAR  0 
+#define rt_SCALAR  0
 
 #define msleep(t)  do { poll(0, 0, t); } while (0)
 
@@ -145,7 +145,7 @@ static inline void strncpyz(char *dest, const char *src, int n)
   dest[n - 1] = '\0';
 }
 
-// the following 2 functions are unsafe, in theory, but can be used anyhow 
+// the following 2 functions are unsafe, in theory, but can be used anyhow
 // since it is very unlikely that two controllers will be started in parallel,
 // moreover it is also possible to avoid using them
 
@@ -314,7 +314,7 @@ static void *rt_BaseRate(void *args)
     rt_make_hard_real_time();
   }
 
-  rt_rpc(rt_MainTask,0,(void *) name); 
+  rt_rpc(rt_MainTask,0,(void *) name);
   t0 = rt_get_cpu_time_ns();
   rt_task_make_periodic(rt_BaseRateTask, rt_get_time() + rt_BaseRateTick, rt_BaseRateTick);
   while (!endBaseRate) {
@@ -354,9 +354,9 @@ static inline void modify_any_param(int index, double param)
     }while(tot<=index);
     i--;
     tot -= lenRPAR[i];
-    j = index-tot; 
+    j = index-tot;
     rtModifyRParam(i, j, &param);
-  } 
+  }
   else {
     index -= NTOTRPAR;
     i=0;
@@ -367,7 +367,7 @@ static inline void modify_any_param(int index, double param)
     }while(tot<=index);
     i--;
     tot -= lenIPAR[i];
-    j = index-tot; 
+    j = index-tot;
     rtModifyIParam(i, j, (int)param);
   }
 }
@@ -404,7 +404,7 @@ static void *rt_HostInterface(void *args)
 	rt_return(task, (isRunning << 16) | ((NTOTRPAR + NTOTIPAR) & 0xFFFF));
 	rt_receivex(task, &Request, 1, &len);
 	rt_returnx(task, &rtParam, sizeof(rtParam));
-					  
+					
 	for (i = 0; i < NRPAR; i++) {
 	  sprintf(rtParam.blockName,"%s/%s",rtParam.modelName,strRPAR[i]);
 	  if(i==0) Idx = 0;
@@ -577,7 +577,7 @@ static void *rt_HostInterface(void *args)
 	    sprintf(rtParam.paramName, "Value[%d]",j);
 	    rtParam.dataValue[0] = IPAR[i][j];
 	    rt_returnx(task, &rtParam, sizeof(rtParam));
-	  } 
+	  }
 	}
 
 	break;
@@ -779,7 +779,7 @@ static int rt_Main(int priority)
 	rt_BaseRateTick = start_rt_timer(nano2count(rt_BaseTaskPeriod));
       }
       hard_timers_cnt = rt_sem_init(nam2num("HTMRCN"), 0);
-    } 
+    }
     else {
       rt_BaseRateTick = nano2count(rt_BaseTaskPeriod);
       rt_sem_signal(hard_timers_cnt);

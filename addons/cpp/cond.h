@@ -34,7 +34,7 @@ namespace RTAI {
  * Condition Variable
  */
 class Condition
-:	public Semaphore 
+:	public Semaphore
 {
 public:
 	Condition();

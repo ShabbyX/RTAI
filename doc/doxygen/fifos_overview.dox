@@ -45,11 +45,11 @@ int x_handler(unsigned int fifo, int rw);
 @endcode
 
 Even if fifos are strictly no more required in RTAI, because of the
-symmetric inter/intra kernel/user space support, they are kept both for 
-compatibility reasons and because they are very useful tools to be used to 
-communicate with interrupt handlers, since they do not require any scheduler 
-to be installed. Notice that for such applications RTAI has now shared memory 
-circular buffers (SCB) that might be even more effective to exchange data 
+symmetric inter/intra kernel/user space support, they are kept both for
+compatibility reasons and because they are very useful tools to be used to
+communicate with interrupt handlers, since they do not require any scheduler
+to be installed. Notice that for such applications RTAI has now shared memory
+circular buffers (SCB) that might be even more effective to exchange data
 to/from interrupt handlers.
 In this sense you can see this new implementation of fifos as a kind of
 universal form of device drivers, since once you have your interrupt handler
@@ -85,7 +85,7 @@ that blocks till all count bytes are available;
 
 @code
 rtf_read_timed(fd, buf, count, ms_delay);
-        
+
 rtf_write_timed(fd, buf, count, ms_delay);
 @endcode
 

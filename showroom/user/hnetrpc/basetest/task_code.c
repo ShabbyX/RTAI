@@ -52,7 +52,7 @@ static inline void RT_SEM_SIGNAL(unsigned long node, int port, SEM *sem)
 	} else {
 		RT_sem_signal(node, port, sem);
 	}
-} 
+}
 
 #define TAKE_PRINT  RT_sem_wait(comnode, srvport, print_sem);
 #define GIVE_PRINT  RT_SEM_SIGNAL(comnode, -srvport, print_sem);
@@ -76,11 +76,11 @@ printf("TASK_NO %d GOT ITS EXEC COMNODE PORT %lx, %d\n", task_no, comnode, srvpo
 
 	for (i = 0; i < 5; ++i)	{
 		RT_sem_wait(comnode, srvport, sems[task_no]);
-		TAKE_PRINT; 
+		TAKE_PRINT;
 		rt_printk(strs[task_no]);
 		GIVE_PRINT;
 		if (task_no == NUM_TASKS - 1) {
-			TAKE_PRINT; 
+			TAKE_PRINT;
 			rt_printk("\n");
 			GIVE_PRINT;
 		}
@@ -88,25 +88,25 @@ printf("TASK_NO %d GOT ITS EXEC COMNODE PORT %lx, %d\n", task_no, comnode, srvpo
 	}
 	RT_SEM_SIGNAL(comnode, -srvport, sync_sem);
 	RT_sem_wait(comnode, srvport, prio_sem);
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk(strs[task_no]);
 	GIVE_PRINT;
 	RT_sleep(comnode, srvport, 1000000000LL);
 	RT_sem_wait_timed(comnode, srvport, prio_sem, (task_no + 1)*1000000000LL);
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk("sem timeout, task %d, %s\n", task_no, strs[task_no]);
 	GIVE_PRINT;
 	RT_SEM_SIGNAL(comnode, -srvport, sync_sem);
 
 /* message queue stuff */
 	if ((ret = RT_mbx_receive(comnode, srvport, mbx_in, buf, 8)) != 0) {
-		TAKE_PRINT; 
+		TAKE_PRINT;
 		rt_printk("RT_mbx_receive() failed with %d\n", ret);
 		GIVE_PRINT;
 	}
-	TAKE_PRINT; 
+	TAKE_PRINT;
 	rt_printk("\nreceived by task %d ", task_no);
-	rt_printk(buf); 
+	rt_printk(buf);
 	GIVE_PRINT;
 	RT_mbx_send(comnode, srvport, mbx_out, strs[task_no], 8);
 /* test receive timeout */
@@ -116,8 +116,8 @@ printf("TASK_NO %d GOT ITS EXEC COMNODE PORT %lx, %d\n", task_no, comnode, srvpo
 		rt_printk("mbx timeout, task %d, %s\n", task_no, strs[task_no]);
 		GIVE_PRINT;
 	}
-	TAKE_PRINT; 
-	rt_printk("\ntask %d complete\n", task_no); 
+	TAKE_PRINT;
+	rt_printk("\ntask %d complete\n", task_no);
 	GIVE_PRINT;
 	rt_make_soft_real_time();
 printf("TASK_NO %d REL ITS EXEC COMNODE PORT %lx, %d\n", task_no, comnode, srvport);

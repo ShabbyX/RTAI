@@ -20,11 +20,11 @@ read junk
 cd ../..; ./ldmod; cd -
 sync
 if (`rtai-config --linux-version | grep -q 2.6`);
-then 
+then
 insmod $MODULES/rtai_rtdm.ko
 cd ..; ./rtnet_up; cd -
 insmod $MODULES/rtai_netrpc.ko ThisNode="127.0.0.1";
-else 
+else
 insmod $MODULES/rtai_rtdm.o
 cd ..; ./rtnet_up; cd -
 insmod $MODULES/rtai_netrpc.o ThisNode="127.0.0.1";

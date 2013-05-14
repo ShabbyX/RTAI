@@ -15,7 +15,7 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* 
+/*
  * Part of this code acked from Linux i387.h and i387.c:
  * Copyright (C) 1994 Linus Torvalds,
  * Copyright (C) 2000 Gareth Hughes <gareth@valinux.com>,
@@ -42,7 +42,7 @@ typedef union thread_xstate FPU_ENV;
 typedef union thread_xstate FPU_ENV;
 #define TASK_FPENV(tsk)  ((tsk)->thread.fpu.state)
 #endif
-   
+
 #ifdef CONFIG_RTAI_FPU_SUPPORT
 
 // RAW FPU MANAGEMENT FOR USAGE FROM WHAT/WHEREVER RTAI DOES IN KERNEL

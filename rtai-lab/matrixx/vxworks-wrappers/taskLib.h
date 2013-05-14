@@ -39,7 +39,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 #define NAME_SIZE 30
 
-struct thread_args { 
+struct thread_args {
 	char name[NAME_SIZE];
 	void *(*fun)(long, ...);
 	long a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, prio, stksiz, fpu;

@@ -1,5 +1,5 @@
 /*
-2.16.2004, rework of the uncopyrighted Linux msg.h files for RTAI 
+2.16.2004, rework of the uncopyrighted Linux msg.h files for RTAI
 hard real time by: Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 COPYRIGHT (C) 2004  Paolo Mantegazza (mantegazza@aero.polimi.it)
@@ -71,13 +71,13 @@ struct msgbuf {
 /* buffer for msgctl calls IPC_INFO, MSG_INFO */
 struct msginfo {
 	int msgpool;
-	int msgmap; 
-	int msgmax; 
-	int msgmnb; 
-	int msgmni; 
-	int msgssz; 
-	int msgtql; 
-	unsigned short  msgseg; 
+	int msgmap;
+	int msgmax;
+	int msgmnb;
+	int msgmni;
+	int msgssz;
+	int msgtql;
+	unsigned short  msgseg;
 };
 
 #define MSGMNI    16   /* <= IPCMNI */     /* max # of msg queue identifiers */

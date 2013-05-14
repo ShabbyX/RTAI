@@ -130,7 +130,7 @@ __BEGIN_DECLS
 #  undef _Mdouble_
 // added for gcc-3.2
 # undef _Mdouble_BEGIN_NAMESPACE
-# undef _Mdouble_END_NAMESPACE 
+# undef _Mdouble_END_NAMESPACE
 // end added for gcc-3.2
 #  undef __MATH_PRECNAME
 

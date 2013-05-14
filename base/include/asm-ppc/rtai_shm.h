@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #include <asm/rtai_vectors.h>
 
 #ifdef __SHM_USE_VECTOR
-// the following function is adapted from Linux PPC unistd.h 
+// the following function is adapted from Linux PPC unistd.h
 static inline long long rtai_shmrq(unsigned long srq, unsigned long whatever)
 {
 	long long retval;

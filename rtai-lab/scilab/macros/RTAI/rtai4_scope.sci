@@ -69,7 +69,7 @@ function [x,y,typ] = rtai4_scope(job,arg1,arg2)
       if ~ok then break,end
       in=[]
       out=[]
-      if exists('traceNames') then 
+      if exists('traceNames') then
 		    index=strindex(traceNames,';')
 				if index<>[] then
 		      in=ones(size(index,2)+1,1)

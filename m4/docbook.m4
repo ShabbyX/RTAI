@@ -2,14 +2,14 @@
 # Building Docbook-XML documents with the autotools.
 #
 # Check whether needed tools for generating Docbook XML doc are installed and
-# running. 
+# running.
 #  - "docbook-root" is the name of the source tree subdirectory which is the
-# docbook documentation root. It is expected to contain at least : 
+# docbook documentation root. It is expected to contain at least :
 #      catalog.in, used to match DTD generic addresses to their local copy ;
 #      pictures, with all the pictures referenced by the XML documents ;
 #      css, with the CSS referenced by the html documents.
 #
-#  - "generated-doc-root" is the name of the source tree subdirectory which 
+#  - "generated-doc-root" is the name of the source tree subdirectory which
 # contains the generated documentation. It is expected to contain at least :
 #      html/pictures with the pictures needed by the html documents ;
 #      html/css with the css needed by the html documents ;
@@ -20,7 +20,7 @@
 #
 # DOX_DOC_INIT(docbook-root, generated-doc-root, docbook-dtd-version)
 # ------------------------------------------------------------------------------
-AC_DEFUN([DBX_DOC_INIT], 
+AC_DEFUN([DBX_DOC_INIT],
 [
 DBX_DOC_ROOT="$1"
 AC_SUBST(DBX_DOC_ROOT)
@@ -45,7 +45,7 @@ else
 fi
 AM_CONDITIONAL(DBX_DOC,[test "$DBX_DOC" = yes])
 
-# 
+#
 DBX_GEN_DOC_ROOT="$2"
 AC_SUBST(DBX_GEN_DOC_ROOT)
 
@@ -59,7 +59,7 @@ AC_SUBST(DBX_LINT)
 
 AC_CHECK_PROG(DBX_XSLTPROC, xsltproc, xsltproc)
 if test x"$DBX_XSLTPROC" = x -a -n "$DBX_DOC"; then
-   AC_MSG_ERROR([xsltproc was not found. Check your PATH variable and try 
+   AC_MSG_ERROR([xsltproc was not found. Check your PATH variable and try
 again.])
 fi
 AC_SUBST(DBX_XSLTPROC)
@@ -79,7 +79,7 @@ AC_ARG_ENABLE(dbx-network,
         [--enable-dbx-network	Try to access Docbook DTD and
 XSL stylesheets through network (default is to die if local installation can not
 be found by configure).],
-        [ case "$enable_dbx_network" in 
+        [ case "$enable_dbx_network" in
            y | yes | yes )
                 DBX_NET=yes;;
            n | no )
@@ -100,25 +100,25 @@ AC_SUBST(DBX_MAYBE_NONET)
 
 AC_MSG_CHECKING(for docbook-xml root dir)
 AC_ARG_WITH(dbx-root,
-        [--with-dbx-root	specify the Docbook XML root (that 
+        [--with-dbx-root	specify the Docbook XML root (that
 is, the directory where docbookx.dtd should be found). Default is to use
 well-known locations (or network if --enable-dbx-network was passed).],
         [DBX_ROOT="$withval"])
 if test x"$DBX_ROOT" = x; then
    # Still not found, we will hence look for it using the "well-known"
-   # places (well... for the moment, only the Debian package directory) 
+   # places (well... for the moment, only the Debian package directory)
    for dir in \
        /usr/share/sgml/docbook/dtd/xml/$DBX_DTD_VERSION
    do
         if test -e $dir/docbookx.dtd; then
-           DBX_ROOT="$dir"; 
+           DBX_ROOT="$dir";
            break;
         fi
    done
 fi
 AC_MSG_RESULT(${DBX_ROOT:-network})
 if test x"$DBX_ROOT" = x; then
-   if test x"$enable_dbx_network" != x  -a -n "$DBX_DOC"; then 
+   if test x"$enable_dbx_network" != x  -a -n "$DBX_DOC"; then
         AC_MSG_ERROR([The Docbook XML DTD was not found, and accessing it
 through network is forbidden.])
    fi
@@ -137,12 +137,12 @@ stylesheet root. Default is to use well-known locations (or network if
         [ DBX_XSL_ROOT="$withval" ])
 if test x"$DBX_XSL_ROOT" = x; then
    # Still not found, we will hence look for it using the "well-known"
-   # places (well... for the moment, only the Debian standard directory) 
+   # places (well... for the moment, only the Debian standard directory)
    for dir in \
        /usr/share/sgml/docbook/stylesheet/xsl/nwalsh
    do
         if test -e "$dir/html/docbook.xsl"; then
-           DBX_XSL_ROOT="$dir"; 
+           DBX_XSL_ROOT="$dir";
            break;
         fi
    done
@@ -150,7 +150,7 @@ fi
 AC_MSG_RESULT(${DBX_XSL_ROOT:-network})
 if test x"$DBX_XSL_ROOT" = x; then
    if test x"$enable_dbx_network" != x -a -n "$DBX_DOC"; then
-        AC_MSG_ERROR([The Docbook XML DTD was not found, and accessing it 
+        AC_MSG_ERROR([The Docbook XML DTD was not found, and accessing it
 through network is forbidden.])
    fi
    DBX_XSL_ROOT="http://http://docbook.sourceforge.net/release/xsl/current"

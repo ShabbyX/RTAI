@@ -86,8 +86,8 @@ void MenageHmsh_PlusNSeconds(int n, MenageHmsh_tHour *h)
 
 void MenageHmsh_PlusOneUnit(MenageHmsh_tHour *h, BOOLEAN *reportSeconds)
 {
-	h->hundredthes = (h->hundredthes + 1)%100; 
-	*reportSeconds = h->hundredthes == 0; 
+	h->hundredthes = (h->hundredthes + 1)%100;
+	*reportSeconds = h->hundredthes == 0;
 	if (*reportSeconds) {
 		MenageHmsh_PlusOneSecond(h);
 	}
@@ -146,11 +146,11 @@ void Display_Get(MenageHmsh_tChain11 *chain, Display_tDest *receiver)
 	rt_sem_wait(&notEmpty);
 	rt_sem_wait(&mutex);
 	if (TimesBufferstatus == full) {
-		*receiver = destChrono; 
+		*receiver = destChrono;
 		*chain = times;
 		TimesBufferstatus = empty;
 	} else if (HourBufferstatus == full) {
-		*receiver = destClock; 
+		*receiver = destClock;
 		*chain = hour;
 		HourBufferstatus = empty;
 	}

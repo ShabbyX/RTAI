@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: sem.h,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -60,7 +60,7 @@ private:
  * Binary Semaphore class
  */
 class BinarySemaphore
-:	public Semaphore 
+:	public Semaphore
 {
 public:
 	BinarySemaphore();
@@ -74,8 +74,8 @@ private:
 /**
  * Counting Semaphore class
  */
-class CountingSemaphore 
-:	public Semaphore 
+class CountingSemaphore
+:	public Semaphore
 {
 public:
 	CountingSemaphore();
@@ -89,8 +89,8 @@ private:
 /**
  * Resource Semaphore class
  */
-class ResourceSemaphore 
-:	public Semaphore 
+class ResourceSemaphore
+:	public Semaphore
 {
 public:
 	ResourceSemaphore();

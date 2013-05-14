@@ -27,49 +27,49 @@
 00017 <span class="comment"> * along with this program; if not, write to the Free Software</span>
 00018 <span class="comment"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
 00019 <span class="comment"> */</span>
-00020 
+00020
 00021 <span class="preprocessor">#ifndef _RTAI_LEDS_H</span>
 00022 <span class="preprocessor"></span><span class="preprocessor">#define _RTAI_LEDS_H</span>
 00023 <span class="preprocessor"></span>
 00024 <span class="preprocessor">#include &lt;rtai_types.h&gt;</span>
-00025 
+00025
 00026 <span class="preprocessor">#ifdef CONFIG_RTAI_INTERNAL_LEDS_SUPPORT</span>
 00027 <span class="preprocessor"></span>
 00028 <span class="preprocessor">#include &lt;asm/rtai_leds.h&gt;</span>
-00029 
+00029
 00030 <span class="preprocessor">#ifdef __cplusplus</span>
 00031 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00032 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00033 
+00033
 00034 <span class="keywordtype">int</span> __rtai_leds_init(<span class="keywordtype">void</span>);
-00035 
+00035
 00036 <span class="keywordtype">void</span> __rtai_leds_exit(<span class="keywordtype">void</span>);
-00037 
+00037
 00038 <span class="keywordtype">void</span> rt_leds_set_mask(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> mask,
 00039                       <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> value);
-00040 
+00040
 00041 <span class="keywordtype">void</span> rt_toggle_leds(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> l);
-00042 
+00042
 00043 <span class="keywordtype">void</span> rt_reset_leds(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> l);
-00044 
+00044
 00045 <span class="keywordtype">void</span> rt_set_leds(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> l);
-00046 
+00046
 00047 <span class="keywordtype">void</span> rt_clear_leds(<span class="keywordtype">void</span>);
-00048 
+00048
 00049 <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> rt_get_leds(<span class="keywordtype">void</span>);
-00050 
+00050
 00051 <span class="keywordtype">void</span> rt_set_leds_port(<span class="keywordtype">int</span> p);
-00052 
+00052
 00053 <span class="keywordtype">void</span> rt_config_leds(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> type,
 00054                     <span class="keywordtype">void</span> (*func)(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> p, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> l),
 00055                     <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> p);
-00056 
+00056
 00057 <span class="preprocessor">#ifdef __cplusplus</span>
 00058 <span class="preprocessor"></span>}
 00059 <span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span>
-00060 
+00060
 00061 <span class="preprocessor">#endif </span><span class="comment">/* CONFIG_RTAI_INTERNAL_LEDS_SUPPORT */</span>
-00062 
+00062
 00063 <span class="preprocessor">#endif </span><span class="comment">/* !_RTAI_LEDS_H */</span>
 </pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Jan 18 22:53:52 2005 for RTAI API by&nbsp;
 <a href="http://www.doxygen.org/index.html">

@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: tbx.cc,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -30,7 +30,7 @@ namespace RTAI {
 TypedMailbox::TypedMailbox()
 {
 	rt_printk("TypedMailbox::TypedMailbox() %p\n",this);
-	m_TypedMailbox = 0;   
+	m_TypedMailbox = 0;
 	m_Owner = true;
 	m_Named = false;
 }
@@ -38,7 +38,7 @@ TypedMailbox::TypedMailbox()
 TypedMailbox::TypedMailbox(int size, int flags)
 {
 	rt_printk("TypedMailbox::TypedMailbox( int size=%d, int flags=%d) %p\n",size,flags,this);
-	m_TypedMailbox = 0;   
+	m_TypedMailbox = 0;
 	m_Owner = true;
 	m_Named = false;
 
@@ -47,7 +47,7 @@ TypedMailbox::TypedMailbox(int size, int flags)
 
 TypedMailbox::TypedMailbox(const char* name)
 {
-	m_TypedMailbox = 0;   
+	m_TypedMailbox = 0;
 	m_Named = true;
 	m_Owner = false;
 	
@@ -56,7 +56,7 @@ TypedMailbox::TypedMailbox(const char* name)
 
 TypedMailbox::TypedMailbox(const char* name, int size, int flags)
 {
-	m_TypedMailbox = 0;   
+	m_TypedMailbox = 0;
 	m_Named = true;
 	m_Owner = true;
 	init(name,size,flags);

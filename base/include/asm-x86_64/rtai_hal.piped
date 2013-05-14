@@ -92,7 +92,7 @@ static inline unsigned long long rtai_ulldiv (unsigned long long ull,
 static inline int rtai_imuldiv (int i, int mult, int div) {
 
     /* Returns (int)i = (int)i*(int)(mult)/(int)div. */
-    
+
     int dummy;
 
     __asm__ __volatile__ ( \
@@ -164,7 +164,7 @@ static inline unsigned long long rtai_u64div32c(unsigned long long a,
 #define RTAI_APIC_ICOUNT	  ((RTAI_FREQ_APIC + HZ/2)/HZ)
 #define RTAI_COUNTER_2_LATCH      0xfffe
 #define RTAI_LATENCY_8254         CONFIG_RTAI_SCHED_8254_LATENCY
-#define RTAI_SETUP_TIME_8254      2011 
+#define RTAI_SETUP_TIME_8254      2011
 
 #define RTAI_CALIBRATED_APIC_FREQ 0
 #define RTAI_FREQ_APIC            (rtai_tunables.apic_freq)
@@ -361,7 +361,7 @@ static inline void rt_get_global_lock(void)
 static inline void rt_release_global_lock(void)
 {
 #if 1
-        barrier(); 
+        barrier();
         atomic_clear_mask((0xFFFF0001 << adeos_processor_id()), (atomic_t *)&rtai_cpu_lock);
         cpu_relax();
         barrier();
@@ -636,7 +636,7 @@ void rt_do_irq(unsigned irq);
 int rt_request_linux_irq(unsigned irq,
 			 irqreturn_t (*handler)(int irq,
 			 void *dev_id,
-			 struct pt_regs *regs), 
+			 struct pt_regs *regs),
 			 char *name,
 			 void *dev_id);
 

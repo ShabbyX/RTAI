@@ -105,8 +105,8 @@ int main(void)
 	rt_thread_init(nam2num("MNTSK"), 100, 0, SCHED_FIFO, 0x1);
 	rt_printk("\nTESTING THE SCHEDULER WITH SEMs [%d LOOPs].\n", LOOPS);
 
-	sem1 = rt_sem_init(nam2num("SEM1"), 0);    
-	sem2 = rt_sem_init(nam2num("SEM2"), 0);    
+	sem1 = rt_sem_init(nam2num("SEM1"), 0);
+	sem2 = rt_sem_init(nam2num("SEM2"), 0);
 
 	thread1 = rt_thread_create(task1, NULL, STACK_SIZE);
 	poll(NULL, 0, 100);
@@ -117,8 +117,8 @@ int main(void)
 	rt_sem_signal(sem1);
 	rt_thread_join(thread1);
 
-	rt_sem_delete(sem1);    
-	rt_sem_delete(sem2);    
+	rt_sem_delete(sem1);
+	rt_sem_delete(sem2);
 
         rt_task_delete(NULL);
 	rt_printk("END SCHEDULER TEST WITH SEMs.\n\n");

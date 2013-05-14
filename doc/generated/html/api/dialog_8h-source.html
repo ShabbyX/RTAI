@@ -8,7 +8,7 @@
 <a class="qindex" href="main.html">Main&nbsp;Page</a> | <a class="qindex" href="modules.html">Modules</a> | <a class="qindex" href="files.html">File&nbsp;List</a> | <a class="qindex" href="globals.html">Globals</a> | <a class="qindex" href="pages.html">Related&nbsp;Pages</a>  | <span class="search"><u>S</u>earch&nbsp;for&nbsp;<input class="search" type="text" name="query" value="" size="20" accesskey="s"/></span></form></div>
 <div class="nav">
 <a class="el" href="dir_000000.html">base</a>&nbsp;/&nbsp;<a class="el" href="dir_000012.html">config</a>&nbsp;/&nbsp;<a class="el" href="dir_000013.html">kconfig</a>&nbsp;/&nbsp;<a class="el" href="dir_000014.html">lxdialog</a></div>
-<h1>dialog.h</h1><div class="fragment"><pre class="fragment">00001 
+<h1>dialog.h</h1><div class="fragment"><pre class="fragment">00001
 00002 <span class="comment">/*</span>
 00003 <span class="comment"> *  dialog.h -- common declarations for all dialog modules</span>
 00004 <span class="comment"> *</span>
@@ -28,14 +28,14 @@
 00018 <span class="comment"> *  along with this program; if not, write to the Free Software</span>
 00019 <span class="comment"> *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</span>
 00020 <span class="comment"> */</span>
-00021 
+00021
 00022 <span class="preprocessor">#include &lt;sys/types.h&gt;</span>
 00023 <span class="preprocessor">#include &lt;fcntl.h&gt;</span>
 00024 <span class="preprocessor">#include &lt;unistd.h&gt;</span>
 00025 <span class="preprocessor">#include &lt;ctype.h&gt;</span>
 00026 <span class="preprocessor">#include &lt;stdlib.h&gt;</span>
 00027 <span class="preprocessor">#include &lt;string.h&gt;</span>
-00028 
+00028
 00029 <span class="preprocessor">#include CURSES_LOC</span>
 00030 <span class="preprocessor"></span>
 00031 <span class="comment">/*</span>
@@ -63,7 +63,7 @@
 00053 <span class="preprocessor"></span><span class="preprocessor">#define MIN(x,y) (x &lt; y ? x : y)</span>
 00054 <span class="preprocessor"></span><span class="preprocessor">#define MAX(x,y) (x &gt; y ? x : y)</span>
 00055 <span class="preprocessor"></span>
-00056 
+00056
 00057 <span class="preprocessor">#ifndef ACS_ULCORNER</span>
 00058 <span class="preprocessor"></span><span class="preprocessor">#define ACS_ULCORNER '+'</span>
 00059 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
@@ -136,18 +136,18 @@
 00126 <span class="comment"> */</span>
 00127 <span class="keyword">extern</span> <span class="keywordtype">bool</span> use_colors;
 00128 <span class="keyword">extern</span> <span class="keywordtype">bool</span> use_shadow;
-00129 
+00129
 00130 <span class="keyword">extern</span> chtype attributes[];
-00131 
+00131
 00132 <span class="keyword">extern</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *backtitle;
-00133 
+00133
 00134 <span class="comment">/*</span>
 00135 <span class="comment"> * Function prototypes</span>
 00136 <span class="comment"> */</span>
 00137 <span class="keyword">extern</span> <span class="keywordtype">void</span> create_rc (<span class="keyword">const</span> <span class="keywordtype">char</span> *filename);
 00138 <span class="keyword">extern</span> <span class="keywordtype">int</span> parse_rc (<span class="keywordtype">void</span>);
-00139 
-00140 
+00139
+00140
 00141 <span class="keywordtype">void</span> init_dialog (<span class="keywordtype">void</span>);
 00142 <span class="keywordtype">void</span> end_dialog (<span class="keywordtype">void</span>);
 00143 <span class="keywordtype">void</span> attr_clear (WINDOW * win, <span class="keywordtype">int</span> height, <span class="keywordtype">int</span> width, chtype attr);
@@ -158,14 +158,14 @@
 00148 <span class="keywordtype">void</span> draw_box (WINDOW * win, <span class="keywordtype">int</span> y, <span class="keywordtype">int</span> x, <span class="keywordtype">int</span> height, <span class="keywordtype">int</span> width, chtype box,
 00149                 chtype border);
 00150 <span class="keywordtype">void</span> draw_shadow (WINDOW * win, <span class="keywordtype">int</span> y, <span class="keywordtype">int</span> x, <span class="keywordtype">int</span> height, <span class="keywordtype">int</span> width);
-00151 
+00151
 00152 <span class="keywordtype">int</span> first_alpha (<span class="keyword">const</span> <span class="keywordtype">char</span> *string, <span class="keyword">const</span> <span class="keywordtype">char</span> *exempt);
 00153 <span class="keywordtype">int</span> dialog_yesno (<span class="keyword">const</span> <span class="keywordtype">char</span> *title, <span class="keyword">const</span> <span class="keywordtype">char</span> *prompt, <span class="keywordtype">int</span> height, <span class="keywordtype">int</span> width);
 00154 <span class="keywordtype">int</span> dialog_msgbox (<span class="keyword">const</span> <span class="keywordtype">char</span> *title, <span class="keyword">const</span> <span class="keywordtype">char</span> *prompt, <span class="keywordtype">int</span> height,
 00155                 <span class="keywordtype">int</span> width, <span class="keywordtype">int</span> pause);
 00156 <span class="keywordtype">int</span> dialog_textbox (<span class="keyword">const</span> <span class="keywordtype">char</span> *title, <span class="keyword">const</span> <span class="keywordtype">char</span> *file, <span class="keywordtype">int</span> height, <span class="keywordtype">int</span> width);
 00157 <span class="keywordtype">int</span> dialog_menu (<span class="keyword">const</span> <span class="keywordtype">char</span> *title, <span class="keyword">const</span> <span class="keywordtype">char</span> *prompt, <span class="keywordtype">int</span> height, <span class="keywordtype">int</span> width,
-00158                 <span class="keywordtype">int</span> menu_height, <span class="keyword">const</span> <span class="keywordtype">char</span> *choice, <span class="keywordtype">int</span> item_no, 
+00158                 <span class="keywordtype">int</span> menu_height, <span class="keyword">const</span> <span class="keywordtype">char</span> *choice, <span class="keywordtype">int</span> item_no,
 00159                 <span class="keyword">const</span> <span class="keywordtype">char</span> * <span class="keyword">const</span> * items);
 00160 <span class="keywordtype">int</span> dialog_checklist (<span class="keyword">const</span> <span class="keywordtype">char</span> *title, <span class="keyword">const</span> <span class="keywordtype">char</span> *prompt, <span class="keywordtype">int</span> height,
 00161                 <span class="keywordtype">int</span> width, <span class="keywordtype">int</span> list_height, <span class="keywordtype">int</span> item_no,
@@ -173,7 +173,7 @@
 00163 <span class="keyword">extern</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> dialog_input_result[];
 00164 <span class="keywordtype">int</span> dialog_inputbox (<span class="keyword">const</span> <span class="keywordtype">char</span> *title, <span class="keyword">const</span> <span class="keywordtype">char</span> *prompt, <span class="keywordtype">int</span> height,
 00165                 <span class="keywordtype">int</span> width, <span class="keyword">const</span> <span class="keywordtype">char</span> *init);
-00166 
+00166
 00167 <span class="comment">/*</span>
 00168 <span class="comment"> * This is the base for fictitious keys, which activate</span>
 00169 <span class="comment"> * the buttons.</span>
@@ -185,7 +185,7 @@
 00175 <span class="comment"> */</span>
 00176 <span class="preprocessor">#define M_EVENT (KEY_MAX+1)</span>
 00177 <span class="preprocessor"></span>
-00178 
+00178
 00179 <span class="comment">/*</span>
 00180 <span class="comment"> * The `flag' parameter in checklist is used to select between</span>
 00181 <span class="comment"> * radiolist and checklist</span>

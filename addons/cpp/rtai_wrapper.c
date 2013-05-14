@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: rtai_wrapper.c,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -30,7 +30,7 @@
 void __rt_get_global_lock(void){
 	rt_get_global_lock();
 }
- 
+
 void __rt_release_global_lock(void){
 	rt_release_global_lock();
 }

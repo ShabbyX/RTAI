@@ -9,7 +9,7 @@
 <div class="nav">
 <a class="el" href="dir_000000.html">base</a>&nbsp;/&nbsp;<a class="el" href="dir_000015.html">include</a></div>
 <h1>rtai_scb.h File Reference</h1><hr><a name="_details"></a><h2>Detailed Description</h2>
-SCB stand for Shared (memory) Circular Buffer. 
+SCB stand for Shared (memory) Circular Buffer.
 <p>
 It is a non blocking implementation for just a single writer (producer) and reader (consumer) and, under such a constraint, it can be a specific substitute for RTAI mailboxes. There are other constraints that must be satisfied so it cannot be a general substitute for the more flexible RTAI mailboxes. In fact it provides just functions corresponding to RTAI mailboxes non blocking atomic send/receive of messages, i.e. the equivalents of rt_mbx_send_if and rt_mbx_receive_if. Moreover the circular buffer size must be &gt;= to the largest message to be sent/received. Thus sending/receiving a message either succeeds of fails. However thanks to the use of shared memory it should be more efficient than mailboxes in atomic exchanges of messages from kernel to user space. So it is a good candidate for supporting drivers development.<p>
 <dl compact><dt><b>Author:</b></dt><dd>Paolo Mantegazza</dd></dl>
@@ -89,7 +89,7 @@ This graph shows which files directly or indirectly include this file:<p><center
     <td>
 
 <p>
-Get the number of bytes avaiable in a shared memory circular buffer. 
+Get the number of bytes avaiable in a shared memory circular buffer.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -129,7 +129,7 @@ rt_scb_bytes is used to get the number of bytes avaiable in a shared memory circ
     <td>
 
 <p>
-Free a shared memory circular buffer. 
+Free a shared memory circular buffer.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -185,7 +185,7 @@ Do not call this function if you provided your own memory to the circular buffer
     <td>
 
 <p>
-eavedrops a message. 
+eavedrops a message.
 <p>
 rt_scb_evdrp atomically spies the message <em>msg</em> of <em>msg_size</em> bytes from the shared memory circular buffer <em>scb</em>. It returns immediately and the caller is never blocked. It is like rt_scb_get but leaves the message in the shared memory circular buffer.<p>
 <dl compact><dt><b>Returns:</b></dt><dd>On success, i.e. message got, it returns 0, msg_size on failure. </dd></dl>
@@ -232,7 +232,7 @@ rt_scb_evdrp atomically spies the message <em>msg</em> of <em>msg_size</em> byte
     <td>
 
 <p>
-Gets (receives) a message, only if the whole message can be passed all at once. 
+Gets (receives) a message, only if the whole message can be passed all at once.
 <p>
 rt_scb_get tries to atomically receive the message <em>msg</em> of <em>msg_size</em> bytes from the shared memory circular buffer <em>scb</em>. It returns immediately and the caller is never blocked.<p>
 <dl compact><dt><b>Returns:</b></dt><dd>On success, i.e. message got, it returns 0, msg_size on failure. </dd></dl>
@@ -279,7 +279,7 @@ rt_scb_get tries to atomically receive the message <em>msg</em> of <em>msg_size<
     <td>
 
 <p>
-Allocate and initialize a shared memory circular buffer. 
+Allocate and initialize a shared memory circular buffer.
 <p>
 <p><b>For internal use only.</b></p>
 <p>
@@ -341,7 +341,7 @@ It must be remarked that only the very first call does a real allocation, any fo
     <td>
 
 <p>
-Puts (sends) a message, only if the whole message can be passed all at once. 
+Puts (sends) a message, only if the whole message can be passed all at once.
 <p>
 rt_scb_put tries to atomically send the message <em>msg</em> of <em>msg_size</em> bytes to the shared memory circular buffer <em>scb</em>. It returns immediately and the caller is never blocked.<p>
 <dl compact><dt><b>Returns:</b></dt><dd>On success, i.e. message put, it returns 0, msg_size on failure. </dd></dl>

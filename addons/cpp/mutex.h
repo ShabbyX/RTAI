@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: mutex.h,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -35,7 +35,7 @@ namespace RTAI {
  * mutal exclusion lock class
  */
 class Mutex
-:	public Semaphore 
+:	public Semaphore
 {
 friend class Condition;
 public:
@@ -48,7 +48,7 @@ private:
 
 /**
  * Scoped mutal exclusion lock class
- */ 
+ */
 class ScopedMutex {
 public:
 	ScopedMutex( Mutex& m );

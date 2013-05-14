@@ -24,7 +24,7 @@ void par_getstr(char * str, int par[], int init, int len);
 static void init(scicos_block *block)
 {
   double *y = GetRealOutPortPtrs(block,1);
- 
+
   y[0] = 0.0;
 }
 
@@ -56,7 +56,7 @@ void rtsquare(scicos_block *block,int flag)
   if (flag==1){          /* set output */
     inout(block);
   }
-  else if (flag==5){     /* termination */ 
+  else if (flag==5){     /* termination */
     end(block);
   }
   else if (flag ==4){    /* initialisation */

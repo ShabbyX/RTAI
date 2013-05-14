@@ -459,20 +459,20 @@ RTAI_PROTO(int, rt_comedi_do_insnlist, (void *dev, comedi_insnlist *ilist))
 		int i, retval, maxdata;
 
 		maxdata = 0;
-		for (i = 0; i < lilist.n_insns; i++) { 
+		for (i = 0; i < lilist.n_insns; i++) {
 			if (lilist.insns[i].n > maxdata) {
 				maxdata = lilist.insns[i].n;
 			}
 		} {
 		lsampl_t ldata[lilist.n_insns][maxdata];
-		for (i = 0; i < lilist.n_insns; i++) { 
+		for (i = 0; i < lilist.n_insns; i++) {
 			memcpy(ldata[i], lilist.insns[i].data, lilist.insns[i].n*sizeof(lsampl_t));
 			insns[i] = lilist.insns[i];
 			insns[i].data = ldata[i];
 		}
 		lilist.insns = insns;
 		retval = rtai_lxrt(FUN_COMEDI_LXRT_INDX, COMEDI_LXRT_SIZARG, _KCOMEDI_DO_INSN_LIST, &arg).i[LOW];
-		for (i = 0; i < retval; i++) { 
+		for (i = 0; i < retval; i++) {
 			memcpy(ilist->insns[i].data, ldata[i], insns[i].n*sizeof(lsampl_t));
 		} }
         	return retval;
@@ -663,8 +663,8 @@ static inline int _RT_comedi_command(unsigned long node, int port, void *dev, co
 		struct rpced_cmd { struct cmds_ofstlens ofstlens; comedi_cmd cmd; unsigned int chanlist[cmd->chanlist_len]; short data[cmd->data_len]; } lcmd;
         	struct { void *dev; void *lcmd; long test; long cmdlen; } arg = { dev, &lcmd, test, sizeof(struct rpced_cmd) };
 		set_cmd_offsets_lens();
-		memcpy(lcmd.chanlist, cmd->chanlist, lcmd.ofstlens.chanlist_len*sizeof(unsigned int)); 
-		memcpy(lcmd.data, cmd->data, lcmd.ofstlens.data_len*sizeof(short)); 
+		memcpy(lcmd.chanlist, cmd->chanlist, lcmd.ofstlens.chanlist_len*sizeof(unsigned int));
+		memcpy(lcmd.data, cmd->data, lcmd.ofstlens.data_len*sizeof(short));
                 struct { unsigned long fun; long type; void *args; long argsize; long space; unsigned long partypes; } args = { PACKPORT(port, FUN_COMEDI_LXRT_INDX, _RT_KCOMEDI_COMMAND, 0), UR1(2, 4), &arg, COMEDI_LXRT_SIZARG, 0, PARTYPES4(VADR, SINT, UINT, UINT) };
 		return rtai_lxrt(NET_RPC_IDX, SIZARGS, NETRPC, &args).i[LOW];
 	}
@@ -897,14 +897,14 @@ static inline int _RT_comedi_do_insnlist(unsigned long node, int port, void *dev
 	if (n_insns > 0 && insns) {
 		int i, maxdata;
 		maxdata = 0;
-		for (maxdata = i = 0; i < n_insns; i++) { 
+		for (maxdata = i = 0; i < n_insns; i++) {
 			maxdata += insns[i].n;
 		} {
 		struct rpced_insns { struct insns_ofstlens ofstlens; comedi_insn insns[n_insns]; unsigned int data_ofsts[n_insns]; lsampl_t data[maxdata]; } linsns;
 		struct { void *dev; long n_insns; void *linsns; unsigned long linsns_len; } arg = { dev, n_insns, &linsns, sizeof(linsns) };
 		struct { unsigned long fun; long type; void *args; long argsize; long space; unsigned long partypes; } args = { PACKPORT(port, FUN_COMEDI_LXRT_INDX, _RT_KCOMEDI_DO_INSN_LIST, 0), UR1(3, 4) | UW1(3, 4), &arg, COMEDI_LXRT_SIZARG, 0, PARTYPES4(VADR, UINT, SINT, UINT) };
 		int retval, offset;
-		for (offset = i = 0; i < n_insns; i++) { 
+		for (offset = i = 0; i < n_insns; i++) {
 			linsns.insns[i] = insns[i];
 			memcpy(&linsns.data[offset], insns[i].data, insns[i].n*sizeof(lsampl_t));
 			linsns.data_ofsts[i] = offset;
@@ -912,11 +912,11 @@ static inline int _RT_comedi_do_insnlist(unsigned long node, int port, void *dev
 		}
 		set_insn_offsets_lens();
 		retval = rtai_lxrt(NET_RPC_IDX, SIZARGS, NETRPC, &args).i[LOW];
-		for (offset = i = 0; i < retval; i++) { 
+		for (offset = i = 0; i < retval; i++) {
 			memcpy(insns[i].data, &linsns.data[offset], insns[i].n*sizeof(lsampl_t));
 			offset += insns[i].n;
 			insns[i].n = linsns.insns[i].n;
-		} 
+		}
 	       	return retval;
 	} }
        	return -1;

@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 
 
 	printf("MASTER TASK MAKES ITSELF PERIODIC WITH A PERIOD OF 1 ms\n");
-	rt_task_make_periodic(mtsk, rt_get_time(), nano2count(PERIOD)); 
+	rt_task_make_periodic(mtsk, rt_get_time(), nano2count(PERIOD));
 	rt_sleep(nano2count(1000000000));
 
 	count = PERIODIC_LOOPS;
@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
 	rt_send(rcvd_from, 0xeeeeeeee);
 
 	printf("MASTER TASK WAITS FOR BUDDY TASK END\n");
-	while (rt_get_adr(btsk_name)) { 
+	while (rt_get_adr(btsk_name)) {
 		rt_sleep(nano2count(1000000000));
 	}
 	printf("MASTER TASK STOPS THE PERIODIC TIMER\n");

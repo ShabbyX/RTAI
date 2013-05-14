@@ -66,7 +66,7 @@ void latency (void *cookie)
 #ifdef USE_TASK_SHADOW
 	rt_task_shadow(&latency_task, "sampling", 99, T_FPU);
 #endif
-    rtai_task_init(0xcacca, 0); 
+    rtai_task_init(0xcacca, 0);
     start_rtai_timer();
 
     nsamples = (ONE_BILLION / period_ns)/1000; // fast hard/soft please
@@ -384,7 +384,7 @@ int main (int argc, char **argv)
     histogram_max = calloc(histogram_size, sizeof(long));
     histogram_min = calloc(histogram_size, sizeof(long));
 
-    if (!(histogram_avg && histogram_max && histogram_min)) 
+    if (!(histogram_avg && histogram_max && histogram_min))
         cleanup_upon_sig(0);
 
     if (period_ns == 0)

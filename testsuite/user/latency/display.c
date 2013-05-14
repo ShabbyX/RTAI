@@ -62,7 +62,7 @@ int main(void)
 	while (!end) {
   		if ((n++ % 21) == 0) {
 #if 1
-			time(&timestamp); 
+			time(&timestamp);
 			tm_timestamp=localtime(&timestamp);
 			printf("%04d/%02d/%0d %02d:%02d:%02d\n", tm_timestamp->tm_year+1900, tm_timestamp->tm_mon+1, tm_timestamp->tm_mday, tm_timestamp->tm_hour, tm_timestamp->tm_min, tm_timestamp->tm_sec);
 #endif

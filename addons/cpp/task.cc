@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: task.cc,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -111,16 +111,16 @@ Task::Task(){
 	m_Named = false;
 	m_Task = 0;
 	for(int n=0; n < CONFIG_RTAI_CPUS;n++)
-		m_CpuUse[n] = 0; 
+		m_CpuUse[n] = 0;
 }
 
 Task::~Task(){
 	std::cerr << "Task::~Task() " << (void*)this << std::endl;	
 
-	if(m_Task != 0) 
+	if(m_Task != 0)
 	{
 		if( m_TaskOwner ){
-			if( m_Named){ 
+			if( m_Named){
 				rt_named_task_delete(m_Task);
 			} else {
 				rt_task_delete(m_Task);
@@ -141,7 +141,7 @@ Task::Task(int stack_size,
 	m_Named = false;	
 	m_Task = 0;
 	for(int n=0; n < CONFIG_RTAI_CPUS;n++)
-		m_CpuUse[n] = 0; 
+		m_CpuUse[n] = 0;
 
 	init(stack_size,priority,uses_fpu,use_signal,cpuid);
 }
@@ -159,7 +159,7 @@ Task::Task(const char* name,
 	m_TaskOwner = true;
 	m_Task = 0;
 	for(int n=0; n < CONFIG_RTAI_CPUS;n++)
-		m_CpuUse[n] = 0; 
+		m_CpuUse[n] = 0;
 
 	init(name,stack_size,priority,uses_fpu,use_signal,cpuid);
 }
@@ -172,14 +172,14 @@ Task::Task(const char* name )
 	m_TaskOwner = false;
 	m_Task = 0;
 	for(int n=0; n < CONFIG_RTAI_CPUS;n++)
-		m_CpuUse[n] = 0; 
+		m_CpuUse[n] = 0;
 
 	init( name );
 }
 
 bool Task::init(int stack_size,
-	        int priority, 
-                bool uses_fpu, 
+	        int priority,
+                bool uses_fpu,
                 bool use_signal,
                 unsigned int cpuid)
 {
@@ -205,8 +205,8 @@ bool Task::init(int stack_size,
 
 bool Task::init(const char* name,
 		int stack_size,
-	        int priority, 
-                bool uses_fpu, 
+	        int priority,
+                bool uses_fpu,
                 bool use_signal,
                 unsigned int cpuid)
 {
@@ -325,7 +325,7 @@ void Task::dump_cpu_use()
 {
 	int cpuid;
 
-	// Output some statistics about CPU usage 
+	// Output some statistics about CPU usage
 	std::cerr << "\n\nCPU USE SUMMARY\n";
 	for (cpuid = 0; cpuid < CONFIG_RTAI_CPUS; cpuid++) {
 		std::cerr << "# " << cpuid << "  -> " << m_CpuUse[ cpuid ] << std::endl;

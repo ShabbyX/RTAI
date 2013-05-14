@@ -541,12 +541,12 @@ static void *rt_HostInterface(void *args)
       rt_receivex(task, &rtParameters, sizeof(char), &len);
       rt_GetParameterInfo(MMI, &rtParameters, 0);
       rt_returnx(task, &rtParameters, sizeof(rtParameters));
-					  
+					
       for (i = 0; i < nBlockParams; i++) {
 	rt_receivex(task, &rtParameters, sizeof(char), &len);
 	rt_GetParameterInfo(MMI, &rtParameters, i);
 	rt_returnx(task, &rtParameters, sizeof(rtParameters));
-      } 
+      }
       }
       { int scopeIdx, Reply;
       float samplingTime;
@@ -568,7 +568,7 @@ static void *rt_HostInterface(void *args)
 				if(j < 0) break;
 	      char traceName[10];
 				sprintf(traceName, "Trace %d", j+1);
-	      rt_returnx(task, traceName, strlen(traceName)+1); // return null terminated string	    
+	      rt_returnx(task, traceName, strlen(traceName)+1); // return null terminated string	
 	  }
 	  samplingTime = ssGetSampleTime(rtaiScope[scopeIdx],0);
 	  rt_returnx(task, &samplingTime, sizeof(float));
@@ -724,7 +724,7 @@ static void *rt_HostInterface(void *args)
       rt_receivex(task, &rtParameters, sizeof(char), &len);
       rt_GetParameterInfo(MMI, &rtParameters, i);
       rt_returnx(task, &rtParameters, sizeof(rtParameters));
-    } 
+    }
     break;			
     }
 

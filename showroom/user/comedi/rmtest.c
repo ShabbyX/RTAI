@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
 /*
- * This program does nothing but verifying the RTAI netrpc interface 
+ * This program does nothing but verifying the RTAI netrpc interface
  * to COMEDI services in terms of passing call and return parameters.
  */
 
@@ -91,7 +91,7 @@ int test_cmd(void)
 	comedi_cmd cmd;
 	unsigned int chanlist[NCHAN];
 	unsigned int buf_read[NCHAN] = { 2, 3, 4, 5, 6 };
-  
+
 	memset(&cmd, 0, sizeof(cmd));
 	for (i = 0; i < NCHAN; i++) {
 		chanlist[i] = CR_PACK(buf_read[i], AI_RANGE, AREF_GROUND);
@@ -104,7 +104,7 @@ int test_cmd(void)
 	cmd.start_arg = 0;
 
 	cmd.scan_begin_src = TRIG_TIMER;
-	cmd.scan_begin_arg = SAMP_TIME; 
+	cmd.scan_begin_arg = SAMP_TIME;
 
 	cmd.convert_src = TRIG_TIMER;
 	cmd.convert_arg = 2000;
@@ -124,7 +124,7 @@ int test_cmd(void)
 	}
 
 	cmd.scan_begin_src = TRIG_TIMER;
-	cmd.scan_begin_arg = SAMP_TIME; 
+	cmd.scan_begin_arg = SAMP_TIME;
 
 	cmd.convert_src = TRIG_TIMER;
 	cmd.convert_arg = 2000;

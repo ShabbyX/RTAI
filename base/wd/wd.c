@@ -27,7 +27,7 @@
  *                           RTAI Watchdog Module
  *                           --------------------
  *
- * Module to provide various watchdog protection services to RTAI thereby 
+ * Module to provide various watchdog protection services to RTAI thereby
  * protecting it (and the host Linux OS) against programming errors in RTAI
  * applications.
  *
@@ -38,60 +38,60 @@
  *    overunning. Normally such tasks would prevent other tasks (and Linux)
  *    from being scheduled and possibly lock and/or crash the system.
  *
- * 2. The ability to adjust important parameters when inserting the watchdog 
+ * 2. The ability to adjust important parameters when inserting the watchdog
  *    module and from other RT modules via a simple API.
  *
- * 3. Configurable policy to use on bad tasks. Currently available policies 
+ * 3. Configurable policy to use on bad tasks. Currently available policies
  *    are...
  *
- *    o Do nothing, other than log some messages and keep a record of the bad 
- *      task. In reality you will probably never get the chance to see these 
- *      messages if the task is locking out the Linux task. This policy is not 
+ *    o Do nothing, other than log some messages and keep a record of the bad
+ *      task. In reality you will probably never get the chance to see these
+ *      messages if the task is locking out the Linux task. This policy is not
  *      usually recommended.
  *
  *    o Resynchronise the task's frame time and nothing more. This is good for
- *      tasks that occasionally overrun. Doing this should prevent the system 
+ *      tasks that occasionally overrun. Doing this should prevent the system
  *      from locking up and crashing as the scheduler tries to catch up with the
- *      missed deadlines. The maximum (if any) number of times to resynchronise 
- *      a task before permanently suspending it is configurable. 
+ *      missed deadlines. The maximum (if any) number of times to resynchronise
+ *      a task before permanently suspending it is configurable.
  *
- *    o Debug policy, this is a special case of the above resync policy. It is 
- *      recommended when step and trace debugging RT tasks that use oneshot RT 
+ *    o Debug policy, this is a special case of the above resync policy. It is
+ *      recommended when step and trace debugging RT tasks that use oneshot RT
  *      timer mode. (See README.WATCHDOG for full details)
  *
  *    o Stretch (increase) the period of the offending task until it no longer
- *      overruns. The percentage increment (of the original period) is 
- *      configurable, as is the maximum (if any) number of times to increase 
- *      the period before permanently suspending the task. When a task's period 
- *      is increased in this way the scheduler is asked to resynchronise the 
+ *      overruns. The percentage increment (of the original period) is
+ *      configurable, as is the maximum (if any) number of times to increase
+ *      the period before permanently suspending the task. When a task's period
+ *      is increased in this way the scheduler is asked to resynchronise the
  *      task's frame time in order to prevent the system locking up and crashing
- *      as it tries to catch up with the missed deadlines. This policy could be 
- *      a useful development aid if you are not sure what period to use for a 
+ *      as it tries to catch up with the missed deadlines. This policy could be
+ *      a useful development aid if you are not sure what period to use for a
  *      task.
  *
  *    o Slip the offending task by forcibly suspending it for a percentage of
  *      its period. The percentage slip is configurable, as is the maximum (if
- *      any) number of times to slip the task before it is permanently 
- *      suspended. By slipping the task, other tasks (including Linux) are 
+ *      any) number of times to slip the task before it is permanently
+ *      suspended. By slipping the task, other tasks (including Linux) are
  *      given the oppurtunity to run and the system doesn't lock up.
  *
- *    o Suspend the offending task so that it no longer poses any threat to 
- *      the system. The task will still be known to the scheduler so it could 
+ *    o Suspend the offending task so that it no longer poses any threat to
+ *      the system. The task will still be known to the scheduler so it could
  *      possibly be resumed sometime later.
  *
  *    o Kill the offending task and remove all trace of it.
  *
  * 4. A safety limit that will suspend any task that overruns excessively. The
- *    definition of 'excessive' is configurable and can also be disabled. This 
+ *    definition of 'excessive' is configurable and can also be disabled. This
  *    is designed to deal with infinite loops no matter what the current policy.
- *    The safety limit needs to be set sufficiently high so that it doesn't 
+ *    The safety limit needs to be set sufficiently high so that it doesn't
  *    interfere with the prevailing watchdog policy. This limit is automatically
- *    disabled when the policy is set to 'Debug' in order not to suspend RT 
+ *    disabled when the policy is set to 'Debug' in order not to suspend RT
  *    tasks being step and trace debugged.
  *
- * 5. Keeps a record of bad tasks (apart from those that have been killed) that 
+ * 5. Keeps a record of bad tasks (apart from those that have been killed) that
  *    can be examined via a /proc interface. (/proc/rtai/watchdog)
- * 
+ *
  * ID: @(#)$Id: wd.c,v 1.14 2009/03/18 23:15:48 mante Exp $
  *
  *******************************************************************************/
@@ -145,7 +145,7 @@ static char version[] = "$Revision: 1.14 $";
 static char ver[10];
 
 // User friendly policy names
-static char *policy_name[] = 
+static char *policy_name[] =
 	{"Nothing", "Resync", "Debug", "Stretch", "Slip", "Suspend", "Kill"};
 
 // Private data
@@ -357,7 +357,7 @@ static void stretch_badtask(RT_TASK *t, BAD_RT_TASK *bt, int cpuid)
     // Stretch the task's period and ask scheduler to resync frame time
     t->period      += llimd(bt->orig_period, Stretch, 100);
     t->resync_frame = 1;
-    DBUG( "...by %d%% to %uns\n", 
+    DBUG( "...by %d%% to %uns\n",
 	  Stretch, (int)count2nano_cpuid(t->period, cpuid));
 }
 
@@ -365,10 +365,10 @@ static void start_slipping_badtask(RT_TASK *t, BAD_RT_TASK *bt, int cpuid)
 {
     // Mark task as slipping and work out how many watchdog ticks to suspend it
     bt->slipping  = 1;
-    bt->countdown = llimd( llimd(count2nano_cpuid(t->period, cpuid), Slip, 100), 
-	    		   1, 
+    bt->countdown = llimd( llimd(count2nano_cpuid(t->period, cpuid), Slip, 100),
+	    		   1,
 			   TickPeriod);
-    DBUG( "Suspending task 0x%X for %d ticks (slip %d)\n", 
+    DBUG( "Suspending task 0x%X for %d ticks (slip %d)\n",
 	  t, bt->countdown, bt->count);
 
     // Suspend task - it will get resumed later
@@ -414,7 +414,7 @@ static void handle_badtask(int wd, RT_TASK *t, BAD_RT_TASK *bt, RTIME overrun)
         bt->policy = WD_SUSPEND;
 	bt->orig_period = 0;
 	WDLOG("Suspending task %p\n", t);
-	smpproof_task_suspend(t);  
+	smpproof_task_suspend(t);
 	return;
     }
 
@@ -422,7 +422,7 @@ static void handle_badtask(int wd, RT_TASK *t, BAD_RT_TASK *bt, RTIME overrun)
     if ((overrun >= (Safety * bt->orig_period)) && (Safety >= 0)) {
 	WDLOG("Forcing suspension of severely overrun task %p\n", t);
 	bt->forced = 1;
-	smpproof_task_suspend(t);  
+	smpproof_task_suspend(t);
 	return;
     }
 
@@ -458,12 +458,12 @@ static void handle_badtask(int wd, RT_TASK *t, BAD_RT_TASK *bt, RTIME overrun)
 
 	case WD_SUSPEND: 	// Suspend the task
 	    WDLOG("Suspending task %p\n", t);
-	    smpproof_task_suspend(t);  
+	    smpproof_task_suspend(t);
 	    break;
 
 	case WD_KILL:    	// Delete the task
 	    WDLOG("Killing task %p\n", t);
-	    smpproof_task_delete(t);   
+	    smpproof_task_delete(t);
 	    break;
 
 	default:      	// Invalid
@@ -506,7 +506,7 @@ static void watchdog(long wd)
 #ifdef WDBUG
 	// LED heartbeat visible on parallel port
 	led = !led;
-	if (led) output |=  (1 << wd); 
+	if (led) output |=  (1 << wd);
 	else     output &= ~(1 << wd);
 	outb(output, LPT_PORT);
 #endif
@@ -545,7 +545,7 @@ static void watchdog(long wd)
 	    }
 
 	    // Ignore non-periodic, resyncing, suspended or blocked tasks
-	    if (!task->period || task->resync_frame || task->state & 
+	    if (!task->period || task->resync_frame || task->state &
 		    (RT_SCHED_SUSPENDED|RT_SCHED_DELAYED|RT_SCHED_SEMAPHORE|RT_SCHED_SEND|RT_SCHED_RECEIVE|RT_SCHED_RPC|RT_SCHED_RETURN)) {
 		continue;
 	    }
@@ -603,9 +603,9 @@ static int wdog_read_proc(char *page, char **start, off_t off, int count,
     // Heading and parameters
     PROC_PRINT("\nRTAI Watchdog Status\n");
     PROC_PRINT(  "--------------------\n");
-    PROC_PRINT("%d Watchdog task%s running @ %dHz in %s mode\n", 
+    PROC_PRINT("%d Watchdog task%s running @ %dHz in %s mode\n",
 	       num_wdogs, num_wdogs > 1 ? "s" : "",
-	       (int)imuldiv(NSECS_PER_SEC, 1, TickPeriod), 
+	       (int)imuldiv(NSECS_PER_SEC, 1, TickPeriod),
 	       wd_OneShot ? "oneshot" : "periodic");
 #ifdef MY_ALLOC
     PROC_PRINT("Using static memory management (%d entries)\n", BAD_TASK_MAX);
@@ -613,9 +613,9 @@ static int wdog_read_proc(char *page, char **start, off_t off, int count,
     PROC_PRINT("Using dynamic memory management\n");
 #endif
     PROC_PRINT("Policy         : '%s'\n", policy_name[Policy]);
-    PROC_PRINT("Grace periods  : %d%s\n", Grace, 
+    PROC_PRINT("Grace periods  : %d%s\n", Grace,
 	       (Policy <= WD_STRETCH) ? " (forced)" : "");
-    PROC_PRINT("Grace divisor  : %d%s\n", GraceDiv, 
+    PROC_PRINT("Grace divisor  : %d%s\n", GraceDiv,
 	       (Policy <= WD_STRETCH) ? " (forced)" : "");
     PROC_PRINT("Safety limit   : ");
     if (Safety < 0) {
@@ -658,22 +658,22 @@ static int wdog_read_proc(char *page, char **start, off_t off, int count,
 		}
 		cpuid = task->runnable_on_cpus;
 		osec  = ulldiv( count2nano_cpuid(bt->orig_period, cpuid),
-			        NSECS_PER_SEC, 
+			        NSECS_PER_SEC,
 			        &onsec);
 		asec  = ulldiv( count2nano_cpuid(task->period, cpuid),
-			        NSECS_PER_SEC, 
+			        NSECS_PER_SEC,
 			        &ansec);
 		PROC_PRINT( "0x%08lx %-2d "
 			    "%s%-2d%s "
 			    "%-8d 0x%-3x %-5d "
 			    "%02ds %09dns %02ds %09dns "
 			    "%s\n",
-			    (long)task, id, 
+			    (long)task, id,
 			    "",
 			    (int)task->runnable_on_cpus,
 			    " ",
 			    task->priority, task->state, bt->count,
-			    (int)osec, (int)onsec, (int)asec, (int)ansec, 
+			    (int)osec, (int)onsec, (int)asec, (int)ansec,
 			    action);
 	    }
 	    id++;
@@ -739,17 +739,17 @@ int __rtai_wd_init(void)
 	start_rt_timer((int)nano2count(TickPeriod));
     }
 
-    // Set up and start watchdog tasks (on separate CPUs if MP). We run as 
+    // Set up and start watchdog tasks (on separate CPUs if MP). We run as
     // many real watchdogs as there are CPUs.
     for (dog = 0; dog < num_online_cpus(); dog++) {
-	rt_task_init_cpuid(&wdog[dog], 
-			   (dog < num_wdogs) ? watchdog : dummy, 
+	rt_task_init_cpuid(&wdog[dog],
+			   (dog < num_wdogs) ? watchdog : dummy,
 			    dog, 2000, RT_SCHED_HIGHEST_PRIORITY, 0, 0, dog);
     }
     for (dog = 0; dog < num_wdogs; dog++) {
 	period = nano2count_cpuid(TickPeriod, dog);
-	rt_task_make_periodic(&wdog[dog], 
-			       rt_get_time_cpuid(dog) + period, 
+	rt_task_make_periodic(&wdog[dog],
+			       rt_get_time_cpuid(dog) + period,
 			       period);
     }
 
@@ -763,9 +763,9 @@ int __rtai_wd_init(void)
 
     // Log initial parameters
     WDLOG( "loaded.\n");
-    WDLOG( "%d Watchdog task%s running @ %dHz in %s mode\n", 
+    WDLOG( "%d Watchdog task%s running @ %dHz in %s mode\n",
 	   num_wdogs, num_wdogs > 1 ? "s" : "",
-	   imuldiv(NSECS_PER_SEC, 1, TickPeriod), 
+	   imuldiv(NSECS_PER_SEC, 1, TickPeriod),
 	   wd_OneShot ? "oneshot" : "periodic");
 #ifdef MY_ALLOC
     WDLOG( "Using static memory management (%d entries)\n", BAD_TASK_MAX);
@@ -773,9 +773,9 @@ int __rtai_wd_init(void)
     WDLOG( "Using dynamic memory management\n");
 #endif
     WDLOG( "Policy         : '%s'\n", policy_name[Policy]);
-    WDLOG( "Grace periods  : %d%s\n", Grace, 
+    WDLOG( "Grace periods  : %d%s\n", Grace,
 	   (Policy <= WD_STRETCH) ? " (forced)" : "");
-    WDLOG( "Grace divisor  : %d%s\n", GraceDiv, 
+    WDLOG( "Grace divisor  : %d%s\n", GraceDiv,
 	   (Policy <= WD_STRETCH) ? " (forced)" : "");
     WDLOG( "Safety limit   : ");
     if (Safety < 0) {

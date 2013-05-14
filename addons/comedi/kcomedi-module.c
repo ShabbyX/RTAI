@@ -201,13 +201,13 @@ static inline int __rt_comedi_command_data_wread(void *dev, unsigned int subdev,
 		rt_get_user(mask, cbmaskarg);
 	}
 	switch (waitmode) {
-		case WAIT: 
+		case WAIT:
 			retval = rt_comedi_wait(&cbmask);
 			break;
-		case WAITIF: 
+		case WAITIF:
 			retval = rt_comedi_wait_if(&cbmask);
 			break;
-		case WAITUNTIL: 
+		case WAITUNTIL:
 			retval = _rt_comedi_wait_until(&cbmask, until);
 			break;
 		default: // useless, just to avoid compiler warnings
@@ -247,13 +247,13 @@ RTAI_SYSCALL_MODE long _rt_comedi_command_data_wread_timed(void *dev, unsigned i
 RTAI_SYSCALL_MODE long RT_comedi_command_data_wread(void *dev, unsigned int subdev, long nchans, lsampl_t *data, unsigned int *cbmask, unsigned int datalen, RTIME time)
 {
 	switch (nchans & 0x3) {
-		case 0: 
+		case 0:
 			return __rt_comedi_command_data_wread(dev, subdev, nchans >> 2, data, (RTIME)0, cbmask, WAIT);
-		case 1: 
+		case 1:
 			return __rt_comedi_command_data_wread(dev, subdev, nchans >> 2, data, (RTIME)0, cbmask, WAITIF);
-		case 2: 
+		case 2:
 			return __rt_comedi_command_data_wread(dev, subdev, nchans >> 2, data, time, cbmask, WAITUNTIL);
-		case 3: 
+		case 3:
 			return _rt_comedi_command_data_wread_until(dev, subdev, nchans >> 2, data, cbmask, rt_get_time() + time);
 	}
 	return 0;
@@ -511,18 +511,18 @@ static RTAI_SYSCALL_MODE int _comedi_unmap(void *dev, unsigned int subdev)
 }
 
 static inline int __rt_comedi_wait(RTIME until, unsigned int *cbmask, int waitmode)
-{ 
+{
 	if (cbmask) {
 		long retval;
 		RT_TASK *task = _rt_whoami();
 		switch (waitmode) {
-			case WAIT: 
+			case WAIT:
 				retval = rt_task_suspend(task);
 				break;
-			case WAITIF: 
+			case WAITIF:
 				retval = rt_task_suspend_if(task);
 				break;
-			case WAITUNTIL: 
+			case WAITUNTIL:
 				retval = rt_task_suspend_until(task, until);
 				break;
 			default: // useless, just to avoid compiler warnings
@@ -540,12 +540,12 @@ static inline int __rt_comedi_wait(RTIME until, unsigned int *cbmask, int waitmo
 }
 
 RTAI_SYSCALL_MODE long rt_comedi_wait(unsigned int *cbmask)
-{ 
+{
 	return __rt_comedi_wait((RTIME)0, cbmask, WAIT);
 }
 
 RTAI_SYSCALL_MODE long rt_comedi_wait_if(unsigned int *cbmask)
-{ 
+{
 	return __rt_comedi_wait((RTIME)0, cbmask, WAITIF);
 }
 
@@ -602,8 +602,8 @@ static struct rt_fun_entry rtai_comedi_fun[] = {
  ,[_KCOMEDI_TRIGGER    ]           = { 0, rt_comedi_trigger }
  ,[_KCOMEDI_DATA_WRITE]            = { 0, _comedi_data_write}
  ,[_KCOMEDI_DATA_READ]             = { 0, _comedi_data_read }
- ,[_KCOMEDI_DATA_READ_DELAYED]     = { 0, _comedi_data_read_delayed }       
- ,[_KCOMEDI_DATA_READ_HINT]        = { 0, _comedi_data_read_hint }          
+ ,[_KCOMEDI_DATA_READ_DELAYED]     = { 0, _comedi_data_read_delayed }
+ ,[_KCOMEDI_DATA_READ_HINT]        = { 0, _comedi_data_read_hint }
  ,[_KCOMEDI_DIO_CONFIG]            = { 0, _comedi_dio_config }
  ,[_KCOMEDI_DIO_READ]              = { 0, _comedi_dio_read }
  ,[_KCOMEDI_DIO_WRITE]             = { 0, _comedi_dio_write }

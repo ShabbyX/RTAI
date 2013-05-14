@@ -113,7 +113,7 @@ static inline unsigned long hweight_long(unsigned long w)
 
 #else /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) */
 
-#ifndef init_MUTEX_LOCKED 
+#ifndef init_MUTEX_LOCKED
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26)
 #define init_MUTEX_LOCKED(sem)  sema_init(sem, 0)
 #endif
@@ -193,7 +193,7 @@ typedef struct class_simple class_t;
 #ifndef CONFIG_SYSFS
 typedef void * class_t;
 #define class_create(a,b)  ((void *)1)
-#define CLASS_DEVICE_CREATE(a, b, c, d, ...)  ((void *)1) 
+#define CLASS_DEVICE_CREATE(a, b, c, d, ...)  ((void *)1)
 #define class_device_destroy(a, b)
 #define class_destroy(a)
 #endif

@@ -151,7 +151,7 @@ do { \
       memset(&task->fpu_reg, 0, sizeof(task->fpu_reg)); \
 }while(0)
 #else
-#define init_fp_env() 
+#define init_fp_env()
 #endif
 
 #define init_task_fpenv(task)  do { init_fpenv((task)->fpu_reg); } while(0)

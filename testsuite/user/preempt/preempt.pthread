@@ -61,22 +61,22 @@ static void *slow_fun(void *arg)
 	rt_make_hard_real_time();
 	rt_sem_wait_barrier(barrier);
         svt = rt_get_time() - SLOWMUL*period;
-        while (!end) {  
+        while (!end) {
                 jit = (int) count2nano((t = rt_get_time()) - svt - SLOWMUL*period);
                 svt = t;
                 if (jit) { jit = - jit; }
                 if (jit > slowjit) { slowjit = jit; }
                 rt_busy_sleep(SLOWMUL/2*TICK_TIME);
-                rt_task_wait_period();                                        
+                rt_task_wait_period();
         }
 	rt_sem_wait_barrier(barrier);
 	rt_make_soft_real_time();
 	rt_task_delete(Slow_Task);
 	return 0;
-}                                        
+}
 
-static void *fast_fun(void *arg) 
-{                             
+static void *fast_fun(void *arg)
+{
         int jit;
         RTIME svt, t;
 
@@ -89,14 +89,14 @@ static void *fast_fun(void *arg)
 	rt_make_hard_real_time();
 	rt_sem_wait_barrier(barrier);
         svt = rt_get_time() - SLOWMUL*period;
-        while (!end) {  
+        while (!end) {
                 jit = (int) count2nano((t = rt_get_time()) - svt - FASTMUL*period);
                 svt = t;
                 if (jit) { jit = - jit; }
                 if (jit > fastjit) { fastjit = jit; }
                 rt_busy_sleep(FASTMUL/2*TICK_TIME);
-                rt_task_wait_period();                                        
-        }                      
+                rt_task_wait_period();
+        }
 	rt_sem_wait_barrier(barrier);
 	rt_make_soft_real_time();
 	rt_task_delete(Fast_Task);
@@ -122,7 +122,7 @@ static void *latency_fun(void *arg)
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	rt_make_hard_real_time();
 	rt_sem_wait_barrier(barrier);
-        while (!end) {  
+        while (!end) {
 		average = 0;
 		for (skip = 0; skip < NAVRG; skip++) {
 			expected += period;

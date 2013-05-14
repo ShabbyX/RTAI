@@ -2,7 +2,7 @@
  * \brief Dynamic memory allocation services.
  *
  * Copyright (C) 2007 Paolo Mantegazza <mantegazza@aero.polimi.it>.
- * Specific following parts as copyrighted/licensed by their authors. 
+ * Specific following parts as copyrighted/licensed by their authors.
  *
  * RTAI is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
@@ -195,7 +195,7 @@ int rtheap_free(rtheap_t *heap, void *block)
 
 /******************************** BEGIN TLSF ********************************/
 
-/* 
+/*
  * Two Levels Segregate Fit memory allocator (TLSF)
  * Version 2.4.2
  *
@@ -223,27 +223,27 @@ int rtheap_free(rtheap_t *heap, void *block)
  *
  * - Add 64 bit support. It now runs on x86_64 and solaris64.
  * - I also tested this on vxworks/32and solaris/32 and i386/32 processors.
- * - Remove assembly code. I could not measure any performance difference 
+ * - Remove assembly code. I could not measure any performance difference
  *   on my core2 processor. This also makes the code more portable.
  * - Moved defines/typedefs from tlsf.h to tlsf.c
- * - Changed MIN_BLOCK_SIZE to sizeof (free_ptr_t) and BHDR_OVERHEAD to 
- *   (sizeof (bhdr_t) - MIN_BLOCK_SIZE). This does not change the fact 
- *    that the minumum size is still sizeof 
+ * - Changed MIN_BLOCK_SIZE to sizeof (free_ptr_t) and BHDR_OVERHEAD to
+ *   (sizeof (bhdr_t) - MIN_BLOCK_SIZE). This does not change the fact
+ *    that the minumum size is still sizeof
  *   (bhdr_t).
  * - Changed all C++ comment style to C style. (// -> /.* ... *./)
- * - Used ls_bit instead of ffs and ms_bit instead of fls. I did this to 
- *   avoid confusion with the standard ffs function which returns 
+ * - Used ls_bit instead of ffs and ms_bit instead of fls. I did this to
+ *   avoid confusion with the standard ffs function which returns
  *   different values.
- * - Created set_bit/clear_bit fuctions because they are not present 
+ * - Created set_bit/clear_bit fuctions because they are not present
  *   on x86_64.
  * - Added locking support + extra file target.h to show how to use it.
  * - Added get_used_size function (REMOVED in 2.4)
  * - Added rtl_realloc and rtl_calloc function
  * - Implemented realloc clever support.
  * - Added some test code in the example directory.
- *        
  *
- * (Oct 23 2006) Adam Scislowicz: 
+ *
+ * (Oct 23 2006) Adam Scislowicz:
  *
  * - Support for ARMv5 implemented
  *
@@ -273,7 +273,7 @@ int rtheap_free(rtheap_t *heap, void *block)
 #include "target.h"
 #else
 #define TLSF_CREATE_LOCK(_unused_)   do{}while(0)
-#define TLSF_DESTROY_LOCK(_unused_)  do{}while(0) 
+#define TLSF_DESTROY_LOCK(_unused_)  do{}while(0)
 #define TLSF_ACQUIRE_LOCK(_unused_)  do{}while(0)
 #define TLSF_RELEASE_LOCK(_unused_)  do{}while(0)
 #endif
@@ -582,7 +582,7 @@ static __inline__ bhdr_t *FIND_SUITABLE_BLOCK(tlsf_t * _tlsf, int *_fl, int *_sl
 	}
 
 #if USE_SBRK || USE_MMAP
-static __inline__ void *get_new_area(size_t * size) 
+static __inline__ void *get_new_area(size_t * size)
 {
     void *area;
 
@@ -848,7 +848,7 @@ static void init_extent (rtheap_t *heap, rtextent_t *extent)
 	extent->freelist = extent->membase;
 }
 
-/*! 
+/*!
  * \fn int rtheap_init(rtheap_t *heap,
                        void *heapaddr,
 		       u_long heapsize,
@@ -1000,7 +1000,7 @@ int rtheap_init (rtheap_t *heap, void *heapaddr, u_long heapsize, u_long pagesiz
 	return 0;
 }
 
-/*! 
+/*!
  * \fn void rtheap_destroy(rtheap_t *heap);
  * \brief Destroys a memory heap.
  *
@@ -1068,7 +1068,7 @@ static caddr_t get_free_range (rtheap_t *heap,
 
 		if (headpage == extent->freelist)
 		    extent->freelist = *((caddr_t *)lastpage);
-		else   
+		else
 		    *((caddr_t *)freehead) = *((caddr_t *)lastpage);
 
 		goto splitpage;
@@ -1102,7 +1102,7 @@ splitpage:
 
 	*((caddr_t *)eblock) = NULL;
 	}
-    else   
+    else
         *((caddr_t *)headpage) = NULL;
 
     pagenum = (headpage - extent->membase) >> heap->pageshift;
@@ -1124,7 +1124,7 @@ splitpage:
     return headpage;
 }
 
-/*! 
+/*!
  * \fn void *rtheap_alloc(rtheap_t *heap, u_long size, int flags);
  * \brief Allocate a memory block from a memory heap.
  *
@@ -1228,7 +1228,7 @@ void *rtheap_alloc (rtheap_t *heap, u_long size, int mode)
 	/* Directly request a free page range. */
 	block = get_free_range(heap,size,0,mode);
 
-	if (block)   
+	if (block)
 	    heap->ubytes += size;
 	}
 
@@ -1239,7 +1239,7 @@ release_and_exit:
     return block;
 }
 
-/*! 
+/*!
  * \fn int rtheap_free(rtheap_t *heap, void *block);
  * \brief Release a memory block to a memory heap.
  *
@@ -1326,7 +1326,7 @@ unlock_and_fail:
 
 	    /* Return the sub-list to the free page list, keeping
 	       an increasing address order to favor coalescence. */
-    
+
 	    for (nextpage = extent->freelist, lastpage = NULL;
 		 nextpage != NULL && nextpage < (caddr_t)block;
 		 lastpage = nextpage, nextpage = *((caddr_t *)nextpage))

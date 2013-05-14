@@ -62,19 +62,19 @@ double ceil ( double x )
 	xhi = xInHex.words.hi & 0x7fffffffUL;	  // xhi is the high half of |x|
 	target = ( xInHex.words.hi < signMask );
 	
-	if ( xhi < 0x43300000ul ) 
+	if ( xhi < 0x43300000ul )
 /*******************************************************************************
 *      Is |x| < 2.0^52?                                                        *
 *******************************************************************************/
 		{
-		if ( xhi < 0x3ff00000ul ) 
+		if ( xhi < 0x3ff00000ul )
 /*******************************************************************************
 *      Is |x| < 1.0?                                                           *
 *******************************************************************************/
 			{
 			if ( ( xhi | xInHex.words.lo ) == 0ul )  // zero x is exact case
 				return ( x );
-			else 
+			else
 				{			                // inexact case
 				asm ("mffs %0" : "=f" (OldEnvironment.dbl));
 				OldEnvironment.words.lo |= 0x02000000ul;
@@ -88,7 +88,7 @@ double ceil ( double x )
 /*******************************************************************************
 *      Is 1.0 < |x| < 2.0^52?                                                  *
 *******************************************************************************/
-		if ( target ) 
+		if ( target )
 			{
 			y = ( x + twoTo52 ) - twoTo52;          // round at binary pt.
 			if ( y < x )
@@ -97,7 +97,7 @@ double ceil ( double x )
 				return ( y );
 			}
 		
-		else 
+		else
 			{
 			y = ( x - twoTo52 ) + twoTo52;          // round at binary pt.
 			if ( y < x )
@@ -127,19 +127,19 @@ double floor ( double x )
 	xhi = xInHex.words.hi & 0x7fffffffUL;	  // xhi is the high half of |x|
 	target = ( xInHex.words.hi < signMask );
 	
-	if ( xhi < 0x43300000ul ) 
+	if ( xhi < 0x43300000ul )
 /*******************************************************************************
 *      Is |x| < 2.0^52?                                                        *
 *******************************************************************************/
 		{
-		if ( xhi < 0x3ff00000ul ) 
+		if ( xhi < 0x3ff00000ul )
 /*******************************************************************************
 *      Is |x| < 1.0?                                                           *
 *******************************************************************************/
 			{
 			if ( ( xhi | xInHex.words.lo ) == 0ul )  // zero x is exact case
 				return ( x );
-			else 
+			else
 				{			                // inexact case
 				asm ("mffs %0" : "=f" (OldEnvironment.dbl));
 				OldEnvironment.words.lo |= 0x02000000ul;
@@ -153,7 +153,7 @@ double floor ( double x )
 /*******************************************************************************
 *      Is 1.0 < |x| < 2.0^52?                                                  *
 *******************************************************************************/
-		if ( target ) 
+		if ( target )
 			{
 			y = ( x + twoTo52 ) - twoTo52;          // round at binary pt.
 			if ( y > x )
@@ -162,7 +162,7 @@ double floor ( double x )
 				return ( y );
 			}
 		
-		else 
+		else
 			{
 			y = ( x - twoTo52 ) + twoTo52;          // round at binary pt.
 			if ( y > x )

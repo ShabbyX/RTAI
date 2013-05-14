@@ -74,7 +74,7 @@ static void rt_timer_tick(void)
 			rt_times.linux_time += rt_times.linux_tick;
 		}
 		rt_pend_linux_irq(TIMER_8254_IRQ);
-	} 
+	}
 	if (Mode) {
 		rt_sem_signal(&sem);
 	} else {
@@ -110,7 +110,7 @@ static int rt_timer_tick_ext(int irq, unsigned long data)
 		}
 		rt_pend_linux_irq(TIMER_8254_IRQ);
 		ret = 0;
-	} 
+	}
 rt_sched_lock();
 	if (Mode) {
 		rt_sem_signal(&sem);

@@ -1,7 +1,7 @@
 /**
  * @ingroup lxrt
  * @file
- * Common scheduling function 
+ * Common scheduling function
  * @author Paolo Mantegazza
  *
  * This file is part of the RTAI project.
@@ -59,7 +59,7 @@ RTAI_SYSCALL_MODE void rt_set_sched_policy(RT_TASK *task, int policy, int rr_qua
 /**
  * @anchor rt_get_prio
  * @brief Check a task priority.
- * 
+ *
  * rt_get_prio returns the base priority of task @e task.
  *
  * Recall that a task has a base native priority, assigned at its
@@ -83,7 +83,7 @@ int rt_get_prio(RT_TASK *task)
 /**
  * @anchor rt_get_inher_prio
  * @brief Check a task priority.
- * 
+ *
  * rt_get_prio returns the base priority task @e task has inherited
  * from other tasks, either blocked on resources owned by or waiting
  * to pass a message to task @e task.
@@ -109,7 +109,7 @@ int rt_get_inher_prio(RT_TASK *task)
 /**
  * @anchor rt_get_priorities
  * @brief Check inheredited and base priority.
- * 
+ *
  * rt_get_priorities returns the base and inherited priorities of a task.
  *
  * Recall that a task has a base native priority, assigned at its
@@ -143,7 +143,7 @@ RTAI_SYSCALL_MODE int rt_get_priorities(RT_TASK *task, int *priority, int *base_
 /**
  * @anchor rt_task_get_info
  * @brief Get task task data listed in RT_TASK_INFO type.
- * 
+ *
  * rt_task_get_info returns task data listed in RT_TASK_INFO type.
  *
  * @param task is the task of interest, NULL can be used for the current task.
@@ -157,7 +157,7 @@ RTAI_SYSCALL_MODE int rt_task_get_info(RT_TASK *task, RT_TASK_INFO *task_info)
 {
 	if (!task) {
 		task = RT_CURRENT;
-	} 
+	}
 	if (task->magic != RT_TASK_MAGIC || task_info == NULL) {
 		return -EINVAL;
 	}
@@ -170,9 +170,9 @@ RTAI_SYSCALL_MODE int rt_task_get_info(RT_TASK *task, RT_TASK_INFO *task_info)
 /**
  * @anchor rt_change_prio
  * @brief Change a task priority.
- * 
+ *
  * rt_change_prio changes the base priority of task @e task to @e
- * prio. 
+ * prio.
  *
  * Recall that a task has a base native priority, assigned at its
  * birth or by @ref rt_change_prio(), and an actual, inherited,
@@ -180,8 +180,8 @@ RTAI_SYSCALL_MODE int rt_task_get_info(RT_TASK *task, RT_TASK_INFO *task_info)
  *
  * @param task is the affected task.
  *
- * @param priority is the new priority, it can range within 0 < prio < 
- * RT_SCHED_LOWEST_PRIORITY. 
+ * @param priority is the new priority, it can range within 0 < prio <
+ * RT_SCHED_LOWEST_PRIORITY.
  *
  * @return rt_change_prio returns the base priority task @e task had
  * before the change.
@@ -265,7 +265,7 @@ RTAI_SYSCALL_MODE int rt_change_prio(RT_TASK *task, int priority)
  *
  * Calling rt_whoami from a task can get a pointer to its own task
  * structure.
- * 
+ *
  * @return The pointer to the current task.
  */
 RT_TASK *rt_whoami(void)
@@ -324,12 +324,12 @@ void rt_task_yield(void)
  * rt_task_suspend suspends execution of the task task.
  *
  * It will not be executed until a call to @ref rt_task_resume() or
- * @ref rt_task_make_periodic() is made. Multiple suspends and require as 
+ * @ref rt_task_make_periodic() is made. Multiple suspends and require as
  * many @ref rt_task_resume() as the rt_task_suspends placed on a task.
  *
  * @param task pointer to a task structure.
  *
- * @return the task suspend depth. An abnormal termination returns as 
+ * @return the task suspend depth. An abnormal termination returns as
  * described below:
  * - @b -EINVAL: task does not refer to a valid task.
  * - @b RTE_UNBLKD:  the task was unblocked while suspended;
@@ -503,7 +503,7 @@ RTAI_SYSCALL_MODE int rt_task_resume(RT_TASK *task)
  * @retval READY Task @e task is ready to run (i.e. unblocked).
  * Note that on a UniProcessor machine the currently running task is
  * just in READY state, while on MultiProcessors can be (READY |
- * RUNNING), see below. 
+ * RUNNING), see below.
  * @retval SUSPENDED Task @e task blocked waiting for a resume.
  * @retval DELAYED Task @e task blocked waiting for its next running
  * period or expiration of a timeout.
@@ -512,14 +512,14 @@ RTAI_SYSCALL_MODE int rt_task_resume(RT_TASK *task)
  * @retval SEND Task @e task blocked on sending a message, receiver
  * was not in RECEIVE state.
  * @retval RECEIVE Task @e task blocked waiting for incoming messages,
- * sends or rpcs. 
+ * sends or rpcs.
  * @retval RPC Task @e task blocked on a Remote Procedure Call,
  * receiver was not in RECEIVE state.
  * @retval RETURN Task @e task blocked waiting for a return from a
  * Remote Procedure Call, receiver got the RPC but has not replied
- * yet. 
+ * yet.
  * @retval RUNNING Task @e task is running, used only for SMP
- * schedulers. 
+ * schedulers.
  *
  * The returned task state is just an approximate information. Timer
  * and other hardware interrupts may cause a change in the state of
@@ -541,18 +541,18 @@ int rt_get_task_state(RT_TASK *task)
  * rt_linux_use_fpu informs the scheduler that floating point
  * arithmetic operations will be used also by foreground Linux
  * processes, i.e. the Linux kernel itself (unlikely) and any of its
- * processes. 
+ * processes.
  *
  * @param use_fpu_flag If this parameter has a nonzero value, the
  * Floating Point Unit (FPU) context is also switched when @e task or
  * the kernel becomes active.
  * This makes task switching slower, negligibly, on all 32 bits CPUs
- * but 386s and the oldest 486s. 
+ * but 386s and the oldest 486s.
  * This flag can be set also by rt_task_init when the real time task
  * is created. With UP and MUP schedulers care is taken to avoid
- * useless saves/ restores of the FPU environment. 
+ * useless saves/ restores of the FPU environment.
  * Under SMP tasks can be moved from CPU to CPU so saves/restores for
- * tasks using the FPU are always carried out. 
+ * tasks using the FPU are always carried out.
  * Note that by default Linux has this flag cleared. Beside by using
  * rt_linux_use_fpu you can change the Linux FPU flag when you insmod
  * any RTAI scheduler module by setting the LinuxFpu command line
@@ -574,13 +574,13 @@ void rt_linux_use_fpu(int use_fpu_flag)
 
 /**
  * @anchor rt_task_use_fpu
- * @brief 
+ * @brief
  *
  * rt_task_use_fpu informs the scheduler that floating point
  * arithmetic operations will be used by the real time task @e task.
  *
  * @param task is a pointer to the real time task.
- * 
+ *
  * @param use_fpu_flag If this parameter has a nonzero value, the
  * Floating Point Unit (FPU) context is also switched when @e task or
  * the kernel becomes active.
@@ -590,7 +590,7 @@ void rt_linux_use_fpu(int use_fpu_flag)
  * task is created. With UP and MUP schedulers care is taken to avoid
  * useless saves/restores of the FPU environment.
  * Under SMP tasks can be moved from CPU to CPU so saves/restores for
- * tasks using the FPU are always carried out. 
+ * tasks using the FPU are always carried out.
  *
  * @return 0 on success. A negative value on failure as described below:
  * - @b EINVAL: task does not refer to a valid task.
@@ -688,7 +688,7 @@ void rt_gettimeorig(RTIME time_orig[])
  * The time of first execution is defined through @e start_time or @e
  * start_delay. @e start_time is an absolute value measured in clock
  * ticks. @e start_delay is relative to the current time and measured
- * in nanoseconds. 
+ * in nanoseconds.
  *
  * @param task is a pointer to the task you want to make periodic.
  *
@@ -754,7 +754,7 @@ RTAI_SYSCALL_MODE int rt_task_make_periodic_relative_ns(RT_TASK *task, RTIME sta
  * @param period corresponds to the period of the task, in clock ticks.
  *
  * @retval 0 on success. A negative value on failure as described
- * below: 
+ * below:
  * - @b EINVAL: task does not refer to a valid task.
  *
  * See also: @ref rt_task_make_periodic_relative_ns().
@@ -801,7 +801,7 @@ RTAI_SYSCALL_MODE int rt_task_make_periodic(RT_TASK *task, RTIME start_time, RTI
  * been previously marked for a periodic execution by calling
  * @ref rt_task_make_periodic() or @ref rt_task_make_periodic_relative_ns().
  *
- * @return 0 if the period expires as expected. An abnormal termination 
+ * @return 0 if the period expires as expected. An abnormal termination
  * returns as described below:
  * - @b RTE_UNBLKD:  the task was unblocked while sleeping;
  * - @b RTE_TMROVRN: an immediate return was taken because the next period
@@ -943,7 +943,7 @@ RTIME next_period(void)
  * need of reading the 8254 timer.
  *
  * @param ns is the number of nanoseconds to wait.
- * 
+ *
  * See also: @ref rt_sleep(), @ref rt_sleep_until().
  *
  * @note A higher priority task or interrupt handler can run before
@@ -964,7 +964,7 @@ RTAI_SYSCALL_MODE void rt_busy_sleep(int ns)
  * rt_sleep suspends execution of the caller task for a time of delay
  * internal count units. During this time the CPU is used by other
  * tasks.
- * 
+ *
  * @param delay Corresponds to the time the task is going to be suspended.
  *
  * See also: @ref rt_busy_sleep(), @ref rt_sleep_until().
@@ -1007,12 +1007,12 @@ RTAI_SYSCALL_MODE int rt_sleep(RTIME delay)
  * rt_sleep_until is similar to @ref rt_sleep() but the parameter time
  * is the absolute time till the task have to be suspended. If the
  * given time is already passed this call has no effect.
- * 
+ *
  * @param time Absolute time till the task have to be suspended
  *
  * See also: @ref rt_busy_sleep(), @ref rt_sleep_until().
  *
- * @return 0 if the sleeping expires as expected. An abnormal termination 
+ * @return 0 if the sleeping expires as expected. An abnormal termination
  * returns as described below:
  * - @b RTE_UNBLKD:  the task was unblocked while sleeping;
  * - @b RTE_TMROVRN: an immediate return was taken because the time deadline
@@ -1448,22 +1448,22 @@ static inline int registr(unsigned long name, void *adr, int type, struct task_s
 static inline int drg_on_name(unsigned long name)
 {
 	return hash_rem_name(name, lxrt_list, max_slots, 0);
-} 
+}
 
 static inline int drg_on_name_cnt(unsigned long name)
 {
 	return hash_rem_name(name, lxrt_list, max_slots, -EFAULT);
-} 
+}
 
 static inline int drg_on_adr(void *adr)
 {
 	return hash_rem_adr(adr, lxrt_list, max_slots, 0);
-} 
+}
 
 static inline int drg_on_adr_cnt(void *adr)
 {
 	return hash_rem_adr(adr, lxrt_list, max_slots, -EFAULT);
-} 
+}
 
 static inline unsigned long get_name(void *adr)
 {
@@ -1481,17 +1481,17 @@ static inline unsigned long get_name(void *adr)
 		return hash_find_adr(adr, lxrt_list, max_slots, 0);
 	}
 	return 0;
-} 
+}
 
 static inline void *get_adr(unsigned long name)
 {
 	return hash_find_name(name, lxrt_list, max_slots, 0, NULL);
-} 
+}
 
 static inline void *get_adr_cnt(unsigned long name)
 {
 	return hash_find_name(name, lxrt_list, max_slots, 1, NULL);
-} 
+}
 
 static inline int get_type(unsigned long name)
 {
@@ -1616,7 +1616,7 @@ static inline int drg_on_name(unsigned long name)
 		rt_spin_unlock_irqrestore(flags, &list_lock);
 	}
 	return 0;
-} 
+}
 
 static inline int drg_on_name_cnt(unsigned long name)
 {
@@ -1637,7 +1637,7 @@ static inline int drg_on_name_cnt(unsigned long name)
 		rt_spin_unlock_irqrestore(flags, &list_lock);
 	}
 	return -EFAULT;
-} 
+}
 
 static inline int drg_on_adr(void *adr)
 {
@@ -1658,7 +1658,7 @@ static inline int drg_on_adr(void *adr)
 		rt_spin_unlock_irqrestore(flags, &list_lock);
 	}
 	return 0;
-} 
+}
 
 static inline int drg_on_adr_cnt(void *adr)
 {
@@ -1679,7 +1679,7 @@ static inline int drg_on_adr_cnt(void *adr)
 		rt_spin_unlock_irqrestore(flags, &list_lock);
 	}
 	return -EFAULT;
-} 
+}
 
 static inline unsigned long get_name(void *adr)
 {
@@ -1701,7 +1701,7 @@ static inline unsigned long get_name(void *adr)
 		}
 	}
 	return 0;
-} 
+}
 
 static inline void *get_adr(unsigned long name)
 {
@@ -1712,7 +1712,7 @@ static inline void *get_adr(unsigned long name)
 		}
 	}
 	return 0;
-} 
+}
 
 static inline void *get_adr_cnt(unsigned long name)
 {
@@ -1728,7 +1728,7 @@ static inline void *get_adr_cnt(unsigned long name)
 		rt_spin_unlock_irqrestore(flags, &list_lock);
 	}
 	return 0;
-} 
+}
 
 static inline int get_type(unsigned long name)
 {
@@ -1806,7 +1806,7 @@ int rt_register(unsigned long name, void *adr, int type, struct task_struct *t)
 int rt_drg_on_name(unsigned long name)
 {
 	return drg_on_name(name);
-} 
+}
 
 /**
  * @ingroup lxrt
@@ -1819,12 +1819,12 @@ int rt_drg_on_name(unsigned long name)
 int rt_drg_on_adr(void *adr)
 {
 	return drg_on_adr(adr);
-} 
+}
 
 RTAI_SYSCALL_MODE unsigned long rt_get_name(void *adr)
 {
 	return get_name(adr);
-} 
+}
 
 RTAI_SYSCALL_MODE void *rt_get_adr(unsigned long name)
 {
@@ -1887,7 +1887,7 @@ void krtai_objects_release(void)
 				case IS_PRX:
 					type = "PRX ";
 					((void (*)(void *))rt_fun_lxrt[PROXY_DETACH].fun)(entry.adr);
-					rt_drg_on_adr(entry.adr); 
+					rt_drg_on_adr(entry.adr);
 					break;
 	                       	default:
 					type = "ALIEN";
@@ -2086,9 +2086,9 @@ static int rtai_read_lxrt(char *page, char **start, off_t off, int count, int *e
 			i,    			// the slot number
 			name,       		// the name in 6 char asci
 			entry.name, 		// the name as unsigned long hex
-			entry.type >= PAGE_SIZE ? "SHMEM" : 
-			entry.type > sizeof(type_name)/sizeof(char *) ? 
-			"ALIEN" : 
+			entry.type >= PAGE_SIZE ? "SHMEM" :
+			entry.type > sizeof(type_name)/sizeof(char *) ?
+			"ALIEN" :
 			type_name[entry.type],	// the Type
 			entry.adr,		// The RT Handle
 			entry.tsk,   		// The Owner task pointer

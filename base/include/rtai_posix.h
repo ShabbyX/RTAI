@@ -103,7 +103,7 @@
 #define pthread_cleanup_pop_rt          pthread_cleanup_pop
 
 /*
- * _RT DO NOTHING FUNCTIONS 
+ * _RT DO NOTHING FUNCTIONS
  */
 
 #define pthread_attr_setdetachstate_rt(attr, detachstate)
@@ -118,9 +118,9 @@
 
 #define pthread_setcanceltype_rt(type, oldtype)
 #define pthread_setcancelstate_rt(state, oldstate)
-#define pthread_attr_getstackaddr_rt(attr, stackaddr) 
+#define pthread_attr_getstackaddr_rt(attr, stackaddr)
 #define pthread_attr_setstackaddr_rt(attr, stackaddr)
-#define pthread_attr_setguardsize_rt(attr, guardsize) 
+#define pthread_attr_setguardsize_rt(attr, guardsize)
 #define pthread_attr_getguardsize_rt(attr, guardsize)
 #define pthread_attr_setscope_rt(attr, scope)
 #define pthread_attr_getscope_rt(attr, scope)
@@ -223,7 +223,7 @@ static inline sem_t *sem_open(const char *namein, int oflags, int value, int typ
 	}
 	nametmp[i]='\0';
 	if (!oflags || value <= SEM_TIMOUT) {
-		SEM *tsem; 
+		SEM *tsem;
 		unsigned long handle = 0UL;
 		if ((tsem = _rt_typed_named_sem_init(nam2num(nametmp), value, type, &handle))) {
 			if ((handle) && (oflags == (O_CREAT | O_EXCL))) 	{
@@ -322,7 +322,7 @@ static inline int sem_getvalue(sem_t *sem, int *sval)
 /*
  * MUTEXES
  */
- 
+
 enum {
   PTHREAD_PROCESS_PRIVATE,
 #define PTHREAD_PROCESS_PRIVATE PTHREAD_PROCESS_PRIVATE
@@ -347,7 +347,7 @@ enum
 #define RTAI_MUTEX_ERRCHECK   (1 << 1)
 #define RTAI_MUTEX_RECURSIVE  (1 << 2)
 #define RTAI_MUTEX_PSHARED    (1 << 3)
- 
+
 static inline int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *mutexattr)
 {
 	rt_typed_sem_init(&mutex->mutex,  !mutexattr || (((long *)mutexattr)[0] & RTAI_MUTEX_DEFAULT) ? RESEM_BINSEM : (((long *)mutexattr)[0] & RTAI_MUTEX_ERRCHECK) ? RESEM_CHEKWT : RESEM_RECURS, RES_SEM);
@@ -690,7 +690,7 @@ static inline int pthread_rwlockattr_setkind_np(pthread_rwlockattr_t *attr, int 
 /*
  * SCHEDULING
  */
- 
+
 static inline int get_max_priority(int policy)
 {
 	return MAX_PRIO;
@@ -707,7 +707,7 @@ static void posix_wrapper_fun(pthread_cookie_t *cookie)
 	rt_sem_broadcast(&cookie->sem);
 	rt_sem_delete(&cookie->sem);
 //	rt_task_suspend(&cookie->task);
-} 
+}
 
 static inline int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg)
 {
@@ -1009,9 +1009,9 @@ static inline int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 /*
  * TIMERS
  */
- 
+
 struct rt_handler_support {
-	void (*_function)(sigval_t); 
+	void (*_function)(sigval_t);
 	sigval_t funarg;
 };
 
@@ -1031,13 +1031,13 @@ static inline int timer_create(clockid_t clockid, struct sigevent *evp, timer_t 
 	struct rt_handler_support *handler_data;			
 		
 	if (clockid != CLOCK_MONOTONIC && clockid != CLOCK_REALTIME) {
-		return -EINTR; 
+		return -EINTR;
 	}	
 	if (evp == NULL) {
-		return -EINTR; 
+		return -EINTR;
 	} else {
 		if (evp->sigev_notify == SIGEV_SIGNAL) {
-			return -EINTR; 
+			return -EINTR;
 		} else if (evp->sigev_notify == SIGEV_THREAD) {
 			timer = rt_malloc(sizeof(struct rt_tasklet_struct));
 			handler_data = rt_malloc(sizeof(struct rt_handler_support));
@@ -1045,7 +1045,7 @@ static inline int timer_create(clockid_t clockid, struct sigevent *evp, timer_t 
 			handler_data->_function = evp->_sigev_un._sigev_thread._function;
 			*timerid = rt_ptimer_create(timer, handler_wrpr, (unsigned long)handler_data, 1, 0);
 		} else {
-			return -EINTR; 
+			return -EINTR;
 		}
 	}
 		
@@ -1106,7 +1106,7 @@ static inline int timer_delete(timer_t timerid)
 
 struct task_struct;
 
-#undef  SEM_VALUE_MAX 
+#undef  SEM_VALUE_MAX
 #define SEM_VALUE_MAX  (SEM_TIMOUT - 1)
 #define SEM_BINARY     (0x7FFFFFFF)
 
@@ -1181,7 +1181,7 @@ RTAI_PROTO(int, pthread_get_adr_np, (unsigned long nameid, void *adr))
  */
 
 #define str2upr(si, so) \
-do { int i; for (i = 0; i <= RTAI_PNAME_MAXSZ; i++) so[i] = toupper(si[i]); } while (0) 
+do { int i; for (i = 0; i <= RTAI_PNAME_MAXSZ; i++) so[i] = toupper(si[i]); } while (0)
 
 RTAI_PROTO(sem_t *, __wrap_sem_open, (const char *namein, int oflags, int value, int type))
 {
@@ -1885,7 +1885,7 @@ RTAI_PROTO(int, __wrap_pthread_barrierattr_getpshared, (const pthread_barrieratt
 #define PTHREAD_HARD_REAL_TIME_NP  2
 
 RTAI_PROTO(int, pthread_setschedparam_np, (int priority, int policy, int rr_quantum_ns, unsigned long cpus_allowed, int mode))
-{ 
+{
 	RT_TASK *task;
 	if ((task = rt_buddy())) {
 		int hs;
@@ -2304,7 +2304,7 @@ RTAI_PROTO(int, __wrap_nanosleep,(const struct timespec *rqtp, struct timespec *
 /*
  * TIMER
  */
- 
+
 static int support_posix_timer(void *data)
 {
 	RT_TASK *task;
@@ -2379,7 +2379,7 @@ RTAI_PROTO (int, __wrap_timer_create, (clockid_t clockid, struct sigevent *evp, 
 
 	struct { struct rt_tasklet_struct *timer; void (*handler)(unsigned long); unsigned long data; long pid; long thread; } arg = { NULL, handler, data, pid, 0 };
 	arg.timer = (struct rt_tasklet_struct*)rtai_lxrt(TASKLETS_IDX, SIZARG, INIT, &arg).v[LOW];
-	data_supfun.tasklet = arg.timer; 
+	data_supfun.tasklet = arg.timer;
 	arg.thread = rt_thread_create((void *)support_posix_timer, &data_supfun, TASKLET_STACK_SIZE);
 	*timerid = (timer_t)rtai_lxrt(TASKLETS_IDX, SIZARG, PTIMER_CREATE, &arg).i[LOW];
 	
@@ -2430,18 +2430,18 @@ RTAI_PROTO (int, __wrap_timer_delete, (timer_t timerid))
 
 
 /*
- * FUNCTIONS (LIKELY) SAFELY USABLE IN HARD REAL TIME "AS THEY ARE", 
- * BECAUSE MAKE SENSE IN THE INITIALIZATION PHASE ONLY, I.E. BEFORE 
+ * FUNCTIONS (LIKELY) SAFELY USABLE IN HARD REAL TIME "AS THEY ARE",
+ * BECAUSE MAKE SENSE IN THE INITIALIZATION PHASE ONLY, I.E. BEFORE
  * GOING HARD REAL TIME
  */
 
 #define pthread_self_rt                  pthread_self
 #define pthread_equal_rt                 pthread_equal
-#define pthread_attr_init_rt             pthread_attr_init      
+#define pthread_attr_init_rt             pthread_attr_init
 #define pthread_attr_destroy_rt          pthread_attr_destroy
 #define pthread_attr_getdetachstate_rt   pthread_attr_getdetachstate
 #define pthread_attr_setschedpolicy_rt   pthread_attr_setschedpolicy
-#define pthread_attr_getschedpolicy_rt   pthread_attr_getschedpolicy 
+#define pthread_attr_getschedpolicy_rt   pthread_attr_getschedpolicy
 #define pthread_attr_setschedparam_rt    pthread_attr_setschedparam
 #define pthread_attr_getschedparam_rt    pthread_attr_getschedparam
 #define pthread_attr_setinheritsched_rt  pthread_attr_setinheritsched

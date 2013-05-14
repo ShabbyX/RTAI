@@ -71,7 +71,7 @@
     <td>
 
 <p>
-Check if sender waits for reply or not. 
+Check if sender waits for reply or not.
 <p>
 <a class="anchor" name="rt_isrpc"></a> <p>
 After receiving a message, by calling rt_isrpc a task can figure out whether the sender task <em>task</em> is waiting for a reply or not. Such an inquiry may be needed when a server task must provide services to both rt_sends (FIXME) and rt_rtcs. No answer is required if the message is sent by an <em>rt_send</em> function or the sender called <a class="el" href="group__rpc.html#rt_rpc_timed">rt_rpc_timed</a>() or <a class="el" href="group__rpc.html#rt_rpc_until">rt_rpc_until</a>() but it is already timed out.<p>
@@ -120,7 +120,7 @@ After receiving a message, by calling rt_isrpc a task can figure out whether the
     <td>
 
 <p>
-Return (sends) the result back to the task that made the related remote procedure call. 
+Return (sends) the result back to the task that made the related remote procedure call.
 <p>
 <a class="anchor" name="rt_return"></a> <p>
 rt_return sends the result <em>result</em> to the task <em>task</em>. If the task calling rt_rpc is not waiting the answer (i.e. killed or timed out) this return message is silently discarded. The returning task tries to release any previously inheredited priority inherediting the highest priority of any rpcing task still waiting for a return, but only if does not own a resource semaphore. In the latter case it will keep the eighest inheredited priority till it has released the resource ownership and no further message is waiting for a return. That means that in the case priority inheritance is coming only from rpced messages the task will return to its base priority when no further message is queued for a return. Such a scheme automatically sets a dynamic priority ceiling in the case priorities are inheredited both from intertask messaging and resource semaphores ownership.<p>
@@ -171,7 +171,7 @@ See also: notes under <a class="el" href="group__rpc.html#rt_rpc">rt_rpc</a>(). 
     <td>
 
 <p>
-Return (sends) an extended result back to the task that made the related extended remote procedure call. 
+Return (sends) an extended result back to the task that made the related extended remote procedure call.
 <p>
 <a class="anchor" name="rt_returnx"></a> <p>
 rt_returns sends the result <em>msg</em> of size <em>size</em> to the task <em>task</em>. If the task calling rt_rpcx is not waiting the answer (i.e. killed or timed out) this return message is silently discarded. The returning task tries to release any previously inheredited priority inherediting the highest priority of any rpcing task still waiting for a return, but only if does not own a resource semaphore. In the latter case it will keep the eighest inheredited priority till it has released the resource ownership and no further message is waiting for a return. That means that in the case priority inheritance is coming only from rpced messages the task will return to its base priority when no further message is queued for a return. Such a scheme automatically sets a dynamic priority ceiling in the case priorities are inheredited both from intertask messaging and resource semaphores ownership.<p>
@@ -222,7 +222,7 @@ See also: notes under <a class="el" href="msg_8c.html#rt_rpcx">rt_rpcx</a>().   
     <td>
 
 <p>
-Make a remote procedure call. 
+Make a remote procedure call.
 <p>
 <a class="anchor" name="rt_rpc"></a> <p>
 rt_rpc makes a Remote Procedure Call (RPC). rt_rpc is used for synchronous inter task messaging as it sends the message <em>msg</em> to the task <em>task</em> and blocks waiting until a return is received from the called task. So the caller task is always blocked and queued up in priority order while the receiver inheredits the blocked sender priority if it is higher (lower in value) than its. The receiver task may get the message with any rt_receive function. It can send an answer with <a class="el" href="group__rpc.html#rt_return">rt_return</a>().<p>
@@ -282,7 +282,7 @@ See also: rt_receive_*, <a class="el" href="group__rpc.html#rt_return">rt_return
     <td>
 
 <p>
-Make a remote procedure call, only if the calling task will not be blocked. 
+Make a remote procedure call, only if the calling task will not be blocked.
 <p>
 <a class="anchor" name="rt_rpc_if"></a> <p>
 rt_rpc_if tries to make a Remote Procedure Call (RPC). If the receiver task is ready to accept a message rt_rpc_if sends the message <em>msg</em> then it always block until a return is received. In this case the caller task is blocked and queued up in priority order while the receiver inheredits the blocked sender priority if it is higher (lower in value) than its. If the receiver is not ready rt_rpc_if returns immediately. The receiver task may get the message with any rt_receive function. It can send the answer with <a class="el" href="group__rpc.html#rt_return">rt_return</a>().<p>
@@ -347,7 +347,7 @@ See also: notes under <a class="el" href="group__rpc.html#rt_rpc">rt_rpc</a>().<
     <td>
 
 <p>
-Make a remote procedure call with a relative timeout. 
+Make a remote procedure call with a relative timeout.
 <p>
 <a class="anchor" name="rt_rpc_timed"></a> <p>
 rt_rpc_timed makes a Remote Procedure Call. It sends the message <em>msg</em> to the task <em>task</em> then always waits until a return is received or a timeout occurs. So the caller task is always blocked and queued up in priority order while the receiver inheredits the blocked sender priority if it is higher (lower in value) than its. The receiver task may get the message with any <a class="el" href="group__msg.html#rt_receive">rt_receive</a>() function. It can send the answer with <a class="el" href="group__rpc.html#rt_return">rt_return</a>().<p>
@@ -414,7 +414,7 @@ See also: <a class="el" href="group__msg.html#rt_receive">rt_receive</a>(), <a c
     <td>
 
 <p>
-Make a remote procedure call with an absolute timeout. 
+Make a remote procedure call with an absolute timeout.
 <p>
 <a class="anchor" name="rt_rpc_until"></a> <p>
 rt_rpc_until makes a Remote Procedure Call. It sends the message <em>msg</em> to the task <em>task</em> then always waits until a return is received or a timeout occurs. So the caller task is always blocked and queued up in priority order while the receiver inheredits the blocked sender priority if it is higher (lower in value) than its. The receiver task may get the message with any <a class="el" href="group__msg.html#rt_receive">rt_receive</a>() function. It can send the answer with <a class="el" href="group__rpc.html#rt_return">rt_return</a>().<p>
@@ -493,7 +493,7 @@ See also: <a class="el" href="group__msg.html#rt_receive">rt_receive</a>(), <a c
     <td>
 
 <p>
-Make an extended remote procedure call with a relative timeout. 
+Make an extended remote procedure call with a relative timeout.
 <p>
 <a class="anchor" name="rt_rpcx_timed"></a> <p>
 rt_rpcx_timed makes an extended Remote Procedure Call (RPC). It sends an arbitrary <em>smsg</em> of size <em>ssize</em> bytes to the task <em>task</em> then it always blocks waiting until a message, of size <em>rsize</em> bytes at most, is returned in <em>rmsg</em> from the called task or a timeout occurs. If the returned message is greater tha rsize it will be truncated. So the caller task is always blocked on the receiver priority queue while the receiver inheredits the blocked sender priority if it is higher (lower in value) than its. The receiver task may get the message with any rt_receivex function. It can send an answer with <a class="el" href="group__rpc.html#rt_returnx">rt_returnx</a>().<p>
@@ -574,7 +574,7 @@ See also: <a class="el" href="group__msg.html#rt_receive">rt_receive</a>(), <a c
     <td>
 
 <p>
-Make an extended remote procedure call with absolute timeout. 
+Make an extended remote procedure call with absolute timeout.
 <p>
 <a class="anchor" name="rt_rpcx_until"></a> <p>
 rt_rpcx_until makes an extended Remote Procedure Call (RPC). It sends an arbitrary <em>smsg</em> of size <em>ssize</em> bytes to the task <em>task</em> then it always blocks waiting until a message, of size <em>rsize</em> bytes at most, is returned in <em>rmsg</em> from the called task or a timeout occurs. If the returned message is greater tha rsize it will be truncated. So the caller task is always blocked on the receiver priority queue while the receiver inheredits the blocked sender priority if it is higher (lower in value) than its. The receiver task may get the message with any rt_receivex function. It can send an answer with <a class="el" href="group__rpc.html#rt_returnx">rt_returnx</a>().<p>

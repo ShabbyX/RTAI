@@ -51,22 +51,22 @@ static void fun(long none)
 {
 	volatile double s, a[MAXDIM], b[MAXDIM];
 	long msg;
-	RTIME period, wait_delay, sync_time, aim_time; 
+	RTIME period, wait_delay, sync_time, aim_time;
 	*worst_lat = -2000000000;
-	wait_delay = nano2count(WAIT_DELAY); 
-	period     = nano2count(PERIOD); 
+	wait_delay = nano2count(WAIT_DELAY);
+	period     = nano2count(PERIOD);
 	for(msg = 0; msg < MAXDIM; msg++) {
 		a[msg] = b[msg] = 3.141592;
 	}
 	rtai_cli();
 	aim_time  = rt_get_time();
-	sync_time = aim_time + wait_delay; 
-	aim_time += period; 
+	sync_time = aim_time + wait_delay;
+	aim_time += period;
 	while (!rt_receive_if(NULL, &msg)) {
 		WAIT_AIM_TIME();
-		sync_time = rt_get_time(); 
+		sync_time = rt_get_time();
 		msg = abs((long)(sync_time - aim_time));
-		sync_time = aim_time + wait_delay; 
+		sync_time = aim_time + wait_delay;
 		aim_time  += period;
 		if (msg > *worst_lat) {
 			*worst_lat = msg;

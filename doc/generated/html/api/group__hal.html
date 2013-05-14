@@ -7,7 +7,7 @@
 <div class="qindex">  <form class="search" action="search.php" method="get">
 <a class="qindex" href="main.html">Main&nbsp;Page</a> | <a class="qindex" href="modules.html">Modules</a> | <a class="qindex" href="files.html">File&nbsp;List</a> | <a class="qindex" href="globals.html">Globals</a> | <a class="qindex" href="pages.html">Related&nbsp;Pages</a>  | <span class="search"><u>S</u>earch&nbsp;for&nbsp;<input class="search" type="text" name="query" value="" size="20" accesskey="s"/></span></form></div>
 <h1>RTAI services functions.</h1><hr><a name="_details"></a><h2>Detailed Description</h2>
-This module defines some functions that can be used by RTAI tasks, for managing interrupts and communication services with Linux processes. 
+This module defines some functions that can be used by RTAI tasks, for managing interrupts and communication services with Linux processes.
 <p>
 
 <p>
@@ -114,7 +114,7 @@ This module defines some functions that can be used by RTAI tasks, for managing 
     <td>
 
 <p>
-Acknowledge an IRQ source. 
+Acknowledge an IRQ source.
 <p>
 The related request can then interrupt the CPU again, provided it has not been masked.<p>
 The above function allow you to manipulate the PIC at hand, but you must know what you are doing. Such a duty does not pertain to this manual and you should refer to your PIC datasheet.<p>
@@ -148,7 +148,7 @@ Often some of the above functions do equivalent things. Once more there is no wa
     <td>
 
 <p>
-Disable an IRQ source. 
+Disable an IRQ source.
 <p>
 The above function allow you to manipulate the PIC at hand, but you must know what you are doing. Such a duty does not pertain to this manual and you should refer to your PIC datasheet.<p>
 Note that Linux has the same functions, but they must be used only for its interrupts. Only the above ones can be safely used in real time handlers.<p>
@@ -181,7 +181,7 @@ Often some of the above functions do equivalent things. Once more there is no wa
     <td>
 
 <p>
-Enable an IRQ source. 
+Enable an IRQ source.
 <p>
 The above function allow you to manipulate the PIC at hand, but you must know what you are doing. Such a duty does not pertain to this manual and you should refer to your PIC datasheet.<p>
 Note that Linux has the same functions, but they must be used only for its interrupts. Only the above ones can be safely used in real time handlers.<p>
@@ -223,7 +223,7 @@ Often some of the above functions do equivalent things. Once more there is no wa
     <td>
 
 <p>
-Uninstall shared Linux interrupt handler. 
+Uninstall shared Linux interrupt handler.
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -265,7 +265,7 @@ Uninstall shared Linux interrupt handler.
     <td>
 
 <p>
-Uninstall a system request handler. 
+Uninstall a system request handler.
 <p>
 rt_free_srq uninstalls the specified system call <em>srq</em>, returned by installing the related handler with a previous call to rt_request_srq().<p>
 <dl compact><dt><b>Return values:</b></dt><dd>
@@ -301,7 +301,7 @@ rt_free_srq uninstalls the specified system call <em>srq</em>, returned by insta
     <td>
 
 <p>
-Uninstall a timer interrupt handler. 
+Uninstall a timer interrupt handler.
 <p>
 rt_free_timer uninstalls a timer previously set by rt_request_timer().     </td>
   </tr>
@@ -331,7 +331,7 @@ rt_free_timer uninstalls a timer previously set by rt_request_timer().     </td>
     <td>
 
 <p>
-Mask and acknowledge and IRQ source. 
+Mask and acknowledge and IRQ source.
 <p>
 No * other interrupts can be accepted, once also the CPU will enable interrupts, which ones depends on the PIC at hand and on how it is programmed.<p>
 The above function allow you to manipulate the PIC at hand, but you must know what you are doing. Such a duty does not pertain to this manual and you should refer to your PIC datasheet.<p>
@@ -365,7 +365,7 @@ Often some of the above functions do equivalent things. Once more there is no wa
     <td>
 
 <p>
-Pend an IRQ to Linux. 
+Pend an IRQ to Linux.
 <p>
 rt_pend_linux_irq appends a Linux interrupt irq for processing in Linux IRQ mode, i.e. with hardware interrupts fully enabled.<p>
 <dl compact><dt><b>Note:</b></dt><dd>rt_pend_linux_irq does not perform any check on <em>irq</em>. </dd></dl>
@@ -397,7 +397,7 @@ rt_pend_linux_irq appends a Linux interrupt irq for processing in Linux IRQ mode
     <td>
 
 <p>
-Append a Linux IRQ. 
+Append a Linux IRQ.
 <p>
 rt_pend_linux_srq appends a system call request srq to be used as a service request to the Linux kernel.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -455,7 +455,7 @@ rt_pend_linux_srq appends a system call request srq to be used as a service requ
     <td>
 
 <p>
-Install shared Linux interrupt handler. 
+Install shared Linux interrupt handler.
 <p>
 rt_request_linux_irq installs function <em>handler</em> as a standard Linux interrupt service routine for IRQ level <em>irq</em> forcing Linux to share the IRQ with other interrupt handlers, even if it does not want. The handler is appended to any already existing Linux handler for the same irq and is run by Linux irq as any of its handler. In this way a real time application can monitor Linux interrupts handling at its will. The handler appears in /proc/interrupts.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -522,7 +522,7 @@ The interrupt service routine can be uninstalled with rt_free_linux_irq().<p>
     <td>
 
 <p>
-Install shared Linux interrupt handler. 
+Install shared Linux interrupt handler.
 <p>
 rt_request_linux_irq installs function <em>handler</em> as a standard Linux interrupt service routine for IRQ level <em>irq</em> forcing Linux to share the IRQ with other interrupt handlers, even if it does not want. The handler is appended to any already existing Linux handler for the same irq and is run by Linux irq as any of its handler. In this way a real time application can monitor Linux interrupts handling at its will. The handler appears in /proc/interrupts.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -583,7 +583,7 @@ The interrupt service routine can be uninstalled with rt_free_linux_irq().<p>
     <td>
 
 <p>
-Install a system request handler. 
+Install a system request handler.
 <p>
 rt_request_srq installs a two way RTAI system request (srq) by assigning <em>u_handler</em>, a function to be used when a user calls srq from user space, and <em>k_handler</em>, the function to be called in kernel space following its activation by a call to rt_pend_linux_srq(). <em>k_handler</em> is in practice used to request a service from the kernel. In fact Linux system requests cannot be used safely from RTAI so you can setup a handler that receives real time requests and safely executes them when Linux is running.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -641,7 +641,7 @@ rt_request_srq installs a two way RTAI system request (srq) by assigning <em>u_h
     <td>
 
 <p>
-Install a timer interrupt handler. 
+Install a timer interrupt handler.
 <p>
 rt_request_timer requests a timer of period tick ticks, and installs the routine <em>handler</em> as a real time interrupt service routine for the timer.<p>
 Set <em>tick</em> to 0 for oneshot mode (in oneshot mode it is not used). If <em>apic</em> has a nonzero value the local APIC timer is used. Otherwise timing is based on the 8254.     </td>
@@ -672,7 +672,7 @@ Set <em>tick</em> to 0 for oneshot mode (in oneshot mode it is not used). If <em
     <td>
 
 <p>
-Shut down an IRQ source. 
+Shut down an IRQ source.
 <p>
 No further interrupt request irq can be accepted.<p>
 The above function allow you to manipulate the PIC at hand, but you must know what you are doing. Such a duty does not pertain to this manual and you should refer to your PIC datasheet.<p>
@@ -706,7 +706,7 @@ Often some of the above functions do equivalent things. Once more there is no wa
     <td>
 
 <p>
-start and initialize the PIC to accept interrupt request irq. 
+start and initialize the PIC to accept interrupt request irq.
 <p>
 The above function allow you to manipulate the PIC at hand, but you must know what you are doing. Such a duty does not pertain to this manual and you should refer to your PIC datasheet.<p>
 Note that Linux has the same functions, but they must be used only for its interrupts. Only the above ones can be safely used in real time handlers.<p>
@@ -739,7 +739,7 @@ Often some of the above functions do equivalent things. Once more there is no wa
     <td>
 
 <p>
-Unmask and IRQ source. 
+Unmask and IRQ source.
 <p>
 The related request can then interrupt the CPU again, provided it has also been acknowledged.<p>
 The above function allow you to manipulate the PIC at hand, but you must know what you are doing. Such a duty does not pertain to this manual and you should refer to your PIC datasheet.<p>
@@ -769,7 +769,7 @@ Often some of the above functions do equivalent things. Once more there is no wa
     <td>
 
 <p>
-Install a timer interrupt handler. 
+Install a timer interrupt handler.
 <p>
 rt_request_timer requests a timer of period tick ticks, and installs the routine <em>handler</em> as a real time interrupt service routine for the timer.<p>
 Set <em>tick</em> to 0 for oneshot mode (in oneshot mode it is not used). If <em>apic</em> has a nonzero value the local APIC timer is used. Otherwise timing is based on the 8254.     </td>

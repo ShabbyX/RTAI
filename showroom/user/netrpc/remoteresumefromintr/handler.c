@@ -44,7 +44,7 @@ static void timer_tick(void)
 	if (rt_times.tick_time >= rt_times.linux_time) {
 		rt_times.linux_time += rt_times.linux_tick;
 		rt_pend_linux_irq(TIMER_8254_IRQ);
-	} 
+	}
 	if (run) {
 		if (rt_waiting_return(tasknode, taskport)) {
 			overuns++;
@@ -53,11 +53,11 @@ static void timer_tick(void)
 			case 1: RT_sem_signal(tasknode, -taskport, rmt_sem);
 				rt_printk("SEM SIGNAL %d\n", ++cnt);
 				break;
-			case 2: 
+			case 2:
 				RT_task_resume(tasknode, -taskport, rmt_task);
 				rt_printk("TASK RESUME %d\n", ++cnt);
 				break;
-			case 3: 
+			case 3:
 				RT_send_if(tasknode, -taskport, rmt_task, run);
 				rt_printk("TASK SEND %d\n", ++cnt);
 				break;

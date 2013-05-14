@@ -98,8 +98,8 @@ void MenageHmsh_PlusNSeconds(int n, MenageHmsh_tHour *h)
 
 void MenageHmsh_PlusOneUnit(MenageHmsh_tHour *h, BOOLEAN *reportSeconds)
 {
-	h->hundredthes = (h->hundredthes + 1)%100; 
-	*reportSeconds = h->hundredthes == 0; 
+	h->hundredthes = (h->hundredthes + 1)%100;
+	*reportSeconds = h->hundredthes == 0;
 	if (*reportSeconds) {
 		MenageHmsh_PlusOneSecond(h);
 	}
@@ -168,7 +168,7 @@ void Display_Get(MenageHmsh_tChain11 *chain, Display_tDest *receiver)
 	}
 	rt_receive(&Display, &msg);
 	*chain = *((MenageHmsh_tChain11 *)msg);
-	*receiver = chain->chain[0] == 't' ? destChrono : destClock; 
+	*receiver = chain->chain[0] == 't' ? destChrono : destClock;
 }
 
 int cpu_used[NR_RT_CPUS];

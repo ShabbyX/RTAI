@@ -60,12 +60,12 @@ function  SetTarget_()
       else
         ok=%f;x_message('Target not valid '+target+'.gen');
       end
-      
+
       if grep(odefun,ode_x) == [] then
          x_message('Ode function not valid');
          ok = %f;
       end
-        
+
       if ok then
          lab=[target,template,odefun,stp];
 	 scs_m.objs(k).model.rpar.props.void3 = lab;

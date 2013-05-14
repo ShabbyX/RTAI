@@ -28,7 +28,7 @@ insmod $MODULES/rtai_tasklets.ko;
 insmod ./kctest_rt.ko;
 insmod ./kuctest_rt.ko;
 
-else 
+else
 
 insmod $MODULES/rtai_tasklets.o;
 insmod ./kctest.o;

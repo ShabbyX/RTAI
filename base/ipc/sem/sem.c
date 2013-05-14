@@ -1,4 +1,4 @@
-/** 
+/**
  * @file
  * Semaphore functions.
  * @author Paolo Mantegazza
@@ -97,7 +97,7 @@ do { \
 
 #define WAKEUP_WAIT_ONE_POLLER(wakeup)
 
-#define WAKEUP_WAIT_ALL_POLLERS(wakeup) 
+#define WAKEUP_WAIT_ALL_POLLERS(wakeup)
 
 #endif
 
@@ -123,11 +123,11 @@ do { if (sem->magic != RT_SEM_MAGIC) return RTE_OBJINV; } while (0)
  *	  for a resource semaphore.
  *
  * @param type is the semaphore type and queuing policy. It can be an OR
- * a semaphore kind: CNT_SEM for counting semaphores, BIN_SEM for binary 
+ * a semaphore kind: CNT_SEM for counting semaphores, BIN_SEM for binary
  * semaphores, RES_SEM for resource semaphores; and queuing policy:
  * FIFO_Q, PRIO_Q for a fifo and priority queueing respectively.
  * Resource semaphores will enforce a PRIO_Q policy anyhow.
- * 
+ *
  * Counting semaphores can register up to 0xFFFE events. Binary
  * semaphores do not count signalled events, their count will never
  * exceed 1 whatever number of events is signaled to them. Resource
@@ -158,9 +158,9 @@ do { if (sem->magic != RT_SEM_MAGIC) return RTE_OBJINV; } while (0)
  * posed on it is just registered. An owner task will go into suspend
  * state only when it releases all the owned resources.
  *
- * @note if the legacy error return values scheme is used RTAI counting 
- *       semaphores assume that their counter will never exceed 0xFFFF, 
- *       such a number being used to signal returns in error. Thus also 
+ * @note if the legacy error return values scheme is used RTAI counting
+ *       semaphores assume that their counter will never exceed 0xFFFF,
+ *       such a number being used to signal returns in error. Thus also
  *       the initial count value cannot be greater 0xFFFF. The new error
  *       return scheme allows counts in the order of billions instead.
  *
@@ -210,7 +210,7 @@ RTAI_SYSCALL_MODE void rt_typed_sem_init(SEM *sem, int value, int type)
  * @param sem must point to an allocated @e SEM structure.
  *
  * @param value is the initial value of the semaphore.
- * 
+ *
  * Positive values of the semaphore variable show how many tasks can
  * do a @ref rt_sem_wait() call without blocking. Negative value of a
  * semaphore shows how many tasks are blocked on the semaphore queue,
@@ -220,10 +220,10 @@ RTAI_SYSCALL_MODE void rt_typed_sem_init(SEM *sem, int value, int type)
  *	 exceed 0xFFFF, such a number being used to signal returns in
  *	 error. Thus also the initial count value cannot be greater
  *	 than 0xFFFF.
- *	 This is an old legacy functioni, there is also 
+ *	 This is an old legacy functioni, there is also
  *	 @ref rt_typed_sem_init(), allowing to
  *	 choose among counting, binary and resource
- *	 semaphores. Resource semaphores have priority inherithance. 
+ *	 semaphores. Resource semaphores have priority inherithance.
  */
 void rt_sem_init(SEM *sem, int value)
 {
@@ -235,24 +235,24 @@ void rt_sem_init(SEM *sem, int value)
  * @anchor rt_sem_delete
  * @brief Delete a semaphore
  *
- * rt_sem_delete deletes a semaphore previously created with 
- * @ref rt_sem_init(). 
+ * rt_sem_delete deletes a semaphore previously created with
+ * @ref rt_sem_init().
  *
  * @param sem points to the structure used in the corresponding
- * call to rt_sem_init. 
+ * call to rt_sem_init.
  *
  * Any tasks blocked on this semaphore is returned in error and
- * allowed to run when semaphore is destroyed. 
+ * allowed to run when semaphore is destroyed.
  *
  * @return 0 is returned upon success. A negative value is returned on
- * failure as described below: 
+ * failure as described below:
  * - @b 0xFFFF: @e sem does not refer to a valid semaphore.
  *
  * @note In principle 0xFFFF could theoretically be a usable
  *	 semaphores events count, so it could be returned also under
  *	 normal circumstances. It is unlikely you are going to count
- *	 up to such number of events, in any case avoid counting up 
- *	 to 0xFFFF. 
+ *	 up to such number of events, in any case avoid counting up
+ *	 to 0xFFFF.
  */
 RTAI_SYSCALL_MODE int rt_sem_delete(SEM *sem)
 {
@@ -321,9 +321,9 @@ RTAI_SYSCALL_MODE int rt_sem_count(SEM *sem)
  *
  * @param sem points to the structure used in the call to @ref
  * rt_sem_init().
- * 
+ *
  * @return 0 is returned upon success. A negative value is returned on
- * failure as described below: 
+ * failure as described below:
  * - @b 0xFFFF: @e sem does not refer to a valid semaphore.
  *
  * @note In principle 0xFFFF could theoretically be a usable
@@ -411,7 +411,7 @@ res:	if (sem->type > 0) {
  * @brief Signaling a semaphore.
  *
  * rt_sem_broadcast signals an event to a semaphore that unblocks all tasks
- * waiting on it. It is used as a support for RTAI proper conditional 
+ * waiting on it. It is used as a support for RTAI proper conditional
  * variables but can be of help in many other instances. After the broadcast
  * the semaphore counts is set to zero, thus all tasks waiting on it will
  * blocked.
@@ -419,7 +419,7 @@ res:	if (sem->type > 0) {
  *
  * @param sem points to the structure used in the call to @ref
  * rt_sem_init().
- * 
+ *
  * @returns 0 always.
  */
 RTAI_SYSCALL_MODE int rt_sem_broadcast(SEM *sem)
@@ -533,10 +533,10 @@ RTAI_SYSCALL_MODE int rt_sem_wait(SEM *sem)
 		rem_ready_current(rt_current);
 		enqueue_blocked(rt_current, &sem->queue, sem->qtype);
 		RT_SCHEDULE_MAP_BOTH(schedmap);
-		if (likely(!(retp = rt_current->blocked_on))) { 
+		if (likely(!(retp = rt_current->blocked_on))) {
 			count = sem->count;
 		} else {
-			if (likely(retp != RTP_OBJREM)) { 
+			if (likely(retp != RTP_OBJREM)) {
 				dequeue_blocked(rt_current);
 				if (++sem->count > 1 && sem->type) {
 					sem->count = 1;
@@ -631,8 +631,8 @@ RTAI_SYSCALL_MODE int rt_sem_wait_if(SEM *sem)
  *	- a timeout occurs;
  *	- an error occurs (e.g. the semaphore is destroyed);
  *
- * In case of a timeout, the semaphore value is incremented before 
- * return.  
+ * In case of a timeout, the semaphore value is incremented before
+ * return.
  *
  * @param sem points to the structure used in the call to @ref
  *	  rt_sem_init().
@@ -642,7 +642,7 @@ RTAI_SYSCALL_MODE int rt_sem_wait_if(SEM *sem)
  * @return the number of events already signaled upon success.
  * Aa special value" as described below in case of a failure:
  * - @b 0xFFFF: @e sem does not refer to a valid semaphore.
- * 
+ *
  * @note In principle 0xFFFF could theoretically be a usable
  *	 semaphores events count so it could be returned also under
  *	 normal circumstances. It is unlikely you are going to count
@@ -691,9 +691,9 @@ RTAI_SYSCALL_MODE int rt_sem_wait_until(SEM *sem, RTIME time)
 			sem->count--;
 			rt_current->queue.prev = rt_current->queue.next = &rt_current->queue;
 		}
-		if (likely(!(retp = rt_current->blocked_on))) { 
+		if (likely(!(retp = rt_current->blocked_on))) {
 			count = sem->count;
-		} else if (likely(retp != RTP_OBJREM)) { 
+		} else if (likely(retp != RTP_OBJREM)) {
 			dequeue_blocked(rt_current);
 			if (++sem->count > 1 && sem->type) {
 				sem->count = 1;
@@ -735,8 +735,8 @@ RTAI_SYSCALL_MODE int rt_sem_wait_until(SEM *sem, RTIME time)
  *	- a timeout occurs;
  *	- an error occurs (e.g. the semaphore is destroyed);
  *
- * In case of a timeout, the semaphore value is incremented before 
- * return.  
+ * In case of a timeout, the semaphore value is incremented before
+ * return.
  *
  * @param sem points to the structure used in the call to @ref
  *	  rt_sem_init().
@@ -746,7 +746,7 @@ RTAI_SYSCALL_MODE int rt_sem_wait_until(SEM *sem, RTIME time)
  * @return the number of events already signaled upon success.
  * A special value as described below in case of a failure:
  * - @b 0xFFFF: @e sem does not refer to a valid semaphore.
- * 
+ *
  * @note In principle 0xFFFF could theoretically be a usable
  *	 semaphores events count so it could be returned also under
  *	 normal circumstances. It is unlikely you are going to count
@@ -769,7 +769,7 @@ RTAI_SYSCALL_MODE int rt_sem_wait_timed(SEM *sem, RTIME delay)
  * a request will be blocked till a number of tasks equal to the semaphore
  * count set at rt_sem_init is reached.
  *
- * @returns -1 for tasks that waited on the barrier, 0 for the tasks that 
+ * @returns -1 for tasks that waited on the barrier, 0 for the tasks that
  * completed the barrier count.
  */
 RTAI_SYSCALL_MODE int rt_sem_wait_barrier(SEM *sem)
@@ -799,7 +799,7 @@ RTAI_SYSCALL_MODE int rt_sem_wait_barrier(SEM *sem)
  * @anchor rt_cond_signal
  * @brief Wait for a signal to a conditional variable.
  *
- * rt_cond_signal resumes one of the tasks that are waiting on the condition 
+ * rt_cond_signal resumes one of the tasks that are waiting on the condition
  * semaphore cnd. Nothing happens if no task is waiting on @a cnd, while it
  * resumed the first queued task blocked on cnd, according to the queueing
  * method set at rt_cond_init.
@@ -864,10 +864,10 @@ static inline int rt_cndmtx_signal(SEM *mtx, RT_TASK *rt_current)
  * @brief Wait for a signal to a conditional variable.
  *
  * rt_cond_wait atomically unlocks mtx (as for using rt_sem_signal)
- * and waits for the condition semaphore cnd to be signaled. The task 
- * execution is suspended until the condition semaphore is signalled. 
+ * and waits for the condition semaphore cnd to be signaled. The task
+ * execution is suspended until the condition semaphore is signalled.
  * Mtx must be obtained by the calling task, before calling rt_cond_wait is
- * called. Before returning to the calling task rt_cond_wait reacquires 
+ * called. Before returning to the calling task rt_cond_wait reacquires
  * mtx by calling rt_sem_wait.
  *
  * @param cnd points to the structure used in the call to @ref
@@ -899,7 +899,7 @@ RTAI_SYSCALL_MODE int rt_cond_wait(CND *cnd, SEM *mtx)
 	rem_ready_current(rt_current);
 	enqueue_blocked(rt_current, &cnd->queue, cnd->qtype);
 	type = rt_cndmtx_signal(mtx, rt_current);
-	if (likely((retp = rt_current->blocked_on) != RTP_OBJREM)) { 
+	if (likely((retp = rt_current->blocked_on) != RTP_OBJREM)) {
 		if (unlikely(retp != NULL)) {
 			dequeue_blocked(rt_current);
                         retval = RTE_UNBLKD;
@@ -921,11 +921,11 @@ RTAI_SYSCALL_MODE int rt_cond_wait(CND *cnd, SEM *mtx)
  * @brief Wait a semaphore with timeout.
  *
  * rt_cond_wait_until atomically unlocks mtx (as for using rt_sem_signal)
- * and waits for the condition semaphore cnd to be signalled. The task 
+ * and waits for the condition semaphore cnd to be signalled. The task
  * execution is suspended until the condition semaphore is either signaled
- * or a timeout expires. Mtx must be obtained by the calling task, before 
- * calling rt_cond_wait is called. Before returning to the calling task 
- * rt_cond_wait_until reacquires mtx by calling rt_sem_wait and returns a 
+ * or a timeout expires. Mtx must be obtained by the calling task, before
+ * calling rt_cond_wait is called. Before returning to the calling task
+ * rt_cond_wait_until reacquires mtx by calling rt_sem_wait and returns a
  * value to indicate if it has been signalled pr timedout.
  *
  * @param cnd points to the structure used in the call to @ref
@@ -964,7 +964,7 @@ RTAI_SYSCALL_MODE int rt_cond_wait_until(CND *cnd, SEM *mtx, RTIME time)
 		enqueue_blocked(rt_current, &cnd->queue, cnd->qtype);
 		enq_timed_task(rt_current);
 		type = rt_cndmtx_signal(mtx, rt_current);
-		if (unlikely((retp = rt_current->blocked_on) == RTP_OBJREM)) { 
+		if (unlikely((retp = rt_current->blocked_on) == RTP_OBJREM)) {
                         retval = RTE_OBJREM;
 		} else if (unlikely(retp != NULL)) {
 			dequeue_blocked(rt_current);
@@ -988,11 +988,11 @@ RTAI_SYSCALL_MODE int rt_cond_wait_until(CND *cnd, SEM *mtx, RTIME time)
  * @brief Wait a semaphore with timeout.
  *
  * rt_cond_wait_timed atomically unlocks mtx (as for using rt_sem_signal)
- * and waits for the condition semaphore cnd to be signalled. The task 
+ * and waits for the condition semaphore cnd to be signalled. The task
  * execution is suspended until the condition semaphore is either signaled
- * or a timeout expires. Mtx must be obtained by the calling task, before 
- * calling rt_cond_wait is called. Before returning to the calling task 
- * rt_cond_wait_until reacquires mtx by calling rt_sem_wait and returns a 
+ * or a timeout expires. Mtx must be obtained by the calling task, before
+ * calling rt_cond_wait is called. Before returning to the calling task
+ * rt_cond_wait_until reacquires mtx by calling rt_sem_wait and returns a
  * value to indicate if it has been signalled pr timedout.
  *
  * @param cnd points to the structure used in the call to @ref
@@ -1023,11 +1023,11 @@ RTAI_SYSCALL_MODE int rt_cond_wait_timed(CND *cnd, SEM *mtx, RTIME delay)
  *
  * @param rwl must point to an allocated @e RWL structure.
  *
- * A multi readers single writer lock (RWL) is a synchronization mechanism 
- * that allows to have simultaneous read only access to an object, while only 
- * one task can have write access. A data set which is searched more 
- * frequently than it is changed can be usefully controlled by using an rwl. 
- * The lock acquisition policy is determined solely on the priority of tasks 
+ * A multi readers single writer lock (RWL) is a synchronization mechanism
+ * that allows to have simultaneous read only access to an object, while only
+ * one task can have write access. A data set which is searched more
+ * frequently than it is changed can be usefully controlled by using an rwl.
+ * The lock acquisition policy is determined solely on the priority of tasks
  * applying to own a lock.
  *
  * @returns 0 if always.
@@ -1070,7 +1070,7 @@ RTAI_SYSCALL_MODE int rt_rwl_delete(RWL *rwl)
  *
  * rt_rwl_rdlock acquires a multi readers single writer lock @a rwl for
  * reading. The calling task will block only if any writer owns the lock
- * already or there are writers with higher priority waiting to acquire 
+ * already or there are writers with higher priority waiting to acquire
  * write access.
  *
  * @param rwl must point to an allocated @e RWL structure.
@@ -1106,7 +1106,7 @@ RTAI_SYSCALL_MODE int rt_rwl_rdlock(RWL *rwl)
  * @anchor rt_rwl_rdlock_if
  * @brief try to acquire a multi readers single writer lock just for reading.
  *
- * rt_rwl_rdlock_if tries to acquire a multi readers single writer lock @a rwl 
+ * rt_rwl_rdlock_if tries to acquire a multi readers single writer lock @a rwl
  * for reading immediately, i.e. without blocking if a writer owns the lock
  * or there are writers with higher priority waiting to acquire write access.
  *
@@ -1136,8 +1136,8 @@ RTAI_SYSCALL_MODE int rt_rwl_rdlock_if(RWL *rwl)
  * @brief try to acquire a multi readers single writer lock for reading within
  * an absolute deadline time.
  *
- * rt_rwl_rdlock_untill tries to acquire a multi readers single writer lock 
- * @a rwl for reading, as for rt_rwl_rdlock, but timing out if the lock has not 
+ * rt_rwl_rdlock_untill tries to acquire a multi readers single writer lock
+ * @a rwl for reading, as for rt_rwl_rdlock, but timing out if the lock has not
  * been acquired within an assigned deadline.
  *
  * @param rwl must point to an allocated @e RWL structure.
@@ -1183,7 +1183,7 @@ RTAI_SYSCALL_MODE int rt_rwl_rdlock_until(RWL *rwl, RTIME time)
  *
  * @param rwl must point to an allocated @e RWL structure.
  *
- * @param delay is the time delay within which the lock must be acquired, in 
+ * @param delay is the time delay within which the lock must be acquired, in
  * internal count units.
  *
  * @returns 0 if the lock was acquired, SEM_TIMOUT if the deadline expired
@@ -1201,7 +1201,7 @@ RTAI_SYSCALL_MODE int rt_rwl_rdlock_timed(RWL *rwl, RTIME delay)
  * @brief acquires a multi readers single writer lock for wrtiting.
  *
  * rt_rwl_rwlock acquires a multi readers single writer lock @a rwl for
- * writing. The calling task will block if any other task, reader or writer, 
+ * writing. The calling task will block if any other task, reader or writer,
  * owns the lock already.
  *
  * @param rwl must point to an allocated @e RWL structure.
@@ -1234,7 +1234,7 @@ RTAI_SYSCALL_MODE int rt_rwl_wrlock(RWL *rwl)
  * @anchor rt_rwl_wrlock_if
  * @brief acquires a multi readers single writer lock for writing.
  *
- * rt_rwl_wrlock_if try to acquire a multi readers single writer lock @a rwl 
+ * rt_rwl_wrlock_if try to acquire a multi readers single writer lock @a rwl
  * for writing immediately, i.e without blocking if the lock is owned already.
  *
  * @param rwl must point to an allocated @e RWL structure.
@@ -1262,8 +1262,8 @@ RTAI_SYSCALL_MODE int rt_rwl_wrlock_if(RWL *rwl)
  * @brief try to acquire a multi readers single writer lock for writing within
  * an absolute deadline time.
  *
- * rt_rwl_rwlock_until tries to acquire a multi readers single writer lock 
- * @a rwl for writing, as for rt_rwl_rwlock, but timing out if the lock has not 
+ * rt_rwl_rwlock_until tries to acquire a multi readers single writer lock
+ * @a rwl for writing, as for rt_rwl_rwlock, but timing out if the lock has not
  * been acquired within an assigned deadline.
  *
  * @param rwl must point to an allocated @e RWL structure.
@@ -1306,7 +1306,7 @@ RTAI_SYSCALL_MODE int rt_rwl_wrlock_until(RWL *rwl, RTIME time)
  *
  * @param rwl must point to an allocated @e RWL structure.
  *
- * @param delay is the time delay within which the lock must be acquired, in 
+ * @param delay is the time delay within which the lock must be acquired, in
  * internal count units.
  *
  * @returns 0 if the lock was acquired, SEM_TIMOUT if the deadline expired
@@ -1323,7 +1323,7 @@ RTAI_SYSCALL_MODE int rt_rwl_wrlock_timed(RWL *rwl, RTIME delay)
  * @anchor rt_rwl_unlock
  * @brief unlock an acquired multi readers single writer lock.
  *
- * rt_rwl_unlock unlocks an acquired multi readers single writer lock @a rwl. 
+ * rt_rwl_unlock unlocks an acquired multi readers single writer lock @a rwl.
  * After releasing the lock any task waiting to acquire it will own the lock
  * according to its priority, whether it is a reader or a writer, otherwise
  * the lock will be fully unlocked.
@@ -1484,12 +1484,12 @@ RTAI_SYSCALL_MODE int rt_spl_lock_if(SPL *spl)
  * @anchor rt_spl_lock_timed
  * @brief Acquire a spinlock with timeout.
  *
- * rt_spl_lock_timed acquires a spinlock @a spl, but waiting spinning only 
+ * rt_spl_lock_timed acquires a spinlock @a spl, but waiting spinning only
  * for an allowed time.
  *
  * @param spl must point to an allocated @e SPL structure.
  *
- * @param ns timeout 
+ * @param ns timeout
  *
  * rt_spl_lock spins on lock till it can be acquired, as for rt_spl_lock,
  * but only for an allowed time. If the spinlock cannot be acquired in time
@@ -1533,7 +1533,7 @@ RTAI_SYSCALL_MODE int rt_spl_lock_timed(SPL *spl, unsigned long ns)
  * @param spl must point to an allocated @e SPL structure.
  *
  * rt_spl_unlock releases an owned lock. The spinlock can remain locked and
- * its ownership can remain with the task is the spinlock acquisition was 
+ * its ownership can remain with the task is the spinlock acquisition was
  * recursed.
  *
  * @returns 0 if the function was used legally, -1 if a tasks tries to unlock
@@ -1570,8 +1570,8 @@ RTAI_SYSCALL_MODE int rt_spl_unlock(SPL *spl)
  * @brief Initialize a specifically typed (counting, binary, resource)
  *	  semaphore identified by a name.
  *
- * _rt_typed_named_sem_init allocate and initializes a semaphore identified 
- * by @e name of type @e type. Once the semaphore structure is allocated the 
+ * _rt_typed_named_sem_init allocate and initializes a semaphore identified
+ * by @e name of type @e type. Once the semaphore structure is allocated the
  * initialization is as for rt_typed_sem_init. The function returns the
  * handle pointing to the allocated semaphore structure, to be used as the
  * usual semaphore address in all semaphore based services. Named objects
@@ -1584,11 +1584,11 @@ RTAI_SYSCALL_MODE int rt_spl_unlock(SPL *spl)
  *	  for a resource semaphore.
  *
  * @param type is the semaphore type and queuing policy. It can be an OR
- * a semaphore kind: CNT_SEM for counting semaphores, BIN_SEM for binary 
+ * a semaphore kind: CNT_SEM for counting semaphores, BIN_SEM for binary
  * semaphores, RES_SEM for resource semaphores; and queuing policy:
  * FIFO_Q, PRIO_Q for a fifo and priority queueing respectively.
  * Resource semaphores will enforce a PRIO_Q policy anyhow.
- * 
+ *
  * Since @a name can be a clumsy identifier, services are provided to
  * convert 6 characters identifiers to unsigned long, and vice versa.
  *
@@ -1597,8 +1597,8 @@ RTAI_SYSCALL_MODE int rt_spl_unlock(SPL *spl)
  * See rt_typed_sem_init for further clues.
  *
  * As for all the named initialization functions it must be remarked that
- * only the very first call to initilize/create a named RTAI object does a 
- * real allocation of the object, any following call with the same name 
+ * only the very first call to initilize/create a named RTAI object does a
+ * real allocation of the object, any following call with the same name
  * will just increase its usage count. In any case the function returns
  * a pointer to the named object, or zero if in error.
  *
@@ -1635,19 +1635,19 @@ RTAI_SYSCALL_MODE SEM *_rt_typed_named_sem_init(unsigned long sem_name, int valu
  * @anchor rt_named_sem_delete
  * @brief Delete a semaphore initialized in named mode.
  *
- * rt_named_sem_delete deletes a semaphore previously created with 
- * @ref _rt_typed_named_sem_init(). 
+ * rt_named_sem_delete deletes a semaphore previously created with
+ * @ref _rt_typed_named_sem_init().
  *
  * @param sem points to the structure pointer returned by a corresponding
- * call to _rt_typed_named_sem_init. 
+ * call to _rt_typed_named_sem_init.
  *
  * Any tasks blocked on this semaphore is returned in error and
- * allowed to run when semaphore is destroyed. 
- * As it is done by all the named allocation functions delete calls have just 
- * the effect of decrementing a usage count till the last is done, as that is 
+ * allowed to run when semaphore is destroyed.
+ * As it is done by all the named allocation functions delete calls have just
+ * the effect of decrementing a usage count till the last is done, as that is
  * the one the really frees the object.
  *
- * @return an int >=0 is returned upon success, SEM_ERR if it failed to 
+ * @return an int >=0 is returned upon success, SEM_ERR if it failed to
  * delete the semafore, -EFAULT if the semaphore does not exist anymore.
  *
  */
@@ -1670,12 +1670,12 @@ RTAI_SYSCALL_MODE int rt_named_sem_delete(SEM *sem)
  * @anchor _rt_named_rwl_init
  * @brief Initialize a multi readers single writer lock identified by a name.
  *
- * _rt_named_rwl_init allocate and initializes a multi readers single writer 
- * lock (RWL) identified by @e name. Once the lock structure is allocated the 
+ * _rt_named_rwl_init allocate and initializes a multi readers single writer
+ * lock (RWL) identified by @e name. Once the lock structure is allocated the
  * initialization is as for rt_rwl_init. The function returns the
  * handle pointing to the allocated multi readers single writer lock o
- * structure, to be used as the usual lock address in all rwl based services. 
- * Named objects are useful for use among different processes, kernel/user 
+ * structure, to be used as the usual lock address in all rwl based services.
+ * Named objects are useful for use among different processes, kernel/user
  * space and in distributed applications, see netrpc.
  *
  * @param rwl_name is the identifier associated with the returned object.
@@ -1686,8 +1686,8 @@ RTAI_SYSCALL_MODE int rt_named_sem_delete(SEM *sem)
  * @see nam2num() and num2nam().
  *
  * As for all the named initialization functions it must be remarked that
- * only the very first call to initilize/create a named RTAI object does a 
- * real allocation of the object, any following call with the same name 
+ * only the very first call to initilize/create a named RTAI object does a
+ * real allocation of the object, any following call with the same name
  * will just increase its usage count. In any case the function returns
  * a pointer to the named object, or zero if in error.
  *
@@ -1718,17 +1718,17 @@ RTAI_SYSCALL_MODE RWL *_rt_named_rwl_init(unsigned long rwl_name)
  * @brief Delete a multi readers single writer lock in named mode.
  *
  * rt_named_rwl_delete deletes a multi readers single writer lock
- * previously created with @ref _rt_named_rwl_init(). 
+ * previously created with @ref _rt_named_rwl_init().
  *
- * @param rwl points to the structure pointer returned by a corresponding 
- * call to rt_named_rwl_init. 
+ * @param rwl points to the structure pointer returned by a corresponding
+ * call to rt_named_rwl_init.
  *
- * As it is done by all the named allocation functions delete calls have just 
- * the effect of decrementing a usage count till the last is done, as that is 
+ * As it is done by all the named allocation functions delete calls have just
+ * the effect of decrementing a usage count till the last is done, as that is
  * the one the really frees the object.
  *
- * @return an int >=0 is returned upon success, SEM_ERR if it failed to 
- * delete the multi readers single writer lock, -EFAULT if the lock does 
+ * @return an int >=0 is returned upon success, SEM_ERR if it failed to
+ * delete the multi readers single writer lock, -EFAULT if the lock does
  * not exist anymore.
  *
  */
@@ -1751,11 +1751,11 @@ RTAI_SYSCALL_MODE int rt_named_rwl_delete(RWL *rwl)
  * @anchor _rt_named_spl_init
  * @brief Initialize a spinlock identified by a name.
  *
- * _rt_named_spl_init allocate and initializes a spinlock (SPL) identified 
- * by @e name. Once the spinlock structure is allocated the initialization 
- * is as for rt_spl_init. The function returns the handle pointing to the 
- * allocated spinlock structure, to be used as the usual spinlock address 
- * in all spinlock based services. Named objects are useful for use among 
+ * _rt_named_spl_init allocate and initializes a spinlock (SPL) identified
+ * by @e name. Once the spinlock structure is allocated the initialization
+ * is as for rt_spl_init. The function returns the handle pointing to the
+ * allocated spinlock structure, to be used as the usual spinlock address
+ * in all spinlock based services. Named objects are useful for use among
  * different processes and kernel/user space.
  *
  * @param spl_name is the identifier associated with the returned object.
@@ -1766,8 +1766,8 @@ RTAI_SYSCALL_MODE int rt_named_rwl_delete(RWL *rwl)
  * @see nam2num() and num2nam().
  *
  * As for all the named initialization functions it must be remarked that
- * only the very first call to initilize/create a named RTAI object does a 
- * real allocation of the object, any following call with the same name 
+ * only the very first call to initilize/create a named RTAI object does a
+ * real allocation of the object, any following call with the same name
  * will just increase its usage count. In any case the function returns
  * a pointer to the named object, or zero if in error.
  *
@@ -1798,13 +1798,13 @@ RTAI_SYSCALL_MODE SPL *_rt_named_spl_init(unsigned long spl_name)
  * @brief Delete a spinlock in named mode.
  *
  * rt_named_spl_delete deletes a spinlock previously created with
- * @ref _rt_named_spl_init(). 
+ * @ref _rt_named_spl_init().
  *
- * @param spl points to the structure pointer returned by a corresponding 
- * call to rt_named_spl_init. 
+ * @param spl points to the structure pointer returned by a corresponding
+ * call to rt_named_spl_init.
  *
- * As it is done by all the named allocation functions delete calls have just 
- * the effect of decrementing a usage count till the last is done, as that is 
+ * As it is done by all the named allocation functions delete calls have just
+ * the effect of decrementing a usage count till the last is done, as that is
  * the one the really frees the object.
  *
  * @return an int >=0 is returned upon success, -EFAULT if the spinlock
@@ -1828,14 +1828,14 @@ RTAI_SYSCALL_MODE int rt_named_spl_delete(SPL *spl)
 struct rt_poll_enc rt_poll_ofstfun[] = {
 	[RT_POLL_NOT_TO_USE]   = {            0           , NULL },
 #ifdef CONFIG_RTAI_RT_POLL
-	[RT_POLL_MBX_RECV]     = { offsetof(MBX, poll_recv), NULL }, 
+	[RT_POLL_MBX_RECV]     = { offsetof(MBX, poll_recv), NULL },
 	[RT_POLL_MBX_SEND]     = { offsetof(MBX, poll_send), NULL },
-	[RT_POLL_SEM_WAIT_ALL] = { offsetof(SEM, poll_wait_all), NULL }, 
+	[RT_POLL_SEM_WAIT_ALL] = { offsetof(SEM, poll_wait_all), NULL },
 	[RT_POLL_SEM_WAIT_ONE] = { offsetof(SEM, poll_wait_one), NULL }
 #else
-	[RT_POLL_MBX_RECV]     = { 0, NULL }, 
+	[RT_POLL_MBX_RECV]     = { 0, NULL },
 	[RT_POLL_MBX_SEND]     = { 0, NULL },
-	[RT_POLL_SEM_WAIT_ALL] = { 0, NULL }, 
+	[RT_POLL_SEM_WAIT_ALL] = { 0, NULL },
 	[RT_POLL_SEM_WAIT_ONE] = { 0, NULL }
 #endif
 };
@@ -1850,7 +1850,7 @@ static inline void rt_schedule_tosched(unsigned long tosched_mask)
 	unsigned long flags;
 #ifdef CONFIG_SMP
 	unsigned long cpumask, rmask;
-	rmask = tosched_mask & ~(cpumask = (1 << rtai_cpuid())); 
+	rmask = tosched_mask & ~(cpumask = (1 << rtai_cpuid()));
 	if (rmask) {
 		rtai_save_flags_and_cli(flags);
 		send_sched_ipi(rmask);
@@ -1864,7 +1864,7 @@ static inline void rt_schedule_tosched(unsigned long tosched_mask)
 		rt_global_restore_flags(flags);
 	}
 }
- 
+
 static inline int rt_poll_wait(POLL_SEM *sem, RT_TASK *rt_current)
 {
 	unsigned long flags;
@@ -1876,7 +1876,7 @@ static inline int rt_poll_wait(POLL_SEM *sem, RT_TASK *rt_current)
 		rem_ready_current(rt_current);
 		enqueue_blocked(rt_current, &sem->queue, 1);
 		rt_schedule();
-		if (unlikely(rt_current->blocked_on != NULL)) { 
+		if (unlikely(rt_current->blocked_on != NULL)) {
 			dequeue_blocked(rt_current);
 			retval = RTE_UNBLKD;
 		}
@@ -1900,7 +1900,7 @@ static inline int rt_poll_wait_until(POLL_SEM *sem, RTIME time, RT_TASK *rt_curr
 			enq_timed_task(rt_current);
 			rt_schedule();
 		}
-		if (unlikely(rt_current->blocked_on != NULL)) { 
+		if (unlikely(rt_current->blocked_on != NULL)) {
 			retval = likely((void *)rt_current->blocked_on > RTP_HIGERR) ? RTE_TIMOUT : RTE_UNBLKD;
 			dequeue_blocked(rt_current);
 		}
@@ -1972,7 +1972,7 @@ EXPORT_SYMBOL(rt_wakeup_pollers);
  * @param nr is the number of elements of pdsa. If zero rt_poll will simply
  * suspend the polling task, but only if a non null timeout is specified.
  *
- * @param timeout sets a possible time boundary for the polling action; its 
+ * @param timeout sets a possible time boundary for the polling action; its
  * value can be:
  * 	-   0 for an infinitely long wait;
  *	- < 0 for a relative timeout;
@@ -1986,7 +1986,7 @@ EXPORT_SYMBOL(rt_wakeup_pollers);
  *
  * @return:
  *	+ the number of structures for which the poll succeeded, the related
- *	  IPCs polling result can be inferred by looking at "what"s, which 
+ *	  IPCs polling result can be inferred by looking at "what"s, which
  *	  will be:
  *	  - unchanged if nothing happened,
  *	  - NULL if the related poll succeeded,
@@ -1999,9 +1999,9 @@ EXPORT_SYMBOL(rt_wakeup_pollers);
  *	+ ENOMEM, if CONFIG_RTAI_RT_POLL_ON_STACK is not set so that RTAI
  *	   heap is used and there is not enough space anymore (see also the
  *	   WARNING below).
- * 
+ *
  * @usage note:
- *	the user sets the elements of her/his struct rt_poll_s array: 
+ *	the user sets the elements of her/his struct rt_poll_s array:
  *	struct rt_poll_s { void *what; unsigned long forwhat; }, as needed.
  *	In particular "what" must be set to the pointer of the IPC
  *      referenced mechanism, i.e. only a MBX pointer at the moment. Then the
@@ -2012,12 +2012,12 @@ EXPORT_SYMBOL(rt_wakeup_pollers);
  *	When _rt_poll returns a user can infer the results of her/his polling
  *	by looking at each "what' in the array, as explained above.
  *	It is important to remark that if more tasks are using the same IPC
- *	mechanism simultaneously, it is not possible to assume that a NULL 
+ *	mechanism simultaneously, it is not possible to assume that a NULL
  *	"what" entails the possibility of applying the desired IPC mechanism
  *	without blocking.
  *	In fact the task at hand cannot be sure that another task has done
  *	it before, so depleting/filling the polled object. Then, if it is known
- *	that more tasks might have polled/accessed the same mechanism, the 
+ *	that more tasks might have polled/accessed the same mechanism, the
  *	"_if" version of the needed action should be used if one wants to
  *	be sure of not blocking. If an "_if" call fails then it will mean
  *	that there was a competing polling/access on the same object.
@@ -2032,7 +2032,7 @@ EXPORT_SYMBOL(rt_wakeup_pollers);
  *	RTAI dynamic heap. To be cautious rt_malloc has been set as default
  *	in the RTAI configuration. If one is sure that short enough lists,
  *	say 30/40 terms or so, will be used in her/his application the more
- *	effective allocation on the stack can be use by setting 
+ *	effective allocation on the stack can be use by setting
  *	CONFIG_RTAI_RT_POLL_ON_STACK when configuring RTAI.
  */
 

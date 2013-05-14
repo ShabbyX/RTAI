@@ -1,5 +1,5 @@
 /*
- * Project: rtai_cpp - RTAI C++ Framework 
+ * Project: rtai_cpp - RTAI C++ Framework
  *
  * File: $Id: task.h,v 1.3 2005/03/18 09:29:59 rpm Exp $
  *
@@ -63,15 +63,15 @@ class Task {
 	friend void entry_point(int this_pointer);
 public:
 	Task();
-	Task(int stack_size, 
-	     int priority, 
+	Task(int stack_size,
+	     int priority,
 	     bool uses_fpu,
 	     bool use_signal,
 	     unsigned int cpuid);
 
 	Task(const char* name,
-	     int stack_size, 
-	     int priority, 
+	     int stack_size,
+	     int priority,
 	     bool uses_fpu,
 	     bool use_signal,
 	     unsigned int cpuid);
@@ -80,17 +80,17 @@ public:
 
 	virtual ~Task();
 
-	virtual bool init(int stack_size, 
-	                  int priority, 
-	                  bool uses_fpu, 
-	                  bool use_signal, 
+	virtual bool init(int stack_size,
+	                  int priority,
+	                  bool uses_fpu,
+	                  bool use_signal,
 	                  unsigned int cpuid);
 
 	virtual bool init(const char* name,
-			  int stack_size, 
-	                  int priority, 
-	                  bool uses_fpu, 
-	                  bool use_signal, 
+			  int stack_size,
+	                  int priority,
+	                  bool uses_fpu,
+	                  bool use_signal,
 	                  unsigned int cpuid);
 
 

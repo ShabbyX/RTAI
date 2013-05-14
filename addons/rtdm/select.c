@@ -59,12 +59,12 @@ static int xnselect_apc;
 #define link2binding(baddr, memb)				\
 	container_of(baddr, struct xnselect_binding, memb)
 
-/** 
+/**
  * Initialize a @a struct @a xnselect structure.
  *
  * This service must be called to initialize a @a struct @a xnselect structure
  * before it is bound to a selector by the means of xnselect_bind().
- * 
+ *
  * @param select_block pointer to the xnselect structure to be initialized
  */
 void xnselect_init(struct xnselect *select_block)
@@ -78,7 +78,7 @@ static inline int xnselect_wakeup(struct xnselector *selector)
 	return xnsynch_flush(&selector->synchbase, 0) == XNSYNCH_RESCHED;
 }
 
-/** 
+/**
  * Bind a file descriptor (represented by its @a xnselect structure) to a
  * selector block.
  *
@@ -95,7 +95,7 @@ static inline int xnselect_wakeup(struct xnselector *selector)
  * @param index index of the file descriptor (represented by @a select_block) in the bit fields used by the @a selector structure;
  *
  * @param state current state of the file descriptor>.
- * 
+ *
  * @a select_block must have been initialized with xnselect_init(),
  * the @a xnselector structure must have been initialized with
  * xnselector_init(), @a binding may be uninitialized.
@@ -103,7 +103,7 @@ static inline int xnselect_wakeup(struct xnselector *selector)
  * This service must be called with nklock locked, irqs off. For this reason,
  * the @a binding parameter must have been allocated by the caller outside the
  * locking section.
- * 
+ *
  * @retval -EINVAL if @a type or @a index is invalid;
  * @retval 0 otherwise.
  */
@@ -161,7 +161,7 @@ int __xnselect_signal(struct xnselect *select_block, unsigned state)
 					resched = 1;
 			}
 		} else
-			__FD_CLR(binding->bit_index, 
+			__FD_CLR(binding->bit_index,
 				 &selector->fds[binding->type].pending);
 	}
 
@@ -169,7 +169,7 @@ int __xnselect_signal(struct xnselect *select_block, unsigned state)
 }
 EXPORT_SYMBOL_GPL(__xnselect_signal);
 
-/** 
+/**
  * Destroy the @a xnselect structure associated with a file descriptor.
  *
  * Any binding with a @a xnselector block is destroyed.
@@ -275,11 +275,11 @@ static unsigned fd_set_popcount(fd_set *set, unsigned n)
 	return count;
 }
 
-/** 
+/**
  * Initialize a selector structure.
- * 
+ *
  * @param selector The selector structure to be initialized.
- * 
+ *
  * @retval 0
  */
 int xnselector_init(struct xnselector *selector)
@@ -296,10 +296,10 @@ int xnselector_init(struct xnselector *selector)
 }
 EXPORT_SYMBOL_GPL(xnselector_init);
 
-/** 
+/**
  * Check the state of a number of file descriptors, wait for a state change if
  * no descriptor is ready.
- * 
+ *
  * @param selector structure to check for pending events
  * @param out_fds The set of descriptors with pending events if a strictly positive number is returned, or the set of descriptors not yet bound if -ECHRNG is returned;
  * @param in_fds the set of descriptors which events should be checked
@@ -310,7 +310,7 @@ EXPORT_SYMBOL_GPL(xnselector_init);
  * timeout with @a timeout_mode set to XN_RELATIVE, will cause a longer sleep
  * than expected if the sleep is interrupted.
  * @param timeout_mode the mode of @a timeout.
- * 
+ *
  * @retval -EINVAL if @a nfds is negative;
  * @retval -ECHRNG if some of the descriptors passed in @a in_fds have not yet
  * been registered with xnselect_bind(), @a out_fds contains the set of such
@@ -391,7 +391,7 @@ int xnselect(struct xnselector *selector,
 }
 EXPORT_SYMBOL_GPL(xnselect);
 
-/** 
+/**
  * Destroy a selector block.
  *
  * All bindings with file descriptor are destroyed.
@@ -434,7 +434,7 @@ static void xnselector_destroy_loop(void *cookie)
 
 			xnlock_get_irqsave(&nklock, s);
 		}
-		resched = 
+		resched =
 			xnsynch_destroy(&selector->synchbase) == XNSYNCH_RESCHED;
 		xnlock_put_irqrestore(&nklock, s);
 
@@ -450,7 +450,7 @@ static void xnselector_destroy_loop(void *cookie)
 int xnselect_mount(void)
 {
 	initq(&xnselectors);
-	xnselect_apc = rthal_apc_alloc("xnselectors_destroy", 
+	xnselect_apc = rthal_apc_alloc("xnselectors_destroy",
 				       xnselector_destroy_loop, NULL);
 	if (xnselect_apc < 0)
 		return xnselect_apc;

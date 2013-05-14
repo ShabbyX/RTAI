@@ -56,13 +56,13 @@
 
 //#define    Infinity(x)       ( x.hex.exponent & ExpMask ) == ExpMask
 #define      dInfinity(x)      ( x.hex.high & dExpMask ) == dExpMask
-#define      sInfinity(x)      ( ( x.hexsgl << 1 ) & sExpMask ) == sExpMask      
+#define      sInfinity(x)      ( ( x.hexsgl << 1 ) & sExpMask ) == sExpMask
 
 //#define    Exponent(x)       x.hex.exponent & ExpMask
 #define      dExponent(x)      x.hex.high & dExpMask
 #define      sExponent(x)      ( ( x.hexsgl << 1 ) & sExpMask )
 
-#define      sZero(x)          ( x.hexsgl & sSgnMask ) == 0 
+#define      sZero(x)          ( x.hexsgl & sSgnMask ) == 0
 //#define    Sign(x)           ( x.hex.exponent & SgnMask ) == SgnMask
 
 /*******************************************************************************
@@ -101,12 +101,12 @@ enum {
   FP_QNAN                       = 1,    /*      quiet NaN
       */
   FP_INFINITE                   = 2,    /*      + or - infinity
-      */ 
+      */
   FP_ZERO                       = 3,    /*      + or - zero
       */
-  FP_NORMAL                     = 4,    /*      all normal numbers 
+  FP_NORMAL                     = 4,    /*      all normal numbers
       */
-  FP_SUBNORMAL                  = 5     /*      denormal numbers 
+  FP_SUBNORMAL                  = 5     /*      denormal numbers
       */
-};     
+};
 

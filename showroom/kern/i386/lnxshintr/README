@@ -10,8 +10,8 @@ to wait Linux.
 
 That said it is here, at least is yet another good test for the core RTAI stuff.
 
-It uses the ethernet interrupt number of the machine on which it has been 
-tested first. It is defined through the static variable ETHIRQ. You might have 
+It uses the ethernet interrupt number of the machine on which it has been
+tested first. It is defined through the static variable ETHIRQ. You might have
 to change it or insmod with "ETHIRQ=myirq".
 
 To run the example type:

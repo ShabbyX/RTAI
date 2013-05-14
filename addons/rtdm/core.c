@@ -108,7 +108,7 @@ static int create_instance(struct rtdm_device *device,
 	int fd;
 	spl_t s;
 
-	/* 
+	/*
 	 * Reset to NULL so that we can always use cleanup_files/instance to
 	 * revert also partially successful allocations.
 	 */
@@ -1446,7 +1446,7 @@ int rt_dev_getpeername(int fd, struct sockaddr *name, socklen_t *namelen);
 /*
  RTAI extension to use select as any other usual RTDM rt_dev_xxx service.
  At the moment selector kept and stack, initialised/destroyed at each call.
- Usage is as for: 
+ Usage is as for:
  int rt_dev_select(int nfds, fd_set *rfds, fd_set *wfds, fd_set *efds,
                    nanosecs_rel_t timeout);.
  As it can be seen args are as for the standard select call execpt for the
@@ -1456,7 +1456,7 @@ int rt_dev_getpeername(int fd, struct sockaddr *name, socklen_t *namelen);
 #define SELECT_DIM  XNSELECT_MAX_TYPES
 
 /*
-RTDM_FD_START kept in case we'll ever need a shift for fd being different from 
+RTDM_FD_START kept in case we'll ever need a shift for fd being different from
 fd_index in the call to:
 int rtdm_select_bind(int fd, rtdm_selector_t *selector, enum rtdm_selecttype type, unsigned fd_index);
 */

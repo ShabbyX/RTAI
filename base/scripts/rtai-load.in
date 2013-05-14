@@ -89,7 +89,7 @@ target_info=`echo $stanza | cut -d: -f3`
 target_mesg=`echo $stanza | cut -s -d: -f4`
 
 if test "$target_name" = user_command; then
-    target_info=`echo $target_info | sed s/";"/" $*\;"/` 
+    target_info=`echo $target_info | sed s/";"/" $*\;"/`
     shift $#
 fi
 
