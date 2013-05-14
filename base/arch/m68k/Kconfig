@@ -1,4 +1,4 @@
-mainmenu "RTAI/m68k/m68knommu configuration"
+mainmenu "RTAI/m68k configuration"
 
 config MODULES
 	bool
@@ -187,8 +187,6 @@ config RTAI_LXRT_NO_INLINE
 endchoice
 
 endmenu
-
-#menu "Machine (m68k/m68knommu)"
 
 #config RTAI_DONT_DISPATCH_CORE_IRQS
 #	bool

@@ -1363,11 +1363,7 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	PROC_PRINT_VARS;
 	int i, none;
 
-#ifdef CONFIG_MMU
 	PROC_PRINT("\n** RTAI/m68k:\n\n");
-#else /* !CONFIG_MMU */
-	PROC_PRINT("\n** RTAI/m68knommu:\n\n");
-#endif /* CONFIG_MMU */
 	none = 1;
 	PROC_PRINT("\n** Real-time IRQs used by RTAI: ");
 	for (i = 0; i < RTAI_NR_IRQS; i++) {

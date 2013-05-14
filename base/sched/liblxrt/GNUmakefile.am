@@ -2,10 +2,8 @@ lib_LTLIBRARIES = liblxrt.la
 
 liblxrt_la_SOURCES = \
 		init.c \
-		services.c
-if !CONFIG_M68KNOMMU
-liblxrt_la_SOURCES += touchall.c
-endif
+		services.c \
+		touchall.c
 
 liblxrt_la_LDFLAGS = -module -version-info 1:0:0
 

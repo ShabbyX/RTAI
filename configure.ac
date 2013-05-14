@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_PREREQ(2.59)
+AC_PREREQ(2.69)
 
 AC_INIT(rtai,3.9.1,rtai@rtai.org)
 
@@ -84,11 +84,6 @@ case "$host" in
 	RTAI_TARGET_ARCH=ppc
 	wanted_kernel_arch=CONFIG_PPC
         ;;
- m68knommu-*)
- 	RTAI_TARGET_ARCH=m68k
-	wanted_kernel_arch=CONFIG_M68K
-	arch_has_mmu=
-	;;
  m68k-*)
 	RTAI_TARGET_ARCH=m68k
 	wanted_kernel_arch=CONFIG_M68K
@@ -254,13 +249,6 @@ ppc|powerpc)
 	fi
 	RTAI_TARGET_ARCH_NAME=$ARCH_SUBDIR
 	;;
-m68k)
-	if test x$arch_has_mmu = x; then
-		RTAI_TARGET_ARCH_NAME=m68knommu
-	else
-		RTAI_TARGET_ARCH_NAME=$RTAI_TARGET_ARCH
-	fi
-	;;
 *)
 	RTAI_TARGET_ARCH_NAME=$RTAI_TARGET_ARCH
 	;;
@@ -291,10 +279,6 @@ else
 fi
 
 case "$RTAI_LINUX_VERSION" in
-  2.4.*)
-	dnl by design, only RTAI Adeos-oldgen HAL is available with 2.4
-	unset CONFIG_KBUILD
-    ;;
   2.6.*)
 	dnl by design, RTAI Adeos-oldgen HAL is supported up to 2.6.12 included,
 	dnl and RTAI Adeos-newgen HAL is supported since 2.6.13 included
@@ -322,52 +306,26 @@ if test x$arch_select = x; then
 fi
 AC_MSG_RESULT([$wanted_kernel_arch])
 
-case "${RTAI_LINUX_VERSION}" in
-2.4.*)
-	dnl MMU not supported in 2.4
-	;;
-*)
-	AC_MSG_CHECKING([for MMU support])
-	mmu_select=`eval echo \\$CONFIG_MMU`
-	if test x$mmu_select != x$arch_has_mmu; then
-		echo
-		echo "************************************************************"
-		echo " The target RTAI architecture MMU check failed:"
-		if test x$mmu_select = x; then
-			echo " MMU is unsupported by Linux architecure, but it must."
-		else
-			echo " MMU is supported by Linux architecure, but it must not."
-		fi
-		echo "************************************************************"
-		exit 1
+AC_MSG_CHECKING([for MMU support])
+mmu_select=`eval echo \\$CONFIG_MMU`
+if test x$mmu_select != x$arch_has_mmu; then
+	echo
+	echo "************************************************************"
+	echo " The target RTAI architecture MMU check failed:"
+	if test x$mmu_select = x; then
+		echo " MMU is unsupported by Linux architecure, but it must."
 	fi
-	if test x$mmu_select != x; then
-		AC_MSG_RESULT([yes])
-	else
-		AC_MSG_RESULT([no])
-	fi
-	;;
-esac
+	echo "************************************************************"
+	exit 1
+fi
+if test x$mmu_select != x; then
+	AC_MSG_RESULT([yes])
+else
+	AC_MSG_RESULT([no])
+fi
 
 if test x${CONFIG_MODULES} = x ; then
   AC_MSG_ERROR([Please set CONFIG_MODULES for $RTAI_LINUX_DIR and rebuild your kernel])
-fi
-
-dnl No longer used.
-dnl if test x${CONFIG_REGPARM} = xy ; then
-dnl   AC_MSG_ERROR([Please unset CONFIG_REGPARM for $RTAI_LINUX_DIR and 
-dnl rebuild your kernel])
-dnl fi
-
-if test x${CONFIG_MODVERSIONS} = xy ; then
-	case "${RTAI_LINUX_VERSION}" in
-	2.4.*)
-  AC_MSG_ERROR([Please unset CONFIG_MODVERSIONS for $RTAI_LINUX_DIR and rebuild your kernel])
-		;;
-	*)
-		dnl reported to be harmless in 2.6
-		;;
-	esac
 fi
 
 if test x${CONFIG_RTAI_ADEOS} = xy -a x${CONFIG_ADEOS_CORE} = x; then
@@ -793,15 +751,6 @@ AC_ARG_ENABLE(align-priority,
 	*) unset CONFIG_RTAI_ALIGN_LINUX_PRIORITY ;;
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_ALIGN_LINUX_PRIORITY:-no})
-
-AC_MSG_CHECKING(for in-kernel C++ support)
-AC_ARG_ENABLE(cplusplus,
-	[ --enable-cplusplus	Build in-kernel C++ support],
-	[case "$enableval" in
-	y | yes) CONFIG_RTAI_CPLUSPLUS=y ;;
-	*) unset CONFIG_RTAI_CPLUSPLUS ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_CPLUSPLUS:-no})
 
 AC_MSG_CHECKING(for calibration frequency factor)
 AC_ARG_ENABLE(cal-freq-fact,
@@ -1287,16 +1236,6 @@ if test x$CONFIG_RTAI_RTDM_SHIRQ = xy ; then
    fi
 fi
 
-dnl Built-in math support is not currently available with Kbuild-built
-dnl kernels due to bad dependencies on user-space headers we really
-dnl need to fix first. So we leave in place all the config machinery
-dnl for having built-in/modular math support, but will complain here
-dnl until those dependencies are properly cleared.
-if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_MATH = xy ; then
-   AC_MSG_ERROR([Built-in math support is not currently available with Linux >= 2.6.x])
-fi
-
-dnl Kbuild is not quite C++ friendly these days.
 if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_CPLUSPLUS = xy ; then
    AC_MSG_ERROR([In-kernel C++ support is not available with Linux >= 2.6.x])
 fi
@@ -1525,10 +1464,8 @@ AM_CONDITIONAL(CONFIG_ARCH_AT91,[test "$CONFIG_ARCH_AT91" = y])
 AM_CONDITIONAL(CONFIG_ARCH_IMX,[test "$CONFIG_ARCH_IMX" = y])
 AM_CONDITIONAL(CONFIG_UCLINUX,[test "$CONFIG_UCLINUX" = y])
 AM_CONDITIONAL(CONFIG_SMP,[test "$CONFIG_SMP" = y])
-AM_CONDITIONAL(CONFIG_M68KNOMMU,[test "$CONFIG_M68K" = y -a "x$CONFIG_MMU" != xy])
 AM_CONDITIONAL(CONFIG_M68K,[test "$CONFIG_M68K" = y -a "$CONFIG_MMU" = y])
 AM_CONDITIONAL(CONFIG_M5407,[test "$CONFIG_M5407" = y])
-AM_CONDITIONAL(CONFIG_M5329,[test "$CONFIG_M5329" = y])
 AM_CONDITIONAL(CONFIG_M54455,[test "$CONFIG_M54455" = y])
 
 AM_CONDITIONAL(CONFIG_RTAI_TRACE,[test -n "$CONFIG_RTAI_TRACE"])
@@ -1739,8 +1676,6 @@ case $RTAI_TARGET_ARCH in
 	if test "$CONFIG_M5407" = y; then
 		RTAI_TARGET_SUBARCH=MCF5407
 		CFLAGS="-m5407 -Wa,-m5407"
-	elif test "$CONFIG_M532x" = y; then
-		RTAI_TARGET_SUBARCH=MCF5329
 	elif test "$CONFIG_M54455" = y; then
 		RTAI_TARGET_SUBARCH=MCF54455
 	else
