@@ -53,7 +53,15 @@ clean-if-reconfigured:
 	   $(MAKE) clean ; \
 	fi
 
-menuconfig: mconf config-status
+CONFIG_METHODS := config nconfig menuconfig xconfig gconfig oldconfig silentoldconfig defconfig\
+	savedefconfig allnoconfig allyesconfig allmodconfig alldefconfig\
+	randconfig listnewconfig olddefconfig
+.PHONY: $(CONFIG_METHODS)
+$(CONFIG_METHODS):
+	$(MAKE) -C base/config/kconfig \
+	-f Makefile.kconfig $@ \
+	srctree=$(PWD) ARCH=`uname -m`
+	@$(MAKE) --no-print-directory config-status
 
 config-status: .rtai_config
 	@test -r config.status && recf=yes || recf=no ; \
@@ -83,11 +91,6 @@ config-status: .rtai_config
 	else \
 	   rm -f .cfok ; false; \
 	fi
-
-mconf: $(KCONFIG_DIR)
-	$(MAKE) -C base/config/kconfig \
-	-f Makefile.kconfig menuconfig \
-	srctree=$(PWD) ARCH=`uname -m`
 
 if CONFIG_RTAI_OLD_FASHIONED_BUILD
 clean-local:
@@ -155,4 +158,4 @@ dev devices:
 	    done ; \
 	fi
 
-.PHONY: reconfig xconfig gconfig mconfig menuconfig config oldconfig clean-if-reconfigured dev devices
+.PHONY: clean-if-reconfigured dev devices
