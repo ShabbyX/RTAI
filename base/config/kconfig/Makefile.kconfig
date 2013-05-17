@@ -194,8 +194,8 @@ EXTRACFLAGS += $(shell $(SHELL) $(srctree)/base/config/kconfig/check.sh $(CC) $(
 CFLAGS_zconf.lex.o	:= -I$(srctree)/base/config/kconfig
 CFLAGS_zconf.tab.o	:= -I$(srctree)/base/config/kconfig
 
-LEX_PREFIX_zconf	:= zconf
-YACC_PREFIX_zconf	:= zconf
+LEX_PREFIX	:= zconf
+YACC_PREFIX	:= zconf
 
 LOADLIBES_qconf	= $(KC_QT_LIBS)
 CXXFLAGS_qconf.o	= $(KC_QT_CFLAGS)
@@ -352,17 +352,17 @@ ld_flags       = $(LDFLAGS) $(ldflags-y)
 # ---------------------------------------------------------------------------
 .PRECIOUS: %.lex.c_shipped
 %.lex.c_shipped: %.l
-	flex -o$@ -L -P $(LEX_PREFIX) $<
+	flex -o $@ -L -P $(LEX_PREFIX) $<
 
 # YACC
 # ---------------------------------------------------------------------------
 .PRECIOUS: %.tab.c_shipped
 %.tab.c_shipped: %.y
-	bison -o$@ -t -l -p $(YACC_PREFIX) $<
+	bison -o $@ -t -l -p $(YACC_PREFIX) $<
 
 .PRECIOUS: %.tab.h_shipped
 %.tab.h_shipped: %.y
-	bison -o/dev/null --defines=$@ -t -l -p $(YACC_PREFIX) $<
+	bison -o /dev/null --defines=$@ -t -l -p $(YACC_PREFIX) $<
 
 # Shipped files
 # ===========================================================================
