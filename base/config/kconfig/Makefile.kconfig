@@ -174,10 +174,14 @@ ifeq ($(gconf-target),1)
 	hostprogs-y += gconf
 endif
 
-clean-files	:= qconf.moc .tmp_qtcheck .tmp_gtkcheck
-clean-files	+= zconf.tab.c zconf.lex.c zconf.hash.c gconf.glade.h
-clean-files     += mconf qconf gconf nconf
-clean-files     += config.pot linux.pot
+PHONY += clean distclean
+
+clean:
+	rm -rf *.o .so .moc *.tmp* *.pot
+	rm -rf zconf.tab.c zconf.lex.c zconf.hash.c gconf.glade.h
+	rm -rf mconf qconf gconf nconf
+
+distclean: clean
 
 # Check that we have the required ncurses stuff installed for lxdialog (menuconfig)
 PHONY += dochecklxdialog
