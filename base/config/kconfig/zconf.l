@@ -1,5 +1,6 @@
-%option backup nostdinit noyywrap never-interactive full ecs
-%option 8bit backup nodefault perf-report perf-report
+%option nostdinit noyywrap never-interactive full ecs
+%option 8bit nodefault perf-report perf-report
+%option noinput
 %x COMMAND HELP STRING PARAM
 %{
 /*
@@ -13,13 +14,16 @@
 #include <string.h>
 #include <unistd.h>
 
-#define LKC_DIRECT_LINK
 #include "lkc.h"
 
 #define START_STRSIZE	16
 
-char *text;
-static char *text_ptr;
+static struct {
+	struct file *file;
+	int lineno;
+} current_pos;
+
+static char *text;
 static int text_size, text_asize;
 
 struct buffer {
@@ -32,34 +36,33 @@ struct buffer *current_buf;
 static int last_ts, first_ts;
 
 static void zconf_endhelp(void);
-static struct buffer *zconf_endfile(void);
+static void zconf_endfile(void);
 
-void new_string(void)
+static void new_string(void)
 {
-	text = malloc(START_STRSIZE);
+	text = xmalloc(START_STRSIZE);
 	text_asize = START_STRSIZE;
-	text_ptr = text;
 	text_size = 0;
-	*text_ptr = 0;
+	*text = 0;
 }
 
-void append_string(const char *str, int size)
+static void append_string(const char *str, int size)
 {
 	int new_size = text_size + size + 1;
 	if (new_size > text_asize) {
+		new_size += START_STRSIZE - 1;
+		new_size &= -START_STRSIZE;
 		text = realloc(text, new_size);
 		text_asize = new_size;
-		text_ptr = text + text_size;
 	}
-	memcpy(text_ptr, str, size);
-	text_ptr += size;
+	memcpy(text + text_size, str, size);
 	text_size += size;
-	*text_ptr = 0;
+	text[text_size] = 0;
 }
 
-void alloc_string(const char *str, int size)
+static void alloc_string(const char *str, int size)
 {
-	text = malloc(size + 1);
+	text = xmalloc(size + 1);
 	memcpy(text, str, size);
 	text[size] = 0;
 }
@@ -72,10 +75,13 @@ n	[A-Za-z0-9_]
 	int str = 0;
 	int ts, i;
 
-[ \t]*#.*\n	current_file->lineno++;
+[ \t]*#.*\n	|
+[ \t]*\n	{
+	current_file->lineno++;
+	return T_EOL;
+}
 [ \t]*#.*
 
-[ \t]*\n	current_file->lineno++; return T_EOL;
 
 [ \t]+	{
 	BEGIN(COMMAND);
@@ -88,42 +94,25 @@ n	[A-Za-z0-9_]
 
 
 <COMMAND>{
-	"mainmenu"		BEGIN(PARAM); return T_MAINMENU;
-	"menu"			BEGIN(PARAM); return T_MENU;
-	"endmenu"		BEGIN(PARAM); return T_ENDMENU;
-	"source"		BEGIN(PARAM); return T_SOURCE;
-	"choice"		BEGIN(PARAM); return T_CHOICE;
-	"endchoice"		BEGIN(PARAM); return T_ENDCHOICE;
-	"comment"		BEGIN(PARAM); return T_COMMENT;
-	"config"		BEGIN(PARAM); return T_CONFIG;
-	"menuconfig"		BEGIN(PARAM); return T_MENUCONFIG;
-	"help"			BEGIN(PARAM); return T_HELP;
-	"if"			BEGIN(PARAM); return T_IF;
-	"endif"			BEGIN(PARAM); return T_ENDIF;
-	"depends"		BEGIN(PARAM); return T_DEPENDS;
-	"requires"		BEGIN(PARAM); return T_REQUIRES;
-	"optional"		BEGIN(PARAM); return T_OPTIONAL;
-	"default"		BEGIN(PARAM); return T_DEFAULT;
-	"prompt"		BEGIN(PARAM); return T_PROMPT;
-	"tristate"		BEGIN(PARAM); return T_TRISTATE;
-	"def_tristate"		BEGIN(PARAM); return T_DEF_TRISTATE;
-	"bool"			BEGIN(PARAM); return T_BOOLEAN;
-	"boolean"		BEGIN(PARAM); return T_BOOLEAN;
-	"def_bool"		BEGIN(PARAM); return T_DEF_BOOLEAN;
-	"def_boolean"		BEGIN(PARAM); return T_DEF_BOOLEAN;
-	"int"			BEGIN(PARAM); return T_INT;
-	"hex"			BEGIN(PARAM); return T_HEX;
-	"string"		BEGIN(PARAM); return T_STRING;
-	"select"		BEGIN(PARAM); return T_SELECT;
-	"enable"		BEGIN(PARAM); return T_SELECT;
-	"range"			BEGIN(PARAM); return T_RANGE;
 	{n}+	{
+		const struct kconf_id *id = kconf_id_lookup(yytext, yyleng);
+		BEGIN(PARAM);
+		current_pos.file = current_file;
+		current_pos.lineno = current_file->lineno;
+		if (id && id->flags & TF_COMMAND) {
+			zconflval.id = id;
+			return id->token;
+		}
 		alloc_string(yytext, yyleng);
 		zconflval.string = text;
 		return T_WORD;
 	}
 	.
-	\n	current_file->lineno++; BEGIN(INITIAL);
+	\n	{
+		BEGIN(INITIAL);
+		current_file->lineno++;
+		return T_EOL;
+	}
 }
 
 <PARAM>{
@@ -134,8 +123,6 @@ n	[A-Za-z0-9_]
 	"!"	return T_NOT;
 	"="	return T_EQUAL;
 	"!="	return T_UNEQUAL;
-	"if"	return T_IF;
-	"on"	return T_ON;
 	\"|\'	{
 		str = yytext[0];
 		new_string();
@@ -144,6 +131,11 @@ n	[A-Za-z0-9_]
 	\n	BEGIN(INITIAL); current_file->lineno++; return T_EOL;
 	---	/* ignore */
 	({n}|[-/.])+	{
+		const struct kconf_id *id = kconf_id_lookup(yytext, yyleng);
+		if (id && id->flags & TF_PARAM) {
+			zconflval.id = id;
+			return id->token;
+		}
 		alloc_string(yytext, yyleng);
 		zconflval.string = text;
 		return T_WORD;
@@ -225,6 +217,11 @@ n	[A-Za-z0-9_]
 		append_string("\n", 1);
 	}
 	[^ \t\n].* {
+		while (yyleng) {
+			if ((yytext[yyleng-1] != ' ') && (yytext[yyleng-1] != '\t'))
+				break;
+			yyleng--;
+		}
 		append_string(yytext, yyleng);
 		if (!first_ts)
 			first_ts = last_ts;
@@ -236,9 +233,9 @@ n	[A-Za-z0-9_]
 }
 
 <<EOF>>	{
-	if (current_buf) {
+	if (current_file) {
 		zconf_endfile();
-		return T_EOF;
+		return T_EOL;
 	}
 	fclose(yyin);
 	yyterminate();
@@ -264,7 +261,7 @@ static void zconf_endhelp(void)
  * ./name
  * $(srctree)/name
  * The latter is used when srctree is separate from objtree
- * when compiling the kernel.
+ * when compiling RTAI.
  * Return NULL if file is not found.
  */
 FILE *zconf_fopen(const char *name)
@@ -273,7 +270,7 @@ FILE *zconf_fopen(const char *name)
 	FILE *f;
 
 	f = fopen(name, "r");
-	if (!f && name[0] != '/') {
+	if (!f && name != NULL && name[0] != '/') {
 		env = getenv(SRCTREE);
 		if (env) {
 			sprintf(fullname, "%s/%s", env, name);
@@ -291,50 +288,59 @@ void zconf_initscan(const char *name)
 		exit(1);
 	}
 
-	current_buf = malloc(sizeof(*current_buf));
+	current_buf = xmalloc(sizeof(*current_buf));
 	memset(current_buf, 0, sizeof(*current_buf));
 
 	current_file = file_lookup(name);
 	current_file->lineno = 1;
-	current_file->flags = FILE_BUSY;
 }
 
 void zconf_nextfile(const char *name)
 {
+	struct file *iter;
 	struct file *file = file_lookup(name);
-	struct buffer *buf = malloc(sizeof(*buf));
+	struct buffer *buf = xmalloc(sizeof(*buf));
 	memset(buf, 0, sizeof(*buf));
 
 	current_buf->state = YY_CURRENT_BUFFER;
-	yyin = zconf_fopen(name);
+	yyin = zconf_fopen(file->name);
 	if (!yyin) {
-		printf("%s:%d: can't open file \"%s\"\n", zconf_curname(), zconf_lineno(), name);
+		printf("%s:%d: can't open file \"%s\"\n",
+		    zconf_curname(), zconf_lineno(), file->name);
 		exit(1);
 	}
 	yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
 	buf->parent = current_buf;
 	current_buf = buf;
 
-	if (file->flags & FILE_BUSY) {
-		printf("recursive scan (%s)?\n", name);
-		exit(1);
+	for (iter = current_file->parent; iter; iter = iter->parent ) {
+		if (!strcmp(current_file->name,iter->name) ) {
+			printf("%s:%d: recursive inclusion detected. "
+			       "Inclusion path:\n  current file : '%s'\n",
+			       zconf_curname(), zconf_lineno(),
+			       zconf_curname());
+			iter = current_file->parent;
+			while (iter && \
+			       strcmp(iter->name,current_file->name)) {
+				printf("  included from: '%s:%d'\n",
+				       iter->name, iter->lineno-1);
+				iter = iter->parent;
+			}
+			if (iter)
+				printf("  included from: '%s:%d'\n",
+				       iter->name, iter->lineno+1);
+			exit(1);
+		}
 	}
-	if (file->flags & FILE_SCANNED) {
-		printf("file %s already scanned?\n", name);
-		exit(1);
-	}
-	file->flags |= FILE_BUSY;
 	file->lineno = 1;
 	file->parent = current_file;
 	current_file = file;
 }
 
-static struct buffer *zconf_endfile(void)
+static void zconf_endfile(void)
 {
 	struct buffer *parent;
 
-	current_file->flags |= FILE_SCANNED;
-	current_file->flags &= ~FILE_BUSY;
 	current_file = current_file->parent;
 
 	parent = current_buf->parent;
@@ -345,22 +351,14 @@ static struct buffer *zconf_endfile(void)
 	}
 	free(current_buf);
 	current_buf = parent;
-
-	return parent;
 }
 
 int zconf_lineno(void)
 {
-	if (current_buf)
-		return current_file->lineno - 1;
-	else
-		return 0;
+	return current_pos.lineno;
 }
 
-char *zconf_curname(void)
+const char *zconf_curname(void)
 {
-	if (current_buf)
-		return current_file->name;
-	else
-		return "<none>";
+	return current_pos.file ? current_pos.file->name : "<none>";
 }
