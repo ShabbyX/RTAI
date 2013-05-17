@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_PREREQ(2.69)
+AC_PREREQ(2.68)
 
 AC_INIT(rtai,3.9.1,rtai@rtai.org)
 

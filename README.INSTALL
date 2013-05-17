@@ -46,16 +46,29 @@ should suffice.
 The RTAI build system is a merge of Linux's Kconfig with
 autoconf/automake/libtool.
 
-1.1.1 Interactive configuration
--------------------------------
-
-1.) In the root of the RTAI source tree:
+You must first prepare your build system to generate a configure file:
 
 $ ./autogen.sh
+
+This also configures RTAI with the default configuration. To instead delay
+the configuration to another step:
+
+$ NOCONFIGURE=y ./autogen.sh
+
+See sections below for interactive and non-interactive configurations.
+
+To compile your fully prepared and configured RTAI tree:
+
+$ make
+
+1.1.1 Interactive configuration
+-------------------------------
 
 To launch the interactive configuration screen:
 
 $ make menuconfig (dialog-based as in 24.1.x)
+
+Other targets similar to the Linux kernel's configuration are also available.
 
 Save your configuration, wait for the shell prompt to come back after
 the configuration script has fully finished, then run "make".
@@ -63,12 +76,7 @@ the configuration script has fully finished, then run "make".
 1.1.2 Non-interactive configuration
 -----------------------------------
 
-You must first prepare your build system to generate a configure file:
-
-$ ./autogen.sh
-
-After the configure file and other necessary components are generated,
-you may now directly call the configure script:
+You may directly call the configure script:
 
 $ ./configure
 
@@ -122,10 +130,6 @@ Some configuration targets in base/ can either produce a module,
 or be statically linked to the RTAI schedulers. Either pass "m" for
 the modular build to their respective --enable-xxx switch, or "y" for
 selecting the built-in mode.
-
-To compile your fully prepared and configured RTAI tree:
-
-$ make
 
 1.2 Installing the software
 ---------------------------
