@@ -1,15 +1,16 @@
-dnl Process this file with autoconf to produce a configure script.
-AC_PREREQ(2.68)
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
 
-AC_INIT(rtai,3.9.1,rtai@rtai.org)
+AC_PREREQ([2.68])
+AC_INIT([RTAI], [3.9.1], [rtai@rtai.org])
+AC_CONFIG_SRCDIR([base/sched/sched.c])
+AC_CONFIG_HEADERS([rtai_config.h])
 
 CONFIG_RTAI_VERSION_MAJOR=3
 CONFIG_RTAI_VERSION_MINOR=9
 CONFIG_RTAI_REVISION_LEVEL=1
 
-AC_CONFIG_HEADERS(rtai_config.h)
 AC_CONFIG_AUX_DIR([bin])
-AC_CONFIG_SRCDIR(base/sched/sched.c)
 AC_CONFIG_MACRO_DIR([m4])
 AC_PREFIX_DEFAULT(/usr/realtime)
 AC_CANONICAL_BUILD
