@@ -46,8 +46,8 @@ clean-if-reconfigured:
 	   $(MAKE) clean ; \
 	fi
 
-CONFIG_METHODS := config nconfig menuconfig xconfig gconfig oldconfig silentoldconfig defconfig\
-	savedefconfig allnoconfig allyesconfig allmodconfig alldefconfig\
+CONFIG_METHODS := config nconfig menuconfig xconfig gconfig oldconfig silentoldconfig defconfig \
+	savedefconfig allnoconfig allyesconfig allmodconfig alldefconfig \
 	randconfig listnewconfig olddefconfig
 .PHONY: $(CONFIG_METHODS)
 $(CONFIG_METHODS):
