@@ -895,7 +895,6 @@ if [[ $ac_cv_mingcc = no ]]; then
 else
   AC_MSG_RESULT([ok])
 fi
-MDL_HAVE_OPENGL
 SC_PATH_EFLTK($CONFIG_RTAI_EFLTK_DIR)
 fi
 

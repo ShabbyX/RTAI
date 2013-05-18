@@ -19,21 +19,6 @@ dnl   Suite 330
 dnl   59 Temple Place
 dnl   Boston, MA 02111-1307, USA.
 dnl ####################################################################
-dnl @synopsis MDL_HAVE_OPENGL
-dnl
-dnl A very simple check for OpenGL headers and libraries
-dnl
-dnl @version 2013-05-12
-dnl @author Alec Ari <neotheuser@ymail.com>
-dnl @license GPLWithACException
-dnl
-AC_DEFUN([MDL_HAVE_OPENGL],
-[
-AC_REQUIRE([AC_PATH_X])
-AC_REQUIRE([AC_PATH_XTRA])
-AC_CHECK_HEADERS(GL/gl.h GL/glu.h,[],[AC_MSG_ERROR([Required OpenGL header missing.])])
-AC_CHECK_LIB(GL, glBegin, [], [AC_MSG_ERROR([Required GL library missing.])])
-])
 
 AC_DEFUN([SC_PATH_EFLTK], [
 
