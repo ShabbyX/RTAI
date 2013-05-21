@@ -46,16 +46,23 @@ should suffice.
 The RTAI build system is a merge of Linux's Kconfig with
 autoconf/automake/libtool.
 
-1.1.1 Interactive configuration
--------------------------------
-
-1.) In the root of the RTAI source tree:
+You must first prepare your build system to generate a configure file:
 
 $ ./autogen.sh
 
+This also configures RTAI with the default configuration. To instead delay
+the configuration to another step:
+
+$ NOCONFIGURE=y ./autogen.sh
+
+See sections below for interactive and non-interactive configurations.
+
+1.1.1 Interactive configuration
+-------------------------------
+
 To launch the interactive configuration screen:
 
-$ make menuconfig (dialog-based as in 24.1.x)
+$ make menuconfig
 
 Save your configuration, wait for the shell prompt to come back after
 the configuration script has fully finished, then run "make".
@@ -142,8 +149,7 @@ Names of available architectures can be found under base/arch/*.
 
 When the standard compilation has finished:
 
-$ cd $builddir
-$ make install
+# make install
 
 Everything needed to use the RTAI distribution will be copied there
 out of the build tree. From now on, you should be able to refer to the
@@ -154,7 +160,7 @@ One may also choose to install the RTAI programs under a temporary
 staging tree by passing the standard DESTDIR variable to "make" while
 installing. e.g.
 
-$ make install DESTDIR=/mnt/target
+# make install DESTDIR=/mnt/target
 
 will create a standard RTAI hierarchy under /mnt/target, keeping the
 original prefix information unmodified. If the installation directory
@@ -203,10 +209,10 @@ If you have to change some template files used by any of the autotools
 (i.e. Makefile.am, configure.ac, acinclude.m4), then you will need the
 following pack to rebuild the derived files:
 
-o autoconf 2.69
-o automake 1.12.6
-o aclocal 1.12.6
-o libtool 2.4
+o autoconf 2.68 or 2.69
+o automake 1.12.6 or 1.13.2
+o aclocal 1.12.6 or 1.13.2
+o libtool 2.4 or 2.4.2
 
 1.7 Using the integrated calibration tool
 -----------------------------------------

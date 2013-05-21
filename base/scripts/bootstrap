@@ -12,7 +12,7 @@ die() {
 echo
 
 echo -n "running libtoolize..."
-libtoolize -c --automake
+libtoolize -f -c --automake
 if [ "$?" != "0" ]; then die "running libtoolize"; fi
 echo "done"
 
@@ -27,7 +27,7 @@ if [ "$?" != "0" ] ; then die "running aclocal"; fi
 echo "done"
 
 echo -n "running autoconf..."
-autoconf
+autoconf -f
 if [ "$?" != "0" ]; then die "running autoconf"; fi
 echo "done"
 
@@ -37,7 +37,7 @@ if [ "$?" != "0" ]; then die "running autoheader"; fi
 echo "done"
 
 echo -n "running automake..."
-$AUTOMAKE -a -c
+$AUTOMAKE --gnu -a -c -f
 if [ "$?" != "0" ]; then die "running automake"; fi
 echo "done"
 
