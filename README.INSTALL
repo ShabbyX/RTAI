@@ -138,6 +138,10 @@ or be statically linked to the RTAI schedulers. Either pass "m" for
 the modular build to their respective --enable-xxx switch, or "y" for
 selecting the built-in mode.
 
+To build, run make:
+
+$ make
+
 1.2 Installing the software
 ---------------------------
 
