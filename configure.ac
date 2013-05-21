@@ -17,6 +17,11 @@ AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_PROG_INSTALL
 
+AM_INIT_AUTOMAKE([foreign no-exeext dist-bzip2])
+AM_MAINTAINER_MODE
+LT_INIT
+AM_PROG_AS
+
 AC_ARG_WITH(CC,
     [  --with-cc=compiler      use specific C compiler],
     [
@@ -48,10 +53,6 @@ AC_DEFINE_UNQUOTED(CONFIG_RTAI_HOST_STRING,"$host",[Host system alias])
 RTAI_HOST_STRING="$host"
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_COMPILER,"`$CC -v 2>&1 | tail -n 1`",[Compiler])
 
-AM_INIT_AUTOMAKE([foreign no-exeext dist-bzip2])
-AM_MAINTAINER_MODE
-AC_PROG_LIBTOOL
-AM_PROG_AS
 dnl Find arch-specific requirements and supports. Features which
 dnl are not supported by all archs must be listed here, so that a
 dnl an Autoconf flag can later be defined/undefined in rtai_config.h.
@@ -1824,6 +1825,7 @@ AC_SUBST(CONFIG_RTAI_LINUXDIR)
 
 
 AC_CONFIG_FILES([ \
+	Makefile \
 	GNUmakefile \
 	base/GNUmakefile \
 	base/arch/GNUmakefile \

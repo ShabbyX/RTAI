@@ -57,16 +57,23 @@ $ NOCONFIGURE=y ./autogen.sh
 
 See sections below for interactive and non-interactive configurations.
 
-To compile your fully prepared and configured RTAI tree:
-
-$ make
-
 1.1.1 Interactive configuration
 -------------------------------
 
+Prepare the build system:
+
+$ NOCONFIGURE=y ./autogen.sh
+
+$ Create a temporary RTAI build for now:
+
+$ ./configure --with-linux-dir=<linux-dir>
+
+Note that <linux-dir> is the path to your RTAI enabled kernel tree.
+For example: /usr/src/linux-2.6.38.8
+
 To launch the interactive configuration screen:
 
-$ make menuconfig (dialog-based as in 24.1.x)
+$ make menuconfig
 
 Other targets similar to the Linux kernel's configuration are also available.
 
@@ -136,8 +143,7 @@ selecting the built-in mode.
 
 When the standard compilation has finished:
 
-$ cd $builddir
-$ make install
+# make install
 
 Everything needed to use the RTAI distribution will be copied there
 out of the build tree. From now on, you should be able to refer to the
@@ -148,7 +154,7 @@ One may also choose to install the RTAI programs under a temporary
 staging tree by passing the standard DESTDIR variable to "make" while
 installing. e.g.
 
-$ make install DESTDIR=/mnt/target
+# make install DESTDIR=/mnt/target
 
 will create a standard RTAI hierarchy under /mnt/target, keeping the
 original prefix information unmodified. If the installation directory
@@ -197,10 +203,10 @@ If you have to change some template files used by any of the autotools
 (i.e. Makefile.am, configure.ac, acinclude.m4), then you will need the
 following pack to rebuild the derived files:
 
-o autoconf 2.69
-o automake 1.12.6
-o aclocal 1.12.6
-o libtool 2.4
+o autoconf 2.68 or 2.69
+o automake 1.12.6 or 1.13.2
+o aclocal 1.12.6 or 1.13.2
+o libtool 2.4 or 2.4.2
 
 1.6 Using the integrated calibration tool
 -----------------------------------------
