@@ -177,7 +177,7 @@ endif
 PHONY += clean distclean
 
 clean:
-	rm -rf *.o .so .moc *.tmp* *.pot
+	rm -rf *.o *.so *.moc *.tmp* *.pot
 	rm -rf zconf.tab.c zconf.lex.c zconf.hash.c gconf.glade.h
 	rm -rf mconf qconf gconf nconf
 
