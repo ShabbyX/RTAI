@@ -53,6 +53,8 @@ clean-if-reconfigured:
 	   $(MAKE) clean ; \
 	fi
 
+CONFIG_STATUS_DEPENDENCIES = .rtai_config
+
 CONFIG_METHODS := config nconfig menuconfig xconfig gconfig oldconfig silentoldconfig defconfig \
 	savedefconfig allnoconfig allyesconfig allmodconfig alldefconfig \
 	randconfig listnewconfig olddefconfig

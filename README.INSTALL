@@ -50,22 +50,25 @@ You must first prepare your build system to generate a configure file:
 
 $ ./autogen.sh
 
-This also configures RTAI with the default configuration. To instead delay
-the configuration to another step:
-
-$ NOCONFIGURE=y ./autogen.sh
+This also configures RTAI with the default configuration and the
+non-interactive configuration flags may be passed.
 
 See sections below for interactive and non-interactive configurations.
 
 1.1.1 Interactive configuration
 -------------------------------
 
+Preparing the build system, ./autogen.sh attemps a bogus configuration just
+to produce makefiles so the interactive configuration can execute.
+
 To launch the interactive configuration screen:
 
 $ make menuconfig
 
-Save your configuration, wait for the shell prompt to come back after
-the configuration script has fully finished, then run "make".
+Other targets similar to the Linux kernel's configuration are also available.
+
+Save your configuration and run "make". This would first reconfigure the build
+with the new configuration and then proceed with the actual build/
 
 1.1.2 Non-interactive configuration
 -----------------------------------
