@@ -1153,6 +1153,13 @@ AC_ARG_ENABLE(user-debug,
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_USER_DEBUG:-no})
 
+AC_ARG_ENABLE(quiet-build,
+        [ --enable-quiet-build   Less verbose build],
+        [case "$enableval" in
+        y | yes) CONFIG_RTAI_QUIET=quiet_ ;;
+        n | no) unset CONFIG_RTAI_QUIET ;;
+        esac])
+
 dnl We need to know this before building the APIC support
 dnl into the SMP scheduler for the x86 platform. Autoconf imposes
 dnl us to define all Automake conditionals...unconditionally. e.g.
@@ -1335,6 +1342,11 @@ AC_DEFINE_UNQUOTED(CONFIG_RTAI_CAL_FREQS_FACT,$CONFIG_RTAI_CAL_FREQS_FACT,[Kconf
 test x$CONFIG_RTAI_USE_LINUX_COMEDI = xy && AC_DEFINE(CONFIG_RTAI_USE_LINUX_COMEDI,1,[Kconfig])
 test x$CONFIG_RTAI_USE_COMEDI_LOCK = xy && AC_DEFINE(CONFIG_RTAI_USE_COMEDI_LOCK,1,[Kconfig])
 
+case $CONFIG_RTAI_QUIET in
+	y|quiet_) CONFIG_RTAI_QUIET=quiet_ ;;
+	n|*) CONFIG_RTAI_QUIET= ;;
+esac
+
 case $CONFIG_RTAI_MONITOR_EXECTIME in
 	y) CONFIG_RTAI_MONITOR_EXECTIME=1 ;;
 	n|*) CONFIG_RTAI_MONITOR_EXECTIME=0 ;;
@@ -1420,6 +1432,7 @@ AH_VERBATIM(CONFIG_RTAI_LXRT_INLINE,[
 #define RTAI_PROTO_NEVER_INLINE(type,name,arglist) type name arglist; static inline type __hidefun(name) arglist
 ])
 
+AC_DEFINE_UNQUOTED(CONFIG_RTAI_ONE_SHOT,$CONFIG_RTAI_ONE_SHOT,[Kconfig])
 dnl CAUTION: We need to have the CONFIG_RTAI_XX symbols always defined when
 dnl the configuration header is read, but we want the Autoconf-produced
 dnl symbols to be defined only when compiling RTAI. This way, we won't
@@ -1533,6 +1546,8 @@ AM_CONDITIONAL(CONFIG_RTAI_MAINTAINER,[test "$CONFIG_RTAI_MAINTAINER" = y])
 AM_CONDITIONAL(CONFIG_RTAI_MAINTAINER_PMA,[test "$CONFIG_RTAI_MAINTAINER_PMA" = y])
 AM_CONDITIONAL(CONFIG_RTAI_MAINTAINER_PGM,[test "$CONFIG_RTAI_MAINTAINER_PGM" = y])
 AM_CONDITIONAL(CONFIG_RTAI_OLD_FASHIONED_BUILD,[test "$CONFIG_RTAI_OLD_FASHIONED_BUILD" = y])
+
+AM_CONDITIONAL(CONFIG_RTAI_QUIET,[test "$CONFIG_RTAI_QUIET" = quiet_])
 
 dnl
 dnl Define arch-specific CFLAGS and links
@@ -1823,6 +1838,7 @@ AC_SUBST(RTAI_POSIX_WRAP)
 
 AC_SUBST(CONFIG_RTAI_LINUXDIR)
 
+AC_SUBST(CONFIG_RTAI_QUIET)
 
 AC_CONFIG_FILES([ \
 	Makefile \
