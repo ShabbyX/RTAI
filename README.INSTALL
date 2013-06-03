@@ -67,8 +67,8 @@ $ make menuconfig
 
 Other targets similar to the Linux kernel's configuration are also available.
 
-Save your configuration and run "make". This would first reconfigure the build
-with the new configuration and then proceed with the actual build/
+Save your configuration and wait for configuration to take place.
+Then run "make".
 
 1.1.2 Non-interactive configuration
 -----------------------------------

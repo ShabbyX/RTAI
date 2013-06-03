@@ -186,6 +186,13 @@ config RTAI_LXRT_NO_INLINE
 
 endchoice
 
+config RTAI_QUIET
+	bool "Quiet build"
+	default y
+	help
+	If enabled, building would be less verbose. If not, the complete
+	build command is written for each command.
+
 endmenu
 
 menu "Machine (x86_32)"

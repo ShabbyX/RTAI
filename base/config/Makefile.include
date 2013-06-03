@@ -1,0 +1,33 @@
+# These are some functions inspired by the Linux kernel build system.
+# They are used to possibly hide details of compilation.
+# if CONFIG_RTAI_QUITE variable is defined to quiet_, it would show short messages.
+
+# Convenient variables
+comma   := ,
+squote  := '
+empty   :=
+space   := $(empty) $(empty)
+
+###
+# Name of target with a '.' as filename prefix. foo/bar.o => foo/.bar.o
+dot-target = $(dir $@).$(notdir $@)
+
+###
+# The temporary file to save gcc -MD generated dependencies must not
+# contain a comma
+depfile = $(subst $(comma),_,$(dot-target).d)
+
+###
+# filename of target with directory and extension stripped
+basetarget = $(basename $(notdir $@))
+
+###
+# filename of first prerequisite with directory and extension stripped
+baseprereq = $(basename $(notdir $<))
+
+###
+# Escape single quote for use in echo statements
+escsq = $(subst $(squote),'\$(squote)',$1)
+
+# print and execute commands
+cmd = @echo '  $(call escsq,$($(CONFIG_RTAI_QUIET)cmd_$(1)))'; $(cmd_$(1))

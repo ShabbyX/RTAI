@@ -34,6 +34,10 @@ DISTCLEANFILES = .rtai_config .rtai_config.old .cfok .cfchanged Module.symvers c
 
 moduledir = @RTAI_MODULE_DIR@
 
+if CONFIG_RTAI_QUIET
+MAKEFLAGS := $(MAKEFLAGS) --no-print-directory
+endif
+
 all-recursive install-recursive: base/GNUmakefile clean-if-reconfigured
 
 base/GNUmakefile: @RTAI_LINUX_DIR@/.config
@@ -53,16 +57,14 @@ clean-if-reconfigured:
 	   $(MAKE) clean ; \
 	fi
 
-CONFIG_STATUS_DEPENDENCIES = .rtai_config
-
 CONFIG_METHODS := config nconfig menuconfig xconfig gconfig oldconfig silentoldconfig defconfig \
 	savedefconfig allnoconfig allyesconfig allmodconfig alldefconfig \
 	randconfig listnewconfig olddefconfig
 .PHONY: $(CONFIG_METHODS)
 $(CONFIG_METHODS):
-	$(MAKE) -C base/config/kconfig \
+	@$(MAKE) -C base/config/kconfig \
 	-f Makefile.kconfig $@ \
-	srctree=$(PWD) ARCH=`uname -m`
+	srctree=$(PWD) ARCH=`uname -m` CONFIG_RTAI_QUIET=$(CONFIG_RTAI_QUIET)
 	@$(MAKE) --no-print-directory config-status
 
 config-status: .rtai_config

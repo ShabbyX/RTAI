@@ -18,6 +18,9 @@ ifeq ($(MAKECMDGOALS),gbuild)
 -include .gtkinst
 endif
 
+include ../Makefile.include
+this_dir := base/config/kconfig
+
 CFLAGS := -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer
 
 PHONY += oldconfig xconfig gconfig menuconfig config silentoldconfig update-po-config
@@ -460,40 +463,53 @@ hostcxx_flags = $(CXXFLAGS) $(EXTRACXXFLAGS) \
 
 # Create executable from a single .c file
 # host-csingle -> Executable
+quiet_cmd_host-csingle	= HOSTCC  $(this_dir)/$@
+      cmd_host-csingle	= $(CC) $(hostc_flags) -o $@ $< $(LOADLIBES) $(LOADLIBES_$(@F))
 $(host-csingle): %: %.c
-	$(CC) $(hostc_flags) -o $@ $< $(LOADLIBES) $(LOADLIBES_$(@F))
+	$(call cmd,host-csingle)
 
 # Link an executable based on list of .o files, all plain c
 # host-cmulti -> executable
+quiet_cmd_host-cmulti	= HOSTLD  $(this_dir)/$@
+      cmd_host-cmulti	= $(CC) $(LDFLAGS) -o $@ $($(@F)-objs) $(LOADLIBES) $(LOADLIBES_$(@F))
 $(host-cmulti): %: $(host-cobjs) $(host-cshlib)
-	$(CC) $(LDFLAGS) -o $@ $($(@F)-objs) \
-		  $(LOADLIBES) $(LOADLIBES_$(@F))
+	$(call cmd,host-cmulti)
 
 # Create .o file from a single .c file
 # host-cobjs -> .o
+quiet_cmd_host-cobjs	= HOSTCC  $(this_dir)/$@
+      cmd_host-cobjs	= $(CC) $(hostc_flags) -c -o $@ $<
 $(host-cobjs): %.o: %.c
-	$(CC) $(hostc_flags) -c -o $@ $<
+	$(call cmd,host-cobjs)
 
 # Link an executable based on list of .o files, a mixture of .c and .cc
 # host-cxxmulti -> executable
-$(host-cxxmulti): %: $(host-cobjs) $(host-cxxobjs) $(host-cshlib)
-	$(CXX) $(LDFLAGS) -o $@ $(foreach o,objs cxxobjs,\
+quiet_cmd_host-cxxmulti	= HOSTLD  $(this_dir)/$@
+      cmd_host-cxxmulti	= $(CXX) $(LDFLAGS) -o $@ $(foreach o,objs cxxobjs,\
 			  $($(@F)-$(o))) \
 			  $(LOADLIBES) $(LOADLIBES_$(@F))
+$(host-cxxmulti): %: $(host-cobjs) $(host-cxxobjs) $(host-cshlib)
+	$(call cmd,host-cxxmulti)
 
 # Create .o file from a single .cc (C++) file
+quiet_cmd_host-cxxobjs	= HOSTCXX $(this_dir)/$@
+      cmd_host-cxxobjs	= $(CXX) $(hostcxx_flags) -c -o $@ $<
 $(host-cxxobjs): %.o: %.cc
-	$(CXX) $(hostcxx_flags) -c -o $@ $<
+	$(call cmd,host-cxxobjs)
 
 # Compile .c file, create position independent .o file
 # host-cshobjs -> .o
+quiet_cmd_host-cshobjs	= HOSTCC  -fPIC $(this_dir)/$@
+      cmd_host-cshobjs	= $(HOSTCC) $(hostc_flags) -fPIC -c -o $@ $<
 $(host-cshobjs): %.o: %.c
-	$(CC) $(hostc_flags) -fPIC -c -o $@ $<
+	$(call cmd,host-cshobjs)
 
 # Link a shared library, based on position independent .o files
 # *.o -> .so shared library (host-cshlib)
+quiet_cmd_host-cshlib	= HOSTLLD -shared $(this_dir)/$@
+      cmd_host-cshlib	= $(CC) $(LDFLAGS) -shared -o $@ $($(@F:.so=-objs))  $(LOADLIBES) $(LOADLIBES_$(@F))
 $(host-cshlib): %: $(host-cshobjs)
-	$(CC) $(LDFLAGS) -shared -o $@ $($(@F:.so=-objs))  $(LOADLIBES) $(LOADLIBES_$(@F))
+	$(call cmd,host-cshlib)
 
 targets += $(host-csingle)  $(host-cmulti) $(host-cobjs)\
 	   $(host-cxxmulti) $(host-cxxobjs) $(host-cshlib) $(host-cshobjs)
