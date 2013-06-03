@@ -9,6 +9,5 @@ cd "$srcdir"
 autoreconf -v --install || exit 1
 cd $ORIGDIR || exit $?
 
-if test -z "$NOCONFIGURE"; then
-    "$srcdir"/configure "$@"
-fi
+# Do a temporary configure to generate initial makefiles
+"$srcdir"/configure --with-linux-dir="/lib/modules/$(uname -r)/build" "$@"
