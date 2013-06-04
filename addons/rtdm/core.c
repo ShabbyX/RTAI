@@ -29,12 +29,6 @@
  */
 
 #include <linux/delay.h>
-
-
-
-
-
-
 #include "rtdm/internal.h"
 
 #define CLOSURE_RETRY_PERIOD_MS	100
