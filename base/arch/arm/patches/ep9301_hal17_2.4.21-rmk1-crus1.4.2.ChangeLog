@@ -1,24 +1,9 @@
-2004-05-09  Michael Neuhauser  <mike@firmix.at>
+2009-01-21  Torsten Koschorrek <devel@koschorrek.com>
 
-	* New version:
-		Adeos version:	r17c3/arm-ep9301
-		Adeos major:	17
-		Adeos minor:	3
-
-2004-05-09  Michael Neuhauser  <mike@firmix.at>
-
-	* adeos/armv.c: export symbol __adeos_std_irq_desc in adeos/armv.c
-	instead of arch/arm/kernel/armksyms.c (now Adeos as module is working
-	again)
-	* adeos/Makefile: added armv.o to export-objs (it exports
-	__adeos_std_irq_desc)
-	* arch/arm/kernel/armksyms.c: do not export __adeos_std_irq_desc
-	(is now exported by adeos/armv.c)
-	* FirmixChangeLog: new file that gives overview on Adeos changes
-	* include/asm-arm/arch-ep93xx/ep93xx_tsc.h: make FREQ_EP93XX_TSC
-	visible in user-space
-	* mm/memory.c (get_user_pages): fix the fix for mlockall() & mmap()
-	problem (vma == NULL is OK now)
+        * EXPORT_SYMBOL(save_crunch);" in file "kernel/ksyms.c"
+	  The rtai_up.o module needs symbol "save_crunch" which is not exported
+	  by kernel,so rtai_up.o is unable to insert to kernel.
+          (suggested in rtai-ml mail dated 19.12.2008)
 
 2004-02-16  Michael Neuhauser  <mike@firmix.at>
 

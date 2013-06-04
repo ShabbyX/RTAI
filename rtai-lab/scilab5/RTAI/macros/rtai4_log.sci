@@ -18,7 +18,7 @@ function [x,y,typ] = rtai4_log(job,arg1,arg2)
     exprs=graphics.exprs;
     while %t do
       [ok,name,exprs]=..
-      getvalue('Set RTAI-log block parameters',..
+      scicos_getvalue('Set RTAI-log block parameters',..
         ['LOG name:'],..
       list('str',1),exprs)
      if ~ok then break,end

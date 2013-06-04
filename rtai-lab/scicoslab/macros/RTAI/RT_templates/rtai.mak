@@ -20,7 +20,7 @@ CC_OPTIONS = -O -DNDEBUG -Dlinux -DNARROWPROTO -D_GNU_SOURCE
 MODEL = $$MODEL$$
 OBJSSTAN = rtmain44.o common.o $$MODEL$$.o $$OBJ$$
 
-SCILIBS = $(SCIDIR)/libs/scicos.a $(SCIDIR)/libs/poly.a $(SCIDIR)/libs/calelm.a $(SCIDIR)/libs/blas.a $(SCIDIR)/libs/lapack.a $(SCIDIR)/libs/blas.a $(SCIDIR)/libs/os_specific.a
+SCILIBS = $(SCIDIR)/libs/scicos.a $(SCIDIR)/libs/poly.a $(SCIDIR)/libs/calelm.a $(SCIDIR)/libs/blas.a $(SCIDIR)/libs/lapack.a $(SCIDIR)/libs/os_specific.a
 OTHERLIBS = 
 ULIBRARY = $(RTAIDIR)/lib/libsciblk.a $(RTAIDIR)/lib/liblxrt.a
 
@@ -30,7 +30,7 @@ rtmain44.c: $(RTAIDIR)/share/rtai/scicos/rtmain44.c $(MODEL).c
 	cp $< .
 
 ../$$MODEL$$: $(OBJSSTAN) $(ULIBRARY)
-	gcc -static -o $@  $(OBJSSTAN) $(SCILIBS) $(ULIBRARY) -lpthread $(COMEDILIB) -lgfortran -lm
+	gcc -static -o $@  $(OBJSSTAN) $(SCILIBS) $(ULIBRARY) -lpthread $(COMEDILIB) -lm
 	@echo "### Created executable: $(MODEL) ###"
 
 clean::

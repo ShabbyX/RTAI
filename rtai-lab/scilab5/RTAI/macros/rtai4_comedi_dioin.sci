@@ -18,7 +18,7 @@ function [x,y,typ] = rtai4_comedi_dioin(job,arg1,arg2)
     exprs=graphics.exprs;
     while %t do
       [ok,ch,name,exprs]=..
-      getvalue('Set RTAI-COMEDI DIO block parameters',..
+      scicos_getvalue('Set RTAI-COMEDI DIO block parameters',..
       ['Channel:';
        'Device:'],..
       list('vec',-1,'str',1),exprs)
@@ -49,7 +49,7 @@ function [x,y,typ] = rtai4_comedi_dioin(job,arg1,arg2)
     model.dstate=[];
     model.blocktype='d'
     model.dep_ut=[%t %f]
-    exprs=[sci2exp(ch),name]
+    exprs=[sci2exp(ch);name]
     gr_i=['xstringb(orig(1),orig(2),[''COMEDI DI'';name+'' CH-''+string(ch)],sz(1),sz(2),''fill'');']
     x=standard_define([3 2],model,exprs,gr_i)
   end

@@ -1,0 +1,3 @@
+SUBDIRS = hal calibration
+
+EXTRA_DIST = Kconfig defconfig patches

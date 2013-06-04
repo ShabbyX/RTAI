@@ -1,0 +1,522 @@
++ diff -u yd-linux-2.4.22-2f/arch/ppc/config.in.PRE_RTAI yd-linux-2.4.22-2f/arch/ppc/config.in
+--- yd-linux-2.4.22-2f/arch/ppc/config.in.PRE_RTAI	2003-11-09 21:57:53.000000000 +0100
++++ yd-linux-2.4.22-2f/arch/ppc/config.in	2004-03-12 12:21:25.000000000 +0100
+@@ -136,6 +136,9 @@
+   bool '  Distribute interrupts on all CPUs by default' CONFIG_IRQ_ALL_CPUS
+ fi
+ 
++#bool 'Real-Time Hardware Abstraction Layer' CONFIG_RTHAL
++define_bool CONFIG_RTHAL y
++
+ if [ "$CONFIG_6xx" = "y" -a "$CONFIG_8260" = "n" ];then
+   bool 'AltiVec Support' CONFIG_ALTIVEC
+   bool 'Thermal Management Support' CONFIG_TAU
++ diff -u yd-linux-2.4.22-2f/arch/ppc/kernel/entry.S.PRE_RTAI yd-linux-2.4.22-2f/arch/ppc/kernel/entry.S
+--- yd-linux-2.4.22-2f/arch/ppc/kernel/entry.S.PRE_RTAI	2003-11-09 21:57:52.000000000 +0100
++++ yd-linux-2.4.22-2f/arch/ppc/kernel/entry.S	2004-03-12 12:22:49.000000000 +0100
+@@ -297,6 +297,7 @@
+ 	bl	do_signal
+ 	.globl	do_signal_ret
+ do_signal_ret:
++	bl	do_soft_sti
+ 	.globl ret_to_user_hook
+ ret_to_user_hook:
+ 	nop
++ diff -u yd-linux-2.4.22-2f/arch/ppc/kernel/head.S.PRE_RTAI yd-linux-2.4.22-2f/arch/ppc/kernel/head.S
+--- yd-linux-2.4.22-2f/arch/ppc/kernel/head.S.PRE_RTAI	2003-11-09 21:57:52.000000000 +0100
++++ yd-linux-2.4.22-2f/arch/ppc/kernel/head.S	2004-03-12 12:21:25.000000000 +0100
+@@ -479,7 +479,20 @@
+ 	.long	ret_from_except
+ 
+ /* Single step - not used on 601 */
++#ifdef CONFIG_RTHAL
++	. = 0xd00
++SingleStep:
++	EXCEPTION_PROLOG
++	addi	r3,r1,STACK_FRAME_OVERHEAD
++	li	r20,MSR_KERNEL
++	rlwimi	r20,r23,0,16,16		/* copy EE bit from saved MSR */
++	bl	transfer_to_handler
++i0xd00:
++	.long	SingleStepException
++	.long	ret_from_except
++#else
+ 	STD_EXCEPTION(0xd00, SingleStep, SingleStepException)
++#endif
+ 	STD_EXCEPTION(0xe00, Trap_0e, UnknownException)
+ 
+ /*
++ diff -u yd-linux-2.4.22-2f/arch/ppc/kernel/irq.c.PRE_RTAI yd-linux-2.4.22-2f/arch/ppc/kernel/irq.c
+--- yd-linux-2.4.22-2f/arch/ppc/kernel/irq.c.PRE_RTAI	2003-11-09 21:57:52.000000000 +0100
++++ yd-linux-2.4.22-2f/arch/ppc/kernel/irq.c	2004-03-12 12:21:25.000000000 +0100
+@@ -514,6 +514,13 @@
+ 	spin_unlock(&desc->lock);
+ }
+ 
++void (*rtai_soft_sti)(void);
++
++void do_soft_sti(void)
++{
++	if(rtai_soft_sti)rtai_soft_sti();
++}
++
+ int do_IRQ(struct pt_regs *regs)
+ {
+ 	int cpu = smp_processor_id();
++ diff -u yd-linux-2.4.22-2f/arch/ppc/kernel/open_pic.c.PRE_RTAI yd-linux-2.4.22-2f/arch/ppc/kernel/open_pic.c
+--- yd-linux-2.4.22-2f/arch/ppc/kernel/open_pic.c.PRE_RTAI	2004-03-12 14:20:08.000000000 +0100
++++ yd-linux-2.4.22-2f/arch/ppc/kernel/open_pic.c	2004-03-12 14:16:47.000000000 +0100
+@@ -940,4 +940,7 @@
+ 
+ 	spin_unlock_irqrestore(&openpic_setup_lock, flags);
+ }
++#else
++void openpic_sleep_save_intrs(void) {printk("openpic_sleep_save_intrs() not implemented");}
++void openpic_sleep_restore_intrs(void) {printk("openpic_sleep_restore_intrs() not implemented");}
+ #endif /* CONFIG_PMAC_PBOOK */
++ diff -u yd-linux-2.4.22-2f/arch/ppc/kernel/ppc_ksyms.c.PRE_RTAI yd-linux-2.4.22-2f/arch/ppc/kernel/ppc_ksyms.c
+--- yd-linux-2.4.22-2f/arch/ppc/kernel/ppc_ksyms.c.PRE_RTAI	2003-11-09 21:57:53.000000000 +0100
++++ yd-linux-2.4.22-2f/arch/ppc/kernel/ppc_ksyms.c	2004-03-12 12:21:25.000000000 +0100
+@@ -222,6 +222,12 @@
+ EXPORT_SYMBOL(synchronize_irq);
+ #endif
+ 
++extern int (*rtai_srq_bckdr)(struct pt_regs *);
++EXPORT_SYMBOL(rtai_srq_bckdr);
++
++extern void (*rtai_soft_sti)(void);
++EXPORT_SYMBOL(rtai_soft_sti);
++
+ EXPORT_SYMBOL(ppc_md);
+ 
+ #ifdef CONFIG_ADB
++ diff -u yd-linux-2.4.22-2f/arch/ppc/kernel/traps.c.PRE_RTAI yd-linux-2.4.22-2f/arch/ppc/kernel/traps.c
+--- yd-linux-2.4.22-2f/arch/ppc/kernel/traps.c.PRE_RTAI	2003-11-09 21:57:52.000000000 +0100
++++ yd-linux-2.4.22-2f/arch/ppc/kernel/traps.c	2004-03-12 12:24:47.000000000 +0100
+@@ -333,12 +333,18 @@
+ 	return retval;
+ }
+ 
++int (*rtai_srq_bckdr)(struct pt_regs *regs) = NULL;
++
+ void
+ ProgramCheckException(struct pt_regs *regs)
+ {
+ 	unsigned int reason = get_reason(regs);
+ 	extern int do_mathemu(struct pt_regs *regs);
+ 
++	if (rtai_srq_bckdr && !rtai_srq_bckdr(regs)) {
++		return;
++	}
++
+ #ifdef CONFIG_MATH_EMULATION
+ 	/* (reason & REASON_ILLEGAL) would be the obvious thing here,
+ 	 * but there seems to be a hardware bug on the 405GP (RevD)
++ diff -u yd-linux-2.4.22-2f/arch/ppc/mm/pgtable.c.PRE_RTAI yd-linux-2.4.22-2f/arch/ppc/mm/pgtable.c
+--- yd-linux-2.4.22-2f/arch/ppc/mm/pgtable.c.PRE_RTAI	2003-11-09 21:57:52.000000000 +0100
++++ yd-linux-2.4.22-2f/arch/ppc/mm/pgtable.c	2004-03-12 12:26:34.000000000 +0100
+@@ -279,7 +279,7 @@
+ 		 * don't get ASID compares on kernel space.
+ 		 */
+ 		f = _PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_SHARED | _PAGE_HWEXEC;
+-#if defined(CONFIG_KGDB) || defined(CONFIG_XMON) || defined(CONFIG_BDI_SWITCH)
++#if defined(CONFIG_KGDB) || defined(CONFIG_XMON) || defined(CONFIG_BDI_SWITCH) || defined (CONFIG_RTHAL)
+ 		/* Allows stub to set breakpoints everywhere */
+ 		f |= _PAGE_WRENABLE;
+ #else	/* !CONFIG_KGDB && !CONFIG_XMON && !CONFIG_BDI_SWITCH */
+@@ -291,7 +291,7 @@
+ 			   forces R/W kernel access */
+ 			f |= _PAGE_USER;
+ #endif /* CONFIG_PPC_STD_MMU */
+-#endif /* CONFIG_KGDB || CONFIG_XMON */
++#endif /* CONFIG_KGDB || CONFIG_XMON || CONFIG_BDI_SWITCH */
+ 		map_page(v, p, f);
+ 		v += PAGE_SIZE;
+ 		p += PAGE_SIZE;
++ diff -u yd-linux-2.4.22-2f/Documentation/Configure.help.PRE_RTAI yd-linux-2.4.22-2f/Documentation/Configure.help
+--- yd-linux-2.4.22-2f/Documentation/Configure.help.PRE_RTAI	2003-11-09 21:57:53.000000000 +0100
++++ yd-linux-2.4.22-2f/Documentation/Configure.help	2004-03-12 12:21:25.000000000 +0100
+@@ -262,6 +262,13 @@
+ 
+   If you don't have this computer, you may safely say N.
+ 
++Real-Time Harware Abstraction
++CONFIG_RTHAL
++  The Real-Time Hardware Abstraction Layer (RTHAL) is used by
++  the Real-Time Application Interface (RTAI) to provide a
++  hard real-time environment as part of Linux.  This feature
++  cannot be turned off, so say Y.
++
+ IO-APIC support on uniprocessors
+ CONFIG_X86_UP_IOAPIC
+   An IO-APIC (I/O Advanced Programmable Interrupt Controller) is an
++ diff -u yd-linux-2.4.22-2f/drivers/video/aty128fb.c.PRE_RTAI yd-linux-2.4.22-2f/drivers/video/aty128fb.c
+--- yd-linux-2.4.22-2f/drivers/video/aty128fb.c.PRE_RTAI	2003-11-09 21:57:53.000000000 +0100
++++ yd-linux-2.4.22-2f/drivers/video/aty128fb.c	2004-03-12 13:26:32.000000000 +0100
+@@ -2630,8 +2630,10 @@
+ 	struct fb_info_aty128 *info = (struct fb_info_aty128 *)data;
+ 	unsigned int reg = aty_ld_le32(LVDS_GEN_CNTL);
+ 
++#ifdef CONFIG_PMAC_PBOOK
+ 	if (!info->lcd_on)
+ 		on = 0;
++#endif
+ 	reg |= LVDS_BL_MOD_EN | LVDS_BLON;
+ 	if (on && level > BACKLIGHT_OFF) {
+ 		reg |= LVDS_DIGION;
++ diff -u yd-linux-2.4.22-2f/include/asm-ppc/system.h.PRE_RTAI yd-linux-2.4.22-2f/include/asm-ppc/system.h
+--- yd-linux-2.4.22-2f/include/asm-ppc/system.h.PRE_RTAI	2003-11-09 22:49:53.000000000 +0100
++++ yd-linux-2.4.22-2f/include/asm-ppc/system.h	2004-03-12 12:36:55.000000000 +0100
+@@ -82,6 +82,7 @@
+ 
+ struct task_struct;
+ #define prepare_to_switch()	do { } while(0)
++#define end_switch()		do { } while(0)
+ #define switch_to(prev,next,last) _switch_to((prev),(next),&(last))
+ extern void _switch_to(struct task_struct *, struct task_struct *,
+ 		       struct task_struct **);
++ diff -u yd-linux-2.4.22-2f/include/linux/sched.h.PRE_RTAI yd-linux-2.4.22-2f/include/linux/sched.h
+--- yd-linux-2.4.22-2f/include/linux/sched.h.PRE_RTAI	2003-11-09 22:49:54.000000000 +0100
++++ yd-linux-2.4.22-2f/include/linux/sched.h	2004-03-12 12:36:55.000000000 +0100
+@@ -415,6 +415,8 @@
+ 
+ /* journalling filesystem info */
+ 	void *journal_info;
++
++	void *this_rt_task[2];
+ };
+ 
+ /*
+@@ -509,6 +511,7 @@
+     blocked:		{{0}},						\
+     alloc_lock:		SPIN_LOCK_UNLOCKED,				\
+     journal_info:	NULL,						\
++    this_rt_task:	{0,0},						\
+ }
+ 
+ 
++ diff -u yd-linux-2.4.22-2f/kernel/exit.c.PRE_RTAI yd-linux-2.4.22-2f/kernel/exit.c
+--- yd-linux-2.4.22-2f/kernel/exit.c.PRE_RTAI	2002-11-29 00:53:15.000000000 +0100
++++ yd-linux-2.4.22-2f/kernel/exit.c	2004-03-12 12:21:25.000000000 +0100
+@@ -422,6 +422,71 @@
+ 	write_unlock_irq(&tasklist_lock);
+ }
+ 
++//
++// PGGC added these lines to callback rtai when a task dies.
++// A list of functions allows different rt_modules to be informed.
++//
++static struct t_callback {
++	void (*rtai_callback)(struct task_struct *tsk);
++	struct t_callback *next;
++	} *rtai_callback_list;
++
++extern int  set_rtai_callback(    void (*fun)(struct task_struct *tsk));
++extern void remove_rtai_callback( void (*fun)(struct task_struct *tsk));
++
++void inform_rtai(void)
++{
++	struct t_callback *pt;
++
++	pt = rtai_callback_list;
++	while (pt) {
++		(*(pt->rtai_callback))(current);
++		pt = pt->next;
++	}
++//printk( "Task pid %d going down\n", current->pid);
++}
++
++int set_rtai_callback( void (*pt)(struct task_struct *tsk))
++{
++	struct t_callback *ptn;
++
++	ptn = kmalloc(sizeof(struct t_callback), GFP_KERNEL);
++	if (!ptn) {
++		return -ENOMEM;
++	}
++	ptn->rtai_callback = pt;
++	ptn->next = rtai_callback_list ? rtai_callback_list : 0;
++	rtai_callback_list = ptn;
++	return 0;
++}
++
++void remove_rtai_callback(void (*pt)(struct task_struct *tsk))
++{
++	struct t_callback *pto, *ptoo, *ptd;
++
++	pto  = rtai_callback_list;
++	ptoo = 0;
++	while (pto) {
++		if (pto->rtai_callback == pt) {
++			if (!ptoo) {
++				rtai_callback_list = pto->next;
++			} else {
++				ptoo->next = pto->next; 
++			}
++ 			ptd = pto;
++			pto = pto->next;
++			kfree(ptd);
++		} else {
++			ptoo = pto;
++			pto = pto->next;
++		}	
++	}
++//printk("rtai_callback_list %X\n", rtai_callback_list);
++}
++//
++//
++//
++
+ NORET_TYPE void do_exit(long code)
+ {
+ 	struct task_struct *tsk = current;
+@@ -439,6 +504,18 @@
+ #ifdef CONFIG_BSD_PROCESS_ACCT
+ 	acct_process(code);
+ #endif
++
++/*
++ * PGGC added these lines to callback rtai when a task dies.
++ * This assumes that a LXRT task should/will always set its
++ * scheduling police to SCHED_FIFO or SCHED_RR.
++ * We may want to enforce this in rt_task_init(...).
++ * (For the moment it is not so, thus let's inform LXRT anyhow (Paolo))
++ */
++	if(tsk->this_rt_task[0]) {
++		inform_rtai();
++	}
++
+ 	__exit_mm(tsk);
+ 
+ 	lock_kernel();
++ diff -u yd-linux-2.4.22-2f/kernel/fork.c.PRE_RTAI yd-linux-2.4.22-2f/kernel/fork.c
+--- yd-linux-2.4.22-2f/kernel/fork.c.PRE_RTAI	2003-08-25 13:44:44.000000000 +0200
++++ yd-linux-2.4.22-2f/kernel/fork.c	2004-03-12 12:21:26.000000000 +0100
+@@ -233,7 +233,9 @@
+ 	atomic_set(&mm->mm_count, 1);
+ 	init_rwsem(&mm->mmap_sem);
+ 	mm->page_table_lock = SPIN_LOCK_UNLOCKED;
++	lock_kernel();
+ 	mm->pgd = pgd_alloc(mm);
++	unlock_kernel();
+ 	mm->def_flags = 0;
+ 	if (mm->pgd)
+ 		return mm;
+@@ -265,7 +267,9 @@
+ inline void __mmdrop(struct mm_struct *mm)
+ {
+ 	BUG_ON(mm == &init_mm);
++	lock_kernel();
+ 	pgd_free(mm->pgd);
++	unlock_kernel();
+ 	destroy_context(mm);
+ 	free_mm(mm);
+ }
++ diff -u yd-linux-2.4.22-2f/kernel/ksyms.c.PRE_RTAI yd-linux-2.4.22-2f/kernel/ksyms.c
+--- yd-linux-2.4.22-2f/kernel/ksyms.c.PRE_RTAI	2003-11-09 21:57:53.000000000 +0100
++++ yd-linux-2.4.22-2f/kernel/ksyms.c	2004-03-12 12:27:45.000000000 +0100
+@@ -603,3 +603,45 @@
+ /* To match ksyms with System.map */
+ extern const char _end[];
+ EXPORT_SYMBOL(_end);
++
++/*** RTAI ***/
++/*
++ * used to inform rtai a task is about to die.
++ */
++extern int  set_rtai_callback(   void (*fun)(struct task_struct *tsk));
++extern void remove_rtai_callback(void (*fun)(struct task_struct *tsk));
++extern NORET_TYPE void do_exit(long code);
++EXPORT_SYMBOL(set_rtai_callback);
++EXPORT_SYMBOL(remove_rtai_callback);
++EXPORT_SYMBOL(do_exit);
++
++/*
++ * used to inform RTAI LXRT a task should deal with a Linux signal, and for rt_lxrt_fork()
++ */
++extern int (*rtai_signal_handler)(struct task_struct *lnxt, int sig);
++EXPORT_SYMBOL(rtai_signal_handler);
++extern int do_fork(unsigned long clone_flags, unsigned long stack_start, struct pt_regs *regs, unsigned long stack_size);
++EXPORT_SYMBOL(do_fork);
++
++/*
++ * used to provide async io support (aio) to RTAI LXRT.
++ */
++extern ssize_t sys_read(unsigned int fd, char * buf, size_t count);
++extern ssize_t sys_write(unsigned int fd, const char * buf, size_t count);
++extern ssize_t sys_pread(unsigned int fd, char * buf,
++				                             size_t count, loff_t pos);
++extern ssize_t sys_pwrite(unsigned int fd, const char * buf,
++				                              size_t count, loff_t pos);
++extern long sys_fsync(unsigned int fd);
++extern long sys_fdatasync(unsigned int fd);
++extern long sys_open(const char * filename, int flags, int mode);
++extern long sys_close(unsigned int fd);
++
++EXPORT_SYMBOL(sys_read);
++EXPORT_SYMBOL(sys_write);
++EXPORT_SYMBOL(sys_open);
++/*EXPORT_SYMBOL(sys_close);*/
++EXPORT_SYMBOL(sys_pread);
++EXPORT_SYMBOL(sys_pwrite);
++EXPORT_SYMBOL(sys_fsync);
++EXPORT_SYMBOL(sys_fdatasync);
++ diff -u yd-linux-2.4.22-2f/kernel/sched.c.PRE_RTAI yd-linux-2.4.22-2f/kernel/sched.c
+--- yd-linux-2.4.22-2f/kernel/sched.c.PRE_RTAI	2003-08-25 13:44:44.000000000 +0200
++++ yd-linux-2.4.22-2f/kernel/sched.c	2004-03-12 12:21:26.000000000 +0100
+@@ -544,6 +544,75 @@
+  * tasks can run. It can not be killed, and it cannot sleep. The 'state'
+  * information in task[0] is never used.
+  */
++
++int idle_weight = -1000;
++#define MAX_MM 4096  // How large should it be?
++static struct smm_t { int in, out; struct mm_struct *mm[MAX_MM]; } smm[NR_CPUS];
++#define incpnd(x) do { x = (x + 1) & (MAX_MM - 1); } while(0)
++
++#ifdef CONFIG_X86
++static inline void pend_mm(struct mm_struct *mm, int cpu)
++{
++	if (rthal.lxrt_global_cli) {
++        	struct smm_t *p = smm + cpu;
++        	p->mm[p->in] = mm;
++	        incpnd(p->in);
++	} else {
++		mmdrop(mm);
++	}
++}
++
++static inline void drop_mm(void)
++{
++	if (rthal.lxrt_global_cli) {
++        	struct smm_t *p = smm + smp_processor_id();
++	        while (p->out != p->in) {
++        	        mmdrop(p->mm[p->out]);
++              		incpnd(p->out);
++        	}
++        }
++}
++
++void switch_mem(struct task_struct *prevp, struct task_struct *nextp, int cpuid)
++{
++	if (cpuid < 0) {
++		struct mm_struct *next = nextp->active_mm;
++		if (prevp->active_mm != next || (cpuid & 0x40000000)) {
++			if ((prevp->active_mm)->context.segments != next->context.segments) {
++				load_LDT(next);
++			}
++			set_bit(cpuid & 0xFFFFFFF, &next->context.cpuvalid);
++			asm volatile("movl %0,%%cr3": :"r" (__pa(next->pgd)));
++		}
++#ifdef CONFIG_SMP
++		  else if (!test_and_set_bit(cpuid & 0xFFFFFFF, &next->context.cpuvalid)) {
++			load_LDT(next);
++		}
++#endif
++	} else {
++		struct mm_struct *oldmm = prevp->active_mm;
++		if (nextp->mm) {
++			switch_mm(oldmm, nextp->mm, nextp, cpuid);
++		} else {
++			nextp->active_mm = oldmm;
++			atomic_inc(&oldmm->mm_count);
++			enter_lazy_tlb(oldmm, nextp, cpuid);
++		}
++		if (!prevp->mm) {
++			prevp->active_mm = NULL;
++			pend_mm(oldmm, cpuid);
++		}
++	}
++}
++#else
++static inline void pend_mm(struct mm_struct *mm, int cpu)
++{
++	mmdrop(mm);
++}
++static inline void drop_mm(void) {}
++void switch_mem(struct task_struct *prevp, struct task_struct *nextp, int cpuid) {}
++#endif
++
+ asmlinkage void schedule(void)
+ {
+ 	struct schedule_data * sched_data;
+@@ -602,7 +671,7 @@
+ 	 * Default process to select..
+ 	 */
+ 	next = idle_task(this_cpu);
+-	c = -1000;
++	c = idle_weight;
+ 	list_for_each(tmp, &runqueue_head) {
+ 		p = list_entry(tmp, struct task_struct, run_list);
+ 		if (can_schedule(p, this_cpu)) {
+@@ -684,7 +753,7 @@
+ 
+ 		if (!prev->mm) {
+ 			prev->active_mm = NULL;
+-			mmdrop(oldmm);
++			pend_mm(oldmm, this_cpu);
+ 		}
+ 	}
+ 
+@@ -693,6 +762,7 @@
+ 	 * stack.
+ 	 */
+ 	switch_to(prev, next, prev);
++	drop_mm();
+ 	__schedule_tail(prev);
+ 
+ same_process:
++ diff -u yd-linux-2.4.22-2f/kernel/signal.c.PRE_RTAI yd-linux-2.4.22-2f/kernel/signal.c
+--- yd-linux-2.4.22-2f/kernel/signal.c.PRE_RTAI	2003-06-13 16:51:39.000000000 +0200
++++ yd-linux-2.4.22-2f/kernel/signal.c	2004-03-12 12:21:26.000000000 +0100
+@@ -1010,9 +1010,30 @@
+ 	return ret;
+ }
+ 
++//
++//  Add this pointer to the RTAI signal handler.
++//
++int (*rtai_signal_handler)(struct task_struct *lnxt, int sig);
++
+ asmlinkage long
+ sys_kill(int pid, int sig)
+ {
++// Add this section to call the RTAI signal handler.
++//
++	{
++	struct task_struct *p;
++	int ret;
++
++	if (rtai_signal_handler) {
++	    p = find_task_by_pid(pid);
++		if(p && (p->policy == SCHED_FIFO || p->policy == SCHED_RR) && p->this_rt_task[0]) {
++			ret = rtai_signal_handler(p, sig);
++			if(!ret) return 0; //let Linux deal with it.
++			}
++		}
++	}
++
++	{
+ 	struct siginfo info;
+ 
+ 	info.si_signo = sig;
+@@ -1022,6 +1043,7 @@
+ 	info.si_uid = current->uid;
+ 
+ 	return kill_something_info(sig, &info, pid);
++	}
+ }
+ 
+ /*
++ diff -u yd-linux-2.4.22-2f/Makefile.PRE_RTAI yd-linux-2.4.22-2f/Makefile
+--- yd-linux-2.4.22-2f/Makefile.PRE_RTAI	2003-11-09 23:16:24.000000000 +0100
++++ yd-linux-2.4.22-2f/Makefile	2004-03-12 12:28:34.000000000 +0100
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 4
+ SUBLEVEL = 22
+-EXTRAVERSION = -2fcustom
++EXTRAVERSION = -2fcustom-rthal5
+ 
+ KERNELRELEASE=$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)
+ 

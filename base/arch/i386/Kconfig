@@ -1,4 +1,4 @@
-mainmenu "RTAI/x86 configuration"
+mainmenu "RTAI/x86_32 configuration"
 
 config MODULES
 	bool
@@ -6,7 +6,7 @@ config MODULES
 
 config RTAI_VERSION
 	string
-	default "3.9 (vulcano)"
+	default "3.8 (vulcano)"
 
 menu "General"
 
@@ -188,7 +188,7 @@ endchoice
 
 endmenu
 
-menu "Machine (x86)"
+menu "Machine (x86_32)"
 
 config RTAI_DONT_DISPATCH_CORE_IRQS
 	bool "Direct vectoring of RTAI native interrupts"
@@ -343,7 +343,7 @@ config RTAI_MONITOR_EXECTIME
 	hard real time tasks, in per thousand of the total time available, 
 	by using the RTAI scheduler proc file, e.g. "cat /proc/rtai/scheduler".
 	Since this option uses the TSC it is better to avoid it in production
-	for x86 CPUs not having TSCs, i.e. 486s and some untrue 586s.
+	for x86_32 CPUs not having TSCs, i.e. 486s and some untrue 586s.
 
 config RTAI_ALLOW_RR
 	bool "Allow round-robin scheduling"
@@ -928,10 +928,10 @@ config RTAI_COMEDI_LXRT
 	bool "Real Time COMEDI support in user space"
 	default n
 	help
-	RTAI offers a unified COMEDI interface to kernel/user space 
-	real-time applications. A kernel module will be built and a library 
-	will be provided. The kernel module is called rtai_comedi.o and must 
-	be loaded if you want to use the libkcomedilxrt.a library.
+	RTAI offers a unified COMEDI interface to kernel/user space real-time
+	applications. A kernel module will be built and a library will be 
+	provided. The kernel modules is called rtai_comedi.o and must be 
+	loaded if you want to use the libkcomedilxrt.a library.
 
 config RTAI_COMEDI_DIR
 	depends on RTAI_COMEDI_LXRT

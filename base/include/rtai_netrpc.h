@@ -42,6 +42,7 @@
 #define MACH_SIZE(port)  (((port) & PORT_MSK) ? 64 : 32)
 
 /* "for writes" - "for reads" below must be the same as those in rtai_lxrt.h */
+
 // for writes
 #define UW1(bf, sz)  ((((bf) & 0x7) << 19) | (((sz) & 0x7) << 22))
 #define UW2(bf, sz)  ((((bf) & 0x7) << 25) | (((sz) & 0x7) << 28))

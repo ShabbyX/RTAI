@@ -111,7 +111,7 @@ previously.
 ------------------------
 
 If you want to make sure nothing unwanted is _ever_ scheduled on a specific
-CPU or core the hotplug system is your friend. (Logically) off lined CPUs are
+CPU or core the hotplug system is your friend. (Logically) offlined CPUs are
 removed from the Linux scheduler and thus no longer get tasks assigned. Online
 again and assigned to a cpuset, RTAI tasks can be scheduled on these CPUs. See
 'Documentation/cpusets.txt' and 'Documentation/cgroup.txt'.

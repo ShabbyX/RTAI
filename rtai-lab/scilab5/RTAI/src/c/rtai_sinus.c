@@ -1,5 +1,6 @@
 /*
 COPYRIGHT (C) 2006  Roberto Bucher (roberto.bucher@supsi.ch)
+              2011  Holger Nahrstaedt
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -16,14 +17,12 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#include <math.h>
-#include <machine.h>
-#include <scicos_block4.h>
+ #include <math.h>
+ #include "scicos_block.h"
 
 static void init(scicos_block *block)
 {
-  double * rpar = GetRparPtrs(block);
-  double *y = GetRealOutPortPtrs(block,1);
+  double *y = block->outptr[0];
   y[0]=0.0;
 }
 
@@ -31,7 +30,7 @@ static void inout(scicos_block *block)
 {
   double w,pi=3.1415927;
   double t = get_scicos_time();
-  double * rpar = GetRparPtrs(block);
+  double * rpar = block->rpar;
   double *y = block->outptr[0];
 
    if (t<rpar[4]) y[0]=0.0;

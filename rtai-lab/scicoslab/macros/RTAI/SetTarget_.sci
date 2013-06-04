@@ -24,25 +24,19 @@ function  SetTarget_()
     disablemenus()
     all_scs_m=scs_m;
     lab=scs_m.objs(k).model.rpar.props.void3;
-
     if lab==[] then
-	lab = ['rtai','','ode4','10'];
-    end
-
-    if size(lab,2)==3 then
-      lab=[lab(1),'',lab(2:3)];
+	lab = ['rtai','ode4','10'];
     end
 
     ode_x=['ode1';'ode2';'ode4'];
 
     while %t
-      [ok,target,template,odefun,stp]=getvalue(..
+      [ok,target,odefun,stp]=getvalue(..
           'Please fill the following values',..
           ['Target: ';
-	   'Target Board: ';
 	  'Ode function: ';
 	  'Step between sampling: '],..
-          list('str',1,'str',1,'str',1,'str',1),lab);
+          list('str',1,'str',1,'str',1),lab);
       if ~ok then break,end
 
       TARGETDIR=SCI+'/contrib/RT_templates';
@@ -67,7 +61,7 @@ function  SetTarget_()
       end
         
       if ok then
-         lab=[target,template,odefun,stp];
+         lab=[target,odefun,stp];
 	 scs_m.objs(k).model.rpar.props.void3 = lab;
          break;
       end

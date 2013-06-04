@@ -1,0 +1,186 @@
+/*
+COPYRIGHT (C) 2000  Emanuele Bianchi (bianchi@aero.polimi.it)
+                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <pthread.h>
+#include <sys/time.h>
+#include <sys/poll.h>
+
+#include <rtai_sem.h>
+
+#define LOOPS  1000
+#define NR_RT_TASKS 30
+#define taskname(x) (1000 + (x))
+
+static pthread_t thread[NR_RT_TASKS];
+
+static RT_TASK *mytask[NR_RT_TASKS];
+
+static SEM *sem;
+
+static int volatile hrt[NR_RT_TASKS], change, end;
+
+static int indx[NR_RT_TASKS];       
+
+static void *thread_fun(void *arg)
+{
+	int mytask_indx;
+
+	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+	mytask_indx = ((int *)arg)[0];
+ 	if (!(mytask[mytask_indx] = rt_task_init_schmod(taskname(mytask_indx), 0, 1000, 0, SCHED_FIFO, 1))) {
+		printf("CANNOT INIT TASK %u\n", taskname(mytask_indx));
+		exit(1);
+	}
+
+	mlockall(MCL_CURRENT | MCL_FUTURE);
+	rt_make_hard_real_time();
+	hrt[mytask_indx] = 1;
+	while (!end) {
+		if (change) {
+			rt_sem_wait(sem);
+		} else {
+		 	rt_task_suspend(mytask[mytask_indx]);
+		}
+	}
+	rt_make_soft_real_time();
+
+	rt_task_delete(mytask[mytask_indx]);
+	hrt[mytask_indx] = 0;
+
+	return (void*)0;
+}
+
+static void msleep(int ms)
+{
+	poll(NULL, 0, ms);
+}
+
+int main(void)
+{
+	RTIME tsr, tsm;
+	RT_TASK *mainbuddy;
+	int i, k, s;       
+ 	struct sched_param mysched;
+	pthread_attr_t attr;
+
+	printf("\n\nWait for it ...\n");
+ 	mysched.sched_priority = sched_get_priority_max(SCHED_FIFO) - 1;
+	if (sched_setscheduler( 0, SCHED_FIFO, &mysched ) == -1 ) {
+		printf("ERROR IN SETTING THE POSIX SCHEDULER\n");
+		exit(1);
+ 	}       
+
+	pthread_attr_init(&attr);	// set default values for all attribute
+	// Set max. stack size of thread to 64 KB (default is 2 MB).
+	// Warning: the *whole* stack is allocated for real when mlockall() is used!
+	if (pthread_attr_setstacksize(&attr, 64 * 1024)) {
+		printf("can't set thread stacksize\n");
+		pthread_attr_destroy(&attr);
+		exit(1);
+	}
+
+ 	if (!(mainbuddy = rt_task_init(nam2num("MASTER"), 1, 1000, 0))) {
+		printf("CANNOT INIT TASK %lu\n", nam2num("MASTER"));
+		exit(1);
+	}
+
+	for (i = 0; i < NR_RT_TASKS; i++) {
+		indx[i] = i;
+		if (pthread_create(thread + i, &attr, thread_fun, indx + i)) {
+			printf("ERROR IN CREATING THREAD %d\n", indx[i]);
+			exit(1);
+ 		}       
+ 	} 
+	pthread_attr_destroy(&attr);
+
+	sem = rt_sem_init(nam2num("SEMAPH"), 1); 
+	change =  0;
+	
+	do {
+		msleep(50);
+		s = 0;	
+		for (i = 0; i < NR_RT_TASKS; i++) {
+			s += hrt[i];
+		}
+	} while (s != NR_RT_TASKS);
+	rt_grow_and_lock_stack(4000);
+	mlockall(MCL_CURRENT | MCL_FUTURE);
+	
+	rt_make_hard_real_time();
+	tsr = rt_get_cpu_time_ns();
+	for (i = 0; i < LOOPS; i++) {
+		for (k = 0; k < NR_RT_TASKS; k++) {
+			rt_task_resume(mytask[k]);
+		} 
+	} 
+	tsr = rt_get_cpu_time_ns() - tsr;
+
+	change = 1;
+
+	for (k = 0; k < NR_RT_TASKS; k++) {
+		rt_task_resume(mytask[k]);
+	} 
+
+	tsm = rt_get_cpu_time_ns();
+	for (i = 0; i < LOOPS; i++) {
+		for (k = 0; k < NR_RT_TASKS; k++) {
+	        	rt_sem_signal(sem);
+		}
+	}
+	tsm = rt_get_cpu_time_ns() - tsm;
+	rt_make_soft_real_time();
+
+	printf("\n\nFOR %d TASKS: ", NR_RT_TASKS);
+	printf("TIME %d (ms), SUSP/RES SWITCHES %d, ", (int)(tsr/1000000), 2*NR_RT_TASKS*LOOPS);
+	printf("SWITCH TIME %d (ns)\n", (int)(tsr/(2*NR_RT_TASKS*LOOPS)));
+
+	printf("\nFOR %d TASKS: ", NR_RT_TASKS);
+	printf("TIME %d (ms), SEM SIG/WAIT SWITCHES %d, ", (int)(tsm/1000000), 2*NR_RT_TASKS*LOOPS);
+	printf("SWITCH TIME %d (ns)\n\n", (int)(tsm/(2*NR_RT_TASKS*LOOPS)));
+	fflush(stdout);
+
+	end = 1;
+	for (i = 0; i < NR_RT_TASKS; i++) {
+	        rt_sem_signal(sem);
+	} 
+	do {
+		msleep(50);
+		s = 0;	
+		for (i = 0; i < NR_RT_TASKS; i++) {
+			s += hrt[i];
+		}
+	} while (s);
+
+	rt_sem_delete(sem);
+	rt_task_delete(mainbuddy);
+	for (i = 0; i < NR_RT_TASKS; i++) {
+		pthread_join(thread[i], NULL);
+	}
+	
+	return 0;
+}

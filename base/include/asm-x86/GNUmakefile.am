@@ -1,0 +1,33 @@
+includedir = @includedir@/asm-x86
+
+include_HEADERS = \
+		rtai.h \
+		rtai_atomic.h \
+		rtai_fpu.h \
+		rtai_hal.h \
+		rtai_emulate_tsc.h \
+		rtai_leds.h \
+		rtai_lxrt.h \
+		rtai_oldnames.h \
+		rtai_sched.h \
+		rtai_shm.h \
+		rtai_srq.h \
+		rtai_usi.h \
+		rtai_vectors.h
+
+if CONFIG_I386
+include_HEADERS += \
+	rtai_fpu_32.h \
+	rtai_hal_32.h
+else
+include_HEADERS +=
+	rtai_fpu_64.h \
+	rtai_hal_64.h
+endif
+
+install-data-local:
+	$(mkinstalldirs) $(DESTDIR)$(includedir)
+	rm -f $(DESTDIR)$(includedir)/../asm
+	$(LN_S) asm-x86 $(DESTDIR)$(includedir)/../asm
+
+#EXTRA_DIST = rtai_hal.piped rtai_hal.immed

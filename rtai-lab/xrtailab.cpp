@@ -1032,7 +1032,6 @@ void rlg_delete_profile_cb(Fl_Widget *, void *)
 
 void rlg_save_profile_cb(Fl_Widget *, void *)
 {
-
 	Fl_Dialog& dialog = *RLG_Save_Profile_Dialog;
 
 	dialog.x(RLG_Main_Window->x() + (int)((RLG_Main_Window->w()-dialog.w())/2));

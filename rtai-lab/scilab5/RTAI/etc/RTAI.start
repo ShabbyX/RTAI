@@ -11,17 +11,25 @@ etc_tlbx = getshortpathname(etc_tlbx);
 root_tlbx = strncpy( etc_tlbx, length(etc_tlbx)-length('\etc\') );
 pathmacros = pathconvert( root_tlbx ) + 'macros'+ filesep();
 
+disp("RTAI Code generation: Please click on the following menu entry in xcos: ");
+disp("Simulation/Compile. Then go to the scilab terminal and type :");
+disp("RTCodeGen()");
+
+// to load scicos library on linux
+scicos_debug();
+
 disp('Load macros');
 //Load  functions library
 RTAIlib = lib(pathmacros);
 exec("SCI/contrib/RTAI/src/c/loader.sce");
 
-predef('c');
-%scicos_menu($+1)=['RTAI','RTAI CodeGen','Set Target'];
-scicos_pal($+1,:)=['RTAI-Lib','SCI/contrib/RTAI/macros/RTAI-Lib.cosf'];
+xcosPalAdd(pathmacros+'/RTAI.xpal','Palettes');
+if getos()=="Windows" then
+   link("hdf5"+getdynlibext());
+else
+   link("libscihdf5"+getdynlibext());
+end
 
-%CmenuTypeOneVector($+1,:)=['RTAI CodeGen','Click on a Superblock (without activation output) to obtain a coded block!']
-%CmenuTypeOneVector($+1,:)=['Set Target','Click on a Superblock (without activation output) to set the Target!']
 
 //predef('all');
 
