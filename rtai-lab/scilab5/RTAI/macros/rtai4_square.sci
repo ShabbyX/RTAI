@@ -16,7 +16,7 @@ function [x,y,typ] = rtai4_square(job,arg1,arg2)
     exprs=graphics.exprs;
     while %t do
       [ok,A,prd,pulse,bias,delay,exprs]=..
-      getvalue('Set RTAI-square block parameters',..
+      scicos_getvalue('Set RTAI-square block parameters',..
       ['Amplitude:';
        'Period:';
        'Impulse width:';
@@ -50,7 +50,7 @@ function [x,y,typ] = rtai4_square(job,arg1,arg2)
     model.dstate=[];
     model.blocktype='d'
     model.dep_ut=[%t %f]
-    exprs=[sci2exp(A),sci2exp(prd),sci2exp(pulse),sci2exp(bias),sci2exp(delay)]
+    exprs=[sci2exp(A);sci2exp(prd);sci2exp(pulse);sci2exp(bias);sci2exp(delay)]
     gr_i=['xstringb(orig(1),orig(2),[''Square''],sz(1),sz(2),''fill'');']
     x=standard_define([3 2],model,exprs,gr_i)
   end

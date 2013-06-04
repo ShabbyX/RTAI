@@ -107,10 +107,10 @@ static unsigned long this_node[2];
 
 #define PRTSRVNAME  0xFFFFFFFF
 struct portslot_t { struct portslot_t *p; long task; int indx, place, socket[2], hard; unsigned long long owner; SEM sem; void *msg; struct sockaddr_in addr; MBX *mbx; unsigned long name;  RTIME timeout; int recovered; };
-static spinlock_t portslot_lock = SPIN_LOCK_UNLOCKED;
+static DEFINE_SPINLOCK(portslot_lock);
 static volatile int portslotsp;
 
-static spinlock_t stub_lock = SPIN_LOCK_UNLOCKED;
+static DEFINE_SPINLOCK(stub_lock);
 static volatile int stubssp = 1;
 
 
@@ -118,7 +118,7 @@ static struct portslot_t *portslot;
 static struct sockaddr_in SPRT_ADDR;
 struct recovery_msg { int hard, priority; unsigned long long owner; struct sockaddr addr; };
 static struct { int in, out; struct recovery_msg *msg; } recovery;
-static spinlock_t recovery_lock = SPIN_LOCK_UNLOCKED;
+static DEFINE_SPINLOCK(recovery_lock);
 
 #if HARD_RTNET
 int hard_rt_socket_callback(int fd, void *func, void *arg)
@@ -1284,7 +1284,7 @@ int soft_rt_socket_callback(int sock, int (*func)(int sock, void *arg), void *ar
 
 static int MaxSockSrq;
 static struct { int srq, in, out, *sockindx; } sysrq;
-static spinlock_t sysrq_lock = SPIN_LOCK_UNLOCKED;
+static DEFINE_SPINLOCK(sysrq_lock);
 
 int soft_rt_sendto(int sock, const void *msg, int msglen, unsigned int sflags, struct sockaddr *to, int tolen)
 {
@@ -1622,14 +1622,6 @@ static inline int krecv(int fd, void *ubuf, size_t size, unsigned flags)
 	return krecvfrom(fd, ubuf, size, flags, NULL, NULL);
 }
 
-#ifndef DECLARE_MUTEX_LOCKED
-#ifndef __DECLARE_SEMAPHORE_GENERIC
-#define DECLARE_MUTEX_LOCKED(name) \
-	struct semaphore name = __SEMAPHORE_INITIALIZER(name, 0)
-#else
-#define DECLARE_MUTEX_LOCKED(name) __DECLARE_SEMAPHORE_GENERIC(name,0)
-#endif
-#endif
 static DECLARE_MUTEX_LOCKED(mtx);
 static unsigned long end_softrtnet;
 

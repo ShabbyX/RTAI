@@ -185,7 +185,7 @@ int main(void)
 	pthread_join(latency_thread, NULL);
 	pthread_join(fast_thread, NULL);
 	pthread_join(slow_thread, NULL);
-	stop_rt_timer();	
+	stop_rt_timer();
 	rtf_sem_destroy(fifo);
 	rtf_destroy(FIFO);
 	rt_sem_delete(barrier);

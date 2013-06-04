@@ -27,11 +27,29 @@
 #endif /* !__cplusplus */
 
 #include <linux/moduleparam.h>
+
 #define RTAI_MODULE_PARM(name, type) \
 	module_param(name, type, 0444)
 
+#ifndef DEFINE_SPINLOCK
+#define DEFINE_SPINLOCK(x) spinlock_t x = SPIN_LOCK_UNLOCKED
+#endif
+
+#ifndef DECLARE_MUTEX_LOCKED
+#ifndef __DECLARE_SEMAPHORE_GENERIC
+#define DECLARE_MUTEX_LOCKED(name) \
+        struct semaphore name = __SEMAPHORE_INITIALIZER(name, 0)
+#else
+#define DECLARE_MUTEX_LOCKED(name) __DECLARE_SEMAPHORE_GENERIC(name,0)
+#endif
+#endif
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18)
 #define IRQF_SHARED  SA_SHIRQ
+#endif
+
+#ifndef cpu_online_map
+#define cpu_online_map (*(cpumask_t *)cpu_online_mask)
 #endif
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)

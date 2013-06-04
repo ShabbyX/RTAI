@@ -847,7 +847,7 @@ static void rtai_critical_sync (void)
 	case 1:
 
 	    p = &rtai_timer_mode[rtai_cpuid()];
-	
+
 	    while (rtai_rdtsc() < rtai_timers_sync_time)
 		;
 
@@ -1445,7 +1445,7 @@ static void rtai_trap_fault (adevinfo_t *evinfo)
 			init_xfpu();	/* Does clts(). */
 			linux_task->used_math = 1;
 			rt_printk("\nUNEXPECTED FPU INITIALIZATION FROM PID = %d\n", linux_task->pid);
-		} else {	
+		} else {
 			rt_printk("\nUNEXPECTED FPU TRAP FROM HARD PID = %d\n", linux_task->pid);
 		}
 		restore_task_fpenv(linux_task);	/* Does clts(). */

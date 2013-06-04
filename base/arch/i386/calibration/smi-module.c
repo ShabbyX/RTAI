@@ -52,7 +52,7 @@
 #define PCI_DEVICE_ID_INTEL_ICH8_4  0x2815
 #endif
 #ifndef PCI_DEVICE_ID_INTEL_ICH10_1
-#define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16
+#define #define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16
 #endif
 
 

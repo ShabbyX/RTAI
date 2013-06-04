@@ -335,7 +335,9 @@
 #define SEM_RT_POLL 		       228
 #define RT_POLL_NETRPC		       229
 
-#define MAX_LXRT_FUN		       230
+#define RT_USRQ_DISPATCHER	       230
+
+#define MAX_LXRT_FUN		       231
 
 // not recovered yet
 // Qblk's
@@ -421,7 +423,7 @@
 #define ENCODE_LXRT_REQ(dynx, srq, lsize)  (((dynx) << 24) | ((srq) << 12) | GT_NR_SYSCALLS | (lsize))
 // ... and this is the decoding.
 #define SRQ(x)   (((x) >> 12) & 0xFFF)
-#define NARG(x)  ((x) & (GT_NR_SYSCALLS - 1))
+#define LXRT_NARG(x)  ((x) & (GT_NR_SYSCALLS - 1))
 #define INDX(x)  (((x) >> 24) & 0xF)
 
 #define LINUX_SYSCALL_GET_MODE       0

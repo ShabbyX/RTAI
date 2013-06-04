@@ -6,7 +6,7 @@ config MODULES
 
 config RTAI_VERSION
 	string
-	default "3.9 (vulcano)"
+	default "3.8 (vulcano)"
 
 menu "General"
 
@@ -441,7 +441,7 @@ config RTAI_BUSY_TIME_ALIGN
 #	you want to use the LXRT syscall mechanism.
 #	RTAI will then operate in mixed mode selectively by using both
 #	its own and Linux syscall mechanisms.
-#	
+#
 #	If in doubt, say no.
 
 config RTAI_ALIGN_LINUX_PRIORITY
@@ -935,24 +935,39 @@ endmenu
 menu "Add-ons"
 
 config RTAI_COMEDI_LXRT
-	bool "Real time COMEDI support in user space"
+	bool "Real Time COMEDI support in user space"
 	default n
 	help
-	RTAI offers a unified kcomedilib interface to kernel/user space
-	real-time applications. A kernel module will be built and a library
-	will be provided. The kernel modules is called rtai_comedi.o and
-	must be loaded if you want to use the libkcomedilxrt.a library.
+	RTAI offers a unified COMEDI interface to kernel/user space real-time
+	applications. A kernel module will be built and a library will be
+	provided. The kernel modules is called rtai_comedi.o and must be
+	loaded if you want to use the libkcomedilxrt.a library.
 
 config RTAI_COMEDI_DIR
 	depends on RTAI_COMEDI_LXRT
 	string "COMEDI installation directory"
 	default "/usr/local"
 	help
-	You need the COMEDI support for data acquisition to build
-	applications such as RTAILab.
-	You can set the path to this package's installation
-	directory here. More specifically, RTAI needs the file
-	linux/comedilib.h.
+	You may need the COMEDI support for data acquisition to build your
+	applications, such as RTAILab.
+	You can set the path to COMEDI installation directory here.
+	It will be found either in Linux, since 2.6.29 (circa), see README
+	in "addons/comedi" for what to do in such a case, or by getting
+	kcomedi from www.comedi.org, in which case RTAI needs the file
+	linux/comedilib.h also.
+
+config RTAI_USE_COMEDI_LOCK
+	depends on RTAI_COMEDI_LXRT
+	bool "Use COMEDI lock by default"
+	default "n"
+	help
+	You may need the COMEDI lock for data acquisition when sharing a
+	board among many users. You can lock/unlock explicitly any
+	operation by calling comedi_lock/unlock yourself. By setting this
+	parameter all functions needing a lock for a safe shared use are
+	lock/unlocked by default. It can be useful to save a couple of
+	calls to enforce locking from user space. Little is gained with it
+	in kernel space.
 
 config RTAI_CPLUSPLUS
 	bool "In-kernel C++ support"

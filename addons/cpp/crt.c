@@ -1,7 +1,7 @@
 /*
  * Project: rtai_cpp - RTAI C++ Framework
  *
- * File: $Id: crt.c,v 1.3 2005/03/18 09:29:59 rpm Exp $
+ * File: $Id: crt.c,v 1.1 2004/12/09 09:19:54 rpm Exp $
  *
  * Specialized bits of code needed to support construction and
  * destruction of file-scope objects in C++ code.

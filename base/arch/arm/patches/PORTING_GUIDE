@@ -1,0 +1,95 @@
+Porting Guide
+=============
+
+This guide shows the way how I'm doing the porting to new hardware and/or
+kernel versions. It doesn't mean that this is the best way but maybe it gives
+you a few ideas how to start with your own port. Any ideas to add or for
+changes or productive criticism are very welcome!
+
+Supported boards:
+
+So, if you already have a RTAI/kernel patch for your board you're almost done.
+You need to get the kernel, maybe a board-specific patch and the RTAI stuff.
+Apply the patches and compile both the kernel and RTAI (RTAI needs to be
+compiled against the used kernel). First tests can be done with the tools which
+are provided with RTAI (<RTAI>/testsuite/*). Code examples are also available
+in the showroom (cvs -d:pserver:anonymous@cvs.gna.org:/cvs/rtai co showroom).
+
+Porting RTAI:
+
+Basically you'll have two possible ways to port RTAI to your board:
+
+- First way:
+  Choose the newest kernel, make it ready for IPIPE and then do the RTAI port.
+  Choosing this way the port has to work for your board and for the new kernel
+  at the same time. You don't have the benefit of a known working kernel!
+  Therefore I think it's harder to do the porting with this approach than
+  choosing the following way.
+
+- Second way:
+  Find an already running solution for an older kernel and for another
+  board/processor/core and start there by following the next steps. This way
+  probably needs more time than the first way but it should be simpler.
+
+
+
+Steps:
+
+1. Choose a linux kernel with Adeos/IPIPE/RTAI support for ARM
+
+   You should prefer a kernel which supports your ARM core. Choose 2.6.7 for
+   imx or 2.6.20 for at91 for example. If you have a board which is already
+   supported you are finished. If your processor is supported you'll have to
+   port that version to your board. If your ARM core is supported start with
+   that kernel and port it to your processor.
+
+   If the core is not supported you might want to choose the most current one
+   which is already running with RTAI (2.6.20.13 at the moment). Ancient kernel
+   in this case but at least you can be sure, that the chosen kernel is already
+   working with RTAI on ARM.
+
+2. First the board then RTAI
+
+   If you have to do the port for your processor or core, you should start with
+   backporting your board to the chosen kernel (In this step without RTAI).
+   This could mean to backport to a very ancient kernel (2.6.20.13 in case of
+   the at91). But you can be sure, that it'll work if you backport step by
+   step. You can go through other kernel versions, too. Clean it up until
+   patching with the Adeos/IPIPE patch runs without errors.
+
+   In the end you'll have a kernel running on your board and which was tested
+   and ported to RTAI before. You'll have an existing RTAI port for that kernel
+   too for the next step. Maybe this step needs some time, but there is no RTAI
+   involved in this step and therefore it should be relatively simple.
+
+   This step can be done with a minimal defconfig (without fs/, drivers/, ...)
+   to reduce compile time and to avoid compiling of unneeded code.
+
+3. Port the existing Adeos/IPIPE/RTAI support to your core/processor/board
+
+   Use the existing RTAI patches in this step. Read the patches, try to
+   understand what they are patching, divide them into the Adeos/IPIPE and RTAI
+   parts. Following the previous steps, you'll have a running kernel for your
+   board and you'll have RTAI patches to start with.
+
+   Maybe you'll have to add support for your processor (RTAI configuration) and
+   some other things to RTAI in this step too.
+
+4. Port to a new kernel version
+
+   If you succeeded in step 3 you can think of a port to a current kernel
+   version. You'd start with a running RTAI on your board but with an ancient
+   kernel. Choose newer kernels which already support RTAI before you choose
+   the newest kernel but without support for RTAI.
+
+
+
+This guide isn't finished! Especially step 3 'll be explained in much more
+detail soon.
+
+
+
+-------
+
+T. Koschorrek <devel@koschorrek.com>
+Copyright (C) 2012 Torsten Koschorrek

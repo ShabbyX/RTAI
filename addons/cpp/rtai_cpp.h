@@ -1,7 +1,7 @@
 /*
  * Project: rtai_cpp - RTAI C++ Framework
  *
- * File: $Id: rtai_cpp.h,v 1.3 2005/03/18 09:29:59 rpm Exp $
+ * File: $Id: rtai_cpp.h,v 1.1 2004/12/09 09:19:54 rpm Exp $
  *
  * Copyright: (C) 2001,2002 Erwin Rol <erwin@muffin.org>
  *

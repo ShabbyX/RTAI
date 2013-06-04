@@ -53,5 +53,5 @@ If you intend to use Linux i386 with REGPARM configured notice that all your
 functions callable from user space must be prefixed with "RTAI_SYSCALL_MODE".
 In such a way they will be usable both with and without REGPARM. If you do
 not do so then avoid configuring REGPARM for Linux, which is not possible from
-2.6.20 onward, where REGPARM is the only way to operate and so it is an option
-no more.
+2.6.20 onward, where REGPARM is the only way to operate and so it is nomore
+an option.

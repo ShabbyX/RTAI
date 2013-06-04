@@ -18,4 +18,5 @@ rtai_scb.py \
 rtai_sem.py \
 rtai_shm.py \
 rtai_spl.py \
-rtai_wd.py
+rtai_wd.py \
+rtai_ser.py

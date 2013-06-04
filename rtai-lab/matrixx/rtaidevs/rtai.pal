@@ -6,4 +6,3 @@ blockdirectory="rtaidevs\AnalogInput" title="RTAI-AnalogInput" icon="rtaidevs\ic
 blockdirectory="rtaidevs\AnalogOutput" title="RTAI-AnalogOutput" icon="rtaidevs\icons\rtai_comedi_dataout.bmp"
 blockdirectory="rtaidevs\DigitalInput" title="RTAI-DigitalInput" icon="rtaidevs\icons\rtai_comedi_dioin.bmp"
 blockdirectory="rtaidevs\DigitalOutput" title="RTAI-DigitalOutput" icon="rtaidevs\icons\rtai_comedi_dioout.bmp"
-

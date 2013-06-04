@@ -663,7 +663,9 @@ static struct rtdm_timer_struct timers_list[NUM_CPUS] =
 #endif
 }, };
 
-static spinlock_t timers_lock[NUM_CPUS] = { SPIN_LOCK_UNLOCKED, };
+//static spinlock_t timers_lock[NUM_CPUS] = { SPIN_LOCK_UNLOCKED, };
+static spinlock_t timers_lock[NUM_CPUS] = { __SPIN_LOCK_UNLOCKED(timers_lock[0]), };
+
 
 #ifdef CONFIG_RTAI_LONG_TIMED_LIST
 

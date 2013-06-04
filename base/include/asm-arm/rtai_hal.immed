@@ -115,13 +115,6 @@ rtai_imuldiv(int i, int mult, int div)
     return (r + r) < div ? q : q + 1;
 }
 
-/* get architecture specific things (using <asm/...> breaks
- * build-in-seperate-directory feature!) */
-#include <asm-arm/arch/rtai_arch.h>
-
-#define RTAI_CPU_FREQ             	RTAI_TSC_FREQ
-#define RTAI_CALIBRATED_CPU_FREQ  	RTAI_TSC_FREQ
-
 #if defined(__KERNEL__) && !defined(__cplusplus)
 #include <linux/sched.h>
 #include <rtai_trace.h>
@@ -129,8 +122,15 @@ rtai_imuldiv(int i, int mult, int div)
 #include <asm/rtai_atomic.h>
 #include <asm/rtai_fpu.h>
 
+/* get architecture specific things (using <asm/...> breaks
+ * build-in-seperate-directory feature!) */
+#include <asm-arm/arch/rtai_arch.h>
+
 #define RTAI_DOMAIN_ID			0x52544149
 #define RTAI_NR_SRQS			32
+
+#define RTAI_CPU_FREQ             	RTAI_TSC_FREQ
+#define RTAI_CALIBRATED_CPU_FREQ  	RTAI_TSC_FREQ
 
 #define RTAI_TIME_LIMIT		   	0x7FFFFFFFFFFFFFFFLL
 
@@ -204,7 +204,6 @@ extern struct rt_times			rt_smp_times[RTAI_NR_CPUS];
 extern volatile unsigned long		rtai_cpu_realtime;
 extern struct rtai_switch_data 		rtai_linux_context[RTAI_NR_CPUS];
 extern int				rtai_adeos_ptdbase;
-extern adomain_t			rtai_domain;
 
 /* type of rt irq handler (general + timer) */
 typedef void (*rt_irq_handler_t)(unsigned irq, void *cookie);
@@ -239,7 +238,6 @@ rt_switch_to_real_time(int cpuid)
     TRACE_RTAI_SWITCHTO_RT(cpuid);
     if (!rtai_linux_context[cpuid].depth++) {
 	rtai_linux_context[cpuid].oldflags = xchg(&adp_root->cpudata[cpuid].status, (1 << IPIPE_STALL_FLAG));
-	adp_cpu_current[cpuid] = &rtai_domain;
 	__set_bit(cpuid, &rtai_cpu_realtime);
     } else {
 	ADEOS_PARANOIA_ASSERT(test_bit(IPIPE_STALL_FLAG, &adp_root->cpudata[cpuid].status) != 0);
@@ -254,7 +252,6 @@ rt_switch_to_linux(int cpuid)
     if (rtai_linux_context[cpuid].depth) {
 	if (!--rtai_linux_context[cpuid].depth) {
 	    __clear_bit(cpuid, &rtai_cpu_realtime);
-	    adp_cpu_current[cpuid] = adp_root;
 	    adp_root->cpudata[cpuid].status = rtai_linux_context[cpuid].oldflags;
 	}
     }

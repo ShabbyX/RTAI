@@ -20,11 +20,6 @@ include_HEADERS = \
 	rtai_taskq.h \
 	select.h
 
-noinst_HEADERS = \
-	core.h \
-	device.h \
-	proc.h
-
 if CONFIG_KBUILD
 rtai_rtdm$(modext): @RTAI_KBUILD_ENV@
 rtai_rtdm$(modext): $(librtdm_a_SOURCES) FORCE

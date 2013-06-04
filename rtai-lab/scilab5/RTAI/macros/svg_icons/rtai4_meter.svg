@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="60px"
+   height="40px"
+   viewBox="0 0 60 40"
+   style="stroke:none"
+   id="svg3050"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="rtai4_meter.svg">
+  <metadata
+     id="metadata3094">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1440"
+     inkscape:window-height="825"
+     id="namedview3092"
+     showgrid="false"
+     inkscape:zoom="5.9"
+     inkscape:cx="30"
+     inkscape:cy="21.969133"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g3060" />
+  <title
+     id="title3052">Graphic window number 0</title>
+  <desc
+     id="desc3054">
+Creator: GL2PS 1.3.2, (C) 1999-2006 Christophe Geuzaine (geuz@geuz.org)
+For: Scilab
+CreationDate: Mon Oct 18 08:20:33 2010
+</desc>
+  <defs
+     id="defs3056">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 20 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="60 : 20 : 1"
+       inkscape:persp3d-origin="30 : 13.333333 : 1"
+       id="perspective3096" />
+    <inkscape:perspective
+       id="perspective3545"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <g
+     id="g3060">
+    <text
+       style="font-size:15px;font-style:normal;font-weight:normal;fill:#000000;stroke:none;font-family:SansSerif"
+       x="7.0560241"
+       y="24.255665"
+       font-size="15"
+       font-style="normal"
+       font-weight="normal"
+       id="text3088">
+      <tspan
+         style="font-size:16px"
+         id="tspan2883">Meter</tspan>
+    </text>
+  </g>
+</svg>

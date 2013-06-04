@@ -1898,7 +1898,9 @@ static int rtdm_do_mmap(rtdm_user_info_t *user_info,
 	filp->private_data = mmap_data;
 
 	down_write(&user_info->mm->mmap_sem);
-	user_ptr = (void *)do_mmap(filp, (unsigned long)*pptr, len, prot,
+//	user_ptr = (void *)do_mmap(filp, (unsigned long)*pptr, len, prot,
+//				   MAP_SHARED, 0);
+	user_ptr = (void *)vm_mmap(filp, (unsigned long)*pptr, len, prot,
 				   MAP_SHARED, 0);
 	up_write(&user_info->mm->mmap_sem);
 

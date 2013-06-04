@@ -1,5 +1,6 @@
 /*
 COPYRIGHT (C) 2006  Roberto Bucher (roberto.bucher@supsi.ch)
+              2011  Holger Nahrstaedt
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -16,8 +17,8 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#include <machine.h>
-#include <scicos_block4.h>
+ #include <math.h>
+ #include "scicos_block.h"
 
 static void init(scicos_block *block)
 {

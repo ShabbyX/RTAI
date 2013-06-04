@@ -1,7 +1,7 @@
 function RTAICodeGen_()
 //Copyright (c) 1989-2010 Metalau project INRIA
 //
-// Last update : 19/07/10
+// Last update : 28/08/09
 //
 // Input editor function of Scicos code generator
 
@@ -61,7 +61,7 @@ function RTAICodeGen_()
             // Got to target sblock.
             scs_m_top=goto_target_scs_m(scs_m_top)
             //## call do_compile_superblock
-            [ok, XX, gui_path, flgcdgen, szclkINTemp, freof, c_atomic_code] = ...
+            [ok, XX, gui_path, flgcdgen, szclkINTemp, freof] = ...
                               do_compile_superblock42(scs_m_top, k);
 
             clearglobal scs_m_top;
@@ -98,10 +98,6 @@ function [txt]=call_block42(bk,pt,flag)
 //
 
   txt=[]
-
-  if flag==2 & (zptr(bk+1)-zptr(bk)+xptr(bk+1)-xptr(bk) == 0) then
-    return
-  end
 
   //**
   if flag==2 & ((zcptr(bk+1)-zcptr(bk))<>0) & pt<0 then
@@ -1382,9 +1378,9 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
   //**** solve which blocks use work ****//
   BeforeCG_WinList = winsid();
 
-  //  ierr=execstr('[state,t]=scicosim(cpr.state,0,0,cpr.sim,'+..
-  //               '''start'',scs_m.props.tol)','errcatch')
-  ierr = 1
+  ierr=execstr('[state,t]=scicosim(cpr.state,0,0,cpr.sim,'+..
+               '''start'',scs_m.props.tol)','errcatch')
+
   //@@ save initial outtb
   if ierr==0
     outtb_init = state.outtb;
@@ -1405,8 +1401,8 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
        end
     end
 
-  //  ierr=execstr('[state,t]=scicosim(state,0,0,cpr.sim,'+..
-  //               '''finish'',scs_m.props.tol)','errcatch')
+    ierr=execstr('[state,t]=scicosim(state,0,0,cpr.sim,'+..
+                 '''finish'',scs_m.props.tol)','errcatch')
   end
 
   //@@ remove windows opened by simulation
@@ -1535,23 +1531,17 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
   rpat = getcwd();
   archname='';
   Tsamp = sci2exp(eval(sTsamp));
-  can_flag = %f;
+
+  template = ''; //** default values for this version
 
   if XX.model.rpar.props.void3 == [] then
 	target = 'rtai'; //** default compilation chain
-        template = ''; //** default values for this version
-	odefun = 'ode4';  //** default solver
-	odestep = '10';   //** default continous step size
-  elseif size(XX.model.rpar.props.void3,2)==3 then
-	target = 'rtai'; //** default compilation chain
-        template = ''; //** default target board
 	odefun = 'ode4';  //** default solver
 	odestep = '10';   //** default continous step size
   else
-	target   = XX.model.rpar.props.void3(1); //** user defined parameters
-	template = XX.model.rpar.props.void3(2);
-	odefun   = XX.model.rpar.props.void3(3);
-	odestep  = XX.model.rpar.props.void3(4);
+	target  = XX.model.rpar.props.void3(1); //** user defined parameters
+	odefun  = XX.model.rpar.props.void3(2);
+	odestep = XX.model.rpar.props.void3(3);
   end
 
   ode_x=['ode1';'ode2';'ode4']; //** available continous solver
@@ -1565,7 +1555,6 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
       rdnom = strsubst(rdnom,' ','_');
       rdnom = strsubst(rdnom,'-','_');
       rdnom = strsubst(rdnom,'.','_');
-      rdnom = strsubst(rdnom,"",'_');
     end
 
     //** dialog box default variables
@@ -2254,8 +2243,6 @@ Code_common= []
             '/* ---- Solver functions prototype for standalone use ---- */'
             'int '+rdnom+'simblk_imp(double , double *, double *, double *);'
             'int dae1();'
-            'int dae2();'
-            'int dae4();'
             '']
     else
       Code=[Code
@@ -2510,26 +2497,16 @@ Code = [Code;
 
       for j=1:nopar
         if mat2scs_c_nb(opar(opptr(i)+j-1)) <> 11 then
-
-	// Thanks to Matteo Morelli for the correction of this bug
-
-          Code_tmp = cformatline(mat2c_typ(opar(opptr(i)+j-1)) +...
-                                 ' opar_'+string(opptr(i)+j-1) + '[]={'+...
-                                 strcat(string(opar(opptr(i)+j-1)),',')+'};',70);
-          Code_tmp(1) = '  __CONST__ '+Code_tmp(1);
-          Code_opar =[Code_opar; Code_tmp]
-
-
-
-
-
-       else //** cmplx test
-          Code_tmp = cformatline(mat2c_typ(opar(opptr(i)+j-1)) +...
+          Code_opar =[Code_opar;
+                 cformatline('  __CONST__ ' + mat2c_typ(opar(opptr(i)+j-1)) +...
+                         ' opar_'+string(opptr(i)+j-1) + '[]={'+...
+                             strcat(string(opar(opptr(i)+j-1)),',')+'};',70)]
+        else //** cmplx test
+          Code_opar =[Code_opar;
+                 cformatline('  __CONST__ ' + mat2c_typ(opar(opptr(i)+j-1)) +...
                          ' opar_'+string(opptr(i)+j-1) + '[]={'+...
                              strcat(string([real(opar(opptr(i)+j-1)(:));
-                                            imag(opar(opptr(i)+j-1)(:))]),',')+'};',70);
-          Code_tmp(1) = '  __CONST__ '+Code_tmp(1);
-          Code_opar =[Code_opar; Code_tmp]
+                                            imag(opar(opptr(i)+j-1)(:))]),',')+'};',70)]
         end
       end
 
@@ -3020,7 +2997,6 @@ Code = [Code;
    if impl_blk then
     Code=[Code;
           '  double h,dt;'
-	  '  int i;'
           '']
   end
 
@@ -3349,8 +3325,12 @@ Code = [Code;
         '/*'+part('-',ones(1,40))+'  ISR function */'
         'int '+rdnom+'_isr(double t)'
         '{'
+//        '  int nevprt=1;'
         '  int local_flag;'
 	'  int i;'
+//	'#ifdef linux'
+//        '  double *args[2];'
+//	'#endif'
        ]
 
   if (x <> []) then
@@ -3359,15 +3339,24 @@ Code = [Code;
           '']
   end
 
-  if with_nrd then
-    if with_nrd2 then
-      Code=[Code;
-            '  /* Variables for constant values */'
-            '  int nrd_1, nrd_2;'
-            ''
-            '  double *args[2];'
-            '']
+  if ALL then
+    Code=[Code;
+          '    /* */'
+          '    ptr = *(block_'+rdnom+'['+string(nb_agenda_blk-1)+'].work);'
+          '    kever = ptr->pointi;'
+          '']
+
+    if with_nrd then
+      if with_nrd2 then
+        Code=[Code;
+              '  /* Variables for constant values */'
+              '  int nrd_1, nrd_2;'
+              ''
+              '  double *args[2];'
+              '']
+      end
     end
+
   end
 
   //** flag 1,2,3
@@ -3443,30 +3432,23 @@ Code = [Code;
             '    '+get_comment('flag',list(flag))
             txt3];
     end
-
-  end
-
-  if impl_blk then
-    intgfun=strsubst(odefun,'ode','dae');
-  else
-    intgfun=odefun
   end
 
   if x<>[] then
     Code=[Code
           ''
-          '    tout=t;'
-	  '    dt='+rdnom+'_get_tsamp();'
-          '    h=dt/'+odestep+';'
-          '    while (tout+h<t+dt){'
+          '  tout=t;'
+	  '  dt='+rdnom+'_get_tsamp();'
+          '  h=dt/'+odestep+';'
+          '  while (tout+h<t+dt){'
 	  ]
     if impl_blk then
       Code=[Code
-            '    '+intgfun+'('+rdnom+'simblk_imp,x,xd,res,tout,h);'
+            '   dae1('+rdnom+'simblk_imp,x,xd,res,tout,h);'
 	   ]
     else
       Code=[Code
-            '    '+intgfun+'('+rdnom+'simblk,x,xd,tout,h);'
+            '  '+odefun+'('+rdnom+'simblk,x,xd,tout,h);'
 	   ]
     end
 
@@ -3478,12 +3460,12 @@ Code = [Code;
 	  ]
     if impl_blk then
       Code=[Code
-            '  '+intgfun+'('+rdnom+'simblk_imp,x,xd,res,tout,he);'
+            '   dae1('+rdnom+'simblk_imp,x,xd,res,tout,he);'
 	   ]
 
     else
       Code=[Code
-            '  '+intgfun+'('+rdnom+'simblk,x,xd,tout,he);'
+            '  '+odefun+'('+rdnom+'simblk,x,xd,tout,he);'
             '']
     end
   end
@@ -3512,7 +3494,7 @@ Code = [Code;
     end
   end
 
-  Code=[Code
+ Code=[Code
 	''
 	'  return 0;'
         '}']
@@ -3577,8 +3559,7 @@ Code = [Code;
                '#include <machine.h>'
 	       ''
 	       'int phase;'
-	       'int err = 0;'
-	       'int * block_error = &err;'
+	       'int * block_error;'
 	       ''
 	       ]
 
@@ -3607,7 +3588,7 @@ Code = [Code;
                '']
 
                Code_common=[Code_common
-               'int get_block_error(int err)'
+               'void get_block_error(int err)'
                '{'
  	       '  return *block_error;'
                '}'
@@ -3737,12 +3718,19 @@ Code = [Code;
         else
           with_nrd2=%f
         end
+//         with_nrd2=%f;
+//         for k=1:size(ind,2)
+//           if ~or(oord([ind(k)],1)==cap) then
+//             with_nrd2=%t;
+//             break;
+//           end
+//         end
         if with_nrd2 then
           Code=[Code;
                 '  /* Variables for constant values */'
                 '  int nrd_1, nrd_2;'
                 ''
-                '  double *args[2];'
+                '  double *args[100];'
                 '']
         end
       end
@@ -3782,10 +3770,9 @@ Code = [Code;
             '}'
             ''
             '/* DAE Method */'
-	    '/* Euler''s Method */'
             'int dae1(f,x,xd,res,t,h)'
             '  int (*f) ();'
-            '  double *x, *xd, *res;'
+            '  double *x,*xd,*res;'
             '  double t, h;'
             '{'
             '  int i;'
@@ -3796,111 +3783,11 @@ Code = [Code;
             '  if (ierr!=0) return ierr;'
             ''
             '  for (i=0;i<NEQ;i++) {'
-            '   x[i]=x[i]+h*res[i];'
+            '   x[i]=x[i]+h*xd[i];'
             '  }'
             ''
             '  return 0;'
-	    '}'
-             ''
-            '/* Heun''s Method */'
-            'int dae2(f,x,xd,res,t,h)'
-            '  int (*f) ();'
-            '  double *x, *xd, *res;'
-            '  double t, h;'
-            '{'
-            '  int i;'
-            '  int ierr;'
-            '  double y['+string(nX)+'],yh['+string(nX)+'],temp,f0['+string(nX)+'],th;'
-            ''
-            '  /**/'
-            '  memcpy(y,x,NEQ*sizeof(double));'
-            '  memcpy(f0,res,NEQ*sizeof(double));'
-            ''
-            '  /**/'
-            '  ierr=(*f)(t,y, f0, res);'
-            '  if (ierr!=0) return ierr;'
-            ''
-            '  /**/'
-            '  for (i=0;i<NEQ;i++) {'
-            '    x[i]=y[i]+h*f0[i];'
-            '  }'
-            '  th=t+h;'
-            '  for (i=0;i<NEQ;i++) {'
-            '    yh[i]=y[i]+h*f0[i];'
-            '  }'
-            '  ierr=(*f)(th,yh, xd, res);'
-            '  if (ierr!=0) return ierr;'
-            ''
-            '  /**/'
-            '  temp=0.5*h;'
-            '  for (i=0;i<NEQ;i++) {'
-            '    x[i]=y[i]+temp*(f0[i]+res[i]);'
-            '  }'
-            ''
-            '  return 0;'
-            '}'
-            ''
-            '/* Fourth-Order Runge-Kutta (RK4) Formula */'
-            'int dae4(f,x,xd,res,t,h)'
-            '  int (*f) ();'
-            '  double *x, *xd, *res;'
-            '  double t, h;'
-            '{'
-            '  int i;'
-            '  int ierr;'
-            '  double y['+string(nX)+'],yh['+string(nX)+'],'+...
-              'temp,f0['+string(nX)+'],th,th2,'+...
-              'f1['+string(nX)+'],f2['+string(nX)+'];'
-            ''
-            '  /**/'
-            '  memcpy(y,x,NEQ*sizeof(double));'
-            '  memcpy(f0,res,NEQ*sizeof(double));'
-            ''
-            '  /**/'
-            '  ierr=(*f)(t,y, xd, f0);'
-            '  if (ierr!=0) return ierr;'
-            ''
-            '  /**/'
-            '  for (i=0;i<NEQ;i++) {'
-            '    x[i]=y[i]+h*f0[i];'
-            '  }'
-            '  th2=t+h/2;'
-            '  for (i=0;i<NEQ;i++) {'
-            '    yh[i]=y[i]+(h/2)*f0[i];'
-            '  }'
-            '  ierr=(*f)(th2,yh, xd, f1);'
-            '  if (ierr!=0) return ierr;'
-            ''
-            '  /**/'
-            '  temp=0.5*h;'
-            '  for (i=0;i<NEQ;i++) {'
-            '    x[i]=y[i]+temp*f1[i];'
-            '  }'
-            '  for (i=0;i<NEQ;i++) {'
-            '    yh[i]=y[i]+(h/2)*f1[i];'
-            '  }'
-            '  ierr=(*f)(th2,yh, xd, f2);'
-            '  if (ierr!=0) return ierr;'
-            ''
-            '  /**/'
-            '  for (i=0;i<NEQ;i++) {'
-            '    x[i]=y[i]+h*f2[i];'
-            '  }'
-            '  th=t+h;'
-            '  for (i=0;i<NEQ;i++) {'
-            '    yh[i]=y[i]+h*f2[i];'
-            '  }'
-            '  ierr=(*f)(th2,yh, xd, res);'
-            '  if (ierr!=0) return ierr;'
-            ''
-            '  /**/'
-            '  temp=h/6;'
-            '  for (i=0;i<NEQ;i++) {'
-            '    x[i]=y[i]+temp*(f0[i]+2.0*f1[i]+2.0*f2[i]+res[i]);'
-            '  }'
-            ''
-            '  return 0;'
-           '}']
+            '}']
     //## explicit case
     else
       Code=[Code;
@@ -3941,12 +3828,19 @@ Code = [Code;
         else
           with_nrd2=%f
         end
+//         with_nrd2=%f;
+//         for k=1:size(ind,2)
+//           if ~or(oord([ind(k)],1)==cap) then
+//             with_nrd2=%t;
+//             break;
+//           end
+//         end
         if with_nrd2 then
           Code=[Code;
                 '  /* Variables for constant values */'
                 '  int nrd_1, nrd_2;'
                 ''
-                '  double *args[2];'
+                '  double *args[100];'
                 '']
         end
       end

@@ -32,10 +32,12 @@ LIBDIRS = -L$(SCIDIR)/../../lib/scilab\
 SCILIBS =\
           -lsciscicos \
           -lsciscicos_blocks \
-          -lscilapack\
+          -lsciapi_scilab \
           -lscipvm \
          -lscishell \
          -lscicompletion        \
+         -lsciscinotes\
+         -lscifunctions\
          -lscicore\
          -lsciconsole \
         -lscifftw \
@@ -67,6 +69,7 @@ SCILIBS =\
         -lscilinear_algebra\
         -lsciaction_binding\
         -lscihistory_manager\
+        -lscihistory_browser \
         -lscidynamiclibrary\
         -lsciio\
         -lscistatistics\
@@ -90,13 +93,13 @@ OTHERLIBS = -lcomedi
 endif
 ULIBRARY = $(RTAIDIR)/lib/libsciblk.so $(RTAIDIR)/lib/liblxrt.so
 
-CFLAGS = $(CC_OPTIONS) -O2 -I$(SCIDIR)/../../include/scilab/core -I$(SCIDIR)/../../include/scilab/scicos_blocks  $(C_FLAGS) -DMODEL=$(MODEL) -DMODELN=$(MODEL).c
+CFLAGS = $(CC_OPTIONS) -O2 -I$(SCIDIR)/../../include/scilab/core -I$(SCIDIR)/../../include/scilab/scicos -I$(SCIDIR)/../../include/scilab/scicos_blocks  $(C_FLAGS) -DMODEL=$(MODEL) -DMODELN=$(MODEL).c
 
 rtmain.c: $(RTAIDIR)/share/rtai/scicos/rtmain.c $(MODEL).c
 	cp $< .
 
 $$MODEL$$: $(OBJSSTAN) $(ULIBRARY)
-	gcc  -o $@  $(OBJSSTAN) $(LIBDIRS) $(SCILIBS) $(ULIBRARY) $(JAVALIBS) $(OTHERLIBS) -lpthread -lstdc++ -lrt  $(COMEDILIB) -lm
+	gcc  -o $@  $(OBJSSTAN) $(LIBDIRS) $(SCILIBS) $(ULIBRARY) $(OTHERLIBS) -lpthread -lstdc++ -lrt  $(COMEDILIB) -lm
 	@echo "### Created executable: $(MODEL) ###"
 
 ../$$MODEL$$: $$MODEL$$

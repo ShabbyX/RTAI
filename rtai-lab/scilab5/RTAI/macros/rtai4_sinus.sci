@@ -17,7 +17,7 @@ function [x,y,typ] = rtai4_sinus(job,arg1,arg2)
     exprs=graphics.exprs;
     while %t do
       [ok,A,frq,phase,bias,delay,exprs]=..
-      getvalue('Set RTAI-sinus block parameters',..
+      scicos_getvalue('Set RTAI-sinus block parameters',..
       ['Amplitude:';
        'Frequency:';
        'Phase:';
@@ -59,7 +59,7 @@ function [x,y,typ] = rtai4_sinus(job,arg1,arg2)
     model.dstate=[];
     model.blocktype='d'
     model.dep_ut=[%t %f]
-    exprs=[sci2exp(A),sci2exp(frq),sci2exp(phase),sci2exp(bias),sci2exp(delay)]
+    exprs=[sci2exp(A);sci2exp(frq);sci2exp(phase);sci2exp(bias);sci2exp(delay)]
     gr_i=['xstringb(orig(1),orig(2),[''Sine''],sz(1),sz(2),''fill'');']
     x=standard_define([3 2],model,exprs,gr_i)
   end

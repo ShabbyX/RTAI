@@ -62,7 +62,7 @@ function [x,y,typ] = rtai4_scope(job,arg1,arg2)
     exprs=graphics.exprs;
     while %t do
       [ok,name,traceNames,exprs]=..
-      getvalue('Set RTAI-scope block parameters',..
+      scicos_getvalue('Set RTAI-scope block parameters',..
       ['Scope name';
 			 'Name of traces (seperator=;)'],..
       list('str',1,'str',1),exprs)
@@ -89,9 +89,9 @@ function [x,y,typ] = rtai4_scope(job,arg1,arg2)
         else
           tnames=traceNames
         end
-        opar=list(iconvert([ascii(stripblanks(name,1)),0],11))
+        opar=list(iconvert([ascii(stripblanks(name,%t)),0],11))
         for i=1:size(tnames, 1)
-          opar(i+1)=iconvert([ascii(stripblanks(tnames(i),1)),0],11)
+          opar(i+1)=iconvert([ascii(stripblanks(tnames(i),%t)),0],11)
         end
         model.opar=opar
         model.dstate=[]
@@ -113,7 +113,7 @@ function [x,y,typ] = rtai4_scope(job,arg1,arg2)
     model.dstate=[0]
     model.blocktype='d'
     model.dep_ut=[%t %f]
-    exprs=[name,traceNames]
+    exprs=[name;traceNames]
     gr_i=['xstringb(orig(1),orig(2)-25,[name],sz(1),25,''fill'');']
     x=standard_define([3 2],model,exprs,gr_i)
   end

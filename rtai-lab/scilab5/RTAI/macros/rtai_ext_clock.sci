@@ -15,7 +15,7 @@ function [x,y,typ]=rtai_ext_clock(job,arg1,arg2)
     exprs=graphics.exprs;
 		while %t do
 			[ok,sampTime,ans]=..
-			   getvalue('Set Exteral Clock parameter',..
+			   scicos_getvalue('Set Exteral Clock parameter',..
 			   ['Expected sample time [s]'],..
 			   list('vec',-1),exprs(1))
 			if ~ok then break,end

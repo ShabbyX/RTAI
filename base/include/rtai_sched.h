@@ -260,23 +260,6 @@ int rt_task_init_cpuid(struct rt_task_struct *task,
 		       void(*signal)(void),
 		       unsigned run_on_cpu);
 
-int rt_kthread_init(struct rt_task_struct *task,
-		    void (*rt_thread)(long),
-		    long data,
-		    int stack_size,
-		    int priority,
-		    int uses_fpu,
-		    void(*signal)(void));
-
-int rt_kthread_init_cpuid(struct rt_task_struct *task,
-		          void (*rt_thread)(long),
-		          long data,
-		          int stack_size,
-		          int priority,
-		          int uses_fpu,
-		          void(*signal)(void),
-		          unsigned run_on_cpu);
-
 RTAI_SYSCALL_MODE void rt_set_runnable_on_cpus(struct rt_task_struct *task,
 			     unsigned long cpu_mask);
 
@@ -525,6 +508,12 @@ void rt_deregister_watchdog(RT_TASK *wdog,
 			    int cpuid);
 
 #endif /* __cplusplus */
+
+long rt_thread_create(void *fun, void *args, int stack_size);
+	
+RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int policy, int cpus_allowed);
+
+int rt_thread_delete(RT_TASK *rt_task);
 
 #endif /* __KERNEL__ */
 

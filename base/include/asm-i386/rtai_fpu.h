@@ -182,8 +182,17 @@ typedef union thread_xstate FPU_ENV;
 	do { clear_stopped_child_used_math(lnxtsk); } while(0)
 #define lnxtsk_uses_fpu(lnxtsk)  (tsk_used_math(lnxtsk))
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
+#undef init_fpu
+#include <asm/i387.h>
+#include <asm/fpu-internal.h>
+#define rtai_set_fpu_used(lnxtsk) __thread_set_has_fpu(lnxtsk)
+#else
+#define rtai_set_fpu_used(lnxtsk) do { task_thread_info(lnxtsk)->status |= TS_USEDFPU; } while(0)
+#endif
+
 #define set_lnxtsk_using_fpu(lnxtsk) \
-	do { task_thread_info(lnxtsk)->status |= TS_USEDFPU; } while(0)
+	do { rtai_set_fpu_used(lnxtsk); } while(0)
 //	do { (lnxtsk)->thread_info->status |= TS_USEDFPU; } while(0)
 
 #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,11) */

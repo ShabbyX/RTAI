@@ -68,7 +68,7 @@ static void rtai_proc_unregister(void);
 // End of proc filesystem additions.
 
 /* Some defines */
-#define BITS_PER_INT  	 	32 		
+#define BITS_PER_INT  	 	32
 
 #ifdef CONFIG_SMP
 /* The SMP code untested. We don't care about it for the moment */
@@ -142,9 +142,9 @@ static struct irq_handling {
 	int ppc_irq;
 	int mapped;
 #ifdef CONFIG_SMP
-	volatile unsigned long dest_status;		
+	volatile unsigned long dest_status;
 #endif
-	volatile int ext;		
+	volatile int ext;
 	unsigned long data;
 	void (*handler)(unsigned int irq);
 	unsigned int irq_count;
@@ -352,7 +352,7 @@ static void run_pending_irqs(void)
        	struct cpu_own_status *cpu;
 
 	cpuid = hard_cpu_id();
-	if (!test_and_set_bit(cpuid, &global.cpu_in_sti)) {			
+	if (!test_and_set_bit(cpuid, &global.cpu_in_sti)) {
 
 		cpu = processor + cpuid;
 		while (global.pending_irqs | cpu->pending_irqs | global.pending_srqs) {
@@ -540,7 +540,7 @@ void rt_unmask_irq(unsigned int irq)
 static int dispatch_irq(struct pt_regs *regs, int isfake)
 {
 	int irq, rirq;
-	
+
 	rt_spin_lock(&global.ic_lock);
 	if ((irq = ppc_get_irq(regs)) >= 0) {
 		if(ic_ack_irq[irq])
@@ -595,20 +595,20 @@ static int dispatch_irq(struct pt_regs *regs, int isfake)
 	} else {
 		rt_spin_unlock(&global.ic_lock);
 		return 0;
-	
+
 	}
 }
 
 static int dispatch_timer_irq(struct pt_regs *regs)
 {
 	int cpuid;
-	
+
 	/*
 	 * TRACE_RTAI_TRAP_ENTRY is not yet handled correctly by LTT.
 	 * Therefore we treat the decrementer trap like an IRQ 255
 	 */
 	TRACE_RTAI_GLOBAL_IRQ_ENTRY(255, !user_mode(regs));
-	
+
 	if (processor[cpuid = hard_cpu_id()].rt_timer_handler) {
 		(processor[cpuid].rt_timer_handler)();
 		rt_spin_lock(&(global.data_lock));
@@ -778,7 +778,7 @@ int rt_request_global_irq(unsigned int irq, void (*handler)(unsigned int irq))
 	if (rirq >= 0 && global_irq[rirq].handler) {
 		return -EBUSY;
 	}
-	
+
 	flags = hard_lock_all();
 	if (rirq < 0) {
 #ifdef CONFIG_SMP
@@ -1637,5 +1637,3 @@ static void rt_printk_sysreq_handler(void)
 		buf_back = tmp;
 	}
 }
-
-

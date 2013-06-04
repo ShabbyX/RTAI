@@ -265,55 +265,49 @@ void rt_set_irq_retmode (unsigned irq, int retmode)
 
 //extern unsigned long io_apic_irqs;
 
-// A bunch of macros to support Linux developers moods in relation to
-// interrupt handling across various releases.
-// Here we care about ProgrammableInterruptControllers (PIC) in particular.
+#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,11)
 
-// 1 - IRQs descriptor and chip
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,18)
-#define rtai_irq_desc(irq) irq_desc[irq]
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18)
 #define rtai_irq_desc_chip(irq) (irq_desc[irq].handler)
-#endif
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19) && LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,27)
+#define rtai_irq_desc(irq) irq_desc[irq]
+#else
+#if defined(__IPIPE_2LEVEL_IRQMAP) || defined(__IPIPE_3LEVEL_IRQMAP)
+#define rtai_irq_desc_chip(irq) (irq_to_desc(irq)->chip)
+#define rtai_irq_desc(irq) (irq_to_desc(irq))[0]
+#else
 #define rtai_irq_desc_chip(irq) (irq_desc[irq].chip)
 #define rtai_irq_desc(irq) irq_desc[irq]
 #endif
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)
-#define rtai_irq_desc(irq) (irq_to_desc(irq))[0]
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,35)
-#define rtai_irq_desc_chip(irq) (irq_to_desc(irq)->irq_data.chip)
-#else
-#define rtai_irq_desc_chip(irq) (irq_to_desc(irq)->chip)
-#endif
 #endif
 
-// 2 - IRQs atomic protections
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,32)
-#define rtai_irq_desc_lock(irq, flags) spin_lock_irqsave(&rtai_irq_desc(irq).lock, flags)
-#define rtai_irq_desc_unlock(irq, flags) spin_unlock_irqrestore(&rtai_irq_desc(irq).lock, flags)
-#else
-#define rtai_irq_desc_lock(irq, flags) raw_spin_lock_irqsave(&rtai_irq_desc(irq).lock, flags)
-#define rtai_irq_desc_unlock(irq, flags) raw_spin_unlock_irqrestore(&rtai_irq_desc(irq).lock, flags)
-#endif
+#define BEGIN_PIC()
+#define END_PIC()
+#undef hal_lock_irq
+#undef hal_unlock_irq
+#define hal_lock_irq(x, y, z)
+#define hal_unlock_irq(x, y)
 
-// 3 - IRQs enabling/disabling naming and calling
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
-#define rtai_irq_endis_fun_wret(fun, irq) \
-return rtai_irq_desc_chip(irq)->fun ? rtai_irq_desc_chip(irq)->fun(irq):-EINVAL;
-#define rtai_irq_endis_fun(fun, irq) \
-if (rtai_irq_desc_chip(irq)->fun) rtai_irq_desc_chip(irq)->fun(irq);
-#define rtai_irq_end(irq) \
-if (rtai_irq_desc_chip(irq)->end) rtai_irq_desc_chip(irq)->end(irq);
-#else
-#define rtai_irq_endis_fun_wret(fun, irq) \
-return rtai_irq_desc_chip(irq)->irq_##fun ? rtai_irq_desc_chip(irq)->irq_##fun(&(rtai_irq_desc(irq).irq_data)) : -EINVAL;
-#define rtai_irq_endis_fun(fun, irq) \
-if (rtai_irq_desc_chip(irq)->irq_##fun) rtai_irq_desc_chip(irq)->irq_##fun(&(rtai_irq_desc(irq).irq_data));
-#define rtai_irq_end(irq) \
-if (rtai_irq_desc_chip(irq)->irq_eoi) rtai_irq_desc_chip(irq)->irq_eoi(&(rtai_irq_desc(irq).irq_data));
-#endif
+#else /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11) */
+
+extern struct hw_interrupt_type hal_std_irq_dtype[];
+#define rtai_irq_desc_chip(irq) (&hal_std_irq_dtype[irq])
+#define rtai_irq_desc(irq) irq_desc[irq]
+
+#define BEGIN_PIC() \
+do { \
+        unsigned long flags, pflags, cpuid; \
+	rtai_save_flags_and_cli(flags); \
+	cpuid = rtai_cpuid(); \
+	pflags = xchg(ROOT_STATUS_ADR(cpuid), 1 << IPIPE_STALL_FLAG); \
+	rtai_save_and_lock_preempt_count()
+
+#define END_PIC() \
+	rtai_restore_preempt_count(); \
+	ROOT_STATUS_VAL(cpuid) = pflags; \
+	rtai_restore_flags(flags); \
+} while (0)
+
+#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11) */
 
 /**
  * start and initialize the PIC to accept interrupt request irq.
@@ -344,7 +338,13 @@ if (rtai_irq_desc_chip(irq)->irq_eoi) rtai_irq_desc_chip(irq)->irq_eoi(&(rtai_ir
  */
 unsigned rt_startup_irq (unsigned irq)
 {
-	rtai_irq_endis_fun_wret(startup, irq);
+        int retval;
+
+	BEGIN_PIC();
+	hal_unlock_irq(hal_root_domain, irq);
+	retval = rtai_irq_desc_chip(irq)->startup(irq);
+	END_PIC();
+        return retval;
 }
 
 /**
@@ -378,12 +378,18 @@ unsigned rt_startup_irq (unsigned irq)
  */
 void rt_shutdown_irq (unsigned irq)
 {
-	rtai_irq_endis_fun(shutdown, irq);
+	BEGIN_PIC();
+	rtai_irq_desc_chip(irq)->shutdown(irq);
+	hal_clear_irq(hal_root_domain, irq);
+	END_PIC();
 }
 
 static inline void _rt_enable_irq (unsigned irq)
 {
-	rtai_irq_endis_fun(enable, irq);
+	BEGIN_PIC();
+	hal_unlock_irq(hal_root_domain, irq);
+	rtai_irq_desc_chip(irq)->enable(irq);
+	END_PIC();
 }
 
 /**
@@ -447,7 +453,10 @@ void rt_enable_irq (unsigned irq)
  */
 void rt_disable_irq (unsigned irq)
 {
-	rtai_irq_endis_fun(disable, irq);
+	BEGIN_PIC();
+	rtai_irq_desc_chip(irq)->disable(irq);
+	hal_lock_irq(hal_root_domain, cpuid, irq);
+	END_PIC();
 }
 
 /**
@@ -483,21 +492,22 @@ void rt_disable_irq (unsigned irq)
  */
 void rt_mask_and_ack_irq (unsigned irq)
 {
-	rtai_irq_endis_fun(ack, irq);
+	rtai_irq_desc_chip(irq)->ack(irq);
 }
 
-#if 0
 static inline void _rt_end_irq (unsigned irq)
 {
+	BEGIN_PIC();
 	if (
 #ifdef CONFIG_X86_IO_APIC
 	    !IO_APIC_IRQ(irq) ||
 #endif /* CONFIG_X86_IO_APIC */
 	    !(rtai_irq_desc(irq).status & (IRQ_DISABLED | IRQ_INPROGRESS))) {
+		hal_unlock_irq(hal_root_domain, irq);
 	}
-	rtai_irq_endis_fun(end, irq);
+	rtai_irq_desc_chip(irq)->end(irq);
+	END_PIC();
 }
-#endif
 
 /**
  * Unmask and IRQ source.
@@ -531,7 +541,7 @@ static inline void _rt_end_irq (unsigned irq)
  */
 void rt_unmask_irq (unsigned irq)
 {
-	_rt_enable_irq(irq);
+	_rt_end_irq(irq);
 }
 
 /**
@@ -571,23 +581,26 @@ void rt_ack_irq (unsigned irq)
 
 void rt_end_irq (unsigned irq)
 {
-	_rt_enable_irq(irq);
+	_rt_end_irq(irq);
 }
 
 void rt_eoi_irq (unsigned irq)
 {
+	BEGIN_PIC();
 	if (
 #ifdef CONFIG_X86_IO_APIC
 	    !IO_APIC_IRQ(irq) ||
 #endif /* CONFIG_X86_IO_APIC */
 	    !(rtai_irq_desc(irq).status & (IRQ_DISABLED | IRQ_INPROGRESS))) {
+		hal_unlock_irq(hal_root_domain, irq);
 	}
 #if defined(CONFIG_X86_IO_APIC) && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19)
-	rtai_irq_endis_fun(eoi, irq);
+	rtai_irq_desc_chip(irq)->eoi(irq);
 #else /* !(CONFIG_X86_IO_APIC && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19))
 */
-	rtai_irq_end(irq);
+	rtai_irq_desc_chip(irq)->end(irq);
 #endif
+	END_PIC();
 }
 
 /**
@@ -1767,7 +1780,7 @@ int __rtai_hal_init (void)
 	attr.name     = "RTAI";
 	attr.domid    = RTAI_DOMAIN_ID;
 	attr.entry    = (void *)rtai_domain_entry;
-	attr.priority = IPIPE_HEAD_PRIORITY;
+	attr.priority = get_domain_pointer(1)->priority + 100;
 	hal_register_domain(&rtai_domain, &attr);
 	for (trapnr = 0; trapnr < HAL_NR_FAULTS; trapnr++) {
 		hal_catch_event(hal_root_domain, trapnr, (void *)rtai_trap_fault);

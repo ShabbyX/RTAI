@@ -205,7 +205,7 @@ int rtRegisterMeter(const char *name, int n)
   return -1;
 }
 
-static int rtRegisterLogData(const char *name, int nrow, int ncol)
+int rtRegisterLogData(const char *name, int nrow, int ncol)
 {
   int i;
   for (i = 0; i < MAX_SCOPES; i++) {

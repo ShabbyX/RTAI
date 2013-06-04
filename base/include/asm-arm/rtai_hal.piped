@@ -111,13 +111,6 @@ rtai_imuldiv(int i, int mult, int div)
     return (r + r) < div ? q : q + 1;
 }
 
-/* get architecture specific things (using <asm/...> breaks
- * build-in-seperate-directory feature!) */
-#include <asm-arm/arch/rtai_arch.h>
-
-#define RTAI_CPU_FREQ             	RTAI_TSC_FREQ
-#define RTAI_CALIBRATED_CPU_FREQ  	RTAI_TSC_FREQ
-
 #if defined(__KERNEL__) && !defined(__cplusplus)
 #include <linux/sched.h>
 #include <rtai_trace.h>
@@ -125,8 +118,15 @@ rtai_imuldiv(int i, int mult, int div)
 #include <asm/rtai_atomic.h>
 #include <asm/rtai_fpu.h>
 
+/* get architecture specific things (using <asm/...> breaks
+ * build-in-seperate-directory feature!) */
+#include <asm-arm/arch/rtai_arch.h>
+
 #define RTAI_DOMAIN_ID			0x52544149
 #define RTAI_NR_SRQS			32
+
+#define RTAI_CPU_FREQ             	RTAI_TSC_FREQ
+#define RTAI_CALIBRATED_CPU_FREQ  	RTAI_TSC_FREQ
 
 #define RTAI_TIME_LIMIT		   	0x7FFFFFFFFFFFFFFFLL
 

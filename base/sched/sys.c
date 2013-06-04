@@ -30,6 +30,8 @@ Nov. 2001, Jan Kiszka (Jan.Kiszka@web.de) fix a tiny bug in __task_init.
 #include <linux/slab.h>
 #include <linux/unistd.h>
 #include <linux/mman.h>
+#include <linux/sched.h>
+#include <linux/delay.h>
 #include <asm/uaccess.h>
 
 #include <rtai_sched.h>
@@ -330,6 +332,7 @@ void rt_make_hard_real_time(RT_TASK *task)
 		steal_from_linux(task);
 	}
 }
+EXPORT_SYMBOL(rt_make_hard_real_time);
 
 void rt_make_soft_real_time(RT_TASK *task)
 {
@@ -341,6 +344,7 @@ void rt_make_soft_real_time(RT_TASK *task)
 		}
 	}
 }
+EXPORT_SYMBOL(rt_make_soft_real_time);
 
 static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_TASK *task)
 {
@@ -366,9 +370,9 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 			return ((RTAI_SYSCALL_MODE long long (*)(unsigned long, ...))funcm[srq].fun)(RTAI_FUN_ARGS);
 		}
 		if (unlikely(NEED_TO_RW(type))) {
-			lxrt_fun_call_wbuf(task, funcm[srq].fun, NARG(lxsrq), arg, type);
+			lxrt_fun_call_wbuf(task, funcm[srq].fun, LXRT_NARG(lxsrq), arg, type);
 		} else {
-			lxrt_fun_call(task, funcm[srq].fun, NARG(lxsrq), arg);
+			lxrt_fun_call(task, funcm[srq].fun, LXRT_NARG(lxsrq), arg);
 	        }
 		return task->retval;
 	}
@@ -784,5 +788,75 @@ void init_fun_ext (void)
 	rt_fun_ext[0] = rt_fun_lxrt;
 }
 
-EXPORT_SYMBOL(rt_make_hard_real_time);
-EXPORT_SYMBOL(rt_make_soft_real_time);
+
+void rt_daemonize(void);
+
+#if 0
+struct thread_args { void *fun; long data; int priority; int policy; int cpus_allowed; RT_TASK *task; struct semaphore *sem; };
+
+static void kthread_fun(struct thread_args *args) 
+{
+	int linux_rt_priority;
+
+	rt_daemonize();
+        if (args->policy == SCHED_NORMAL) {
+                linux_rt_priority = 0;
+        } else if ((linux_rt_priority = MAX_RT_PRIO - 1 - args->priority) < 1) {
+                linux_rt_priority = 1;
+	}
+	rtai_set_linux_task_priority(current, args->policy, linux_rt_priority);
+	
+	if ((args->task = __task_init(rt_get_name(NULL), args->priority, 0, 0, args->cpus_allowed))) {
+		RT_TASK *task = args->task;
+		void (*fun)(long) = args->fun;
+		long data = args->data;
+		up(args->sem);
+		rt_make_hard_real_time(task);
+		fun(data);
+		rt_thread_delete(task);
+	} 
+	return;
+}
+
+RT_TASK *rt_kthread_create(void *fun, long data, int priority, int linux_policy, int cpus_allowed)
+{
+	struct semaphore sem;
+	struct thread_args args = { fun, data, priority, linux_policy, cpus_allowed, NULL, &sem };
+	init_MUTEX_LOCKED(&sem);
+	kernel_thread((void *)kthread_fun, &args, 0);
+	down(&sem);
+	msleep(100);
+	return args.task;
+}
+#endif
+	
+long rt_thread_create(void *fun, void *args, int stack_size)
+{
+	return kernel_thread(fun, args, 0);
+}
+EXPORT_SYMBOL(rt_thread_create);
+	
+RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int policy, int cpus_allowed)
+{
+	int linux_rt_priority;
+	RT_TASK *task;
+        if (policy == SCHED_NORMAL) {
+                linux_rt_priority = 0;
+        } else if ((linux_rt_priority = MAX_RT_PRIO - 1 - priority) < 1) {
+                linux_rt_priority = 1;
+	}
+	rtai_set_linux_task_priority(current, policy, linux_rt_priority);
+	rt_daemonize();
+	
+	if ((task = __task_init(name ? name : rt_get_name(NULL), priority, 0, max_msg_size, cpus_allowed))) {
+		rt_make_hard_real_time(task);
+	} 
+	return task;
+}
+EXPORT_SYMBOL(rt_thread_init);
+
+int rt_thread_delete(RT_TASK *rt_task)
+{
+	return __task_delete(rt_task);
+}
+EXPORT_SYMBOL(rt_thread_delete);

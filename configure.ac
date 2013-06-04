@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT([RTAI], [3.9.1], [rtai@rtai.org])
+AC_INIT([RTAI], [3.9.1-unofficial], [rtai@rtai.org])
 AC_CONFIG_SRCDIR([base/sched/sched.c])
 AC_CONFIG_HEADERS([rtai_config.h])
 
@@ -65,15 +65,17 @@ arch_has_mmu=y
 
 case "$host" in
  i*86*-*)
-	RTAI_TARGET_ARCH=i386
+	RTAI_TARGET_ARCH=x86
+	RTAI_TARGET_SUBARCH=32
 	arch_supports_lxrt=y
 	arch_supports_leds=y
 	arch_supports_sim=y
 	arch_supports_rtailab=y
-	wanted_kernel_arch=CONFIG_X86
+	wanted_kernel_arch=CONFIG_X86_32
         ;;
  x86_64*-*)
-        RTAI_TARGET_ARCH=x86_64
+        RTAI_TARGET_ARCH=x86
+	RTAI_TARGET_SUBARCH=64
         arch_supports_lxrt=y
         arch_supports_rtailab=n
         wanted_kernel_arch=CONFIG_X86_64
@@ -86,6 +88,11 @@ case "$host" in
 	RTAI_TARGET_ARCH=ppc
 	wanted_kernel_arch=CONFIG_PPC
         ;;
+ m68knommu-*)
+	RTAI_TARGET_ARCH=m68k
+	wanted_kernel_arch=CONFIG_M68K
+	arch_has_mmu=
+	;;
  m68k-*)
 	RTAI_TARGET_ARCH=m68k
 	wanted_kernel_arch=CONFIG_M68K
@@ -286,7 +293,10 @@ case "$RTAI_LINUX_VERSION" in
 	dnl and RTAI Adeos-newgen HAL is supported since 2.6.13 included
 	CONFIG_KBUILD=y
     ;;
-  *)
+  3.*)
+	CONFIG_KBUILD=y
+    ;;
+  *) 
     AC_MSG_ERROR([Unsupported kernel version $RTAI_LINUX_VERSION])
 esac
 
@@ -791,10 +801,6 @@ AC_ARG_ENABLE(comedi-lxrt,
 	*) unset CONFIG_RTAI_COMEDI_LXRT ;;
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_COMEDI_LXRT:-no})
-
-if test x$CONFIG_RTAI_COMEDI_LXRT = xy; then
-   SC_PATH_COMEDI($CONFIG_RTAI_COMEDI_DIR)
-fi
 
 CONFIG_RTAI_USE_LINUX_COMEDI=n
 if test x$CONFIG_RTAI_COMEDI_LXRT = xy; then
@@ -1468,8 +1474,10 @@ dnl Whether Linux is using the Kbuild make system.
 AM_CONDITIONAL(CONFIG_KBUILD,[test "$CONFIG_KBUILD" = y])
 
 dnl CPU architecture
+dnl FIXME_X86
 AM_CONDITIONAL(CONFIG_X86_64,[test "$CONFIG_X86_64" = y])
-AM_CONDITIONAL(CONFIG_X86,[test "$CONFIG_X86" = y -a "x$CONFIG_X86_64" != xy])
+AM_CONDITIONAL(CONFIG_I386,[test "$CONFIG_X86_32" = y])
+AM_CONDITIONAL(CONFIG_X86,[test "$CONFIG_X86" = y])
 AM_CONDITIONAL(CONFIG_PPC,[test "$CONFIG_PPC" = y])
 AM_CONDITIONAL(CONFIG_ARM,[test "$CONFIG_ARM" = y])
 AM_CONDITIONAL(CONFIG_ARCH_EP9301,[test "$CONFIG_ARCH_EP9301" = y])
@@ -1630,8 +1638,9 @@ dnl extra arch-dependent opts to be passed to the compiler
 RTAI_TARGET_ARCH_OPTS=
 
 case $RTAI_TARGET_ARCH in
- i386)
-	RTAI_TARGET_SUBARCH=
+ x86)
+ case $RTAI_TARGET_SUBARCH in
+   32)
 	RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
 	RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
 	if test x$CONFIG_RTAI_FPU_SUPPORT = xy; then
@@ -1640,8 +1649,7 @@ case $RTAI_TARGET_ARCH in
 	   RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -msoft-float"
 	fi
         ;;
- x86_64)
-        RTAI_TARGET_SUBARCH=
+   64)
         RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
         RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
         if test x$CONFIG_RTAI_FPU_SUPPORT = xy; then
@@ -1654,7 +1662,8 @@ case $RTAI_TARGET_ARCH in
 	# as suggested by Paul <paul_c AT tuxcnc DOT org>
 	RTAI_TARGET_ARCH_OPTS="$RTAI_TARGET_ARCH_OPTS -msse"
         ;;
-
+   esac
+   ;;
  arm)
 	if test "$CONFIG_ARCH_EP9301" = y; then
 		RTAI_TARGET_SUBARCH=ep9301
@@ -1749,7 +1758,7 @@ RTAI_KMOD_CFLAGS="$RTAI_KMOD_CFLAGS -D__IN_RTAI__"
 RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CXXFLAGS -D__IN_RTAI__"
 RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -D__IN_RTAI__"
 
-AC_CONFIG_LINKS(base/include/asm:$srcdir/base/include/asm-$RTAI_TARGET_ARCH)
+AC_CONFIG_LINKS(base/include/asm:base/include/asm-$RTAI_TARGET_ARCH)
 
 if test x$CONFIG_RTAI_OLD_FASHIONED_BUILD = xy; then
    AC_CONFIG_LINKS(base/include/rtai_config.h:rtai_config.h)
@@ -1860,7 +1869,13 @@ AC_CONFIG_FILES([ \
 	base/arch/x86_64/GNUmakefile \
         base/arch/x86_64/hal/GNUmakefile \
         base/arch/x86_64/calibration/GNUmakefile \
+	base/arch/x86_64/calibration/setsmi \
         base/include/asm-x86_64/GNUmakefile \
+	base/arch/x86/GNUmakefile \
+        base/arch/x86/hal/GNUmakefile \
+        base/arch/x86/calibration/GNUmakefile \
+	base/arch/x86/calibration/setsmi \
+        base/include/asm-x86/GNUmakefile \
         base/arch/arm/GNUmakefile \
 	base/arch/arm/hal/GNUmakefile \
 	base/include/asm-arm/GNUmakefile \

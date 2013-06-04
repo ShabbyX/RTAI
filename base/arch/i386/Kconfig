@@ -1,4 +1,4 @@
-mainmenu "RTAI/x86 configuration"
+mainmenu "RTAI/x86_32 configuration"
 
 config MODULES
 	bool
@@ -6,7 +6,7 @@ config MODULES
 
 config RTAI_VERSION
 	string
-	default "3.9 (vulcano)"
+	default "3.8 (vulcano)"
 
 menu "General"
 
@@ -195,7 +195,7 @@ config RTAI_QUIET
 
 endmenu
 
-menu "Machine (x86)"
+menu "Machine (x86_32)"
 
 config RTAI_DONT_DISPATCH_CORE_IRQS
 	bool "Direct vectoring of RTAI native interrupts"
@@ -350,7 +350,7 @@ config RTAI_MONITOR_EXECTIME
 	hard real time tasks.
 
 	** Since this option uses the TSC it is better to avoid it in production
-	for x86 CPUs not having TSCs, i.e. 486s and some untrue 586s. **
+	for x86_32 CPUs not having TSCs, i.e. 486s and some untrue 586s. **
 
 	This option also enables display of execution time of tasks, per thousand
 	of the total time available, in the output of the RTAI scheduler proc file,
@@ -439,7 +439,7 @@ config RTAI_LXRT_USE_LINUX_SYSCALL
 	you want to use the LXRT syscall mechanism.
 	RTAI will then operate in mixed mode selectively by using both
 	its own and Linux syscall mechanisms.
-	
+
 	If in doubt, say no.
 
 config RTAI_ALIGN_LINUX_PRIORITY
@@ -892,7 +892,7 @@ config RTAI_USI
 	The user space interrupt support does much of the same, but adds
 	something that permits you to write nothing in kernel space.
 	The module will be called rtai_usi.o.
-	
+
 
 config RTAI_WD
 	bool "Watchdog support"
@@ -939,10 +939,10 @@ config RTAI_COMEDI_LXRT
 	bool "Real Time COMEDI support in user space"
 	default n
 	help
-	RTAI offers a unified COMEDI interface to kernel/user space
-	real-time applications. A kernel module will be built and a library
-	will be provided. The kernel module is called rtai_comedi.o and must
-	be loaded if you want to use the libkcomedilxrt.a library.
+	RTAI offers a unified COMEDI interface to kernel/user space real-time
+	applications. A kernel module will be built and a library will be
+	provided. The kernel modules is called rtai_comedi.o and must be
+	loaded if you want to use the libkcomedilxrt.a library.
 
 config RTAI_COMEDI_DIR
 	depends on RTAI_COMEDI_LXRT

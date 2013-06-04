@@ -8,7 +8,7 @@ I try to keep branches named after the RTAI modules up-to-date with their
 development in the original CVS repository at https://gna.org/cvs/?group=rtai.
 
 This repository does not keep track of RTAI's history before
-version 3.9, which is the initial commit of this repository. 
+version 3.9, which is the initial commit of this repository.
 
 Currently, the `vulcano` branch tracks any changes to the `vulcano`
 module of the original CVS repository, as well as containing
