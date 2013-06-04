@@ -46,7 +46,7 @@ oldconfig: conf
 	@./$< --$@ $(Kconfig)
 
 silentoldconfig: conf
-	@@mkdir -p include/generated
+	@mkdir -p include/generated
 	@./$< --$@ $(Kconfig)
 
 # Create new linux.pot file
@@ -179,10 +179,16 @@ endif
 
 PHONY += clean distclean
 
+quiet_cmd_clean-objs = CLEAN   $(this_dir)/ objects
+      cmd_clean-objs = rm -rf *.o *.so *.moc *.tmp* *.pot
+quiet_cmd_clean-ships = CLEAN   $(this_dir)/ shipped files
+      cmd_clean-ships = rm -rf zconf.tab.c zconf.lex.c zconf.hash.c gconf.glade.h
+quiet_cmd_clean-execs = CLEAN   $(this_dir)/ executables
+      cmd_clean-execs = rm -rf mconf qconf gconf nconf
 clean:
-	rm -rf *.o *.so *.moc *.tmp* *.pot
-	rm -rf zconf.tab.c zconf.lex.c zconf.hash.c gconf.glade.h
-	rm -rf mconf qconf gconf nconf
+	$(call cmd,clean-objs)
+	$(call cmd,clean-ships)
+	$(call cmd,clean-execs)
 
 distclean: clean
 
@@ -301,8 +307,10 @@ zconf.tab.o: zconf.lex.c zconf.hash.c
 
 qconf.o: qconf.moc
 
+quiet_cmd_qt-moc	= QT MOC  $(this_dir)/$@
+      cmd_qt-moc	= $(KC_QT_MOC) -i $< -o $@
 %.moc: %.h .tmp_qtcheck
-	$(KC_QT_MOC) -i $< -o $@
+	$(call cmd,qt-moc)
 
 # Extract gconf menu items for I18N support
 gconf.glade.h: gconf.glade
@@ -351,32 +359,42 @@ ld_flags       = $(LDFLAGS) $(ldflags-y)
 
 # GPERF
 # ---------------------------------------------------------------------------
+quiet_cmd_gperf	= GPERF   $(this_dir)/$@
+      cmd_gperf	= gperf -t --output-file $@ -a -C -E -g -k 1,3,$$ -p -t $<
 .PRECIOUS: %.hash.c_shipped
 %.hash.c_shipped: %.gperf
-	gperf -t --output-file $@ -a -C -E -g -k 1,3,$$ -p -t $<
+	$(call cmd,gperf)
 
 # LEX
 # ---------------------------------------------------------------------------
+quiet_cmd_flex	= LEX     $@
+      cmd_flex	= flex -o $@ -L -P $(LEX_PREFIX) $<
 .PRECIOUS: %.lex.c_shipped
 %.lex.c_shipped: %.l
-	flex -o $@ -L -P $(LEX_PREFIX) $<
+	$(call cmd,flex)
 
 # YACC
 # ---------------------------------------------------------------------------
+quiet_cmd_bison	= YACC    $@
+      cmd_bison	= bison -o $@ -t -l -p $(YACC_PREFIX) $<
 .PRECIOUS: %.tab.c_shipped
 %.tab.c_shipped: %.y
-	bison -o $@ -t -l -p $(YACC_PREFIX) $<
+	$(call cmd,bison)
 
+quiet_cmd_bison_h	= YACC    $@
+      cmd_bison_h	= bison -o /dev/null --defines=$@ -t -l -p $(YACC_PREFIX) $<
 .PRECIOUS: %.tab.h_shipped
 %.tab.h_shipped: %.y
-	bison -o /dev/null --defines=$@ -t -l -p $(YACC_PREFIX) $<
+	$(call cmd,bison_h)
 
 # Shipped files
 # ===========================================================================
+quiet_cmd_shipped	= SHIPPED $@
+      cmd_shipped	= cat $< > $@
 %.c: %.c_shipped
-	cat $< > $@
+	$(call cmd,shipped)
 %.h: %.h_shipped
-	cat $< > $@
+	$(call cmd,shipped)
 
 # ==========================================================================
 # Building binaries on the host system
