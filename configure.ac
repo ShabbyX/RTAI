@@ -1617,11 +1617,71 @@ RTAI_KBUILD_DISTCLEAN=""
 AC_MSG_CHECKING([for kernel module extension])
 AC_MSG_RESULT([$RTAI_MODULE_EXT])
 
+dnl gcc 3.3 and above needs -D_FORTIFY_SOURCE=0 in math
+dnl (suggested by Paul <paul_c AT tuxcnc DOT org>);
+dnl not sure about the implications, in general I'd prefer
+dnl that code causing warnings gets fixed...
+RTAI_FP_CFLAGS=
+AC_MSG_CHECKING(for gcc version >= 3.3)
+AC_CACHE_VAL(ac_cv_gcc33,
+AC_LANG_SAVE
+AC_LANG_CPLUSPLUS
+[AC_TRY_COMPILE(
+[#if !( __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3))
+#error GCC does not need _FORTIFY_SOURCE
+#endif],
+[return 0;],
+[ac_cv_gcc33=yes],
+[ac_cv_gcc33=no])]
+AC_LANG_RESTORE)
+if [[ $ac_cv_gcc33 = no ]]; then
+  AC_MSG_RESULT([no])
+else
+  RTAI_FP_CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0"
+  AC_MSG_RESULT([ok])
+fi
+
+dnl FIXME: used in rtai-config.in but never defined
+RTAI_COMPAT_CPPFLAGS=
+
+dnl In some versions of glibs, <features.h> includes <bits/predef.h>
+dnl which is in a folder such as /usr/include/i386-linux-gnu/bits/...
+dnl Since the math module includes this user-space header, this path
+dnl needs to be added to its search path.
+dnl We should check anyway to see if it is at all needed.
+
+AC_MSG_CHECKING([if extra includes are necessary for math module])
+save_CFLAGS="$CFLAGS"
+CFLAGS="-ffreestanding -nostdinc -I/usr/include"
+AC_CACHE_VAL(ac_cv_needs_include_for_math,
+AC_LANG_SAVE
+AC_LANG_C
+[AC_TRY_COMPILE([#include <features.h>],
+[int i = 0; return i; ],
+[ac_cv_needs_include_for_math=no],
+[ac_cv_needs_include_for_math=yes])]
+AC_LANG_RESTORE)
+AC_MSG_RESULT($ac_cv_needs_include_for_math)
+CFLAGS="$save_CFLAGS"
+
+RTAI_MATH_KMOD_CFLAGS=""
+if [[ $ac_cv_needs_include_for_math = yes ]]; then
+   RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CXXFLAGS -fno-use-cxa-atexit"
+   if ls /usr/include/*/bits > /dev/null 2>&1; then
+      BITS_INCLUDE_DIR=$(echo /usr/include/*/bits | cut -d ' ' -f 1)
+      RTAI_MATH_KMOD_CFLAGS="-I${BITS_INCLUDE_DIR%/bits}"
+   fi
+fi
+
+AC_MSG_CHECKING([for RTAI target architecture])
+
+dnl RTAI_USER_CFLAGS="-I$LINUX_KERNELSRC/include "
 RTAI_USER_CFLAGS="-D_GNU_SOURCE"
 
 if test x"$LINUX_KERNELOUTPUT" != x"$LINUX_KERNELSRC"; then
   RTAI_REAL_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include $RTAI_REAL_USER_CFLAGS"
 fi
+
 
 dnl extra arch-dependent opts to be passed to the compiler
 RTAI_TARGET_ARCH_OPTS=
