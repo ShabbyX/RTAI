@@ -127,4 +127,53 @@ struct xnselector;
 
 /*@}*/
 
+/*
+ * In Linux 3.5.7, some __F* constants defined in linux/posix_types.h have been removed.
+ * They are quite simple constants, used in core.c and select.c so I'm putting them here
+ */
+
+#ifndef __NFDBITS
+# define __NFDBITS	(8 * sizeof(long))
+#endif
+
+#ifndef __FDSET_LONGS
+# define __FDSET_LONGS	(__FD_SETSIZE/__NFDBITS)
+#endif
+
+#ifndef __FDELT
+# define __FDELT(d)	((d) / __NFDBITS)
+#endif
+
+#ifndef __FDMASK
+# define __FDMASK(d)	(1UL << ((d) % __NFDBITS))
+#endif
+
+#ifndef __FD_SET
+static inline void __FD_SET(unsigned long __fd, __kernel_fd_set *__fdsetp)
+{
+       __set_bit(__fd, __fdsetp->fds_bits);
+}
+#endif
+
+#ifndef __FD_CLR
+static inline void __FD_CLR(unsigned long __fd, __kernel_fd_set *__fdsetp)
+{
+       __clear_bit(__fd, __fdsetp->fds_bits);
+}
+#endif
+
+#ifndef __FD_ISSET
+static inline int __FD_ISSET(unsigned long __fd, const __kernel_fd_set *__fdsetp)
+{
+       return test_bit(__fd, __fdsetp->fds_bits);
+}
+#endif
+
+#ifndef __FD_ZERO
+static inline void __FD_ZERO(__kernel_fd_set *__fdsetp)
+{
+       memset(__fdsetp->fds_bits, 0, sizeof __fdsetp->fds_bits);
+}
+#endif
+
 #endif /* XNSELECT_H */
