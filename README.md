@@ -12,7 +12,8 @@ version 3.9, which is the initial commit of this repository.
 
 Currently, the `vulcano` branch tracks any changes to the `vulcano`
 module of the original CVS repository, as well as containing
-its `showroom` module, much like `master`.
+its `showroom` module, much like `master`.  Similarly, the `magma`
+branch tracks changes to the `magma` module of RTAI.
 
 Please refer to the README.INSTALL file for building instructions.
 
