@@ -184,7 +184,7 @@ diff -uNrp linux-2.6.12/Makefile linux-2.6.12-adeos/Makefile
 @@ -564,6 +564,8 @@ export MODLIB
  ifeq ($(KBUILD_EXTMOD),)
  core-y		+= kernel/ mm/ fs/ ipc/ security/ crypto/
- 
+
 +core-$(CONFIG_ADEOS) += adeos/
 +
  vmlinux-dirs	:= $(patsubst %/,%,$(filter %/, $(init-y) $(init-m) \
@@ -620,7 +620,7 @@ diff -uNrp linux-2.6.12/adeos/generic.c linux-2.6.12-adeos/adeos/generic.c
 +int adeos_free_ptdkey (int key)
 +
 +{
-+    unsigned long flags; 
++    unsigned long flags;
 +
 +    if (key < 0 || key >= adp_current->ptd_keymax)
 +	return -EINVAL;
@@ -949,7 +949,7 @@ diff -uNrp linux-2.6.12/adeos/x86.c linux-2.6.12-adeos/adeos/x86.c
 +
 +static void (*__adeos_std_vector_table[256])(void);
 +
-+/* Lifted from arch/i386/kernel/traps.c */ 
++/* Lifted from arch/i386/kernel/traps.c */
 +#define __adeos_set_gate(gate_addr,type,dpl,addr)  \
 +do { \
 +  int __d0, __d1; \
@@ -1189,7 +1189,7 @@ diff -uNrp linux-2.6.12/adeos/x86.c linux-2.6.12-adeos/adeos/x86.c
 +			   (void (*)(unsigned))__adeos_std_vector_table[vector],
 +			   &__adeos_ack_system_irq,
 +			   IPIPE_CALLASM_MASK|IPIPE_HANDLE_MASK|IPIPE_PASS_MASK);
-+      
++
 +      __adeos_set_irq_gate(vector,
 +			   __adeos_irq_trampolines[vector - FIRST_EXTERNAL_VECTOR]);
 +      }
@@ -1225,7 +1225,7 @@ diff -uNrp linux-2.6.12/adeos/x86.c linux-2.6.12-adeos/adeos/x86.c
 +			   (void (*)(unsigned))__adeos_std_vector_table[vector],
 +			   &__adeos_ack_system_irq,
 +			   IPIPE_CALLASM_MASK|IPIPE_HANDLE_MASK|IPIPE_PASS_MASK);
-+      
++
 +      __adeos_set_irq_gate(vector,
 +			   __adeos_irq_trampolines[vector - FIRST_EXTERNAL_VECTOR]);
 +      }
@@ -1541,7 +1541,7 @@ diff -uNrp linux-2.6.12/adeos/x86.c linux-2.6.12-adeos/adeos/x86.c
 +	int **psp = &adp->esp[_cpuid];
 +
 +	adp->estackbase[_cpuid] = (int *)kmalloc(estacksz,GFP_KERNEL);
-+    
++
 +	if (adp->estackbase[_cpuid] == NULL)
 +	    panic("Adeos: No memory for domain stack on CPU #%d",_cpuid);
 +
@@ -1679,18 +1679,18 @@ diff -uNrp linux-2.6.12/arch/i386/Kconfig linux-2.6.12-adeos/arch/i386/Kconfig
 --- linux-2.6.12/arch/i386/Kconfig	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/arch/i386/Kconfig	2005-06-19 11:51:11.000000000 +0200
 @@ -941,6 +941,7 @@ config SECCOMP
- 
+
  endmenu
- 
+
 +source "adeos/Kconfig"
- 
+
  menu "Power management options (ACPI, APM)"
  	depends on !X86_VOYAGER
 diff -uNrp linux-2.6.12/arch/i386/kernel/Makefile linux-2.6.12-adeos/arch/i386/kernel/Makefile
 --- linux-2.6.12/arch/i386/kernel/Makefile	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/arch/i386/kernel/Makefile	2005-06-19 11:51:11.000000000 +0200
-@@ -11,6 +11,7 @@ obj-y	:= process.o semaphore.o signal.o 
- 
+@@ -11,6 +11,7 @@ obj-y	:= process.o semaphore.o signal.o
+
  obj-y				+= cpu/
  obj-y				+= timers/
 +obj-$(CONFIG_ADEOS_CORE)	+= adeos.o
@@ -1884,7 +1884,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/adeos.c linux-2.6.12-adeos/arch/i386/ke
 +
 +    if (!__adeos_apic_mapped)
 +	return 0;
-+    
++
 +    adeos_hw_local_irq_save(flags);
 +    cpuid = __adeos_apicid_2_cpuid[adeos_smp_apic_id()];
 +    adeos_hw_local_irq_restore(flags);
@@ -2335,7 +2335,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/adeos.c linux-2.6.12-adeos/arch/i386/ke
 +{
 +    adeos_declare_cpuid;
 +    unsigned long flags;
-+ 
++
 +    adeos_get_cpu(flags);
 +
 +    if (adp_cpu_current[cpuid] == adp_root)
@@ -2472,7 +2472,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/adeos.c linux-2.6.12-adeos/arch/i386/ke
 +
 +	/* Only sync virtual IRQs here, so that we don't recurse
 +	   indefinitely in case of an external interrupt flood. */
-+    
++
 +	if ((adp_root->cpudata[cpuid].irq_pending_hi & IPIPE_IRQMASK_VIRT) != 0)
 +	    __adeos_sync_stage(IPIPE_IRQMASK_VIRT);
 +	}
@@ -2499,18 +2499,18 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/apic.c linux-2.6.12-adeos/arch/i386/ker
 -	ack_APIC_irq();
 +	__ack_APIC_irq();
  }
- 
+
  void __init apic_intr_init(void)
 @@ -799,6 +799,9 @@ void __init init_apic_mappings(void)
  		apic_phys = mp_lapic_addr;
- 
+
  	set_fixmap_nocache(FIX_APIC_BASE, apic_phys);
 +#ifdef CONFIG_ADEOS_CORE
 +	__adeos_apic_mapped = 1;
 +#endif /* CONFIG_ADEOS_CORE */
  	printk(KERN_DEBUG "mapped APIC to %08lx (%08lx)\n", APIC_BASE,
  	       apic_phys);
- 
+
 @@ -1161,6 +1164,9 @@ inline void smp_local_timer_interrupt(st
  fastcall void smp_apic_timer_interrupt(struct pt_regs *regs)
  {
@@ -2518,7 +2518,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/apic.c linux-2.6.12-adeos/arch/i386/ker
 +#ifdef CONFIG_ADEOS_CORE
 +        struct pt_regs *_regs = adp_pipelined ? __adeos_tick_regs + cpu : regs;
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  	/*
  	 * the NMI deadlock-detector uses this.
 @@ -1178,7 +1184,11 @@ fastcall void smp_apic_timer_interrupt(s
@@ -2532,14 +2532,14 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/apic.c linux-2.6.12-adeos/arch/i386/ker
 +#endif /* CONFIG_ADEOS_CORE */
  	irq_exit();
  }
- 
+
 @@ -1197,7 +1207,7 @@ fastcall void smp_spurious_interrupt(str
  	 */
  	v = apic_read(APIC_ISR + ((SPURIOUS_APIC_VECTOR & ~0x1f) >> 1));
  	if (v & (1 << (SPURIOUS_APIC_VECTOR & 0x1f)))
 -		ack_APIC_irq();
 +		__ack_APIC_irq();
- 
+
  	/* see sw-dev-man vol 3, chapter 7.4.13.5 */
  	printk(KERN_INFO "spurious APIC interrupt on CPU#%d, should never happen.\n",
 diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mcheck/p4.c linux-2.6.12-adeos/arch/i386/kernel/cpu/mcheck/p4.c
@@ -2548,12 +2548,12 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mcheck/p4.c linux-2.6.12-adeos/arch
 @@ -50,6 +50,9 @@ static void intel_thermal_interrupt(stru
  	unsigned int cpu = smp_processor_id();
  	static unsigned long next[NR_CPUS];
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	if (!adp_pipelined)
 +#endif /* CONFIG_ADEOS_CORE */
  	ack_APIC_irq();
- 
+
  	if (time_after(next[cpu], jiffies))
 diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mtrr/cyrix.c linux-2.6.12-adeos/arch/i386/kernel/cpu/mtrr/cyrix.c
 --- linux-2.6.12/arch/i386/kernel/cpu/mtrr/cyrix.c	2005-06-17 21:48:29.000000000 +0200
@@ -2561,7 +2561,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mtrr/cyrix.c linux-2.6.12-adeos/arc
 @@ -118,6 +118,11 @@ static void prepare_set(void)
  {
  	u32 cr0;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	unsigned long flags;
 +	adeos_hw_local_irq_save(flags);
@@ -2573,12 +2573,12 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mtrr/cyrix.c linux-2.6.12-adeos/arc
 @@ -137,10 +142,18 @@ static void prepare_set(void)
  	/* Cyrix ARRs - everything else were excluded at the top */
  	setCx86(CX86_CCR3, (ccr3 & 0x0f) | 0x10);
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	adeos_hw_local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
  }
- 
+
  static void post_set(void)
  {
 +#ifdef CONFIG_ADEOS_CORE
@@ -2588,7 +2588,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mtrr/cyrix.c linux-2.6.12-adeos/arc
 +
  	/*  Flush caches and TLBs  */
  	wbinvd();
- 
+
 @@ -153,6 +166,10 @@ static void post_set(void)
  	/*  Restore value of CR4  */
  	if ( cpu_has_pge )
@@ -2598,15 +2598,15 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mtrr/cyrix.c linux-2.6.12-adeos/arc
 +	adeos_hw_local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
  }
- 
+
  static void cyrix_set_arr(unsigned int reg, unsigned long base,
 diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mtrr/generic.c linux-2.6.12-adeos/arch/i386/kernel/cpu/mtrr/generic.c
 --- linux-2.6.12/arch/i386/kernel/cpu/mtrr/generic.c	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/arch/i386/kernel/cpu/mtrr/generic.c	2005-06-19 11:52:27.000000000 +0200
 @@ -261,6 +261,11 @@ static void prepare_set(void)
- 
+
  	spin_lock(&set_atomicity_lock);
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	{
 +	unsigned long flags;
@@ -2616,7 +2616,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mtrr/generic.c linux-2.6.12-adeos/a
  	cr0 = read_cr0() | 0x40000000;	/* set CD flag */
  	write_cr0(cr0);
 @@ -280,10 +285,18 @@ static void prepare_set(void)
- 
+
  	/*  Disable MTRRs, and set the default type to uncached  */
  	mtrr_wrmsr(MTRRdefType_MSR, deftype_lo & 0xf300UL, deftype_hi);
 +#ifdef CONFIG_ADEOS_CORE
@@ -2624,7 +2624,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mtrr/generic.c linux-2.6.12-adeos/a
 +	}
 +#endif /* CONFIG_ADEOS_CORE */
  }
- 
+
  static void post_set(void)
  {
 +#ifdef CONFIG_ADEOS_CORE
@@ -2633,7 +2633,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mtrr/generic.c linux-2.6.12-adeos/a
 +#endif /* CONFIG_ADEOS_CORE */
  	/*  Flush TLBs (no need to flush caches - they are disabled)  */
  	__flush_tlb();
- 
+
 @@ -297,6 +310,9 @@ static void post_set(void)
  	if ( cpu_has_pge )
  		write_cr4(cr4);
@@ -2642,23 +2642,23 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mtrr/generic.c linux-2.6.12-adeos/a
 +	adeos_hw_local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
  }
- 
+
  static void generic_set_all(void)
 diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mtrr/state.c linux-2.6.12-adeos/arch/i386/kernel/cpu/mtrr/state.c
 --- linux-2.6.12/arch/i386/kernel/cpu/mtrr/state.c	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/arch/i386/kernel/cpu/mtrr/state.c	2005-06-19 11:51:11.000000000 +0200
 @@ -12,7 +12,11 @@ void set_mtrr_prepare_save(struct set_mt
  	unsigned int cr0;
- 
+
  	/*  Disable interrupts locally  */
 +#ifdef CONFIG_ADEOS_CORE
 +	adeos_hw_local_irq_save(ctxt->flags);
 +#else /* !CONFIG_ADEOS_CORE */
  	local_irq_save(ctxt->flags);
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  	if (use_intel() || is_cpu(CYRIX)) {
- 
+
 @@ -73,6 +77,10 @@ void set_mtrr_done(struct set_mtrr_conte
  			write_cr4(ctxt->cr4val);
  	}
@@ -2669,14 +2669,14 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/cpu/mtrr/state.c linux-2.6.12-adeos/arc
  	local_irq_restore(ctxt->flags);
 +#endif /* CONFIG_ADEOS_CORE */
  }
- 
+
 diff -uNrp linux-2.6.12/arch/i386/kernel/entry.S linux-2.6.12-adeos/arch/i386/kernel/entry.S
 --- linux-2.6.12/arch/i386/kernel/entry.S	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/arch/i386/kernel/entry.S	2005-06-19 12:27:14.000000000 +0200
 @@ -82,6 +82,14 @@ VM_MASK		= 0x00020000
  #define resume_kernel		restore_nocheck
  #endif
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +#ifdef CONFIG_PREEMPT
 +#undef preempt_stop
@@ -2713,7 +2713,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/entry.S linux-2.6.12-adeos/arch/i386/ke
  					# between sampling and the iret
  	movl TI_flags(%ebp), %ecx
 @@ -159,14 +175,23 @@ ENTRY(resume_userspace)
- 
+
  #ifdef CONFIG_PREEMPT
  ENTRY(resume_kernel)
 -	cli
@@ -2750,7 +2750,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/entry.S linux-2.6.12-adeos/arch/i386/ke
 +	jne   .adeos_sysdone
 +	movl ORIG_EAX(%esp),%eax
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  	/* Note, _TIF_SECCOMP is bit number 8, and so it needs testw and not testb */
  	testw $(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|_TIF_SECCOMP),TI_flags(%ebp)
 @@ -209,11 +242,24 @@ sysenter_past_esp:
@@ -2849,7 +2849,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/entry.S linux-2.6.12-adeos/arch/i386/ke
  	movl %esp, %eax
  	movl $1, %edx
 @@ -399,7 +475,11 @@ ENTRY(interrupt)
- 
+
  vector=0
  ENTRY(irq_entries_start)
 +#ifdef CONFIG_ADEOS_CORE
@@ -2863,7 +2863,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/entry.S linux-2.6.12-adeos/arch/i386/ke
 @@ -427,6 +507,36 @@ ENTRY(name)				\
  /* The include is where all of the SMP etc. interrupts come from */
  #include "entry_arch.h"
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +
 +.data
@@ -2905,7 +2905,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/entry.S linux-2.6.12-adeos/arch/i386/ke
 +	call __adeos_if_fixup_root
 +#endif /* CONFIG_ADEOS_CORE */
  	jmp ret_from_exception
- 
+
  ENTRY(coprocessor_error)
 @@ -470,6 +583,9 @@ ENTRY(simd_coprocessor_error)
  ENTRY(device_not_available)
@@ -2928,7 +2928,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/entry.S linux-2.6.12-adeos/arch/i386/ke
 +#else /* !CONFIG_ADEOS_CORE */
  	jmp restore_all
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  nmi_stack_fixup:
  	FIX_STACK(12,nmi_stack_correct, 1)
 diff -uNrp linux-2.6.12/arch/i386/kernel/i386_ksyms.c linux-2.6.12-adeos/arch/i386/kernel/i386_ksyms.c
@@ -2937,7 +2937,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/i386_ksyms.c linux-2.6.12-adeos/arch/i3
 @@ -36,6 +36,49 @@
  extern void dump_thread(struct pt_regs *, struct user *);
  extern spinlock_t rtc_lock;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +extern int __adeos_irq_trampolines;
 +EXPORT_SYMBOL(__adeos_irq_trampolines);
@@ -2983,14 +2983,14 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/i386_ksyms.c linux-2.6.12-adeos/arch/i3
 +
  /* This is definitely a GPL-only symbol */
  EXPORT_SYMBOL_GPL(cpu_gdt_table);
- 
+
 diff -uNrp linux-2.6.12/arch/i386/kernel/i8259.c linux-2.6.12-adeos/arch/i386/kernel/i8259.c
 --- linux-2.6.12/arch/i386/kernel/i8259.c	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/arch/i386/kernel/i8259.c	2005-07-02 12:50:57.000000000 +0200
 @@ -92,13 +92,14 @@ void disable_8259A_irq(unsigned int irq)
  	unsigned int mask = 1 << irq;
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&i8259A_lock, flags);
 +	spin_lock_irqsave_hw(&i8259A_lock, flags);
 +	pic_irq_lock(irq);
@@ -3002,12 +3002,12 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/i8259.c linux-2.6.12-adeos/arch/i386/ke
 -	spin_unlock_irqrestore(&i8259A_lock, flags);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
  }
- 
+
  void enable_8259A_irq(unsigned int irq)
 @@ -106,13 +107,14 @@ void enable_8259A_irq(unsigned int irq)
  	unsigned int mask = ~(1 << irq);
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&i8259A_lock, flags);
 +	spin_lock_irqsave_hw(&i8259A_lock, flags);
  	cached_irq_mask &= mask;
@@ -3019,12 +3019,12 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/i8259.c linux-2.6.12-adeos/arch/i386/ke
 +	pic_irq_unlock(irq);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
  }
- 
+
  int i8259A_irq_pending(unsigned int irq)
 @@ -121,12 +123,12 @@ int i8259A_irq_pending(unsigned int irq)
  	unsigned long flags;
  	int ret;
- 
+
 -	spin_lock_irqsave(&i8259A_lock, flags);
 +	spin_lock_irqsave_hw(&i8259A_lock, flags);
  	if (irq < 8)
@@ -3033,19 +3033,19 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/i8259.c linux-2.6.12-adeos/arch/i386/ke
  		ret = inb(PIC_SLAVE_CMD) & (mask >> 8);
 -	spin_unlock_irqrestore(&i8259A_lock, flags);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
- 
+
  	return ret;
  }
-@@ -173,7 +175,7 @@ static void mask_and_ack_8259A(unsigned 
+@@ -173,7 +175,7 @@ static void mask_and_ack_8259A(unsigned
  	unsigned int irqmask = 1 << irq;
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&i8259A_lock, flags);
 +	spin_lock_irqsave_hw(&i8259A_lock, flags);
  	/*
  	 * Lightweight spurious IRQ detection. We do not want
  	 * to overdo spurious IRQ handling - it's usually a sign
-@@ -191,6 +193,15 @@ static void mask_and_ack_8259A(unsigned 
+@@ -191,6 +193,15 @@ static void mask_and_ack_8259A(unsigned
  	 */
  	if (cached_irq_mask & irqmask)
  		goto spurious_8259A_irq;
@@ -3059,7 +3059,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/i8259.c linux-2.6.12-adeos/arch/i386/ke
 +	}
 +#endif /* CONFIG_ADEOS_CORE */
  	cached_irq_mask |= irqmask;
- 
+
  handle_real_irq:
 @@ -204,7 +215,7 @@ handle_real_irq:
  		outb(cached_master_mask, PIC_MASTER_IMR);
@@ -3068,25 +3068,25 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/i8259.c linux-2.6.12-adeos/arch/i386/ke
 -	spin_unlock_irqrestore(&i8259A_lock, flags);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
  	return;
- 
+
  spurious_8259A_irq:
 @@ -293,7 +304,7 @@ void init_8259A(int auto_eoi)
  {
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&i8259A_lock, flags);
 +	spin_lock_irqsave_hw(&i8259A_lock, flags);
- 
+
  	outb(0xff, PIC_MASTER_IMR);	/* mask all of 8259A-1 */
  	outb(0xff, PIC_SLAVE_IMR);	/* mask all of 8259A-2 */
 @@ -327,7 +338,7 @@ void init_8259A(int auto_eoi)
  	outb(cached_master_mask, PIC_MASTER_IMR); /* restore master IRQ mask */
  	outb(cached_slave_mask, PIC_SLAVE_IMR);	  /* restore slave IRQ mask */
- 
+
 -	spin_unlock_irqrestore(&i8259A_lock, flags);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
  }
- 
+
  /*
 diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/kernel/io_apic.c
 --- linux-2.6.12/arch/i386/kernel/io_apic.c	2005-06-17 21:48:29.000000000 +0200
@@ -3094,7 +3094,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/
 @@ -174,18 +174,20 @@ static void mask_IO_APIC_irq (unsigned i
  {
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
 +	pic_irq_lock(irq);
@@ -3102,11 +3102,11 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
  }
- 
+
  static void unmask_IO_APIC_irq (unsigned int irq)
  {
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
  	__unmask_IO_APIC_irq(irq);
@@ -3114,7 +3114,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/
 +	pic_irq_unlock(irq);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
  }
- 
+
  static void clear_IO_APIC_pin(unsigned int apic, unsigned int pin)
 @@ -194,10 +196,10 @@ static void clear_IO_APIC_pin(unsigned i
  	unsigned long flags;
@@ -3128,7 +3128,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
  	if (entry.delivery_mode == dest_SMI)
  		return;
- 
+
 @@ -206,10 +208,10 @@ static void clear_IO_APIC_pin(unsigned i
  	 */
  	memset(&entry, 0, sizeof(entry));
@@ -3140,7 +3140,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
  }
- 
+
  static void clear_IO_APIC (void)
 @@ -231,7 +233,7 @@ static void set_ioapic_affinity_irq(unsi
  	apicid_value = cpu_mask_to_apicid(cpumask);
@@ -3158,12 +3158,12 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
  }
- 
+
  #if defined(CONFIG_IRQBALANCE)
 @@ -1811,14 +1813,15 @@ static unsigned int startup_edge_ioapic_
  	int was_pending = 0;
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
  	if (irq < 16) {
@@ -3175,7 +3175,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	pic_irq_unlock(irq);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
- 
+
  	return was_pending;
  }
 @@ -1828,6 +1831,26 @@ static unsigned int startup_edge_ioapic_
@@ -3208,7 +3208,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/
 @@ -1837,6 +1860,8 @@ static void ack_edge_ioapic_irq(unsigned
  	ack_APIC_irq();
  }
- 
+
 +#endif /* CONFIG_ADEOS_CORE */
 +
  /*
@@ -3217,7 +3217,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/
 @@ -1858,6 +1883,77 @@ static unsigned int startup_level_ioapic
  	return 0; /* don't check for pending */
  }
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +
 +/* The standard Linux implementation for acknowledging IO-APIC
@@ -3295,20 +3295,20 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/
 @@ -1898,6 +1994,8 @@ static void end_level_ioapic_irq (unsign
  	}
  }
- 
+
 +#endif /* CONFIG_ADEOS_CORE */
 +
  #ifdef CONFIG_PCI_MSI
  static unsigned int startup_edge_ioapic_vector(unsigned int vector)
  {
-@@ -2035,7 +2133,7 @@ static void disable_lapic_irq (unsigned 
- 
+@@ -2035,7 +2133,7 @@ static void disable_lapic_irq (unsigned
+
  static void ack_lapic_irq (unsigned int irq)
  {
 -	ack_APIC_irq();
 +	__ack_APIC_irq();
  }
- 
+
  static void end_lapic_irq (unsigned int i) { /* nothing */ }
 @@ -2306,12 +2404,12 @@ static int ioapic_suspend(struct sys_dev
  	
@@ -3322,13 +3322,13 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/
  	}
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
- 
+
  	return 0;
  }
 @@ -2327,7 +2425,7 @@ static int ioapic_resume(struct sys_devi
  	data = container_of(dev, struct sysfs_ioapic_data, dev);
  	entry = data->entry;
- 
+
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
  	reg_00.raw = io_apic_read(dev->id, 0);
@@ -3340,23 +3340,23 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/io_apic.c linux-2.6.12-adeos/arch/i386/
  	}
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
- 
+
  	return 0;
  }
 @@ -2532,12 +2630,38 @@ int io_apic_set_pci_routing (int ioapic,
  	if (!ioapic && (irq < 16))
  		disable_8259A_irq(irq);
- 
+
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
  	io_apic_write(ioapic, 0x11+2*pin, *(((int *)&entry)+1));
  	io_apic_write(ioapic, 0x10+2*pin, *(((int *)&entry)+0));
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
- 
+
  	return 0;
  }
- 
+
  #endif /*CONFIG_ACPI_BOOT*/
 +
 +#if defined(CONFIG_ADEOS_CORE) && defined(CONFIG_SMP)
@@ -3389,7 +3389,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/process.c linux-2.6.12-adeos/arch/i386/
 +++ linux-2.6.12-adeos/arch/i386/kernel/process.c	2005-06-19 11:53:10.000000000 +0200
 @@ -161,6 +161,9 @@ void cpu_idle (void)
  				idle = default_idle;
- 
+
  			__get_cpu_var(irq_stat).idle_timestamp = jiffies;
 +#ifdef CONFIG_ADEOS_CORE
 +			adeos_suspend_domain();
@@ -3403,7 +3403,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/smp.c linux-2.6.12-adeos/arch/i386/kern
 @@ -132,6 +132,11 @@ void __send_IPI_shortcut(unsigned int sh
  	 */
  	unsigned int cfg;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	unsigned long flags;
 +	adeos_hw_local_irq_save(flags);
@@ -3421,12 +3421,12 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/smp.c linux-2.6.12-adeos/arch/i386/kern
 +	adeos_hw_local_irq_restore(flags);
 +#endif /* !CONFIG_ADEOS_CORE */
  }
- 
+
  void fastcall send_IPI_self(int vector)
 @@ -162,7 +171,11 @@ void send_IPI_mask_bitmask(cpumask_t cpu
  	unsigned long cfg;
  	unsigned long flags;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	adeos_hw_local_irq_save(flags);
 +#else  /* !CONFIG_ADEOS_CORE */
@@ -3438,25 +3438,25 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/smp.c linux-2.6.12-adeos/arch/i386/kern
 @@ -185,7 +198,11 @@ void send_IPI_mask_bitmask(cpumask_t cpu
  	 */
  	apic_write_around(APIC_ICR, cfg);
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	adeos_hw_local_irq_restore(flags);
 +#else  /* !CONFIG_ADEOS_CORE */
  	local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
  }
- 
+
  void send_IPI_mask_sequence(cpumask_t mask, int vector)
 @@ -199,7 +216,11 @@ void send_IPI_mask_sequence(cpumask_t ma
  	 * should be modified to do 1 message per cluster ID - mbligh
- 	 */ 
- 
+ 	 */
+
 +#ifdef CONFIG_ADEOS_CORE
 +	adeos_hw_local_irq_save(flags);
 +#else /* !CONFIG_ADEOS_CORE */
  	local_irq_save(flags);
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  	for (query_cpu = 0; query_cpu < NR_CPUS; ++query_cpu) {
  		if (cpu_isset(query_cpu, mask)) {
 @@ -226,7 +247,11 @@ void send_IPI_mask_sequence(cpumask_t ma
@@ -3469,7 +3469,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/smp.c linux-2.6.12-adeos/arch/i386/kern
  	local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
  }
- 
+
  #include <mach_ipi.h> /* must come after the send_IPI functions above for inlining */
 @@ -311,6 +336,10 @@ static inline void leave_mm (unsigned lo
  fastcall void smp_invalidate_interrupt(struct pt_regs *regs)
@@ -3479,9 +3479,9 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/smp.c linux-2.6.12-adeos/arch/i386/kern
 +	unsigned long flags;
 +	adeos_hw_local_irq_save(flags);
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  	cpu = get_cpu();
- 
+
 @@ -340,6 +369,9 @@ fastcall void smp_invalidate_interrupt(s
  	smp_mb__after_clear_bit();
  out:
@@ -3490,7 +3490,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/smp.c linux-2.6.12-adeos/arch/i386/kern
 +	adeos_hw_local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
  }
- 
+
  static void flush_tlb_others(cpumask_t cpumask, struct mm_struct *mm,
 @@ -400,6 +432,10 @@ void flush_tlb_current_task(void)
  {
@@ -3500,7 +3500,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/smp.c linux-2.6.12-adeos/arch/i386/kern
 +	unsigned long flags;
 +	adeos_hw_local_irq_save(flags);
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  	preempt_disable();
  	cpu_mask = mm->cpu_vm_mask;
 @@ -408,6 +444,9 @@ void flush_tlb_current_task(void)
@@ -3512,7 +3512,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/smp.c linux-2.6.12-adeos/arch/i386/kern
 +#endif /* CONFIG_ADEOS_CORE */
  	preempt_enable();
  }
- 
+
 @@ -435,6 +474,10 @@ void flush_tlb_page(struct vm_area_struc
  {
  	struct mm_struct *mm = vma->vm_mm;
@@ -3521,20 +3521,20 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/smp.c linux-2.6.12-adeos/arch/i386/kern
 +	unsigned long flags;
 +	adeos_hw_local_irq_save(flags);
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  	preempt_disable();
  	cpu_mask = mm->cpu_vm_mask;
 @@ -447,6 +490,10 @@ void flush_tlb_page(struct vm_area_struc
  		 	leave_mm(smp_processor_id());
  	}
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	adeos_hw_local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
 +
  	if (!cpus_empty(cpu_mask))
  		flush_tlb_others(cpu_mask, mm, va);
- 
+
 @@ -609,4 +656,3 @@ fastcall void smp_call_function_interrup
  		atomic_inc(&call_data->finished);
  	}
@@ -3545,7 +3545,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/smpboot.c linux-2.6.12-adeos/arch/i386/
 +++ linux-2.6.12-adeos/arch/i386/kernel/smpboot.c	2005-06-19 11:51:11.000000000 +0200
 @@ -762,6 +762,11 @@ static int __init do_boot_cpu(int apicid
  	unsigned short nmi_high = 0, nmi_low = 0;
- 
+
  	cpu = ++cpucount;
 +
 +#ifdef CONFIG_ADEOS_CORE
@@ -3558,7 +3558,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/smpboot.c linux-2.6.12-adeos/arch/i386/
 @@ -895,6 +900,10 @@ static void __init smp_boot_cpus(unsigne
  	int apicid, cpu, bit, kicked;
  	unsigned long bogosum = 0;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	__adeos_apicid_2_cpuid[adeos_smp_apic_id()] = 0;
 +#endif /* CONFIG_ADEOS_CORE */
@@ -3583,14 +3583,14 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/time.c linux-2.6.12-adeos/arch/i386/ker
 +		spin_unlock_irqrestore_hw_cond(&i8259A_lock,flags);
  	}
  #endif
- 
+
 diff -uNrp linux-2.6.12/arch/i386/kernel/timers/timer_pit.c linux-2.6.12-adeos/arch/i386/kernel/timers/timer_pit.c
 --- linux-2.6.12/arch/i386/kernel/timers/timer_pit.c	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/arch/i386/kernel/timers/timer_pit.c	2005-06-29 12:18:39.000000000 +0200
 @@ -100,6 +100,10 @@ static unsigned long get_offset_pit(void
  	 */
  	unsigned long jiffies_t;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	if (!__adeos_pipeline_head_p(adp_root))
 +		return 0;	/* We don't really own the PIT. */
@@ -3603,7 +3603,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/timers/timer_tsc.c linux-2.6.12-adeos/a
 +++ linux-2.6.12-adeos/arch/i386/kernel/timers/timer_tsc.c	2005-06-29 12:23:38.000000000 +0200
 @@ -369,6 +369,12 @@ static void mark_offset_tsc(void)
  	rdtsc(last_tsc_low, last_tsc_high);
- 
+
  	spin_lock(&i8253_lock);
 +#ifdef CONFIG_ADEOS_CORE
 +	if (!__adeos_pipeline_head_p(adp_root)) {
@@ -3612,28 +3612,28 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/timers/timer_tsc.c linux-2.6.12-adeos/a
 +	}
 +#endif /* CONFIG_ADEOS_CORE */
  	outb_p(0x00, PIT_MODE);     /* latch the count ASAP */
- 
+
  	count = inb_p(PIT_CH0);    /* read the latched count */
 @@ -385,6 +391,9 @@ static void mark_offset_tsc(void)
  		count = LATCH - 1;
  	}
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 + noadj:
 +#endif /* CONFIG_ADEOS_CORE */
  	spin_unlock(&i8253_lock);
- 
+
  	if (pit_latch_buggy) {
 @@ -440,9 +449,11 @@ static void mark_offset_tsc(void)
  	monotonic_base += cycles_2_ns(this_offset - last_offset);
  	write_sequnlock(&monotonic_lock);
- 
+
 +#ifndef CONFIG_ADEOS_CORE
  	/* calculate delay_at_last_interrupt */
  	count = ((LATCH-1) - count) * TICK_SIZE;
  	delay_at_last_interrupt = (count + LATCH/2) / LATCH;
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  	/* catch corner case where tick rollover occured
  	 * between tsc and pit reads (as noted when
 diff -uNrp linux-2.6.12/arch/i386/kernel/traps.c linux-2.6.12-adeos/arch/i386/kernel/traps.c
@@ -3642,7 +3642,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/traps.c linux-2.6.12-adeos/arch/i386/ke
 @@ -141,6 +141,13 @@ void show_trace(struct task_struct *task
  {
  	unsigned long ebp;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	if (!task && adp_current != adp_root)
 +	    {
@@ -3652,7 +3652,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/traps.c linux-2.6.12-adeos/arch/i386/ke
 +#endif /* CONFIG_ADEOS_CORE */
  	if (!task)
  		task = current;
- 
+
 @@ -226,6 +233,11 @@ void show_registers(struct pt_regs *regs
  		regs->esi, regs->edi, regs->ebp, esp);
  	printk("ds: %04x   es: %04x   ss: %04x\n",
@@ -3668,7 +3668,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/traps.c linux-2.6.12-adeos/arch/i386/ke
 @@ -306,6 +318,10 @@ void die(const char * str, struct pt_reg
  	};
  	static int die_counter;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	if (adp_current != adp_root)
 +	    adeos_set_printk_sync(adp_current);
@@ -3677,7 +3677,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/traps.c linux-2.6.12-adeos/arch/i386/ke
  		console_verbose();
  		spin_lock_irq(&die.lock);
 @@ -555,6 +571,9 @@ static DEFINE_SPINLOCK(nmi_print_lock);
- 
+
  void die_nmi (struct pt_regs *regs, const char *msg)
  {
 +#ifdef CONFIG_ADEOS_CORE
@@ -3699,23 +3699,23 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/traps.c linux-2.6.12-adeos/arch/i386/ke
 @@ -621,6 +643,9 @@ fastcall void do_nmi(struct pt_regs * re
  {
  	int cpu;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	if (adp_current == adp_root)
 +#endif /* CONFIG_ADEOS_CORE */
  	nmi_enter();
- 
+
  	cpu = smp_processor_id();
 @@ -629,6 +654,9 @@ fastcall void do_nmi(struct pt_regs * re
  	if (!nmi_callback(regs, cpu))
  		default_do_nmi(regs);
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	if (adp_current == adp_root)
 +#endif /* CONFIG_ADEOS_CORE */
  	nmi_exit();
  }
- 
+
 @@ -946,12 +974,19 @@ asmlinkage void math_state_restore(struc
  {
  	struct thread_info *thread = current_thread_info();
@@ -3724,7 +3724,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/traps.c linux-2.6.12-adeos/arch/i386/ke
 +	unsigned long flags;
 +	adeos_hw_local_irq_save(flags);
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  	clts();		/* Allow maths ops (or we recurse) */
  	if (!tsk_used_math(tsk))
  		init_fpu(tsk);
@@ -3734,7 +3734,7 @@ diff -uNrp linux-2.6.12/arch/i386/kernel/traps.c linux-2.6.12-adeos/arch/i386/ke
 +	adeos_hw_local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
  }
- 
+
  #ifndef CONFIG_MATH_EMULATION
 diff -uNrp linux-2.6.12/arch/i386/mm/fault.c linux-2.6.12-adeos/arch/i386/mm/fault.c
 --- linux-2.6.12/arch/i386/mm/fault.c	2005-06-17 21:48:29.000000000 +0200
@@ -3742,7 +3742,7 @@ diff -uNrp linux-2.6.12/arch/i386/mm/fault.c linux-2.6.12-adeos/arch/i386/mm/fau
 @@ -224,12 +224,16 @@ fastcall void do_page_fault(struct pt_re
  	/* get the address */
  	__asm__("movl %%cr2,%0":"=r" (address));
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	adeos_hw_sti();
 +#endif /* CONFIG_ADEOS_CORE */
@@ -3754,9 +3754,9 @@ diff -uNrp linux-2.6.12/arch/i386/mm/fault.c linux-2.6.12-adeos/arch/i386/mm/fau
  	if (regs->eflags & (X86_EFLAGS_IF|VM_MASK))
 -		local_irq_enable();
 +	    local_irq_enable();
- 
+
  	tsk = current;
- 
+
 diff -uNrp linux-2.6.12/arch/i386/mm/ioremap.c linux-2.6.12-adeos/arch/i386/mm/ioremap.c
 --- linux-2.6.12/arch/i386/mm/ioremap.c	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/arch/i386/mm/ioremap.c	2005-06-19 11:54:53.000000000 +0200
@@ -3767,7 +3767,7 @@ diff -uNrp linux-2.6.12/arch/i386/mm/ioremap.c linux-2.6.12-adeos/arch/i386/mm/i
 +#ifdef CONFIG_ADEOS_CORE
 +#include <asm/pgalloc.h>
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  #define ISA_START_ADDRESS	0xa0000
  #define ISA_END_ADDRESS		0x100000
 @@ -92,6 +95,9 @@ static int ioremap_page_range(unsigned l
@@ -4304,7 +4304,7 @@ diff -uNrp linux-2.6.12/include/asm-i386/apic.h linux-2.6.12-adeos/include/asm-i
 @@ -69,7 +69,13 @@ int get_physical_broadcast(void);
  # define apic_write_around(x,y) apic_write_atomic((x),(y))
  #endif
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +#define ack_APIC_irq() do { if (!adp_pipelined) __ack_APIC_irq(); } while(0)
 +static inline void __ack_APIC_irq(void)
@@ -4347,7 +4347,7 @@ diff -uNrp linux-2.6.12/include/asm-i386/mach-default/do_timer.h linux-2.6.12-ad
  {
 +	unsigned long flags;
  	int i;
- 
+
 -	spin_lock(&i8259A_lock);
 +	spin_lock_irqsave_hw_cond(&i8259A_lock, flags);
  	/*
@@ -4364,12 +4364,12 @@ diff -uNrp linux-2.6.12/include/asm-i386/mach-visws/do_timer.h linux-2.6.12-adeo
 --- linux-2.6.12/include/asm-i386/mach-visws/do_timer.h	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/include/asm-i386/mach-visws/do_timer.h	2005-06-28 16:37:57.000000000 +0200
 @@ -27,15 +27,16 @@ static inline void do_timer_interrupt_ho
- 
+
  static inline int do_timer_overflow(int count)
  {
 +	unsigned long flags;
  	int i;
- 
+
 -	spin_lock(&i8259A_lock);
 +	spin_lock_irqsave_hw_cond(&i8259A_lock, flags);
  	/*
@@ -4385,10 +4385,10 @@ diff -uNrp linux-2.6.12/include/asm-i386/mach-visws/do_timer.h linux-2.6.12-adeo
 diff -uNrp linux-2.6.12/include/asm-i386/pgalloc.h linux-2.6.12-adeos/include/asm-i386/pgalloc.h
 --- linux-2.6.12/include/asm-i386/pgalloc.h	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/include/asm-i386/pgalloc.h	2005-06-19 11:51:11.000000000 +0200
-@@ -47,4 +47,28 @@ static inline void pte_free(struct page 
- 
+@@ -47,4 +47,28 @@ static inline void pte_free(struct page
+
  #define check_pgt_cache()	do { } while (0)
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +static inline void set_pgdir(unsigned long address, pgd_t entry)
 +{
@@ -4400,7 +4400,7 @@ diff -uNrp linux-2.6.12/include/asm-i386/pgalloc.h linux-2.6.12-adeos/include/as
 +	read_lock(&tasklist_lock);
 +
 +	for_each_process(p) {
-+		if(p->mm) 
++		if(p->mm)
 +		    *pgd_offset(p->mm,address) = entry;
 +	}
 +
@@ -4427,7 +4427,7 @@ diff -uNrp linux-2.6.12/include/asm-i386/smp.h linux-2.6.12-adeos/include/asm-i3
 +#else /* !CONFIG_ADEOS_CORE */
  #define __smp_processor_id() (current_thread_info()->cpu)
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  extern cpumask_t cpu_callout_map;
  extern cpumask_t cpu_callin_map;
 diff -uNrp linux-2.6.12/include/asm-i386/spinlock.h linux-2.6.12-adeos/include/asm-i386/spinlock.h
@@ -4436,7 +4436,7 @@ diff -uNrp linux-2.6.12/include/asm-i386/spinlock.h linux-2.6.12-adeos/include/a
 @@ -57,6 +57,9 @@ typedef struct {
  	"jmp 1b\n" \
  	"3:\n\t"
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +#define spin_lock_string_flags spin_lock_string
 +#else /* !CONFIG_ADEOS_CORE */
@@ -4448,15 +4448,15 @@ diff -uNrp linux-2.6.12/include/asm-i386/spinlock.h linux-2.6.12-adeos/include/a
  	"jmp 1b\n" \
  	"4:\n\t"
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  /*
   * This works. Despite all the confusion.
 diff -uNrp linux-2.6.12/include/asm-i386/system.h linux-2.6.12-adeos/include/asm-i386/system.h
 --- linux-2.6.12/include/asm-i386/system.h	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/include/asm-i386/system.h	2005-06-19 11:51:11.000000000 +0200
-@@ -441,6 +441,33 @@ struct alt_instr { 
+@@ -441,6 +441,33 @@ struct alt_instr {
  #define set_wmb(var, value) do { var = value; wmb(); } while (0)
- 
+
  /* interrupt control.. */
 +#ifdef CONFIG_ADEOS_CORE
 +
@@ -4488,10 +4488,10 @@ diff -uNrp linux-2.6.12/include/asm-i386/system.h linux-2.6.12-adeos/include/asm
  #define local_save_flags(x)	do { typecheck(unsigned long,x); __asm__ __volatile__("pushfl ; popl %0":"=g" (x): /* no input */); } while (0)
  #define local_irq_restore(x) 	do { typecheck(unsigned long,x); __asm__ __volatile__("pushl %0 ; popfl": /* no output */ :"g" (x):"memory", "cc"); } while (0)
  #define local_irq_disable() 	__asm__ __volatile__("cli": : :"memory")
-@@ -458,6 +485,8 @@ struct alt_instr { 
+@@ -458,6 +485,8 @@ struct alt_instr {
  /* For spinlocks etc */
  #define local_irq_save(x)	__asm__ __volatile__("pushfl ; popl %0 ; cli":"=g" (x): /* no input */ :"memory")
- 
+
 +#endif /* CONFIG_ADEOS_CORE */
 +
  /*
@@ -4864,7 +4864,7 @@ diff -uNrp linux-2.6.12/include/linux/adeos.h linux-2.6.12-adeos/include/linux/a
 +{
 +    unsigned long flags, s;
 +    adeos_declare_cpuid;
-+    
++
 +    adeos_get_cpu(flags);
 +    s = test_bit(IPIPE_STALL_FLAG,&adp->cpudata[cpuid].status);
 +    adeos_put_cpu(flags);
@@ -4892,7 +4892,7 @@ diff -uNrp linux-2.6.12/include/linux/adeos.h linux-2.6.12-adeos/include/linux/a
 +    if (__adeos_pipeline_head_p(adp))
 +	adeos_hw_cli();
 +#endif /* CONFIG_SMP */
-+    
++
 +    return s;
 +}
 +
@@ -4903,7 +4903,7 @@ diff -uNrp linux-2.6.12/include/linux/adeos.h linux-2.6.12-adeos/include/linux/a
 +{
 +    unsigned long flags, s;
 +    adeos_declare_cpuid;
-+    
++
 +    adeos_get_cpu(flags);
 +    s = test_bit(IPIPE_STALL_FLAG,&adp->cpudata[cpuid].status);
 +    adeos_unstall_pipeline_from(adp);
@@ -5117,16 +5117,16 @@ diff -uNrp linux-2.6.12/include/linux/init_task.h linux-2.6.12-adeos/include/lin
 +	.cpu_timers	= INIT_CPU_TIMERS(tsk.cpu_timers),		\
 +}
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  #define INIT_CPU_TIMERS(cpu_timers)					\
  {									\
 diff -uNrp linux-2.6.12/include/linux/preempt.h linux-2.6.12-adeos/include/linux/preempt.h
 --- linux-2.6.12/include/linux/preempt.h	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/include/linux/preempt.h	2005-06-19 11:51:11.000000000 +0200
 @@ -26,6 +26,47 @@
- 
+
  asmlinkage void preempt_schedule(void);
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +
 +#include <asm/adeos.h>
@@ -5174,18 +5174,18 @@ diff -uNrp linux-2.6.12/include/linux/preempt.h linux-2.6.12-adeos/include/linux
 @@ -50,6 +91,8 @@ do { \
  	preempt_check_resched(); \
  } while (0)
- 
+
 +#endif /* CONFIG_ADEOS_CORE */
 +
  #else
- 
+
  #define preempt_disable()		do { } while (0)
 diff -uNrp linux-2.6.12/include/linux/sched.h linux-2.6.12-adeos/include/linux/sched.h
 --- linux-2.6.12/include/linux/sched.h	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/include/linux/sched.h	2005-06-19 11:51:11.000000000 +0200
 @@ -4,6 +4,9 @@
  #include <asm/param.h>	/* for HZ */
- 
+
  #include <linux/config.h>
 +#ifdef CONFIG_ADEOS_CORE
 +#include <linux/adeos.h>
@@ -5201,13 +5201,13 @@ diff -uNrp linux-2.6.12/include/linux/sched.h linux-2.6.12-adeos/include/linux/s
 +        void *ptd[ADEOS_ROOT_NPTDKEYS];
 +#endif /* CONFIG_ADEOS_CORE */
  };
- 
+
  static inline pid_t process_group(struct task_struct *tsk)
 diff -uNrp linux-2.6.12/init/Kconfig linux-2.6.12-adeos/init/Kconfig
 --- linux-2.6.12/init/Kconfig	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/init/Kconfig	2005-06-19 11:51:11.000000000 +0200
 @@ -69,6 +69,7 @@ menu "General setup"
- 
+
  config LOCALVERSION
  	string "Local version - append to kernel release"
 +	default "-adeos"
@@ -5229,14 +5229,14 @@ diff -uNrp linux-2.6.12/init/main.c linux-2.6.12-adeos/init/main.c
  	softirq_init();
 @@ -596,6 +599,10 @@ static void __init do_basic_setup(void)
  	sock_init();
- 
+
  	do_initcalls();
 +
 +#ifdef CONFIG_ADEOS
 +	__adeos_takeover();
 +#endif /* CONFIG_ADEOS */
  }
- 
+
  static void do_pre_smp_initcalls(void)
 diff -uNrp linux-2.6.12/kernel/Makefile linux-2.6.12-adeos/kernel/Makefile
 --- linux-2.6.12/kernel/Makefile	2005-06-17 21:48:29.000000000 +0200
@@ -5244,7 +5244,7 @@ diff -uNrp linux-2.6.12/kernel/Makefile linux-2.6.12-adeos/kernel/Makefile
 @@ -9,6 +9,7 @@ obj-y     = sched.o fork.o exec_domain.o
  	    rcupdate.o intermodule.o extable.o params.o posix-timers.o \
  	    kthread.o wait.o kfifo.o sys_ni.o posix-cpu-timers.o
- 
+
 +obj-$(CONFIG_ADEOS_CORE) += adeos.o
  obj-$(CONFIG_FUTEX) += futex.o
  obj-$(CONFIG_GENERIC_ISA_DMA) += dma.o
@@ -5358,9 +5358,9 @@ diff -uNrp linux-2.6.12/kernel/adeos.c linux-2.6.12-adeos/kernel/adeos.c
 +    __adeos_init_platform();
 +
 +    __adeos_printk_virq = adeos_alloc_irq(); /* Cannot fail here. */
-+    adp->irqs[__adeos_printk_virq].handler = &__adeos_flush_printk; 
-+    adp->irqs[__adeos_printk_virq].acknowledge = NULL; 
-+    adp->irqs[__adeos_printk_virq].control = IPIPE_HANDLE_MASK; 
++    adp->irqs[__adeos_printk_virq].handler = &__adeos_flush_printk;
++    adp->irqs[__adeos_printk_virq].acknowledge = NULL;
++    adp->irqs[__adeos_printk_virq].control = IPIPE_HANDLE_MASK;
 +
 +    printk(KERN_INFO "Adeos %s: Root domain %s registered.\n",
 +	   ADEOS_VERSION_STRING,
@@ -5421,7 +5421,7 @@ diff -uNrp linux-2.6.12/kernel/adeos.c linux-2.6.12-adeos/kernel/adeos.c
 +
 +	    /* Let the higher priority domain process the event. */
 +	    __adeos_switch_to(this_domain,next_domain,cpuid);
-+	    
++	
 +	    adeos_load_cpuid();	/* Processor might have changed. */
 +
 +	    if (!next_domain->cpudata[cpuid].event_info.propagate)
@@ -5651,7 +5651,7 @@ diff -uNrp linux-2.6.12/kernel/adeos.c linux-2.6.12-adeos/kernel/adeos.c
 +		    !test_bit(IPIPE_STALL_FLAG,&this_domain->cpudata[cpuid].status))
 +		    __adeos_sync_stage(IPIPE_IRQMASK_ANY);
 +		}
-+	    
++	
 +	    break;
 +	    }
 +	else if (next_domain == this_domain)
@@ -6067,7 +6067,7 @@ diff -uNrp linux-2.6.12/kernel/exit.c linux-2.6.12-adeos/kernel/exit.c
 +	__adeos_exit_process(tsk);
 +#endif /* CONFIG_ADEOS_CORE */
  	exit_mm(tsk);
- 
+
  	exit_sem(tsk);
 diff -uNrp linux-2.6.12/kernel/fork.c linux-2.6.12-adeos/kernel/fork.c
 --- linux-2.6.12/kernel/fork.c	2005-06-17 21:48:29.000000000 +0200
@@ -6085,12 +6085,12 @@ diff -uNrp linux-2.6.12/kernel/fork.c linux-2.6.12-adeos/kernel/fork.c
 +	}
 +#endif /* CONFIG_ADEOS_CORE */
  	retval = 0;
- 
+
  fork_out:
 diff -uNrp linux-2.6.12/kernel/irq/handle.c linux-2.6.12-adeos/kernel/irq/handle.c
 --- linux-2.6.12/kernel/irq/handle.c	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/kernel/irq/handle.c	2005-06-19 11:51:11.000000000 +0200
-@@ -117,13 +117,30 @@ fastcall unsigned int __do_IRQ(unsigned 
+@@ -117,13 +117,30 @@ fastcall unsigned int __do_IRQ(unsigned
  		/*
  		 * No locking required for CPU-local interrupts:
  		 */
@@ -6113,7 +6113,7 @@ diff -uNrp linux-2.6.12/kernel/irq/handle.c linux-2.6.12-adeos/kernel/irq/handle
  		desc->handler->end(irq);
  		return 1;
  	}
- 
+
  	spin_lock(&desc->lock);
 +#ifdef CONFIG_ADEOS_CORE
 +	if (!adp_pipelined)
@@ -6121,29 +6121,29 @@ diff -uNrp linux-2.6.12/kernel/irq/handle.c linux-2.6.12-adeos/kernel/irq/handle
  	desc->handler->ack(irq);
  	/*
  	 * REPLAY is when Linux resends an IRQ that was dropped earlier
-@@ -168,6 +185,11 @@ fastcall unsigned int __do_IRQ(unsigned 
- 
+@@ -168,6 +185,11 @@ fastcall unsigned int __do_IRQ(unsigned
+
  		spin_unlock(&desc->lock);
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +		if (adp_pipelined && __adeos_tick_irq == irq)
 +		    action_ret = handle_IRQ_event(irq,__adeos_tick_regs + smp_processor_id(),action);
 +		else
 +#endif /* CONFIG_ADEOS_CORE */
  		action_ret = handle_IRQ_event(irq, regs, action);
- 
+
  		spin_lock(&desc->lock);
 diff -uNrp linux-2.6.12/kernel/panic.c linux-2.6.12-adeos/kernel/panic.c
 --- linux-2.6.12/kernel/panic.c	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/kernel/panic.c	2005-06-19 11:51:11.000000000 +0200
-@@ -69,6 +69,9 @@ NORET_TYPE void panic(const char * fmt, 
+@@ -69,6 +69,9 @@ NORET_TYPE void panic(const char * fmt,
  	va_end(args);
  	printk(KERN_EMERG "Kernel panic - not syncing: %s\n",buf);
  	bust_spinlocks(0);
 +#ifdef CONFIG_ADEOS_CORE
 +	__adeos_dump_state();
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  #ifdef CONFIG_SMP
  	smp_send_stop();
 diff -uNrp linux-2.6.12/kernel/printk.c linux-2.6.12-adeos/kernel/printk.c
@@ -6152,7 +6152,7 @@ diff -uNrp linux-2.6.12/kernel/printk.c linux-2.6.12-adeos/kernel/printk.c
 @@ -502,6 +502,66 @@ __setup("time", printk_time_setup);
   * is inspected when the actual printing occurs.
   */
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +
 +static raw_spinlock_t __adeos_printk_lock = RAW_SPIN_LOCK_UNLOCKED;
@@ -6207,7 +6207,7 @@ diff -uNrp linux-2.6.12/kernel/printk.c linux-2.6.12-adeos/kernel/printk.c
 +
 +	if (!test_and_set_bit(ADEOS_PPRINTK_FLAG,&adp_root->flags))
 +		adeos_trigger_irq(__adeos_printk_virq);
-+out: 
++out:
 +	va_end(args);
 +
 +	return r;
@@ -6217,11 +6217,11 @@ diff -uNrp linux-2.6.12/kernel/printk.c linux-2.6.12-adeos/kernel/printk.c
  {
  	va_list args;
 @@ -513,6 +573,7 @@ asmlinkage int printk(const char *fmt, .
- 
+
  	return r;
  }
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  asmlinkage int vprintk(const char *fmt, va_list args)
  {
 diff -uNrp linux-2.6.12/kernel/sched.c linux-2.6.12-adeos/kernel/sched.c
@@ -6245,14 +6245,14 @@ diff -uNrp linux-2.6.12/kernel/sched.c linux-2.6.12-adeos/kernel/sched.c
  # define task_running(rq, p)		((rq)->curr == (p))
  #endif
 @@ -1347,18 +1356,24 @@ asmlinkage void schedule_tail(task_t *pr
- 
+
  	if (current->set_child_tid)
  		put_user(current->pid, current->set_child_tid);
 +#ifdef CONFIG_ADEOS_CORE
 +	__adeos_enter_process();
 +#endif /* CONFIG_ADEOS_CORE */
  }
- 
+
  /*
   * context_switch - switch to the new MM and the new
   * thread's register state.
@@ -6262,7 +6262,7 @@ diff -uNrp linux-2.6.12/kernel/sched.c linux-2.6.12-adeos/kernel/sched.c
  {
  	struct mm_struct *mm = next->mm;
  	struct mm_struct *oldmm = prev->active_mm;
- 
+
 +if (!rq) {
 +	switch_mm(oldmm, next->active_mm, next);
 +	if (!mm) enter_lazy_tlb(oldmm, next);
@@ -6270,7 +6270,7 @@ diff -uNrp linux-2.6.12/kernel/sched.c linux-2.6.12-adeos/kernel/sched.c
  	if (unlikely(!mm)) {
  		next->active_mm = oldmm;
  		atomic_inc(&oldmm->mm_count);
-@@ -1371,13 +1386,15 @@ task_t * context_switch(runqueue_t *rq, 
+@@ -1371,13 +1386,15 @@ task_t * context_switch(runqueue_t *rq,
  		WARN_ON(rq->prev_mm);
  		rq->prev_mm = oldmm;
  	}
@@ -6278,10 +6278,10 @@ diff -uNrp linux-2.6.12/kernel/sched.c linux-2.6.12-adeos/kernel/sched.c
 +}
  	/* Here we just switch the register state and the stack. */
  	switch_to(prev, next, prev);
- 
+
  	return prev;
  }
- 
+
 +EXPORT_SYMBOL(context_switch);
 +
  /*
@@ -6290,7 +6290,7 @@ diff -uNrp linux-2.6.12/kernel/sched.c linux-2.6.12-adeos/kernel/sched.c
 @@ -2615,6 +2632,10 @@ asmlinkage void __sched schedule(void)
  	unsigned long run_time;
  	int cpu, idx;
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	if (adp_current != adp_root) /* Let's be helpful and	conservative. */
 +	    return;
@@ -6301,7 +6301,7 @@ diff -uNrp linux-2.6.12/kernel/sched.c linux-2.6.12-adeos/kernel/sched.c
 @@ -2761,9 +2782,28 @@ switch_tasks:
  		rq->curr = next;
  		++*switch_count;
- 
+
 -		prepare_arch_switch(rq, next);
 +#ifdef CONFIG_ADEOS_CORE
 +		prepare_arch_switch(rq, prev, next);
@@ -6325,7 +6325,7 @@ diff -uNrp linux-2.6.12/kernel/sched.c linux-2.6.12-adeos/kernel/sched.c
 +		       Linux housekeeping chores, at least not now. */
 +		    return;
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  		finish_task_switch(prev);
  	} else
 @@ -3406,6 +3446,21 @@ recheck:
@@ -6352,7 +6352,7 @@ diff -uNrp linux-2.6.12/kernel/sched.c linux-2.6.12-adeos/kernel/sched.c
  		deactivate_task(p, rq);
 @@ -5019,3 +5074,60 @@ void normalize_rt_tasks(void)
  }
- 
+
  #endif /* CONFIG_MAGIC_SYSRQ */
 +
 +#ifdef CONFIG_ADEOS_CORE
@@ -6415,9 +6415,9 @@ diff -uNrp linux-2.6.12/kernel/signal.c linux-2.6.12-adeos/kernel/signal.c
 --- linux-2.6.12/kernel/signal.c	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/kernel/signal.c	2005-06-19 11:51:12.000000000 +0200
 @@ -611,6 +611,13 @@ void signal_wake_up(struct task_struct *
- 
+
  	set_tsk_thread_flag(t, TIF_SIGPENDING);
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	{
 +	struct { struct task_struct *t; } evdata = { t };
@@ -6431,7 +6431,7 @@ diff -uNrp linux-2.6.12/kernel/signal.c linux-2.6.12-adeos/kernel/signal.c
 @@ -876,6 +883,17 @@ specific_send_sig_info(int sig, struct s
  		BUG();
  	assert_spin_locked(&t->sighand->siglock);
- 
+
 +#ifdef CONFIG_ADEOS_CORE
 +	/* If some domain handler in the pipeline doesn't ask for
 +	   propagation, return success pretending that 'sig' was
@@ -6458,7 +6458,7 @@ diff -uNrp linux-2.6.12/kernel/sysctl.c linux-2.6.12-adeos/kernel/sysctl.c
 +#endif /* CONFIG_ADEOS_CORE */
  #endif
  }
- 
+
 diff -uNrp linux-2.6.12/lib/kernel_lock.c linux-2.6.12-adeos/lib/kernel_lock.c
 --- linux-2.6.12/lib/kernel_lock.c	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/lib/kernel_lock.c	2005-06-19 11:51:12.000000000 +0200
@@ -6481,23 +6481,23 @@ diff -uNrp linux-2.6.12/lib/kernel_lock.c linux-2.6.12-adeos/lib/kernel_lock.c
  	int this_cpu = __smp_processor_id();
  	cpumask_t this_mask;
 +#endif /* CONFIG_ADEOS_CORE */
- 
+
  	if (likely(preempt_count))
  		goto out;
 diff -uNrp linux-2.6.12/mm/vmalloc.c linux-2.6.12-adeos/mm/vmalloc.c
 --- linux-2.6.12/mm/vmalloc.c	2005-06-17 21:48:29.000000000 +0200
 +++ linux-2.6.12-adeos/mm/vmalloc.c	2005-06-19 11:55:42.000000000 +0200
 @@ -18,6 +18,9 @@
- 
+
  #include <asm/uaccess.h>
  #include <asm/tlbflush.h>
 +#ifdef CONFIG_ADEOS_CORE
 +#include <asm/pgalloc.h>
 +#endif /* CONFIG_ADEOS_CORE */
- 
- 
+
+
  DEFINE_RWLOCK(vmlist_lock);
-@@ -148,10 +151,17 @@ int map_vm_area(struct vm_struct *area, 
+@@ -148,10 +151,17 @@ int map_vm_area(struct vm_struct *area,
  	pgd = pgd_offset_k(addr);
  	spin_lock(&init_mm.page_table_lock);
  	do {

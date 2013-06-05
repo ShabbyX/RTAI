@@ -287,7 +287,7 @@ extern unsigned long io_apic_irqs;
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -331,7 +331,7 @@ unsigned rt_startup_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -380,7 +380,7 @@ static inline void _rt_enable_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -412,7 +412,7 @@ void rt_enable_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -453,7 +453,7 @@ void rt_disable_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -503,7 +503,7 @@ static inline void _rt_end_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -538,7 +538,7 @@ void rt_unmask_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -747,7 +747,7 @@ void rt_pend_linux_srq (unsigned srq)
 irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_regs *regs)
 {
 	return RTAI_LINUX_IRQ_HANDLED;
-} 
+}
 
 #define REQUEST_LINUX_IRQ_BROADCAST_TO_APIC_TIMERS()  0
 
@@ -888,7 +888,7 @@ int rt_request_timer (void (*handler)(void), unsigned tick, int unused)
 	rtai_save_flags_and_cli(flags);
 
 
-   	if (tick > 0) 
+   	if (tick > 0)
 	{
 		rt_times.linux_tick = LATCH;
 		rt_times.tick_time = read_timer_cnt();
@@ -897,8 +897,8 @@ int rt_request_timer (void (*handler)(void), unsigned tick, int unused)
 		rt_times.periodic_tick = tick;
 
 		rt_set_timer_delay(tick);
-	} 
-	else 
+	}
+	else
 	{
 		rt_times.tick_time = rdtsc();
 		rt_times.linux_tick = imuldiv(LATCH,rtai_tunables.cpu_freq,RTAI_FREQ_8254);
@@ -983,7 +983,7 @@ static int rtai_hirq_dispatcher (unsigned irq, struct pt_regs *regs)
 
 		HAL_LOCK_LINUX();
 		if (rtai_realtime_irq[irq].irq_ack)
-			rtai_realtime_irq[irq].irq_ack(irq); 
+			rtai_realtime_irq[irq].irq_ack(irq);
 		mb();
 		RTAI_SCHED_ISR_LOCK();
 		if (rtai_realtime_irq[irq].retmode && rtai_realtime_irq[irq].handler(irq, rtai_realtime_irq[irq].cookie)) {
@@ -1005,7 +1005,7 @@ static int rtai_hirq_dispatcher (unsigned irq, struct pt_regs *regs)
 		lflags = ROOT_STATUS_VAL(cpuid);
 		ROOT_STATUS_VAL(cpuid) = (1 << IPIPE_STALL_FLAG);
 		if (rtai_realtime_irq[irq].irq_ack)
-			rtai_realtime_irq[irq].irq_ack(irq); 
+			rtai_realtime_irq[irq].irq_ack(irq);
 		mb();
 		hal_pend_uncond(irq, cpuid);
 		ROOT_STATUS_VAL(cpuid) = lflags;

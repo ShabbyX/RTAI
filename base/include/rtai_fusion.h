@@ -20,7 +20,7 @@
 
 /* REMINDER 1: timer types and functions to use
 types:
-FTIME 
+FTIME
 FTIMER_INFO
 functions:
 FTIME ftimer_ns2ticks(FTIME ns)
@@ -65,7 +65,7 @@ void ftask_make_hard_real_time(void)
 
 typedef long long FTIME;
 
-typedef struct ftimer_info 
+typedef struct ftimer_info
 	{ FTIME period; FTIME date; FTIME tsc; } FTIMER_INFO;
 
 #ifdef __cplusplus
@@ -138,7 +138,7 @@ static inline void ftimer_stop(void)
 #define T_LOPRIO  1
 #define T_HIPRIO  99
 
-typedef struct ftask_placeholder 
+typedef struct ftask_placeholder
 	{ unsigned long opaque, opaque2; } FTASK_PLACEHOLDER;
 
 typedef struct ftask_info {

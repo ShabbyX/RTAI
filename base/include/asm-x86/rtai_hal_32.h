@@ -186,7 +186,7 @@ static inline unsigned long long rtai_ulldiv (unsigned long long ull, unsigned l
 static inline int rtai_imuldiv (int i, int mult, int div) {
 
     /* Returns (int)i = (int)i*(int)(mult)/(int)div. */
-    
+
     int dummy;
 
     __asm__ __volatile__ ( \
@@ -293,7 +293,7 @@ struct rtai_realtime_irq_s {
 #define RTAI_APIC_ICOUNT	  ((RTAI_FREQ_APIC + HZ/2)/HZ)
 #define RTAI_COUNTER_2_LATCH      0xfffe
 #define RTAI_LATENCY_8254         CONFIG_RTAI_SCHED_8254_LATENCY
-#define RTAI_SETUP_TIME_8254      2011 
+#define RTAI_SETUP_TIME_8254      2011
 
 #define RTAI_CALIBRATED_APIC_FREQ 0
 #define RTAI_FREQ_APIC            (rtai_tunables.apic_freq)
@@ -633,7 +633,7 @@ static inline void rtai_spin_glock(volatile unsigned long *lock)
 static inline void rtai_spin_gunlock(volatile unsigned long *lock)
 {
 	test_and_clear_bit(31, lock);
-	cpu_relax(); 
+	cpu_relax();
 }
 
 #endif
@@ -828,7 +828,7 @@ static inline int rt_save_switch_to_real_time(int cpuid)
 	if (!rtai_linux_context[cpuid].sflags) {
 		_rt_switch_to_real_time(cpuid);
 		return 0;
-	} 
+	}
 	return 1;
 }
 
@@ -856,7 +856,7 @@ static inline unsigned long save_and_set_taskpri(unsigned long taskpri)
 	do { apic_write_around(APIC_TASKPRI, taskpri); } while (0)
 #endif
 
-static inline void rt_set_timer_delay (int delay) 
+static inline void rt_set_timer_delay (int delay)
 {
     if (delay) {
         unsigned long flags;

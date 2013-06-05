@@ -2,9 +2,9 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/Makefile 2.6.22-x86_64/Makefil
 --- 2.6.22/Makefile	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/Makefile	2007-07-13 22:21:49.000000000 +0200
 @@ -490,6 +490,10 @@ endif
- 
+
  include $(srctree)/arch/$(ARCH)/Makefile
- 
+
 +ifdef CONFIG_IPIPE_TRACE_MCOUNT
 +CFLAGS          += -pg
 +endif
@@ -16,9 +16,9 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/Kconfig 2.6.22-x86
 --- 2.6.22/arch/x86_64/Kconfig	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/arch/x86_64/Kconfig	2007-07-13 22:21:50.000000000 +0200
 @@ -332,6 +332,8 @@ config SCHED_MC
- 
+
  source "kernel/Kconfig.preempt"
- 
+
 +source "kernel/ipipe/Kconfig"
 +
  config NUMA
@@ -30,7 +30,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/boot/compressed/mi
 @@ -23,6 +23,12 @@
   * This means that it is not safe to place pointers in static structures.
   */
- 
+
 +#ifdef CONFIG_IPIPE_TRACE_MCOUNT
 +void __attribute__ ((no_instrument_function)) mcount(void)
 +{
@@ -62,7 +62,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/apic.c 2.6.
 -		ack_APIC_irq();
 +		__ack_APIC_irq();
  }
- 
+
  void clear_local_APIC(void)
 @@ -384,7 +384,7 @@ void __cpuinit setup_local_APIC (void)
  		value = apic_read(APIC_ISR + i*0x10);
@@ -72,7 +72,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/apic.c 2.6.
 +				__ack_APIC_irq();
  		}
  	}
- 
+
 @@ -508,9 +508,9 @@ static int lapic_suspend(struct sys_devi
  	if (maxlvt >= 5)
  		apic_pm_state.apic_thmr = apic_read(APIC_LVTTHMR);
@@ -84,11 +84,11 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/apic.c 2.6.
 +	local_irq_restore_hw(flags);
  	return 0;
  }
- 
+
 @@ -525,7 +525,7 @@ static int lapic_resume(struct sys_devic
- 
+
  	maxlvt = get_maxlvt();
- 
+
 -	local_irq_save(flags);
 +	local_irq_save_hw(flags);
  	rdmsr(MSR_IA32_APICBASE, l, h);
@@ -102,14 +102,14 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/apic.c 2.6.
 +	local_irq_restore_hw(flags);
  	return 0;
  }
- 
+
 @@ -786,7 +786,7 @@ static void setup_APIC_timer(unsigned in
  {
  	unsigned long flags;
- 
+
 -	local_irq_save(flags);
 +	local_irq_save_hw(flags);
- 
+
  	/* wait for irq slice */
   	if (hpet_address && hpet_use_timer) {
 @@ -818,7 +818,7 @@ static void setup_APIC_timer(unsigned in
@@ -119,29 +119,29 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/apic.c 2.6.
 -	local_irq_restore(flags);
 +	local_irq_restore_hw(flags);
  }
- 
+
  /*
 @@ -889,7 +889,11 @@ void __init setup_boot_APIC_clock (void)
  	printk(KERN_INFO "Using local APIC timer interrupts.\n");
  	using_apic_timer = 1;
- 
+
 -	local_irq_disable();
 +#ifdef CONFIG_IPIPE
 +	__ipipe_tick_irq = ipipe_apic_vector_irq(LOCAL_TIMER_VECTOR);
 +#endif
 +
 +	local_irq_disable_hw();
- 
+
  	calibration_result = calibrate_APIC_clock();
  	/*
 @@ -897,13 +901,15 @@ void __init setup_boot_APIC_clock (void)
  	 */
  	setup_APIC_timer(calibration_result);
- 
+
 +	local_irq_enable_hw();
  	local_irq_enable();
  }
- 
+
  void __cpuinit setup_secondary_APIC_clock(void)
  {
 -	local_irq_disable(); /* FIXME: Do we need this? --RR */
@@ -150,7 +150,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/apic.c 2.6.
 +	local_irq_enable_hw();
  	local_irq_enable();
  }
- 
+
 @@ -1014,8 +1020,12 @@ void smp_local_timer_interrupt(void)
  {
  	profile_tick(CPU_PROFILING);
@@ -170,9 +170,9 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/apic.c 2.6.
  	if (v & (1 << (SPURIOUS_APIC_VECTOR & 0x1f)))
 -		ack_APIC_irq();
 +		__ack_APIC_irq();
- 
+
  #if 0
- 	static unsigned long last_warning; 
+ 	static unsigned long last_warning;
 diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6.22-x86_64/arch/x86_64/kernel/entry.S
 --- 2.6.22/arch/x86_64/kernel/entry.S	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/arch/x86_64/kernel/entry.S	2007-07-13 22:21:50.000000000 +0200
@@ -181,9 +181,9 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
  #include <asm/page.h>
  #include <asm/irqflags.h>
 +#include <asm/ipipe.h>
- 
+
  	.code64
- 
+
 +#ifdef CONFIG_IPIPE
 +#define ENABLE_INTERRUPTS_HW_COND	sti
 +#define PREEMPT_SCHEDULE_IRQ		call __ipipe_preempt_schedule_irq_thunk;  \
@@ -206,7 +206,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
  	GET_THREAD_INFO(%rcx)
  	testl $(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT),threadinfo_flags(%rcx)
 @@ -228,6 +240,17 @@ ENTRY(system_call)
- 	movq  %rax,ORIG_RAX-ARGOFFSET(%rsp) 
+ 	movq  %rax,ORIG_RAX-ARGOFFSET(%rsp)
  	movq  %rcx,RIP-ARGOFFSET(%rsp)
  	CFI_REL_OFFSET rip,RIP-ARGOFFSET
 +#ifdef CONFIG_IPIPE
@@ -247,7 +247,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
 +#endif
  	call \func
  	.endm
- 
+
 +#ifdef CONFIG_IPIPE
 +
 +	/* %rdi=negated _vector_ number, %rsi=handler */
@@ -323,9 +323,9 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
  	 */
 -	cli
  	TRACE_IRQS_IRETQ
- 	swapgs 
+ 	swapgs
  	jmp restore_args
- 
+
  retint_restore_args:				
 -	cli
 +	TRACE_IRQS_IRETQ
@@ -344,7 +344,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
 +	PREEMPT_SCHEDULE_IRQ
  	jmp exit_intr
  #endif	
- 
+
 @@ -634,7 +727,27 @@ END(common_interrupt)
  	
  /*
@@ -379,7 +379,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
  	CFI_ENDPROC
  	.endm
 +#endif /* !CONFIG_IPIPE */	
- 
+
  ENTRY(thermal_interrupt)
  	apicinterrupt THERMAL_APIC_VECTOR,smp_thermal_interrupt
 @@ -667,10 +781,12 @@ END(invalidate_interrupt\num)
@@ -392,7 +392,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
  	INVALIDATE_ENTRY 6
  	INVALIDATE_ENTRY 7
 +#endif /* !CONFIG_IPIPE */	
- 
+
  ENTRY(call_function_interrupt)
  	apicinterrupt CALL_FUNCTION_VECTOR,smp_call_function_interrupt
 @@ -695,31 +811,39 @@ END(spurious_interrupt)
@@ -402,12 +402,12 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
 -	.macro zeroentry sym
 +	.macro zeroentry sym, ex_code
  	INTR_FRAME
- 	pushq $0	/* push error code/oldrax */ 
+ 	pushq $0	/* push error code/oldrax */
  	CFI_ADJUST_CFA_OFFSET 8
- 	pushq %rax	/* push real oldrax to the rdi slot */ 
+ 	pushq %rax	/* push real oldrax to the rdi slot */
  	CFI_ADJUST_CFA_OFFSET 8
  	CFI_REL_OFFSET rax,0
-+#ifdef CONFIG_IPIPE    
++#ifdef CONFIG_IPIPE
 +	movq $\ex_code,%rax
 +#else
  	leaq  \sym(%rip),%rax
@@ -415,14 +415,14 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
  	jmp error_entry
  	CFI_ENDPROC
  	.endm	
- 
+
 -	.macro errorentry sym
 +	.macro errorentry sym, ex_code
  	XCPT_FRAME
  	pushq %rax
  	CFI_ADJUST_CFA_OFFSET 8
  	CFI_REL_OFFSET rax,0
-+#ifdef CONFIG_IPIPE    
++#ifdef CONFIG_IPIPE
 +	movq $\ex_code,%rax
 +#else
  	leaq  \sym(%rip),%rax
@@ -430,7 +430,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
  	jmp error_entry
  	CFI_ENDPROC
  	.endm
- 
+
  	/* error code is on the stack already */
  	/* handle NMI like exceptions that can happen everywhere */
 -	.macro paranoidentry sym, ist=0, irqtrace=1
@@ -466,7 +466,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
 +#endif	
 +3:	
  	.endm
- 
+
  	/*
 @@ -766,6 +906,10 @@ END(spurious_interrupt)
  paranoid_exit\trace:
@@ -481,7 +481,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
  paranoid_swapgs\trace:
 @@ -865,7 +1009,19 @@ error_sti:	
  	movq %rsp,%rdi
- 	movq ORIG_RAX(%rsp),%rsi	/* get error code */ 
+ 	movq ORIG_RAX(%rsp),%rsi	/* get error code */
  	movq $-1,ORIG_RAX(%rsp)
 +#ifdef CONFIG_IPIPE
 +	movq %rax, %rdx
@@ -496,14 +496,14 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
 +#else /* !CONFIG_IPIPE */
  	call *%rax
 +#endif /* !CONFIG_IPIPE */
- 	/* ebx:	no swapgs flag (1: don't need swapgs, 0: need it) */	 
+ 	/* ebx:	no swapgs flag (1: don't need swapgs, 0: need it) */	
  error_exit:		
  	movl %ebx,%eax		
 @@ -883,7 +1039,9 @@ error_exit:		
  	 * The iret might restore flags:
  	 */
  	TRACE_IRQS_IRETQ
--	swapgs 
+-	swapgs
 +exit_swap:
 +	swapgs
 +exit_noswap:	
@@ -512,27 +512,27 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
  	CFI_ENDPROC
 @@ -1025,19 +1183,19 @@ ENTRY(kernel_execve)
  ENDPROC(kernel_execve)
- 
+
  KPROBE_ENTRY(page_fault)
 -	errorentry do_page_fault
 +	errorentry do_page_fault ex_page_fault
  KPROBE_END(page_fault)
- 
+
  ENTRY(coprocessor_error)
 -	zeroentry do_coprocessor_error
 +	zeroentry do_coprocessor_error ex_coprocessor_error
  END(coprocessor_error)
- 
+
  ENTRY(simd_coprocessor_error)
 -	zeroentry do_simd_coprocessor_error	
 +	zeroentry do_simd_coprocessor_error ex_simd_coprocessor_error
  END(simd_coprocessor_error)
- 
+
  ENTRY(device_not_available)
 -	zeroentry math_state_restore
 +	zeroentry math_state_restore ex_math_state_restore
  END(device_not_available)
- 
+
  	/* runs on exception stack */
 @@ -1045,7 +1203,7 @@ KPROBE_ENTRY(debug)
   	INTR_FRAME
@@ -542,7 +542,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
 +	paranoidentry do_debug, DEBUG_STACK, 1, ex_debug
  	paranoidexit
  KPROBE_END(debug)
- 
+
 @@ -1067,29 +1225,29 @@ KPROBE_ENTRY(int3)
   	INTR_FRAME
   	pushq $0
@@ -552,70 +552,70 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/entry.S 2.6
   	jmp paranoid_exit1
   	CFI_ENDPROC
  KPROBE_END(int3)
- 
+
  ENTRY(overflow)
 -	zeroentry do_overflow
 +	zeroentry do_overflow ex_overflow
  END(overflow)
- 
+
  ENTRY(bounds)
 -	zeroentry do_bounds
 +	zeroentry do_bounds ex_bounds
  END(bounds)
- 
+
  ENTRY(invalid_op)
 -	zeroentry do_invalid_op	
 +	zeroentry do_invalid_op ex_invalid_op
  END(invalid_op)
- 
+
  ENTRY(coprocessor_segment_overrun)
 -	zeroentry do_coprocessor_segment_overrun
 +	zeroentry do_coprocessor_segment_overrun ex_coprocessor_segment_overrun
  END(coprocessor_segment_overrun)
- 
+
  ENTRY(reserved)
 -	zeroentry do_reserved
 +	zeroentry do_reserved ex_reserved
  END(reserved)
- 
+
  	/* runs on exception stack */
 @@ -1101,11 +1259,11 @@ ENTRY(double_fault)
  END(double_fault)
- 
+
  ENTRY(invalid_TSS)
 -	errorentry do_invalid_TSS
 +	errorentry do_invalid_TSS ex_invalid_TSS
  END(invalid_TSS)
- 
+
  ENTRY(segment_not_present)
 -	errorentry do_segment_not_present
 +	errorentry do_segment_not_present ex_segment_not_present
  END(segment_not_present)
- 
+
  	/* runs on exception stack */
 @@ -1117,19 +1275,19 @@ ENTRY(stack_segment)
  END(stack_segment)
- 
+
  KPROBE_ENTRY(general_protection)
 -	errorentry do_general_protection
 +	errorentry do_general_protection ex_general_protection
  KPROBE_END(general_protection)
- 
+
  ENTRY(alignment_check)
 -	errorentry do_alignment_check
 +	errorentry do_alignment_check ex_alignment_check
  END(alignment_check)
- 
+
  ENTRY(divide_error)
 -	zeroentry do_divide_error
 +	zeroentry do_divide_error ex_divide_error
  END(divide_error)
- 
+
  ENTRY(spurious_interrupt_bug)
 -	zeroentry do_spurious_interrupt_bug
 +	zeroentry do_spurious_interrupt_bug ex_spurious_interrupt_bug
  END(spurious_interrupt_bug)
- 
+
  #ifdef CONFIG_X86_MCE
 diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/genapic_flat.c 2.6.22-x86_64/arch/x86_64/kernel/genapic_flat.c
 --- 2.6.22/arch/x86_64/kernel/genapic_flat.c	2007-07-09 01:32:17.000000000 +0200
@@ -623,14 +623,14 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/genapic_fla
 @@ -64,9 +64,9 @@ static void flat_send_IPI_mask(cpumask_t
  	unsigned long mask = cpus_addr(cpumask)[0];
  	unsigned long flags;
- 
+
 -	local_irq_save(flags);
 +	local_irq_save_hw(flags);
  	__send_IPI_dest_field(mask, vector, APIC_DEST_LOGICAL);
 -	local_irq_restore(flags);
 +	local_irq_restore_hw(flags);
  }
- 
+
  static void flat_send_IPI_allbutself(int vector)
 diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/head64.c 2.6.22-x86_64/arch/x86_64/kernel/head64.c
 --- 2.6.22/arch/x86_64/kernel/head64.c	2007-07-09 01:32:17.000000000 +0200
@@ -638,27 +638,27 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/head64.c 2.
 @@ -58,7 +58,7 @@ static void __init copy_bootdata(char *r
  	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
  }
- 
+
 -void __init x86_64_start_kernel(char * real_mode_data)
 +void __init notrace x86_64_start_kernel(char * real_mode_data)
  {
  	int i;
- 
+
 diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/i8259.c 2.6.22-x86_64/arch/x86_64/kernel/i8259.c
 --- 2.6.22/arch/x86_64/kernel/i8259.c	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/arch/x86_64/kernel/i8259.c	2007-07-13 22:21:50.000000000 +0200
 @@ -96,7 +96,7 @@ static void (*interrupt[NR_VECTORS - FIR
   */
- 
+
  static int i8259A_auto_eoi;
 -DEFINE_SPINLOCK(i8259A_lock);
 +IPIPE_DEFINE_SPINLOCK(i8259A_lock);
  static void mask_and_ack_8259A(unsigned int);
- 
+
  static struct irq_chip i8259A_chip = {
 @@ -137,6 +137,7 @@ void disable_8259A_irq(unsigned int irq)
  	unsigned long flags;
- 
+
  	spin_lock_irqsave(&i8259A_lock, flags);
 +	ipipe_irq_lock(irq);
  	cached_irq_mask |= mask;
@@ -666,7 +666,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/i8259.c 2.6
  		outb(cached_A1,0xA1);
 @@ -151,11 +152,14 @@ void enable_8259A_irq(unsigned int irq)
  	unsigned long flags;
- 
+
  	spin_lock_irqsave(&i8259A_lock, flags);
 -	cached_irq_mask &= mask;
 -	if (irq & 8)
@@ -683,7 +683,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/i8259.c 2.6
 +	}
  	spin_unlock_irqrestore(&i8259A_lock, flags);
  }
- 
+
 @@ -530,10 +534,12 @@ void __init init_IRQ(void)
  	set_intr_gate(INVALIDATE_TLB_VECTOR_START+1, invalidate_interrupt1);
  	set_intr_gate(INVALIDATE_TLB_VECTOR_START+2, invalidate_interrupt2);
@@ -694,7 +694,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/i8259.c 2.6
  	set_intr_gate(INVALIDATE_TLB_VECTOR_START+6, invalidate_interrupt6);
  	set_intr_gate(INVALIDATE_TLB_VECTOR_START+7, invalidate_interrupt7);
 +#endif /* !CONFIG_IPIPE */
- 
+
  	/* IPI for generic function call */
  	set_intr_gate(CALL_FUNCTION_VECTOR, call_function_interrupt);
 diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/io_apic.c 2.6.22-x86_64/arch/x86_64/kernel/io_apic.c
@@ -703,40 +703,40 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/io_apic.c 2
 @@ -90,8 +90,8 @@ int timer_over_8254 __initdata = 1;
  /* Where if anywhere is the i8259 connect in external int mode */
  static struct { int pin, apic; } ioapic_i8259 = { -1, -1 };
- 
+
 -static DEFINE_SPINLOCK(ioapic_lock);
 -DEFINE_SPINLOCK(vector_lock);
 +static IPIPE_DEFINE_SPINLOCK(ioapic_lock);
 +IPIPE_DEFINE_SPINLOCK(vector_lock);
- 
+
  /*
   * # of IRQ routing registers
 @@ -332,6 +332,7 @@ static void mask_IO_APIC_irq (unsigned i
  	unsigned long flags;
- 
+
  	spin_lock_irqsave(&ioapic_lock, flags);
 +	ipipe_irq_lock(irq);
  	__mask_IO_APIC_irq(irq);
  	spin_unlock_irqrestore(&ioapic_lock, flags);
  }
 @@ -342,6 +343,7 @@ static void unmask_IO_APIC_irq (unsigned
- 
+
  	spin_lock_irqsave(&ioapic_lock, flags);
  	__unmask_IO_APIC_irq(irq);
 +	ipipe_irq_unlock(irq);
  	spin_unlock_irqrestore(&ioapic_lock, flags);
  }
- 
+
 @@ -1303,6 +1305,7 @@ static unsigned int startup_ioapic_irq(u
  			was_pending = 1;
  	}
  	__unmask_IO_APIC_irq(irq);
 +	ipipe_irq_unlock(irq);
  	spin_unlock_irqrestore(&ioapic_lock, flags);
- 
+
  	return was_pending;
 @@ -1393,13 +1396,16 @@ static inline void irq_complete_move(uns
- 
+
  static void ack_apic_edge(unsigned int irq)
  {
 +#ifndef CONFIG_IPIPE
@@ -746,14 +746,14 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/io_apic.c 2
 +#endif
 +	__ack_APIC_irq();
  }
- 
+
  static void ack_apic_level(unsigned int irq)
  {
 +#ifndef CONFIG_IPIPE
  	int do_unmask_irq = 0;
- 
+
  	irq_complete_move(irq);
-@@ -1421,6 +1427,9 @@ static void ack_apic_level(unsigned int 
+@@ -1421,6 +1427,9 @@ static void ack_apic_level(unsigned int
  	move_masked_irq(irq);
  	if (unlikely(do_unmask_irq))
  		unmask_IO_APIC_irq(irq);
@@ -761,16 +761,16 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/io_apic.c 2
 +	__ack_APIC_irq();
 +#endif /* CONFIG_IPIPE */
  }
- 
+
  static struct irq_chip ioapic_chip __read_mostly = {
-@@ -1486,7 +1495,7 @@ static void disable_lapic_irq (unsigned 
- 
+@@ -1486,7 +1495,7 @@ static void disable_lapic_irq (unsigned
+
  static void ack_lapic_irq (unsigned int irq)
  {
 -	ack_APIC_irq();
 +	__ack_APIC_irq();
  }
- 
+
  static void end_lapic_irq (unsigned int i) { /* nothing */ }
 @@ -2145,3 +2154,11 @@ void __init setup_ioapic_dest(void)
  	}
@@ -1689,13 +1689,13 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/nmi.c 2.6.2
 +
 +int (*nmi_watchdog_tick) (struct pt_regs * regs, unsigned reason) = &default_nmi_watchdog_tick;
 +EXPORT_SYMBOL(nmi_watchdog_tick);
- 
+
  static cpumask_t backtrace_mask = CPU_MASK_NONE;
- 
+
 @@ -313,7 +317,7 @@ void touch_nmi_watchdog (void)
   	touch_softlockup_watchdog();
  }
- 
+
 -int __kprobes nmi_watchdog_tick(struct pt_regs * regs, unsigned reason)
 +static int __kprobes default_nmi_watchdog_tick(struct pt_regs * regs, unsigned reason)
  {
@@ -1705,13 +1705,13 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/process.c 2
 --- 2.6.22/arch/x86_64/kernel/process.c	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/arch/x86_64/kernel/process.c	2007-07-13 22:21:50.000000000 +0200
 @@ -54,6 +54,8 @@
- 
+
  asmlinkage extern void ret_from_fork(void);
- 
+
 +asmlinkage extern void thread_return(void);
 +
  unsigned long kernel_thread_flags = CLONE_VM | CLONE_UNTRACED;
- 
+
  unsigned long boot_option_idle_override = 0;
 @@ -220,6 +222,7 @@ void cpu_idle (void)
  			 */
@@ -1724,32 +1724,32 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/process.c 2
 @@ -476,6 +479,7 @@ int copy_thread(int nr, unsigned long cl
  	p->thread.rsp = (unsigned long) childregs;
  	p->thread.rsp0 = (unsigned long) (childregs+1);
- 	p->thread.userrsp = me->thread.userrsp; 
+ 	p->thread.userrsp = me->thread.userrsp;
 +	p->thread.rip = (unsigned long) thread_return;
- 
+
  	set_tsk_thread_flag(p, TIF_FORK);
- 
-@@ -573,7 +577,7 @@ __switch_to(struct task_struct *prev_p, 
+
+@@ -573,7 +577,7 @@ __switch_to(struct task_struct *prev_p,
  {
  	struct thread_struct *prev = &prev_p->thread,
  				 *next = &next_p->thread;
--	int cpu = smp_processor_id();  
-+	int cpu = raw_smp_processor_id();  
+-	int cpu = smp_processor_id();
++	int cpu = raw_smp_processor_id();
  	struct tss_struct *tss = &per_cpu(init_tss, cpu);
- 
+
  	/* we're going to use this soon, after a few expensive things */
 diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/setup64.c 2.6.22-x86_64/arch/x86_64/kernel/setup64.c
 --- 2.6.22/arch/x86_64/kernel/setup64.c	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/arch/x86_64/kernel/setup64.c	2007-07-13 22:21:50.000000000 +0200
 @@ -114,7 +114,7 @@ void __init setup_per_cpu_areas(void)
  	}
- } 
- 
+ }
+
 -void pda_init(int cpu)
 +void notrace pda_init(int cpu)
- { 
+ {
  	struct x8664_pda *pda = cpu_pda(cpu);
- 
+
 @@ -191,7 +191,7 @@ unsigned long kernel_eflags;
   * 'CPU state barrier', nothing should get across.
   * A lot of state is already set up in PDA init.
@@ -1769,7 +1769,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/smp.c 2.6.2
 +	unsigned long flags;
 +
 + 	local_irq_save_hw_cond(flags);
- 
+
  	cpu = smp_processor_id();
  	/*
 @@ -163,6 +166,7 @@ asmlinkage void smp_invalidate_interrupt
@@ -1778,19 +1778,19 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/smp.c 2.6.2
  	cpu_clear(cpu, f->flush_cpumask);
 + 	local_irq_restore_hw_cond(flags);
  }
- 
+
  static void flush_tlb_others(cpumask_t cpumask, struct mm_struct *mm,
 @@ -213,14 +217,17 @@ void flush_tlb_current_task(void)
  {
  	struct mm_struct *mm = current->mm;
  	cpumask_t cpu_mask;
 +	unsigned long flags;
- 
+
  	preempt_disable();
 +	local_irq_save_hw_cond(flags);
  	cpu_mask = mm->cpu_vm_mask;
  	cpu_clear(smp_processor_id(), cpu_mask);
- 
+
  	local_flush_tlb();
  	if (!cpus_empty(cpu_mask))
  		flush_tlb_others(cpu_mask, mm, FLUSH_ALL);
@@ -1804,23 +1804,23 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/smp.c 2.6.2
  	struct mm_struct *mm = vma->vm_mm;
 +	unsigned long flags;
  	cpumask_t cpu_mask;
- 
+
  	preempt_disable();
 +	local_irq_save_hw_cond(flags);
  	cpu_mask = mm->cpu_vm_mask;
  	cpu_clear(smp_processor_id(), cpu_mask);
- 
+
 @@ -262,6 +271,8 @@ void flush_tlb_page(struct vm_area_struc
  		 	leave_mm(smp_processor_id());
  	}
- 
+
 +	local_irq_restore_hw_cond(flags);
 +
  	if (!cpus_empty(cpu_mask))
  		flush_tlb_others(cpu_mask, mm, va);
- 
+
 @@ -453,7 +464,7 @@ EXPORT_SYMBOL(smp_call_function);
- 
+
  static void stop_this_cpu(void *dummy)
  {
 -	local_irq_disable();
@@ -1849,23 +1849,23 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/smpboot.c 2
  	check_tsc_sync_source(cpu);
 -	local_irq_restore(flags);
 +	local_irq_restore_hw(flags);
- 
+
  	while (!cpu_isset(cpu, cpu_online_map))
  		cpu_relax();
 diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/time.c 2.6.22-x86_64/arch/x86_64/kernel/time.c
 --- 2.6.22/arch/x86_64/kernel/time.c	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/arch/x86_64/kernel/time.c	2007-07-13 22:21:50.000000000 +0200
 @@ -49,7 +49,7 @@ static char *timename = NULL;
- 
+
  DEFINE_SPINLOCK(rtc_lock);
  EXPORT_SYMBOL(rtc_lock);
 -DEFINE_SPINLOCK(i8253_lock);
 +IPIPE_DEFINE_SPINLOCK(i8253_lock);
- 
+
  volatile unsigned long __jiffies __section_jiffies = INITIAL_JIFFIES;
- 
+
 @@ -160,8 +160,12 @@ void main_timer_handler(void)
- 
+
  	do_timer(1);
  #ifndef CONFIG_SMP
 +#ifdef CONFIG_IPIPE
@@ -1874,7 +1874,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/time.c 2.6.
  	update_process_times(user_mode(get_irq_regs()));
  #endif
 +#endif
- 
+
  /*
   * In the SMP case we use the local APIC timer interrupt to do the profiling,
 diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/traps.c 2.6.22-x86_64/arch/x86_64/kernel/traps.c
@@ -1891,11 +1891,11 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/traps.c 2.6
 +#endif /* CONFIG_IPIPE */
  	printk("Process %s (pid: %d, threadinfo %p, task %p)\n",
  		cur->comm, cur->pid, task_thread_info(cur), cur);
- 
+
 @@ -558,6 +563,8 @@ void __kprobes die_nmi(char *str, struct
  	do_exit(SIGSEGV);
  }
- 
+
 +EXPORT_SYMBOL(die_nmi);
 +
  static void __kprobes do_trap(int trapnr, int signr, char *str,
@@ -1906,10 +1906,10 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/traps.c 2.6
  {
  	struct task_struct *me = current;
 +	unsigned long flags;
-+ 
++
 +	local_irq_save_hw_cond(flags);
  	clts();			/* Allow maths ops (or we recurse) */
- 
+
  	if (!used_math())
 @@ -1065,6 +1075,7 @@ asmlinkage void math_state_restore(void)
  	restore_fpu_checking(&me->thread.i387.fxsave);
@@ -1917,7 +1917,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/traps.c 2.6
  	me->fpu_counter++;
 +	local_irq_restore_hw_cond(flags);
  }
- 
+
  void __init trap_init(void)
 diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/vsyscall.c 2.6.22-x86_64/arch/x86_64/kernel/vsyscall.c
 --- 2.6.22/arch/x86_64/kernel/vsyscall.c	2007-07-09 01:32:17.000000000 +0200
@@ -1925,7 +1925,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/kernel/vsyscall.c 
 @@ -43,7 +43,7 @@
  #include <asm/desc.h>
  #include <asm/topology.h>
- 
+
 -#define __vsyscall(nr) __attribute__ ((unused,__section__(".vsyscall_" #nr)))
 +#define __vsyscall(nr) __attribute__ ((unused,__section__(".vsyscall_" #nr))) notrace
  #define __syscall_clobber "r11","rcx","memory"
@@ -1959,7 +1959,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/mm/fault.c 2.6.22-
 @@ -301,6 +301,25 @@ static int vmalloc_fault(unsigned long a
  	return 0;
  }
- 
+
 +#ifdef CONFIG_IPIPE
 +
 +int __ipipe_pin_range_mapping(struct mm_struct *mm,
@@ -1981,16 +1981,16 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/arch/x86_64/mm/fault.c 2.6.22-
 +
  int page_fault_trace = 0;
  int exception_trace = 1;
- 
+
 @@ -328,6 +347,8 @@ asmlinkage void __kprobes do_page_fault(
  	/* get the address */
  	__asm__("movq %%cr2,%0":"=r" (address));
- 
+
 +	local_irq_enable_hw_cond();
 +
  	info.si_code = SEGV_MAPERR;
- 
- 
+
+
 diff --exclude .pc --exclude patches -uNrp 2.6.22/drivers/pci/htirq.c 2.6.22-x86_64/drivers/pci/htirq.c
 --- 2.6.22/drivers/pci/htirq.c	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/drivers/pci/htirq.c	2007-07-13 22:21:49.000000000 +0200
@@ -2000,7 +2000,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/drivers/pci/htirq.c 2.6.22-x86
   */
 -static DEFINE_SPINLOCK(ht_irq_lock);
 +static IPIPE_DEFINE_SPINLOCK(ht_irq_lock);
- 
+
  struct ht_irq_cfg {
  	struct pci_dev *dev;
 diff --exclude .pc --exclude patches -uNrp 2.6.22/drivers/serial/8250.c 2.6.22-x86_64/drivers/serial/8250.c
@@ -2009,7 +2009,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/drivers/serial/8250.c 2.6.22-x
 @@ -2514,6 +2514,51 @@ static int __init serial8250_console_set
  	return uart_set_options(port, co, baud, parity, bits, flow);
  }
- 
+
 +#ifdef CONFIG_IPIPE
 +
 +#include <stdarg.h>
@@ -2064,7 +2064,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/apic.h 2.6.
 @@ -51,7 +51,13 @@ static __inline unsigned int apic_read(u
  extern void apic_wait_icr_idle(void);
  extern unsigned int safe_apic_wait_icr_idle(void);
- 
+
 +#ifdef CONFIG_IPIPE
 +#define ack_APIC_irq() do { } while(0)
 +static inline void __ack_APIC_irq(void)
@@ -2090,10 +2090,10 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/hw_irq.h 2.
 +#else /* !CONFIG_IPIPE */
  #define INVALIDATE_TLB_VECTOR_END	0xf7
  #define INVALIDATE_TLB_VECTOR_START	0xf0	/* f0-f7 used for TLB flush */
- 
+
  #define NUM_INVALIDATE_TLB_VECTORS	8
 +#endif /* !CONFIG_IPIPE */
- 
+
  /*
   * Local APIC timer IRQ vector is on a different priority level,
 @@ -98,7 +105,7 @@
@@ -2102,19 +2102,19 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/hw_irq.h 2.
  extern void __setup_vector_irq(int cpu);
 -extern spinlock_t vector_lock;
 +extern ipipe_spinlock_t vector_lock;
- 
+
  /*
   * Various low-level irq details needed by irq.c, process.c,
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/io_apic.h 2.6.22-x86_64/include/asm-x86_64/io_apic.h
 --- 2.6.22/include/asm-x86_64/io_apic.h	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/include/asm-x86_64/io_apic.h	2007-07-13 22:21:50.000000000 +0200
-@@ -125,6 +125,6 @@ extern int sis_apic_bug; /* dummy */ 
- 
+@@ -125,6 +125,6 @@ extern int sis_apic_bug; /* dummy */
+
  void enable_NMI_through_LVT0 (void * dummy);
- 
+
 -extern spinlock_t i8259A_lock;
 +extern ipipe_spinlock_t i8259A_lock;
- 
+
  #endif
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/ipi.h 2.6.22-x86_64/include/asm-x86_64/ipi.h
 --- 2.6.22/include/asm-x86_64/ipi.h	2007-07-09 01:32:17.000000000 +0200
@@ -2126,7 +2126,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/ipi.h 2.6.2
 +	unsigned long flags;
 +
 +	local_irq_save_hw(flags);
- 
+
  	/*
  	 * Wait for idle.
 @@ -72,6 +75,8 @@ static inline void __send_IPI_shortcut(u
@@ -2136,7 +2136,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/ipi.h 2.6.2
 +
 +	local_irq_restore_hw(flags);
  }
- 
+
  /*
 @@ -117,12 +122,12 @@ static inline void send_IPI_mask_sequenc
  	 * to an arbitrary mask, so I do a unicast to each CPU instead.
@@ -2151,7 +2151,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/ipi.h 2.6.2
 -	local_irq_restore(flags);
 +	local_irq_restore_hw(flags);
  }
- 
+
  #endif /* __ASM_IPI_H */
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/ipipe.h 2.6.22-x86_64/include/asm-x86_64/ipipe.h
 --- 2.6.22/include/asm-x86_64/ipipe.h	1970-01-01 01:00:00.000000000 +0100
@@ -2403,14 +2403,14 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/irqflags.h 
 @@ -16,10 +16,16 @@
   * Interrupt control:
   */
- 
+
 +#include <linux/ipipe_base.h>
 +#include <linux/ipipe_trace.h>
 +
  static inline unsigned long __raw_local_save_flags(void)
  {
  	unsigned long flags;
- 
+
 +#ifdef CONFIG_IPIPE
 +	flags = (!__ipipe_test_root()) << 9;
 +#else
@@ -2422,11 +2422,11 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/irqflags.h 
  		: "memory"
  	);
 +#endif
- 
+
  	return flags;
  }
 @@ -36,12 +43,16 @@ static inline unsigned long __raw_local_
- 
+
  static inline void raw_local_irq_restore(unsigned long flags)
  {
 +#ifdef CONFIG_IPIPE
@@ -2440,10 +2440,10 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/irqflags.h 
  	);
 +#endif
  }
- 
+
  #ifdef CONFIG_X86_VSMP
 @@ -73,12 +84,21 @@ static inline int raw_irqs_disabled_flag
- 
+
  static inline void raw_local_irq_disable(void)
  {
 +#ifdef CONFIG_IPIPE
@@ -2453,7 +2453,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/irqflags.h 
  	__asm__ __volatile__("cli" : : : "memory");
 +#endif
  }
- 
+
  static inline void raw_local_irq_enable(void)
  {
 +#ifdef CONFIG_IPIPE
@@ -2462,19 +2462,19 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/irqflags.h 
  	__asm__ __volatile__("sti" : : : "memory");
 +#endif
  }
- 
+
  static inline int raw_irqs_disabled_flags(unsigned long flags)
 @@ -101,8 +121,10 @@ static inline unsigned long __raw_local_
  	return flags;
  }
- 
+
 -#define raw_local_irq_save(flags) \
 -		do { (flags) = __raw_local_irq_save(); } while (0)
 +#define raw_local_irq_save(flags) do {			\
 +		ipipe_check_context(ipipe_root_domain);	\
 +		(flags) = __raw_local_irq_save();	\
 +	} while (0)
- 
+
  static inline int raw_irqs_disabled(void)
  {
 @@ -117,6 +139,12 @@ static inline int raw_irqs_disabled(void
@@ -2489,11 +2489,11 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/irqflags.h 
 +#endif
  	__asm__ __volatile__("sti; hlt" : : : "memory");
  }
- 
+
 @@ -129,13 +157,103 @@ static inline void halt(void)
  	__asm__ __volatile__("hlt": : :"memory");
  }
- 
+
 +static inline unsigned long raw_mangle_irq_bits(int virt, unsigned long real)
 +{
 +	/* Merge virtual and real interrupt mask bits into a single
@@ -2597,14 +2597,14 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/irqflags.h 
 +#  define TRACE_IRQS_OFF	IPIPE_TRACE_IRQS_OFF
  # endif
  #endif
- 
+
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/mmu_context.h 2.6.22-x86_64/include/asm-x86_64/mmu_context.h
 --- 2.6.22/include/asm-x86_64/mmu_context.h	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/include/asm-x86_64/mmu_context.h	2007-07-13 22:21:50.000000000 +0200
 @@ -67,8 +67,12 @@ static inline void switch_mm(struct mm_s
  	asm volatile("movl %0,%%fs"::"r"(0));  \
  } while(0)
- 
+
 -#define activate_mm(prev, next) \
 -	switch_mm((prev),(next),NULL)
 -
@@ -2615,7 +2615,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/mmu_context
 +		switch_mm((prev),(next),NULL);	   \
 +		local_irq_restore_hw_cond(flags);  \
 +	} while(0)
- 
+
  #endif
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/nmi.h 2.6.22-x86_64/include/asm-x86_64/nmi.h
 --- 2.6.22/include/asm-x86_64/nmi.h	2007-07-09 01:32:17.000000000 +0200
@@ -2626,7 +2626,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/nmi.h 2.6.2
  extern void enable_timer_nmi_watchdog(void);
 -extern int nmi_watchdog_tick (struct pt_regs * regs, unsigned reason);
 +extern int (*nmi_watchdog_tick)(struct pt_regs * regs, unsigned reason);
- 
+
  extern void nmi_watchdog_default(void);
  extern int setup_nmi_watchdog(char *);
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/processor.h 2.6.22-x86_64/include/asm-x86_64/processor.h
@@ -2638,8 +2638,8 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/processor.h
  	unsigned short	es, ds, fsindex, gsindex;	
 +	unsigned long	rip;
  /* Hardware debugging registers */
- 	unsigned long	debugreg0;  
- 	unsigned long	debugreg1;  
+ 	unsigned long	debugreg0;
+ 	unsigned long	debugreg1;
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/system.h 2.6.22-x86_64/include/asm-x86_64/system.h
 --- 2.6.22/include/asm-x86_64/system.h	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/include/asm-x86_64/system.h	2007-07-13 22:21:50.000000000 +0200
@@ -2670,15 +2670,15 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/system.h 2.
 -		       [pda_pcurrent] "i" (offsetof(struct x8664_pda, pcurrent))   \
 +		       [PDA_pcurrent] "i" (offsetof(struct x8664_pda, pcurrent))   \
  		     : "memory", "cc" __EXTRA_CLOBBER)
-     
- extern void load_gs_index(unsigned); 
+
+ extern void load_gs_index(unsigned);
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/unistd.h 2.6.22-x86_64/include/asm-x86_64/unistd.h
 --- 2.6.22/include/asm-x86_64/unistd.h	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/include/asm-x86_64/unistd.h	2007-07-13 22:26:00.000000000 +0200
 @@ -631,6 +631,8 @@ __SYSCALL(__NR_timerfd, sys_timerfd)
  #define __NR_eventfd		284
  __SYSCALL(__NR_eventfd, sys_eventfd)
- 
+
 +#define __NR_syscalls		285
 +
  #ifndef __NO_STUBS
@@ -2693,7 +2693,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/asm-x86_64/vsyscall.h 
  	((unused, __section__ (".vsyscall_gtod_data"),aligned(16)))
 -#define __vsyscall_fn __attribute__ ((unused,__section__(".vsyscall_fn")))
 +#define __vsyscall_fn __attribute__ ((unused,__section__(".vsyscall_fn"))) notrace
- 
+
  #define VGETCPU_RDTSCP	1
  #define VGETCPU_LSL	2
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/clockchips.h 2.6.22-x86_64/include/linux/clockchips.h
@@ -2705,7 +2705,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/clockchips.h 2.6
  	ktime_t			next_event;
 +	int64_t			delta;
  };
- 
+
  /*
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/hardirq.h 2.6.22-x86_64/include/linux/hardirq.h
 --- 2.6.22/include/linux/hardirq.h	2007-07-09 01:32:17.000000000 +0200
@@ -2713,12 +2713,12 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/hardirq.h 2.6.22
 @@ -133,7 +133,7 @@ extern void irq_enter(void);
   */
  extern void irq_exit(void);
- 
+
 -#define nmi_enter()		do { lockdep_off(); __irq_enter(); } while (0)
 -#define nmi_exit()		do { __irq_exit(); lockdep_on(); } while (0)
 +#define nmi_enter()		do { if (ipipe_root_domain_p) { lockdep_off(); __irq_enter(); } } while (0)
 +#define nmi_exit()		do { if (ipipe_root_domain_p) { __irq_exit(); lockdep_on(); } } while (0)
- 
+
  #endif /* LINUX_HARDIRQ_H */
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/ipipe.h 2.6.22-x86_64/include/linux/ipipe.h
 --- 2.6.22/include/linux/ipipe.h	1970-01-01 01:00:00.000000000 +0100
@@ -3489,7 +3489,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/ipipe_base.h 2.6
 +
 +#define ipipe_preempt_disable(flags)	local_irq_save_hw(flags)
 +#define ipipe_preempt_enable(flags)	local_irq_restore_hw(flags)
-+ 
++
 +#ifdef CONFIG_IPIPE_DEBUG_CONTEXT
 +void ipipe_check_context(struct ipipe_domain *border_ipd);
 +#else /* !CONFIG_IPIPE_DEBUG_CONTEXT */
@@ -3648,7 +3648,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/kernel.h 2.6.22-
 +#include <linux/ipipe_base.h>
  #include <asm/byteorder.h>
  #include <asm/bug.h>
- 
+
 @@ -83,9 +84,12 @@ struct user;
   */
  #ifdef CONFIG_PREEMPT_VOLUNTARY
@@ -3662,7 +3662,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/kernel.h 2.6.22-
 -# define might_resched() do { } while (0)
 +# define might_resched() ipipe_check_context(ipipe_root_domain)
  #endif
- 
+
  #ifdef CONFIG_DEBUG_SPINLOCK_SLEEP
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/linkage.h 2.6.22-x86_64/include/linux/linkage.h
 --- 2.6.22/include/linux/linkage.h	2007-07-09 01:32:17.000000000 +0200
@@ -3670,7 +3670,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/linkage.h 2.6.22
 @@ -64,4 +64,8 @@
  #define fastcall
  #endif
- 
+
 +#ifndef notrace
 +#define notrace		__attribute__((no_instrument_function))
 +#endif
@@ -3679,41 +3679,41 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/linkage.h 2.6.22
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/mm.h 2.6.22-x86_64/include/linux/mm.h
 --- 2.6.22/include/linux/mm.h	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/include/linux/mm.h	2007-07-13 22:21:49.000000000 +0200
-@@ -169,6 +169,7 @@ extern unsigned int kobjsize(const void 
+@@ -169,6 +169,7 @@ extern unsigned int kobjsize(const void
  #define VM_MAPPED_COPY	0x01000000	/* T if mapped copy of data (nommu mmap) */
  #define VM_INSERTPAGE	0x02000000	/* The vma has had "vm_insert_page()" done on it */
  #define VM_ALWAYSDUMP	0x04000000	/* Always include in core dumps */
 +#define VM_PINNED	0x08000000	/* Disable faults for the vma */
- 
+
  #ifndef VM_STACK_DEFAULT_FLAGS		/* arch can override this */
  #define VM_STACK_DEFAULT_FLAGS VM_DATA_DEFAULT_FLAGS
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/preempt.h 2.6.22-x86_64/include/linux/preempt.h
 --- 2.6.22/include/linux/preempt.h	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/include/linux/preempt.h	2007-07-13 22:21:49.000000000 +0200
 @@ -8,6 +8,7 @@
- 
+
  #include <linux/thread_info.h>
  #include <linux/linkage.h>
 +#include <linux/ipipe_base.h>
- 
+
  #ifdef CONFIG_DEBUG_PREEMPT
    extern void fastcall add_preempt_count(int val);
 @@ -28,18 +29,21 @@ asmlinkage void preempt_schedule(void);
- 
+
  #define preempt_disable() \
  do { \
 +	ipipe_check_context(ipipe_root_domain); \
  	inc_preempt_count(); \
  	barrier(); \
  } while (0)
- 
+
  #define preempt_enable_no_resched() \
  do { \
 +	ipipe_check_context(ipipe_root_domain); \
  	barrier(); \
  	dec_preempt_count(); \
  } while (0)
- 
+
  #define preempt_check_resched() \
  do { \
 +	ipipe_check_context(ipipe_root_domain); \
@@ -3721,9 +3721,9 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/preempt.h 2.6.22
  		preempt_schedule(); \
  } while (0)
 @@ -53,10 +57,10 @@ do { \
- 
+
  #else
- 
+
 -#define preempt_disable()		do { } while (0)
 -#define preempt_enable_no_resched()	do { } while (0)
 -#define preempt_enable()		do { } while (0)
@@ -3732,9 +3732,9 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/preempt.h 2.6.22
 +#define preempt_enable_no_resched()	ipipe_check_context(ipipe_root_domain)
 +#define preempt_enable()		ipipe_check_context(ipipe_root_domain)
 +#define preempt_check_resched()		ipipe_check_context(ipipe_root_domain)
- 
+
  #endif
- 
+
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/sched.h 2.6.22-x86_64/include/linux/sched.h
 --- 2.6.22/include/linux/sched.h	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/include/linux/sched.h	2007-07-13 22:21:49.000000000 +0200
@@ -3743,7 +3743,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/sched.h 2.6.22-x
  #include <linux/errno.h>
  #include <linux/nodemask.h>
 +#include <linux/ipipe.h>
- 
+
  #include <asm/system.h>
  #include <asm/semaphore.h>
 @@ -152,6 +153,13 @@ extern unsigned long weighted_cpuload(co
@@ -3757,17 +3757,17 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/sched.h 2.6.22-x
 +#define TASK_ATOMICSWITCH	0
 +#define TASK_NOWAKEUP          0
 +#endif /* CONFIG_IPIPE */
- 
+
  #define __set_task_state(tsk, state_value)		\
  	do { (tsk)->state = (state_value); } while (0)
 @@ -1065,6 +1073,9 @@ struct task_struct {
- 
+
  	atomic_t fs_excl;	/* holding fs exclusive resources */
  	struct rcu_head rcu;
 +#ifdef CONFIG_IPIPE
 +	void *ptd[IPIPE_ROOT_NPTDKEYS];
 +#endif
- 
+
  	/*
  	 * cache last used pipe for splice
 @@ -1184,6 +1195,11 @@ static inline void put_task_struct(struc
@@ -3779,16 +3779,16 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/sched.h 2.6.22-x
 +#else
 +#define PF_EVNOTIFY	0
 +#endif /* CONFIG_IPIPE */
- 
+
  /*
   * Only the _current_ task can read/write to tsk->flags, but other
 diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/smp.h 2.6.22-x86_64/include/linux/smp.h
 --- 2.6.22/include/linux/smp.h	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/include/linux/smp.h	2007-07-13 22:21:49.000000000 +0200
 @@ -107,6 +107,8 @@ static inline int smp_call_function_sing
- 
+
  #endif /* !SMP */
- 
+
 +#include <linux/ipipe_base.h>
 +
  /*
@@ -3800,7 +3800,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/spinlock.h 2.6.2
 @@ -172,7 +172,90 @@ do {								\
  #define read_trylock(lock)		__cond_lock(lock, _read_trylock(lock))
  #define write_trylock(lock)		__cond_lock(lock, _write_trylock(lock))
- 
+
 -#define spin_lock(lock)			_spin_lock(lock)
 +#undef TYPE_EQUAL
 +#define TYPE_EQUAL(lock, type) \
@@ -3886,35 +3886,35 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/spinlock.h 2.6.2
 +} while (0)
 +
 +#define spin_lock(lock)	PICK_SPINOP(_lock, lock)
- 
+
  #ifdef CONFIG_DEBUG_LOCK_ALLOC
  # define spin_lock_nested(lock, subclass) _spin_lock_nested(lock, subclass)
 @@ -185,7 +268,7 @@ do {								\
- 
+
  #if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
- 
+
 -#define spin_lock_irqsave(lock, flags)	flags = _spin_lock_irqsave(lock)
 +#define spin_lock_irqsave(lock, flags)	PICK_SPINLOCK_IRQSAVE(lock, flags)
  #define read_lock_irqsave(lock, flags)	flags = _read_lock_irqsave(lock)
  #define write_lock_irqsave(lock, flags)	flags = _write_lock_irqsave(lock)
- 
+
 @@ -199,7 +282,7 @@ do {								\
- 
+
  #else
- 
+
 -#define spin_lock_irqsave(lock, flags)	_spin_lock_irqsave(lock, flags)
 +#define spin_lock_irqsave(lock, flags)	PICK_SPINLOCK_IRQSAVE(lock, flags)
  #define read_lock_irqsave(lock, flags)	_read_lock_irqsave(lock, flags)
  #define write_lock_irqsave(lock, flags)	_write_lock_irqsave(lock, flags)
  #define spin_lock_irqsave_nested(lock, flags, subclass)	\
 @@ -207,7 +290,7 @@ do {								\
- 
+
  #endif
- 
+
 -#define spin_lock_irq(lock)		_spin_lock_irq(lock)
 +#define spin_lock_irq(lock)		PICK_SPINLOCK_IRQ(lock)
  #define spin_lock_bh(lock)		_spin_lock_bh(lock)
- 
+
  #define read_lock_irq(lock)		_read_lock_irq(lock)
 @@ -221,32 +304,40 @@ do {								\
   */
@@ -3976,18 +3976,18 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/spinlock.h 2.6.2
 @@ -254,8 +345,8 @@ do {						\
  } while (0)
  #endif
- 
+
 -#define spin_unlock_irqrestore(lock, flags) \
 -					_spin_unlock_irqrestore(lock, flags)
 +#define spin_unlock_irqrestore(lock, flags)	\
 +					PICK_SPINUNLOCK_IRQRESTORE(lock, flags)
  #define spin_unlock_bh(lock)		_spin_unlock_bh(lock)
- 
+
  #define read_unlock_irqrestore(lock, flags) \
 @@ -339,4 +430,25 @@ extern int _atomic_dec_and_lock(atomic_t
   */
  #define spin_can_lock(lock)	(!spin_is_locked(lock))
- 
+
 +#ifdef CONFIG_IPIPE
 +void fastcall __ipipe_spin_lock_irq(raw_spinlock_t *lock);
 +void fastcall __ipipe_spin_unlock_irq(raw_spinlock_t *lock);
@@ -4016,13 +4016,13 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/spinlock_types.h
 @@ -31,6 +31,10 @@ typedef struct {
  #endif
  } spinlock_t;
- 
+
 +typedef struct {
 +	raw_spinlock_t __raw_lock;
 +} __ipipe_spinlock_t;
 +
  #define SPINLOCK_MAGIC		0xdead4ead
- 
+
  typedef struct {
 @@ -92,9 +96,19 @@ typedef struct {
   * __SPIN_LOCK_UNLOCKED()/__RW_LOCK_UNLOCKED() as appropriate.
@@ -4031,10 +4031,10 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/include/linux/spinlock_types.h
 +#define IPIPE_SPIN_LOCK_UNLOCKED					\
 +	(__ipipe_spinlock_t) {	.__raw_lock = __RAW_SPIN_LOCK_UNLOCKED }
  #define RW_LOCK_UNLOCKED	__RW_LOCK_UNLOCKED(old_style_rw_init)
- 
+
  #define DEFINE_SPINLOCK(x)	spinlock_t x = __SPIN_LOCK_UNLOCKED(x)
  #define DEFINE_RWLOCK(x)	rwlock_t x = __RW_LOCK_UNLOCKED(x)
- 
+
 +#ifdef CONFIG_IPIPE
 +# define ipipe_spinlock_t	__ipipe_spinlock_t
 +# define IPIPE_DEFINE_SPINLOCK(x) ipipe_spinlock_t x = IPIPE_SPIN_LOCK_UNLOCKED
@@ -4048,7 +4048,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/init/Kconfig 2.6.22-x86_64/ini
 --- 2.6.22/init/Kconfig	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/init/Kconfig	2007-07-13 22:21:49.000000000 +0200
 @@ -67,6 +67,7 @@ menu "General setup"
- 
+
  config LOCALVERSION
  	string "Local version - append to kernel release"
 +	default "-ipipe"
@@ -4061,12 +4061,12 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/init/main.c 2.6.22-x86_64/init
 @@ -508,7 +508,7 @@ asmlinkage void __init start_kernel(void
  	unwind_init();
  	lockdep_init();
- 
+
 -	local_irq_disable();
 +	local_irq_disable_hw();
  	early_boot_irqs_off();
  	early_init_irq_lock_class();
- 
+
 @@ -561,6 +561,11 @@ asmlinkage void __init start_kernel(void
  	softirq_init();
  	timekeeping_init();
@@ -4086,7 +4086,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/init/main.c 2.6.22-x86_64/init
 + 	ipipe_init_proc();
  	do_initcalls();
  }
- 
+
 diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/Makefile 2.6.22-x86_64/kernel/Makefile
 --- 2.6.22/kernel/Makefile	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/kernel/Makefile	2007-07-13 22:21:50.000000000 +0200
@@ -4102,7 +4102,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/exit.c 2.6.22-x86_64/ke
 --- 2.6.22/kernel/exit.c	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/kernel/exit.c	2007-07-13 22:21:50.000000000 +0200
 @@ -947,6 +947,7 @@ fastcall NORET_TYPE void do_exit(long co
- 
+
  	if (group_dead)
  		acct_process();
 + 	ipipe_exit_notify(tsk);
@@ -4123,7 +4123,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/fork.c 2.6.22-x86_64/ke
 @@ -920,7 +921,7 @@ static inline void copy_flags(unsigned l
  {
  	unsigned long new_flags = p->flags;
- 
+
 -	new_flags &= ~(PF_SUPERPRIV | PF_NOFREEZE);
 +	new_flags &= ~(PF_SUPERPRIV | PF_NOFREEZE | PF_EVNOTIFY);
  	new_flags |= PF_FORKNOEXEC;
@@ -4142,7 +4142,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/fork.c 2.6.22-x86_64/ke
 +	}
 +#endif /* CONFIG_IPIPE */
  	return p;
- 
+
  bad_fork_cleanup_namespaces:
 diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/ipipe/Kconfig 2.6.22-x86_64/kernel/ipipe/Kconfig
 --- 2.6.22/kernel/ipipe/Kconfig	1970-01-01 01:00:00.000000000 +0100
@@ -7177,29 +7177,29 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/irq/chip.c 2.6.22-x86_6
 +++ 2.6.22-x86_64/kernel/irq/chip.c	2007-07-13 22:21:50.000000000 +0200
 @@ -340,7 +340,9 @@ handle_level_irq(unsigned int irq, struc
  	irqreturn_t action_ret;
- 
+
  	spin_lock(&desc->lock);
 +#ifndef CONFIG_IPIPE
  	mask_ack_irq(desc, irq);
 +#endif /* CONFIG_IPIPE */
- 
+
  	if (unlikely(desc->status & IRQ_INPROGRESS))
  		goto out_unlock;
 @@ -465,8 +467,10 @@ handle_edge_irq(unsigned int irq, struct
- 
+
  	kstat_cpu(cpu).irqs[irq]++;
- 
+
 +#ifndef CONFIG_IPIPE
  	/* Start handling the irq */
  	desc->chip->ack(irq);
 +#endif /* CONFIG_IPIPE */
- 
+
  	/* Mark the IRQ currently in progress.*/
  	desc->status |= IRQ_INPROGRESS;
 @@ -506,6 +510,68 @@ out_unlock:
  	spin_unlock(&desc->lock);
  }
- 
+
 +#ifdef CONFIG_IPIPE
 +
 +void fastcall __ipipe_ack_simple_irq(unsigned irq, struct irq_desc *desc)
@@ -7266,20 +7266,20 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/irq/chip.c 2.6.22-x86_6
  /**
   *	handle_percpu_IRQ - Per CPU local irq handler
 @@ -521,8 +587,10 @@ handle_percpu_irq(unsigned int irq, stru
- 
+
  	kstat_this_cpu.irqs[irq]++;
- 
+
 +#ifndef CONFIG_IPIPE
  	if (desc->chip->ack)
  		desc->chip->ack(irq);
 +#endif /* CONFIG_IPIPE */
- 
+
  	action_ret = handle_IRQ_event(irq, desc->action);
  	if (!noirqdebug)
 @@ -532,6 +600,22 @@ handle_percpu_irq(unsigned int irq, stru
  		desc->chip->eoi(irq);
  }
- 
+
 +#ifdef CONFIG_IPIPE
 +
 +void fastcall __ipipe_ack_percpu_irq(unsigned irq, struct irq_desc *desc)
@@ -7297,10 +7297,10 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/irq/chip.c 2.6.22-x86_6
 +#endif /* CONFIG_IPIPE */
 +
  #endif /* CONFIG_SMP */
- 
+
  void
 @@ -551,6 +635,30 @@ __set_irq_handler(unsigned int irq, irq_
- 
+
  	if (!handle)
  		handle = handle_bad_irq;
 +#ifdef CONFIG_IPIPE
@@ -7345,9 +7345,9 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/irq/chip.c 2.6.22-x86_6
 + 		desc->ipipe_end = &__ipipe_noend_irq;
 + 	}
 +#endif /* CONFIG_IPIPE */
- 
+
  	spin_lock_irqsave(&desc->lock, flags);
- 
+
 @@ -572,6 +690,10 @@ __set_irq_handler(unsigned int irq, irq_
  			mask_ack_irq(desc, irq);
  		desc->status |= IRQ_DISABLED;
@@ -7365,7 +7365,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/printk.c 2.6.22-x86_64/
 @@ -498,6 +498,78 @@ static int have_callable_console(void)
   * printf(3)
   */
- 
+
 +#ifdef CONFIG_IPIPE
 +
 +static ipipe_spinlock_t __ipipe_printk_lock = IPIPE_SPIN_LOCK_UNLOCKED;
@@ -7442,24 +7442,24 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/printk.c 2.6.22-x86_64/
  {
  	va_list args;
 @@ -509,6 +581,7 @@ asmlinkage int printk(const char *fmt, .
- 
+
  	return r;
  }
 +#endif /* CONFIG_IPIPE */
- 
+
  /* cpu currently holding logbuf_lock */
  static volatile unsigned int printk_cpu = UINT_MAX;
 diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/sched.c 2.6.22-x86_64/kernel/sched.c
 --- 2.6.22/kernel/sched.c	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/kernel/sched.c	2007-07-13 22:21:50.000000000 +0200
 @@ -1518,7 +1518,7 @@ static int try_to_wake_up(struct task_st
- 
+
  	rq = task_rq_lock(p, &flags);
  	old_state = p->state;
 -	if (!(old_state & state))
 +	if (!(old_state & state) || (old_state & TASK_NOWAKEUP))
  		goto out;
- 
+
  	if (p->array)
 @@ -1939,19 +1939,25 @@ asmlinkage void schedule_tail(struct tas
  #endif
@@ -7468,7 +7468,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/sched.c 2.6.22-x86_64/k
 +
 +	ipipe_init_notify(current);
  }
- 
+
  /*
   * context_switch - switch to the new MM and the new
   * thread's register state.
@@ -7480,7 +7480,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/sched.c 2.6.22-x86_64/k
  {
  	struct mm_struct *mm = next->mm;
  	struct mm_struct *oldmm = prev->active_mm;
- 
+
 +if (!rq) {
 +	switch_mm(oldmm, next->active_mm, next);
 +	if (!mm) enter_lazy_tlb(oldmm, next);
@@ -7505,16 +7505,16 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/sched.c 2.6.22-x86_64/k
 +#endif /* CONFIG_IPIPE */
  	spin_release(&rq->lock.dep_map, 1, _THIS_IP_);
  #endif
- 
+
  	/* Here we just switch the register state and the stack. */
  	switch_to(prev, next, prev);
 +#ifdef CONFIG_IPIPE
 +	current->ptd[IPIPE_ROOT_NPTDKEYS - 1] = prev;
 +#endif /* CONFIG_IPIPE */
- 
+
  	return prev;
  }
- 
+
 +EXPORT_SYMBOL(context_switch);
 +
  /*
@@ -7523,7 +7523,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/sched.c 2.6.22-x86_64/k
 @@ -3574,12 +3589,15 @@ asmlinkage void __sched schedule(void)
  	long *switch_count;
  	struct rq *rq;
- 
+
 +	ipipe_check_context(ipipe_root_domain);
 +
  	/*
@@ -7540,7 +7540,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/sched.c 2.6.22-x86_64/k
 @@ -3590,8 +3608,13 @@ asmlinkage void __sched schedule(void)
  	}
  	profile_hit(SCHED_PROFILING, __builtin_return_address(0));
- 
+
 +	if (unlikely(current->state & TASK_ATOMICSWITCH)) {
 +		current->state &= ~TASK_ATOMICSWITCH;
 +		goto need_resched_nodisable;
@@ -7587,7 +7587,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/sched.c 2.6.22-x86_64/k
  		/*
 @@ -7200,3 +7227,54 @@ void set_curr_task(int cpu, struct task_
  }
- 
+
  #endif
 +
 +#ifdef CONFIG_IPIPE
@@ -7645,10 +7645,10 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/signal.c 2.6.22-x86_64/
 +++ 2.6.22-x86_64/kernel/signal.c	2007-07-13 22:21:50.000000000 +0200
 @@ -447,6 +447,7 @@ void signal_wake_up(struct task_struct *
  	unsigned int mask;
- 
+
  	set_tsk_thread_flag(t, TIF_SIGPENDING);
 +	ipipe_sigwake_notify(t); /* TIF_SIGPENDING must be set first. */
- 
+
  	/*
  	 * For SIGKILL, we want to wake it up in the stopped/traced case.
 diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/spinlock.c 2.6.22-x86_64/kernel/spinlock.c
@@ -7677,10 +7677,10 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/kernel/time/clockevents.c 2.6.
 +++ 2.6.22-x86_64/kernel/time/clockevents.c	2007-07-13 22:21:50.000000000 +0200
 @@ -84,6 +84,7 @@ int clockevents_program_event(struct clo
  		return -ETIME;
- 
+
  	dev->next_event = expires;
 +	dev->delta = delta;
- 
+
  	if (dev->mode == CLOCK_EVT_MODE_SHUTDOWN)
  		return 0;
 diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/Kconfig.debug 2.6.22-x86_64/lib/Kconfig.debug
@@ -7689,7 +7689,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/Kconfig.debug 2.6.22-x86_6
 @@ -71,6 +71,8 @@ config HEADERS_CHECK
  	  exported to $(INSTALL_HDR_PATH) (usually 'usr/include' in
  	  your build tree), to make sure they're suitable.
- 
+
 +source "kernel/ipipe/Kconfig.debug"
 +
  config DEBUG_KERNEL
@@ -7703,8 +7703,8 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/bust_spinlocks.c 2.6.22-x8
  #include <linux/wait.h>
  #include <linux/vt_kern.h>
 +#include <linux/ipipe_trace.h>
- 
- 
+
+
  void __attribute__((weak)) bust_spinlocks(int yes)
  {
  	if (yes) {
@@ -7729,7 +7729,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/ioremap.c 2.6.22-x86_64/li
 -	flush_cache_vmap(start, end);
 +	__ipipe_pin_range_globally(start, end);
 + 	flush_cache_vmap(start, end);
- 
+
  	return err;
  }
 diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/smp_processor_id.c 2.6.22-x86_64/lib/smp_processor_id.c
@@ -7738,20 +7738,20 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/smp_processor_id.c 2.6.22-
 @@ -13,6 +13,9 @@ unsigned int debug_smp_processor_id(void
  	int this_cpu = raw_smp_processor_id();
  	cpumask_t this_mask;
- 
+
 +	if (!ipipe_root_domain_p)
 +		goto out;
 +
  	if (likely(preempt_count))
  		goto out;
- 
+
 diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/spinlock_debug.c 2.6.22-x86_64/lib/spinlock_debug.c
 --- 2.6.22/lib/spinlock_debug.c	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/lib/spinlock_debug.c	2007-07-13 22:21:50.000000000 +0200
 @@ -133,6 +133,8 @@ void _raw_spin_lock(spinlock_t *lock)
  	debug_spin_lock_after(lock);
  }
- 
+
 +EXPORT_SYMBOL(_raw_spin_lock);
 +
  int _raw_spin_trylock(spinlock_t *lock)
@@ -7760,7 +7760,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/spinlock_debug.c 2.6.22-x8
 @@ -148,12 +150,16 @@ int _raw_spin_trylock(spinlock_t *lock)
  	return ret;
  }
- 
+
 +EXPORT_SYMBOL(_raw_spin_trylock);
 +
  void _raw_spin_unlock(spinlock_t *lock)
@@ -7768,7 +7768,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/spinlock_debug.c 2.6.22-x8
  	debug_spin_unlock(lock);
  	__raw_spin_unlock(&lock->raw_lock);
  }
- 
+
 +EXPORT_SYMBOL(_raw_spin_unlock);
 +
  static void rwlock_bug(rwlock_t *lock, const char *msg)
@@ -7777,7 +7777,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/spinlock_debug.c 2.6.22-x8
 @@ -199,6 +205,8 @@ void _raw_read_lock(rwlock_t *lock)
  	__raw_read_lock(&lock->raw_lock);
  }
- 
+
 +EXPORT_SYMBOL(_raw_read_lock);
 +
  int _raw_read_trylock(rwlock_t *lock)
@@ -7786,7 +7786,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/spinlock_debug.c 2.6.22-x8
 @@ -212,12 +220,16 @@ int _raw_read_trylock(rwlock_t *lock)
  	return ret;
  }
- 
+
 +EXPORT_SYMBOL(_raw_read_trylock);
 +
  void _raw_read_unlock(rwlock_t *lock)
@@ -7794,7 +7794,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/spinlock_debug.c 2.6.22-x8
  	RWLOCK_BUG_ON(lock->magic != RWLOCK_MAGIC, lock, "bad magic");
  	__raw_read_unlock(&lock->raw_lock);
  }
- 
+
 +EXPORT_SYMBOL(_raw_read_unlock);
 +
  static inline void debug_write_lock_before(rwlock_t *lock)
@@ -7803,7 +7803,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/spinlock_debug.c 2.6.22-x8
 @@ -275,6 +287,8 @@ void _raw_write_lock(rwlock_t *lock)
  	debug_write_lock_after(lock);
  }
- 
+
 +EXPORT_SYMBOL(_raw_write_lock);
 +
  int _raw_write_trylock(rwlock_t *lock)
@@ -7812,7 +7812,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/lib/spinlock_debug.c 2.6.22-x8
 @@ -290,8 +304,12 @@ int _raw_write_trylock(rwlock_t *lock)
  	return ret;
  }
- 
+
 +EXPORT_SYMBOL(_raw_write_trylock);
 +
  void _raw_write_unlock(rwlock_t *lock)
@@ -7830,13 +7830,13 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/mm/memory.c 2.6.22-x86_64/mm/m
  #include <linux/init.h>
  #include <linux/writeback.h>
 +#include <linux/vmalloc.h>
- 
+
  #include <asm/pgalloc.h>
  #include <asm/uaccess.h>
 @@ -418,13 +419,41 @@ struct page *vm_normal_page(struct vm_ar
  	return pfn_to_page(pfn);
  }
- 
+
 +static inline void cow_user_page(struct page *dst, struct page *src, unsigned long va, struct vm_area_struct *vma)
 +{
 +	/*
@@ -7870,7 +7870,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/mm/memory.c 2.6.22-x86_64/mm/m
   * already present in the new task to be cleared in the whole range
   * covered by this vma.
   */
- 
+
 -static inline void
 +static inline int
  copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
@@ -7903,12 +7903,12 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/mm/memory.c 2.6.22-x86_64/mm/m
  		pte = pte_wrprotect(pte);
  	}
 @@ -487,6 +535,7 @@ copy_one_pte(struct mm_struct *dst_mm, s
- 
+
  out_set_pte:
  	set_pte_at(dst_mm, addr, dst_pte, pte);
 +	return 0;
  }
- 
+
  static int copy_pte_range(struct mm_struct *dst_mm, struct mm_struct *src_mm,
 @@ -524,7 +573,9 @@ again:
  			progress++;
@@ -7920,7 +7920,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/mm/memory.c 2.6.22-x86_64/mm/m
 +			return -ENOMEM;
  		progress += 8;
  	} while (dst_pte++, src_pte++, addr += PAGE_SIZE, addr != end);
- 
+
 @@ -1170,7 +1221,7 @@ static inline int zeromap_pud_range(stru
  		if (err)
  			break;
@@ -7928,12 +7928,12 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/mm/memory.c 2.6.22-x86_64/mm/m
 -	return err;
 +	return 0;
  }
- 
+
  int zeromap_page_range(struct vm_area_struct *vma,
-@@ -1580,34 +1631,6 @@ static inline pte_t maybe_mkwrite(pte_t 
+@@ -1580,34 +1631,6 @@ static inline pte_t maybe_mkwrite(pte_t
  	return pte;
  }
- 
+
 -static inline void cow_user_page(struct page *dst, struct page *src, unsigned long va, struct vm_area_struct *vma)
 -{
 -	/*
@@ -7966,7 +7966,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/mm/memory.c 2.6.22-x86_64/mm/m
   * This routine handles present pages, when users try to write
   * to a shared page. It is done by copying the page to a new address
 @@ -2817,3 +2840,117 @@ int access_process_vm(struct task_struct
- 
+
  	return buf - old_buf;
  }
 +
@@ -8092,7 +8092,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/mm/mlock.c 2.6.22-x86_64/mm/ml
  	struct vm_area_struct * vma, * prev = NULL;
 -	unsigned int def_flags = 0;
 +	unsigned int def_flags = current->mm->def_flags & VM_PINNED;
- 
+
  	if (flags & MCL_FUTURE)
 -		def_flags = VM_LOCKED;
 +		def_flags |= VM_LOCKED;
@@ -8102,7 +8102,7 @@ diff --exclude .pc --exclude patches -uNrp 2.6.22/mm/mlock.c 2.6.22-x86_64/mm/ml
 diff --exclude .pc --exclude patches -uNrp 2.6.22/mm/vmalloc.c 2.6.22-x86_64/mm/vmalloc.c
 --- 2.6.22/mm/vmalloc.c	2007-07-09 01:32:17.000000000 +0200
 +++ 2.6.22-x86_64/mm/vmalloc.c	2007-07-13 22:21:50.000000000 +0200
-@@ -156,6 +156,7 @@ int map_vm_area(struct vm_struct *area, 
+@@ -156,6 +156,7 @@ int map_vm_area(struct vm_struct *area,
  		if (err)
  			break;
  	} while (pgd++, addr = next, addr != end);

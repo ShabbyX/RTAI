@@ -794,7 +794,7 @@ void rt_daemonize(void);
 #if 0
 struct thread_args { void *fun; long data; int priority; int policy; int cpus_allowed; RT_TASK *task; struct semaphore *sem; };
 
-static void kthread_fun(struct thread_args *args) 
+static void kthread_fun(struct thread_args *args)
 {
 	int linux_rt_priority;
 
@@ -814,7 +814,7 @@ static void kthread_fun(struct thread_args *args)
 		rt_make_hard_real_time(task);
 		fun(data);
 		rt_thread_delete(task);
-	} 
+	}
 	return;
 }
 
@@ -850,7 +850,7 @@ RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int 
 	
 	if ((task = __task_init(name ? name : rt_get_name(NULL), priority, 0, max_msg_size, cpus_allowed))) {
 		rt_make_hard_real_time(task);
-	} 
+	}
 	return task;
 }
 EXPORT_SYMBOL(rt_thread_init);

@@ -52,7 +52,7 @@
 #define PCI_DEVICE_ID_INTEL_ICH8_4  0x2815
 #endif
 #ifndef PCI_DEVICE_ID_INTEL_ICH10_1
-#define #define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16 
+#define #define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16
 #endif
 
 
@@ -86,7 +86,7 @@ pci.ids database, ICH5-M ?)
 */
 
 #define DEVFN        0xf8 /* device 31, function 0 */
-    
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 #define pci_get_device(a, b, c)  pci_find_device(a, b, c)
 #define pci_dev_put(a)           do { /*nothing*/ } while(0)
@@ -235,7 +235,7 @@ int init_module(void)
 	return retval;
 }
 
-void cleanup_module(void)         
+void cleanup_module(void)
 {
 	hal_smi_restore();
 	printk("SMI configuration has been reset, saved mask used = %lx.\n", hal_smi_saved_bits);
@@ -284,7 +284,7 @@ MODULE_LICENSE("GPL");
 
    page 492, 493: USB EHCI legacy support and SPECIAL SMI, i.e Intel Specific
        USB 2.0 SMI register.
-       
+
    page 520, SMBus
        may be disabled by clearing register HOSTC, bit SMB_SMI_EN
        register used by Linux driver drivers/i2c/busses/i2c-i801.c

@@ -65,9 +65,9 @@ index b5e8068..4f49f7d 100644
 +if CONFIG_ARCH_IMX
 +libhal_a_SOURCES += mach-imx/imx-timer.c
 +endif
- 
+
  if CONFIG_KBUILD
- 
+
 diff --git a/base/arch/arm/hal/GNUmakefile.in b/base/arch/arm/hal/GNUmakefile.in
 index 20d4920..3860f96 100644
 --- a/base/arch/arm/hal/GNUmakefile.in
@@ -116,13 +116,13 @@ index 20d4920..3860f96 100644
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hal.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pxa-timer.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imx-timer.Po@am__quote@
- 
+
  .c.o:
  @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
 @@ -457,6 +463,20 @@ pxa-timer.obj: mach-pxa/pxa-timer.c
  @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
  @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pxa-timer.obj `if test -f 'mach-pxa/pxa-timer.c'; then $(CYGPATH_W) 'mach-pxa/pxa-timer.c'; else $(CYGPATH_W) '$(srcdir)/mach-pxa/pxa-timer.c'; fi`
- 
+
 +imx-timer.o: mach-imx/imx-timer.c
 +@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT imx-timer.o -MD -MP -MF "$(DEPDIR)/imx-timer.Tpo" -c -o imx-timer.o `test -f 'mach-imx/imx-timer.c' || echo '$(srcdir)/'`mach-imx/imx-timer.c; \
 +@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/imx-timer.Tpo" "$(DEPDIR)/imx-timer.Po"; else rm -f "$(DEPDIR)/imx-timer.Tpo"; exit 1; fi
@@ -139,7 +139,7 @@ index 20d4920..3860f96 100644
 +
  mostlyclean-libtool:
  	-rm -f *.lo
- 
+
 diff --git a/base/arch/arm/hal/hal.c b/base/arch/arm/hal/hal.c
 index 6c07b4b..329085f 100644
 --- a/base/arch/arm/hal/hal.c
@@ -156,21 +156,21 @@ index 6c07b4b..329085f 100644
 @@ -133,6 +133,8 @@ rt_request_irq(unsigned irq, rt_irq_handler_t handler, void *cookie, int retmode
  {
      unsigned long flags;
- 
+
 +    printk("REQUEST IRQ %i handler %p\n", irq, handler);
 +
      if (handler == NULL || irq >= NR_IRQS)
  	return -EINVAL;
- 
+
 @@ -152,6 +154,8 @@ rt_release_irq(unsigned irq)
  {
      unsigned long flags;
- 
+
 +    printk("RELEASE IRQ %i \n", irq);
 +
      if (irq >= NR_IRQS  || !rtai_realtime_irq[irq].handler)
  	return -EINVAL;
- 
+
 @@ -206,7 +210,7 @@ rt_startup_irq(unsigned irq)
      id->probing = 0;
      id->triggered = 0;
@@ -179,7 +179,7 @@ index 6c07b4b..329085f 100644
 +    id->chip->unmask(irq);
      return 0;
  }
- 
+
 @@ -215,19 +219,22 @@ rt_shutdown_irq(unsigned irq)
  {
      struct irqdesc *id = &irq_desc[irq];
@@ -187,7 +187,7 @@ index 6c07b4b..329085f 100644
 -    id->mask(irq);
 +    id->chip->mask(irq);
  }
- 
+
  void
  rt_enable_irq(unsigned irq)
  {
@@ -204,7 +204,7 @@ index 6c07b4b..329085f 100644
 +	id->chip->unmask(irq);
      }
  }
- 
+
 @@ -235,20 +242,23 @@ void
  rt_disable_irq(unsigned irq)
  {
@@ -217,21 +217,21 @@ index 6c07b4b..329085f 100644
 +    if (id->disable_depth++ == 0) {}
 +	id->chip->mask(irq);
  }
- 
+
  void
  rt_mask_and_ack_irq(unsigned irq)
  {
 -    irq_desc[irq].mask_ack(irq);
 +    irq_desc[irq].chip->mask(irq);
  }
- 
+
  void
  rt_unmask_irq(unsigned irq)
  {
 -    irq_desc[irq].unmask(irq);
 +    irq_desc[irq].chip->unmask(irq);
  }
- 
+
  void
 @@ -256,8 +266,8 @@ rt_ack_irq(unsigned irq)
  {
@@ -242,30 +242,30 @@ index 6c07b4b..329085f 100644
 +    id->chip->mask(irq);
 +    id->chip->unmask(irq);
  }
- 
+
  /**
 @@ -292,6 +302,8 @@ rt_request_linux_irq(unsigned irq,
  {
      unsigned long flags;
- 
+
 +    printk("rt_request_linux_irq IRQ %i, handler %p action->handler %p   rtai_linux_irq[irq].count %i\n", irq, handler, irq_desc[irq].action->handler, rtai_linux_irq[irq].count);
 +
      if (irq >= NR_IRQS || !handler)
  	return -EINVAL;
- 
+
 @@ -325,9 +337,13 @@ rt_free_linux_irq(unsigned irq, void *dev_id)
  {
      unsigned long flags;
- 
+
 +    printk("rt_free_linux_irq IRQ %i action->handler %p   rtai_linux_irq[irq].count %i\n", irq, irq_desc[irq].action->handler, rtai_linux_irq[irq].count);
 +
      if (irq >= NR_IRQS || rtai_linux_irq[irq].count == 0)
  	return -EINVAL;
- 
+
 +    printk("VALID\n");
 +
      rtai_save_flags_and_cli(flags);
- 
+
      free_irq(irq, dev_id);
 @@ -602,7 +618,14 @@ rtai_set_linux_task_priority(struct task_struct *task, int policy, int prio)
      set_tsk_need_resched(current);
@@ -281,7 +281,7 @@ index 6c07b4b..329085f 100644
 +}
 +//#error "Sorry, Kernels >= 2.6.0 not supported (yet)"
  #endif  /* KERNEL_VERSION < 2.6.0 */
- 
+
  #ifdef CONFIG_PROC_FS
 diff --git a/base/arch/arm/hal/mach-imx/imx-timer.c b/base/arch/arm/hal/mach-imx/imx-timer.c
 new file mode 100644
@@ -314,7 +314,7 @@ index 0000000..8a89bca
 +--------------------------------------------------------------------------
 +Acknowledgements
 +- Paolo Mantegazza	(mantegazza@aero.polimi.it)
-+	creator of RTAI 
++	creator of RTAI
 +- port to imx architecture using both pxa-timer.c and ep9301-timer.c
 +  20060613: Torsten Koschorrek (koschorrek@synertronixx.de)
 +*/
@@ -436,7 +436,7 @@ index e86686f..10fc060 100644
 @@ -46,6 +46,11 @@ host_triplet = @host@
  @CONFIG_ARCH_EP9301_TRUE@		arch-ep9301/rtai_exports.h \
  @CONFIG_ARCH_EP9301_TRUE@		arch-ep9301/rtai_timer.h
- 
+
 +@CONFIG_ARCH_IMX_TRUE@am__append_3 = \
 +@CONFIG_ARCH_IMX_TRUE@		arch-imx/rtai_arch.h \
 +@CONFIG_ARCH_IMX_TRUE@		arch-imx/rtai_exports.h \
@@ -472,10 +472,10 @@ index e86686f..10fc060 100644
 +	rtai_usi.h rtai_vectors.h $(am__append_1) $(am__append_2) $(am__append_3)
  EXTRA_DIST = rtai_hal.immed rtai_hal.piped
  all: all-am
- 
+
 @@ -462,7 +470,7 @@ distclean-tags:
  	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
- 
+
  distdir: $(DISTFILES)
 -	$(mkdir_p) $(distdir)/arch-ep9301 $(distdir)/arch-pxa
 +	$(mkdir_p) $(distdir)/arch-ep9301 $(distdir)/arch-pxa $(distdir)/arch-imx
@@ -606,9 +606,9 @@ index 0000000..6290009
 +--------------------------------------------------------------------------
 +Acknowledgements
 +- Paolo Mantegazza	(mantegazza@aero.polimi.it)
-+	creator of RTAI 
++	creator of RTAI
 +*/
-+/* 
++/*
 +* This file is included from rtai.c to support arch-specific exports
 +*/
 +#ifndef _ASM_ARCH_RTAI_EXPORT_H_
@@ -650,7 +650,7 @@ index 0000000..08ea9df
 +--------------------------------------------------------------------------
 +Acknowledgements
 +- Paolo Mantegazza	(mantegazza@aero.polimi.it)
-+	creator of RTAI 
++	creator of RTAI
 +- port to imx architecture using both
 +  arch-pxa/rtai_timer.h and arch-ep9301/rtai_timer.h
 +  20060613: Torsten Koschorrek (koschorrek@synertronixx.de)
@@ -765,7 +765,7 @@ index 1c7ddde..2373291 100644
 +	printf("%s REMIND\n", __FUNCTION__);
 +	return 0;
  }
- 
+
  RTAI_PROTO(void, pthread_exit_rt,(void *retval))
 diff --git a/base/sched/sched.c b/base/sched/sched.c
 index b729414..a0996a7 100644
@@ -774,11 +774,11 @@ index b729414..a0996a7 100644
 @@ -769,6 +769,8 @@ void rt_schedule(void)
  	RT_TASK *rt_current, *task, *new_task;
  	int cpuid, prio, preempt;
- 
+
 +	leds_event(led_timer);
 +
  	rt_current = rt_smp_current[cpuid = rtai_cpuid()];
- 
+
  	RR_YIELD();
 diff --git a/configure b/configure
 index 5e92f9b..87d201a 100755
@@ -786,12 +786,12 @@ index 5e92f9b..87d201a 100755
 +++ b/configure
 @@ -467,7 +467,7 @@ ac_includes_default="\
  #endif"
- 
+
  ac_subdirs_all="$ac_subdirs_all rtai-sim"
 -ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CXX CXXFLAGS ac_ct_CXX CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT EGREP LN_S ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB CPP CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL CCAS CCASFLAGS X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS GL_CFLAGS GL_LIBS RTAI_MAYBE_DOCDIR DOXYGEN DOXYGEN_HAVE_DOT DBX_DOC_ROOT DBX_DOC_TRUE DBX_DOC_FALSE DBX_GEN_DOC_ROOT DBX_LINT DBX_XSLTPROC DBX_FOP DBX_MAYBE_NONET DBX_ROOT DBX_XSL_ROOT DBX_ABS_SRCDIR_TRUE DBX_ABS_SRCDIR_FALSE RTAI_MAYBE_SIMDIR CONFIG_X86_LOCAL_APIC_TRUE CONFIG_X86_LOCAL_APIC_FALSE CONFIG_KBUILD_TRUE CONFIG_KBUILD_FALSE CONFIG_X86_TRUE CONFIG_X86_FALSE CONFIG_PPC_TRUE CONFIG_PPC_FALSE CONFIG_ARM_TRUE CONFIG_ARM_FALSE CONFIG_ARCH_EP9301_TRUE CONFIG_ARCH_EP9301_FALSE CONFIG_ARCH_PXA_TRUE CONFIG_ARCH_PXA_FALSE CONFIG_UCLINUX_TRUE CONFIG_UCLINUX_FALSE CONFIG_SMP_TRUE CONFIG_SMP_FALSE CONFIG_RTAI_SCHED_UP_TRUE CONFIG_RTAI_SCHED_UP_FALSE CONFIG_RTAI_SCHED_MUP_TRUE CONFIG_RTAI_SCHED_MUP_FALSE CONFIG_RTAI_SCHED_SMP_TRUE CONFIG_RTAI_SCHED_SMP_FALSE CONFIG_RTAI_SCHED_LXRT_TRUE CONFIG_RTAI_SCHED_LXRT_FALSE CONFIG_RTAI_TRACE_TRUE CONFIG_RTAI_TRACE_FALSE CONFIG_RTAI_MATH_TRUE CONFIG_RTAI_MATH_FALSE CONFIG_RTAI_BITS_TRUE CONFIG_RTAI_BITS_FALSE CONFIG_RTAI_FIFOS_TRUE CONFIG_RTAI_FIFOS_FALSE CONFIG_RTAI_NETRPC_TRUE CONFIG_RTAI_NETRPC_FALSE CONFIG_RTAI_SEM_TRUE CONFIG_RTAI_SEM_FALSE CONFIG_RTAI_MSG_TRUE CONFIG_RTAI_MSG_FALSE CONFIG_RTAI_MBX_TRUE CONFIG_RTAI_MBX_FALSE CONFIG_RTAI_TBX_TRUE CONFIG_RTAI_TBX_FALSE CONFIG_RTAI_MQ_TRUE CONFIG_RTAI_MQ_FALSE CONFIG_RTAI_SHM_TRUE CONFIG_RTAI_SHM_FALSE CONFIG_RTAI_MALLOC_TRUE CONFIG_RTAI_MALLOC_FALSE CONFIG_RTAI_TASKLETS_TRUE CONFIG_RTAI_TASKLETS_FALSE CONFIG_RTAI_USI_TRUE CONFIG_RTAI_USI_FALSE CONFIG_RTAI_WD_TRUE CONFIG_RTAI_WD_FALSE CONFIG_RTAI_LEDS_TRUE CONFIG_RTAI_LEDS_FALSE CONFIG_RTAI_MATH_BUILTIN_TRUE CONFIG_RTAI_MATH_BUILTIN_FALSE CONFIG_RTAI_BITS_BUILTIN_TRUE CONFIG_RTAI_BITS_BUILTIN_FALSE CONFIG_RTAI_FIFOS_BUILTIN_TRUE CONFIG_RTAI_FIFOS_BUILTIN_FALSE CONFIG_RTAI_NETRPC_BUILTIN_TRUE CONFIG_RTAI_NETRPC_BUILTIN_FALSE CONFIG_RTAI_SEM_BUILTIN_TRUE CONFIG_RTAI_SEM_BUILTIN_FALSE CONFIG_RTAI_MSG_BUILTIN_TRUE CONFIG_RTAI_MSG_BUILTIN_FALSE CONFIG_RTAI_MBX_BUILTIN_TRUE CONFIG_RTAI_MBX_BUILTIN_FALSE CONFIG_RTAI_TBX_BUILTIN_TRUE CONFIG_RTAI_TBX_BUILTIN_FALSE CONFIG_RTAI_MQ_BUILTIN_TRUE CONFIG_RTAI_MQ_BUILTIN_FALSE CONFIG_RTAI_SHM_BUILTIN_TRUE CONFIG_RTAI_SHM_BUILTIN_FALSE CONFIG_RTAI_MALLOC_BUILTIN_TRUE CONFIG_RTAI_MALLOC_BUILTIN_FALSE CONFIG_RTAI_TASKLETS_BUILTIN_TRUE CONFIG_RTAI_TASKLETS_BUILTIN_FALSE CONFIG_RTAI_USI_BUILTIN_TRUE CONFIG_RTAI_USI_BUILTIN_FALSE CONFIG_RTAI_LEDS_BUILTIN_TRUE CONFIG_RTAI_LEDS_BUILTIN_FALSE CONFIG_RTAI_COMEDI_LXRT_TRUE CONFIG_RTAI_COMEDI_LXRT_FALSE CONFIG_RTAI_CPLUSPLUS_TRUE CONFIG_RTAI_CPLUSPLUS_FALSE CONFIG_RTAI_SERIAL_TRUE CONFIG_RTAI_SERIAL_FALSE CONFIG_RTAI_LAB_TRUE CONFIG_RTAI_LAB_FALSE CONFIG_RTAI_MVM_TRUE CONFIG_RTAI_MVM_FALSE CONFIG_RTAI_TESTSUITE_TRUE CONFIG_RTAI_TESTSUITE_FALSE CONFIG_RTAI_ADEOS_TRUE CONFIG_RTAI_ADEOS_FALSE CONFIG_RTAI_MATH_C99_TRUE CONFIG_RTAI_MATH_C99_FALSE CONFIG_RTAI_DOX_DOC_TRUE CONFIG_RTAI_DOX_DOC_FALSE CONFIG_RTAI_MAINTAINER_TRUE CONFIG_RTAI_MAINTAINER_FALSE CONFIG_RTAI_MAINTAINER_PMA_TRUE CONFIG_RTAI_MAINTAINER_PMA_FALSE CONFIG_RTAI_MAINTAINER_PGM_TRUE CONFIG_RTAI_MAINTAINER_PGM_FALSE CONFIG_RTAI_OLD_FASHIONED_BUILD_TRUE CONFIG_RTAI_OLD_FASHIONED_BUILD_FALSE CROSS_COMPILE DOXYGEN_SHOW_INCLUDE_FILES LATEX_BATCHMODE LATEX_MODE EFLTK_DIR COMEDI_DIR RTAI_BUILD_STRING RTAI_HOST_STRING RTAI_TARGET_ARCH RTAI_TARGET_SUBARCH RTAI_BUILTIN_MODLIST RTAI_KMOD_CFLAGS RTAI_KMOD_CXXFLAGS RTAI_COMPAT_CPPFLAGS RTAI_USER_CFLAGS RTAI_KMOD_APP_CFLAGS RTAI_KMOD_APP_CXXFLAGS RTAI_USER_APP_CFLAGS RTAI_LXRT_LDADD RTAI_FP_CFLAGS RTAI_LINUX_DIR RTAI_LINUX_VERSION RTAI_MODULE_DIR RTAI_MODULE_EXT RTAI_KBUILD_ENV RTAI_KBUILD_TOP RTAI_KBUILD_BOTTOM RTAI_KBUILD_CMD RTAI_KBUILD_CLEAN CONFIG_RTAI_LINUXDIR CONFIG_RTAI_ADDONS_TRUE CONFIG_RTAI_ADDONS_FALSE subdirs LIBOBJS LTLIBOBJS'
 +ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CXX CXXFLAGS ac_ct_CXX CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT EGREP LN_S ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB CPP CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL CCAS CCASFLAGS X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS GL_CFLAGS GL_LIBS RTAI_MAYBE_DOCDIR DOXYGEN DOXYGEN_HAVE_DOT DBX_DOC_ROOT DBX_DOC_TRUE DBX_DOC_FALSE DBX_GEN_DOC_ROOT DBX_LINT DBX_XSLTPROC DBX_FOP DBX_MAYBE_NONET DBX_ROOT DBX_XSL_ROOT DBX_ABS_SRCDIR_TRUE DBX_ABS_SRCDIR_FALSE RTAI_MAYBE_SIMDIR CONFIG_X86_LOCAL_APIC_TRUE CONFIG_X86_LOCAL_APIC_FALSE CONFIG_KBUILD_TRUE CONFIG_KBUILD_FALSE CONFIG_X86_TRUE CONFIG_X86_FALSE CONFIG_PPC_TRUE CONFIG_PPC_FALSE CONFIG_ARM_TRUE CONFIG_ARM_FALSE CONFIG_ARCH_EP9301_TRUE CONFIG_ARCH_EP9301_FALSE CONFIG_ARCH_PXA_TRUE CONFIG_ARCH_PXA_FALSE CONFIG_ARCH_IMX_TRUE CONFIG_ARCH_IMX_FALSE CONFIG_UCLINUX_TRUE CONFIG_UCLINUX_FALSE CONFIG_SMP_TRUE CONFIG_SMP_FALSE CONFIG_RTAI_SCHED_UP_TRUE CONFIG_RTAI_SCHED_UP_FALSE CONFIG_RTAI_SCHED_MUP_TRUE CONFIG_RTAI_SCHED_MUP_FALSE CONFIG_RTAI_SCHED_SMP_TRUE CONFIG_RTAI_SCHED_SMP_FALSE CONFIG_RTAI_SCHED_LXRT_TRUE CONFIG_RTAI_SCHED_LXRT_FALSE CONFIG_RTAI_TRACE_TRUE CONFIG_RTAI_TRACE_FALSE CONFIG_RTAI_MATH_TRUE CONFIG_RTAI_MATH_FALSE CONFIG_RTAI_BITS_TRUE CONFIG_RTAI_BITS_FALSE CONFIG_RTAI_FIFOS_TRUE CONFIG_RTAI_FIFOS_FALSE CONFIG_RTAI_NETRPC_TRUE CONFIG_RTAI_NETRPC_FALSE CONFIG_RTAI_SEM_TRUE CONFIG_RTAI_SEM_FALSE CONFIG_RTAI_MSG_TRUE CONFIG_RTAI_MSG_FALSE CONFIG_RTAI_MBX_TRUE CONFIG_RTAI_MBX_FALSE CONFIG_RTAI_TBX_TRUE CONFIG_RTAI_TBX_FALSE CONFIG_RTAI_MQ_TRUE CONFIG_RTAI_MQ_FALSE CONFIG_RTAI_SHM_TRUE CONFIG_RTAI_SHM_FALSE CONFIG_RTAI_MALLOC_TRUE CONFIG_RTAI_MALLOC_FALSE CONFIG_RTAI_TASKLETS_TRUE CONFIG_RTAI_TASKLETS_FALSE CONFIG_RTAI_USI_TRUE CONFIG_RTAI_USI_FALSE CONFIG_RTAI_WD_TRUE CONFIG_RTAI_WD_FALSE CONFIG_RTAI_LEDS_TRUE CONFIG_RTAI_LEDS_FALSE CONFIG_RTAI_MATH_BUILTIN_TRUE CONFIG_RTAI_MATH_BUILTIN_FALSE CONFIG_RTAI_BITS_BUILTIN_TRUE CONFIG_RTAI_BITS_BUILTIN_FALSE CONFIG_RTAI_FIFOS_BUILTIN_TRUE CONFIG_RTAI_FIFOS_BUILTIN_FALSE CONFIG_RTAI_NETRPC_BUILTIN_TRUE CONFIG_RTAI_NETRPC_BUILTIN_FALSE CONFIG_RTAI_SEM_BUILTIN_TRUE CONFIG_RTAI_SEM_BUILTIN_FALSE CONFIG_RTAI_MSG_BUILTIN_TRUE CONFIG_RTAI_MSG_BUILTIN_FALSE CONFIG_RTAI_MBX_BUILTIN_TRUE CONFIG_RTAI_MBX_BUILTIN_FALSE CONFIG_RTAI_TBX_BUILTIN_TRUE CONFIG_RTAI_TBX_BUILTIN_FALSE CONFIG_RTAI_MQ_BUILTIN_TRUE CONFIG_RTAI_MQ_BUILTIN_FALSE CONFIG_RTAI_SHM_BUILTIN_TRUE CONFIG_RTAI_SHM_BUILTIN_FALSE CONFIG_RTAI_MALLOC_BUILTIN_TRUE CONFIG_RTAI_MALLOC_BUILTIN_FALSE CONFIG_RTAI_TASKLETS_BUILTIN_TRUE CONFIG_RTAI_TASKLETS_BUILTIN_FALSE CONFIG_RTAI_USI_BUILTIN_TRUE CONFIG_RTAI_USI_BUILTIN_FALSE CONFIG_RTAI_LEDS_BUILTIN_TRUE CONFIG_RTAI_LEDS_BUILTIN_FALSE CONFIG_RTAI_COMEDI_LXRT_TRUE CONFIG_RTAI_COMEDI_LXRT_FALSE CONFIG_RTAI_CPLUSPLUS_TRUE CONFIG_RTAI_CPLUSPLUS_FALSE CONFIG_RTAI_SERIAL_TRUE CONFIG_RTAI_SERIAL_FALSE CONFIG_RTAI_LAB_TRUE CONFIG_RTAI_LAB_FALSE CONFIG_RTAI_MVM_TRUE CONFIG_RTAI_MVM_FALSE CONFIG_RTAI_TESTSUITE_TRUE CONFIG_RTAI_TESTSUITE_FALSE CONFIG_RTAI_ADEOS_TRUE CONFIG_RTAI_ADEOS_FALSE CONFIG_RTAI_MATH_C99_TRUE CONFIG_RTAI_MATH_C99_FALSE CONFIG_RTAI_DOX_DOC_TRUE CONFIG_RTAI_DOX_DOC_FALSE CONFIG_RTAI_MAINTAINER_TRUE CONFIG_RTAI_MAINTAINER_FALSE CONFIG_RTAI_MAINTAINER_PMA_TRUE CONFIG_RTAI_MAINTAINER_PMA_FALSE CONFIG_RTAI_MAINTAINER_PGM_TRUE CONFIG_RTAI_MAINTAINER_PGM_FALSE CONFIG_RTAI_OLD_FASHIONED_BUILD_TRUE CONFIG_RTAI_OLD_FASHIONED_BUILD_FALSE CROSS_COMPILE DOXYGEN_SHOW_INCLUDE_FILES LATEX_BATCHMODE LATEX_MODE EFLTK_DIR COMEDI_DIR RTAI_BUILD_STRING RTAI_HOST_STRING RTAI_TARGET_ARCH RTAI_TARGET_SUBARCH RTAI_BUILTIN_MODLIST RTAI_KMOD_CFLAGS RTAI_KMOD_CXXFLAGS RTAI_COMPAT_CPPFLAGS RTAI_USER_CFLAGS RTAI_KMOD_APP_CFLAGS RTAI_KMOD_APP_CXXFLAGS RTAI_USER_APP_CFLAGS RTAI_LXRT_LDADD RTAI_FP_CFLAGS RTAI_LINUX_DIR RTAI_LINUX_VERSION RTAI_MODULE_DIR RTAI_MODULE_EXT RTAI_KBUILD_ENV RTAI_KBUILD_TOP RTAI_KBUILD_BOTTOM RTAI_KBUILD_CMD RTAI_KBUILD_CLEAN CONFIG_RTAI_LINUXDIR CONFIG_RTAI_ADDONS_TRUE CONFIG_RTAI_ADDONS_FALSE subdirs LIBOBJS LTLIBOBJS'
  ac_subst_files=''
- 
+
  # Initialize some variables set by options.
 @@ -19299,6 +19299,7 @@ case "$host" in
          ;;
@@ -802,9 +802,9 @@ index 5e92f9b..87d201a 100755
          ;;
   powerpc-*|ppc-*)
 @@ -23484,6 +23485,16 @@ fi
- 
- 
- 
+
+
+
 +if test "$CONFIG_ARCH_IMX" = y; then
 +  CONFIG_ARCH_IMX_TRUE=
 +  CONFIG_ARCH_IMX_FALSE='#'
@@ -828,21 +828,21 @@ index 5e92f9b..87d201a 100755
  		echo
  		echo "******************************************"
 @@ -24167,6 +24180,8 @@ if test x$CONFIG_KBUILD = xy; then
- 
+
               ac_config_links="$ac_config_links testsuite/kern/preempt/Makefile:testsuite/kern/preempt/Makefile.kbuild"
- 
+
 +             ac_config_links="$ac_config_links testsuite/kern/scb9328/Makefile:testsuite/kern/scb9328/Makefile.kbuild"
 +
               ac_config_links="$ac_config_links testsuite/kern/switches/Makefile:testsuite/kern/switches/Makefile.kbuild"
- 
+
  fi
 @@ -24242,7 +24257,7 @@ echo "$as_me: error: rtai-lab package is missing" >&2;}
  fi
- 
+
  if test -d $srcdir/testsuite; then
 -                                                                                             ac_config_files="$ac_config_files testsuite/GNUmakefile testsuite/kern/GNUmakefile testsuite/kern/latency/GNUmakefile testsuite/kern/preempt/GNUmakefile testsuite/kern/switches/GNUmakefile testsuite/user/GNUmakefile testsuite/user/latency/GNUmakefile testsuite/user/preempt/GNUmakefile testsuite/user/switches/GNUmakefile"
 +                                                                                             ac_config_files="$ac_config_files testsuite/GNUmakefile testsuite/kern/GNUmakefile testsuite/kern/latency/GNUmakefile testsuite/kern/preempt/GNUmakefile testsuite/kern/scb9328/GNUmakefile testsuite/kern/switches/GNUmakefile testsuite/user/GNUmakefile testsuite/user/latency/GNUmakefile testsuite/user/preempt/GNUmakefile testsuite/user/switches/GNUmakefile"
- 
+
  elif test \! x$CONFIG_RTAI_TESTSUITE = x; then
       { { echo "$as_me:$LINENO: error: testsuite package is missing" >&5
 @@ -24444,6 +24459,13 @@ echo "$as_me: error: conditional \"CONFIG_ARCH_PXA\" was never defined.
@@ -895,7 +895,7 @@ index d67483a..fe51fa5 100644
 +AM_CONDITIONAL(CONFIG_ARCH_IMX,[test "$CONFIG_ARCH_IMX" = y])
  AM_CONDITIONAL(CONFIG_UCLINUX,[test "$CONFIG_UCLINUX" = y])
  AM_CONDITIONAL(CONFIG_SMP,[test "$CONFIG_SMP" = y])
- 
+
 @@ -1294,6 +1295,8 @@ case $RTAI_TARGET_ARCH in
  		RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -march=armv4 -mtune=arm9tdmi"
  	elif test "$CONFIG_ARCH_PXA" = y; then
@@ -912,7 +912,7 @@ index d67483a..fe51fa5 100644
 +   AC_CONFIG_LINKS(testsuite/kern/scb9328/Makefile:testsuite/kern/scb9328/Makefile.kbuild)
     AC_CONFIG_LINKS(testsuite/kern/switches/Makefile:testsuite/kern/switches/Makefile.kbuild)
  fi
- 
+
 @@ -1512,6 +1516,7 @@ if test -d $srcdir/testsuite; then
  	testsuite/kern/GNUmakefile \
  	testsuite/kern/latency/GNUmakefile \
@@ -939,7 +939,7 @@ index a2d2889..66b28b6 100644
 -SUBDIRS = latency preempt switches
 +SUBDIRS = latency preempt scb9328 switches
  all: all-recursive
- 
+
  .SUFFIXES:
 diff --git a/testsuite/kern/scb9328/GNUmakefile.am b/testsuite/kern/scb9328/GNUmakefile.am
 new file mode 100644
@@ -1389,7 +1389,7 @@ index 0000000..f20083f
 +
 +clean-noinstLIBRARIES:
 +	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-+libscb9328_rt.a: $(libscb9328_rt_a_OBJECTS) $(libscb9328_rt_a_DEPENDENCIES) 
++libscb9328_rt.a: $(libscb9328_rt_a_OBJECTS) $(libscb9328_rt_a_DEPENDENCIES)
 +	-rm -f libscb9328_rt.a
 +	$(libscb9328_rt_a_AR) libscb9328_rt.a $(libscb9328_rt_a_OBJECTS) $(libscb9328_rt_a_LIBADD)
 +	$(RANLIB) libscb9328_rt.a
@@ -1781,12 +1781,12 @@ index 0000000..c178073
 +}
 +#endif
 +
-+/* 
++/*
 + *	/proc/rtai/latency_calibrate entry
 + */
 +
 +#ifdef CONFIG_PROC_FS
-+static int proc_read(char *page, char **start, off_t off, 
++static int proc_read(char *page, char **start, off_t off,
 +                     int count, int *eof, void *data)
 +{
 +	PROC_PRINT_VARS;
@@ -1804,9 +1804,9 @@ index 0000000..c178073
 +
 +
 +/*
-+ *	Periodic realtime thread 
++ *	Periodic realtime thread
 + */
-+ 
++
 +void
 +fun(int thread)
 +{
@@ -1878,8 +1878,8 @@ index 0000000..c178073
 +
 +
 +/*
-+ *	Initialisation. We have to select the scheduling mode and start 
-+ *      our periodical measurement task.  
++ *	Initialisation. We have to select the scheduling mode and start
++ *      our periodical measurement task.
 + */
 +
 +static int
@@ -1940,7 +1940,7 @@ index 0000000..c178073
 +
 +
 +/*
-+ *	Cleanup 
++ *	Cleanup
 + */
 +
 +static void

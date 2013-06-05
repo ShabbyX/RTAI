@@ -12,7 +12,7 @@ exec("SCI/contrib/RTAI/loader.sce");
 Code generation
 ------------------
 
-Do not use the menu entry Tools/Code generation. For RTAI Code generation you have to use Simulation/Compile and then go to the scilab terminal 
+Do not use the menu entry Tools/Code generation. For RTAI Code generation you have to use Simulation/Compile and then go to the scilab terminal
 and type :
 
 RTCodeGen()

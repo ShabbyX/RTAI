@@ -360,7 +360,7 @@ do { \
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -394,7 +394,7 @@ unsigned rt_startup_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -431,7 +431,7 @@ static inline void _rt_enable_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -463,7 +463,7 @@ void rt_enable_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -499,7 +499,7 @@ void rt_disable_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -550,7 +550,7 @@ static inline void _rt_end_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -585,7 +585,7 @@ void rt_unmask_irq (unsigned irq)
  * should be done for edge triggered ones. Recall that in the latter case you
  * allow also any new interrupts on the same request as soon as you enable
  * interrupts at the CPU level.
- * 
+ *
  * Often some of the above functions do equivalent things. Once more there is no
  * way of doing it right except by knowing the hardware you are manipulating.
  * Furthermore you must also remember that when you install a hard real time
@@ -815,7 +815,7 @@ irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_reg
 	rtai_hw_restore_flags(flags);
 
 	return RTAI_LINUX_IRQ_HANDLED;
-} 
+}
 
 #ifdef CONFIG_GENERIC_CLOCKEVENTS
 
@@ -839,7 +839,7 @@ static inline int REQUEST_LINUX_IRQ_BROADCAST_TO_APIC_TIMERS(void)
 irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_regs *regs)
 {
 	return RTAI_LINUX_IRQ_HANDLED;
-} 
+}
 
 #define REQUEST_LINUX_IRQ_BROADCAST_TO_APIC_TIMERS()  0
 
@@ -862,7 +862,7 @@ irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_reg
 	} while (0)
 
 #endif
- 
+
 #ifdef CONFIG_SMP
 
 static unsigned long rtai_old_irq_affinity[IPIPE_NR_XIRQS];
@@ -1047,7 +1047,7 @@ unsigned long rt_assign_irq_to_cpu (int irq, unsigned long cpumask)
  * reset IRQ->CPU assignment
  *
  * rt_reset_irq_to_sym_mode resets the interrupt irq to the symmetric interrupts
- * management, whatever that means, existing before the very first use of RTAI 
+ * management, whatever that means, existing before the very first use of RTAI
  * rt_assign_irq_to_cpu. This function applies to external interrupts only.
  *
  * @the mask of the interrupts routing before its call.
@@ -1243,7 +1243,7 @@ void rt_setup_8254_tsc (void)
 	outb_p(RTAI_COUNTER_2_LATCH & 0xff, 0x42);
 	outb_p(RTAI_COUNTER_2_LATCH >> 8, 0x42);
 	rtai_ts_8254 = c + ((RTIME)LATCH)*jiffies;
-	rtai_last_8254_counter2 = 0; 
+	rtai_last_8254_counter2 = 0;
 	outb_p((inb_p(0x61) & 0xFD) | 1, 0x61);
 	rtai_critical_exit(flags);
 }
@@ -1429,7 +1429,7 @@ static int intercept_syscall_prologue(unsigned long event, struct pt_regs *regs)
 			return 0;
                 }
                 return 1;
-        } 
+        }
 	return likely(sched_intercept_syscall_prologue != NULL) ? sched_intercept_syscall_prologue(regs) : 0;
 }
 
@@ -1474,7 +1474,7 @@ int rtai_calibrate_8254 (void)
 	flags = rtai_critical_enter(NULL);
 	outb(0x34,0x43);
 	t = rtai_rdtsc();
-	for (i = 0; i < 10000; i++) { 
+	for (i = 0; i < 10000; i++) {
 		outb(LATCH & 0xff,0x40);
 		outb(LATCH >> 8,0x40);
 	}
@@ -1556,7 +1556,7 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	PROC_PRINT("    APIC Latency: %d ns\n",RTAI_LATENCY_APIC);
 	PROC_PRINT("    APIC Setup: %d ns\n",RTAI_SETUP_TIME_APIC);
 #endif /* CONFIG_X86_LOCAL_APIC */
-    
+
 	none = 1;
 	PROC_PRINT("\n** Real-time IRQs used by RTAI: ");
     	for (i = 0; i < RTAI_NR_IRQS; i++) {
@@ -1948,10 +1948,10 @@ int (*rt_linux_hrt_next_shot)(unsigned long, struct clock_event_device *);
 #define TEST_LINUX_TICK  RTAI_APIC_ICOUNT
 #else
 #define TEST_LINUX_TICK  (used_apic ? RTAI_APIC_ICOUNT : LATCH)
-#endif 
+#endif
 
-/* 
- * _rt_linux_hrt_set_mode and _rt_linux_hrt_next_shot below should serve 
+/*
+ * _rt_linux_hrt_set_mode and _rt_linux_hrt_next_shot below should serve
  * RTAI examples only and assume that RTAI is in periodic mode always
  */
 
@@ -2019,7 +2019,7 @@ static unsigned long hal_request_apic_freq(unsigned long *apic_freq)
 	}
 	if (avrg_freq) {
 		if ((avrg_freq /= num_online_cpus()) != freq) {
-			printk("*** APICs FREQs DIFFER ***\n"); 
+			printk("*** APICs FREQs DIFFER ***\n");
 		}
 		*apic_freq = avrg_freq;
 	}

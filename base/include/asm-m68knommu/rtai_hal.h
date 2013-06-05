@@ -139,7 +139,7 @@ struct rtai_realtime_irq_s {
         int (*irq_ack)(unsigned int);
 };
 
-/* 
+/*
  * Linux has this information in io_apic.c, but it does not export it;
  * on the other hand it should be fairly stable this way and so we try
  * to avoid putting something else in our patch.
@@ -414,7 +414,7 @@ static inline int rt_save_switch_to_real_time(int cpuid)
 	if (!rtai_linux_context[cpuid].sflags) {
 		_rt_switch_to_real_time(cpuid);
 		return 0;
-	} 
+	}
 	return 1;
 }
 

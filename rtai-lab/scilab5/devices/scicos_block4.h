@@ -15,9 +15,9 @@
 
 typedef void (*voidg)();
 
-/* scicos_block structure definition 
- * WARNING: take care that this sructure is 
- * not the same as the one in scicos_block.h 
+/* scicos_block structure definition
+ * WARNING: take care that this sructure is
+ * not the same as the one in scicos_block.h
  * i.e same name but inptr and outptr are void **
  */
 typedef struct {
@@ -100,7 +100,7 @@ typedef struct {
 */
 #define ReInitialization 6
 
-#define DoColdRestart(block)        (do_cold_restart()) 
+#define DoColdRestart(block)        (do_cold_restart())
 #define GetSimulationPhase(block)   (get_phase_simulation())
 #define GetScicosTime(block)        (get_scicos_time())
 #define GetFinalTime(block)         (get_final_time())
@@ -108,7 +108,7 @@ typedef struct {
 #define SetBlockNum(block,val)      (set_block_number(val))
 #define GetBlockError(block)        (get_block_error())
 #define SetBlockError(block,val)    (set_block_error(val))
-#define StopSimulation(block,val)   (end_scicos_sim()) 
+#define StopSimulation(block,val)   (end_scicos_sim())
 
 /* utility function for block declaration */
 void do_cold_restart();
@@ -140,8 +140,8 @@ int fx_( double *, double *);
 int read_xml_initial_states(int ,const char * , char **, double *);
 int write_xml_states(int,const char *, char **, double *);
 double pow_(double , double );
-double exp_(double ); 
-double log_(double ); 
+double exp_(double );
+double log_(double );
 
 #ifdef __STDC__
  void Coserror(char *fmt,...);
@@ -273,7 +273,7 @@ extern int s_cmp();
   * 78 - GetLabelPtrs(blk)
   * 79 - GetBoolInPortPtrs(blk,x)
   * 80 - GetBoolOutPortPtrs(blk,x)
-  * 81 - GetPtrWorkPtrs(blk) 
+  * 81 - GetPtrWorkPtrs(blk)
   */
 
 /**
@@ -727,15 +727,15 @@ extern int s_cmp();
 #if WIN32
 #ifdef min
 #undef min
-#endif 
-#ifdef max 
+#endif
+#ifdef max
 #undef max
-#endif 
-#endif 
+#endif
+#endif
 
 #ifndef max
 #define max(a,b) ((a) >= (b) ? (a) : (b))
-#endif 
+#endif
 #ifndef min
 #define min(a,b) ((a) <= (b) ? (a) : (b))
 #endif

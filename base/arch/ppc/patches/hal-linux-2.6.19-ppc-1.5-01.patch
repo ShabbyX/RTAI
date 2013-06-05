@@ -6,7 +6,7 @@
  		while (!need_resched() && !cpu_should_die()) {
  			ppc64_runlatch_off();
 +			ipipe_suspend_domain();
- 
+
  			if (ppc_md.power_save) {
  				clear_thread_flag(TIF_POLLING_NRFLAG);
 @@ -59,13 +60,21 @@
@@ -18,32 +18,32 @@
 +#else /* !CONFIG_IPIPE */
  				local_irq_disable();
 +#endif /* CONFIG_IPIPE */
- 
+
  				/* check again after disabling irqs */
  				if (!need_resched() && !cpu_should_die())
  					ppc_md.power_save();
- 
+
 +#ifdef CONFIG_IPIPE
 +				local_irq_enable_hw();
 +#else /* !CONFIG_IPIPE */
  				local_irq_enable();
 +#endif /* CONFIG_IPIPE */
  				set_thread_flag(TIF_POLLING_NRFLAG);
- 
+
  			} else {
 + diff -u linux-2.6.19/arch/powerpc/kernel/irq.c.ORIG linux-2.6.19/arch/powerpc/kernel/irq.c
 --- linux-2.6.19/arch/powerpc/kernel/irq.c.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/arch/powerpc/kernel/irq.c	2006-12-13 14:01:45.582981152 +0100
 @@ -69,7 +69,11 @@
  #endif
- 
+
  int __irq_offset_value;
 +#ifdef CONFIG_IPIPE
 +int ppc_spurious_interrupts;
 +#else /* !CONFIG_IPIPE */
  static int ppc_spurious_interrupts;
 +#endif /* CONFIG_IPIPE */
- 
+
  #ifdef CONFIG_PPC32
  EXPORT_SYMBOL(__irq_offset_value);
 + diff -u linux-2.6.19/arch/ppc/boot/Makefile.ORIG linux-2.6.19/arch/ppc/boot/Makefile
@@ -52,7 +52,7 @@
 @@ -16,6 +16,14 @@
  CFLAGS	 	+= -fno-builtin -D__BOOTER__ -Iarch/$(ARCH)/boot/include
  HOSTCFLAGS	+= -Iarch/$(ARCH)/boot/include
- 
+
 +ifdef CONFIG_IPIPE_TRACE
 +# do not trace the boot loader
 +nullstring :=
@@ -62,7 +62,7 @@
 +endif
 +
  BOOT_TARGETS	= zImage zImage.initrd znetboot znetboot.initrd
- 
+
  bootdir-y			:= simple
 + diff -u linux-2.6.19/arch/ppc/Kconfig.ORIG linux-2.6.19/arch/ppc/Kconfig
 --- linux-2.6.19/arch/ppc/Kconfig.ORIG	2006-11-29 22:57:37.000000000 +0100
@@ -70,12 +70,12 @@
 @@ -950,6 +950,8 @@
  	depends on SMP
  	default "4"
- 
+
 +source "kernel/ipipe/Kconfig"
 +
  config HIGHMEM
  	bool "High memory support"
- 
+
 + diff -u linux-2.6.19/arch/ppc/kernel/entry.S.ORIG linux-2.6.19/arch/ppc/kernel/entry.S
 --- linux-2.6.19/arch/ppc/kernel/entry.S.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/arch/ppc/kernel/entry.S	2006-12-13 14:01:45.596979506 +0100
@@ -128,7 +128,7 @@
 @@ -260,11 +290,34 @@
  	SYNC
  	RFI
- 
+
 +#ifdef CONFIG_IPIPE
 +.ipipe_end_syscall:
 +	LOAD_MSR_KERNEL(r10,MSR_KERNEL)	/* doesn't include MSR_EE */
@@ -139,7 +139,7 @@
 +
  66:	li	r3,-ENOSYS
  	b	ret_from_syscall
- 
+
  	.globl	ret_from_fork
  ret_from_fork:
 +#ifdef CONFIG_IPIPE
@@ -163,7 +163,7 @@
 @@ -630,6 +683,12 @@
  	SYNC			/* Some chip revs have problems here... */
  	MTMSRD(r10)		/* disable interrupts */
- 
+
 +#ifdef CONFIG_IPIPE
 +        bl __ipipe_check_root
 +        cmpwi   r3, 0
@@ -213,7 +213,7 @@
  #endif /* CONFIG_PREEMPT */
 @@ -928,3 +1013,10 @@
  	b	4b
- 
+
  	.comm	ee_restarts,4
 +
 +#ifdef CONFIG_IPIPE
@@ -227,7 +227,7 @@
 +++ linux-2.6.19/arch/ppc/kernel/head_44x.S	2006-12-13 14:01:45.602978801 +0100
 @@ -427,7 +427,11 @@
  	INSTRUCTION_STORAGE_EXCEPTION
- 
+
  	/* External Input Interrupt */
 -	EXCEPTION(0x0500, ExternalInput, do_IRQ, EXC_XFER_LITE)
 +#ifdef CONFIG_IPIPE
@@ -235,13 +235,13 @@
 +#else /* !CONFIG_IPIPE */
 + 	EXCEPTION(0x0500, ExternalInput, do_IRQ, EXC_XFER_LITE)
 +#endif /* CONFIG_IPIPE */
- 
+
  	/* Alignment Interrupt */
  	ALIGNMENT_EXCEPTION
 @@ -771,6 +775,15 @@ exception_stack_top:
  cmd_line:
  	.space	512
- 
+
 +	.globl intercept_table
 +intercept_table:
 +	.long 0, 0, i0x200, i0x300, i0x400, i0x500, i0x600, i0x700
@@ -260,7 +260,7 @@
 @@ -228,6 +228,12 @@
  	EXC_XFER_TEMPLATE(hdlr, n, MSR_KERNEL, NOCOPY, transfer_to_handler_full, \
  			  ret_from_except_full)
- 
+
 +#ifdef CONFIG_IPIPE
 +#define EXC_XFER_IPIPE(n, hdlr)		\
 +	EXC_XFER_TEMPLATE(hdlr, n+1, MSR_KERNEL, NOCOPY, transfer_to_handler, \
@@ -272,14 +272,14 @@
  			  ret_from_except)
 @@ -396,7 +402,11 @@
  	EXC_XFER_EE_LITE(0x400, handle_page_fault)
- 
+
  /* 0x0500 - External Interrupt Exception */
 +#ifdef CONFIG_IPIPE
 +	EXCEPTION(0x0500, HardwareInterrupt, __ipipe_grab_irq, EXC_XFER_IPIPE)
 +#else /* !CONFIG_IPIPE */
  	EXCEPTION(0x0500, HardwareInterrupt, do_IRQ, EXC_XFER_LITE)
 +#endif /* CONFIG_IPIPE */
- 
+
  /* 0x0600 - Alignment Exception */
  	START_EXCEPTION(0x0600, Alignment)
 @@ -434,7 +444,11 @@
@@ -291,13 +291,13 @@
 +#else /* !CONFIG_IPIPE */
  	EXC_XFER_LITE(0x1000, timer_interrupt)
 +#endif /* CONFIG_IPIPE */
- 
+
  #if 0
  /* NOTE:
 @@ -1014,6 +1028,15 @@ exception_stack_top:
  cmd_line:
  	.space	512
- 
+
 +	.globl intercept_table
 +intercept_table:
 +	.long 0, 0, i0x200, i0x300, i0x400, i0x500, i0x600, i0x700
@@ -322,37 +322,37 @@
 +	EXC_XFER_TEMPLATE(n, hdlr, n+1, NOCOPY, transfer_to_handler, \
 +			  __ipipe_ret_from_except)
 +#endif /* CONFIG_IPIPE */
- 
+
  #define EXC_XFER_LITE(n, hdlr)		\
  	EXC_XFER_TEMPLATE(n, hdlr, n+1, NOCOPY, transfer_to_handler, \
 @@ -238,7 +243,11 @@
  	EXC_XFER_EE_LITE(0x400, handle_page_fault)
- 
+
  /* External interrupt */
 +#ifdef CONFIG_IPIPE
 +	EXCEPTION(0x500, HardwareInterrupt, __ipipe_grab_irq, EXC_XFER_IPIPE)
 +#else /* !CONFIG_IPIPE */
  	EXCEPTION(0x500, HardwareInterrupt, do_IRQ, EXC_XFER_LITE)
 +#endif /* CONFIG_IPIPE */
- 
+
  /* Alignment exception */
  	. = 0x600
 @@ -259,7 +268,11 @@
  	EXCEPTION(0x800, FPUnavailable, unknown_exception, EXC_XFER_STD)
- 
+
  /* Decrementer */
 +#ifdef CONFIG_IPIPE
 +	EXCEPTION(0x900, Decrementer, __ipipe_grab_timer, EXC_XFER_IPIPE)
 +#else /* !CONFIG_IPIPE */
  	EXCEPTION(0x900, Decrementer, timer_interrupt, EXC_XFER_LITE)
 +#endif /* CONFIG_IPIPE */
- 
+
  	EXCEPTION(0xa00, Trap_0a, unknown_exception, EXC_XFER_EE)
  	EXCEPTION(0xb00, Trap_0b, unknown_exception, EXC_XFER_EE)
 @@ -919,6 +932,15 @@ swapper_pg_dir:
  cmd_line:
  	.space	512
- 
+
 +	.globl intercept_table
 +intercept_table:
 +	.long 0, 0, i0x200, i0x300, i0x400, i0x500, i0x600, i0x700
@@ -371,7 +371,7 @@
 @@ -187,6 +187,12 @@
  	EXC_XFER_TEMPLATE(hdlr, n, MSR_KERNEL, NOCOPY, transfer_to_handler_full, \
  			  ret_from_except_full)
- 
+
 +#ifdef CONFIG_IPIPE
 +#define EXC_XFER_IPIPE(n, hdlr)		\
 +	EXC_XFER_TEMPLATE(hdlr, n+1, MSR_KERNEL, NOCOPY, transfer_to_handler, \
@@ -384,7 +384,7 @@
 @@ -345,6 +351,15 @@
  	addi	r3,r1,STACK_FRAME_OVERHEAD;				      \
  	EXC_XFER_STD(0x0700, program_check_exception)
- 
+
 +#ifdef CONFIG_IPIPE
 +#define DECREMENTER_EXCEPTION						      \
 +	START_EXCEPTION(Decrementer)					      \
@@ -402,7 +402,7 @@
  	addi    r3,r1,STACK_FRAME_OVERHEAD;				      \
  	EXC_XFER_LITE(0x0900, timer_interrupt)
 +#endif /* CONFIG_IPIPE */
- 
+
  #define FP_UNAVAILABLE_EXCEPTION					      \
  	START_EXCEPTION(FloatingPointUnavailable)			      \
 + diff -u linux-2.6.19/arch/ppc/kernel/head_fsl_booke.S.ORIG linux-2.6.19/arch/ppc/kernel/head_fsl_booke.S
@@ -410,20 +410,20 @@
 +++ linux-2.6.19/arch/ppc/kernel/head_fsl_booke.S	2006-12-13 14:01:45.624976215 +0100
 @@ -526,7 +526,11 @@
  	INSTRUCTION_STORAGE_EXCEPTION
- 
+
  	/* External Input Interrupt */
 +#ifdef CONFIG_IPIPE
 +	EXCEPTION(0x0500, ExternalInput, __ipipe_grab_irq, EXC_XFER_IPIPE)
 +#else /* !CONFIG_IPIPE */
  	EXCEPTION(0x0500, ExternalInput, do_IRQ, EXC_XFER_LITE)
 +#endif /* CONFIG_IPIPE */
- 
+
  	/* Alignment Interrupt */
  	ALIGNMENT_EXCEPTION
 @@ -1056,6 +1060,15 @@ exception_stack_top:
  cmd_line:
  	.space	512
- 
+
 +	.globl intercept_table
 +intercept_table:
 +	.long 0, 0, i0x200, i0x300, i0x400, i0x500, i0x600, i0x700
@@ -442,7 +442,7 @@
 @@ -295,6 +295,12 @@
  	EXC_XFER_TEMPLATE(n, hdlr, n, NOCOPY, transfer_to_handler_full,	\
  			  ret_from_except_full)
- 
+
 +#ifdef CONFIG_IPIPE
 +#define EXC_XFER_IPIPE(n, hdlr)		\
 +	EXC_XFER_TEMPLATE(n, hdlr, n+1, NOCOPY, transfer_to_handler, \
@@ -454,30 +454,30 @@
  			  ret_from_except)
 @@ -356,7 +362,11 @@
  	EXC_XFER_EE_LITE(0x400, handle_page_fault)
- 
+
  /* External interrupt */
 +#ifdef CONFIG_IPIPE
 +	EXCEPTION(0x500, HardwareInterrupt, __ipipe_grab_irq, EXC_XFER_IPIPE)
 +#else /* !CONFIG_IPIPE */
  	EXCEPTION(0x500, HardwareInterrupt, do_IRQ, EXC_XFER_LITE)
 +#endif /* CONFIG_IPIPE */
- 
+
  /* Alignment exception */
  	. = 0x600
 @@ -381,7 +391,11 @@
  	EXC_XFER_EE_LITE(0x800, kernel_fp_unavailable_exception)
- 
+
  /* Decrementer */
 +#ifdef CONFIG_IPIPE
 +	EXCEPTION(0x900, Decrementer, __ipipe_grab_timer, EXC_XFER_IPIPE)
 +#else /* !CONFIG_IPIPE */
  	EXCEPTION(0x900, Decrementer, timer_interrupt, EXC_XFER_LITE)
 +#endif /* CONFIG_IPIPE */
- 
+
  	EXCEPTION(0xa00, Trap_0a, unknown_exception, EXC_XFER_EE)
  	EXCEPTION(0xb00, Trap_0b, unknown_exception, EXC_XFER_EE)
 @@ -1350,8 +1364,8 @@ cmd_line:
- 
+
  	.globl intercept_table
  intercept_table:
 -	.long 0, 0, i0x200, i0x300, i0x400, 0, i0x600, i0x700
@@ -1341,7 +1341,7 @@
 +obj-$(CONFIG_IPIPE)		+= ipipe-core.o ipipe-root.o
 +obj-$(CONFIG_IPIPE_TRACE_MCOUNT)	+= ipipe-mcount.o
  obj-$(CONFIG_KEXEC)		+= machine_kexec.o relocate_kernel.o
- 
+
  ifndef CONFIG_MATH_EMULATION
 + diff -u linux-2.6.19/arch/ppc/kernel/setup.c.ORIG linux-2.6.19/arch/ppc/kernel/setup.c
 --- linux-2.6.19/arch/ppc/kernel/setup.c.ORIG	2006-11-29 22:57:37.000000000 +0100
@@ -1367,7 +1367,7 @@
 +#else
  		update_process_times(user_mode(regs));
 +#endif
- 
+
  	  	if (smp_processor_id())
  			continue;
 + diff -u linux-2.6.19/arch/ppc/kernel/traps.c.ORIG linux-2.6.19/arch/ppc/kernel/traps.c
@@ -1376,7 +1376,7 @@
 @@ -233,6 +233,9 @@
  {
  	unsigned long reason = get_mc_reason(regs);
- 
+
 +	if (ipipe_trap_notify(IPIPE_TRAP_MCE,regs))
 +	    	return;
 +
@@ -1384,7 +1384,7 @@
  		regs->msr |= MSR_RI;
  		_exception(SIGBUS, regs, BUS_ADRERR, regs->nip);
 @@ -392,6 +395,8 @@
- 
+
  void unknown_exception(struct pt_regs *regs)
  {
 +	if (ipipe_trap_notify(IPIPE_TRAP_UNKNOWN,regs))
@@ -1393,7 +1393,7 @@
  	       regs->nip, regs->msr, regs->trap, print_tainted());
  	_exception(SIGTRAP, regs, 0, 0);
 @@ -399,6 +404,8 @@
- 
+
  void instruction_breakpoint_exception(struct pt_regs *regs)
  {
 +	if (ipipe_trap_notify(IPIPE_TRAP_IABR,regs))
@@ -1402,14 +1402,14 @@
  		return;
  	_exception(SIGTRAP, regs, TRAP_BRKPT, 0);
 @@ -406,6 +413,8 @@
- 
+
  void RunModeException(struct pt_regs *regs)
  {
 +	if (ipipe_trap_notify(IPIPE_TRAP_RM,regs))
 +	    	return;
  	_exception(SIGTRAP, regs, 0, 0);
  }
- 
+
 @@ -555,6 +564,8 @@
  {
  	if (single_stepping(regs)) {
@@ -1422,7 +1422,7 @@
 @@ -624,6 +635,9 @@
  	unsigned int reason = get_reason(regs);
  	extern int do_mathemu(struct pt_regs *regs);
- 
+
 +	if (ipipe_trap_notify(IPIPE_TRAP_PCE,regs))
 +	    	return;
 +
@@ -1448,7 +1448,7 @@
  		sig = SIGSEGV;
  		code = SEGV_ACCERR;
 @@ -740,6 +758,8 @@
- 
+
  void nonrecoverable_exception(struct pt_regs *regs)
  {
 +	if (ipipe_trap_notify(IPIPE_TRAP_NREC,regs))
@@ -1459,15 +1459,15 @@
 @@ -760,6 +780,9 @@
  	extern int Soft_emulate_8xx(struct pt_regs *);
  	int errcode;
- 
+
 +	if (ipipe_trap_notify(IPIPE_TRAP_SOFTEMU,regs))
 +	    	return;
 +
  	CHECK_FULL_REGS(regs);
- 
+
  	if (!user_mode(regs)) {
 @@ -788,6 +811,8 @@
- 
+
  void DebugException(struct pt_regs *regs, unsigned long debug_status)
  {
 +	if (ipipe_trap_notify(IPIPE_TRAP_DEBUG,regs))
@@ -1478,7 +1478,7 @@
 @@ -828,6 +853,9 @@
  {
  	static int kernel_altivec_count;
- 
+
 +	if (ipipe_trap_notify(IPIPE_TRAP_ALTUNAVAIL,regs))
 +	    	return;
 +
@@ -1488,7 +1488,7 @@
 @@ -849,6 +877,8 @@
  {
  	int err;
- 
+
 +	if (ipipe_trap_notify(IPIPE_TRAP_ALTASSIST,regs))
 +	    	return;
  	preempt_disable();
@@ -1497,20 +1497,20 @@
 @@ -909,6 +939,9 @@
  	int fpexc_mode;
  	int code = 0;
- 
+
 +	if (ipipe_trap_notify(IPIPE_TRAP_SPE,regs))
 +	    	return;
 +
  	spefscr = current->thread.spefscr;
  	fpexc_mode = current->thread.fpexc_mode;
- 
+
 + diff -u linux-2.6.19/arch/ppc/mm/fault.c.ORIG linux-2.6.19/arch/ppc/mm/fault.c
 --- linux-2.6.19/arch/ppc/mm/fault.c.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/arch/ppc/mm/fault.c	2006-12-13 14:01:45.670970808 +0100
 @@ -113,6 +113,9 @@
  		is_write = error_code & 0x02000000;
  #endif /* CONFIG_4xx || CONFIG_BOOKE */
- 
+
 +	if (ipipe_trap_notify(IPIPE_TRAP_ACCESS,regs))
 +	    	return 0;
 +
@@ -1522,11 +1522,11 @@
 +++ linux-2.6.19/arch/ppc/platforms/85xx/sbc85xx.h	2006-12-13 14:01:45.675970220 +0100
 @@ -15,7 +15,6 @@
  #define __PLATFORMS_85XX_SBC85XX_H__
- 
+
  #include <linux/init.h>
 -#include <linux/seq_file.h>
  #include <asm/ppcboot.h>
- 
+
  #define BOARD_CCSRBAR		((uint)0xff700000)
 + diff -u linux-2.6.19/arch/ppc/syslib/open_pic.c.ORIG linux-2.6.19/arch/ppc/syslib/open_pic.c
 --- linux-2.6.19/arch/ppc/syslib/open_pic.c.ORIG	2006-11-29 22:57:37.000000000 +0100
@@ -1541,7 +1541,7 @@
  	openpic_eoi();
  #else
 @@ -832,7 +832,7 @@
- 
+
  static void openpic_end_irq(unsigned int irq_nr)
  {
 -#ifdef __SLOW_VERSION__
@@ -1553,9 +1553,9 @@
 --- linux-2.6.19/include/asm-powerpc/hw_irq.h.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/include/asm-powerpc/hw_irq.h	2006-12-13 14:01:45.714965635 +0100
 @@ -12,6 +12,166 @@
- 
+
  extern void timer_interrupt(struct pt_regs *);
- 
+
 +#ifdef CONFIG_IPIPE
 +
 +#ifdef CONFIG_PPC_ISERIES
@@ -1717,12 +1717,12 @@
 +#else /* !CONFIG_IPIPE */
 +
  #ifdef CONFIG_PPC_ISERIES
- 
+
  extern unsigned long local_get_flags(void);
 @@ -83,6 +243,8 @@
- 
+
  #endif /* CONFIG_PPC_ISERIES */
- 
+
 +#endif /* CONFIG_IPIPE */
 +
  #define mask_irq(irq)						\
@@ -1732,13 +1732,13 @@
 --- linux-2.6.19/include/asm-powerpc/irq.h.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/include/asm-powerpc/irq.h	2006-12-13 14:01:45.722964695 +0100
 @@ -11,7 +11,9 @@
- 
+
  #include <linux/threads.h>
  #include <linux/list.h>
 +#ifdef CONFIG_PPC_MERGE
  #include <linux/radix-tree.h>
 +#endif
- 
+
  #include <asm/types.h>
  #include <asm/atomic.h>
 + diff -u linux-2.6.19/include/asm-ppc/ipipe.h.ORIG linux-2.6.19/include/asm-ppc/ipipe.h
@@ -1986,7 +1986,7 @@
 + 	local_irq_restore_hw_cond(flags);
  	preempt_enable();
  }
- 
+
 @@ -193,7 +197,13 @@
   * After we have set current->mm to a new value, this activates
   * the context for the new mm so we see the new mappings.
@@ -1999,28 +1999,28 @@
 +	switch_mm(active_mm, mm, current); \
 +	local_irq_restore_hw_cond(flags);	   \
 +} while(0)
- 
+
  extern void mmu_context_init(void);
- 
+
 + diff -u linux-2.6.19/include/asm-ppc/mv64x60.h.ORIG linux-2.6.19/include/asm-ppc/mv64x60.h
 --- linux-2.6.19/include/asm-ppc/mv64x60.h.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/include/asm-ppc/mv64x60.h	2006-12-13 14:01:59.298368685 +0100
 @@ -255,9 +255,9 @@
  mv64x60_write(struct mv64x60_handle *bh, u32 offset, u32 val) {
  	ulong	flags;
- 
+
 -	spin_lock_irqsave(&mv64x60_lock, flags);
 +	spin_lock_irqsave_hw(&mv64x60_lock, flags);
  	out_le32(bh->v_base + offset, val);
 -	spin_unlock_irqrestore(&mv64x60_lock, flags);
 +	spin_unlock_irqrestore_hw(&mv64x60_lock, flags);
  }
- 
+
  extern inline u32
 @@ -265,9 +265,9 @@
  	ulong	flags;
  	u32     reg;
- 
+
 -	spin_lock_irqsave(&mv64x60_lock, flags);
 +	spin_lock_irqsave_hw(&mv64x60_lock, flags);
  	reg = in_le32(bh->v_base + offset);
@@ -2028,11 +2028,11 @@
 +	spin_unlock_irqrestore_hw(&mv64x60_lock, flags);
  	return reg;
  }
- 
+
 @@ -277,11 +277,11 @@
  	u32	reg;
  	ulong	flags;
- 
+
 -	spin_lock_irqsave(&mv64x60_lock, flags);
 +	spin_lock_irqsave_hw(&mv64x60_lock, flags);
  	reg = in_le32(bh->v_base + offs) & (~mask);
@@ -2041,15 +2041,15 @@
 -	spin_unlock_irqrestore(&mv64x60_lock, flags);
 +	spin_unlock_irqrestore_hw(&mv64x60_lock, flags);
  }
- 
+
  #define	mv64x60_set_bits(bh, offs, bits) mv64x60_modify(bh, offs, ~0, bits)
 + diff -u linux-2.6.19/include/asm-ppc/pgalloc.h.ORIG linux-2.6.19/include/asm-ppc/pgalloc.h
 --- linux-2.6.19/include/asm-ppc/pgalloc.h.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/include/asm-ppc/pgalloc.h	2006-12-13 14:01:45.737962932 +0100
 @@ -39,5 +39,10 @@
- 
+
  #define check_pgt_cache()	do { } while (0)
- 
+
 +static inline void set_pgdir(unsigned long address, pgd_t entry)
 +{
 +    /* nop */
@@ -2063,7 +2063,7 @@
 @@ -128,7 +128,20 @@
   */
  extern void irq_exit(void);
- 
+
 +#ifdef CONFIG_IPIPE
 +#define nmi_enter() \
 +do { \
@@ -2079,7 +2079,7 @@
  #define nmi_enter()		do { lockdep_off(); irq_enter(); } while (0)
  #define nmi_exit()		do { __irq_exit(); lockdep_on(); } while (0)
 +#endif /* CONFIG_IPIPE */
- 
+
  #endif /* LINUX_HARDIRQ_H */
 + diff -u linux-2.6.19/include/linux/ipipe.h.ORIG linux-2.6.19/include/linux/ipipe.h
 --- linux-2.6.19/include/linux/ipipe.h.ORIG	2006-12-13 14:01:45.763959875 +0100
@@ -2904,7 +2904,7 @@
 @@ -64,4 +64,8 @@
  #define fastcall
  #endif
- 
+
 +#ifndef notrace
 +#define notrace		__attribute__((no_instrument_function))
 +#endif
@@ -2914,9 +2914,9 @@
 --- linux-2.6.19/include/linux/preempt.h.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/include/linux/preempt.h	2006-12-13 14:01:45.806954820 +0100
 @@ -26,22 +26,37 @@
- 
+
  asmlinkage void preempt_schedule(void);
- 
+
 +#ifdef CONFIG_IPIPE
 +#include <asm/ipipe.h>
 +DECLARE_PER_CPU(struct ipipe_domain *, ipipe_percpu_domain);
@@ -2935,7 +2935,7 @@
 +		barrier(); \
 +	} \
  } while (0)
- 
+
  #define preempt_enable_no_resched() \
  do { \
 -	barrier(); \
@@ -2945,7 +2945,7 @@
 +		dec_preempt_count(); \
 +	} \
  } while (0)
- 
+
  #define preempt_check_resched() \
  do { \
 -	if (unlikely(test_thread_flag(TIF_NEED_RESCHED))) \
@@ -2955,15 +2955,15 @@
 +			preempt_schedule(); \
 +	} \
  } while (0)
- 
+
  #define preempt_enable() \
 + diff -u linux-2.6.19/include/linux/sched.h.ORIG linux-2.6.19/include/linux/sched.h
 --- linux-2.6.19/include/linux/sched.h.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/include/linux/sched.h	2006-12-13 14:01:45.821953057 +0100
 @@ -43,6 +43,7 @@
- 
+
  #include <asm/param.h>	/* for HZ */
- 
+
 +#include <linux/ipipe.h>
  #include <linux/capability.h>
  #include <linux/threads.h>
@@ -2980,7 +2980,7 @@
 +#define TASK_NOWAKEUP		0
 +#endif /* CONFIG_IPIPE */
 +
- 
+
  #define __set_task_state(tsk, state_value)		\
  	do { (tsk)->state = (state_value); } while (0)
 @@ -1023,6 +1032,9 @@
@@ -2991,7 +2991,7 @@
 +	void *ptd[IPIPE_ROOT_NPTDKEYS];
 +#endif
  };
- 
+
  static inline pid_t process_group(struct task_struct *tsk)
 @@ -1115,6 +1127,11 @@
  #define PF_SPREAD_SLAB	0x02000000	/* Spread some slab caches over cpuset */
@@ -3002,14 +3002,14 @@
 +#else
 +#define PF_EVNOTIFY	0
 +#endif /* CONFIG_IPIPE */
- 
+
  /*
   * Only the _current_ task can read/write to tsk->flags, but other
 + diff -u linux-2.6.19/init/Kconfig.ORIG linux-2.6.19/init/Kconfig
 --- linux-2.6.19/init/Kconfig.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/init/Kconfig	2006-12-13 14:01:45.826952469 +0100
 @@ -67,6 +67,7 @@
- 
+
  config LOCALVERSION
  	string "Local version - append to kernel release"
 +	default "-ipipe"
@@ -3040,8 +3040,8 @@
 +        select IPIPE
 +
 +        help
-+          Xenomai is a real-time extension to the Linux kernel. Note 
-+          that Xenomai relies on Adeos interrupt pipeline (CONFIG_IPIPE 
++          Xenomai is a real-time extension to the Linux kernel. Note
++          that Xenomai relies on Adeos interrupt pipeline (CONFIG_IPIPE
 +          option) to be enabled, so enabling this option selects the
 +          CONFIG_IPIPE option.
 +
@@ -3068,7 +3068,7 @@
  	sysctl_init();
  #endif
 +	ipipe_init_proc();
- 
+
  	do_initcalls();
  }
 + diff -u linux-2.6.19/kernel/exit.c.ORIG linux-2.6.19/kernel/exit.c
@@ -3077,17 +3077,17 @@
 @@ -914,6 +914,7 @@
  	taskstats_exit_send(tsk, tidstats, group_dead, mycpu);
  	taskstats_exit_free(tidstats);
- 
+
 +	ipipe_exit_notify(tsk);
  	exit_mm(tsk);
- 
+
  	if (group_dead)
 + diff -u linux-2.6.19/kernel/fork.c.ORIG linux-2.6.19/kernel/fork.c
 --- linux-2.6.19/kernel/fork.c.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/kernel/fork.c	2006-12-13 14:01:45.841950706 +0100
 @@ -384,6 +384,7 @@
  	might_sleep();
- 
+
  	if (atomic_dec_and_test(&mm->mm_users)) {
 +		ipipe_cleanup_notify(mm);
  		exit_aio(mm);
@@ -3096,7 +3096,7 @@
 @@ -914,7 +915,7 @@
  {
  	unsigned long new_flags = p->flags;
- 
+
 -	new_flags &= ~(PF_SUPERPRIV | PF_NOFREEZE);
 +	new_flags &= ~(PF_SUPERPRIV | PF_NOFREEZE | PF_EVNOTIFY);
  	new_flags |= PF_FORKNOEXEC;
@@ -3114,9 +3114,9 @@
 +			p->ptd[k] = NULL;
 +	}
 +#endif /* CONFIG_IPIPE */
-+ 
++
  	return p;
- 
+
  bad_fork_cleanup_namespaces:
 + diff -u linux-2.6.19/kernel/ipipe/core.c.ORIG linux-2.6.19/kernel/ipipe/core.c
 --- linux-2.6.19/kernel/ipipe/core.c.ORIG	2006-12-13 14:01:45.845950236 +0100
@@ -5957,7 +5957,7 @@
  		desc->chip->end(irq);
  		return 1;
  	}
- 
+
  	spin_lock(&desc->lock);
 +#ifndef CONFIG_IPIPE
  	if (desc->chip->ack)
@@ -5975,7 +5975,7 @@
  obj-$(CONFIG_TASK_DELAY_ACCT) += delayacct.o
  obj-$(CONFIG_TASKSTATS) += taskstats.o tsacct.o
 +obj-$(CONFIG_IPIPE) += ipipe/
- 
+
  ifneq ($(CONFIG_SCHED_NO_NO_OMIT_FRAME_POINTER),y)
  # According to Alan Modra <alan@linuxcare.com.au>, the -fno-omit-frame-pointer is
 @@ -74,3 +75,5 @@
@@ -5990,7 +5990,7 @@
 @@ -489,6 +489,78 @@
   * printf(3)
   */
- 
+
 +#ifdef CONFIG_IPIPE
 +
 +static ipipe_spinlock_t __ipipe_printk_lock = IPIPE_SPIN_LOCK_UNLOCKED;
@@ -6057,7 +6057,7 @@
 +
 +	if (oldcount == 0)
 +		ipipe_trigger_irq(__ipipe_printk_virq);
-+out: 
++out:
 +	va_end(args);
 +
 +	return r;
@@ -6067,24 +6067,24 @@
  {
  	va_list args;
 @@ -500,6 +572,7 @@
- 
+
  	return r;
  }
 +#endif /* CONFIG_IPIPE */
- 
+
  /* cpu currently holding logbuf_lock */
  static volatile unsigned int printk_cpu = UINT_MAX;
 + diff -u linux-2.6.19/kernel/sched.c.ORIG linux-2.6.19/kernel/sched.c
 --- linux-2.6.19/kernel/sched.c.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/kernel/sched.c	2006-12-13 14:01:45.893944593 +0100
 @@ -1391,7 +1391,7 @@ static int try_to_wake_up(struct task_st
- 
+
  	rq = task_rq_lock(p, &flags);
  	old_state = p->state;
 -	if (!(old_state & state))
 +	if (!(old_state & state) || (old_state & TASK_NOWAKEUP))
  		goto out;
- 
+
  	if (p->array)
 @@ -1809,19 +1809,25 @@ asmlinkage void schedule_tail(struct tas
  #endif
@@ -6093,7 +6093,7 @@
 +
 +	ipipe_init_notify(current);
  }
- 
+
  /*
   * context_switch - switch to the new MM and the new
   * thread's register state.
@@ -6105,7 +6105,7 @@
  {
  	struct mm_struct *mm = next->mm;
  	struct mm_struct *oldmm = prev->active_mm;
- 
+
 +if (!rq) {
 +	switch_mm(oldmm, next->active_mm, next);
 +	if (!mm) enter_lazy_tlb(oldmm, next);
@@ -6130,19 +6130,19 @@
 +#endif /* CONFIG_IPIPE */
  	spin_release(&rq->lock.dep_map, 1, _THIS_IP_);
  #endif
- 
+
  	/* Here we just switch the register state and the stack. */
  	switch_to(prev, next, prev);
 +#ifdef CONFIG_IPIPE
 +	current->ptd[IPIPE_ROOT_NPTDKEYS - 1] = prev;
 +#endif /* CONFIG_IPIPE */
- 
+
  	return prev;
  }
 @@ -3324,12 +3337,16 @@ asmlinkage void __sched schedule(void)
  	long *switch_count;
  	struct rq *rq;
- 
+
 +#ifdef CONFIG_IPIPE
 +	if (unlikely(!ipipe_root_domain_p))
 +		return;
@@ -6160,7 +6160,7 @@
 @@ -3337,8 +3354,13 @@ asmlinkage void __sched schedule(void)
  	}
  	profile_hit(SCHED_PROFILING, __builtin_return_address(0));
- 
+
 +	if (unlikely(current->state & TASK_ATOMICSWITCH)) {
 +		current->state &= ~TASK_ATOMICSWITCH;
 +		goto need_resched_nodisable;
@@ -6211,7 +6211,7 @@
  		/*
 @@ -6950,3 +6980,50 @@ void set_curr_task(int cpu, struct task_
  }
- 
+
  #endif
 +
 +#ifdef CONFIG_IPIPE
@@ -6265,10 +6265,10 @@
 +++ linux-2.6.19/kernel/signal.c	2006-12-13 14:01:45.899943888 +0100
 @@ -504,6 +504,7 @@
  	unsigned int mask;
- 
+
  	set_tsk_thread_flag(t, TIF_SIGPENDING);
 +	ipipe_sigwake_notify(t); /* TIF_SIGPENDING must be set first. */
- 
+
  	/*
  	 * For SIGKILL, we want to wake it up in the stopped/traced case.
 + diff -u linux-2.6.19/lib/Kconfig.debug.ORIG linux-2.6.19/lib/Kconfig.debug
@@ -6277,7 +6277,7 @@
 @@ -46,6 +46,8 @@
  	  you really need it, and what the merge plan to the mainline kernel for
  	  your module is.
- 
+
 +source "kernel/ipipe/Kconfig.debug"
 +
  config DEBUG_KERNEL
@@ -6289,7 +6289,7 @@
 @@ -13,6 +13,11 @@
  	int this_cpu = raw_smp_processor_id();
  	cpumask_t this_mask;
- 
+
 +#ifdef CONFIG_IPIPE
 + 	if (ipipe_current_domain != ipipe_root_domain)
 +	    return this_cpu;
@@ -6297,14 +6297,14 @@
 +
  	if (likely(preempt_count))
  		goto out;
- 
+
 + diff -u linux-2.6.19/Makefile.ORIG linux-2.6.19/Makefile
 --- linux-2.6.19/Makefile.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/Makefile	2006-12-13 14:01:45.935939656 +0100
 @@ -491,6 +491,10 @@
- 
+
  include $(srctree)/arch/$(ARCH)/Makefile
- 
+
 +ifdef CONFIG_IPIPE_TRACE_MCOUNT
 +CFLAGS          += -pg
 +endif
@@ -6316,12 +6316,12 @@
 --- linux-2.6.19/mm/vmalloc.c.ORIG	2006-11-29 22:57:37.000000000 +0100
 +++ linux-2.6.19/mm/vmalloc.c	2006-12-13 14:01:45.941938951 +0100
 @@ -19,6 +19,7 @@
- 
+
  #include <asm/uaccess.h>
  #include <asm/tlbflush.h>
 +#include <asm/pgalloc.h>
- 
- 
+
+
  DEFINE_RWLOCK(vmlist_lock);
 @@ -151,10 +152,14 @@
  	BUG_ON(addr >= end);
@@ -6345,13 +6345,13 @@
 --- hal-linux-2.6.19-ppc-1.5-01.patch	2007-04-07 18:12:09.000000000 +0200
 +++ /home/rtai-cvs/xenomai/ksrc/arch/powerpc/patches/adeos-ipipe-2.6.19-ppc-1.5-01.patch	2006-12-19 20:38:16.000000000 +0100
 @@ -238,22 +238,6 @@
-  
+
   	/* Alignment Interrupt */
   	ALIGNMENT_EXCEPTION
 -@@ -771,6 +775,15 @@ exception_stack_top:
 - cmd_line:
 - 	.space	512
-- 
+-
 -+	.globl intercept_table
 -+intercept_table:
 -+	.long 0, 0, i0x200, i0x300, i0x400, i0x500, i0x600, i0x700
@@ -6368,13 +6368,13 @@
  --- linux-2.6.19/arch/ppc/kernel/head_4xx.S.ORIG	2006-11-29 22:57:37.000000000 +0100
  +++ linux-2.6.19/arch/ppc/kernel/head_4xx.S	2006-12-13 14:01:45.607978213 +0100
 @@ -294,22 +278,6 @@
-  
+
   #if 0
   /* NOTE:
 -@@ -1014,6 +1028,15 @@ exception_stack_top:
 - cmd_line:
 - 	.space	512
-- 
+-
 -+	.globl intercept_table
 -+intercept_table:
 -+	.long 0, 0, i0x200, i0x300, i0x400, i0x500, i0x600, i0x700
@@ -6391,13 +6391,13 @@
  --- linux-2.6.19/arch/ppc/kernel/head_8xx.S.ORIG	2006-11-29 22:57:37.000000000 +0100
  +++ linux-2.6.19/arch/ppc/kernel/head_8xx.S	2006-12-13 14:01:45.613977508 +0100
 @@ -349,22 +317,6 @@
-  
+
   	EXCEPTION(0xa00, Trap_0a, unknown_exception, EXC_XFER_EE)
   	EXCEPTION(0xb00, Trap_0b, unknown_exception, EXC_XFER_EE)
 -@@ -919,6 +932,15 @@ swapper_pg_dir:
 - cmd_line:
 - 	.space	512
-- 
+-
 -+	.globl intercept_table
 -+intercept_table:
 -+	.long 0, 0, i0x200, i0x300, i0x400, i0x500, i0x600, i0x700
@@ -6414,13 +6414,13 @@
  --- linux-2.6.19/arch/ppc/kernel/head_booke.h.ORIG	2006-11-29 22:57:37.000000000 +0100
  +++ linux-2.6.19/arch/ppc/kernel/head_booke.h	2006-12-13 14:01:45.618976920 +0100
 @@ -420,22 +372,6 @@
-  
+
   	/* Alignment Interrupt */
   	ALIGNMENT_EXCEPTION
 -@@ -1056,6 +1060,15 @@ exception_stack_top:
 - cmd_line:
 - 	.space	512
-- 
+-
 -+	.globl intercept_table
 -+intercept_table:
 -+	.long 0, 0, i0x200, i0x300, i0x400, i0x500, i0x600, i0x700
@@ -6437,11 +6437,11 @@
  --- linux-2.6.19/arch/ppc/kernel/head.S.ORIG	2006-11-29 22:57:37.000000000 +0100
  +++ linux-2.6.19/arch/ppc/kernel/head.S	2006-12-13 14:01:45.628975745 +0100
 @@ -476,17 +412,6 @@
-  
+
   	EXCEPTION(0xa00, Trap_0a, unknown_exception, EXC_XFER_EE)
   	EXCEPTION(0xb00, Trap_0b, unknown_exception, EXC_XFER_EE)
 -@@ -1350,8 +1364,8 @@ cmd_line:
-- 
+-
 - 	.globl intercept_table
 - intercept_table:
 --	.long 0, 0, i0x200, i0x300, i0x400, 0, i0x600, i0x700
@@ -6506,12 +6506,12 @@
  +++ linux-2.6.19/kernel/sched.c	2006-12-13 14:01:45.893944593 +0100
 -@@ -1391,7 +1391,7 @@ static int try_to_wake_up(struct task_st
 +@@ -1391,7 +1391,7 @@
-  
+
   	rq = task_rq_lock(p, &flags);
   	old_state = p->state;
 @@ -6083,7 +6003,7 @@
   		goto out;
-  
+
   	if (p->array)
 -@@ -1809,19 +1809,25 @@ asmlinkage void schedule_tail(struct tas
 +@@ -1809,6 +1809,8 @@
@@ -6520,7 +6520,7 @@
   		put_user(current->pid, current->set_child_tid);
 @@ -6092,51 +6012,7 @@
   }
-  
+
   /*
 -  * context_switch - switch to the new MM and the new
 -  * thread's register state.
@@ -6532,7 +6532,7 @@
 - {
 - 	struct mm_struct *mm = next->mm;
 - 	struct mm_struct *oldmm = prev->active_mm;
-- 
+-
 -+if (!rq) {
 -+	switch_mm(oldmm, next->active_mm, next);
 -+	if (!mm) enter_lazy_tlb(oldmm, next);
@@ -6557,13 +6557,13 @@
 -+#endif /* CONFIG_IPIPE */
 - 	spin_release(&rq->lock.dep_map, 1, _THIS_IP_);
 - #endif
-- 
+-
 - 	/* Here we just switch the register state and the stack. */
 - 	switch_to(prev, next, prev);
 -+#ifdef CONFIG_IPIPE
 -+	current->ptd[IPIPE_ROOT_NPTDKEYS - 1] = prev;
 -+#endif /* CONFIG_IPIPE */
-- 
+-
 - 	return prev;
 - }
 
@@ -6573,7 +6573,7 @@ EXPORT_SYMBOL(context_switch);
 +@@ -3324,12 +3326,16 @@
   	long *switch_count;
   	struct rq *rq;
-  
+
 @@ -6154,7 +6030,7 @@
   		printk(KERN_ERR "BUG: scheduling while atomic: "
   			"%s/0x%08x/%d\n",
@@ -6582,7 +6582,7 @@ EXPORT_SYMBOL(context_switch);
 +@@ -3337,8 +3343,13 @@
   	}
   	profile_hit(SCHED_PROFILING, __builtin_return_address(0));
-  
+
 @@ -6168,16 +6044,16 @@
   	prev = current;
   	release_kernel_lock(prev);
@@ -6628,7 +6628,7 @@ EXPORT_SYMBOL(context_switch);
 -@@ -6950,3 +6980,50 @@ void set_curr_task(int cpu, struct task_
 +@@ -6950,3 +6969,50 @@
   }
-  
+
   #endif
 
 #endif

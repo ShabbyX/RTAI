@@ -4,7 +4,7 @@ diff -uNrp 2.6.13/include/linux/hardirq.h 2.6.13-ipipe/include/linux/hardirq.h
 @@ -87,8 +87,21 @@ extern void synchronize_irq(unsigned int
  # define synchronize_irq(irq)	barrier()
  #endif
- 
+
 +#ifdef CONFIG_IPIPE
 +#define nmi_enter() \
 +do { \
@@ -20,7 +20,7 @@ diff -uNrp 2.6.13/include/linux/hardirq.h 2.6.13-ipipe/include/linux/hardirq.h
  #define nmi_enter()		irq_enter()
  #define nmi_exit()		sub_preempt_count(HARDIRQ_OFFSET)
 +#endif /* CONFIG_IPIPE */
- 
+
  #ifndef CONFIG_VIRT_CPU_ACCOUNTING
  static inline void account_user_vtime(struct task_struct *tsk)
 diff -uNrp 2.6.13/include/linux/ipipe.h 2.6.13-ipipe/include/linux/ipipe.h
@@ -783,17 +783,17 @@ diff -uNrp 2.6.13/include/linux/preempt.h 2.6.13-ipipe/include/linux/preempt.h
 +# define add_preempt_count(val)do { preempt_count() += (val); } while (0)
 +# define sub_preempt_count(val)do { preempt_count() -= (val); } while (0)
  #endif
- 
+
  #define inc_preempt_count() add_preempt_count(1)
  #define dec_preempt_count() sub_preempt_count(1)
- 
+
 -#define preempt_count()	(current_thread_info()->preempt_count)
 +#define preempt_count()(current_thread_info()->preempt_count)
- 
+
  #ifdef CONFIG_PREEMPT
- 
+
  asmlinkage void preempt_schedule(void);
- 
+
 +#ifdef CONFIG_IPIPE
 +
 +#include <asm/ipipe.h>
@@ -817,7 +817,7 @@ diff -uNrp 2.6.13/include/linux/preempt.h 2.6.13-ipipe/include/linux/preempt.h
 +      barrier(); \
 +    } \
 +  } while (0)
- 
+
  #define preempt_enable_no_resched() \
 -do { \
 -	barrier(); \
@@ -829,7 +829,7 @@ diff -uNrp 2.6.13/include/linux/preempt.h 2.6.13-ipipe/include/linux/preempt.h
 +      dec_preempt_count(); \
 +    } \
 +  } while (0)
- 
+
  #define preempt_check_resched() \
 -do { \
 -	if (unlikely(test_thread_flag(TIF_NEED_RESCHED))) \
@@ -841,13 +841,13 @@ diff -uNrp 2.6.13/include/linux/preempt.h 2.6.13-ipipe/include/linux/preempt.h
 +	preempt_schedule(); \
 +    } \
 +  } while (0)
- 
+
  #define preempt_enable() \
  do { \
 @@ -52,10 +70,10 @@ do { \
- 
+
  #else
- 
+
 -#define preempt_disable()		do { } while (0)
 -#define preempt_enable_no_resched()	do { } while (0)
 -#define preempt_enable()		do { } while (0)
@@ -856,15 +856,15 @@ diff -uNrp 2.6.13/include/linux/preempt.h 2.6.13-ipipe/include/linux/preempt.h
 +#define preempt_enable_no_resched()do { } while (0)
 +#define preempt_enable()do { } while (0)
 +#define preempt_check_resched()do { } while (0)
- 
+
  #endif
- 
+
 diff -uNrp 2.6.13/include/linux/sched.h 2.6.13-ipipe/include/linux/sched.h
 --- 2.6.13/include/linux/sched.h	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/include/linux/sched.h	2005-09-07 13:24:50.000000000 +0200
 @@ -4,6 +4,7 @@
  #include <asm/param.h>	/* for HZ */
- 
+
  #include <linux/config.h>
 +#include <linux/ipipe.h>
  #include <linux/capability.h>
@@ -878,13 +878,13 @@ diff -uNrp 2.6.13/include/linux/sched.h 2.6.13-ipipe/include/linux/sched.h
 +        void *ptd[IPIPE_ROOT_NPTDKEYS];
 +#endif
  };
- 
+
  static inline pid_t process_group(struct task_struct *tsk)
 diff -uNrp 2.6.13/init/Kconfig 2.6.13-ipipe/init/Kconfig
 --- 2.6.13/init/Kconfig	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/init/Kconfig	2005-09-07 13:24:50.000000000 +0200
 @@ -69,6 +69,7 @@ menu "General setup"
- 
+
  config LOCALVERSION
  	string "Local version - append to kernel release"
 +	default "-ipipe"
@@ -897,11 +897,11 @@ diff -uNrp 2.6.13/init/main.c 2.6.13-ipipe/init/main.c
 @@ -389,6 +389,7 @@ static void noinline rest_init(void)
  	 */
  	schedule();
- 
+
 + 	ipipe_reset_stats();
  	cpu_idle();
- } 
- 
+ }
+
 @@ -474,6 +475,9 @@ asmlinkage void __init start_kernel(void
  	init_timers();
  	softirq_init();
@@ -909,7 +909,7 @@ diff -uNrp 2.6.13/init/main.c 2.6.13-ipipe/init/main.c
 +	/* We need to wait for the interrupt and time subsystems to be
 +	   initialized before enabling the pipeline. */
 + 	ipipe_init();
- 
+
  	/*
  	 * HACK ALERT! This is early. We're enabling the console before
 diff -uNrp 2.6.13/kernel/Makefile 2.6.13-ipipe/kernel/Makefile
@@ -920,7 +920,7 @@ diff -uNrp 2.6.13/kernel/Makefile 2.6.13-ipipe/kernel/Makefile
  obj-$(CONFIG_CRASH_DUMP) += crash_dump.o
  obj-$(CONFIG_SECCOMP) += seccomp.o
 +obj-$(CONFIG_IPIPE) += ipipe/
- 
+
  ifneq ($(CONFIG_SCHED_NO_NO_OMIT_FRAME_POINTER),y)
  # According to Alan Modra <alan@linuxcare.com.au>, the -fno-omit-frame-pointer is
 diff -uNrp 2.6.13/kernel/exit.c 2.6.13-ipipe/kernel/exit.c
@@ -932,7 +932,7 @@ diff -uNrp 2.6.13/kernel/exit.c 2.6.13-ipipe/kernel/exit.c
  	}
 + 	ipipe_exit_notify(tsk);
  	exit_mm(tsk);
- 
+
  	exit_sem(tsk);
 diff -uNrp 2.6.13/kernel/ipipe/Kconfig 2.6.13-ipipe/kernel/ipipe/Kconfig
 --- 2.6.13/kernel/ipipe/Kconfig	1970-01-01 01:00:00.000000000 +0100
@@ -1977,7 +1977,7 @@ diff -uNrp 2.6.13/kernel/ipipe/generic.c 2.6.13-ipipe/kernel/ipipe/generic.c
 +
 +int ipipe_free_ptdkey (int key)
 +{
-+	unsigned long flags; 
++	unsigned long flags;
 +
 +	if (key < 0 || key >= IPIPE_ROOT_NPTDKEYS)
 +		return -EINVAL;
@@ -2034,7 +2034,7 @@ diff -uNrp 2.6.13/kernel/irq/handle.c 2.6.13-ipipe/kernel/irq/handle.c
 @@ -81,6 +81,15 @@ fastcall int handle_IRQ_event(unsigned i
  {
  	int ret, retval = 0, status = 0;
- 
+
 +#ifdef CONFIG_IPIPE
 +	/* If processing a timer tick, pass the original regs as
 +	   collected during preemption and not our phony - always
@@ -2046,8 +2046,8 @@ diff -uNrp 2.6.13/kernel/irq/handle.c 2.6.13-ipipe/kernel/irq/handle.c
 +
  	if (!(action->flags & SA_INTERRUPT))
  		local_irq_enable();
- 
-@@ -117,14 +126,18 @@ fastcall unsigned int __do_IRQ(unsigned 
+
+@@ -117,14 +126,18 @@ fastcall unsigned int __do_IRQ(unsigned
  		/*
  		 * No locking required for CPU-local interrupts:
  		 */
@@ -2058,7 +2058,7 @@ diff -uNrp 2.6.13/kernel/irq/handle.c 2.6.13-ipipe/kernel/irq/handle.c
  		desc->handler->end(irq);
  		return 1;
  	}
- 
+
  	spin_lock(&desc->lock);
 +#ifndef CONFIG_IPIPE
  	desc->handler->ack(irq);
@@ -2072,7 +2072,7 @@ diff -uNrp 2.6.13/kernel/printk.c 2.6.13-ipipe/kernel/printk.c
 @@ -502,6 +502,66 @@ __setup("time", printk_time_setup);
   * is inspected when the actual printing occurs.
   */
- 
+
 +#ifdef CONFIG_IPIPE
 +
 +static raw_spinlock_t __ipipe_printk_lock = RAW_SPIN_LOCK_UNLOCKED;
@@ -2127,7 +2127,7 @@ diff -uNrp 2.6.13/kernel/printk.c 2.6.13-ipipe/kernel/printk.c
 +
 +	if (!test_and_set_bit(IPIPE_PPRINTK_FLAG,&ipipe_root_domain->flags))
 +		ipipe_trigger_irq(__ipipe_printk_virq);
-+out: 
++out:
 +	va_end(args);
 +
 +	return r;
@@ -2137,11 +2137,11 @@ diff -uNrp 2.6.13/kernel/printk.c 2.6.13-ipipe/kernel/printk.c
  {
  	va_list args;
 @@ -513,6 +573,7 @@ asmlinkage int printk(const char *fmt, .
- 
+
  	return r;
  }
 +#endif /* CONFIG_IPIPE */
- 
+
  asmlinkage int vprintk(const char *fmt, va_list args)
  {
 diff -uNrp 2.6.13/kernel/sched.c 2.6.13-ipipe/kernel/sched.c
@@ -2156,7 +2156,7 @@ diff -uNrp 2.6.13/kernel/sched.c 2.6.13-ipipe/kernel/sched.c
  {
  	struct mm_struct *mm = next->mm;
  	struct mm_struct *oldmm = prev->active_mm;
- 
+
 +if (!rq) {
 +	switch_mm(oldmm, next->active_mm, next);
 +	if (!mm) enter_lazy_tlb(oldmm, next);
@@ -2164,7 +2164,7 @@ diff -uNrp 2.6.13/kernel/sched.c 2.6.13-ipipe/kernel/sched.c
  	if (unlikely(!mm)) {
  		next->active_mm = oldmm;
  		atomic_inc(&oldmm->mm_count);
-@@ -1557,13 +1560,15 @@ task_t * context_switch(runqueue_t *rq, 
+@@ -1557,13 +1560,15 @@ task_t * context_switch(runqueue_t *rq,
  		WARN_ON(rq->prev_mm);
  		rq->prev_mm = oldmm;
  	}
@@ -2172,10 +2172,10 @@ diff -uNrp 2.6.13/kernel/sched.c 2.6.13-ipipe/kernel/sched.c
 +}
  	/* Here we just switch the register state and the stack. */
  	switch_to(prev, next, prev);
- 
+
  	return prev;
  }
- 
+
 +EXPORT_SYMBOL(context_switch);
 +
  /*
@@ -2212,7 +2212,7 @@ diff -uNrp 2.6.13/kernel/sched.c 2.6.13-ipipe/kernel/sched.c
  		/*
 @@ -5263,3 +5276,53 @@ void normalize_rt_tasks(void)
  }
- 
+
  #endif /* CONFIG_MAGIC_SYSRQ */
 +
 +#ifdef CONFIG_IPIPE
@@ -2269,10 +2269,10 @@ diff -uNrp 2.6.13/kernel/signal.c 2.6.13-ipipe/kernel/signal.c
 +++ 2.6.13-ipipe/kernel/signal.c	2005-09-07 13:24:50.000000000 +0200
 @@ -612,6 +612,7 @@ void signal_wake_up(struct task_struct *
  	unsigned int mask;
- 
+
  	set_tsk_thread_flag(t, TIF_SIGPENDING);
 +	ipipe_sigwake_notify(t); /* TIF_SIGPENDING must be set first. */
- 
+
  	/*
  	 * For SIGKILL, we want to wake it up in the stopped/traced case.
 diff -uNrp 2.6.13/kernel/sysctl.c 2.6.13-ipipe/kernel/sysctl.c
@@ -2285,14 +2285,14 @@ diff -uNrp 2.6.13/kernel/sysctl.c 2.6.13-ipipe/kernel/sysctl.c
 +	ipipe_init_proc();
  #endif
  }
- 
+
 diff -uNrp 2.6.13/lib/smp_processor_id.c 2.6.13-ipipe/lib/smp_processor_id.c
 --- 2.6.13/lib/smp_processor_id.c	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/lib/smp_processor_id.c	2005-09-07 13:24:50.000000000 +0200
 @@ -12,6 +12,11 @@ unsigned int debug_smp_processor_id(void
  	int this_cpu = raw_smp_processor_id();
  	cpumask_t this_mask;
- 
+
 +#ifdef CONFIG_IPIPE
 + 	if (ipipe_current_domain != ipipe_root_domain)
 +	    return this_cpu;
@@ -2300,19 +2300,19 @@ diff -uNrp 2.6.13/lib/smp_processor_id.c 2.6.13-ipipe/lib/smp_processor_id.c
 +
  	if (likely(preempt_count))
  		goto out;
- 
+
 diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 --- 2.6.13/mm/vmalloc.c	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/mm/vmalloc.c	2005-09-06 15:47:00.000000000 +0200
 @@ -18,6 +18,7 @@
- 
+
  #include <asm/uaccess.h>
  #include <asm/tlbflush.h>
 +#include <asm/pgalloc.h>
- 
- 
+
+
  DEFINE_RWLOCK(vmlist_lock);
-@@ -148,10 +149,13 @@ int map_vm_area(struct vm_struct *area, 
+@@ -148,10 +149,13 @@ int map_vm_area(struct vm_struct *area,
  	pgd = pgd_offset_k(addr);
  	spin_lock(&init_mm.page_table_lock);
  	do {
@@ -2329,9 +2329,9 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 --- 2.6.13/arch/i386/Kconfig	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/arch/i386/Kconfig	2005-09-07 13:24:49.000000000 +0200
 @@ -513,6 +513,8 @@ config SCHED_SMT
- 
+
  source "kernel/Kconfig.preempt"
- 
+
 +source "kernel/ipipe/Kconfig"
 +
  config X86_UP_APIC
@@ -2340,15 +2340,15 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 @@ -980,7 +982,6 @@ config CRASH_DUMP
  	  Generate crash dump after being started by kexec.
  endmenu
- 
+
 -
  menu "Power management options (ACPI, APM)"
  	depends on !X86_VOYAGER
- 
+
 --- 2.6.13/arch/i386/kernel/Makefile	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/arch/i386/kernel/Makefile	2005-09-07 13:24:49.000000000 +0200
-@@ -11,6 +11,7 @@ obj-y	:= process.o semaphore.o signal.o 
- 
+@@ -11,6 +11,7 @@ obj-y	:= process.o semaphore.o signal.o
+
  obj-y				+= cpu/
  obj-y				+= timers/
 +obj-$(CONFIG_IPIPE)		+= ipipe-core.o ipipe-root.o
@@ -2364,7 +2364,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 -	ack_APIC_irq();
 +	__ack_APIC_irq();
  }
- 
+
  void __init apic_intr_init(void)
 @@ -1179,6 +1179,9 @@ inline void smp_local_timer_interrupt(st
  fastcall void smp_apic_timer_interrupt(struct pt_regs *regs)
@@ -2373,7 +2373,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +#ifdef CONFIG_IPIPE
 +	regs =  __ipipe_tick_regs + cpu;
 +#endif /* CONFIG_IPIPE */
- 
+
  	/*
  	 * the NMI deadlock-detector uses this.
 @@ -1215,7 +1218,7 @@ fastcall void smp_spurious_interrupt(str
@@ -2382,7 +2382,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	if (v & (1 << (SPURIOUS_APIC_VECTOR & 0x1f)))
 -		ack_APIC_irq();
 +		__ack_APIC_irq();
- 
+
  	/* see sw-dev-man vol 3, chapter 7.4.13.5 */
  	printk(KERN_INFO "spurious APIC interrupt on CPU#%d, should never happen.\n",
 --- 2.6.13/arch/i386/kernel/entry.S	2005-08-29 01:41:01.000000000 +0200
@@ -2393,12 +2393,12 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  #include <asm/desc.h>
 +#include <asm/ipipe.h>
  #include "irq_vectors.h"
- 
+
  #define nr_syscalls ((syscall_table_size)/4)
-@@ -75,11 +76,54 @@ DF_MASK		= 0x00000400 
+@@ -75,11 +76,54 @@ DF_MASK		= 0x00000400
  NT_MASK		= 0x00004000
  VM_MASK		= 0x00020000
- 
+
 +#ifdef CONFIG_IPIPE
 +#define CLI                     call __ipipe_stall_root
 +#define STI                     call __ipipe_unstall_root
@@ -2450,11 +2450,11 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 -#define resume_kernel		restore_nocheck
 +#define resume_kernel	  restore_nocheck
  #endif
- 
+
  #define SAVE_ALL \
 @@ -124,6 +168,7 @@ VM_MASK		= 0x00020000
- 
- 
+
+
  ENTRY(ret_from_fork)
 +	sti
  	pushl %eax
@@ -2480,7 +2480,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  					# between sampling and the iret
  	movl TI_flags(%ebp), %ecx
 @@ -159,14 +206,15 @@ ENTRY(resume_userspace)
- 
+
  #ifdef CONFIG_PREEMPT
  ENTRY(resume_kernel)
 -	cli
@@ -2502,7 +2502,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	SAVE_ALL
  	GET_THREAD_INFO(%ebp)
 +	CATCH_ROOT_SYSCALL(sysenter_tail,sysenter_exit)
- 
+
  	/* Note, _TIF_SECCOMP is bit number 8, and so it needs testw and not testb */
  	testw $(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|_TIF_SECCOMP),TI_flags(%ebp)
 @@ -209,11 +258,13 @@ sysenter_past_esp:
@@ -2583,7 +2583,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	movl %esp, %eax
  	movl $1, %edx
 @@ -399,7 +460,7 @@ ENTRY(interrupt)
- 
+
  vector=0
  ENTRY(irq_entries_start)
 -.rept NR_IRQS
@@ -2594,7 +2594,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 @@ -409,6 +470,28 @@ ENTRY(irq_entries_start)
  vector=vector+1
  .endr
- 
+
 +#ifdef CONFIG_IPIPE
 +	ALIGN
 +common_interrupt:
@@ -2625,10 +2625,10 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	call smp_/**/name;		\
  	jmp ret_from_intr;
 +#endif /* CONFIG_IPIPE */
- 
+
  /* The include is where all of the SMP etc. interrupts come from */
  #include "entry_arch.h"
- 
+
  ENTRY(divide_error)
  	pushl $0			# no error code
 -	pushl $do_divide_error
@@ -2643,19 +2643,19 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 -	call *%edi
 +	HANDLE_EXCEPTION(edi)
  	jmp ret_from_exception
- 
+
  ENTRY(coprocessor_error)
  	pushl $0
 -	pushl $do_coprocessor_error
 +	PUSH_XCODE(do_coprocessor_error)
  	jmp error_code
- 
+
  ENTRY(simd_coprocessor_error)
  	pushl $0
 -	pushl $do_simd_coprocessor_error
 +	PUSH_XCODE(do_simd_coprocessor_error)
  	jmp error_code
- 
+
  ENTRY(device_not_available)
  	pushl $-1			# mark this as an int
  	SAVE_ALL
@@ -2677,7 +2677,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	call do_nmi
 -	jmp restore_all
 +	jmp restore_nmi
- 
+
  nmi_stack_fixup:
  	FIX_STACK(12,nmi_stack_correct, 1)
 @@ -591,6 +677,7 @@ nmi_16bit_stack:
@@ -2689,61 +2689,61 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	movl %esp,%eax		# pt_regs pointer
  	call do_int3
 @@ -598,58 +685,58 @@ ENTRY(int3)
- 
+
  ENTRY(overflow)
  	pushl $0
 -	pushl $do_overflow
 +	PUSH_XCODE(do_overflow)
  	jmp error_code
- 
+
  ENTRY(bounds)
  	pushl $0
 -	pushl $do_bounds
 +	PUSH_XCODE(do_bounds)
  	jmp error_code
- 
+
  ENTRY(invalid_op)
  	pushl $0
 -	pushl $do_invalid_op
 +	PUSH_XCODE(do_invalid_op)
  	jmp error_code
- 
+
  ENTRY(coprocessor_segment_overrun)
  	pushl $0
 -	pushl $do_coprocessor_segment_overrun
 +	PUSH_XCODE(do_coprocessor_segment_overrun)
  	jmp error_code
- 
+
  ENTRY(invalid_TSS)
 -	pushl $do_invalid_TSS
 +	PUSH_XCODE(do_invalid_TSS)
  	jmp error_code
- 
+
  ENTRY(segment_not_present)
 -	pushl $do_segment_not_present
 +	PUSH_XCODE(do_segment_not_present)
  	jmp error_code
- 
+
  ENTRY(stack_segment)
 -	pushl $do_stack_segment
 +	PUSH_XCODE(do_stack_segment)
  	jmp error_code
- 
+
  ENTRY(general_protection)
 -	pushl $do_general_protection
 +	PUSH_XCODE(do_general_protection)
  	jmp error_code
- 
+
  ENTRY(alignment_check)
 -	pushl $do_alignment_check
 +	PUSH_XCODE(do_alignment_check)
  	jmp error_code
- 
+
  ENTRY(page_fault)
 -	pushl $do_page_fault
 +	PUSH_XCODE(do_page_fault)
  	jmp error_code
- 
+
  #ifdef CONFIG_X86_MCE
  ENTRY(machine_check)
  	pushl $0
@@ -2751,20 +2751,20 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +	PUSH_XCODE(machine_check_vector)
  	jmp error_code
  #endif
- 
+
  ENTRY(spurious_interrupt_bug)
  	pushl $0
 -	pushl $do_spurious_interrupt_bug
 +	PUSH_XCODE(do_spurious_interrupt_bug)
  	jmp error_code
- 
+
  #include "syscall_table.S"
 --- 2.6.13/arch/i386/kernel/i8259.c	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/arch/i386/kernel/i8259.c	2005-09-07 13:24:49.000000000 +0200
 @@ -92,13 +92,14 @@ void disable_8259A_irq(unsigned int irq)
  	unsigned int mask = 1 << irq;
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&i8259A_lock, flags);
 +	spin_lock_irqsave_hw(&i8259A_lock, flags);
 +	ipipe_irq_lock(irq);
@@ -2776,12 +2776,12 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 -	spin_unlock_irqrestore(&i8259A_lock, flags);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
  }
- 
+
  void enable_8259A_irq(unsigned int irq)
 @@ -106,13 +107,14 @@ void enable_8259A_irq(unsigned int irq)
  	unsigned int mask = ~(1 << irq);
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&i8259A_lock, flags);
 +	spin_lock_irqsave_hw(&i8259A_lock, flags);
  	cached_irq_mask &= mask;
@@ -2793,12 +2793,12 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +	ipipe_irq_unlock(irq);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
  }
- 
+
  int i8259A_irq_pending(unsigned int irq)
 @@ -121,12 +123,12 @@ int i8259A_irq_pending(unsigned int irq)
  	unsigned long flags;
  	int ret;
- 
+
 -	spin_lock_irqsave(&i8259A_lock, flags);
 +	spin_lock_irqsave_hw(&i8259A_lock, flags);
  	if (irq < 8)
@@ -2807,19 +2807,19 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  		ret = inb(PIC_SLAVE_CMD) & (mask >> 8);
 -	spin_unlock_irqrestore(&i8259A_lock, flags);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
- 
+
  	return ret;
  }
-@@ -173,7 +175,7 @@ static void mask_and_ack_8259A(unsigned 
+@@ -173,7 +175,7 @@ static void mask_and_ack_8259A(unsigned
  	unsigned int irqmask = 1 << irq;
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&i8259A_lock, flags);
 +	spin_lock_irqsave_hw(&i8259A_lock, flags);
  	/*
  	 * Lightweight spurious IRQ detection. We do not want
  	 * to overdo spurious IRQ handling - it's usually a sign
-@@ -191,6 +193,15 @@ static void mask_and_ack_8259A(unsigned 
+@@ -191,6 +193,15 @@ static void mask_and_ack_8259A(unsigned
  	 */
  	if (cached_irq_mask & irqmask)
  		goto spurious_8259A_irq;
@@ -2833,7 +2833,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +	}
 +#endif /* CONFIG_IPIPE */
  	cached_irq_mask |= irqmask;
- 
+
  handle_real_irq:
 @@ -204,7 +215,7 @@ handle_real_irq:
  		outb(cached_master_mask, PIC_MASTER_IMR);
@@ -2842,25 +2842,25 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 -	spin_unlock_irqrestore(&i8259A_lock, flags);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
  	return;
- 
+
  spurious_8259A_irq:
 @@ -305,7 +316,7 @@ void init_8259A(int auto_eoi)
  {
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&i8259A_lock, flags);
 +	spin_lock_irqsave_hw(&i8259A_lock, flags);
- 
+
  	outb(0xff, PIC_MASTER_IMR);	/* mask all of 8259A-1 */
  	outb(0xff, PIC_SLAVE_IMR);	/* mask all of 8259A-2 */
 @@ -339,7 +350,7 @@ void init_8259A(int auto_eoi)
  	outb(cached_master_mask, PIC_MASTER_IMR); /* restore master IRQ mask */
  	outb(cached_slave_mask, PIC_SLAVE_IMR);	  /* restore slave IRQ mask */
- 
+
 -	spin_unlock_irqrestore(&i8259A_lock, flags);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
  }
- 
+
  /*
 @@ -413,7 +424,7 @@ void __init init_IRQ(void)
  	 */
@@ -2869,14 +2869,14 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 -		if (i >= NR_IRQS)
 +		if (i >= NR_XIRQS)
  			break;
- 		if (vector != SYSCALL_VECTOR) 
+ 		if (vector != SYSCALL_VECTOR)
  			set_intr_gate(vector, interrupt[i]);
 --- 2.6.13/arch/i386/kernel/io_apic.c	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/arch/i386/kernel/io_apic.c	2005-09-16 18:00:53.000000000 +0200
 @@ -175,18 +175,20 @@ static void mask_IO_APIC_irq (unsigned i
  {
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
 +	ipipe_irq_lock(irq);
@@ -2884,11 +2884,11 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
  }
- 
+
  static void unmask_IO_APIC_irq (unsigned int irq)
  {
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
 +	ipipe_irq_unlock(irq);
@@ -2896,7 +2896,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
  }
- 
+
  static void clear_IO_APIC_pin(unsigned int apic, unsigned int pin)
 @@ -195,10 +197,10 @@ static void clear_IO_APIC_pin(unsigned i
  	unsigned long flags;
@@ -2910,7 +2910,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
  	if (entry.delivery_mode == dest_SMI)
  		return;
- 
+
 @@ -207,10 +209,10 @@ static void clear_IO_APIC_pin(unsigned i
  	 */
  	memset(&entry, 0, sizeof(entry));
@@ -2922,7 +2922,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
  }
- 
+
  static void clear_IO_APIC (void)
 @@ -232,7 +234,7 @@ static void set_ioapic_affinity_irq(unsi
  	apicid_value = cpu_mask_to_apicid(cpumask);
@@ -2940,7 +2940,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
  }
- 
+
  #if defined(CONFIG_IRQBALANCE)
 @@ -1246,10 +1248,10 @@ static void __init setup_IO_APIC_irqs(vo
  			if (!apic && (irq < 16))
@@ -2954,7 +2954,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +		spin_unlock_irqrestore_hw(&ioapic_lock, flags);
  	}
  	}
- 
+
 @@ -1293,10 +1295,10 @@ static void __init setup_ExtINT_IRQ0_pin
  	/*
  	 * Add it to the IO-APIC irq-routing table:
@@ -2965,31 +2965,31 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	io_apic_write(0, 0x10+2*pin, *(((int *)&entry)+0));
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
- 
+
  	enable_8259A_irq(0);
  }
 @@ -1575,7 +1577,7 @@ void /*__init*/ print_PIC(void)
- 
+
  	printk(KERN_DEBUG "\nprinting PIC contents\n");
- 
+
 -	spin_lock_irqsave(&i8259A_lock, flags);
 +	spin_lock_irqsave_hw(&i8259A_lock, flags);
- 
+
  	v = inb(0xa1) << 8 | inb(0x21);
  	printk(KERN_DEBUG "... PIC  IMR: %04x\n", v);
 @@ -1589,7 +1591,7 @@ void /*__init*/ print_PIC(void)
  	outb(0x0a,0xa0);
  	outb(0x0a,0x20);
- 
+
 -	spin_unlock_irqrestore(&i8259A_lock, flags);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
- 
+
  	printk(KERN_DEBUG "... PIC  ISR: %04x\n", v);
- 
+
 @@ -1845,14 +1847,15 @@ static unsigned int startup_edge_ioapic_
  	int was_pending = 0;
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
  	if (irq < 16) {
@@ -3001,7 +3001,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	ipipe_irq_unlock(irq);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
- 
+
  	return was_pending;
  }
 @@ -1862,6 +1865,32 @@ static unsigned int startup_edge_ioapic_
@@ -3040,7 +3040,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 @@ -1871,6 +1900,8 @@ static void ack_edge_ioapic_irq(unsigned
  	ack_APIC_irq();
  }
- 
+
 +#endif /* CONFIG_IPIPE */
 +
  /*
@@ -3049,7 +3049,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 @@ -1892,6 +1923,82 @@ static unsigned int startup_level_ioapic
  	return 0; /* don't check for pending */
  }
- 
+
 +#ifdef CONFIG_IPIPE
 +
 +/* Prevent low priority IRQs grabbed by high priority domains from
@@ -3132,20 +3132,20 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 @@ -1932,6 +2039,8 @@ static void end_level_ioapic_irq (unsign
  	}
  }
- 
+
 +#endif /* CONFIG_IPIPE */
 +
  #ifdef CONFIG_PCI_MSI
  static unsigned int startup_edge_ioapic_vector(unsigned int vector)
  {
-@@ -2069,7 +2178,7 @@ static void disable_lapic_irq (unsigned 
- 
+@@ -2069,7 +2178,7 @@ static void disable_lapic_irq (unsigned
+
  static void ack_lapic_irq (unsigned int irq)
  {
 -	ack_APIC_irq();
 +	__ack_APIC_irq();
  }
- 
+
  static void end_lapic_irq (unsigned int i) { /* nothing */ }
 @@ -2340,12 +2449,12 @@ static int ioapic_suspend(struct sys_dev
  	
@@ -3159,13 +3159,13 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	}
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
- 
+
  	return 0;
  }
 @@ -2361,7 +2470,7 @@ static int ioapic_resume(struct sys_devi
  	data = container_of(dev, struct sysfs_ioapic_data, dev);
  	entry = data->entry;
- 
+
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
  	reg_00.raw = io_apic_read(dev->id, 0);
@@ -3177,20 +3177,20 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	}
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
- 
+
  	return 0;
  }
 @@ -2566,10 +2675,10 @@ int io_apic_set_pci_routing (int ioapic,
  	if (!ioapic && (irq < 16))
  		disable_8259A_irq(irq);
- 
+
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
  	io_apic_write(ioapic, 0x11+2*pin, *(((int *)&entry)+1));
  	io_apic_write(ioapic, 0x10+2*pin, *(((int *)&entry)+0));
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
- 
+
  	return 0;
  }
 --- 2.6.13/arch/i386/kernel/ipipe-core.c	1970-01-01 01:00:00.000000000 +0100
@@ -4423,13 +4423,13 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  static unsigned int nmi_p4_cccr_val;
  extern void show_registers(struct pt_regs *regs);
 +static void default_nmi_watchdog_tick (struct pt_regs * regs);
- 
+
  /*
   * lapic_nmi_owner tracks the ownership of the lapic NMI hardware:
 @@ -101,6 +102,11 @@ int nmi_active;
  	(P4_CCCR_OVF_PMI0|P4_CCCR_THRESHOLD(15)|P4_CCCR_COMPLEMENT|	\
  	 P4_CCCR_COMPARE|P4_CCCR_REQUIRED|P4_CCCR_ESCR_SELECT(4)|P4_CCCR_ENABLE)
- 
+
 +static void delay_10_ticks(void *ignored)
 +{
 +	mdelay((10*1000)/nmi_hz); // wait 10 ticks
@@ -4448,11 +4448,11 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +#else
 +	delay_10_ticks(NULL);
 +#endif
- 
+
  	for (cpu = 0; cpu < NR_CPUS; cpu++) {
  #ifdef CONFIG_SMP
 @@ -150,6 +160,7 @@ static int __init setup_nmi_watchdog(cha
- 
+
  	if (nmi >= NMI_INVALID)
  		return 0;
 +        nmi_watchdog_tick = default_nmi_watchdog_tick;
@@ -4462,13 +4462,13 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 @@ -480,9 +491,7 @@ void touch_nmi_watchdog (void)
  		alert_counter[i] = 0;
  }
- 
+
 -extern void die_nmi(struct pt_regs *, const char *msg);
 -
 -void nmi_watchdog_tick (struct pt_regs * regs)
 +static void default_nmi_watchdog_tick (struct pt_regs * regs)
  {
- 
+
  	/*
 @@ -577,3 +586,4 @@ EXPORT_SYMBOL(reserve_lapic_nmi);
  EXPORT_SYMBOL(release_lapic_nmi);
@@ -4479,7 +4479,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +++ 2.6.13-ipipe/arch/i386/kernel/process.c	2005-09-07 13:24:49.000000000 +0200
 @@ -201,6 +201,7 @@ void cpu_idle(void)
  				play_dead();
- 
+
  			__get_cpu_var(irq_stat).idle_timestamp = jiffies;
 + 			ipipe_suspend_domain();
  			idle();
@@ -4494,7 +4494,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +	unsigned long flags;
 +
 +	local_irq_save_hw_cond(flags);
- 
+
  	/*
  	 * Wait for idle.
 @@ -148,6 +151,8 @@ void __send_IPI_shortcut(unsigned int sh
@@ -4504,12 +4504,12 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +
 +	local_irq_restore_hw_cond(flags);
  }
- 
+
  void fastcall send_IPI_self(int vector)
 @@ -164,7 +169,7 @@ void send_IPI_mask_bitmask(cpumask_t cpu
  	unsigned long cfg;
  	unsigned long flags;
- 
+
 -	local_irq_save(flags);
 +	local_irq_save_hw(flags);
  	WARN_ON(mask & ~cpus_addr(cpu_online_map)[0]);
@@ -4518,19 +4518,19 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 @@ -187,7 +192,7 @@ void send_IPI_mask_bitmask(cpumask_t cpu
  	 */
  	apic_write_around(APIC_ICR, cfg);
- 
+
 -	local_irq_restore(flags);
 +	local_irq_restore_hw(flags);
  }
- 
+
  void send_IPI_mask_sequence(cpumask_t mask, int vector)
 @@ -201,7 +206,7 @@ void send_IPI_mask_sequence(cpumask_t ma
  	 * should be modified to do 1 message per cluster ID - mbligh
- 	 */ 
- 
+ 	 */
+
 -	local_irq_save(flags);
 +	local_irq_save_hw(flags);
- 
+
  	for (query_cpu = 0; query_cpu < NR_CPUS; ++query_cpu) {
  		if (cpu_isset(query_cpu, mask)) {
 @@ -228,7 +233,7 @@ void send_IPI_mask_sequence(cpumask_t ma
@@ -4540,39 +4540,39 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 -	local_irq_restore(flags);
 +	local_irq_restore_hw(flags);
  }
- 
+
  #include <mach_ipi.h> /* must come after the send_IPI functions above for inlining */
 @@ -312,7 +317,9 @@ static inline void leave_mm (unsigned lo
- 
+
  fastcall void smp_invalidate_interrupt(struct pt_regs *regs)
  {
 -	unsigned long cpu;
 +    	unsigned long cpu, flags;
 +
 +	local_irq_save_hw_cond(flags);
- 
+
  	cpu = get_cpu();
- 
+
 @@ -342,6 +349,7 @@ fastcall void smp_invalidate_interrupt(s
  	smp_mb__after_clear_bit();
  out:
  	put_cpu_no_resched();
 +	local_irq_restore_hw_cond(flags);
  }
- 
+
  static void flush_tlb_others(cpumask_t cpumask, struct mm_struct *mm,
 @@ -402,14 +410,19 @@ void flush_tlb_current_task(void)
  {
  	struct mm_struct *mm = current->mm;
  	cpumask_t cpu_mask;
 +	unsigned long flags;
- 
+
  	preempt_disable();
 +	local_irq_save_hw_cond(flags);
 +
  	cpu_mask = mm->cpu_vm_mask;
  	cpu_clear(smp_processor_id(), cpu_mask);
- 
+
  	local_flush_tlb();
  	if (!cpus_empty(cpu_mask))
  		flush_tlb_others(cpu_mask, mm, FLUSH_ALL);
@@ -4580,28 +4580,28 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +	local_irq_restore_hw_cond(flags);
  	preempt_enable();
  }
- 
+
 @@ -437,8 +450,11 @@ void flush_tlb_page(struct vm_area_struc
  {
  	struct mm_struct *mm = vma->vm_mm;
  	cpumask_t cpu_mask;
 +	unsigned long flags;
- 
+
  	preempt_disable();
 +	local_irq_save_hw_cond(flags);
 +
  	cpu_mask = mm->cpu_vm_mask;
  	cpu_clear(smp_processor_id(), cpu_mask);
- 
+
 @@ -449,6 +465,8 @@ void flush_tlb_page(struct vm_area_struc
  		 	leave_mm(smp_processor_id());
  	}
- 
+
 +	local_irq_restore_hw_cond(flags);
 +
  	if (!cpus_empty(cpu_mask))
  		flush_tlb_others(cpu_mask, mm, va);
- 
+
 @@ -628,4 +646,3 @@ fastcall void smp_call_function_interrup
  		atomic_inc(&call_data->finished);
  	}
@@ -4611,10 +4611,10 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +++ 2.6.13-ipipe/arch/i386/kernel/smpboot.c	2005-09-07 13:24:49.000000000 +0200
 @@ -873,6 +873,7 @@ static int __devinit do_boot_cpu(int api
  	unsigned short nmi_high = 0, nmi_low = 0;
- 
+
  	++cpucount;
 + 	ipipe_note_apicid(apicid,cpu);
- 
+
  	/*
  	 * We can't use kernel_thread since we must avoid to
 @@ -1088,6 +1089,7 @@ static void __init smp_boot_cpus(unsigne
@@ -4622,7 +4622,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	boot_cpu_logical_apicid = logical_smp_processor_id();
  	x86_cpu_to_apicid[0] = boot_cpu_physical_apicid;
 +	ipipe_note_apicid(boot_cpu_physical_apicid,0);
- 
+
  	current_thread_info()->cpu = 0;
  	smp_tune_scheduling();
 --- 2.6.13/arch/i386/kernel/time.c	2005-08-29 01:41:01.000000000 +0200
@@ -4641,13 +4641,13 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +		spin_unlock_irqrestore_hw_cond(&i8259A_lock,flags);
  	}
  #endif
- 
+
 --- 2.6.13/arch/i386/kernel/timers/timer_pit.c	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/arch/i386/kernel/timers/timer_pit.c	2005-09-07 13:24:49.000000000 +0200
 @@ -99,6 +99,10 @@ static unsigned long get_offset_pit(void
  	 */
  	unsigned long jiffies_t;
- 
+
 +#ifdef CONFIG_IPIPE
 +	if (!__ipipe_pipeline_head_p(ipipe_root_domain))
 +		return 0;	/* We don't really own the PIT. */
@@ -4658,9 +4658,9 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 --- 2.6.13/arch/i386/kernel/timers/timer_tsc.c	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/arch/i386/kernel/timers/timer_tsc.c	2005-09-17 20:30:38.000000000 +0200
 @@ -367,6 +367,20 @@ static void mark_offset_tsc(void)
- 
+
  	rdtsc(last_tsc_low, last_tsc_high);
- 
+
 +#ifdef CONFIG_IPIPE
 +	if (!__ipipe_pipeline_head_p(ipipe_root_domain)) {
 +		/* If Linux does not actually own the timer, clock
@@ -4677,13 +4677,13 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +
  	spin_lock(&i8253_lock);
  	outb_p(0x00, PIT_MODE);     /* latch the count ASAP */
- 
+
 --- 2.6.13/arch/i386/kernel/traps.c	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/arch/i386/kernel/traps.c	2005-10-02 18:53:13.000000000 +0200
 @@ -96,6 +96,9 @@ static int kstack_depth_to_print = 24;
  struct notifier_block *i386die_chain;
  static DEFINE_SPINLOCK(die_notifier_lock);
- 
+
 +void (*nmi_watchdog_tick) (struct pt_regs * regs);
 +EXPORT_SYMBOL(nmi_watchdog_tick);
 +
@@ -4703,11 +4703,11 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  		current->comm, current->pid, current_thread_info(), current);
  	/*
 @@ -593,6 +601,7 @@ void die_nmi (struct pt_regs *regs, cons
- 
+
  	do_exit(SIGSEGV);
  }
 +EXPORT_SYMBOL(die_nmi);
- 
+
  static void default_do_nmi(struct pt_regs * regs)
  {
 @@ -978,12 +987,15 @@ asmlinkage void math_state_restore(struc
@@ -4715,7 +4715,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	struct thread_info *thread = current_thread_info();
  	struct task_struct *tsk = thread->task;
 +	unsigned long flags;
- 
+
 +	local_irq_save_hw_cond(flags);
  	clts();		/* Allow maths ops (or we recurse) */
  	if (!tsk_used_math(tsk))
@@ -4724,43 +4724,43 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	thread->status |= TS_USEDFPU;	/* So we fnsave on switch_to() */
 +	local_irq_restore_hw_cond(flags);
  }
- 
+
  #ifndef CONFIG_MATH_EMULATION
 --- 2.6.13/arch/i386/mach-visws/visws_apic.c	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/arch/i386/mach-visws/visws_apic.c	2005-09-07 13:24:50.000000000 +0200
 @@ -199,7 +199,7 @@ static irqreturn_t piix4_master_intr(int
  	irq_desc_t *desc;
  	unsigned long flags;
- 
+
 -	spin_lock_irqsave(&i8259A_lock, flags);
 +	spin_lock_irqsave_hw(&i8259A_lock, flags);
- 
+
  	/* Find out what's interrupting in the PIIX4 master 8259 */
  	outb(0x0c, 0x20);		/* OCW3 Poll command */
 @@ -236,7 +236,7 @@ static irqreturn_t piix4_master_intr(int
  		outb(0x60 + realirq, 0x20);
  	}
- 
+
 -	spin_unlock_irqrestore(&i8259A_lock, flags);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
- 
+
  	desc = irq_desc + realirq;
- 
+
 @@ -254,7 +254,7 @@ static irqreturn_t piix4_master_intr(int
  	return IRQ_HANDLED;
- 
+
  out_unlock:
 -	spin_unlock_irqrestore(&i8259A_lock, flags);
 +	spin_unlock_irqrestore_hw(&i8259A_lock, flags);
  	return IRQ_NONE;
  }
- 
+
 --- 2.6.13/arch/i386/mm/fault.c	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/arch/i386/mm/fault.c	2005-09-07 13:24:50.000000000 +0200
 @@ -224,6 +224,8 @@ fastcall void do_page_fault(struct pt_re
  	/* get the address */
  	__asm__("movl %%cr2,%0":"=r" (address));
- 
+
 +	local_irq_enable_hw_cond();
 +
  	if (notify_die(DIE_PAGE_FAULT, "page fault", regs, error_code, 14,
@@ -4773,7 +4773,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  #include <asm/tlbflush.h>
  #include <asm/pgtable.h>
 +#include <asm/pgalloc.h>
- 
+
  #define ISA_START_ADDRESS	0xa0000
  #define ISA_END_ADDRESS		0x100000
 @@ -93,6 +94,7 @@ static int ioremap_page_range(unsigned l
@@ -4789,7 +4789,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 @@ -82,7 +82,13 @@ int get_physical_broadcast(void);
  # define apic_write_around(x,y) apic_write_atomic((x),(y))
  #endif
- 
+
 +#ifdef CONFIG_IPIPE
 +#define ack_APIC_irq() do { } while(0)
 +static inline void __ack_APIC_irq(void)
@@ -5053,7 +5053,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  {
  	int i;
 +	unsigned long flags;
- 
+
 -	spin_lock(&i8259A_lock);
 +	spin_lock_irqsave_hw_cond(&i8259A_lock, flags);
  	/*
@@ -5073,7 +5073,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  {
  	int i;
 +	unsigned long flags;
- 
+
 -	spin_lock(&i8259A_lock);
 +	spin_lock_irqsave_hw_cond(&i8259A_lock, flags);
  	/*
@@ -5090,7 +5090,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +++ 2.6.13-ipipe/include/asm-i386/mmu_context.h	2005-09-07 13:24:50.000000000 +0200
 @@ -67,6 +67,11 @@ static inline void switch_mm(struct mm_s
  	asm("movl %0,%%fs ; movl %0,%%gs": :"r" (0))
- 
+
  #define activate_mm(prev, next) \
 -	switch_mm((prev),(next),NULL)
 +do { \
@@ -5099,23 +5099,23 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +	switch_mm((prev),(next),NULL);		   \
 +	local_irq_restore_hw_cond(flags);	   \
 +} while(0)
- 
+
  #endif
 --- 2.6.13/include/asm-i386/nmi.h	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/include/asm-i386/nmi.h	2005-10-02 18:59:52.000000000 +0200
 @@ -25,4 +25,6 @@ void set_nmi_callback(nmi_callback_t cal
   */
  void unset_nmi_callback(void);
-  
+
 +void die_nmi(struct pt_regs *, const char *msg);
 +
  #endif /* ASM_NMI_H */
 --- 2.6.13/include/asm-i386/pgalloc.h	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/include/asm-i386/pgalloc.h	2005-09-07 13:24:50.000000000 +0200
-@@ -47,4 +47,27 @@ static inline void pte_free(struct page 
- 
+@@ -47,4 +47,27 @@ static inline void pte_free(struct page
+
  #define check_pgt_cache()	do { } while (0)
- 
+
 +static inline void set_pgdir(unsigned long address, pgd_t entry)
 +{
 +#ifdef CONFIG_IPIPE
@@ -5126,7 +5126,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 +	read_lock(&tasklist_lock);
 +
 +	for_each_process(p) {
-+		if(p->mm) 
++		if(p->mm)
 +		    *pgd_offset(p->mm,address) = entry;
 +	}
 +
@@ -5145,7 +5145,7 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
 @@ -57,6 +57,9 @@ typedef struct {
  	"jmp 1b\n" \
  	"3:\n\t"
- 
+
 +#ifdef CONFIG_IPIPE
 +#define spin_lock_string_flags spin_lock_string
 +#else /* !CONFIG_IPIPE */
@@ -5157,14 +5157,14 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  	"jmp 1b\n" \
  	"4:\n\t"
 +#endif /* CONFIG_IPIPE */
- 
+
  /*
   * This works. Despite all the confusion.
 --- 2.6.13/include/asm-i386/system.h	2005-08-29 01:41:01.000000000 +0200
 +++ 2.6.13-ipipe/include/asm-i386/system.h	2005-09-10 12:28:35.000000000 +0200
-@@ -441,6 +441,35 @@ struct alt_instr { 
+@@ -441,6 +441,35 @@ struct alt_instr {
  #define set_wmb(var, value) do { var = value; wmb(); } while (0)
- 
+
  /* interrupt control.. */
 +#ifdef CONFIG_IPIPE
 +
@@ -5198,10 +5198,10 @@ diff -uNrp 2.6.13/mm/vmalloc.c 2.6.13-ipipe/mm/vmalloc.c
  #define local_save_flags(x)	do { typecheck(unsigned long,x); __asm__ __volatile__("pushfl ; popl %0":"=g" (x): /* no input */); } while (0)
  #define local_irq_restore(x) 	do { typecheck(unsigned long,x); __asm__ __volatile__("pushl %0 ; popfl": /* no output */ :"g" (x):"memory", "cc"); } while (0)
  #define local_irq_disable() 	__asm__ __volatile__("cli": : :"memory")
-@@ -458,6 +487,8 @@ struct alt_instr { 
+@@ -458,6 +487,8 @@ struct alt_instr {
  /* For spinlocks etc */
  #define local_irq_save(x)	__asm__ __volatile__("pushfl ; popl %0 ; cli":"=g" (x): /* no input */ :"memory")
- 
+
 +#endif /* CONFIG_IPIPE */
 +
  /*
