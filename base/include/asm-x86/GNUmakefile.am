@@ -15,14 +15,14 @@ include_HEADERS = \
 		rtai_usi.h \
 		rtai_vectors.h
 
-if CONFIG_I386
+if CONFIG_X86_64
 include_HEADERS += \
-	rtai_fpu_32.h \
-	rtai_hal_32.h
-else
-include_HEADERS +=
 	rtai_fpu_64.h \
 	rtai_hal_64.h
+else
+include_HEADERS +=
+	rtai_fpu_32.h \
+	rtai_hal_32.h
 endif
 
 install-data-local:
