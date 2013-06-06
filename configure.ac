@@ -1560,7 +1560,6 @@ AH_VERBATIM(CONFIG_RTAI_LXRT_INLINE,[
 #define RTAI_PROTO_NEVER_INLINE(type,name,arglist) type name arglist; static inline type __hidefun(name) arglist
 ])
 
-AC_DEFINE_UNQUOTED(CONFIG_RTAI_ONE_SHOT,$CONFIG_RTAI_ONE_SHOT,[Kconfig])
 dnl CAUTION: We need to have the CONFIG_RTAI_XX symbols always defined when
 dnl the configuration header is read, but we want the Autoconf-produced
 dnl symbols to be defined only when compiling RTAI. This way, we won't
