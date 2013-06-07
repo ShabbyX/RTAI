@@ -110,7 +110,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/entry.S 2.4.34-i386-ipipe/arch/i386/kernel/en
 +				addl $8,%esp
 +#define DIVERT_EXCEPTION(code)
 +#endif /* CONFIG_IPIPE */
-+	
++
  EBX		= 0x00
  ECX		= 0x04
  EDX		= 0x08
@@ -118,7 +118,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/entry.S 2.4.34-i386-ipipe/arch/i386/kernel/en
 
 
  ENTRY(ret_from_fork)
-+	STI_COND_HW	
++	STI_COND_HW
  	pushl %ebx
  	call SYMBOL_NAME(schedule_tail)
  	addl $4, %esp
@@ -216,13 +216,13 @@ diff -uNrp 2.4.34/arch/i386/kernel/entry.S 2.4.34-i386-ipipe/arch/i386/kernel/en
  ENTRY(bounds)
  	pushl $0
 -	pushl $ SYMBOL_NAME(do_bounds)
-+	PUSH_XCODE(do_bounds)	
++	PUSH_XCODE(do_bounds)
  	jmp error_code
 
  ENTRY(invalid_op)
  	pushl $0
 -	pushl $ SYMBOL_NAME(do_invalid_op)
-+	PUSH_XCODE(do_invalid_op)	
++	PUSH_XCODE(do_invalid_op)
  	jmp error_code
 
  ENTRY(coprocessor_segment_overrun)
@@ -237,7 +237,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/entry.S 2.4.34-i386-ipipe/arch/i386/kernel/en
 
  ENTRY(invalid_TSS)
 -	pushl $ SYMBOL_NAME(do_invalid_TSS)
-+	PUSH_XCODE(do_invalid_TSS)	
++	PUSH_XCODE(do_invalid_TSS)
  	jmp error_code
 
  ENTRY(segment_not_present)
@@ -252,7 +252,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/entry.S 2.4.34-i386-ipipe/arch/i386/kernel/en
 
  ENTRY(general_protection)
 -	pushl $ SYMBOL_NAME(do_general_protection)
-+	PUSH_XCODE(do_general_protection)	
++	PUSH_XCODE(do_general_protection)
  	jmp error_code
 
  ENTRY(alignment_check)
@@ -372,7 +372,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/i8259.c 2.4.34-i386-ipipe/arch/i386/kernel/i8
 +	    spin_unlock_irqrestore_hw(&i8259A_lock, flags);
 +	    return;
 +	}
-+#endif /* CONFIG_IPIPE */	
++#endif /* CONFIG_IPIPE */
  	cached_irq_mask |= irqmask;
 
  handle_real_irq:
@@ -442,7 +442,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/io_apic.c 2.4.34-i386-ipipe/arch/i386/kernel/
  void clear_IO_APIC_pin(unsigned int apic, unsigned int pin)
 @@ -171,10 +173,10 @@ void clear_IO_APIC_pin(unsigned int apic
  	unsigned long flags;
- 	
+
  	/* Check delivery_mode to be sure we're not clearing an SMI pin */
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
@@ -523,7 +523,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/io_apic.c 2.4.34-i386-ipipe/arch/i386/kernel/
  	}
  	__unmask_IO_APIC_irq(irq);
 -	spin_unlock_irqrestore(&ioapic_lock, flags);
-+	ipipe_irq_unlock(irq);	
++	ipipe_irq_unlock(irq);
 +	spin_unlock_irqrestore_hw(&ioapic_lock, flags);
 
  	return was_pending;
@@ -1525,7 +1525,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/irq.c 2.4.34-i386-ipipe/arch/i386/kernel/irq.
 +	if (__ipipe_tick_irq == irq)
 +		regs = __ipipe_tick_regs + smp_processor_id();
 +#endif /* CONFIG_IPIPE */
-+	
++
  	if (!(action->flags & SA_INTERRUPT))
  		__sti();
 
@@ -1533,10 +1533,10 @@ diff -uNrp 2.4.34/arch/i386/kernel/irq.c 2.4.34-i386-ipipe/arch/i386/kernel/irq.
 
  	kstat.irqs[cpu][irq]++;
  	spin_lock(&desc->lock);
-+#ifndef CONFIG_IPIPE	
++#ifndef CONFIG_IPIPE
  	desc->handler->ack(irq);
 +#endif /* CONFIG_IPIPE */
-+	
++
  	/*
  	   REPLAY is when Linux resends an IRQ that was dropped earlier
  	   WAITING is used by probe to mark irqs that are being tested
@@ -1625,7 +1625,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/smp.c 2.4.34-i386-ipipe/arch/i386/kernel/smp.
  	unsigned int cfg;
 +	unsigned long flags;
 +
-+	local_irq_save_hw_cond(flags);	
++	local_irq_save_hw_cond(flags);
 
  	/*
  	 * Wait for idle.
@@ -1646,7 +1646,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/smp.c 2.4.34-i386-ipipe/arch/i386/kernel/smp.
 -	__cli();
 
 +	local_irq_save_hw(flags);
- 		
+
  	/*
  	 * Wait for idle.
 @@ -185,7 +189,7 @@ static inline void send_IPI_mask_bitmask
@@ -1685,9 +1685,9 @@ diff -uNrp 2.4.34/arch/i386/kernel/smp.c 2.4.34-i386-ipipe/arch/i386/kernel/smp.
 +        unsigned long cpu, flags;
 
 +	local_irq_save_hw_cond(flags);
-+	
++
 +	cpu = smp_processor_id();
-+	
++
  	if (!test_bit(cpu, &flush_cpumask))
  		return;
  		/*
@@ -1695,7 +1695,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/smp.c 2.4.34-i386-ipipe/arch/i386/kernel/smp.
  	}
  	ack_APIC_irq();
  	clear_bit(cpu, &flush_cpumask);
-+	
++
 +	local_irq_restore_hw_cond(flags);
  }
 
@@ -1707,7 +1707,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/smp.c 2.4.34-i386-ipipe/arch/i386/kernel/smp.
 +	unsigned long flags;
 
 +	local_irq_save_hw_cond(flags);
-+	
++
  	local_flush_tlb();
  	if (cpu_mask)
  		flush_tlb_others(cpu_mask, mm, FLUSH_ALL);
@@ -1723,7 +1723,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/smp.c 2.4.34-i386-ipipe/arch/i386/kernel/smp.
 +	unsigned long flags;
 
 +	local_irq_save_hw_cond(flags);
-+	
++
  	if (current->active_mm == mm) {
  		if(current->mm)
  			__flush_tlb_one(va);
@@ -1732,7 +1732,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/smp.c 2.4.34-i386-ipipe/arch/i386/kernel/smp.
  	}
 
 +	local_irq_restore_hw_cond(flags);
-+	
++
  	if (cpu_mask)
  		flush_tlb_others(cpu_mask, mm, va);
  }
@@ -1809,7 +1809,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/time.c 2.4.34-i386-ipipe/arch/i386/kernel/tim
 
  			int i;
 +			unsigned long flags;
-+			spin_lock_irqsave_hw_cond(&i8259A_lock,flags);			
++			spin_lock_irqsave_hw_cond(&i8259A_lock,flags);
 
 -			spin_lock(&i8259A_lock);
  			/*
@@ -1859,7 +1859,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/time.c 2.4.34-i386-ipipe/arch/i386/kernel/tim
  	}
  #endif
 -
-+	
++
  #ifdef CONFIG_VISWS
  	/* Clear the interrupt */
  	co_cpu_write(CO_CPU_STAT,co_cpu_read(CO_CPU_STAT) & ~CO_STAT_TIMEINTR);
@@ -1871,7 +1871,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/time.c 2.4.34-i386-ipipe/arch/i386/kernel/tim
  	int count;
 -
 +#endif /* CONFIG_IPIPE */
-+	
++
  	/*
  	 * Here we are in the timer irq handler. We just have irqs locally
  	 * disabled but we don't know if the timer_bh is running on the other
@@ -1879,7 +1879,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/time.c 2.4.34-i386-ipipe/arch/i386/kernel/tim
 
  		rdtscl(last_tsc_low);
 
-+#ifndef CONFIG_IPIPE		
++#ifndef CONFIG_IPIPE
  		spin_lock(&i8253_lock);
  		outb_p(0x00, 0x43);     /* latch the count ASAP */
 
@@ -1887,8 +1887,8 @@ diff -uNrp 2.4.34/arch/i386/kernel/time.c 2.4.34-i386-ipipe/arch/i386/kernel/tim
 
  		count = ((LATCH-1) - count) * TICK_SIZE;
  		delay_at_last_interrupt = (count + LATCH/2) / LATCH;
-+		
-+#endif /* CONFIG_IPIPE */		
++
++#endif /* CONFIG_IPIPE */
  	}
 
  	do_timer_interrupt(irq, NULL, regs);
@@ -1903,7 +1903,7 @@ diff -uNrp 2.4.34/arch/i386/kernel/traps.c 2.4.34-i386-ipipe/arch/i386/kernel/tr
 +	if (ipipe_current_domain != ipipe_root_domain)
 +	    printk("I-pipe domain %s",ipipe_current_domain->name);
 +	else
-+#endif /* CONFIG_IPIPE */	
++#endif /* CONFIG_IPIPE */
  	printk("Process %s (pid: %d, stackpage=%08lx)",
  		current->comm, current->pid, 4096+(unsigned long)current);
  	/*
@@ -1958,7 +1958,7 @@ diff -uNrp 2.4.34/arch/i386/mm/ioremap.c 2.4.34-i386-ipipe/arch/i386/mm/ioremap.
  		if (remap_area_pmd(pmd, address, end - address,
  					 phys_addr + address, flags))
  			break;
-+		set_pgdir(address, *dir);		
++		set_pgdir(address, *dir);
  		error = 0;
  		address = (address + PGDIR_SIZE) & PGDIR_MASK;
  		dir++;
@@ -3286,7 +3286,7 @@ diff -uNrp 2.4.34/init/main.c 2.4.34-i386-ipipe/init/main.c
 +	/* We need to wait for the interrupt and time subsystems to be
 +	   initialized before enabling the pipeline. */
 + 	ipipe_init();
-+	
++
  	/*
  	 * HACK ALERT! This is early. We're enabling the console before
  	 * we've done PCI setups etc, and console_init() must be aware of
@@ -3952,7 +3952,7 @@ diff -uNrp 2.4.34/kernel/ipipe/core.c 2.4.34-i386-ipipe/kernel/ipipe/core.c
 +				err = -EPERM;
 +				goto unlock_and_exit;
 +			}
-+			
++
 +			__ipipe_enable_irq(irq);
 +		}
 +	}
@@ -4742,7 +4742,7 @@ diff -uNrp 2.4.34/kernel/ipipe/generic.c 2.4.34-i386-ipipe/kernel/ipipe/generic.
 +			__ipipe_event_monitors[event]--;
 +			ipd->evself |= (1LL << event);
 +	}
-+	
++
 +	ipipe_critical_exit(flags);
 +
 +	if (!handler && ipipe_root_domain_p) {
@@ -5131,7 +5131,7 @@ diff -uNrp 2.4.34/kernel/signal.c 2.4.34-i386-ipipe/kernel/signal.c
  	t->sigpending = 1;
 -
 +	ipipe_sigwake_notify(t); /* sigpending must be set first. */
-+	
++
  #ifdef CONFIG_SMP
  	/*
  	 * If the task is running on a different CPU
@@ -5144,7 +5144,7 @@ diff -uNrp 2.4.34/mm/vmalloc.c 2.4.34-i386-ipipe/mm/vmalloc.c
  	do {
 +	        pgd_t olddir = *dir;
  		pmd_t *pmd;
- 		
+
  		pmd = pmd_alloc(&init_mm, dir, address);
 @@ -174,6 +175,9 @@ static inline int __vmalloc_area_pages (
  		if (alloc_area_pmd(pmd, address, end - address, gfp_mask, prot, pages))
@@ -5152,7 +5152,7 @@ diff -uNrp 2.4.34/mm/vmalloc.c 2.4.34-i386-ipipe/mm/vmalloc.c
 
 +		if (pgd_val(olddir) != pgd_val(*dir))
 +		    set_pgdir(address,*dir);
-+		
++
  		address = (address + PGDIR_SIZE) & PGDIR_MASK;
  		dir++;
  	} while (address && (address < end));

@@ -370,7 +370,7 @@ index 992f08d..5684367 100644
  			set_bit(count, &smp_changes_mask);
  		mask >>= 1;
  	}
--	
+-
 +	local_irq_restore_hw(flags);
  }
 
@@ -466,7 +466,7 @@ index dc7f938..b091024 100644
 +#define HANDLE_EXCEPTION(code)		call *%code
 +#define DIVERT_EXCEPTION(code)
 +#endif /* CONFIG_IPIPE */
-+	
++
  #ifdef CONFIG_PREEMPT
  #define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
  #else
@@ -631,7 +631,7 @@ index dc7f938..b091024 100644
 +	BUILD_INTERRUPT(ipipe_ipi3,IPIPE_SERVICE_VECTOR3)
 +#ifdef CONFIG_SMP
 +	BUILD_INTERRUPT(ipipe_ipiX,IPIPE_CRITICAL_VECTOR)
-+#endif	
++#endif
 +#endif
 +
 +#else /* !CONFIG_IPIPE */
@@ -837,7 +837,7 @@ index 3a058bb..a446083 100644
 +
  #ifndef CONFIG_PREEMPT
  #define retint_kernel retint_restore_args
- #endif	
+ #endif
 @@ -159,6 +170,7 @@ ENTRY(ret_from_fork)
  	CFI_ADJUST_CFA_OFFSET 4
  	popf				# reset kernel eflags
@@ -860,7 +860,7 @@ index 3a058bb..a446083 100644
 +	popq %rdi
 +	js    ret_from_sys_call
 +	jnz   sysret_fastexit
-+#endif		
++#endif
  	GET_THREAD_INFO(%rcx)
  	testl $(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|_TIF_SECCOMP),threadinfo_flags(%rcx)
  	jnz tracesys
@@ -868,13 +868,13 @@ index 3a058bb..a446083 100644
  	 * sysretq will re-enable interrupts:
  	 */
  	TRACE_IRQS_ON
-+sysret_fastexit:	
++sysret_fastexit:
  	movq RIP-ARGOFFSET(%rsp),%rcx
  	CFI_REGISTER	rip,rcx
  	RESTORE_ARGS 0,-ARG_SKIP,1
 @@ -268,6 +292,8 @@ sysret_check:
  	/* Handle reschedules */
- 	/* edx:	work, edi: workmask */	
+ 	/* edx:	work, edi: workmask */
  sysret_careful:
 +	testl $(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|_TIF_SECCOMP),%edx
 +	jnz ret_from_sys_call_trace
@@ -946,10 +946,10 @@ index 3a058bb..a446083 100644
 +#else /* !CONFIG_IPIPE */
  	XCPT_FRAME
  	interrupt do_IRQ
-+#endif /* !CONFIG_IPIPE */	
++#endif /* !CONFIG_IPIPE */
  	/* 0(%rsp): oldrsp-ARGOFFSET */
  ret_from_intr:
- 	cli	
+ 	cli
 @@ -533,7 +608,7 @@ ret_from_intr:
  	leaveq
  	CFI_DEF_CFA_REGISTER	rsp
@@ -978,8 +978,8 @@ index 3a058bb..a446083 100644
  	 */
 -	TRACE_IRQS_IRETQ
  restore_args:
- 	RESTORE_ARGS 0,8,0						
- iret_label:	
+ 	RESTORE_ARGS 0,8,0
+ iret_label:
 @@ -629,7 +704,7 @@ ENTRY(retint_kernel)
  	jnc  retint_restore_args
  	bt   $9,EFLAGS-ARGOFFSET(%rsp)	/* interrupts off? */
@@ -987,13 +987,13 @@ index 3a058bb..a446083 100644
 -	call preempt_schedule_irq
 +	PREEMPT_SCHEDULE_IRQ
  	jmp exit_intr
- #endif	
+ #endif
 
 @@ -638,7 +713,26 @@ END(common_interrupt)
- 	
+
  /*
   * APIC interrupts.
-- */		
+- */
 + */
 +#ifdef CONFIG_IPIPE
 +	.macro apicinterrupt num,func
@@ -1013,7 +1013,7 @@ index 3a058bb..a446083 100644
 +	jmp restore_args
 +	CFI_ENDPROC
 +	.endm
-+#else /* !CONFIG_IPIPE */	
++#else /* !CONFIG_IPIPE */
  	.macro apicinterrupt num,func
  	INTR_FRAME
  	pushq $~(\num)
@@ -1021,7 +1021,7 @@ index 3a058bb..a446083 100644
  	jmp ret_from_intr
  	CFI_ENDPROC
  	.endm
-+#endif /* !CONFIG_IPIPE */	
++#endif /* !CONFIG_IPIPE */
 
  ENTRY(thermal_interrupt)
  	apicinterrupt THERMAL_APIC_VECTOR,smp_thermal_interrupt
@@ -1029,19 +1029,19 @@ index 3a058bb..a446083 100644
  	INVALIDATE_ENTRY 1
  	INVALIDATE_ENTRY 2
  	INVALIDATE_ENTRY 3
-+#ifndef CONFIG_IPIPE	
++#ifndef CONFIG_IPIPE
  	INVALIDATE_ENTRY 4
  	INVALIDATE_ENTRY 5
  	INVALIDATE_ENTRY 6
  	INVALIDATE_ENTRY 7
-+#endif /* !CONFIG_IPIPE */	
++#endif /* !CONFIG_IPIPE */
 
  ENTRY(call_function_interrupt)
  	apicinterrupt CALL_FUNCTION_VECTOR,smp_call_function_interrupt
 @@ -699,31 +796,39 @@ END(spurious_interrupt)
  /*
   * Exception entry points.
-  */ 		
+  */
 -	.macro zeroentry sym
 +	.macro zeroentry sym, ex_code
  	INTR_FRAME
@@ -1057,7 +1057,7 @@ index 3a058bb..a446083 100644
 +#endif
  	jmp error_entry
  	CFI_ENDPROC
- 	.endm	
+ 	.endm
 
 -	.macro errorentry sym
 +	.macro errorentry sym, ex_code
@@ -1102,12 +1102,12 @@ index 3a058bb..a446083 100644
  	.if \irqtrace
  	TRACE_IRQS_OFF
  	.endif
-+#ifdef CONFIG_IPIPE	
++#ifdef CONFIG_IPIPE
 +	xorl %eax,%eax
 +	/* WARNING: paranoidexit will check %eax to decide whether the
 +	exception has to be propagated or not. */
-+#endif	
-+3:	
++#endif
++3:
  	.endm
 
  	/*
@@ -1118,7 +1118,7 @@ index 3a058bb..a446083 100644
 +#ifdef CONFIG_IPIPE
 +	testl %eax,%eax
 +	jnz paranoid_swapgs\trace
-+#endif		
++#endif
  	testl $3,CS(%rsp)
  	jnz   paranoid_userspace\trace
  paranoid_swapgs\trace:
@@ -1156,7 +1156,7 @@ index 3a058bb..a446083 100644
  END(coprocessor_error)
 
  ENTRY(simd_coprocessor_error)
--	zeroentry do_simd_coprocessor_error	
+-	zeroentry do_simd_coprocessor_error
 +	zeroentry do_simd_coprocessor_error ex_do_simd_coprocessor_error
  END(simd_coprocessor_error)
 
@@ -1169,7 +1169,7 @@ index 3a058bb..a446083 100644
 @@ -1044,7 +1181,7 @@ KPROBE_ENTRY(debug)
   	INTR_FRAME
  	pushq $0
- 	CFI_ADJUST_CFA_OFFSET 8		
+ 	CFI_ADJUST_CFA_OFFSET 8
 -	paranoidentry do_debug, DEBUG_STACK
 +	paranoidentry do_debug, DEBUG_STACK, 1, ex_do_debug
  	paranoidexit
@@ -1196,7 +1196,7 @@ index 3a058bb..a446083 100644
  END(bounds)
 
  ENTRY(invalid_op)
--	zeroentry do_invalid_op	
+-	zeroentry do_invalid_op
 +	zeroentry do_invalid_op ex_do_invalid_op
  END(invalid_op)
 
@@ -2872,7 +2872,7 @@ index 0000000..c84a687
 +	movq	8(%rsp),%rcx
 +	movq	(%rsp),%rax
 +	addq	$56,%rsp
-+out:	
++out:
 +	ret
 +END(mcount)
 diff --git a/arch/x86/kernel/nmi_32.c b/arch/x86/kernel/nmi_32.c
@@ -3500,14 +3500,14 @@ index 6ea73f3..f6db509 100644
 @@ -55,6 +55,13 @@
  	thunk lockdep_sys_exit_thunk,lockdep_sys_exit
  #endif
- 	
+
 +#ifdef CONFIG_IPIPE
 +#ifdef CONFIG_PREEMPT
 +	thunk_retrax __ipipe_preempt_schedule_irq_thunk,__ipipe_preempt_schedule_irq
-+#endif	
++#endif
 +	thunk_retrax __ipipe_syscall_root_thunk,__ipipe_syscall_root
 +#endif
-+	
++
  	/* SAVE_ARGS below is used only for the .cfi directives it contains. */
  	CFI_STARTPROC
  	SAVE_ARGS
@@ -4961,7 +4961,7 @@ index bb9163b..7035f6a 100644
 +	local_save_flags_hw(flags);
 +	local_irq_restore_hw_notrace((flags & ~(1 << 9)) | (1 << 18));
 +}
-+	
++
 +static inline void local_irq_enable_hw_notrace(void)
 +{
 +	unsigned long flags;
@@ -5088,7 +5088,7 @@ index e4f1997..f303823 100644
 @@ -223,6 +223,7 @@ struct thread_struct {
  	unsigned long	fs;
  	unsigned long	gs;
- 	unsigned short	es, ds, fsindex, gsindex;	
+ 	unsigned short	es, ds, fsindex, gsindex;
 +	unsigned long	rip;
  /* Hardware debugging registers */
  	unsigned long	debugreg0;
@@ -10644,7 +10644,7 @@ index 4b0144b..e0e7a3d 100644
 +		kunmap_atomic(kaddr, KM_USER0);
 +		flush_dcache_page(dst);
 +		return;
-+		
++
 +	}
 +	copy_user_highpage(dst, src, va, vma);
 +}
@@ -10672,7 +10672,7 @@ index 4b0144b..e0e7a3d 100644
 +			struct page *old_page = vm_normal_page(vma, addr, pte);
 +			cow_user_page(uncow_page, old_page, addr, vma);
 +			pte = mk_pte(uncow_page, vma->vm_page_prot);
-+			
++
 +			if (vm_flags & VM_SHARED)
 +				pte = pte_mkclean(pte);
 +			pte = pte_mkold(pte);
@@ -10785,7 +10785,7 @@ index 4b0144b..e0e7a3d 100644
 +{
 +	spinlock_t *ptl;
 +	pte_t *pte;
-+	
++
 +	do {
 +		pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
 +		if (!pte)
@@ -10860,7 +10860,7 @@ index 4b0144b..e0e7a3d 100644
 +
 +		addr = vma->vm_start;
 +		end = vma->vm_end;
-+		
++
 +		pgd = pgd_offset(mm, addr);
 +		do {
 +			next = pgd_addr_end(addr, end);

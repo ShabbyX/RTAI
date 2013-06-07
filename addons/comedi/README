@@ -186,7 +186,7 @@ space instead the overhead of calling "comedi_do_insn" many times could
 be much more significant, so it might help in having the possibility of
 executing a whole set of instructions in a single shot to kernel space only.
 
-The following macros can be used to avoid remembering the instruction fields:	
+The following macros can be used to avoid remembering the instruction fields:
 #define BUILD_AREAD_INSN(insn, subdev, data, nd, chan, arange, aref)
 to set up an instruction for analog input;
 #define BUILD_AWRITE_INSN(insn, subdev, data, nd, chan, arange, aref)

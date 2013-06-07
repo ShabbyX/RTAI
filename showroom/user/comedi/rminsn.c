@@ -65,7 +65,7 @@ unsigned int daqnode, daqport;
 
 static int init_board(void)
 {
-	dev = RT_comedi_open(daqnode, daqport, "/dev/comedi0");		
+	dev = RT_comedi_open(daqnode, daqport, "/dev/comedi0");
 	printf("Comedi device (6071) handle: %p.\n", dev);
 	if (!dev){
 		printf("Unable to open (6071) %s.\n", "/dev/comedi0");
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 		data[NICHAN + 1] = (1 - toggle)*maxdatao/2;
 		toggle = 1 - toggle;
 #endif
-		
+
 #if SINGLE_INSN
 		for (i = 0; i < NCHAN; i++) {
 			if ((retval = RT_comedi_do_insn(daqnode, daqport, dev, insn + i)) > 0) {

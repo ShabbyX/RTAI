@@ -47,7 +47,7 @@ static void *async_fun(void *args)
 		exit(1);
 	}
 	mlockall(MCL_CURRENT | MCL_FUTURE);
-	while (!end) {	
+	while (!end) {
 if (SERVER) {
 		unsigned long long retval;
 		long i1, i2;
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	rt_make_hard_real_time();
 
-	while (!end) {	
+	while (!end) {
 		r = RT_mbx_receive(sndnode, -sndport, sndmbx, &i, sizeof(long));
 		rt_printk("RECEIVE %ld %ld\n", r, i);
 if (SERVER) {

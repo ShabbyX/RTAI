@@ -85,7 +85,7 @@ start_rt_timer(0);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	printf("\nPLAYER TASK RUNNING\n\n(TYPE ENTER TO END EVERYTHING)\n");
 
-	while (!end) {	
+	while (!end) {
 		lseek(player, 0, SEEK_SET);
 		while(!end && (msg = read(player, data, BUFSIZE)) > 0) {
 			RT_mbx_send(spknode, spkport, mbx, data, msg);
@@ -93,7 +93,7 @@ start_rt_timer(0);
 	}
 
 	RT_rpc(spknode, spkport, spktsk, msg, &msg);
-	rt_make_soft_real_time();	
+	rt_make_soft_real_time();
 	rt_release_port(spknode, spkport);
 //stop_rt_timer();
 	rt_task_delete(plrtsk);

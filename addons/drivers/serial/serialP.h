@@ -96,7 +96,7 @@ struct rt_spmbx {
 };
 
 struct rt_spct_t {
-	int opened;	
+	int opened;
 	int base_adr, irq;
 	int mode, fifotrig;
 	int ier, mcr;

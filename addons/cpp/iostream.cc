@@ -91,7 +91,7 @@ ostream& ostream::write(const char *s, int n)
 }
 
 ostream& ostream::operator<<( const char* s )
-{	
+{
 	return write(s);;
 }
 
@@ -111,7 +111,7 @@ ostream& ostream::operator<<( unsigned char c)
 
 	return *this;
 }
-	
+
 ostream& ostream::operator<<( unsigned short n)
 {
 	if( m_OutputOn )

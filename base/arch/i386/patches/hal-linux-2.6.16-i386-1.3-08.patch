@@ -3180,7 +3180,7 @@ Binary files 2.6.16/arch/ia64/hp/sim/boot/bootloader and 2.6.16-ipipe/arch/ia64/
 +	jnz  ret_from_intr
 +	RESTORE_REGS
 +	addl $4, %esp
-+	iret	
++	iret
 +
 +#define BUILD_INTERRUPT(name, nr)	\
 +ENTRY(name)				\
@@ -3492,7 +3492,7 @@ Binary files 2.6.16/arch/ia64/hp/sim/boot/bootloader and 2.6.16-ipipe/arch/ia64/
  static void clear_IO_APIC_pin(unsigned int apic, unsigned int pin)
 @@ -202,10 +204,10 @@ static void clear_IO_APIC_pin(unsigned i
  	unsigned long flags;
- 	
+
  	/* Check delivery_mode to be sure we're not clearing an SMI pin */
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
@@ -3658,7 +3658,7 @@ Binary files 2.6.16/arch/ia64/hp/sim/boot/bootloader and 2.6.16-ipipe/arch/ia64/
  		reg_00.raw = io_apic_read(apic, 0);
 -		spin_unlock_irqrestore(&ioapic_lock, flags);
 +		spin_unlock_irqrestore_hw(&ioapic_lock, flags);
- 		
+
  		old_id = mp_ioapics[apic].mpc_apicid;
 
 @@ -1836,16 +1838,16 @@ static void __init setup_ioapic_ids_from
@@ -3883,7 +3883,7 @@ Binary files 2.6.16/arch/ia64/hp/sim/boot/bootloader and 2.6.16-ipipe/arch/ia64/
 
  /*
 @@ -2438,12 +2547,12 @@ static int ioapic_suspend(struct sys_dev
- 	
+
  	data = container_of(dev, struct sysfs_ioapic_data, dev);
  	entry = data->entry;
 -	spin_lock_irqsave(&ioapic_lock, flags);
@@ -5686,7 +5686,7 @@ Binary files 2.6.16/arch/ia64/hp/sim/boot/bootloader and 2.6.16-ipipe/arch/ia64/
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore_hw_cond(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 --- 2.6.16/include/asm-i386/mach-visws/do_timer.h	2006-03-20 06:53:29.000000000 +0100
@@ -5706,7 +5706,7 @@ Binary files 2.6.16/arch/ia64/hp/sim/boot/bootloader and 2.6.16-ipipe/arch/ia64/
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore_hw_cond(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 --- 2.6.16/include/asm-i386/mmu_context.h	2006-03-20 06:53:29.000000000 +0100

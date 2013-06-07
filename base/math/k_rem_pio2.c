@@ -155,9 +155,9 @@ static double PIo2[] = {
 };
 
 #ifdef __STDC__
-static const double			
+static const double
 #else
-static double			
+static double
 #endif
 zero   = 0.0,
 one    = 1.0,
@@ -167,7 +167,7 @@ twon24  =  5.96046447753906250000e-08; /* 0x3E700000, 0x00000000 */
 #ifdef __STDC__
 	int __kernel_rem_pio2(double *x, double *y, int e0, int nx, int prec, const int32_t *ipio2)
 #else
-	int __kernel_rem_pio2(x,y,e0,nx,prec,ipio2) 	
+	int __kernel_rem_pio2(x,y,e0,nx,prec,ipio2)
 	double x[], y[]; int e0,nx,prec; int32_t ipio2[];
 #endif
 {

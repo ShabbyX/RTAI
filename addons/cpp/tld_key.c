@@ -55,7 +55,7 @@ int __rt_tld_create_key(void){
 int __rt_tld_free_key(int key){
 #if 1
 	return 0;
-#else	
+#else
 	return rt_tld_free_key(key);
 #endif
 }

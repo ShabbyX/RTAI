@@ -51,14 +51,14 @@ static char rcsid[] = "$NetBSD: s_expm1.c,v 1.8 1995/05/10 20:47:09 jtc Exp $";
  *	    |                  5           |     -61
  *	    | 1.0+Q1*z+...+Q5*z   -  R1(z) | <= 2
  *	    |                              |
- *	
+ *
  *	expm1(r) = exp(r)-1 is then computed by the following
  * 	specific way which minimize the accumulation rounding error:
  *			       2     3
  *			      r     r    [ 3 - (R1 + R1*r/2)  ]
  *	      expm1(r) = r + --- + --- * [--------------------]
  *		              2     2    [ 6 - r*(3 - R1*r/2) ]
- *	
+ *
  *	To compensate the error in the argument reduction, we use
  *		expm1(r+c) = expm1(r) + c + expm1(r)*c
  *			   ~ expm1(r) + c + r*c
@@ -70,7 +70,7 @@ static char rcsid[] = "$NetBSD: s_expm1.c,v 1.8 1995/05/10 20:47:09 jtc Exp $";
  *	 expm1(r+c)~r - ({r*(--- * [--------------------]-c)-c} - --- )
  *	                ({  ( 2    [ 6 - r*(3 - R1*r/2) ]  )  }    2  )
  *                      (                                             )
- *    	
+ *
  *		   = r - E
  *   3. Scale back to obtain expm1(x):
  *	From step 1, we have
@@ -188,7 +188,7 @@ Q5  =  -2.01099218183624371326e-07; /* BE8AFDB7 6E09C32D */
 	}
 	else if(hx < 0x3c900000) {  	/* when |x|<2**-54, return x */
 	    t = huge+x;	/* return x with inexact flags when x!=0 */
-	    return x - (t-(huge+x));	
+	    return x - (t-(huge+x));
 	}
 	else k = 0;
 

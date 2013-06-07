@@ -416,7 +416,7 @@ RTAI_SYSCALL_MODE int RT_comedi_do_insnlist(void *dev, long n_insns, struct insn
 	lsampl_t *data           = RT_INSN_ADR(data_ofst);
 	comedi_insn insn[2]; // 2 instances, a safe room for 64 getting into 32
 	for (i = 0; i < n_insns; i ++) {
-		memcpy(insn, insns, ofstlens->insn_len);	
+		memcpy(insn, insns, ofstlens->insn_len);
 		insn[0].data     = data + data_ofsts[i];
 		insn[0].subdev   = RT_INSN(subdev_ofst);
 		insn[0].chanspec = RT_INSN(chanspec_ofst);

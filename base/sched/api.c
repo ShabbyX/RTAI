@@ -1883,7 +1883,7 @@ void krtai_objects_release(void)
 				case IS_MBX:
 					type = "MBX ";
 					((void (*)(void *))rt_fun_lxrt[NAMED_MBX_DELETE].fun)(entry.adr);
-	                       		break;	
+	                       		break;
 				case IS_PRX:
 					type = "PRX ";
 					((void (*)(void *))rt_fun_lxrt[PROXY_DETACH].fun)(entry.adr);
@@ -1908,7 +1908,7 @@ void krtai_objects_release(void)
 extern struct rtai_realtime_irq_s rtai_realtime_irq[];
 
 RTAI_SYSCALL_MODE int rt_irq_wait(unsigned irq)
-{	
+{
 	int retval;
 	retval = rt_task_suspend(0);
 	return rtai_domain.irqs[irq].handler ? -retval : RT_IRQ_TASK_ERR;

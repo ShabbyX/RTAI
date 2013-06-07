@@ -55,7 +55,7 @@ struct ipc_ids {
 	int max_id;
 	unsigned short seq;
 	unsigned short seq_max;
-	struct semaphore sem;	
+	struct semaphore sem;
 	spinlock_t ary;
 	struct ipc_id* entries;
 };

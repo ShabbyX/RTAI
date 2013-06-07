@@ -117,9 +117,9 @@ public:
 	virtual int run() = 0;
 
 	bool is_valid();
-	
+
 	void inc_cpu_use();
-	void dump_cpu_use();	
+	void dump_cpu_use();
 protected:
 	int m_CpuUse[ CONFIG_RTAI_CPUS ];
 

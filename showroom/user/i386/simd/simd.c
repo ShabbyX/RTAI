@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
 	}
 	rt_make_soft_real_time();
 	if (argc == 1) {
-		stop_rt_timer();	
+		stop_rt_timer();
 	}
 	rt_task_delete(task);
 	rt_mbx_delete(mbx);

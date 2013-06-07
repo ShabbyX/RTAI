@@ -167,7 +167,7 @@ static void ClockChrono_Clock(long t)
 static void ClockChrono_Chrono(long t)
 {
 	RTIME OneUnit = nano2count(ONE_UNIT);
-	MenageHmsh_tHour times;			
+	MenageHmsh_tHour times;
 	MenageHmsh_tChain11 timesChain;
 	BOOLEAN Intermediatetimes = FALSE;
 	MenageHmsh_tHour endIntermediateTimes;

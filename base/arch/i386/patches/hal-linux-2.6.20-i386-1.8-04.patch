@@ -131,7 +131,7 @@ index 776d9be..fbb73a0 100644
 @@ -672,9 +678,9 @@ static int lapic_suspend(struct sys_device *dev, pm_message_t state)
  		apic_pm_state.apic_thmr = apic_read(APIC_LVTTHMR);
  #endif
- 	
+
 -	local_irq_save(flags);
 +	local_irq_save_hw(flags);
  	disable_local_APIC();
@@ -283,7 +283,7 @@ index 5e47683..5b65ffe 100644
 +#define HANDLE_EXCEPTION(code)		call *%code
 +#define DIVERT_EXCEPTION(code)
 +#endif /* CONFIG_IPIPE */
-+	
++
  #ifdef CONFIG_PREEMPT
  #define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
  #else
@@ -449,7 +449,7 @@ index 5e47683..5b65ffe 100644
 +	BUILD_INTERRUPT(ipipe_ipi3,IPIPE_SERVICE_VECTOR3)
 +#ifdef CONFIG_SMP
 +	BUILD_INTERRUPT(ipipe_ipiX,IPIPE_CRITICAL_VECTOR)
-+#endif	
++#endif
 +#endif
 +
 +#else /* !CONFIG_IPIPE */
@@ -2139,7 +2139,7 @@ index 8fe7e45..0f83d8f 100644
 
 -		spin_lock(&i8253_lock);
 +		spin_lock_irqsave(&i8253_lock);
- 		
+
  		outb_p(0x00, 0x43);
  		val = inb_p(0x40);
  		val |= inb(0x40) << 8;
@@ -2804,7 +2804,7 @@ index 7d606e3..d550afe 100644
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 diff --git a/include/asm-i386/mmu_context.h b/include/asm-i386/mmu_context.h
@@ -7777,7 +7777,7 @@ index ef09f0a..bb4cff1 100644
 +		kunmap_atomic(kaddr, KM_USER0);
 +		flush_dcache_page(dst);
 +		return;
-+		
++
 +	}
 +	copy_user_highpage(dst, src, va, vma);
 +}
@@ -7806,7 +7806,7 @@ index ef09f0a..bb4cff1 100644
 +
 +			cow_user_page(page, old_page, addr, vma);
 +			pte = mk_pte(page, vma->vm_page_prot);
-+			
++
 +			if (vm_flags & VM_SHARED)
 +				pte = pte_mkclean(pte);
 +			pte = pte_mkold(pte);
@@ -7895,7 +7895,7 @@ index ef09f0a..bb4cff1 100644
 +{
 +	spinlock_t *ptl;
 +	pte_t *pte;
-+	
++
 +	do {
 +		pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
 +		if (!pte)
@@ -7966,7 +7966,7 @@ index ef09f0a..bb4cff1 100644
 +
 +		addr = vma->vm_start;
 +		end = vma->vm_end;
-+		
++
 +		pgd = pgd_offset(mm, addr);
 +		do {
 +			next = pgd_addr_end(addr, end);

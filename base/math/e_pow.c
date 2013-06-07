@@ -117,12 +117,12 @@ ivln2_l  =  1.92596299112661746887e-08; /* 0x3E54AE0B, 0xF85DDF44 =1/ln2 tail*/
 	ix = hx&0x7fffffff;  iy = hy&0x7fffffff;
 
     /* y==zero: x**0 = 1 */
-	if((iy|ly)==0) return one; 	
+	if((iy|ly)==0) return one;
 
     /* +-NaN return x+y */
 	if(ix > 0x7ff00000 || ((ix==0x7ff00000)&&(lx!=0)) ||
 	   iy > 0x7ff00000 || ((iy==0x7ff00000)&&(ly!=0)))
-		return x+y;	
+		return x+y;
 
     /* determine if y is an odd int when x < 0
      * yisint = 0	... y is not an integer
@@ -130,7 +130,7 @@ ivln2_l  =  1.92596299112661746887e-08; /* 0x3E54AE0B, 0xF85DDF44 =1/ln2 tail*/
      * yisint = 2	... y is an even int
      */
 	yisint  = 0;
-	if(hx<0) {	
+	if(hx<0) {
 	    if(iy>=0x43400000) yisint = 2; /* even integer y */
 	    else if(iy>=0x3ff00000) {
 		k = (iy>>20)-0x3ff;	   /* exponent */
@@ -141,11 +141,11 @@ ivln2_l  =  1.92596299112661746887e-08; /* 0x3E54AE0B, 0xF85DDF44 =1/ln2 tail*/
 		    j = iy>>(20-k);
 		    if((j<<(20-k))==iy) yisint = 2-(j&1);
 		}
-	    }		
+	    }
 	}
 
     /* special value of y */
-	if(ly==0) { 	
+	if(ly==0) {
 	    if (iy==0x7ff00000) {	/* y is +-inf */
 	        if(((ix-0x3ff00000)|lx)==0)
 		    return  y - y;	/* inf**+-1 is NaN */
@@ -160,7 +160,7 @@ ivln2_l  =  1.92596299112661746887e-08; /* 0x3E54AE0B, 0xF85DDF44 =1/ln2 tail*/
 	    if(hy==0x40000000) return x*x; /* y is  2 */
 	    if(hy==0x3fe00000) {	/* y is  0.5 */
 		if(hx>=0)	/* x >= +0 */
-		return __ieee754_sqrt(x);	
+		return __ieee754_sqrt(x);
 	    }
 	}
 

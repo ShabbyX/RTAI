@@ -53,7 +53,7 @@ static void *thread_fun(int idx)
 	unsigned int loops = LOOPS;
 	struct timespec abstime;
 	char name[7];
-	
+
 	sprintf(name, "TASK%d", idx);
 	pthread_setschedparam_np(NTASKS - idx + 1, SCHED_FIFO, 0, 0x1, PTHREAD_HARD_REAL_TIME_NP);
 	mlockall(MCL_CURRENT | MCL_FUTURE);

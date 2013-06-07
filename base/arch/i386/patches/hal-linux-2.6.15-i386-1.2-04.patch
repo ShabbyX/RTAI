@@ -3031,7 +3031,7 @@
 +	jnz  ret_from_intr
 +	RESTORE_REGS
 +	addl $4, %esp
-+	iret	
++	iret
 +
 +#define BUILD_INTERRUPT(name, nr)	\
 +ENTRY(name)				\
@@ -3343,7 +3343,7 @@
  static void clear_IO_APIC_pin(unsigned int apic, unsigned int pin)
 @@ -200,10 +202,10 @@ static void clear_IO_APIC_pin(unsigned i
  	unsigned long flags;
- 	
+
  	/* Check delivery_mode to be sure we're not clearing an SMI pin */
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
@@ -3509,7 +3509,7 @@
  		reg_00.raw = io_apic_read(apic, 0);
 -		spin_unlock_irqrestore(&ioapic_lock, flags);
 +		spin_unlock_irqrestore_hw(&ioapic_lock, flags);
- 		
+
  		old_id = mp_ioapics[apic].mpc_apicid;
 
 @@ -1834,16 +1836,16 @@ static void __init setup_ioapic_ids_from
@@ -3734,7 +3734,7 @@
 
  /*
 @@ -2421,12 +2530,12 @@ static int ioapic_suspend(struct sys_dev
- 	
+
  	data = container_of(dev, struct sysfs_ioapic_data, dev);
  	entry = data->entry;
 -	spin_lock_irqsave(&ioapic_lock, flags);
@@ -5530,7 +5530,7 @@
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore_hw_cond(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 --- 2.6.15/include/asm-i386/mach-visws/do_timer.h	2006-01-03 04:21:10.000000000 +0100
@@ -5550,7 +5550,7 @@
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore_hw_cond(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 --- 2.6.15/include/asm-i386/mmu_context.h	2006-01-03 04:21:10.000000000 +0100

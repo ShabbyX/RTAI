@@ -181,7 +181,7 @@ double nearbyint ( double x )
 #endif /* __ppc__ */
 
 	y = twoTo52;
-	
+
 	asm ("mffs %0" : "=f" (OldEnvironment));	/* get the environement */
 
       if ( fabs ( x ) >= y )                          /* huge case is exact */
@@ -395,7 +395,7 @@ double round ( double x )
 *******************************************************************************/
 
 long int roundtol ( double x )
-	{	
+	{
 	register double y, z;
 	DblInHex argument, OldEnvironment;
 	register unsigned long int xhi;
@@ -404,11 +404,11 @@ long int roundtol ( double x )
 	const DblInHex kTZ = {{ 0x0, 0x1 }};
 	const DblInHex kUP = {{ 0x0, 0x2 }};
 #endif /* __ppc__ */
-	
+
 	argument.dbl = x;
 	xhi = argument.words.hi & 0x7ffffffful;	        	// high 32 bits of x
 	target = ( argument.words.hi < signMask );         	// flag positive sign
-	
+
 	if ( xhi > 0x41e00000ul )
 /*******************************************************************************
 *     Is x is out of long range or NaN?                                        *
@@ -422,7 +422,7 @@ long int roundtol ( double x )
 		else
 			return ( LONG_MIN );
 		}
-	
+
 	if ( target )
 /*******************************************************************************
 *     Is sign of x is "+"?                                                     *
@@ -434,7 +434,7 @@ long int roundtol ( double x )
 *******************************************************************************/
 			{
 			y = ( x + doubleToLong ) - doubleToLong; 	// round at binary point
-			if ( y != x )	
+			if ( y != x )
 				{		                    	// inexact case
 				asm ("mffs %0" : "=f" (OldEnvironment.dbl));	// save environment
 				asm ("mtfsf 255,%0" : /*NULLOUT*/ : /*IN*/ "f" ( kTZ.dbl )); // truncate rounding
@@ -443,7 +443,7 @@ long int roundtol ( double x )
 				asm ("mtfsf 255,%0" : /*NULLOUT*/ : /*IN*/ "f" ( OldEnvironment.dbl ));
 				return ( ( long ) argument.words.lo );
 				}
-			
+
 			argument.dbl = y + doubleToLong;		// force result into argument.words.lo
 			return ( ( long ) argument.words.lo ); 	// return long result
 			}
@@ -473,7 +473,7 @@ long int roundtol ( double x )
 			asm ("mtfsf 255,%0" : /*NULLOUT*/ : /*IN*/ "f" ( OldEnvironment.dbl ));
 			return ( ( long ) argument.words.lo );
 			}
-		
+
 		argument.dbl = y + doubleToLong;
 		return ( ( long ) argument.words.lo );	  	//  return long result
 		}
@@ -495,16 +495,16 @@ long int roundtol ( double x )
 *******************************************************************************/
 
 double trunc ( double x )
-      {	
+      {
 	DblInHex argument,OldEnvironment;
 	register double y;
 	register unsigned long int xhi;
 	register long int target;
-	
+
 	argument.dbl = x;
 	xhi = argument.words.hi & 0x7fffffffUL;	      	// xhi <- high half of |x|
 	target = ( argument.words.hi < signMask );	      	// flag positive sign
-	
+
 	if ( xhi < 0x43300000ul )
 /*******************************************************************************
 *     Is |x| < 2.0^53?                                                         *
@@ -537,7 +537,7 @@ double trunc ( double x )
 			else
 				return ( y );
 			}
-		
+
 		else
 			{
 			y = ( x - twoTo52 ) + twoTo52;      	// round at binary point.

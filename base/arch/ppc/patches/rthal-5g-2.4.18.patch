@@ -19,7 +19,7 @@
  	.globl	do_signal_ret
  do_signal_ret:
 +	bl	do_soft_sti
- 	.globl ret_to_user_hook	
+ 	.globl ret_to_user_hook
  ret_to_user_hook:
  	nop
 + diff -u linux-2.4.18/arch/ppc/kernel/irq.c.PRE_RTAI linux-2.4.18/arch/ppc/kernel/irq.c
@@ -219,7 +219,7 @@
 +		} else {
 +			ptoo = pto;
 +			pto = pto->next;
-+		}	
++		}
 +	}
 +//printk("rtai_callback_list %X\n", rtai_callback_list);
 +}
@@ -489,7 +489,7 @@
 +#ifdef CONFIG_X86
 +		pgd_t olddir = *dir;
 +#endif
- 		
+
  		pmd = pmd_alloc(&init_mm, dir, address);
  		ret = -ENOMEM;
 @@ -157,6 +160,10 @@

@@ -152,9 +152,9 @@ static int mbxovrwrput(MBX *mbx, char **msg, int msg_size, int space)
 	if ((n = msg_size - mbx->size) > 0) {
 		*msg += n;
 		msg_size -= n;
-	}		
+	}
 	while (msg_size > 0) {
-		if (mbx->frbs) {	
+		if (mbx->frbs) {
 			if ((tocpy = mbx->size - mbx->lbyte) > msg_size) {
 				tocpy = msg_size;
 			}
@@ -173,7 +173,7 @@ static int mbxovrwrput(MBX *mbx, char **msg, int msg_size, int space)
 			msg_size -= tocpy;
 			*msg     += tocpy;
 			mbx->lbyte = MOD_SIZE(mbx->lbyte + tocpy);
-		}	
+		}
 		if (msg_size) {
 			while ((n = msg_size - mbx->frbs) > 0) {
 				if ((tocpy = mbx->size - mbx->fbyte) > n) {
@@ -188,7 +188,7 @@ static int mbxovrwrput(MBX *mbx, char **msg, int msg_size, int space)
         			rt_spin_unlock_irqrestore(flags, &(mbx->lock));
 				mbx->fbyte = MOD_SIZE(mbx->fbyte + tocpy);
 			}
-		}		
+		}
 	}
 	return 0;
 }

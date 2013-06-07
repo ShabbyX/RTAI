@@ -471,7 +471,7 @@ int rt_free_linux_irq (unsigned irq, void *dev_id)
 		irq_desc[irq].action->flags = rtai_linux_irq[irq].flags;
 	}
 	spin_unlock(&irq_desc[irq].lock);
-	
+
 	rtai_restore_flags(flags);
 
 	return 0;
@@ -960,7 +960,7 @@ static void rtai_install_archdep (void)
 {
 	struct hal_sysinfo_struct sysinfo;
 
-#if !defined(USE_LINUX_SYSCALL) && !defined(CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL)	
+#if !defined(USE_LINUX_SYSCALL) && !defined(CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL)
 	/* empty till a direct RTAI syscall way is decided */
 #endif
 
@@ -1193,7 +1193,7 @@ int __rtai_hal_init (void)
 #ifdef CONFIG_PROC_FS
 	rtai_proc_register();
 #endif /* CONFIG_PROC_FS */
-	
+
 	// register RTAI domain
 	hal_init_attr(&attr);
 	attr.name     = "RTAI";

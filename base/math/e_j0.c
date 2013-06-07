@@ -33,12 +33,12 @@ static char rcsid[] = "$NetBSD: e_j0.c,v 1.8 1995/05/10 20:45:23 jtc Exp $";
  * 	   (To avoid cancellation, use
  *		sin(x) +- cos(x) = -cos(2x)/(sin(x) -+ cos(x))
  * 	    to compute the worse one.)
- *	
+ *
  *	3 Special cases
  *		j0(nan)= nan
  *		j0(0) = 1
  *		j0(inf) = 0
- *		
+ *
  * Method -- y0(x):
  *	1. For x<2.
  *	   Since
@@ -349,7 +349,7 @@ static double pS2[5] = {
 	s = one+z*(q[0]+z*(q[1]+z*(q[2]+z*(q[3]+z*q[4]))));
 	return one+ r/s;
 }
-		
+
 
 /* For x >= 8, the asymptotic expansions of qzero is
  *	-1/8 s + 75/1024 s^3 - ..., where s = 1/x.

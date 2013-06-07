@@ -1770,7 +1770,7 @@
 +				err = -EPERM;
 +				goto unlock_and_exit;
 +			}
-+			
++
 +			__ipipe_enable_irq(irq);
 +		}
 +	}
@@ -2557,7 +2557,7 @@
 +			__ipipe_event_monitors[event]--;
 +			ipd->evself |= (1LL << event);
 +	}
-+	
++
 +	ipipe_critical_exit(flags);
 +
 +	if (!handler && ipipe_root_domain_p) {
@@ -3709,7 +3709,7 @@
 +};
 +
 +static void *__ipipe_frozen_prtrace_start(struct seq_file *m, loff_t *pos)
-+{	
++{
 +	loff_t n = *pos;
 +
 +	down(&out_mutex);
@@ -4997,7 +4997,7 @@
  static void clear_IO_APIC_pin(unsigned int apic, unsigned int pin)
 @@ -202,10 +204,10 @@ static void clear_IO_APIC_pin(unsigned i
  	unsigned long flags;
- 	
+
  	/* Check delivery_mode to be sure we're not clearing an SMI pin */
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
@@ -5163,7 +5163,7 @@
  		reg_00.raw = io_apic_read(apic, 0);
 -		spin_unlock_irqrestore(&ioapic_lock, flags);
 +		spin_unlock_irqrestore_hw(&ioapic_lock, flags);
- 		
+
  		old_id = mp_ioapics[apic].mpc_apicid;
 
 @@ -1833,16 +1835,16 @@ static void __init setup_ioapic_ids_from
@@ -5402,7 +5402,7 @@
 
  int timer_uses_ioapic_pin_0;
 @@ -2440,12 +2546,12 @@ static int ioapic_suspend(struct sys_dev
- 	
+
  	data = container_of(dev, struct sysfs_ioapic_data, dev);
  	entry = data->entry;
 -	spin_lock_irqsave(&ioapic_lock, flags);
@@ -7257,7 +7257,7 @@
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore_hw_cond(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 --- 2.6.17/include/asm-i386/mach-visws/do_timer.h	2006-06-18 03:49:35.000000000 +0200
@@ -7277,7 +7277,7 @@
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore_hw_cond(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 --- 2.6.17/include/asm-i386/mmu_context.h	2006-06-18 03:49:35.000000000 +0200

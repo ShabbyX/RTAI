@@ -60,7 +60,7 @@ static lsampl_t maxdatai, maxdatao;
 
 static int init_board(void)
 {
-	dev = comedi_open("/dev/comedi0");		
+	dev = comedi_open("/dev/comedi0");
 	printf("Comedi device (6071) handle: %p.\n", dev);
 	if (!dev){
 		printf("Unable to open (6071) %s.\n", "/dev/comedi0");
@@ -146,7 +146,7 @@ int main(void)
 		data[NICHAN + 1] = (1 - toggle)*maxdatao/2;
 		toggle = 1 - toggle;
 #endif
-		
+
 #if SINGLE_INSN
 		for (i = 0; i < NCHAN; i++) {
 			if ((retval = comedi_do_insn(dev, insn + i)) > 0) {

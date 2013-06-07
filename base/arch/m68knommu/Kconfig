@@ -364,7 +364,7 @@ config RTAI_LXRT_USE_LINUX_SYSCALL
 	you want to use the LXRT syscall mechanism.
 	RTAI will then operate in mixed mode selectively by using both
 	its own and Linux syscall mechanisms.
-	
+
 	If in doubt, say no.
 
 config RTAI_ALIGN_LINUX_PRIORITY

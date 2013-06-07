@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
 	}
 	rt_make_soft_real_time();
 	if (!hard_timer_running) {
-		stop_rt_timer();	
+		stop_rt_timer();
 	}
 	rt_get_exectime(task, exectime);
 	if (exectime[1] && exectime[2]) {

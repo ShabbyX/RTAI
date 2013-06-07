@@ -183,7 +183,7 @@ index 0000000..8818dd5
 +	unsigned irq;
 +
 +	irq = mcf_timervector;
-+	
++
 +	ipipe_virtualize_irq(ipipe_root_domain,
 +				 irq,
 +				 (ipipe_irq_handler_t)&do_IRQ,
@@ -643,7 +643,7 @@ index 1e3c0dc..f2fd417 100755
 +				movel PT_ORIG_D0(%sp),%d0
 +#else
 +#define EMULATE_ROOT_IRET(bypass)
-+#define CATCH_ROOT_SYSCALL(bypass1,bypass2)	
++#define CATCH_ROOT_SYSCALL(bypass1,bypass2)
 +#endif
 +
  .bss
@@ -768,7 +768,7 @@ index ba5a9f3..7cff5c8 100755
 +//	__raw_writetrr(mcftmr_cycles_per_jiffy, TA(MCFTIMER_TRR));
 +//	__raw_writew(MCFTIMER_TMR_ENORI | MCFTIMER_TMR_CLK16 |
 +//		MCFTIMER_TMR_RESTART | MCFTIMER_TMR_ENABLE, TA(MCFTIMER_TMR));
-+		
++
 +
 +#ifdef CONFIG_IPIPE
 +    __raw_writetrr(mcftmr_cycles_per_jiffy - 1, TA(MCFTIMER_TRR));
@@ -778,7 +778,7 @@ index ba5a9f3..7cff5c8 100755
 + __raw_writetrr(((MCF_BUSCLK / 16) / HZ), TA(MCFTIMER_TRR));
 + __raw_writew(MCFTIMER_TMR_ENORI | MCFTIMER_TMR_CLK16 |
 +     MCFTIMER_TMR_RESTART | MCFTIMER_TMR_ENABLE, TA(MCFTIMER_TMR));
-+#endif		
++#endif
 
  	mcftmr_clk.mult = clocksource_hz2mult(FREQ, mcftmr_clk.shift);
  	clocksource_register(&mcftmr_clk);
@@ -2831,29 +2831,29 @@ index 073005b..af7dd25 100755
 +{
 +	struct fs_struct *fs;
 +	sigset_t blocked;
-+	
++
 +	current->flags |= PF_NOFREEZE;
-+	
++
 +	if (current->nsproxy != init_task.nsproxy) {
 +		get_nsproxy(init_task.nsproxy);
 +		switch_task_namespaces(current, init_task.nsproxy);
 +	}
 +	set_special_pids(&init_struct_pid);
 +	proc_clear_tty(current);
-+	
++
 +	sigfillset(&blocked);
 +	sigprocmask(SIG_BLOCK, &blocked, NULL);
 +	flush_signals(current);
-+	
++
 +	exit_fs(current);
 +	fs = init_task.fs;
 +	current->fs = fs;
 +	atomic_inc(&fs->count);
-+	
++
 +	exit_files(current);
 +	current->files = init_task.files;
 +	atomic_inc(&current->files->count);
-+	
++
 +	reparent_to_kthreadd();
 +}
 +
@@ -6377,7 +6377,7 @@ index 8dcdec6..d6f1938 100755
  #endif
  	if (current->set_child_tid)
  		put_user(task_pid_vnr(current), current->set_child_tid);
-+		
++
 +	ipipe_init_notify(current);
  }
 
@@ -6395,7 +6395,7 @@ index 8dcdec6..d6f1938 100755
 -	prepare_task_switch(rq, prev, next);
  	mm = next->mm;
  	oldmm = prev->active_mm;
-+	
++
 +
 +	if (likely(!rq)) {
 +	    switch_mm(oldmm, next->active_mm, next);
@@ -6805,7 +6805,7 @@ index 0d14d1e..62ce099 100755
 +		kunmap_atomic(kaddr, KM_USER0);
 +		flush_dcache_page(dst);
 +		return;
-+		
++
 +	}
 +	copy_user_highpage(dst, src, va, vma);
 +}
@@ -6833,7 +6833,7 @@ index 0d14d1e..62ce099 100755
 +			struct page *old_page = vm_normal_page(vma, addr, pte);
 +			cow_user_page(uncow_page, old_page, addr, vma);
 +			pte = mk_pte(uncow_page, vma->vm_page_prot);
-+			
++
 +			if (vm_flags & VM_SHARED)
 +				pte = pte_mkclean(pte);
 +			pte = pte_mkold(pte);
@@ -6911,7 +6911,7 @@ index 0d14d1e..62ce099 100755
 +{
 +	spinlock_t *ptl;
 +	pte_t *pte;
-+	
++
 +	do {
 +		pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
 +		if (!pte)
@@ -6986,7 +6986,7 @@ index 0d14d1e..62ce099 100755
 +
 +		addr = vma->vm_start;
 +		end = vma->vm_end;
-+	
++
 +		pgd = pgd_offset(mm, addr);
 +		do {
 +			next = pgd_addr_end(addr, end);

@@ -45,7 +45,7 @@ ln2	= 6.93147180559945286227e-01;  /* 0x3FE62E42, 0xFEFA39EF */
 	double __ieee754_acosh(x)
 	double x;
 #endif
-{	
+{
 	double t;
 	int32_t hx;
 	u_int32_t lx;

@@ -59,7 +59,7 @@ static unsigned long usi_save_flags_and_cli(unsigned long arg, unsigned long *ef
 
 static void usi_restore_flags(unsigned long flags, unsigned long *eflags)
 {
-	//if (test_bit(RTAI_IFLAG, &flags)) {	
+	//if (test_bit(RTAI_IFLAG, &flags)) {
 	if (!(flags & ~ALLOWINT)) {
 		//set_bit(RTAI_IFLAG, eflags);
 		*eflags &= ALLOWINT;

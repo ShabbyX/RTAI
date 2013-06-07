@@ -37,7 +37,7 @@ static char rcsid[] = "$NetBSD: w_jn.c,v 1.6 1995/05/10 20:49:19 jtc Exp $";
  *	yn(n,x) is similar in all respects, except
  *	that forward recursion is used for all
  *	values of n>1.
- *	
+ *
  */
 
 #include "math.h"

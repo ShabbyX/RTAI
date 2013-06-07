@@ -713,7 +713,7 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/arch/arm/hal/hal.c rtai-3.5-cv/b
 +{
 +	struct hal_sysinfo_struct sysinfo;
 +
-+#if !defined(USE_LINUX_SYSCALL) && !defined(CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL)	
++#if !defined(USE_LINUX_SYSCALL) && !defined(CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL)
 +	/* empty till a direct RTAI syscall way is decided */
 +#endif
 +
@@ -2149,7 +2149,7 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/include/asm-arm/rtai_lxrt.h rtai
 +	if (!IS_FUSION_TIMER_RUNNING()) { \
 +		hal_pend_uncond(__ipipe_mach_timerint, cpuid); \
 +	} \
-+} while (0)		
++} while (0)
 +
  /* Adeos/ARM calls all event handlers with hw-interrupts enabled (both in threaded
   * and unthreaded mode), so there is no need for RTAI to do it again. */
@@ -2225,7 +2225,7 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/include/asm-arm/rtai_oldnames.h 
 
 +#define FREQ_APIC       		RTAI_TIMER_FREQ
 +#define LATENCY_APIC    		RTAI_TIMER_LATENCY
-+#define SETUP_TIME_APIC 		RTAI_TIMER_SETUP_TIME		
++#define SETUP_TIME_APIC 		RTAI_TIMER_SETUP_TIME
 +#define RTAI_FREQ_APIC			RTAI_TIMER_FREQ
 +
 +#define CALIBRATED_APIC_FREQ  		RTAI_CALIBRATED_APIC_FREQ

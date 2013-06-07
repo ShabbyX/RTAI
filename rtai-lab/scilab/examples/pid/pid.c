@@ -718,7 +718,7 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
   case 1:
   /*        Initialize tvec */
   ntvec=2;
-	
+
   flag = 3;
   nevprt = 1;
  C2F(ifthel)(&flag, &nevprt, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]),

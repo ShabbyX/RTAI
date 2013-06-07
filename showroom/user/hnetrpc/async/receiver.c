@@ -47,7 +47,7 @@ static void *async_fun(void *args)
 		exit(1);
 	}
 	mlockall(MCL_CURRENT | MCL_FUTURE);
-	while (!end) {	
+	while (!end) {
 if (SERVER) {
 		unsigned long long retval;
 		int i1, i2, l1, l2;
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
 	printf("\nRECEIVER TASK RUNNING\n");
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
-	while (!end) {	
+	while (!end) {
 		r = RT_mbx_receive(sndnode, -sndport, sndmbx, &i, sizeof(long));
 		rt_printk("RECEIVE %ld %ld\n", r, i);
 if (SERVER) {

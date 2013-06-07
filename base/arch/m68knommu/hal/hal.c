@@ -908,7 +908,7 @@ int rt_request_timer (void (*handler)(void), unsigned tick, int unused)
 
 		rt_set_timer_delay(LATCH);
 	}
-	
+
 	retval = rt_request_global_irq(RT_TIMER_IRQ, handler);
 	rt_set_irq_ack(RT_TIMER_IRQ, rt_ack_tmr);
 	rtai_restore_flags(flags);
@@ -929,7 +929,7 @@ void rt_free_timer (void)
 	rtai_save_flags_and_cli(flags);
 	timer_inuse = 0;
 
-	rt_free_global_irq(RT_TIMER_IRQ);	
+	rt_free_global_irq(RT_TIMER_IRQ);
 
 	rtai_restore_flags(flags);
 }
@@ -953,7 +953,7 @@ static int rtai_hirq_dispatcher (unsigned irq, struct pt_regs *regs)
 	unsigned long cpuid = 0;
 
 	CHECK_KERCTX();
-	
+
 	if (rtai_realtime_irq[irq].handler) {
 		unsigned long sflags;
 		if (irq == RT_TIMER_IRQ)
@@ -1435,7 +1435,7 @@ int __rtai_hal_init (void)
 		printk(KERN_ERR "RTAI[hal]: NO VIRTUAL INTERRUPT AVAILABLE.\n");
 		halinv = 1;
 	}
-	
+
 	if (halinv) {
 		return -1;
 	}

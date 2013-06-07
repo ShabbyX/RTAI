@@ -31,7 +31,7 @@ int main(void)
 	char d = 'd';
 	char chain[12];
 	char displine[40] = "CLOCK-> 00:00:00  CHRONO-> 00:00:00";
-	
+
 	if ((Keyboard = open("/dev/rtf0", O_WRONLY)) < 0) {
 		fprintf(stderr, "Error opening /dev/rtf0 in screen\n");
 		exit(1);

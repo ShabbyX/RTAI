@@ -173,7 +173,7 @@ static inline union rtai_lxrt_t __rtai_lxrt(unsigned long arg0, unsigned long ar
 		register unsigned long __sc_0  __asm__ ("r0");
 		register unsigned long __sc_3  __asm__ ("r3");
 		register unsigned long __sc_4  __asm__ ("r4");
-		
+
 		__sc_0 = arg0;
 		__sc_3 = arg1;
 		__sc_4 = arg2;

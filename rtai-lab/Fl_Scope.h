@@ -89,9 +89,9 @@ class Fl_Scope : public Fl_Gl_Window
 		float getdx();
 		void trace_length(int);
 		int trace_length();
-		
+
 		void add_to_trace(int n, float val);
-		
+
 		void pause(int);
 		int pause();
 		void oneshot(int);
@@ -155,7 +155,7 @@ class Fl_Scope : public Fl_Gl_Window
 		float *Trace_Offset;
 		float *Trace_Width;
 		float *Trace_Offset_Value;
-	
+
  		trStat *Stats;
 		int *Data_Ptr;
                 float Prev_Val;

@@ -39,7 +39,7 @@ int fifo::create(int id, int size){
 	int res = rtf_create(id,size);
 	m_fifo = id;
 	m_this_table[id] = this;
-	
+
 	return res;
 }
 
@@ -49,13 +49,13 @@ fifo::~fifo(){
 		rtf_destroy(m_fifo);
 	}
 }
-	
+
 int fifo::reset(){
 	return rtf_reset(m_fifo);
 }
 
 int fifo::resize(int size){
-	return rtf_resize(m_fifo,size);	
+	return rtf_resize(m_fifo,size);
 }
 
 int fifo::put(const void* buffer, int count){

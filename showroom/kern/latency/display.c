@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 		tm_timestamp=localtime(&timestamp);
 		printf("%04d/%02d/%0d %02d:%02d:%02d   ",
 			tm_timestamp->tm_year+1900, tm_timestamp->tm_mon+1, tm_timestamp->tm_mday,
-		 	tm_timestamp->tm_hour, tm_timestamp->tm_min, tm_timestamp->tm_sec	
+		 	tm_timestamp->tm_hour, tm_timestamp->tm_min, tm_timestamp->tm_sec
 		);
 		printf("min: %8d    max: %8d    average: %8d\n", (int) samp.min, (int) samp.max, samp.index);
 		fflush(stdout);

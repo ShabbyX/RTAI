@@ -49,7 +49,7 @@ Count& Count::operator=(const Count& count)
 Count& Count::operator=(long long count)
 {
 	m_Count = count;
-	
+
 	return *this;
 }
 

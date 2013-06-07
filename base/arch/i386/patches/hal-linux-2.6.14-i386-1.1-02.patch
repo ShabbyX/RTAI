@@ -2907,7 +2907,7 @@ Binary files 2.6.14/arch/ia64/hp/sim/boot/bootloader and 2.6.14-ipipe/arch/ia64/
 +	jnz  ret_from_intr
 +	RESTORE_REGS
 +	addl $4, %esp
-+	iret	
++	iret
 +
 +#define BUILD_INTERRUPT(name, nr)	\
 +ENTRY(name)				\
@@ -3205,7 +3205,7 @@ Binary files 2.6.14/arch/ia64/hp/sim/boot/bootloader and 2.6.14-ipipe/arch/ia64/
  static void clear_IO_APIC_pin(unsigned int apic, unsigned int pin)
 @@ -197,10 +199,10 @@ static void clear_IO_APIC_pin(unsigned i
  	unsigned long flags;
- 	
+
  	/* Check delivery_mode to be sure we're not clearing an SMI pin */
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
@@ -3454,7 +3454,7 @@ Binary files 2.6.14/arch/ia64/hp/sim/boot/bootloader and 2.6.14-ipipe/arch/ia64/
 
  static void end_lapic_irq (unsigned int i) { /* nothing */ }
 @@ -2344,12 +2453,12 @@ static int ioapic_suspend(struct sys_dev
- 	
+
  	data = container_of(dev, struct sysfs_ioapic_data, dev);
  	entry = data->entry;
 -	spin_lock_irqsave(&ioapic_lock, flags);
@@ -5261,7 +5261,7 @@ Binary files 2.6.14/arch/ia64/hp/sim/boot/bootloader and 2.6.14-ipipe/arch/ia64/
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore_hw_cond(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 --- 2.6.14/include/asm-i386/mach-visws/do_timer.h	2005-10-28 02:02:08.000000000 +0200
@@ -5281,7 +5281,7 @@ Binary files 2.6.14/arch/ia64/hp/sim/boot/bootloader and 2.6.14-ipipe/arch/ia64/
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore_hw_cond(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 --- 2.6.14/include/asm-i386/mmu_context.h	2005-10-28 02:02:08.000000000 +0200

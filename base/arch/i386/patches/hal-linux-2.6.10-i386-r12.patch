@@ -794,7 +794,7 @@ diff -uNrp linux-2.6.10/adeos/generic.c linux-2.6.10-adeos/adeos/generic.c
 +
 +    if (!flags)
 +	adeos_hw_sti();	/* Absolutely needed. */
-+	
++
 +    adeos_lock_cpu(hwflags);
 +
 +    if (mutex->sleepq != NULL)
@@ -818,7 +818,7 @@ diff -uNrp linux-2.6.10/adeos/generic.c linux-2.6.10-adeos/adeos/generic.c
 +    else
 +	{
 +	__clear_bit(IPIPE_STALL_FLAG,&adp->cpudata[cpuid].status);
-+	
++
 +	if (adp->cpudata[cpuid].irq_pending_hi != 0)
 +	    __adeos_sync_stage(IPIPE_IRQMASK_ANY);
 +	}
@@ -1365,7 +1365,7 @@ diff -uNrp linux-2.6.10/adeos/x86.c linux-2.6.10-adeos/adeos/x86.c
 +
 +    if (adp->irqs[irq].control & IPIPE_SYSTEM_MASK)
 +	return -EPERM;
-+	
++
 +    spin_lock_irqsave_hw(&__adeos_pipelock,flags);
 +
 +    if (handler != NULL)
@@ -1394,7 +1394,7 @@ diff -uNrp linux-2.6.10/adeos/x86.c linux-2.6.10-adeos/adeos/x86.c
 +	    err = -EBUSY;
 +	    goto unlock_and_exit;
 +	    }
-+	
++
 +	if ((modemask & (IPIPE_SHARED_MASK|IPIPE_PASS_MASK)) == IPIPE_SHARED_MASK)
 +	    {
 +	    err = -EINVAL;
@@ -1488,7 +1488,7 @@ diff -uNrp linux-2.6.10/adeos/x86.c linux-2.6.10-adeos/adeos/x86.c
 +
 +    if (adp_current->irqs[irq].control & IPIPE_SYSTEM_MASK)
 +	return -EPERM;
-+	
++
 +    if (((setmask|clrmask) & IPIPE_SHARED_MASK) != 0)
 +	return -EINVAL;
 +
@@ -2776,7 +2776,7 @@ diff -uNrp linux-2.6.10/arch/i386/kernel/entry.S linux-2.6.10-adeos/arch/i386/ke
 +	call __adeos_exit_syscall
 + 	testl %eax,%eax
 + 	jne   .adeos_sysdone
-+.adeos_syswork:	
++.adeos_syswork:
 +#endif /* CONFIG_ADEOS_CORE */
  	cli
  	movl TI_flags(%ebp), %ecx
@@ -2887,7 +2887,7 @@ diff -uNrp linux-2.6.10/arch/i386/kernel/entry.S linux-2.6.10-adeos/arch/i386/ke
 +	RESTORE_ALL
 +
 +#endif /* !CONFIG_ADEOS_CORE */
-+	
++
  ENTRY(divide_error)
  	pushl $0			# no error code
  	pushl $do_divide_error
@@ -3098,7 +3098,7 @@ diff -uNrp linux-2.6.10/arch/i386/kernel/io_apic.c linux-2.6.10-adeos/arch/i386/
  void clear_IO_APIC_pin(unsigned int apic, unsigned int pin)
 @@ -194,10 +196,10 @@ void clear_IO_APIC_pin(unsigned int apic
  	unsigned long flags;
- 	
+
  	/* Check delivery_mode to be sure we're not clearing an SMI pin */
 -	spin_lock_irqsave(&ioapic_lock, flags);
 +	spin_lock_irqsave_hw(&ioapic_lock, flags);
@@ -3291,7 +3291,7 @@ diff -uNrp linux-2.6.10/arch/i386/kernel/io_apic.c linux-2.6.10-adeos/arch/i386/
 
  static void end_lapic_irq (unsigned int i) { /* nothing */ }
 @@ -2303,12 +2401,12 @@ static int ioapic_suspend(struct sys_dev
- 	
+
  	data = container_of(dev, struct sysfs_ioapic_data, dev);
  	entry = data->entry;
 -	spin_lock_irqsave(&ioapic_lock, flags);
@@ -3423,7 +3423,7 @@ diff -uNrp linux-2.6.10/arch/i386/kernel/smp.c linux-2.6.10-adeos/arch/i386/kern
 +#else  /* !CONFIG_ADEOS_CORE */
  	local_irq_save(flags);
 +#endif /* CONFIG_ADEOS_CORE */
- 		
+
  	/*
  	 * Wait for idle.
 @@ -185,7 +198,11 @@ void send_IPI_mask_bitmask(cpumask_t cpu
@@ -4348,7 +4348,7 @@ diff -uNrp linux-2.6.10/include/asm-i386/mach-default/do_timer.h linux-2.6.10-ad
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore_hw_cond(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 diff -uNrp linux-2.6.10/include/asm-i386/mach-visws/do_timer.h linux-2.6.10-adeos/include/asm-i386/mach-visws/do_timer.h
@@ -4370,7 +4370,7 @@ diff -uNrp linux-2.6.10/include/asm-i386/mach-visws/do_timer.h linux-2.6.10-adeo
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore_hw_cond(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 diff -uNrp linux-2.6.10/include/asm-i386/pgalloc.h linux-2.6.10-adeos/include/asm-i386/pgalloc.h
@@ -4387,7 +4387,7 @@ diff -uNrp linux-2.6.10/include/asm-i386/pgalloc.h linux-2.6.10-adeos/include/as
 +	struct task_struct * p;
 +	pgd_t *pgd;
 +	struct page *page;
-+	
++
 +	read_lock(&tasklist_lock);
 +
 +	for_each_process(p) {
@@ -5417,7 +5417,7 @@ diff -uNrp linux-2.6.10/kernel/adeos.c linux-2.6.10-adeos/kernel/adeos.c
 +
 +	    /* Let the higher priority domain process the event. */
 +	    __adeos_switch_to(this_domain,next_domain,cpuid);
-+	
++
 +	    adeos_load_cpuid();	/* Processor might have changed. */
 +
 +	    if (!next_domain->cpudata[cpuid].event_info.propagate)
@@ -5647,7 +5647,7 @@ diff -uNrp linux-2.6.10/kernel/adeos.c linux-2.6.10-adeos/kernel/adeos.c
 +		    !test_bit(IPIPE_STALL_FLAG,&this_domain->cpudata[cpuid].status))
 +		    __adeos_sync_stage(IPIPE_IRQMASK_ANY);
 +		}
-+	
++
 +	    break;
 +	    }
 +	else if (next_domain == this_domain)
@@ -6199,7 +6199,7 @@ diff -uNrp linux-2.6.10/kernel/printk.c linux-2.6.10-adeos/kernel/printk.c
 +		__adeos_printk_fill += r;
 +	} else
 +		r = 0;
-+	
++
 +	spin_unlock_irqrestore_hw(&__adeos_printk_lock,flags);
 +
 +	if (!test_and_set_bit(ADEOS_PPRINTK_FLAG,&adp_root->flags))

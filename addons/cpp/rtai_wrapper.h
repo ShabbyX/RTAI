@@ -35,7 +35,7 @@ extern "C"  {
 #endif
 
 #include <rtai_types.h>
-	
+
 void __rt_get_global_lock(void);
 
 void __rt_release_global_lock(void);

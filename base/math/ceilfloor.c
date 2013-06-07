@@ -57,11 +57,11 @@ double ceil ( double x )
 	register double y;
 	register unsigned long int xhi;
 	register int target;
-	
+
 	xInHex.dbl = x;
 	xhi = xInHex.words.hi & 0x7fffffffUL;	  // xhi is the high half of |x|
 	target = ( xInHex.words.hi < signMask );
-	
+
 	if ( xhi < 0x43300000ul )
 /*******************************************************************************
 *      Is |x| < 2.0^52?                                                        *
@@ -96,7 +96,7 @@ double ceil ( double x )
 			else
 				return ( y );
 			}
-		
+
 		else
 			{
 			y = ( x - twoTo52 ) + twoTo52;          // round at binary pt.
@@ -122,11 +122,11 @@ double floor ( double x )
 	register double y;
 	register unsigned long int xhi;
 	register long int target;
-	
+
 	xInHex.dbl = x;
 	xhi = xInHex.words.hi & 0x7fffffffUL;	  // xhi is the high half of |x|
 	target = ( xInHex.words.hi < signMask );
-	
+
 	if ( xhi < 0x43300000ul )
 /*******************************************************************************
 *      Is |x| < 2.0^52?                                                        *
@@ -161,7 +161,7 @@ double floor ( double x )
 			else
 				return ( y );
 			}
-		
+
 		else
 			{
 			y = ( x - twoTo52 ) + twoTo52;          // round at binary pt.

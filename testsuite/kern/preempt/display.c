@@ -42,7 +42,7 @@ int main(int argc,char *argv[])
 	int n = 0, rd;
 
 	setlinebuf(stdout);
-	
+
 	if ((fd0 = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDONLY)) < 0) {
 		fprintf(stderr, "Error opening %s\n",nm);
 		exit(1);

@@ -47,7 +47,7 @@ static double one = 1.0, shuge = 1.0e307;
 	double __ieee754_sinh(x)
 	double x;
 #endif
-{	
+{
 	double t,w,h;
 	int32_t ix,jx;
 	u_int32_t lx;
@@ -57,7 +57,7 @@ static double one = 1.0, shuge = 1.0e307;
 	ix = jx&0x7fffffff;
 
     /* x is INF or NaN */
-	if(ix>=0x7ff00000) return x+x;	
+	if(ix>=0x7ff00000) return x+x;
 
 	h = 0.5;
 	if (jx<0) h = -h;

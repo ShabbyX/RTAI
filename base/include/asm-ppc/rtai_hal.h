@@ -104,7 +104,7 @@ static inline unsigned long long rtai_llimd(unsigned long long ull, unsigned lon
 	unsigned long long low;
 	unsigned long q, r;
 
-	low  = rtai_ullmul(((unsigned long *)(void *)&ull)[1], mult);	
+	low  = rtai_ullmul(((unsigned long *)(void *)&ull)[1], mult);
 	q = rtai_ulldiv(rtai_ullmul(((unsigned long *)(void *)&ull)[0], mult) + ((unsigned long *)(void *)&low)[0], div, (unsigned long *)(void *)&low);
 	low = rtai_ulldiv(low, div, &r);
 	((unsigned long *)(void *)&low)[0] += q;

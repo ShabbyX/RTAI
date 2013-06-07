@@ -60,7 +60,7 @@ void dump_stats(double sum, int total_hits)
 	/* compute std-deviation (unbiased form) */
 	variance /= total_hits - 1;
 	variance = sqrt(variance);
-	
+
 	printf("HSS| %9d| %10.3f| %10.3f\n", total_hits, avg, variance);
 }
 

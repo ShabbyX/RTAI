@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 	size_t msglen;
 	RTIME period;
 	char *pt;
-	
+
 
  	if (!(srv = rt_task_init_schmod(srv_name, 0, 0, 0, SCHED_FIFO, 0x1))) {
 		PRINTF("CANNOT INIT SRV TASK\n");
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
 		exit(-1);
 	}
 
-	
+
 	msglen = 0;
 	pid = rt_Receive(0, 0, 0, &msglen);
 	if (pid) {
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
 			PRINTF("SRV rt_Receive() failed\n");
 			continue;
 		}
-		
+
 		PRINTF("SRV received msg    [%s] %d bytes from pid %04X\n", msg, msglen, pid);
 
 		memcpy (rep, msg, sizeof(rep));

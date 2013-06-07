@@ -42,7 +42,7 @@ int main(int argc,char *argv[])
 	int n = 0;
 
 	setlinebuf(stdout);
-	
+
 	pollkb.fd = 0;
 	pollkb.events = POLLIN;
 

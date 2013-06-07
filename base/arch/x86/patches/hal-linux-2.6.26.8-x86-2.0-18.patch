@@ -365,7 +365,7 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/cpu/mtrr/generic.c linux-2.6.26.8-ipip
  			set_bit(count, &smp_changes_mask);
  		mask >>= 1;
  	}
--	
+-
 +	local_irq_restore_hw(flags);
  }
 
@@ -460,7 +460,7 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_32.S linux-2.6.26.8-ipipe/arch/x
 +#define HANDLE_EXCEPTION(code)		call *%code
 +#define DIVERT_EXCEPTION(code)
 +#endif /* CONFIG_IPIPE */
-+	
++
  #ifdef CONFIG_PREEMPT
  #define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
  #else
@@ -625,7 +625,7 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_32.S linux-2.6.26.8-ipipe/arch/x
 +	BUILD_INTERRUPT(ipipe_ipi3,IPIPE_SERVICE_VECTOR3)
 +#ifdef CONFIG_SMP
 +	BUILD_INTERRUPT(ipipe_ipiX,IPIPE_CRITICAL_VECTOR)
-+#endif	
++#endif
 +#endif
 +
 +#else /* !CONFIG_IPIPE */
@@ -828,7 +828,7 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
 +
  #ifndef CONFIG_PREEMPT
  #define retint_kernel retint_restore_args
- #endif	
+ #endif
 @@ -167,6 +176,7 @@ ENTRY(ret_from_fork)
  	CFI_ADJUST_CFA_OFFSET 4
  	popf				# reset kernel eflags
@@ -851,21 +851,21 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
 +	popq %rdi
 +	js    ret_from_sys_call
 +	jnz   sysret_fastexit
-+#endif		
++#endif
  	GET_THREAD_INFO(%rcx)
  	testl $(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|_TIF_SECCOMP),threadinfo_flags(%rcx)
  	jnz tracesys
-@@ -271,6 +292,7 @@ sysret_check:		
+@@ -271,6 +292,7 @@ sysret_check:
  	 * sysretq will re-enable interrupts:
  	 */
  	TRACE_IRQS_ON
-+sysret_fastexit:	
++sysret_fastexit:
  	movq RIP-ARGOFFSET(%rsp),%rcx
  	CFI_REGISTER	rip,rcx
  	RESTORE_ARGS 0,-ARG_SKIP,1
-@@ -281,6 +303,8 @@ sysret_check:		
+@@ -281,6 +303,8 @@ sysret_check:
  	/* Handle reschedules */
- 	/* edx:	work, edi: workmask */	
+ 	/* edx:	work, edi: workmask */
  sysret_careful:
 +	testl $(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|_TIF_SECCOMP),%edx
 +	jnz ret_from_sys_call_trace
@@ -937,7 +937,7 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
 +#else /* !CONFIG_IPIPE */
  	XCPT_FRAME
  	interrupt do_IRQ
-+#endif /* !CONFIG_IPIPE */	
++#endif /* !CONFIG_IPIPE */
  	/* 0(%rsp): oldrsp-ARGOFFSET */
  ret_from_intr:
  	DISABLE_INTERRUPTS(CLBR_NONE)
@@ -982,13 +982,13 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
 -	call preempt_schedule_irq
 +	PREEMPT_SCHEDULE_IRQ
  	jmp exit_intr
- #endif	
+ #endif
 
 @@ -670,7 +743,26 @@ END(common_interrupt)
- 	
+
  /*
   * APIC interrupts.
-- */		
+- */
 + */
 +#ifdef CONFIG_IPIPE
 +	.macro apicinterrupt num,func
@@ -1008,7 +1008,7 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
 +	jmp restore_args
 +	CFI_ENDPROC
 +	.endm
-+#else /* !CONFIG_IPIPE */	
++#else /* !CONFIG_IPIPE */
  	.macro apicinterrupt num,func
  	INTR_FRAME
  	pushq $~(\num)
@@ -1016,7 +1016,7 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
  	jmp ret_from_intr
  	CFI_ENDPROC
  	.endm
-+#endif /* !CONFIG_IPIPE */	
++#endif /* !CONFIG_IPIPE */
 
  ENTRY(thermal_interrupt)
  	apicinterrupt THERMAL_APIC_VECTOR,smp_thermal_interrupt
@@ -1024,19 +1024,19 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
  	INVALIDATE_ENTRY 1
  	INVALIDATE_ENTRY 2
  	INVALIDATE_ENTRY 3
-+#ifndef CONFIG_IPIPE	
++#ifndef CONFIG_IPIPE
  	INVALIDATE_ENTRY 4
  	INVALIDATE_ENTRY 5
  	INVALIDATE_ENTRY 6
  	INVALIDATE_ENTRY 7
-+#endif /* !CONFIG_IPIPE */	
++#endif /* !CONFIG_IPIPE */
 
  ENTRY(call_function_interrupt)
  	apicinterrupt CALL_FUNCTION_VECTOR,smp_call_function_interrupt
 @@ -731,31 +826,39 @@ END(spurious_interrupt)
  /*
   * Exception entry points.
-  */ 		
+  */
 -	.macro zeroentry sym
 +	.macro zeroentry sym, ex_code
  	INTR_FRAME
@@ -1052,7 +1052,7 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
 +#endif
  	jmp error_entry
  	CFI_ENDPROC
- 	.endm	
+ 	.endm
 
 -	.macro errorentry sym
 +	.macro errorentry sym, ex_code
@@ -1097,12 +1097,12 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
  	.if \irqtrace
  	TRACE_IRQS_OFF
  	.endif
-+#ifdef CONFIG_IPIPE	
++#ifdef CONFIG_IPIPE
 +	xorl %eax,%eax
 +	/* WARNING: paranoidexit will check %eax to decide whether the
 +	exception has to be propagated or not. */
-+#endif	
-+3:	
++#endif
++3:
  	.endm
 
  	/*
@@ -1113,11 +1113,11 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
 +#ifdef CONFIG_IPIPE
 +	testl %eax,%eax
 +	jnz paranoid_swapgs\trace
-+#endif		
++#endif
  	testl $3,CS(%rsp)
  	jnz   paranoid_userspace\trace
  paranoid_swapgs\trace:
-@@ -901,7 +1024,19 @@ error_sti:	
+@@ -901,7 +1024,19 @@ error_sti:
  	movq %rsp,%rdi
  	movq ORIG_RAX(%rsp),%rsi	/* get error code */
  	movq $-1,ORIG_RAX(%rsp)
@@ -1151,7 +1151,7 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
  END(coprocessor_error)
 
  ENTRY(simd_coprocessor_error)
--	zeroentry do_simd_coprocessor_error	
+-	zeroentry do_simd_coprocessor_error
 +	zeroentry do_simd_coprocessor_error ex_do_simd_coprocessor_error
  END(simd_coprocessor_error)
 
@@ -1164,7 +1164,7 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
 @@ -1077,7 +1212,7 @@ KPROBE_ENTRY(debug)
   	INTR_FRAME
  	pushq $0
- 	CFI_ADJUST_CFA_OFFSET 8		
+ 	CFI_ADJUST_CFA_OFFSET 8
 -	paranoidentry do_debug, DEBUG_STACK
 +	paranoidentry do_debug, DEBUG_STACK, 1, ex_do_debug
  	paranoidexit
@@ -1191,7 +1191,7 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/entry_64.S linux-2.6.26.8-ipipe/arch/x
  END(bounds)
 
  ENTRY(invalid_op)
--	zeroentry do_invalid_op	
+-	zeroentry do_invalid_op
 +	zeroentry do_invalid_op ex_do_invalid_op
  END(invalid_op)
 
@@ -2929,7 +2929,7 @@ diff -uNrp linux-2.6.26.8/arch/x86/kernel/mcount_64.S linux-2.6.26.8-ipipe/arch/
 +	movq	8(%rsp),%rcx
 +	movq	(%rsp),%rax
 +	addq	$56,%rsp
-+out:	
++out:
 +	ret
 +END(mcount)
 diff -uNrp linux-2.6.26.8/arch/x86/kernel/nmi_32.c linux-2.6.26.8-ipipe/arch/x86/kernel/nmi_32.c
@@ -3390,14 +3390,14 @@ diff -uNrp linux-2.6.26.8/arch/x86/lib/thunk_64.S linux-2.6.26.8-ipipe/arch/x86/
 @@ -50,6 +50,13 @@
  	thunk lockdep_sys_exit_thunk,lockdep_sys_exit
  #endif
- 	
+
 +#ifdef CONFIG_IPIPE
 +#ifdef CONFIG_PREEMPT
 +	thunk_retrax __ipipe_preempt_schedule_irq_thunk,__ipipe_preempt_schedule_irq
-+#endif	
++#endif
 +	thunk_retrax __ipipe_syscall_root_thunk,__ipipe_syscall_root
 +#endif
-+	
++
  	/* SAVE_ARGS below is used only for the .cfi directives it contains. */
  	CFI_STARTPROC
  	SAVE_ARGS

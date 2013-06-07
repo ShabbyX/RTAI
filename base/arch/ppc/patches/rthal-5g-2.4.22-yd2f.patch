@@ -259,7 +259,7 @@
 +		} else {
 +			ptoo = pto;
 +			pto = pto->next;
-+		}	
++		}
 +	}
 +//printk("rtai_callback_list %X\n", rtai_callback_list);
 +}

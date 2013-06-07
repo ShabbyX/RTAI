@@ -45,7 +45,7 @@ extern char *TargetMeterMbxID;
 static void mdlInitializeSizes(SimStruct *S)
 {
 	uint_T i;
-	
+
 	ssSetNumSFcnParams(S, NUMBER_OF_PARAMS);
 	if (ssGetNumSFcnParams(S) != ssGetSFcnParamsCount(S)) {
 		return;

@@ -104,7 +104,7 @@ int main(void)
 
 	sem = rt_sem_init(nam2num("SEMAPH"), 1);
 	change =  0;
-	
+
 	for (i = 0; i < NR_RT_TASKS; i++) {
 		indx[i] = i;
 		if (!(thread[i] = rt_thread_create(thread_fun, indx + i, 0))) {
@@ -115,13 +115,13 @@ int main(void)
 
 	do {
 		msleep(50);
-		s = 0;	
+		s = 0;
 		for (i = 0; i < NR_RT_TASKS; i++) {
 			s += hrt[i];
 		}
 	} while (s != NR_RT_TASKS);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
-	
+
 	rt_make_hard_real_time();
 	tsr = rt_get_cpu_time_ns();
 	for (i = 0; i < LOOPS; i++) {
@@ -181,7 +181,7 @@ int main(void)
 	}
 	do {
 		msleep(50);
-		s = 0;	
+		s = 0;
 		for (i = 0; i < NR_RT_TASKS; i++) {
 			s += hrt[i];
 		}
@@ -192,6 +192,6 @@ int main(void)
 	for (i = 0; i < NR_RT_TASKS; i++) {
 		rt_thread_join(thread[i]);
 	}
-	
+
 	return 0;
 }

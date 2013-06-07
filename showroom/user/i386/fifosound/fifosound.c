@@ -127,7 +127,7 @@ int main(void)
 	read(cntrfifo, &data, 1);
 	printf("\nINIT MASTER TASK\n\n(CTRL-C TO END EVERYTHING)\n");
 
-	while (!end) {	
+	while (!end) {
 		lseek(player, 0, SEEK_SET);
 		while(!end && read(player, &data, 1) > 0) {
 			write(playfifo, &data, 1);

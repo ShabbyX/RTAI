@@ -2973,7 +2973,7 @@ diff --exclude CVS -uNrp linuxppc_2_4_denx-20070325/kernel/ipipe/core.c 2.4.25-p
 +				err = -EPERM;
 +				goto unlock_and_exit;
 +			}
-+			
++
 +			__ipipe_enable_irq(irq);
 +		}
 +	}
@@ -3766,7 +3766,7 @@ diff --exclude CVS -uNrp linuxppc_2_4_denx-20070325/kernel/ipipe/generic.c 2.4.2
 +			__ipipe_event_monitors[event]--;
 +			ipd->evself |= (1LL << event);
 +	}
-+	
++
 +	ipipe_critical_exit(flags);
 +
 +	if (!handler && ipipe_root_domain_p) {

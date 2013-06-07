@@ -46,7 +46,7 @@ int main(void)
 	char d = 'd';
 	char chain[12];
 	char displine[40] = "CLOCK-> 00:00:00  CHRONO-> 00:00:00";
-	
+
 	signal(SIGINT, endme);
  	if (!(mytask = rt_task_init(nam2num("SCRTSK"), 20, 0, 0))) {
 		printf("CANNOT INIT SCREEN TASK\n");

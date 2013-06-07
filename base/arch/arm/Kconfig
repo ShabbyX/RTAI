@@ -232,7 +232,7 @@ config RTAI_SCHED_LXRT
 	application process to real-time, a real-time agent task is
 	created and executes the real-time services on behalf of the
 	LXRT process.
-	
+
 	The NEWLXRT scheduler unifies U/MP and kernel/user space by
 	scheduling Linux tasks/kernel threads natively, along with
 	RTAI kernel tasks, all in one. In fact, NEWLXRT brings
@@ -385,7 +385,7 @@ menu "Other features"
 
 config RTAI_MATH
 	bool "Math support"
-	depends on RTAI_FPU_SUPPORT	
+	depends on RTAI_FPU_SUPPORT
 	default y
 
 config RTAI_MATH_C99

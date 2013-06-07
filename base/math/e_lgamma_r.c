@@ -60,7 +60,7 @@ static char rcsid[] = "$NetBSD: e_lgamma_r.c,v 1.7 1995/05/10 20:45:42 jtc Exp $
  *		w = w0 + w1*z + w2*z  + w3*z  + ... + w6*z
  *	where
  *		|w - f(z)| < 2**-58.74
- *		
+ *
  *   4. For negative x, since (G is gamma function)
  *		-x*G(-x)*G(x) = pi/sin(pi*x),
  * 	we have
@@ -71,14 +71,14 @@ static char rcsid[] = "$NetBSD: e_lgamma_r.c,v 1.7 1995/05/10 20:45:42 jtc Exp $
  *			  = log(pi/(|x*sin(pi*x)|)) - lgamma(-x);
  *	Note: one should avoid compute pi*(-x) directly in the
  *	      computation of sin(pi*(-x)).
- *		
+ *
  *   5. Special Cases
  *		lgamma(2+s) ~ s*(1-Euler) for tiny s
  *		lgamma(1)=lgamma(2)=0
  *		lgamma(x) ~ -log(x) for tiny x
  *		lgamma(0) = lgamma(inf) = inf
  *	 	lgamma(-integer) = +-inf
- *	
+ *
  */
 
 #include "math.h"
@@ -279,7 +279,7 @@ __inline__
 		p3 = t2+w*(t5+w*(t8+w*(t11+w*t14)));
 		p  = z*p1-(tt-w*(p2+y*p3));
 		r += (tf + p); break;
-	      case 2:	
+	      case 2:
 		p1 = y*(u0+y*(u1+y*(u2+y*(u3+y*(u4+y*u5)))));
 		p2 = one+y*(v1+y*(v2+y*(v3+y*(v4+y*v5))));
 		r += (-0.5*y + p1/p2);

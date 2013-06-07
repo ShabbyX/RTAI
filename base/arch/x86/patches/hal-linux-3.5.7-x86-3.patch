@@ -4715,10 +4715,10 @@ index a63efd6..45f2129 100644
  	CFI_ENDPROC
 +
 +#ifdef CONFIG_IPIPE
-+	/* rdi:	arg1 ... normal C conventions. rax is passed from C. */ 	
++	/* rdi:	arg1 ... normal C conventions. rax is passed from C. */
 +	.macro THUNK_RETRAX name,func
 +	.globl \name
-+\name:	
++\name:
 +	CFI_STARTPROC
 +	SAVE_ARGS
 +	call \func
@@ -4729,7 +4729,7 @@ index a63efd6..45f2129 100644
 +
 +	CFI_STARTPROC
 +	SAVE_ARGS
-+restore_norax:	
++restore_norax:
 +	RESTORE_ARGS 0
 +	ret
 +	CFI_ENDPROC
@@ -7411,7 +7411,7 @@ index 0000000..d76647c
 +	void *timer_set;	/* pointer passed to ->set() callback */
 +	struct clock_event_device *host_timer;
 +	struct list_head link;
-+	
++
 +	/* Conversions between clock frequency and timer frequency */
 +	unsigned c2t_integ;
 +	unsigned c2t_frac;

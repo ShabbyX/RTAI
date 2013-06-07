@@ -50,7 +50,7 @@ static double one = 1.0, half=0.5, huge = 1.0e300;
 	double __ieee754_cosh(x)
 	double x;
 #endif
-{	
+{
 	double t,w;
 	int32_t ix;
 	u_int32_t lx;
@@ -60,7 +60,7 @@ static double one = 1.0, half=0.5, huge = 1.0e300;
 	ix &= 0x7fffffff;
 
     /* x is INF or NaN */
-	if(ix>=0x7ff00000) return x*x;	
+	if(ix>=0x7ff00000) return x*x;
 
     /* |x| in [0,0.5*ln2], return 1+expm1(|x|)^2/(2*exp(|x|)) */
 	if(ix<0x3fd62e43) {

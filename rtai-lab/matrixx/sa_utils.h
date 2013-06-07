@@ -41,7 +41,7 @@ which is located at: http://www.ni.com/legal/license.
 
 #define GET_EXTIN(type, b)   \
 		  JUXTAPOSE(type,_Fpr)(b)
-		
+
 #define SET_EXTOUT(type, b)   \
 		  JUXTAPOSE(F_,type)(b)
 

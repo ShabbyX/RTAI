@@ -3047,7 +3047,7 @@ diff -Nurp linux-2.4.29.orig/arch/i386/kernel/irq.c linux-2.4.29/arch/i386/kerne
 +#endif /* CONFIG_ADEOS_CORE */
  		handle_IRQ_event(irq, &regs, action);
  		spin_lock(&desc->lock);
- 		
+
 @@ -1125,6 +1133,29 @@ static int irq_affinity_write_proc (stru
  	return full_count;
  }
@@ -3146,7 +3146,7 @@ diff -Nurp linux-2.4.29.orig/arch/i386/kernel/smp.c linux-2.4.29/arch/i386/kerne
  	__cli();
 -
 +#endif /* CONFIG_ADEOS_CORE */
- 		
+
  	/*
  	 * Wait for idle.
 @@ -185,7 +197,11 @@ static inline void send_IPI_mask_bitmask
@@ -3903,7 +3903,7 @@ diff -Nurp linux-2.4.29.orig/include/asm-i386/pgalloc.h linux-2.4.29/include/asm
 diff -Nurp linux-2.4.29.orig/include/asm-i386/smp.h linux-2.4.29/include/asm-i386/smp.h
 --- linux-2.4.29.orig/include/asm-i386/smp.h	2004-11-17 12:54:22.000000000 +0100
 +++ linux-2.4.29/include/asm-i386/smp.h	2005-03-09 11:31:31.000000000 +0100
-@@ -81,7 +81,11 @@ extern void smp_store_cpu_info(int id);	
+@@ -81,7 +81,11 @@ extern void smp_store_cpu_info(int id);
   * so this is correct in the x86 case.
   */
 
@@ -5571,7 +5571,7 @@ diff -Nurp linux-2.4.29.orig/mm/vmalloc.c linux-2.4.29/mm/vmalloc.c
 +		pgd_t olddir = *dir;
 +#endif /* CONFIG_ADEOS_CORE */
  		pmd_t *pmd;
- 		
+
  		pmd = pmd_alloc(&init_mm, dir, address);
 @@ -174,6 +177,11 @@ static inline int __vmalloc_area_pages (
  		if (alloc_area_pmd(pmd, address, end - address, gfp_mask, prot, pages))

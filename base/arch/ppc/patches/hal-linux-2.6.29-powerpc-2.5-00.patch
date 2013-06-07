@@ -74,7 +74,7 @@ index d3d4534..0e88328 100644
  #define EX_R3		64
  #define EX_LR		72
 
-+#ifdef CONFIG_SOFTDISABLE	
++#ifdef CONFIG_SOFTDISABLE
 +#define COPY_SOFTISTATE(mreg)			\
 +	lbz	mreg,PACASOFTIRQEN(r13);	\
 +	std	mreg,SOFTE(r1);
@@ -158,7 +158,7 @@ index d3d4534..0e88328 100644
  	TRACE_DISABLE_INTS
  #endif /* CONFIG_PPC_ISERIES */
 -
-+		
++
  #define ENABLE_INTS				\
  	ld	r12,_MSR(r1);			\
  	mfmsr	r11;				\
@@ -310,7 +310,7 @@ index f75a5fc..32242c5 100644
 +	__asm__ __volatile__("": : :"memory");
 +	return msr;
 +}
-+	
++
 +#define local_save_flags_hw(x)		((x) = mfmsr())
 +#define irqs_disabled_hw()		((mfmsr() & MSR_EE) == 0)
 +
@@ -953,7 +953,7 @@ index 5f68ecf..7707090 100644
 +#define TRACE_DISABLE_INTS		bl	__ipipe_trace_irqson
 +#define TRACE_ENABLE_INTS		bl	__ipipe_trace_irqson
 +#define TRACE_DISABLE_INTS_REALLY	bl	__ipipe_trace_irqsoff
-+#else	
++#else
 +#define TRACE_DISABLE_INTS
 +#define TRACE_ENABLE_INTS
 +#define TRACE_DISABLE_INTS_REALLY
@@ -1340,7 +1340,7 @@ index 6f7eb7e..8647704 100644
 +	ori	r10,r10,MSR_EE
 +	SYNC
 +	MTMSRD(r10)
-+#endif /* CONFIG_IPIPE */		
++#endif /* CONFIG_IPIPE */
  	REST_NVGPRS(r1)
  	bl	schedule_tail
  	li	r3,0
@@ -1360,7 +1360,7 @@ index 6f7eb7e..8647704 100644
  	beq+	restore
  	andi.	r0,r3,MSR_EE	/* interrupts off? */
  	beq	restore		/* don't schedule if so */
-+#ifdef CONFIG_IPIPE	
++#ifdef CONFIG_IPIPE
 +#ifdef CONFIG_IPIPE_TRACE_IRQSOFF
 +	lis	r3,(0x80000000)@h
 +	ori	r3,r3,(0x80000000)@l
@@ -1371,13 +1371,13 @@ index 6f7eb7e..8647704 100644
 +	SYNC
 +	MTMSRD(r10)
 +	bl	__ipipe_fast_stall_root
-+#endif /* CONFIG_IPIPE */	
++#endif /* CONFIG_IPIPE */
  1:	bl	preempt_schedule_irq
  	rlwinm	r9,r1,0,0,(31-THREAD_SHIFT)
  	lwz	r3,TI_FLAGS(r9)
  	andi.	r0,r3,_TIF_NEED_RESCHED
  	bne-	1b
-+#ifdef CONFIG_IPIPE	
++#ifdef CONFIG_IPIPE
 +	bl	__ipipe_fast_unstall_root
 +	LOAD_MSR_KERNEL(r10,MSR_KERNEL)
 +	SYNC
@@ -1390,7 +1390,7 @@ index 6f7eb7e..8647704 100644
 +	ori	r3,r3,(0x80000000)@l
 +	bl	ipipe_trace_begin
 +#endif /* CONFIG_IPIPE_TRACE_IRQSOFF */
-+#endif /* CONFIG_IPIPE */	
++#endif /* CONFIG_IPIPE */
  #else
  resume_kernel:
  #endif /* CONFIG_PREEMPT */
@@ -1416,7 +1416,7 @@ index ae7e445..7bb61b8 100644
  	addi	r9,r1,STACK_FRAME_OVERHEAD
  	ld	r12,_MSR(r1)
  #endif /* CONFIG_TRACE_IRQFLAGS */
-+#ifdef CONFIG_SOFTDISABLE	
++#ifdef CONFIG_SOFTDISABLE
  	li	r10,1
  	stb	r10,PACASOFTIRQEN(r13)
  	stb	r10,PACAHARDIRQEN(r13)
@@ -1512,7 +1512,7 @@ index ae7e445..7bb61b8 100644
  	mtmsrd	r10,1
 -
  	bl	.save_nvgprs
-+#endif		
++#endif
 +
  	addi	r3,r1,STACK_FRAME_OVERHEAD
  	bl	.do_syscall_trace_leave
@@ -1532,7 +1532,7 @@ index ae7e445..7bb61b8 100644
 +	mfmsr	r10
 +	ori	r10,r10,MSR_EE
 +	mtmsrd	r10,1
-+#endif /* CONFIG_IPIPE */		
++#endif /* CONFIG_IPIPE */
  	bl	.schedule_tail
  	REST_NVGPRS(r1)
  	li	r3,0
@@ -1557,7 +1557,7 @@ index ae7e445..7bb61b8 100644
  	 */
 +#ifdef CONFIG_IPIPE_TRACE_IRQSOFF
 +	bl	__ipipe_trace_irqsoff
-+#endif	
++#endif
  	mfmsr	r10		/* Get current interrupt state */
  	rldicl	r9,r10,48,1	/* clear MSR_EE */
  	rotldi	r9,r9,16
@@ -1599,7 +1599,7 @@ index ae7e445..7bb61b8 100644
 +	insrdi	r5,r3,1,63
 +	std	r5,0(r4)
 +	ld	r3,_MSR(r1)
-+#endif	
++#endif
 +#endif	/* !CONFIG_SOFTDISABLE */
 
  	ld	r4,_CTR(r1)
@@ -1656,7 +1656,7 @@ index ae7e445..7bb61b8 100644
  	li	r0,0
  	mtcr	r0
 
--#ifdef CONFIG_BUG	
+-#ifdef CONFIG_BUG
 +#ifdef CONFIG_BUG && CONFIG_SOFTDISABLE
  	/* There is no way it is acceptable to get here with interrupts enabled,
  	 * check it with the asm equivalent of WARN_ON
@@ -1890,7 +1890,7 @@ index 82a9c37..4753eda 100644
   * ret_from_except or ret_from_except_lite instead of this.
   */
  fast_exc_return_irq:			/* restores irq state too */
-+#ifdef CONFIG_SOFTDISABLE	
++#ifdef CONFIG_SOFTDISABLE
  	ld	r3,SOFTE(r1)
  	TRACE_AND_RESTORE_IRQ(r3);
  	ld	r12,_MSR(r1)
@@ -1922,7 +1922,7 @@ index 82a9c37..4753eda 100644
  	 * to what it was before the trap.  Note that .raw_local_irq_restore
  	 * handles any interrupts pending at this point.
  	 */
-+#ifdef CONFIG_SOFTDISABLE	
++#ifdef CONFIG_SOFTDISABLE
  	ld	r3,SOFTE(r1)
  	TRACE_AND_RESTORE_IRQ_PARTIAL(r3, 11f)
  	bl	.raw_local_irq_restore
@@ -1932,7 +1932,7 @@ index 82a9c37..4753eda 100644
 +	nor	r3,r3,r3
 +	andi.	r3,r3,1
 +	bl	__ipipe_restore_if_root
-+#endif			
++#endif
 +#endif
  	b	11f
 
@@ -1946,12 +1946,12 @@ index 82a9c37..4753eda 100644
  	stb	r8,PACAHARDIRQEN(r13)
  END_FW_FTR_SECTION_IFSET(FW_FEATURE_ISERIES)
  #endif
-+#ifdef CONFIG_SOFTDISABLE	
++#ifdef CONFIG_SOFTDISABLE
  BEGIN_FW_FTR_SECTION
  	stb	r7,PACAHARDIRQEN(r13)
  END_FW_FTR_SECTION_IFCLR(FW_FEATURE_ISERIES)
  	stb	r7,PACASOFTIRQEN(r13)
-+#endif	
++#endif
 
  	mtspr	SPRN_SRR0,r3
  	mtspr	SPRN_SRR1,r4
@@ -1959,10 +1959,10 @@ index 82a9c37..4753eda 100644
 
  	/* Load up the kernel context */
  5:
-+#ifdef CONFIG_SOFTDISABLE	
++#ifdef CONFIG_SOFTDISABLE
  	li	r5,0
  	stb	r5,PACASOFTIRQEN(r13)	/* Soft Disabled */
-+#endif	
++#endif
  #ifdef CONFIG_PPC_ISERIES
  BEGIN_FW_FTR_SECTION
  	mfmsr	r5
@@ -1970,7 +1970,7 @@ index 82a9c37..4753eda 100644
  	li	r5,1
  END_FW_FTR_SECTION_IFSET(FW_FEATURE_ISERIES)
  #endif
-+#ifdef CONFIG_SOFTDISABLE	
++#ifdef CONFIG_SOFTDISABLE
  	stb	r5,PACAHARDIRQEN(r13)	/* Hard Disabled on others */
 +#endif
 
@@ -2112,11 +2112,11 @@ index 5328709..8c3a2b7 100644
  	rldicl	r0,r7,48,1
  	rotldi	r0,r0,16
  	mtmsrd	r0,1			/* hard-disable interrupts */
-+#ifdef CONFIG_SOFTDISABLE	
++#ifdef CONFIG_SOFTDISABLE
  	li	r0,1
  	stb	r0,PACASOFTIRQEN(r13)	/* we'll hard-enable shortly */
  	stb	r0,PACAHARDIRQEN(r13)
-+#endif CONFIG_SOFTDISABLE	
++#endif CONFIG_SOFTDISABLE
  BEGIN_FTR_SECTION
  	DSSALL
  	sync
@@ -2124,7 +2124,7 @@ index 5328709..8c3a2b7 100644
  	rldicl	r0,r7,48,1
  	rotldi	r0,r0,16
  	mtmsrd	r0,1			/* hard-disable interrupts */
-+#ifdef CONFIG_SOFTDISABLE	
++#ifdef CONFIG_SOFTDISABLE
  	li	r0,1
  	li	r6,0
  	stb	r0,PACAHARDIRQEN(r13)	/* we'll hard-enable shortly */
@@ -2321,8 +2321,8 @@ index 0000000..a883a38
 +		if (cpu_isset(cpu, cpumask))
 +			set_bit(ipi, &per_cpu(ipipe_ipi_message, cpu).value);
 +	}
-+	mb();	
-+	
++	mb();
++
 +	if (unlikely(cpus_empty(cpumask)))
 +		goto out;
 +
@@ -2883,22 +2883,22 @@ index 0000000..a883a38
 +	local_irq_enable_hw();
 +#endif
 +
-+	/*										
-+	 * This routine either returns:							
-+	 * 0 -- if the syscall is to be passed to Linux;				
-+	 * >0 -- if the syscall should not be passed to Linux, and no			
-+	 * tail work should be performed;						
-+	 * <0 -- if the syscall should not be passed to Linux but the			
-+	 * tail work has to be performed (for handling signals etc).			
++	/*
++	 * This routine either returns:
++	 * 0 -- if the syscall is to be passed to Linux;
++	 * >0 -- if the syscall should not be passed to Linux, and no
++	 * tail work should be performed;
++	 * <0 -- if the syscall should not be passed to Linux but the
++	 * tail work has to be performed (for handling signals etc).
 +	 */
 +
 +	if (__ipipe_syscall_watched_p(current, regs->gpr[0]) &&
 +	    __ipipe_event_monitored_p(IPIPE_EVENT_SYSCALL) &&
 +	    __ipipe_dispatch_event(IPIPE_EVENT_SYSCALL,regs) > 0) {
 +		if (ipipe_root_domain_p && !in_atomic()) {
-+			/*								
-+			 * Sync pending VIRQs before _TIF_NEED_RESCHED			
-+			 * is tested.							
++			/*
++			 * Sync pending VIRQs before _TIF_NEED_RESCHED
++			 * is tested.
 +			 */
 +			local_irq_disable_hw();
 +			if ((ipipe_root_cpudom_var(irqpend_himask) & IPIPE_IRQMASK_VIRT) != 0)
@@ -3081,7 +3081,7 @@ index 2d34196..3b72de3 100644
 +	/* Early temporary init, before per-cpu areas are moved to
 +	 * their final location. */
 +	get_paca()->root_percpu = (u64)&ipipe_percpudom(&ipipe_root, status, 0);
-+#endif	
++#endif
 +
  	DBG(" -> setup_system()\n");
 
@@ -3093,7 +3093,7 @@ index 2d34196..3b72de3 100644
 +#ifdef CONFIG_IPIPE
 +	/* Reset pointer to the relocated per-cpu root domain data. */
 +	get_paca()->root_percpu = (u64)&ipipe_percpudom(&ipipe_root, status, 0);
-+#endif	
++#endif
  }
  #endif
 
@@ -4184,7 +4184,7 @@ index 63cdf98..e5a35fb 100644
 +
 +void __ipipe_qe_ic_cascade_irq(struct qe_ic *qe_ic, unsigned int virq)
 +{
-+	
++
 +	struct pt_regs regs;    /* Contents not used. */
 +
 +	ipipe_trace_irq_entry(virq);
@@ -6777,7 +6777,7 @@ index 0000000..97e6aae
 +	struct ipipe_percpu_domain_data *p = ipipe_cpudom_ptr(ipd);
 +
 +	prefetchw(p);
-+	
++
 +	if (likely(!test_bit(IPIPE_LOCK_FLAG, &ipd->irqs[irq].control))) {
 +		__set_bit(rank, &p->irqpend_lomask[level]);
 +		__set_bit(level, &p->irqpend_himask);

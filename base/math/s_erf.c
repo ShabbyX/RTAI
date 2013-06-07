@@ -36,7 +36,7 @@ static char rcsid[] = "$NetBSD: s_erf.c,v 1.8 1995/05/10 20:47:05 jtc Exp $";
  *	   Q is an odd poly of degree 10.
  *						 -57.90
  *			| R - (erf(x)-x)/x | <= 2
- *	
+ *
  *
  *	   Remark. The formula is derived by noting
  *          erf(x) = (2/sqrt(pi))*(x - x^3/3 + x^5/10 - x^7/42 + ....)

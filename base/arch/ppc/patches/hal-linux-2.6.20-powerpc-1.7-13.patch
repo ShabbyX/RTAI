@@ -161,7 +161,7 @@ index c03e829..687a965 100644
 +	ori	r10,r10,MSR_EE
 +	SYNC
 +	MTMSRD(r10)
-+#endif /* CONFIG_IPIPE */		
++#endif /* CONFIG_IPIPE */
  	REST_NVGPRS(r1)
  	bl	schedule_tail
  	li	r3,0
@@ -181,7 +181,7 @@ index c03e829..687a965 100644
  	beq+	restore
  	andi.	r0,r3,MSR_EE	/* interrupts off? */
  	beq	restore		/* don't schedule if so */
-+#ifdef CONFIG_IPIPE	
++#ifdef CONFIG_IPIPE
 +#ifdef CONFIG_IPIPE_TRACE_IRQSOFF
 +	lis	r3,(0x80000000)@h
 +	ori	r3,r3,(0x80000000)@l
@@ -192,13 +192,13 @@ index c03e829..687a965 100644
 +	SYNC
 +	MTMSRD(r10)
 +	bl	__ipipe_fast_stall_root
-+#endif /* CONFIG_IPIPE */	
++#endif /* CONFIG_IPIPE */
  1:	bl	preempt_schedule_irq
  	rlwinm	r9,r1,0,0,(31-THREAD_SHIFT)
  	lwz	r3,TI_FLAGS(r9)
  	andi.	r0,r3,_TIF_NEED_RESCHED
  	bne-	1b
-+#ifdef CONFIG_IPIPE	
++#ifdef CONFIG_IPIPE
 +	bl	__ipipe_fast_unstall_root
 +	LOAD_MSR_KERNEL(r10,MSR_KERNEL)
 +	SYNC
@@ -211,7 +211,7 @@ index c03e829..687a965 100644
 +	ori	r3,r3,(0x80000000)@l
 +	bl	ipipe_trace_begin
 +#endif /* CONFIG_IPIPE_TRACE_IRQSOFF */
-+#endif /* CONFIG_IPIPE */	
++#endif /* CONFIG_IPIPE */
  #else
  resume_kernel:
  #endif /* CONFIG_PREEMPT */
@@ -602,7 +602,7 @@ index 0000000..29e9837
 +static void __ipipe_ipi_demux(int irq)
 +{
 +	int ipi, cpu = ipipe_processor_id();
-+	
++
 +	__ipipe_ack_irq(irq);
 +
 +	kstat_cpu(cpu).irqs[irq]++;
@@ -652,8 +652,8 @@ index 0000000..29e9837
 +		if (cpu_isset(cpu, cpumask))
 +			set_bit(ipi, &per_cpu(ipipe_ipi_message.value, cpu));
 +	}
-+	mb();	
-+	
++	mb();
++
 +	if (!cpus_empty(cpumask))
 +#ifdef CONFIG_MPIC
 +		mpic_send_ipi(0x2, cpus_addr(cpumask)[0]);
@@ -1147,22 +1147,22 @@ index 0000000..29e9837
 +
 +int __ipipe_syscall_root(struct pt_regs *regs) /* HW interrupts off */
 +{
-+	/*										
-+	 * This routine either returns:							
-+	 * 0 -- if the syscall is to be passed to Linux;				
-+	 * >0 -- if the syscall should not be passed to Linux, and no			
-+	 * tail work should be performed;						
-+	 * <0 -- if the syscall should not be passed to Linux but the			
-+	 * tail work has to be performed (for handling signals etc).			
++	/*
++	 * This routine either returns:
++	 * 0 -- if the syscall is to be passed to Linux;
++	 * >0 -- if the syscall should not be passed to Linux, and no
++	 * tail work should be performed;
++	 * <0 -- if the syscall should not be passed to Linux but the
++	 * tail work has to be performed (for handling signals etc).
 +	 */
 +
 +	if (__ipipe_syscall_watched_p(current, regs->gpr[0]) &&
 +	    __ipipe_event_monitored_p(IPIPE_EVENT_SYSCALL) &&
 +	    __ipipe_dispatch_event(IPIPE_EVENT_SYSCALL,regs) > 0) {
 +		if (ipipe_root_domain_p && !in_atomic()) {
-+			/*								
-+			 * Sync pending VIRQs before _TIF_NEED_RESCHED			
-+			 * is tested.							
++			/*
++			 * Sync pending VIRQs before _TIF_NEED_RESCHED
++			 * is tested.
 +			 */
 +			local_irq_disable_hw();
 +			if ((ipipe_root_cpudom_var(irqpend_himask) & IPIPE_IRQMASK_VIRT) != 0)
@@ -1293,7 +1293,7 @@ index 0000000..83faab8
 +	lwz	r5, 52(r1)
 +	li	r6,0
 +	bl	__ipipe_trace
-+1:	
++1:
 + /* Restore the registers...  */
 +	lwz     r6,  8(r1)
 +	lwz	r0, 44(r1)
@@ -1372,7 +1372,7 @@ index f6f0c6b..4fd2828 100644
  	calculate_steal_time();
 @@ -672,7 +676,8 @@ void timer_interrupt(struct pt_regs * regs)
  	}
- 	
+
  	next_dec = tb_ticks_per_jiffy - ticks;
 -	set_dec(next_dec);
 +	if ( !disarm_decr[cpu] )
@@ -7635,7 +7635,7 @@ index ef09f0a..25b3620 100644
 +		kunmap_atomic(kaddr, KM_USER0);
 +		flush_dcache_page(dst);
 +		return;
-+		
++
 +	}
 +	copy_user_highpage(dst, src, va, vma);
 +}
@@ -7775,7 +7775,7 @@ index ef09f0a..25b3620 100644
 +{
 +	spinlock_t *ptl;
 +	pte_t *pte;
-+	
++
 +	do {
 +		pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
 +		if (!pte)
@@ -7850,7 +7850,7 @@ index ef09f0a..25b3620 100644
 +
 +		addr = vma->vm_start;
 +		end = vma->vm_end;
-+		
++
 +		pgd = pgd_offset(mm, addr);
 +		do {
 +			next = pgd_addr_end(addr, end);

@@ -90,7 +90,7 @@ __do_global_dtors(void)
 	static func_ptr *p = __DTOR_LIST__ + 1;
 	static int completed = 0;
 
-	rt_printk("GLOBAL DTORS START\n");	
+	rt_printk("GLOBAL DTORS START\n");
 
 	while (*p)
 	{
@@ -98,8 +98,8 @@ __do_global_dtors(void)
 		(*(p-1)) ();
 	}
 
-	rt_printk("GLOBAL DTORS END\n");	
-	
+	rt_printk("GLOBAL DTORS END\n");
+
 	completed = 1;
 }
 
@@ -110,7 +110,7 @@ __do_global_ctors(void)
 	unsigned long nptrs = (unsigned long) __CTOR_LIST__[0];
 	unsigned i;
 
-	rt_printk("GLOBAL CTORS START\n");	
+	rt_printk("GLOBAL CTORS START\n");
 
 	if (nptrs == (unsigned long)-1)
 		for (nptrs = 0; __CTOR_LIST__[nptrs + 1] != 0; nptrs++);
@@ -118,7 +118,7 @@ __do_global_ctors(void)
 	for (i = nptrs; i >= 1; i--)
 		__CTOR_LIST__[i] ();
 
-	rt_printk("GLOBAL CTORS END\n");	
+	rt_printk("GLOBAL CTORS END\n");
 }
 
 #endif /* ! (__GNUC__ > 3) */
@@ -146,8 +146,8 @@ static int main_thread(void *unused){
 	res = main(0,0);
 
 	__do_global_dtors();
-	__do_atexit();	
-	
+	__do_atexit();
+
 	return res;
 }
 
@@ -189,7 +189,7 @@ void startup_cleanup(void)
 {
 #ifdef USE_MAIN
 	int waitpid_result = 1;
-	
+
 	while( waitpid_result > 0 )
 		waitpid_result = waitpid(-1,NULL,__WCLONE|WNOHANG);
 #else

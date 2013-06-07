@@ -52,7 +52,7 @@ MODULE_LICENSE("GPL");
 		if (abs(rt_sem_wait(mutex)) >= RTE_LOWERR) { \
 			return -EBADF; \
 		} \
-	} while (0)		
+	} while (0)
 #define mq_mutex_timedlock(mutex, abstime) \
 	do { \
 		RTIME t = timespec2count(abstime); \
@@ -284,15 +284,15 @@ static void delete_queue(int q_index)
 	mq_cond_destroy(&rt_pqueue_descr[q_index].emp_cond);
 	mq_cond_destroy(&rt_pqueue_descr[q_index].full_cond);
 
-	if (num_pqueues > 0) {	
-		num_pqueues--;	
+	if (num_pqueues > 0) {
+		num_pqueues--;
 	}
 }
 
 static void signal_suprt_fun_mq(void *fun_arg)
-{			
+{
 	struct suprt_fun_arg { RT_TASK *sigtask; RT_TASK *task; mqd_t mq; } arg = *(struct suprt_fun_arg *)fun_arg;
-	
+
 	arg.sigtask = RT_CURRENT;
 	if (!rt_request_signal_(arg.sigtask, arg.task, (arg.mq + MAXSIGNALS))) {
 		while (rt_wait_signal(arg.sigtask, arg.task)) {
@@ -366,10 +366,10 @@ RTAI_SYSCALL_MODE mqd_t _mq_open(char *mq_name, int oflags, mode_t permissions, 
 			} else if(task_data_ptr->q_access[q_ind].q_id == INVALID_PQUEUE) {
 				if (spare_count == 0) {
 					first_spare = q_ind;
-				}			
+				}
 				spare_count++;
 			}
-		}	
+		}
 	//If the task has not already opened this queue and there are no
 	//more available slots, can't do anymore...
 		if (!q_found && spare_count == 0) {
@@ -477,16 +477,16 @@ RTAI_SYSCALL_MODE mqd_t _mq_open(char *mq_name, int oflags, mode_t permissions, 
 		mq_mutex_unlock(&pqueue_mutex);
 		return -ENOENT;
 	}
-	
+
 	// Return the message queue's id and mark it as open
 	rt_pqueue_descr[q_index].open_count++;
 	mq_mutex_unlock(&pqueue_mutex);
-	
+
 	// Prepare notify task
 	if ((oflags & O_NOTIFY_NP) && space == 0)	{
 		rt_request_signal_mq(rt_pqueue_descr[q_index].q_id);
 	}
-	
+
 	return (mqd_t)rt_pqueue_descr[q_index].q_id;
 }
 EXPORT_SYMBOL(_mq_open);
@@ -556,7 +556,7 @@ RTAI_SYSCALL_MODE size_t _mq_timedreceive(mqd_t mq, char *msg_buffer, size_t buf
 	MQMSG *msg_ptr;
 	MSG_QUEUE *q;
 	struct timespec time;
-	
+
 	if (q_index < 0 || q_index >= MAX_PQUEUES) {
 		return -EBADF;
 	}
@@ -687,7 +687,7 @@ RTAI_SYSCALL_MODE int _mq_timedsend(mqd_t mq, const char *msg, size_t msglen, un
 	}
 	if (msgprio > MQ_PRIO_MAX) {
 		return -EINVAL;
-	}			
+	}
 	if (!space) {
 		rt_copy_from_user(&time, abstime, sizeof(struct timespec));
 		abstime = &time;

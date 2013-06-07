@@ -108,7 +108,7 @@ public:
 
 	Time& operator-=(const Time& time);
 	Time& operator-=(nsecs time);
-	
+
 	Time  operator+(const Time& time) const;
 	Time  operator+(nsecs time) const;
 

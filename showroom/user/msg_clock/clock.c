@@ -167,7 +167,7 @@ static int ClockChrono_Chrono(void *args)
 {
 	RT_TASK *mytask;
 	RTIME OneUnit = nano2count(ONE_UNIT);
-	MenageHmsh_tHour times;			
+	MenageHmsh_tHour times;
 	MenageHmsh_tChain11 timesChain;
 	BOOLEAN Intermediatetimes = FALSE;
 	MenageHmsh_tHour endIntermediateTimes;

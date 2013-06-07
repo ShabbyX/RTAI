@@ -114,7 +114,7 @@ typedef int integer;
 #ifndef  _PARAMS
 #define  _PARAMS(paramlist)		paramlist
 #endif
-#else	
+#else
 #ifndef  __PARAMS
 #define  __PARAMS(paramlist)		()
 #endif

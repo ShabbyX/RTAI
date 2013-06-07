@@ -122,7 +122,7 @@ rt_make_soft_real_time()
 while rt_get_adr(nam2num("LATCHK")) != NULL :
 	rt_sleep(nano2count(1000000))
 if hard_timer_running == 0 :
-	stop_rt_timer()	
+	stop_rt_timer()
 rt_get_exectime(task, exectime)
 if exectime[1] and exectime[2] :
 	print "\n*** S = ", s, "EXECTIME = ", c_double(exectime[0]).value/c_double(exectime[2] - exectime[1]).value, "***\n"

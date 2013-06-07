@@ -469,7 +469,7 @@ void rt_set_runnable_on_cpuid(RT_TASK *task, unsigned int cpuid)
 	}
 	flags = rt_global_save_flags_and_cli();
 	switch (rt_smp_oneshot_timer[task->runnable_on_cpus] |
-		(rt_smp_oneshot_timer[cpuid] << 1)) {	
+		(rt_smp_oneshot_timer[cpuid] << 1)) {
                 case 1:
                         task->period = llimd(task->period, TIMER_FREQ, tuned.cpu_freq);
                         task->resume_time = llimd(task->resume_time, TIMER_FREQ, tuned.cpu_freq);
@@ -884,7 +884,7 @@ void rt_schedule(void)
 				}
 				if (rt_current->force_soft) {
 					make_current_soft(rt_current, cpuid);
-				}	
+				}
 			}
 		} else if (rt_current->state != RT_SCHED_READY) {
 sched_soft:
@@ -1807,7 +1807,7 @@ static void kthread_m(int cpuid)
 	struct klist_t *klistp;
 	RT_TASK *task;
 
-	
+
 	detach_kthread();
 	(task = &thread_task[cpuid])->magic = RT_TASK_MAGIC;
 	task->runnable_on_cpus = cpuid;
@@ -2440,7 +2440,7 @@ static int rtai_read_sched(char *page, char **start, off_t off, int count,
 				unsigned long den = (unsigned long)llimd(rdtsc() - task->exectime[1], 10, tuned.cpu_freq);
 				if (den) {
 					t = 1000UL*(unsigned long)llimd(task->exectime[0], 10, tuned.cpu_freq)/den;
-				}				
+				}
 			}
 			PROC_PRINT("%-10d %-11lu %-4s %-3s 0x%-3x  %1lu:%1lu   %-4d   %-4d %-4d  %p   %-lu\n",
                                task->priority,
@@ -2572,7 +2572,7 @@ static int lxrt_init(void)
     int cpuid;
 
     init_fun_ext();
-	
+
 
     for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
     	adeos_virtualize_irq(wake_up_srq[cpuid].srq = adeos_alloc_irq(), wake_up_srq_handler, NULL, IPIPE_HANDLE_FLAG);
@@ -2601,7 +2601,7 @@ static int lxrt_init(void)
 	rt_fun_lxrt[cpuid].type = 1;
 	rt_fun_lxrt[cpuid].fun  = nihil;
 	}
-	
+
     set_rt_fun_entries(rt_sched_entries);
 
     lxrt_old_trap_handler = rt_set_rtai_trap_handler(lxrt_handle_trap);

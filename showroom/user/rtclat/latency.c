@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 		rt_sleep(nano2count(1000000));
 	}
 	rt_make_soft_real_time();
-	stop_rt_timer();	
+	stop_rt_timer();
 	rt_get_exectime(task, exectime);
 	printf("\n>>> S = %g, EXECTIME = %G\n", s, (double)exectime[0]/(double)(exectime[2] - exectime[1]));
 	rt_task_delete(task);

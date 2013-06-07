@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
 	rt_make_soft_real_time();
 	rt_task_delete(reptsk);
-	
+
 	if (!(latency_file = fopen( "latencies.txt", "w+"))) {
 		printf( "Error opening file: latencies.txt.\n");
 		return 1;

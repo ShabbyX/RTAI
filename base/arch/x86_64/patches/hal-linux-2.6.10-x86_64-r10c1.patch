@@ -791,7 +791,7 @@ diff -uNrp linux-2.6.10-orig/adeos/generic.c linux-2.6.10-adeos/adeos/generic.c
 +
 +    if (!flags)
 +	adeos_hw_sti();	/* Absolutely needed. */
-+	
++
 +    adeos_lock_cpu(hwflags);
 +
 +    if (mutex->sleepq != NULL)
@@ -815,7 +815,7 @@ diff -uNrp linux-2.6.10-orig/adeos/generic.c linux-2.6.10-adeos/adeos/generic.c
 +    else
 +	{
 +	__clear_bit(IPIPE_STALL_FLAG,&adp->cpudata[cpuid].status);
-+	
++
 +	if (adp->cpudata[cpuid].irq_pending_hi != 0)
 +	    __adeos_sync_stage(IPIPE_IRQMASK_ANY);
 +	}
@@ -970,7 +970,7 @@ diff -uNrp linux-2.6.10-orig/adeos/x86_64.c linux-2.6.10-adeos/adeos/x86_64.c
 +			(((unsigned long)idt_table[v].offset_high) << 32))
 +
 +#define BUILD_TRAP_PROTO(trapnr)  __adeos_trap_##trapnr(void)
-+	
++
 +#define SAVE_ALL \
 +	"subq  $15*8,%rsp\n" \
 +	"movq  %rdi,14*8(%rsp)\n" \
@@ -988,7 +988,7 @@ diff -uNrp linux-2.6.10-orig/adeos/x86_64.c linux-2.6.10-adeos/adeos/x86_64.c
 +	"movq %r13, 2*8(%rsp)\n" \
 +	"movq %r14, 1*8(%rsp)\n" \
 +	"movq %r15, (%rsp)\n"
-+	
++
 +#define RESTORE_ALL \
 +	"movq (%rsp),%r15\n" \
 +	"movq 1*8(%rsp),%r14\n" \
@@ -1272,7 +1272,7 @@ diff -uNrp linux-2.6.10-orig/adeos/x86_64.c linux-2.6.10-adeos/adeos/x86_64.c
 +    if (adp_pipelined) return;
 +
 +    /* Collect the original vector table. */
-+	
++
 +    for (vector = 0; vector < 256; vector++)
 +		__adeos_std_vector_table[vector] = __adeos_get_gate_addr(vector);
 +
@@ -1294,7 +1294,7 @@ diff -uNrp linux-2.6.10-orig/adeos/x86_64.c linux-2.6.10-adeos/adeos/x86_64.c
 +#ifdef CONFIG_X86_IO_APIC
 +		if (IO_APIC_IRQ(irq)) {
 +		    vector = IO_APIC_VECTOR(irq);
-+	
++
 +		    if (vector == 0) continue;
 +#ifdef CONFIG_PCI_MSI
 +		/* Account specifically for MSI routing. */
@@ -1305,18 +1305,18 @@ diff -uNrp linux-2.6.10-orig/adeos/x86_64.c linux-2.6.10-adeos/adeos/x86_64.c
 +#endif /* CONFIG_X86_IO_APIC */
 +		{
 +		    vector = irq + FIRST_EXTERNAL_VECTOR;
-+	
++
 +		    if (vector == IA32_SYSCALL_VECTOR) continue;
 +		}
-+		
++
 +		if (vector >= FIRST_SYSTEM_VECTOR) continue;
-+	
++
 +		/* Fails for ADEOS_CRITICAL_IPI but that's ok. */
 +		adeos_virtualize_irq(rirq,
 +			__adeos_std_vector_table[vector],
 +			&__adeos_ack_common_irq,
 +			IPIPE_CALLASM_MASK|IPIPE_HANDLE_MASK|IPIPE_PASS_MASK);
-+	
++
 +		set_intr_gate(vector,__adeos_irq_trampolines[rirq]);
 +	} // end for
 +
@@ -1341,11 +1341,11 @@ diff -uNrp linux-2.6.10-orig/adeos/x86_64.c linux-2.6.10-adeos/adeos/x86_64.c
 +		irq_desc[irq].handler->enable = &__adeos_override_irq_enable;
 +		irq_desc[irq].handler->disable = &__adeos_override_irq_disable;
 +		irq_desc[irq].handler->end = &__adeos_override_irq_end;
-+	
++
 +		if (irq_desc[irq].handler->set_affinity != NULL)
 +		    irq_desc[irq].handler->set_affinity = &__adeos_override_irq_affinity;
 +	}
-+	
++
 +#ifdef CONFIG_X86_LOCAL_APIC
 +
 +    /* Map the APIC system vectors including the unused ones so that
@@ -1443,14 +1443,14 @@ diff -uNrp linux-2.6.10-orig/adeos/x86_64.c linux-2.6.10-adeos/adeos/x86_64.c
 +#ifdef CONFIG_X86_IO_APIC
 +		if (IO_APIC_IRQ(irq)) {
 +		    vector = IO_APIC_VECTOR(irq);
-+	
++
 +		    if (vector == 0)
 +			continue;
 +	    } else
 +#endif /* CONFIG_X86_IO_APIC */
 +		{
 +		    vector = irq + FIRST_EXTERNAL_VECTOR;
-+	
++
 +		    if (vector == IA32_SYSCALL_VECTOR)
 +			continue;
 +		}
@@ -1528,7 +1528,7 @@ diff -uNrp linux-2.6.10-orig/adeos/x86_64.c linux-2.6.10-adeos/adeos/x86_64.c
 +    if (irq >= IPIPE_NR_IRQS) return -EINVAL;
 +
 +    if (adp->irqs[irq].control & IPIPE_SYSTEM_MASK) return -EPERM;
-+    	
++
 +    adeos_spin_lock_irqsave(&__adeos_pipelock,flags);
 +
 +    if (handler != NULL) {
@@ -1542,7 +1542,7 @@ diff -uNrp linux-2.6.10-orig/adeos/x86_64.c linux-2.6.10-adeos/adeos/x86_64.c
 +
 +		if (handler == ADEOS_SAME_HANDLER) {
 +			handler = adp->irqs[irq].handler;
-+	
++
 +		    if (handler == NULL) {
 +				err = -EINVAL;
 +				goto unlock_and_exit;
@@ -1552,12 +1552,12 @@ diff -uNrp linux-2.6.10-orig/adeos/x86_64.c linux-2.6.10-adeos/adeos/x86_64.c
 +		    err = -EBUSY;
 +		    goto unlock_and_exit;
 +	    }
-+		
++
 +		if ((modemask & (IPIPE_SHARED_MASK|IPIPE_PASS_MASK)) == IPIPE_SHARED_MASK) {
 +		    err = -EINVAL;
 +		    goto unlock_and_exit;
 +		}
-+	
++
 +		if ((modemask & IPIPE_STICKY_MASK) != 0)
 +		    modemask |= IPIPE_HANDLE_MASK;
 +	}
@@ -1642,7 +1642,7 @@ diff -uNrp linux-2.6.10-orig/adeos/x86_64.c linux-2.6.10-adeos/adeos/x86_64.c
 +
 +    if (adp_current->irqs[irq].control & IPIPE_SYSTEM_MASK)
 +	return -EPERM;
-+	
++
 +    if (((setmask|clrmask) & IPIPE_SHARED_MASK) != 0)
 +	return -EINVAL;
 +
@@ -1701,12 +1701,12 @@ diff -uNrp linux-2.6.10-orig/adeos/x86_64.c linux-2.6.10-adeos/adeos/x86_64.c
 +
 +    for (_cpuid = 0; _cpuid < nr_cpus; _cpuid++) {
 +		unsigned long **psp = &adp->rsp[_cpuid];
-+	
++
 +		adp->estackbase[_cpuid] = (unsigned long *)kmalloc(estacksz,GFP_KERNEL);
-+	
++
 +		if (adp->estackbase[_cpuid] == NULL)
 +		    panic("Adeos: No memory for domain stack on CPU #%d",_cpuid);
-+	
++
 +		adp->rsp[_cpuid] = adp->estackbase[_cpuid];
 +		**psp = 0;
 +		*psp = (unsigned long *)(((unsigned long)*psp + estacksz - 0x10) & ~0xf);
@@ -2076,9 +2076,9 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/adeos.c linux-2.6.10-adeos/arch/
 +    if (num_online_cpus() > 1) { /* We might be running a SMP-kernel on a UP box... */
 +		adeos_declare_cpuid;
 +		cpumask_t lock_map;
-+	
++
 +		adeos_load_cpuid();
-+	
++
 +		if (!cpu_test_and_set(cpuid,__adeos_cpu_lock_map)) {
 +		    while (cpu_test_and_set(BITS_PER_LONG - 1,__adeos_cpu_lock_map)) {
 +				/* Refer to the explanations found in
@@ -2088,11 +2088,11 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/adeos.c linux-2.6.10-adeos/arch/
 +				int n = 0;
 +				do { cpu_relax(); } while (++n < cpuid);
 +			}
-+	
++
 +		    adeos_spin_lock(&__adeos_cpu_barrier);
-+	
++
 +		    __adeos_cpu_sync = syncfn;
-+	
++
 +		    /* Send the sync IPI to all processors but the current one. */
 +		    send_IPI_allbutself(ADEOS_CRITICAL_VECTOR);
 +
@@ -2148,10 +2148,10 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/adeos.c linux-2.6.10-adeos/arch/
 +
 +    for (cpuid = 0; cpuid < ADEOS_NR_CPUS; cpuid++) {
 +		adp->cpudata[cpuid].irq_pending_hi = 0;
-+	
++
 +		for (n = 0; n < IPIPE_IRQ_IWORDS; n++)
 +		    adp->cpudata[cpuid].irq_pending_lo[n] = 0;
-+	
++
 +		for (n = 0; n < IPIPE_NR_IRQS; n++)
 +		    adp->cpudata[cpuid].irq_hits[n] = 0;
 +	}
@@ -2672,8 +2672,8 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/entry.S linux-2.6.10-adeos/arch/
 @@ -51,7 +51,21 @@
  #define preempt_stop
  #define retint_kernel retint_restore_args
- #endif	
--	
+ #endif
+-
 +
 +#ifdef CONFIG_ADEOS_CORE
 +
@@ -2695,8 +2695,8 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/entry.S linux-2.6.10-adeos/arch/
 @@ -59,7 +73,7 @@
   * RESTORE_TOP_OF_STACK syncs the syscall state after any possible ptregs
   * manipulation.
-  */        	
--		
+  */
+-
 +
  	/* %rsp:at FRAMEEND */
  	.macro FIXUP_TOP_OF_STACK tmp
@@ -2708,12 +2708,12 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/entry.S linux-2.6.10-adeos/arch/
 +
  /*
   * A newly forked process directly context switches into this.
-  */ 	
+  */
 @@ -180,11 +195,21 @@ ENTRY(system_call)
  	swapgs
  	movq	%rsp,%gs:pda_oldrsp
  	movq	%gs:pda_kernelstack,%rsp
--	sti					
+-	sti
 +	sti
  	SAVE_ARGS 8,1
  	movq  %rax,ORIG_RAX-ARGOFFSET(%rsp)
@@ -2730,7 +2730,7 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/entry.S linux-2.6.10-adeos/arch/
 +	jne   .adeos_sysdone
 +	LOAD_ARGS R11-ARGOFFSET
 +#endif /* CONFIG_ADEOS_CORE */
-+	GET_THREAD_INFO(%rcx)	
++	GET_THREAD_INFO(%rcx)
  	testl $(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT),threadinfo_flags(%rcx)
  	jnz tracesys
  	cmpq $__NR_syscall_max,%rax
@@ -2748,7 +2748,7 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/entry.S linux-2.6.10-adeos/arch/
  /*
   * Syscall return path ending with SYSRET (fast path)
   * Has incomplete stack frame and undefined top of stack.
-@@ -206,6 +238,12 @@ sysret_check:		
+@@ -206,6 +238,12 @@ sysret_check:
  	movl threadinfo_flags(%rcx),%edx
  	andl %edi,%edx
  	jnz  sysret_careful
@@ -2761,7 +2761,7 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/entry.S linux-2.6.10-adeos/arch/
  	movq RIP-ARGOFFSET(%rsp),%rcx
  	RESTORE_ARGS 0,-ARG_SKIP,1
  	movq	%gs:pda_oldrsp,%rsp
-@@ -217,7 +255,7 @@ sysret_check:		
+@@ -217,7 +255,7 @@ sysret_check:
  sysret_careful:
  	bt $TIF_NEED_RESCHED,%edx
  	jnc sysret_signal
@@ -2795,20 +2795,20 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/entry.S linux-2.6.10-adeos/arch/
 -	sti
 +  	sti
  	SAVE_REST
- 	/* Check for syscall exit trace */	
+ 	/* Check for syscall exit trace */
  	testl $(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|_TIF_SINGLESTEP),%edx
 @@ -436,7 +474,11 @@ ENTRY(stub_rt_sigreturn)
  ENTRY(common_interrupt)
  	interrupt do_IRQ
  	/* 0(%rsp): oldrsp-ARGOFFSET */
--ret_from_intr:		
+-ret_from_intr:
 +#ifdef CONFIG_ADEOS_CORE
 +ENTRY(ret_from_intr)
 +#else /* !CONFIG_ADEOS_CORE */
 +ret_from_intr:
 +#endif /* CONFIG_ADEOS_CORE */
  	popq  %rdi
- 	cli	
+ 	cli
  	subl $1,%gs:pda_irqcount
 @@ -484,7 +526,7 @@ bad_iret:
  retint_careful:
@@ -2818,8 +2818,8 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/entry.S linux-2.6.10-adeos/arch/
 +  	sti
  	pushq %rdi
  	call  schedule
- 	popq %rdi		
-@@ -519,7 +561,7 @@ retint_kernel:	
+ 	popq %rdi
+@@ -519,7 +561,7 @@ retint_kernel:
  	bt   $9,EFLAGS-ARGOFFSET(%rsp)	/* interrupts off? */
  	jc   retint_restore_args
  	movl $PREEMPT_ACTIVE,threadinfo_preempt_count(%rcx)
@@ -2835,19 +2835,19 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/entry.S linux-2.6.10-adeos/arch/
 -        je   error_swapgs
 +    je   error_swapgs
  	jmp  error_sti
- 	
+
         /* Reload gs selector with exception handling */
-@@ -839,12 +881,12 @@ paranoid_userspace:	
+@@ -839,12 +881,12 @@ paranoid_userspace:
  	testl $(_TIF_SIGPENDING|_TIF_NOTIFY_RESUME|_TIF_SINGLESTEP),%edx
  	jnz paranoid_signal
  	jmp paranoid_swapgs
--paranoid_resched:		
+-paranoid_resched:
 -	sti
 +paranoid_resched:
 +  	sti
  	call schedule
  	jmp paranoid_exit
--paranoid_signal:		
+-paranoid_signal:
 -	sti
 +paranoid_signal:
 +  	sti
@@ -3040,8 +3040,8 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/io_apic.c linux-2.6.10-adeos/arc
  	check_timer();
  	if (!acpi_ioapic)
  		print_IO_APIC();
-+		
-+	print_IO_APIC();	
++
++	print_IO_APIC();
  }
 
  struct sysfs_ioapic_data {
@@ -3201,7 +3201,7 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/smpboot.c linux-2.6.10-adeos/arc
  	}
  	Dprintk("After Startup.\n");
 -
-+	
++
  	if (send_status)
  		printk(KERN_ERR "APIC never delivered???\n");
  	if (accept_status)
@@ -3209,7 +3209,7 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/smpboot.c linux-2.6.10-adeos/arc
  	unsigned long start_rip;
 
  	cpu = ++cpucount;
-+	
++
 +#ifdef CONFIG_ADEOS_CORE
 +	__adeos_apicid_2_cpuid[apicid] = cpu;
 +#endif /* CONFIG_ADEOS_CORE */
@@ -3221,10 +3221,10 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/smpboot.c linux-2.6.10-adeos/arc
  	unsigned apicid, cpu, bit, kicked;
 
  	nmi_watchdog_default();
-+	
++
 +#ifdef CONFIG_ADEOS_CORE
 +	__adeos_apicid_2_cpuid[adeos_smp_apic_id()] = 0;
-+#endif /* CONFIG_ADEOS_CORE */	
++#endif /* CONFIG_ADEOS_CORE */
 
  	/*
  	 * Setup boot CPU information
@@ -3241,7 +3241,7 @@ diff -uNrp linux-2.6.10-orig/arch/x86_64/kernel/time.c linux-2.6.10-adeos/arch/x
 +		adeos_spin_lock_irqsave(&i8253_lock,flags);
 +#else /* !CONFIG_ADEOS_CORE */
 + 		spin_lock(&i8253_lock);
-+#endif /* CONFIG_ADEOS_CORE */		
++#endif /* CONFIG_ADEOS_CORE */
  		outb_p(0x00, 0x43);
  		delay = inb_p(0x40);
  		delay |= inb(0x40) << 8;
@@ -4755,7 +4755,7 @@ diff -uNrp linux-2.6.10-orig/init/main.c linux-2.6.10-adeos/init/main.c
  		   __stop___param - __start___param,
  		   &unknown_bootoption);
  	sort_main_extable();
-+	
++
  	trap_init();
  	rcu_init();
  	init_IRQ();
@@ -4958,7 +4958,7 @@ diff -uNrp linux-2.6.10-orig/kernel/adeos.c linux-2.6.10-adeos/kernel/adeos.c
 +
 +	    /* Let the higher priority domain process the event. */
 +	    __adeos_switch_to(this_domain,next_domain,cpuid);
-+	
++
 +	    adeos_load_cpuid();	/* Processor might have changed. */
 +
 +	    if (!next_domain->cpudata[cpuid].event_info.propagate)
@@ -5188,7 +5188,7 @@ diff -uNrp linux-2.6.10-orig/kernel/adeos.c linux-2.6.10-adeos/kernel/adeos.c
 +		    !test_bit(IPIPE_SYNC_FLAG,&this_domain->cpudata[cpuid].status))
 +		    __adeos_sync_stage(IPIPE_IRQMASK_ANY);
 +		}
-+	
++
 +	    break;
 +	    }
 +	else if (next_domain == this_domain)

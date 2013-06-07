@@ -115,7 +115,7 @@ static double one = 1.0, Zero[] = {0.0, -0.0,};
 
     /* convert back to floating value and restore the sign */
 	if((hx|lx)==0) 			/* return sign(x)*0 */
-	    return Zero[(u_int32_t)sx>>31];	
+	    return Zero[(u_int32_t)sx>>31];
 	while(hx<0x00100000) {		/* normalize x */
 	    hx = hx+hx+(lx>>31); lx = lx+lx;
 	    iy -= 1;

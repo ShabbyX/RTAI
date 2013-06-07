@@ -20,13 +20,13 @@
 #		Set new overall dispatching mode to specified value, even if
 #		overall dispatching mode is DIRTY. Warning! You might loose
 #		source code changes if you do this!
-#		
+#
 # File modes:
 #	IMMED	source file foo.x is the same as foo.immed
 #	PIPED	source file foo.x is the same as foo.piped
 #	DIRTY	source file foo.x is neither the same as foo.piped
 #		nor the same as foo.immed
-#	
+#
 # Overall modes:
 #	IMMED	all source files are the same as their .immed variant
 #	PIPED	all source files are the same as their .piped variant

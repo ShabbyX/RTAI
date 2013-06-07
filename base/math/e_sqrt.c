@@ -60,7 +60,7 @@ static char rcsid[] = "$NetBSD: e_sqrt.c,v 1.8 1995/05/10 20:46:17 jtc Exp $";
  *                         -i                     -(i+1)
  *	    s	  =  s  + 2  ,  y    = y  -  s  - 2  		(5)
  *           i+1      i          i+1    i     i
- *				
+ *
  *	One may easily use induction to prove (4) and (5).
  *	Note. Since the left hand side of (3) contain only i+2 bits,
  *	      it does not necessary to do a full (53-bit) comparison
@@ -73,7 +73,7 @@ static char rcsid[] = "$NetBSD: e_sqrt.c,v 1.8 1995/05/10 20:46:17 jtc Exp $";
  *	The rounding mode can be detected by checking whether
  *	huge + tiny is equal to huge, and whether huge - tiny is
  *	equal to huge for some floating point number "huge" and "tiny".
- *		
+ *
  * Special cases:
  *	sqrt(+-0) = +-0 	... exact
  *	sqrt(inf) = inf
@@ -108,7 +108,7 @@ static	double	one	= 1.0, tiny=1.0e-300;
 	EXTRACT_WORDS(ix0,ix1,x);
 
     /* take care of Inf and NaN */
-	if((ix0&0x7ff00000)==0x7ff00000) {			
+	if((ix0&0x7ff00000)==0x7ff00000) {
 	    return x*x+x;		/* sqrt(NaN)=NaN, sqrt(+inf)=+inf
 					   sqrt(-inf)=sNaN */
 	}
@@ -312,7 +312,7 @@ A.  sqrt(x) by Newton Iteration
 	        I := i;	 		... restore inexact flag
 	        R := r;  		... restore rounded mode
 	        return sqrt(x):=y.
-		
+
     (4)	Special cases
 
 	Square root of +inf, +-0, or NaN is itself;
@@ -354,7 +354,7 @@ B.  sqrt(x) by Reciproot Iteration
 	result by x to get an approximation z that matches sqrt(x)
 	to about 1 ulp. To be exact, we will have
 		-1ulp < sqrt(x)-z<1.0625ulp.
-	
+
 	... set rounding mode to Round-to-nearest
 	   y := y*(1.5-0.5*x*y*y)	... almost 15 sig. bits to 1/sqrt(x)
 	   y := y*((1.5-2^-30)+0.5*x*y*y)... about 29 sig. bits to 1/sqrt(x)
@@ -447,7 +447,7 @@ B.  sqrt(x) by Reciproot Iteration
 	11			01		even
 	-------------------------------------------------
 
-    (4)	Special cases (see (4) of Section A).	
+    (4)	Special cases (see (4) of Section A).
 
  */
 

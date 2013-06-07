@@ -51,7 +51,7 @@ Time& Time::operator=(const Time& time)
 Time& Time::operator=(long long time)
 {
 	m_Time = time;
-	
+
 	return *this;
 }
 

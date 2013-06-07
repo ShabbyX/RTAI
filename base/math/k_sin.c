@@ -28,7 +28,7 @@ static char rcsid[] = "$NetBSD: k_sin.c,v 1.8 1995/05/10 20:46:31 jtc Exp $";
  *		  	         3            13
  *	   	sin(x) ~ x + S1*x + ... + S6*x
  *	   where
- *	
+ *
  * 	|sin(x)         2     4     6     8     10     12  |     -58
  * 	|----- - (1+S1*x +S2*x +S3*x +S4*x +S5*x  +S6*x   )| <= 2
  * 	|  x 					           |

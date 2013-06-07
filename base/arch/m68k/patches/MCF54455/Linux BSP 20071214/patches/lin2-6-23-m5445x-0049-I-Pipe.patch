@@ -167,7 +167,7 @@ index 0435b76..59b6e3e 100644
  .globl sys_call_table
  .globl ret_from_interrupt
  .globl inthandler
-+	
++
 +#ifdef CONFIG_IPIPE
 +#define EMULATE_ROOT_IRET(bypass) \
 +	jbsr __ipipe_unstall_iret_root ; \
@@ -186,7 +186,7 @@ index 0435b76..59b6e3e 100644
 +#endif
 
  ENTRY(buserr)
-+#ifdef  CONFIG_IPIPE	
++#ifdef  CONFIG_IPIPE
 +        move    #0x2700, %sr
  	SAVE_ALL_INT
 +	moveb   %sp@(PT_SR), %d0
@@ -196,7 +196,7 @@ index 0435b76..59b6e3e 100644
 +	move    %d0, %sr
 +#else
 +	SAVE_ALL_INT
-+#endif	
++#endif
  	GET_CURRENT(%d0)
  	movel   %sp,%sp@-		/* stack frame pointer argument */
 +#ifndef CONFIG_IPIPE
@@ -231,7 +231,7 @@ index 0435b76..59b6e3e 100644
  	movel	%a0@,%a0
  	jsr	%a0@
  	movel	%d0,%sp@(PT_D0)		/* save the return value */
-+sysenter_tail:	
++sysenter_tail:
  ret_from_syscall:
  	movew	%curptr@(TASK_INFO+TINFO_FLAGS+2),%d0
  	jne	syscall_exit_work	/* flags set so process */
@@ -274,7 +274,7 @@ index 0435b76..59b6e3e 100644
 +#ifndef CONFIG_IPIPE
  	subql	#1,%curptr@(TASK_INFO+TINFO_PREEMPT)
  	jeq	ret_from_last_interrupt
-+#else	
++#else
 +	bra	ret_from_last_interrupt
 +#endif
  2:	RESTORE_ALL
@@ -284,7 +284,7 @@ index 0435b76..59b6e3e 100644
 +#ifdef CONFIG_IPIPE
 +	tstl	%d0
 +	jeq	2b
-+#endif	
++#endif
  	moveb	%sp@(PT_SR),%d0
  	andl	#(~ALLOWINT>>8)&0xff,%d0
  	jne	2b
@@ -1393,20 +1393,20 @@ index 849ed75..39c66a8 100644
 +	    local_irq_restore_hw(flags);
  	    return (-1);
  	}
- 	
+
      	pmd = pmd_offset(pgd, mmuar);
      	if (pmd_none(*pmd)) {
 -	    local_irq_restore(flags);
 +	    local_irq_restore_hw(flags);
  	    return (-1);
- 	}	
-     	
+ 	}
+
  	pte = (mmuar >= PAGE_OFFSET) ? pte_offset_kernel(pmd, mmuar)
  	                             : pte_offset_map(pmd, mmuar);
      	if (pte_none(*pte) || !pte_present(*pte)) {
 -	    local_irq_restore(flags);
 +	    local_irq_restore_hw(flags);
- 	    return (-1);		
+ 	    return (-1);
  	}
 
  	if (write) {

@@ -57,7 +57,7 @@ static void fun(long t) {
 	int flag;
 	double sine[2] = {1., 2.,}, time;
 	unsigned int loops = LOOPS;
-	
+
 	time = 0.0;
 	while (loops--) {
 		cpu_used[hard_cpu_id()]++;

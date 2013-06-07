@@ -52,7 +52,7 @@ TWO52[2]={
 	sx = (i0>>31)&1;
 	j0 = ((i0>>20)&0x7ff)-0x3ff;
 	if(j0<20) {
-	    if(j0<0) { 	
+	    if(j0<0) {
 		if(((i0&0x7fffffff)|i1)==0) return x;
 		i1 |= (i0&0x0fffff);
 		i0 &= 0xfffe0000;

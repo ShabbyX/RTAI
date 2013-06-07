@@ -277,7 +277,7 @@ int Fl_Scope::increment_trace_pointer()
 
 void Fl_Scope::write_to_trace(int n, float val)
 {
-	if (Write_Ptr[n] < 0 || Write_Ptr[n]>Trace_Len) Write_Ptr[n] = Trace_Len;	
+	if (Write_Ptr[n] < 0 || Write_Ptr[n]>Trace_Len) Write_Ptr[n] = Trace_Len;
 	Trace[n][Write_Ptr[n]--] = val;
 }
 
@@ -331,7 +331,7 @@ void Fl_Scope::add_to_trace(int n, float val)
   } else {
     if ((Data_Ptr[0] >= 0) && (Data_Ptr[0] < Trace_Len && Trigger_Mode != tmHold)) Trace[n][Data_Ptr[0]] = val;
   }
-		
+
 } // add_to_trace
 
 void Fl_Scope::add_to_trace(int pos, int n, float val)
@@ -350,7 +350,7 @@ void Fl_Scope::initgl()
 	glLoadIdentity();
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(Bg_rgb[0], Bg_rgb[1], Bg_rgb[2], 0.0);
-	glClear(GL_COLOR_BUFFER_BIT);	
+	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Fl_Scope::drawticks()
@@ -527,7 +527,7 @@ void Fl_Scope::draw()
 
 	if (Scope_Flags & sfDrawTics) drawticks();
 	if (Scope_Flags & sfDrawGrid) drawgrid();
-	
+
 // Draw all trace lines
 	for (int nn = 0; nn < num_of_traces; nn++) {
 	        glLineWidth(Trace_Width[nn]);

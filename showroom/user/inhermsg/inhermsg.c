@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 		SNDBRCV  = atoi(argv[2]);
 		HARDMAIN = atoi(argv[3]);
 	}
-	
+
  	if (!(maintask = rt_task_init_schmod(0xcacca, 1, 0, 0, SCHED_FIFO, 0x1))) {
 		rt_printk("CANNOT INIT MAIN\n");
 		exit(1);

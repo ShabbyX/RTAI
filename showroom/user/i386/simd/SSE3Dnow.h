@@ -217,7 +217,7 @@
 			    "shufps $0xee," #reg2 "," #regout "\n"\
 			    "addps  " #reg0 "," #regout "\n"\
 			    : /* nothing */  \
-			    : /* nothing */)			
+			    : /* nothing */)
 
 
 

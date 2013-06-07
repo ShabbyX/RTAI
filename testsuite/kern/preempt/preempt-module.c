@@ -158,7 +158,7 @@ static void __preempt_exit(void)
 {
 	int cpuid;
 
-	stop_rt_timer();	
+	stop_rt_timer();
 	rt_task_delete(&thread);
 	rt_task_delete(&Slow_Task);
 	rt_task_delete(&Fast_Task);

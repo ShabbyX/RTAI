@@ -183,7 +183,7 @@ index 0000000..f237523
 +	unsigned irq;
 +
 +	irq = mcf_timervector;
-+	
++
 +	ipipe_virtualize_irq(ipipe_root_domain,
 +				 irq,
 +				 (ipipe_irq_handler_t)&do_IRQ,
@@ -680,7 +680,7 @@ index b333731..f5c69df 100644
 +				movel PT_ORIG_D0(%sp),%d0
 +#else
 +#define EMULATE_ROOT_IRET(bypass)
-+#define CATCH_ROOT_SYSCALL(bypass1,bypass2)	
++#define CATCH_ROOT_SYSCALL(bypass1,bypass2)
 +#endif
 +
  .bss
@@ -6800,7 +6800,7 @@ index f82b359..8ce463a 100644
 +		kunmap_atomic(kaddr, KM_USER0);
 +		flush_dcache_page(dst);
 +		return;
-+		
++
 +	}
 +	copy_user_highpage(dst, src, va, vma);
 +}
@@ -6828,7 +6828,7 @@ index f82b359..8ce463a 100644
 +			struct page *old_page = vm_normal_page(vma, addr, pte);
 +			cow_user_page(uncow_page, old_page, addr, vma);
 +			pte = mk_pte(uncow_page, vma->vm_page_prot);
-+			
++
 +			if (vm_flags & VM_SHARED)
 +				pte = pte_mkclean(pte);
 +			pte = pte_mkold(pte);
@@ -6941,7 +6941,7 @@ index f82b359..8ce463a 100644
 +{
 +	spinlock_t *ptl;
 +	pte_t *pte;
-+	
++
 +	do {
 +		pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
 +		if (!pte)
@@ -7016,7 +7016,7 @@ index f82b359..8ce463a 100644
 +
 +		addr = vma->vm_start;
 +		end = vma->vm_end;
-+		
++
 +		pgd = pgd_offset(mm, addr);
 +		do {
 +			next = pgd_addr_end(addr, end);

@@ -78,7 +78,7 @@ static void *encoder_irq(void *args)
 		mycount++;
 		if (mycount >= MaxCount) {
 			if (mycount >= maxcnt) {
-				maxcnt = mycount;		
+				maxcnt = mycount;
 			}
 			mycount = 0;
 		}
@@ -128,17 +128,17 @@ static void get_data(void)
 	printf("Please enter encoder's data.\n");
 	printf("Pulses/Round : ");
 	scanf("%f",&Encoder_Res);
-	printf("Encoder Diameter : ");	
+	printf("Encoder Diameter : ");
 	scanf("%f",&Encoder_Dia);
 
 	printf("\nPlease enter job details\n");
-	printf("Steel Width : ");	
+	printf("Steel Width : ");
 	scanf("%f",&Steel_Width);
-	printf("Steel Thickness : ");	
+	printf("Steel Thickness : ");
 	scanf("%f",&Steel_Thick);
-	printf("Item Length : ");	
+	printf("Item Length : ");
 	scanf("%f",&Item_Length);
-	printf("Quantity to press : ");	
+	printf("Quantity to press : ");
 	scanf("%i",&Item_Qty);
 	Encoder = PI*Encoder_Dia/Encoder_Res;
 }
@@ -169,19 +169,19 @@ static void paint_screen(void)
 
 	wrefresh(title);
 	wrefresh(mywin1);
-	wrefresh(mywin2);	
-	wrefresh(foot);	
+	wrefresh(mywin2);
+	wrefresh(foot);
 }
 
 static void update_display(void)
 {
-	old_enc_cnt = encoder_count;		
+	old_enc_cnt = encoder_count;
 	mvwprintw(mywin2,6,18,"         ");
 	mvwprintw(mywin2,6,18,"%i", old_enc_cnt);
 	mvwprintw(mywin2,7,18,"%f", Item_Length*Encoder);
 	mvwprintw(mywin2,8,18,"%i", Pressed_Items);
 	mvwprintw(mywin2,10,25,"%i)", maxcnt);
-	wrefresh(mywin2);	
+	wrefresh(mywin2);
 }
 
 void screen_end(void)

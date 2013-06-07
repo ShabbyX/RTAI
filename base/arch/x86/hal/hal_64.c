@@ -1778,7 +1778,7 @@ void __rtai_hal_exit (void)
         hal_virtualize_irq(hal_root_domain, rtai_sysreq_virq, NULL, NULL, 0);
         hal_free_irq(rtai_sysreq_virq);
         rtai_uninstall_archdep();
-	
+
 	if (IsolCpusMask) {
 		for (trapnr = 0; trapnr < IPIPE_NR_XIRQS; trapnr++) {
 			rt_reset_irq_to_sym_mode(trapnr);

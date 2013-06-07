@@ -1787,7 +1787,7 @@
 +				err = -EPERM;
 +				goto unlock_and_exit;
 +			}
-+			
++
 +			__ipipe_enable_irq(irq);
 +		}
 +	}
@@ -2577,7 +2577,7 @@
 +			__ipipe_event_monitors[event]--;
 +			ipd->evself |= (1LL << event);
 +	}
-+	
++
 +	ipipe_critical_exit(flags);
 +
 +	if (!handler && ipipe_root_domain_p) {
@@ -3729,7 +3729,7 @@
 +};
 +
 +static void *__ipipe_frozen_prtrace_start(struct seq_file *m, loff_t *pos)
-+{	
++{
 +	loff_t n = *pos;
 +
 +	down(&out_mutex);
@@ -4511,7 +4511,7 @@
 +	ori	r10,r10,MSR_EE
 +	SYNC
 +	MTMSRD(r10)
-+#endif /* CONFIG_IPIPE */		
++#endif /* CONFIG_IPIPE */
  	REST_NVGPRS(r1)
  	bl	schedule_tail
  	li	r3,0
@@ -4532,7 +4532,7 @@
  	beq+	restore
  	andi.	r0,r3,MSR_EE	/* interrupts off? */
  	beq	restore		/* don't schedule if so */
-+#ifdef CONFIG_IPIPE	
++#ifdef CONFIG_IPIPE
 +#ifdef CONFIG_IPIPE_TRACE_IRQSOFF
 +	lis	r3,(0x80000000)@h
 +	ori	r3,r3,(0x80000000)@l
@@ -4543,13 +4543,13 @@
 +	SYNC
 +	MTMSRD(r10)
 +	bl	__ipipe_fast_stall_root
-+#endif /* CONFIG_IPIPE */	
++#endif /* CONFIG_IPIPE */
  1:	bl	preempt_schedule_irq
  	rlwinm	r9,r1,0,0,18
  	lwz	r3,TI_FLAGS(r9)
  	andi.	r0,r3,_TIF_NEED_RESCHED
  	bne-	1b
-+#ifdef CONFIG_IPIPE	
++#ifdef CONFIG_IPIPE
 +	bl	__ipipe_fast_unstall_root
 +	LOAD_MSR_KERNEL(r10,MSR_KERNEL)
 +	SYNC
@@ -4562,7 +4562,7 @@
 +	ori	r3,r3,(0x80000000)@l
 +	bl	ipipe_trace_begin
 +#endif /* CONFIG_IPIPE_TRACE_IRQSOFF */
-+#endif /* CONFIG_IPIPE */	
++#endif /* CONFIG_IPIPE */
  #else
  resume_kernel:
  #endif /* CONFIG_PREEMPT */
@@ -5200,7 +5200,7 @@
 +	lwz	r5, 52(r1)
 +	li	r6,0
 +	bl	__ipipe_trace
-+1:	
++1:
 + /* Restore the registers...  */
 +	lwz     r6,  8(r1)
 +	lwz	r0, 44(r1)

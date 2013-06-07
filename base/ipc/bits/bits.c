@@ -175,7 +175,7 @@ int rt_bits_delete(BITS *bits)
 		rem_timed_task(task);
 		if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED)) == RT_SCHED_READY) {
 			task->blocked_on = RTP_OBJREM;
-			enq_ready_task(task);	
+			enq_ready_task(task);
 #ifdef CONFIG_SMP
 			set_bit(task->runnable_on_cpus & 0x1F, &schedmap);
 #endif
@@ -266,7 +266,7 @@ RTAI_SYSCALL_MODE int _rt_bits_wait(BITS *bits, int testfun, unsigned long testm
 	flags = rt_global_save_flags_and_cli();
 	if (!test_fun[testfun](bits, testmasks)) {
 		void *retpnt;
-		long bits_test[2];	
+		long bits_test[2];
 		rt_current = RT_CURRENT;
 		TEST_BUF(rt_current, bits_test);
 		TEST_FUN(rt_current)  = testfun;

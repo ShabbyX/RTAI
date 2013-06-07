@@ -947,7 +947,7 @@ static void rtai_install_archdep (void)
 {
 	struct hal_sysinfo_struct sysinfo;
 
-#if !defined(USE_LINUX_SYSCALL) && !defined(CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL)	
+#if !defined(USE_LINUX_SYSCALL) && !defined(CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL)
 	/* empty till a direct RTAI syscall way is decided */
 #endif
 

@@ -1298,7 +1298,7 @@ int rtdm_sem_timeddown(rtdm_sem_t *sem, nanosecs_rel_t timeout,
 
 
 
-	if ((retval = _sem_wait_timed(&sem->sem, timeout, timeout_seq)) == 1) {	
+	if ((retval = _sem_wait_timed(&sem->sem, timeout, timeout_seq)) == 1) {
 		SELECT_SIGNAL(&sem->select_block, 0);
 	}
 	return retval;

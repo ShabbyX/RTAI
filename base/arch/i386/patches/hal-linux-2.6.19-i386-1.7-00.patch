@@ -97,7 +97,7 @@ index 2fd4b7d..cad2c71 100644
 @@ -665,9 +665,9 @@ static int lapic_suspend(struct sys_device *dev, pm_message_t state)
  	apic_pm_state.apic_tdcr = apic_read(APIC_TDCR);
  	apic_pm_state.apic_thmr = apic_read(APIC_LVTTHMR);
- 	
+
 -	local_irq_save(flags);
 +	local_irq_save_hw(flags);
  	disable_local_APIC();
@@ -2145,7 +2145,7 @@ index 8fe7e45..0f83d8f 100644
 
 -		spin_lock(&i8253_lock);
 +		spin_lock_irqsave(&i8253_lock);
- 		
+
  		outb_p(0x00, 0x43);
  		val = inb_p(0x40);
  		val |= inb(0x40) << 8;
@@ -2724,7 +2724,7 @@ index 7d606e3..d550afe 100644
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 diff --git a/include/asm-i386/mmu_context.h b/include/asm-i386/mmu_context.h
@@ -7516,7 +7516,7 @@ index 156861f..e9f765e 100644
 +		kunmap_atomic(kaddr, KM_USER0);
 +		flush_dcache_page(dst);
 +		return;
-+		
++
 +	}
 +	copy_user_highpage(dst, src, va);
 +}
@@ -7545,7 +7545,7 @@ index 156861f..e9f765e 100644
 +
 +			cow_user_page(page, old_page, addr);
 +			pte = mk_pte(page, vma->vm_page_prot);
-+			
++
 +			if (vm_flags & VM_SHARED)
 +				pte = pte_mkclean(pte);
 +			pte = pte_mkold(pte);
@@ -7604,7 +7604,7 @@ index 156861f..e9f765e 100644
 -		kunmap_atomic(kaddr, KM_USER0);
 -		flush_dcache_page(dst);
 -		return;
--		
+-
 -	}
 -	copy_user_highpage(dst, src, va);
 -}
@@ -7627,7 +7627,7 @@ index 156861f..e9f765e 100644
 +{
 +	spinlock_t *ptl;
 +	pte_t *pte;
-+	
++
 +	do {
 +		pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
 +		if (!pte)
@@ -7699,7 +7699,7 @@ index 156861f..e9f765e 100644
 +
 +		addr = vma->vm_start;
 +		end = vma->vm_end;
-+		
++
 +		pgd = pgd_offset(mm, addr);
 +		do {
 +			next = pgd_addr_end(addr, end);
@@ -7734,7 +7734,7 @@ index 156861f..e9f765e 100644
 +	write_unlock(&pinned_mms_lock);
 +
 +  done_vmlist:
-+	read_unlock(&vmlist_lock);	
++	read_unlock(&vmlist_lock);
 +  done_mm:
 +	mmput(mm);
 +	return result;

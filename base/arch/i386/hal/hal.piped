@@ -753,7 +753,7 @@ irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_reg
 static inline int REQUEST_LINUX_IRQ_BROADCAST_TO_APIC_TIMERS(void)
 {
 	return IS_FUSION_TIMER_RUNNING() ? 0 : rt_request_linux_irq(RTAI_TIMER_8254_IRQ, &rtai_broadcast_to_local_timers, "rtai_broadcast", &rtai_broadcast_to_local_timers);
-}	
+}
 
 #define FREE_LINUX_IRQ_BROADCAST_TO_APIC_TIMERS() \
 do { \

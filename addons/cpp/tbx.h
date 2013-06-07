@@ -42,7 +42,7 @@ public:
 	TypedMailbox(const char* name, int size, int flags);
 
 	virtual ~TypedMailbox();
-	
+
 	void init(int size, int flags );
 	void init(const char* name );
 	void init(const char* name, int size, int flags );
@@ -91,48 +91,48 @@ public:
 	int send( Type *msg ){
 		return TypedMailbox::send( (void*)msg, sizeof( Type ) );
 	}
-	
+
 	int send_if( Type *msg ){
 		return TypedMailbox::send_if( (void*)msg, sizeof( Type ) );
 	}
-	
+
 	int send_until( Type *msg, const Count& time){
 		return TypedMailbox::send_until( (void*)msg, sizeof( Type ), time );
 	}
-	
+
 	int send_timed( Type *msg, const Count& delay){
 		return TypedMailbox::send_timed( (void*)msg, sizeof( Type ), delay );
 	}
-	
+
 
 	int receive( Type *msg ){
 		return TypedMailbox::receive( (void*)msg, sizeof( Type ));
 	}
-	
+
 	int receive_if( Type *msg ){
 		return TypedMailbox::receive_if( (void*)msg, sizeof( Type ) );
 	}
-	
+
 	int receive_until( Type *msg, const Count& time){
 		return TypedMailbox::receive_until( (void*)msg, sizeof( Type ), time );
 	}
-	
+
 	int receive_timed( Type *msg, const Count& delay){
 		return TypedMailbox::receive_timed((void*)msg, sizeof( Type ), delay );
 	}
-	
+
 	int broadcast( Type *msg ){
 		return TypedMailbox::broadcast( (void*)msg, sizeof( Type ) );
 	}
-	
+
 	int broadcast_if( Type *msg ){
 		return TypedMailbox::broadcast_if( (void*)msg, sizeof( Type ) );
 	}
-	
+
 	int broadcast_until( Type *msg, const Count& time){
 		return TypedMailbox::broadcast_until( (void*)msg, sizeof( Type ), time );
 	}
-	
+
 	int broadcast_timed( Type *msg, const Count& delay){
 		return TypedMailbox::broadcast_timed( (void*)msg, sizeof( Type ), delay );
 	}
@@ -140,15 +140,15 @@ public:
 	int urgent( Type *msg ){
 		return TypedMailbox::urgent( (void*)msg, sizeof( Type ) );
 	}
-	
+
 	int urgent_if( Type *msg ){
 		return TypedMailbox::urgent_if( (void*)msg, sizeof( Type ) );
 	}
-	
+
 	int urgent_until( Type *msg, const Count& time){
 		return TypedMailbox::urgent_until( (void*)msg, sizeof( Type ), time );
 	}
-	
+
 	int urgent_timed( Type *msg, const Count& delay){
 		return TypedMailbox::urgent_timed( (void*)msg, sizeof( Type ), delay );
 	}

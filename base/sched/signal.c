@@ -218,7 +218,7 @@ RTAI_SYSCALL_MODE int rt_wait_signal(RT_TASK *sigtask, RT_TASK *task)
 EXPORT_SYMBOL(rt_wait_signal);
 
 static void signal_suprt_fun(long args)
-{		
+{
 	struct sigsuprt_t arg = *((struct sigsuprt_t *)args);
 
 	if (!rt_request_signal_(arg.sigtask, arg.task, arg.signal)) {

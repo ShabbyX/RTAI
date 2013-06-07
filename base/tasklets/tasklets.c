@@ -142,19 +142,19 @@ static struct rt_fun_entry rt_tasklet_fun[] = {
 	{ 0, rt_wait_tasklet_is_hard },	   	//  13
 	{ 0, rt_set_tasklet_priority },  	//  14
 	{ 0, rt_register_task },	  	//  15
-	{ 0, rt_get_timer_times },		//  16	
-	{ 0, rt_get_timer_overrun },		//  17	
-		
-/* Posix timers support */	
+	{ 0, rt_get_timer_times },		//  16
+	{ 0, rt_get_timer_overrun },		//  17
+
+/* Posix timers support */
 
 	{ 0, rt_ptimer_create },		//  18
 	{ 0, rt_ptimer_settime },		//  19
 	{ 0, rt_ptimer_overrun },		//  20
 	{ 0, rt_ptimer_gettime },		//  21
-	{ 0, rt_ptimer_delete }			//  22	
-	
+	{ 0, rt_ptimer_delete }			//  22
+
 /* End Posix timers support */
-	
+
 };
 
 #ifdef CONFIG_RTAI_LONG_TIMED_LIST
@@ -477,25 +477,25 @@ RTAI_SYSCALL_MODE int rt_insert_timer(struct rt_tasklet_struct *timer, int prior
 
 // timer initialization
 	timer->uses_fpu    = 0;
-	
+
 	if (pid >= 0) {
 		if (!handler) {
 			return -EINVAL;
 		}
-		timer->handler   = handler;	
+		timer->handler   = handler;
 		timer->data 			 = data;
 	} else {
 		if (timer->handler != NULL || timer->handler == (void *)1) {
-			timer->handler = (void *)1;	
+			timer->handler = (void *)1;
 			timer->data    = data;
-		}		
+		}
 	}
-	
-	timer->priority    = priority;	
+
+	timer->priority    = priority;
 	REALTIME2COUNT(firing_time)
 	timer->firing_time = firing_time;
 	timer->period      = period;
-	
+
 	if (!pid) {
 		timer->task = 0;
 		timer->cpuid = cpuid = NUM_CPUS > 1 ? rtai_cpuid() : 0;
@@ -643,10 +643,10 @@ RTAI_SYSCALL_MODE void rt_set_timer_period(struct rt_tasklet_struct *timer, RTIM
 RTAI_SYSCALL_MODE void rt_get_timer_times(struct rt_tasklet_struct *timer, RTIME timer_times[])
 {
 	RTIME firing;
-	
+
 	firing = -rt_get_time();
 	firing += timer->firing_time;
-		
+
 	timer_times[0] = firing > 0 ? firing : -1;
 	timer_times[1] = timer->period;
 }
@@ -811,9 +811,9 @@ RTAI_SYSCALL_MODE int rt_delete_tasklet(struct rt_tasklet_struct *tasklet)
 	tasklet->handler = 0;
 	rt_copy_to_user(tasklet->usptasklet, tasklet, sizeof(struct rt_usp_tasklet_struct));
 	rt_task_resume(tasklet->task);
-	thread = tasklet->thread;	
+	thread = tasklet->thread;
 	rt_free(tasklet);
-	return thread;	
+	return thread;
 }
 
 /*
@@ -831,7 +831,7 @@ struct ptimer_list { int t_indx, p_idx; struct ptimer_list *p_ptr; struct rt_tas
 static int init_ptimers(void)
 {
 	int i;
-	
+
 	if (!(posix_timer = (struct ptimer_list *)kmalloc((PosixTimers)*sizeof(struct ptimer_list), GFP_KERNEL))) {
 		printk("Init MODULE no memory for Posix Timer's list.\n");
 		return -ENOMEM;
@@ -903,7 +903,7 @@ RTAI_SYSCALL_MODE void rt_ptimer_settime(timer_t timer, const struct itimerspec 
 {
 	struct rt_tasklet_struct *tasklet;
 	RTIME now;
-	
+
 	tasklet = posix_timer[timer].timer;
 	rt_remove_timer(tasklet);
 	now = rt_get_time();
@@ -913,7 +913,7 @@ RTAI_SYSCALL_MODE void rt_ptimer_settime(timer_t timer, const struct itimerspec 
 		}else {
 			now = 0;
 		}
-	}	
+	}
 	if (timespec2count ( &(value->it_value)) > 0) {
 		if (data) {
 			rt_insert_timer(tasklet, 0, now + timespec2count ( &(value->it_value) ), timespec2count ( &(value->it_interval) ), NULL, data, -1);
@@ -940,19 +940,19 @@ RTAI_SYSCALL_MODE int rt_ptimer_delete(timer_t timer, long space)
 {
 	struct rt_tasklet_struct *tasklet;
 	int rtn = 0;
-	
+
 	tasklet = posix_timer[timer].timer;
 	gvb_ptimer_indx(timer);
-	rt_remove_tasklet(tasklet);	
+	rt_remove_tasklet(tasklet);
 	if (space) {
 		tasklet->handler = 0;
 		rt_copy_to_user(tasklet->usptasklet, tasklet, sizeof(struct rt_usp_tasklet_struct));
 		rt_task_resume(tasklet->task);
-		rtn = tasklet->thread;	
+		rtn = tasklet->thread;
 	}
 	rt_free(tasklet);
 	return rtn;
-}		
+}
 EXPORT_SYMBOL(rt_ptimer_delete);
 
  /*
@@ -972,7 +972,7 @@ int __rtai_tasklets_init(void)
         }
 	if (init_ptimers()) {
 		return -ENOMEM;
-	}	
+	}
 	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
 		timers_lock[cpuid] = timers_lock[0];
 		timers_list[cpuid] = timers_list[0];

@@ -39,7 +39,7 @@ void task1(void)
 	rt_grow_and_lock_stack(STACK_SIZE - 10000);
 #ifdef MAKE_HARD
 	MAKE_HARD();
-#endif	
+#endif
 	rt_make_hard_real_time();
 	rt_printk("TASK1 TID = %d : ", rt_gettid());
 
@@ -61,7 +61,7 @@ void task2(void)
 	rt_grow_and_lock_stack(STACK_SIZE - 10000);
 #ifdef MAKE_HARD
 	MAKE_HARD();
-#endif	
+#endif
 	rt_printk("TASK2 TID = %d.\n\n", rt_gettid());
 
 	rt_printk("TESTING FAILING WAIT IF ......");

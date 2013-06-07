@@ -27,7 +27,7 @@ int main(void)
 		exit(1);
 	}
 
-	while (!end) {	
+	while (!end) {
 		lseek(player, 0, SEEK_SET);
 		while(!end && read(player, data, BUFSIZE)) {
 			write(fifo, data, BUFSIZE);

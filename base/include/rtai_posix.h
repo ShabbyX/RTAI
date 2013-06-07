@@ -217,7 +217,7 @@ static inline sem_t *sem_open(const char *namein, int oflags, int value, int typ
 	if (strlen(namein) > RTAI_PNAME_MAXSZ) {
 		return (sem_t *)-ENAMETOOLONG;
 	}
-	
+
 	for(i = 0; i < strlen(namein); i++) {
 		if ((nametmp[i] = namein [i]) >= 'a' && nametmp[i] <= 'z') nametmp[i] += 'A' - 'a';
 	}
@@ -242,9 +242,9 @@ static inline int sem_close(sem_t *sem)
 		return -EBUSY;
 	}
 	rt_named_sem_delete(&sem->sem);
-	
+
 	rt_free(sem);
-	
+
 	return  0;
 }
 
@@ -256,7 +256,7 @@ static inline int sem_unlink(const char *namein)
 	if (strlen(namein) > RTAI_PNAME_MAXSZ) {
 		return -ENAMETOOLONG;
 	}
-	
+
 	for(i = 0; i < strlen(namein); i++) {
 		if ((nametmp[i] = namein [i]) >= 'a' && nametmp[i] <= 'z') nametmp[i] += 'A' - 'a';
 	}
@@ -299,12 +299,12 @@ static inline int sem_wait(sem_t *sem)
 }
 
 static inline int sem_trywait(sem_t *sem)
-{	
+{
 	return rt_sem_wait_if(&sem->sem) > 0 ? 0 : -EAGAIN;
 }
 
 static inline int sem_timedwait(sem_t *sem, const struct timespec *abstime)
-{	
+{
 	return rt_sem_wait_until(&sem->sem, timespec2count(abstime)) < SEM_TIMOUT ? 0 : -ETIMEDOUT;
 }
 
@@ -361,7 +361,7 @@ static inline int pthread_mutex_destroy(pthread_mutex_t *mutex)
 		rt_sem_delete(&mutex->mutex);
 		return  0;
 	}
-	return -EBUSY;	
+	return -EBUSY;
 }
 
 static inline int pthread_mutex_lock(pthread_mutex_t *mutex)
@@ -396,7 +396,7 @@ static inline int pthread_mutexattr_destroy(pthread_mutexattr_t *attr)
 }
 
 static inline int pthread_mutexattr_getpshared(const pthread_mutexattr_t *attr, int *pshared)
-{	
+{
 	*pshared = (((long *)attr)[0] & RTAI_MUTEX_PSHARED) != 0 ? PTHREAD_PROCESS_SHARED : PTHREAD_PROCESS_PRIVATE;
 	return 0;
 }
@@ -464,7 +464,7 @@ static inline int pthread_cond_destroy(pthread_cond_t *cond)
 		return -EBUSY;
 	}
 	rt_sem_delete(&cond->cond);
-	return  0;	
+	return  0;
 }
 
 static inline int pthread_cond_signal(pthread_cond_t *cond)
@@ -632,7 +632,7 @@ static inline int pthread_rwlock_trywrlock(pthread_rwlock_t *rwlock)
 	if (rt_rwl_wrlock_if(&rwlock->rwlock)) {
 		return -EBUSY;
 	}
-	return 0;	
+	return 0;
 }
 
 static inline int pthread_rwlock_timedwrlock(pthread_rwlock_t *rwlock, struct timespec *abstime)
@@ -1028,11 +1028,11 @@ static void handler_wrpr(unsigned long sup_data)
 static inline int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
 {
 	struct rt_tasklet_struct *timer;
-	struct rt_handler_support *handler_data;			
-		
+	struct rt_handler_support *handler_data;
+
 	if (clockid != CLOCK_MONOTONIC && clockid != CLOCK_REALTIME) {
 		return -EINTR;
-	}	
+	}
 	if (evp == NULL) {
 		return -EINTR;
 	} else {
@@ -1048,7 +1048,7 @@ static inline int timer_create(clockid_t clockid, struct sigevent *evp, timer_t 
 			return -EINTR;
 		}
 	}
-		
+
 	return 0;
 }
 
@@ -1060,11 +1060,11 @@ static inline int timer_getoverrun(timer_t timerid)
 static inline int timer_gettime(timer_t timerid, struct itimerspec *value)
 {
 	RTIME timer_times[2];
-	
+
 	rt_ptimer_gettime(timerid, timer_times);
 	count2timespec( timer_times[0], &(value->it_value) );
 	count2timespec( timer_times[1], &(value->it_interval) );
-	
+
 	return 0;
 }
 
@@ -1072,7 +1072,7 @@ static inline int timer_settime(timer_t timerid, int flags, const struct itimers
 {
 	if (ovalue != NULL) {
 		timer_gettime(timerid, ovalue);
-	}	
+	}
 	rt_ptimer_settime(timerid, value, 0, flags);
 
 	return 0;
@@ -1081,7 +1081,7 @@ static inline int timer_settime(timer_t timerid, int flags, const struct itimers
 static inline int timer_delete(timer_t timerid)
 {
 	rt_ptimer_delete(timerid, 0);
-	return 0;	
+	return 0;
 }
 
 #ifdef __cplusplus
@@ -1476,7 +1476,7 @@ RTAI_PROTO(int, __wrap_pthread_mutexattr_destroy, (pthread_mutexattr_t *attr))
 }
 
 RTAI_PROTO(int, __wrap_pthread_mutexattr_getpshared, (const pthread_mutexattr_t *attr, int *pshared))
-{	
+{
 	*pshared = (((long *)attr)[0] & RTAI_MUTEX_PSHARED) != 0 ? PTHREAD_PROCESS_SHARED : PTHREAD_PROCESS_PRIVATE;
 	return 0;
 }
@@ -1972,7 +1972,7 @@ static void *support_thread_fun(struct local_pthread_args_struct *args)
 	pthread_t thread;
 	int policy;
 	struct sched_param param;
-	
+
 	pthread_getschedparam(thread = pthread_self(), &policy, &param);
 	if (policy == SCHED_OTHER) {
 		policy = SCHED_RR;
@@ -2272,7 +2272,7 @@ RTAI_PROTO(int, __wrap_clock_nanosleep,(clockid_t clockid, int flags, const stru
 		}
 		return  -EINTR;
 	}
-	
+
 	pthread_setcanceltype(canc_type, NULL);
 
 	return 0;
@@ -2310,7 +2310,7 @@ static int support_posix_timer(void *data)
 	RT_TASK *task;
 	struct rt_tasklet_struct usptasklet;
 	struct data_stru { struct rt_tasklet_struct *tasklet; long signum; } data_struct;
-	
+
 	data_struct = *(struct data_stru *)data;
 
 	if (!(task = rt_thread_init((unsigned long)data_struct.tasklet, 98, 0, SCHED_FIFO, 0xF))) {
@@ -2323,7 +2323,7 @@ static int support_posix_timer(void *data)
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	rt_make_hard_real_time();
-	
+
 	if (data_struct.signum)	{
 		while (1) {
 			rt_task_suspend(task);
@@ -2333,8 +2333,8 @@ static int support_posix_timer(void *data)
 				break;
 			}
 		}
-	} else {	
-		while (1) {	
+	} else {
+		while (1) {
 			rt_task_suspend(task);
 			if (usptasklet.handler) {
 				usptasklet.handler(usptasklet.data);
@@ -2343,7 +2343,7 @@ static int support_posix_timer(void *data)
 			}
 		}
 	}
-	
+
 	rtai_sti();
 	rt_make_soft_real_time();
 	rt_task_delete(task);
@@ -2357,12 +2357,12 @@ RTAI_PROTO (int, __wrap_timer_create, (clockid_t clockid, struct sigevent *evp, 
 	int pid = -1;
 	unsigned long data = 0;
 	struct { struct rt_tasklet_struct *tasklet; long signum; } data_supfun;
-	
+
 	if (clockid != CLOCK_MONOTONIC && clockid != CLOCK_REALTIME) {
 		errno = ENOTSUP;
 		return -1;
 	}
-		
+
 	if (evp == NULL) {
 			data_supfun.signum = SIGALRM;
 	} else {
@@ -2382,20 +2382,20 @@ RTAI_PROTO (int, __wrap_timer_create, (clockid_t clockid, struct sigevent *evp, 
 	data_supfun.tasklet = arg.timer;
 	arg.thread = rt_thread_create((void *)support_posix_timer, &data_supfun, TASKLET_STACK_SIZE);
 	*timerid = (timer_t)rtai_lxrt(TASKLETS_IDX, SIZARG, PTIMER_CREATE, &arg).i[LOW];
-	
+
 	return 0;
 }
 
 RTAI_PROTO (int, __wrap_timer_gettime, (timer_t timerid, struct itimerspec *value))
 {
 	RTIME timer_times[2];
-	
+
 	struct { timer_t timer; RTIME *timer_times; } arg = { timerid, timer_times };
 	rtai_lxrt(TASKLETS_IDX, SIZARG, PTIMER_GETTIME, &arg);
-	
+
 	count2timespec( timer_times[0], &(value->it_value) );
 	count2timespec( timer_times[1], &(value->it_interval) );
-	
+
 	return 0;
 }
 
@@ -2406,7 +2406,7 @@ RTAI_PROTO (int, __wrap_timer_settime, (timer_t timerid, int flags, const struct
 	}
 	struct { timer_t timer; const struct itimerspec *value; unsigned long data; long flags; } arg = { timerid, value, pthread_self(), flags};
 	rtai_lxrt(TASKLETS_IDX, SIZARG, PTIMER_SETTIME, &arg);
-	
+
 	return 0;
 }
 
@@ -2419,13 +2419,13 @@ RTAI_PROTO (int, __wrap_timer_getoverrun, (timer_t timerid))
 RTAI_PROTO (int, __wrap_timer_delete, (timer_t timerid))
 {
 	int thread;
-	
+
 	struct { timer_t timer; long space;} arg_del = { timerid, 1 };
 	if ((thread = rtai_lxrt(TASKLETS_IDX, sizeof(arg_del), PTIMER_DELETE, &arg_del).i[LOW])) {
 		rt_thread_join(thread);
 	}
-	
-	return 0;	
+
+	return 0;
 }
 
 

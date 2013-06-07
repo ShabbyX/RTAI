@@ -21,7 +21,7 @@ static char rcsid[] = "$NetBSD: e_atanh.c,v 1.8 1995/05/10 20:44:55 jtc Exp $";
  *                  1              2x                          x
  *	atanh(x) = --- * log(1 + -------) = 0.5 * log1p(2 * --------)
  *                  2             1 - x                      1 - x
- *	
+ *
  * 	For x<0.5
  *	atanh(x) = 0.5*log1p(2x+2x*x/(1-x))
  *

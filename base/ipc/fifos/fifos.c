@@ -461,9 +461,9 @@ static inline int mbx_ovrwr_put(F_MBX *mbx, char **msg, int msg_size, int lnx)
 	if ((n = msg_size - mbx->size) > 0) {
 		*msg += n;
 		msg_size -= n;
-	}		
+	}
 	while (msg_size > 0) {
-		if (mbx->frbs) {	
+		if (mbx->frbs) {
 			if ((tocpy = mbx->size - mbx->lbyte) > msg_size) {
 				tocpy = msg_size;
 			}
@@ -482,7 +482,7 @@ static inline int mbx_ovrwr_put(F_MBX *mbx, char **msg, int msg_size, int lnx)
 			msg_size -= tocpy;
 			*msg     += tocpy;
 			mbx->lbyte = MOD_SIZE(mbx->lbyte + tocpy);
-		}	
+		}
 		if (msg_size) {
 			while ((n = msg_size - mbx->frbs) > 0) {
 				if ((tocpy = mbx->size - mbx->fbyte) > n) {
@@ -497,7 +497,7 @@ static inline int mbx_ovrwr_put(F_MBX *mbx, char **msg, int msg_size, int lnx)
 				rtf_spin_unlock_irqrestore(flags, mbx->buflock);
 				mbx->fbyte = MOD_SIZE(mbx->fbyte + tocpy);
 			}
-		}		
+		}
 	}
 	return 0;
 }
@@ -822,7 +822,7 @@ RTAI_SYSCALL_MODE int rtf_reset(unsigned int minor)
 {
 	int semval;
 	F_MBX *mbx;
-	
+
 	VALID_FIFO;
 
 	TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_RESET, minor, 0);
@@ -873,7 +873,7 @@ RTAI_SYSCALL_MODE int rtf_resize(unsigned int minor, int size)
 	void *oldbuf, *newbuf;
 	int old_malloc_type, new_malloc_type, semval;
 	F_MBX *mbx;
-	
+
 	VALID_FIFO;
 
 	TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_RESIZE, minor, size);
@@ -1328,7 +1328,7 @@ static int rtf_open(struct inode *inode, struct file *filp)
 }
 
 static int rtf_fasync(int fd, struct file *filp, int mode)
-{	
+{
 	int minor;
 	minor = MINOR((filp->f_dentry->d_inode)->i_rdev);
 

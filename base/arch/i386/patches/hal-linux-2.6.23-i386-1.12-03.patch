@@ -350,7 +350,7 @@ index a714d6b..7d0d03a 100644
 +#define HANDLE_EXCEPTION(code)		call *%code
 +#define DIVERT_EXCEPTION(code)
 +#endif /* CONFIG_IPIPE */
-+	
++
  #ifdef CONFIG_PREEMPT
  #define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
  #else
@@ -514,7 +514,7 @@ index a714d6b..7d0d03a 100644
 +	BUILD_INTERRUPT(ipipe_ipi3,IPIPE_SERVICE_VECTOR3)
 +#ifdef CONFIG_SMP
 +	BUILD_INTERRUPT(ipipe_ipiX,IPIPE_CRITICAL_VECTOR)
-+#endif	
++#endif
 +#endif
 +
 +#else /* !CONFIG_IPIPE */
@@ -8410,7 +8410,7 @@ index f82b359..8ce463a 100644
 +		kunmap_atomic(kaddr, KM_USER0);
 +		flush_dcache_page(dst);
 +		return;
-+		
++
 +	}
 +	copy_user_highpage(dst, src, va, vma);
 +}
@@ -8438,7 +8438,7 @@ index f82b359..8ce463a 100644
 +			struct page *old_page = vm_normal_page(vma, addr, pte);
 +			cow_user_page(uncow_page, old_page, addr, vma);
 +			pte = mk_pte(uncow_page, vma->vm_page_prot);
-+			
++
 +			if (vm_flags & VM_SHARED)
 +				pte = pte_mkclean(pte);
 +			pte = pte_mkold(pte);
@@ -8551,7 +8551,7 @@ index f82b359..8ce463a 100644
 +{
 +	spinlock_t *ptl;
 +	pte_t *pte;
-+	
++
 +	do {
 +		pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
 +		if (!pte)
@@ -8626,7 +8626,7 @@ index f82b359..8ce463a 100644
 +
 +		addr = vma->vm_start;
 +		end = vma->vm_end;
-+		
++
 +		pgd = pgd_offset(mm, addr);
 +		do {
 +			next = pgd_addr_end(addr, end);

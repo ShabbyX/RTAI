@@ -135,7 +135,7 @@ static void mdlStart(SimStruct *S)
   static char_T errMsg[256];
   comedi_krange krange;
   double range_min, range_max;
-	
+
   if (!ComediDev[index]) {
     dev = comedi_open(devname[index]);
     if (!dev) {
@@ -211,7 +211,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
   double range_max = ssGetRWork(S)[1];
   lsampl_t data, maxdata = comedi_get_maxdata(dev, subdev, COMEDI_CHANNEL);
   double x;
-	
+
   comedi_data_read(dev, subdev, channel, range, aref, &data);
   x = data;
   x /= maxdata;

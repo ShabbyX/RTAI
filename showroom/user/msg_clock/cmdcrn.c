@@ -101,7 +101,7 @@ void *CommandChrono_task(void *args)
 					buffered = 0;
 				} else {
 					rt_receive(put, &command);
-				}	
+				}
 				Chronostatus = running;
 				break;
 			case running:

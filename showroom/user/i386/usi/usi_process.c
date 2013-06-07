@@ -63,7 +63,7 @@ static void *timer_handler(void *args)
 		do {
 			ovr = rt_irq_wait_timed(TIMER_IRQ, nano2count(TIMEOUT));
 			if (ovr == RT_IRQ_TASK_ERR) break;
-			if (ovr > 0) {	
+			if (ovr > 0) {
 				/* overrun processing, if any, goes here */
 				rt_sem_signal(dspsem);
 			}

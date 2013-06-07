@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 		average += (int)count2nano(rt_get_time() - expected);
 	}
 	rt_make_soft_real_time();
-	stop_rt_timer();	
+	stop_rt_timer();
 	rt_task_delete(task);
 	write(fifo, &average, sizeof(average));
 	close(fifo);

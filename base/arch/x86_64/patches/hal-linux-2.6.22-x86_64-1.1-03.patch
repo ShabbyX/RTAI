@@ -216,7 +216,7 @@ index a67f87b..6239fc6 100644
 +
  #ifndef CONFIG_PREEMPT
  #define retint_kernel retint_restore_args
- #endif	
+ #endif
 @@ -159,6 +170,7 @@ ENTRY(ret_from_fork)
  	CFI_ADJUST_CFA_OFFSET 4
  	popf				# reset kernel eflags
@@ -239,15 +239,15 @@ index a67f87b..6239fc6 100644
 +	popq %rdi
 +	js    ret_from_sys_call
 +	jnz   sysret_fastexit
-+#endif		
++#endif
  	GET_THREAD_INFO(%rcx)
  	testl $(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|_TIF_SECCOMP),threadinfo_flags(%rcx)
  	jnz tracesys
-@@ -255,6 +278,7 @@ sysret_check:		
+@@ -255,6 +278,7 @@ sysret_check:
  	 * sysretq will re-enable interrupts:
  	 */
  	TRACE_IRQS_ON
-+sysret_fastexit:	
++sysret_fastexit:
  	movq RIP-ARGOFFSET(%rsp),%rcx
  	CFI_REGISTER	rip,rcx
  	RESTORE_ARGS 0,-ARG_SKIP,1
@@ -289,7 +289,7 @@ index a67f87b..6239fc6 100644
 +	cli
 +        ret
 +END(__ipipe_root_xirq_thunk)
-+	
++
 +	/* %rdi=virq number, %rsi=cookie, %rdx=handler */
 +ENTRY(__ipipe_root_virq_thunk)
 +	movq %rsp, %rax
@@ -308,7 +308,7 @@ index a67f87b..6239fc6 100644
 +	cli
 +        ret
 +END(__ipipe_root_virq_thunk)
-+	
++
 +ENTRY(common_interrupt)
 +	XCPT_FRAME
 +	interrupt *ipipe_irq_handler
@@ -327,17 +327,17 @@ index a67f87b..6239fc6 100644
  ENTRY(common_interrupt)
  	XCPT_FRAME
  	interrupt do_IRQ
-+#endif /* !CONFIG_IPIPE */	
++#endif /* !CONFIG_IPIPE */
  	/* 0(%rsp): oldrsp-ARGOFFSET */
 +#ifdef CONFIG_IPIPE
 +ENTRY(ret_from_intr)
 +#else
  ret_from_intr:
 +#endif
- 	cli	
+ 	cli
  	TRACE_IRQS_OFF
  	decl %gs:pda_irqcount
-@@ -552,17 +647,15 @@ retint_swapgs:	 	
+@@ -552,17 +647,15 @@ retint_swapgs:
  	/*
  	 * The iretq could re-enable interrupts:
  	 */
@@ -346,7 +346,7 @@ index a67f87b..6239fc6 100644
  	swapgs
  	jmp restore_args
 
- retint_restore_args:				
+ retint_restore_args:
 -	cli
 +	TRACE_IRQS_IRETQ
  	/*
@@ -354,8 +354,8 @@ index a67f87b..6239fc6 100644
  	 */
 -	TRACE_IRQS_IRETQ
  restore_args:
- 	RESTORE_ARGS 0,8,0						
- iret_label:	
+ 	RESTORE_ARGS 0,8,0
+ iret_label:
 @@ -625,7 +718,7 @@ ENTRY(retint_kernel)
  	jnc  retint_restore_args
  	bt   $9,EFLAGS-ARGOFFSET(%rsp)	/* interrupts off? */
@@ -363,13 +363,13 @@ index a67f87b..6239fc6 100644
 -	call preempt_schedule_irq
 +	PREEMPT_SCHEDULE_IRQ
  	jmp exit_intr
- #endif	
+ #endif
 
 @@ -634,7 +727,27 @@ END(common_interrupt)
- 	
+
  /*
   * APIC interrupts.
-- */		
+- */
 + */
 +#ifdef CONFIG_IPIPE
 +	.macro apicinterrupt num,func
@@ -390,7 +390,7 @@ index a67f87b..6239fc6 100644
 +	jmp restore_args
 +	CFI_ENDPROC
 +	.endm
-+#else /* !CONFIG_IPIPE */	
++#else /* !CONFIG_IPIPE */
  	.macro apicinterrupt num,func
  	INTR_FRAME
  	pushq $~(\num)
@@ -398,7 +398,7 @@ index a67f87b..6239fc6 100644
  	jmp ret_from_intr
  	CFI_ENDPROC
  	.endm
-+#endif /* !CONFIG_IPIPE */	
++#endif /* !CONFIG_IPIPE */
 
  ENTRY(thermal_interrupt)
  	apicinterrupt THERMAL_APIC_VECTOR,smp_thermal_interrupt
@@ -406,19 +406,19 @@ index a67f87b..6239fc6 100644
  	INVALIDATE_ENTRY 1
  	INVALIDATE_ENTRY 2
  	INVALIDATE_ENTRY 3
-+#ifndef CONFIG_IPIPE	
++#ifndef CONFIG_IPIPE
  	INVALIDATE_ENTRY 4
  	INVALIDATE_ENTRY 5
  	INVALIDATE_ENTRY 6
  	INVALIDATE_ENTRY 7
-+#endif /* !CONFIG_IPIPE */	
++#endif /* !CONFIG_IPIPE */
 
  ENTRY(call_function_interrupt)
  	apicinterrupt CALL_FUNCTION_VECTOR,smp_call_function_interrupt
 @@ -695,31 +811,39 @@ END(spurious_interrupt)
  /*
   * Exception entry points.
-  */ 		
+  */
 -	.macro zeroentry sym
 +	.macro zeroentry sym, ex_code
  	INTR_FRAME
@@ -434,7 +434,7 @@ index a67f87b..6239fc6 100644
 +#endif
  	jmp error_entry
  	CFI_ENDPROC
- 	.endm	
+ 	.endm
 
 -	.macro errorentry sym
 +	.macro errorentry sym, ex_code
@@ -479,12 +479,12 @@ index a67f87b..6239fc6 100644
  	.if \irqtrace
  	TRACE_IRQS_OFF
  	.endif
-+#ifdef CONFIG_IPIPE	
++#ifdef CONFIG_IPIPE
 +	xorl %eax,%eax
 +	/* WARNING: paranoidexit will check %eax to decide whether the
 +	exception has to be propagated or not. */
-+#endif	
-+3:	
++#endif
++3:
  	.endm
 
  	/*
@@ -495,11 +495,11 @@ index a67f87b..6239fc6 100644
 +#ifdef CONFIG_IPIPE
 +	testl %eax,%eax
 +	jnz paranoid_swapgs\trace
-+#endif		
++#endif
  	testl $3,CS(%rsp)
  	jnz   paranoid_userspace\trace
  paranoid_swapgs\trace:
-@@ -865,7 +1009,19 @@ error_sti:	
+@@ -865,7 +1009,19 @@ error_sti:
  	movq %rsp,%rdi
  	movq ORIG_RAX(%rsp),%rsi	/* get error code */
  	movq $-1,ORIG_RAX(%rsp)
@@ -516,18 +516,18 @@ index a67f87b..6239fc6 100644
 +#else /* !CONFIG_IPIPE */
  	call *%rax
 +#endif /* !CONFIG_IPIPE */
- 	/* ebx:	no swapgs flag (1: don't need swapgs, 0: need it) */	
- error_exit:		
- 	movl %ebx,%eax		
-@@ -883,7 +1039,9 @@ error_exit:		
+ 	/* ebx:	no swapgs flag (1: don't need swapgs, 0: need it) */
+ error_exit:
+ 	movl %ebx,%eax
+@@ -883,7 +1039,9 @@ error_exit:
  	 * The iret might restore flags:
  	 */
  	TRACE_IRQS_IRETQ
 -	swapgs
 +exit_swap:
 +	swapgs
-+exit_noswap:	
- 	RESTORE_ARGS 0,8,0						
++exit_noswap:
+ 	RESTORE_ARGS 0,8,0
  	jmp iret_label
  	CFI_ENDPROC
 @@ -1025,19 +1183,19 @@ ENTRY(kernel_execve)
@@ -544,7 +544,7 @@ index a67f87b..6239fc6 100644
  END(coprocessor_error)
 
  ENTRY(simd_coprocessor_error)
--	zeroentry do_simd_coprocessor_error	
+-	zeroentry do_simd_coprocessor_error
 +	zeroentry do_simd_coprocessor_error ex_simd_coprocessor_error
  END(simd_coprocessor_error)
 
@@ -557,7 +557,7 @@ index a67f87b..6239fc6 100644
 @@ -1045,7 +1203,7 @@ KPROBE_ENTRY(debug)
   	INTR_FRAME
  	pushq $0
- 	CFI_ADJUST_CFA_OFFSET 8		
+ 	CFI_ADJUST_CFA_OFFSET 8
 -	paranoidentry do_debug, DEBUG_STACK
 +	paranoidentry do_debug, DEBUG_STACK, 1, ex_debug
  	paranoidexit
@@ -584,7 +584,7 @@ index a67f87b..6239fc6 100644
  END(bounds)
 
  ENTRY(invalid_op)
--	zeroentry do_invalid_op	
+-	zeroentry do_invalid_op
 +	zeroentry do_invalid_op ex_invalid_op
  END(invalid_op)
 
@@ -1703,7 +1703,7 @@ index 0000000..82384a1
 +	movq	8(%rsp),%rcx
 +	movq	(%rsp),%rax
 +	addq	$56,%rsp
-+out:	
++out:
 +	ret
 +END(mcount)
 diff --git a/arch/x86_64/kernel/nmi.c b/arch/x86_64/kernel/nmi.c
@@ -1974,19 +1974,19 @@ index 55e586d..60d51ff 100644
 @@ -51,6 +51,18 @@
  	thunk trace_hardirqs_off_thunk,trace_hardirqs_off
  #endif
- 	
+
 +#ifdef CONFIG_IPIPE
 +#ifdef CONFIG_PREEMPT
 +	thunk_retrax __ipipe_preempt_schedule_irq_thunk,__ipipe_preempt_schedule_irq
-+#endif	
++#endif
 +	thunk_retrax __ipipe_syscall_root_thunk,__ipipe_syscall_root
 +#ifdef CONFIG_IPIPE_TRACE_IRQSOFF
 +	thunk __ipipe_trace_irqs_on_thunk,__ipipe_trace_irqs_on
 +	thunk __ipipe_trace_irqs_off_thunk,__ipipe_trace_irqs_off
 +	thunk ipipe_trace_begin_thunk,ipipe_trace_begin
-+#endif	
 +#endif
-+	
++#endif
++
  	/* SAVE_ARGS below is used only for the .cfi directives it contains. */
  	CFI_STARTPROC
  	SAVE_ARGS
@@ -2567,7 +2567,7 @@ index 86e70fe..61e1427 100644
 +	local_save_flags_hw(flags);
 +	local_irq_restore_hw_notrace((flags & ~(1 << 9)) | (1 << 18));
 +}
-+	
++
 +static inline void local_irq_enable_hw_notrace(void)
 +{
 +	unsigned long flags;
@@ -2682,7 +2682,7 @@ index 461ffe4..9f26e88 100644
 @@ -221,6 +221,7 @@ struct thread_struct {
  	unsigned long	fs;
  	unsigned long	gs;
- 	unsigned short	es, ds, fsindex, gsindex;	
+ 	unsigned short	es, ds, fsindex, gsindex;
 +	unsigned long	rip;
  /* Hardware debugging registers */
  	unsigned long	debugreg0;
@@ -7976,7 +7976,7 @@ index f64cbf9..44b0fed 100644
 +		kunmap_atomic(kaddr, KM_USER0);
 +		flush_dcache_page(dst);
 +		return;
-+		
++
 +	}
 +	copy_user_highpage(dst, src, va, vma);
 +}
@@ -8005,7 +8005,7 @@ index f64cbf9..44b0fed 100644
 +
 +			cow_user_page(page, old_page, addr, vma);
 +			pte = mk_pte(page, vma->vm_page_prot);
-+			
++
 +			if (vm_flags & VM_SHARED)
 +				pte = pte_mkclean(pte);
 +			pte = pte_mkold(pte);
@@ -8094,7 +8094,7 @@ index f64cbf9..44b0fed 100644
 +{
 +	spinlock_t *ptl;
 +	pte_t *pte;
-+	
++
 +	do {
 +		pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
 +		if (!pte)
@@ -8165,7 +8165,7 @@ index f64cbf9..44b0fed 100644
 +
 +		addr = vma->vm_start;
 +		end = vma->vm_end;
-+		
++
 +		pgd = pgd_offset(mm, addr);
 +		do {
 +			next = pgd_addr_end(addr, end);

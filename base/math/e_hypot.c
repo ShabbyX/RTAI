@@ -33,7 +33,7 @@ static char rcsid[] = "$NetBSD: e_hypot.c,v 1.9 1995/05/12 04:57:27 jtc Exp $";
  *		t1*y1+((x-y)*(x-y)+(t1*y2+t2*y))
  *	where t1 = 2x with lower 32 bits cleared, t2 = 2x-t1,
  *	y1= y with lower 32 bits chopped, y2 = y-y1.
- *		
+ *
  *	NOTE: scaling may be necessary if some argument is too
  *	      large or too tiny
  *
@@ -84,7 +84,7 @@ static char rcsid[] = "$NetBSD: e_hypot.c,v 1.9 1995/05/12 04:57:27 jtc Exp $";
 	   SET_HIGH_WORD(b,hb);
 	}
 	if(hb < 0x20b00000) {	/* b < 2**-500 */
-	    if(hb <= 0x000fffff) {	/* subnormal b or 0 */	
+	    if(hb <= 0x000fffff) {	/* subnormal b or 0 */
 	        u_int32_t low;
 		GET_LOW_WORD(low,b);
 		if((hb|low)==0) return a;

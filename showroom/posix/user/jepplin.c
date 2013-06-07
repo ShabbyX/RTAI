@@ -117,7 +117,7 @@ static void *start_task_code(void *arg)
 	for (i = 0; i < NUM_TASKS; ++i) {
 		sem_init(&sems[i], 0, 0);
 		pthread_create(&thread[i], NULL, (void *)task_code, (void *)i);
-	}	
+	}
 	/* create the sync semaphore */
 	sem_init(&sync_sem, 0, 0);
 	/* create the priority-test semaphore */

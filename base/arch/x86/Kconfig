@@ -764,7 +764,7 @@ config RTAI_USI
 	The user space interrupt support does much of the same, but adds
 	something that permits you to write nothing in kernel space.
 	The module will be called rtai_usi.o.
-	
+
 
 config RTAI_WD
 	bool "Watchdog support"

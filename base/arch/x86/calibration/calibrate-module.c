@@ -144,7 +144,7 @@ static long long user_srq(unsigned long whatever)
 			if (args[0] == KLATENCY) {
 				rt_task_init_cpuid(&rtask, spv, args[2], STACKSIZE, 0, 0, 0, hard_cpu_id());
 			} else {
-//				rt_kthread_init_cpuid(&rtask, spv, args[2], STACKSIZE, 0, 0, 0, hard_cpu_id());	
+//				rt_kthread_init_cpuid(&rtask, spv, args[2], STACKSIZE, 0, 0, 0, hard_cpu_id());
 			}
 			expected = rt_get_time() + 100*period;
 			rt_task_make_periodic(&rtask, expected, period);

@@ -234,7 +234,7 @@ index 3c3c220..0118f34 100644
 +#define HANDLE_EXCEPTION(code)		call *%code
 +#define DIVERT_EXCEPTION(code)
 +#endif /* CONFIG_IPIPE */
-+	
++
  #ifdef CONFIG_PREEMPT
  #define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
  #else
@@ -401,7 +401,7 @@ index 3c3c220..0118f34 100644
 +	BUILD_INTERRUPT(ipipe_ipi3,IPIPE_SERVICE_VECTOR3)
 +#ifdef CONFIG_SMP
 +	BUILD_INTERRUPT(ipipe_ipiX,IPIPE_CRITICAL_VECTOR)
-+#endif	
++#endif
 +#endif
 +
 +#else /* !CONFIG_IPIPE */
@@ -2089,7 +2089,7 @@ index 9b77b39..25eb6a1 100644
 
 -		spin_lock(&i8253_lock);
 +		spin_lock_irqsave(&i8253_lock);
- 		
+
  		outb_p(0x00, 0x43);
  		val = inb_p(0x40);
  		val |= inb(0x40) << 8;
@@ -7959,7 +7959,7 @@ index f64cbf9..44b0fed 100644
 +		kunmap_atomic(kaddr, KM_USER0);
 +		flush_dcache_page(dst);
 +		return;
-+		
++
 +	}
 +	copy_user_highpage(dst, src, va, vma);
 +}
@@ -7988,7 +7988,7 @@ index f64cbf9..44b0fed 100644
 +
 +			cow_user_page(page, old_page, addr, vma);
 +			pte = mk_pte(page, vma->vm_page_prot);
-+			
++
 +			if (vm_flags & VM_SHARED)
 +				pte = pte_mkclean(pte);
 +			pte = pte_mkold(pte);
@@ -8077,7 +8077,7 @@ index f64cbf9..44b0fed 100644
 +{
 +	spinlock_t *ptl;
 +	pte_t *pte;
-+	
++
 +	do {
 +		pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
 +		if (!pte)
@@ -8148,7 +8148,7 @@ index f64cbf9..44b0fed 100644
 +
 +		addr = vma->vm_start;
 +		end = vma->vm_end;
-+		
++
 +		pgd = pgd_offset(mm, addr);
 +		do {
 +			next = pgd_addr_end(addr, end);

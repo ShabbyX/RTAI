@@ -108,7 +108,7 @@ bool Mailbox::init(const char* name)
 	if(m_Mailbox == 0){
 		m_Owner = false;
 		m_Named = true;
-		
+
         unsigned long num = nam2num(name);
         if(  rt_get_type( num ) == IS_MBX ){
             m_Mailbox = static_cast<MBX*>(rt_get_adr( num  ));

@@ -40,7 +40,7 @@ int main(int argc,char *argv[])
 	RT_TASK *task;
 	long msg;
 	struct sample { long min, max, avrg, jitters[2]; } samp;
-	
+
         if (!(task = rt_task_init_schmod(nam2num("PRECHK"), 15, 0, 0, SCHED_FIFO, 0xF))) {
                 printf("CANNOT INIT MASTER TASK\n");
                 exit(1);

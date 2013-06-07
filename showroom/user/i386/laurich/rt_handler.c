@@ -108,7 +108,7 @@ static void tmr_irq_handler(int irq)
 //			rt_sem_wait_if(&tmr_sema[timer]);
 			thandler += (rdtsc() - tirq);
 			cntirq++;
-			rt_sem_signal(&tmr_sema[timer]);	
+			rt_sem_signal(&tmr_sema[timer]);
 		}
 	}
 	rt_pend_linux_irq(irq);

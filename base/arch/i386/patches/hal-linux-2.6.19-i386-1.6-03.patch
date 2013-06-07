@@ -92,7 +92,7 @@ diff --exclude patches --exclude .pc -uNrp 2.6.19/arch/i386/kernel/apic.c 2.6.19
 @@ -665,9 +665,9 @@ static int lapic_suspend(struct sys_devi
  	apic_pm_state.apic_tdcr = apic_read(APIC_TDCR);
  	apic_pm_state.apic_thmr = apic_read(APIC_LVTTHMR);
- 	
+
 -	local_irq_save(flags);
 +	local_irq_save_hw(flags);
  	disable_local_APIC();
@@ -2111,7 +2111,7 @@ diff --exclude patches --exclude .pc -uNrp 2.6.19/arch/i386/mach-voyager/voyager
 
 -		spin_lock(&i8253_lock);
 +		spin_lock_irqsave(&i8253_lock);
- 		
+
  		outb_p(0x00, 0x43);
  		val = inb_p(0x40);
  		val |= inb(0x40) << 8;
@@ -2662,7 +2662,7 @@ diff --exclude patches --exclude .pc -uNrp 2.6.19/include/asm-i386/mach-default/
  	i = inb(0x20);
 -	spin_unlock(&i8259A_lock);
 +	spin_unlock_irqrestore(&i8259A_lock, flags);
- 	
+
  	/* assumption about timer being IRQ0 */
  	if (i & 0x01) {
 diff --exclude patches --exclude .pc -uNrp 2.6.19/include/asm-i386/mmu_context.h 2.6.19-ipipe/include/asm-i386/mmu_context.h

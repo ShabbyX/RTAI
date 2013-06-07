@@ -510,7 +510,7 @@ void rt_deregister_watchdog(RT_TASK *wdog,
 #endif /* __cplusplus */
 
 long rt_thread_create(void *fun, void *args, int stack_size);
-	
+
 RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int policy, int cpus_allowed);
 
 int rt_thread_delete(RT_TASK *rt_task);

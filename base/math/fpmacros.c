@@ -88,7 +88,7 @@ long int __fpclassify ( double arg )
             } x;
 
 	x.dbl = arg;
-	
+
 	exponent = x.hex.high & dExpMask;
 	if ( exponent == dExpMask )
 		{

@@ -136,7 +136,7 @@ static void *latency_fun(void *arg)
 	int period;
 	RT_TASK *chktsk;
 	RTIME expected;
-	
+
 	min_diff = 1000000000;
 	max_diff = -1000000000;
         if (!(Latency_Task = rt_thread_init(nam2num("PRETSK"), 0, 0, SCHED_FIFO, CPUMAP))) {
@@ -210,7 +210,7 @@ int main(void)
 	rt_thread_join(fast_thread);
 	rt_thread_join(slow_thread);
 	if (!hard_timer_running) {
-		stop_rt_timer();	
+		stop_rt_timer();
 	}
 	rt_sem_delete(barrier);
 	rt_thread_delete(Main_Task);

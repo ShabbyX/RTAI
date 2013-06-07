@@ -34,12 +34,12 @@ static char rcsid[] = "$NetBSD: e_j1.c,v 1.8 1995/05/10 20:45:27 jtc Exp $";
  * 	   (To avoid cancellation, use
  *		sin(x) +- cos(x) = -cos(2x)/(sin(x) -+ cos(x))
  * 	    to compute the worse one.)
- *	
+ *
  *	3 Special cases
  *		j1(nan)= nan
  *		j1(0) = 0
  *		j1(inf) = 0
- *		
+ *
  * Method -- y1(x):
  *	1. screen out x<=0 cases: y1(0)=-inf, y1(x<0)=NaN
  *	2. For x<2.
@@ -347,7 +347,7 @@ static double ps2[5] = {
         s = one+z*(q[0]+z*(q[1]+z*(q[2]+z*(q[3]+z*q[4]))));
         return one+ r/s;
 }
-		
+
 
 /* For x >= 8, the asymptotic expansions of qone is
  *	3/8 s - 105/1024 s^3 - ..., where s = 1/x.

@@ -153,11 +153,11 @@ RTAI_SYSCALL_MODE int rt_spclear_tx(unsigned int tty)
  *
  * Arguments:
  * 		tty		serial port number
- * 		
+ *
  * 		mode		RT_SP_NO_HAND_SHAKE
  * 				RT_SP_DSR_ON_TX 	transmitter enabled if DSR active
  * 				RT_SP_HW_FLOW		RTS-CTS flow control
- * 					
+ *
  *				Note: RT_SP_DSR_ON_TX and RT_SP_HW_FLOW can
  *				      be ORed together
  * Return Value:
@@ -184,7 +184,7 @@ RTAI_SYSCALL_MODE int rt_spset_mode(unsigned int tty, int mode)
  *
  * Arguments:
  * 		tty		serial port number
- * 		
+ *
  *		fifotrig	RT_SP_FIFO_DISABLE
  *      			RT_SP_FIFO_SIZE_1
  *      			RT_SP_FIFO_SIZE_4
@@ -217,9 +217,9 @@ RTAI_SYSCALL_MODE int rt_spset_fifotrig(unsigned int tty, int fifotrig)
  *
  * Arguments:
  * 		tty		serial port number
- * 		
+ *
  *		mask		RT_SP_DTR | RT_SP_RTS
- *      			
+ *
  *		setbits		0 -> reset bits in mask
  *      			1 -> set bits in mask
  *
@@ -248,9 +248,9 @@ RTAI_SYSCALL_MODE int rt_spset_mcr(unsigned int tty, int mask, int setbits)
  *
  * Arguments:
  * 		tty		serial port number
- * 		
+ *
  *		mask		RT_SP_CTS | RT_SP_DSR | RT_SP_RI | RT_SP_DCD
- *      			
+ *
  * Return Value:
  * 		masked MSR register value
  * 		or
@@ -272,10 +272,10 @@ RTAI_SYSCALL_MODE int rt_spget_msr(unsigned int tty, int mask)
  *
  * Arguments:
  * 		tty		serial port number
- *      			
+ *
  * Return Value:
  * 		last error condition code
- * 		
+ *
  * 		This condition code can be one of this values:
  * 		RT_SP_BUFFER_FULL
  * 		RT_SP_BUFFER_OVF
@@ -386,12 +386,12 @@ static inline int mbxevdrp(struct rt_spmbx *mbx, char **msg, int msg_size)
  *
  * Arguments:
  * 		tty		serial port number
- * 		
+ *
  * 		msg		pointer to the chars to send
  *
  *		msg_size	abs(msg_size) is the number of bytes to write.
  * 				If <0, write bytes only if possible to write them all together.
- *      			
+ *
  * Return Value:
  * 		number of chars NOT sent
  * 		or
@@ -423,13 +423,13 @@ RTAI_SYSCALL_MODE int rt_spwrite(unsigned int tty, char *msg, int msg_size)
  *
  * Arguments:
  * 		tty		serial port number
- * 		
+ *
  * 		msg		pointer to the buffer where to put chars received
  *
  *		msg_size	abs(msg_size) is the number of bytes to read.
  *				If >0, read all the bytes up to msg_size
  *				If <0, read bytes only if possible to read them all together.
- *      			
+ *
  * Return Value:
  * 		number of chars NOT get (respect to what requested)
  * 		or
@@ -463,13 +463,13 @@ RTAI_SYSCALL_MODE int rt_spread(unsigned int tty, char *msg, int msg_size)
  *
  * Arguments:
  * 		tty		serial port number
- * 		
+ *
  * 		msg		pointer to the buffer where to put chars received
  *
  *		msg_size	abs(msg_size) is the number of bytes to read.
  *				If >0, read all the bytes up to msg_size
  *				If <0, read bytes only if possible to read them all together.
- *      			
+ *
  * Return Value:
  * 		number of chars NOT get (respect to what requested)
  * 		or
@@ -498,14 +498,14 @@ RTAI_SYSCALL_MODE int rt_spevdrp(unsigned int tty, char *msg, int msg_size)
  *
  * Arguments:
  * 		tty		serial port number.
- * 		
+ *
  * 		msg		pointer to the chars to send.
  *
  *		msg_size	number of bytes to send.
  *
  *		delay		timeout in internal count unit,
  *				use DELAY_FOREVER for a blocking send.
- *      			
+ *
  * Return Value:
  * 		-ENODEV, if wrong tty number;
  * 		msg_size, if < 0 or another writer is already using tty;
@@ -547,14 +547,14 @@ RTAI_SYSCALL_MODE int rt_spwrite_timed(unsigned int tty, char *msg, int msg_size
  *
  * Arguments:
  * 		tty		serial port number.
- * 		
+ *
  * 		msg		pointer to the chars to receive.
  *
  *		msg_size	the number of bytes to receive.
  *
  *		delay		timeout in internal count unit,
  *				use DELAY_FOREVER for a blocking receive.
- *      			
+ *
  * Return Value:
  * 		-ENODEV, if wrong tty number;
  * 		msg_size, if < 0 or another reader is already using tty;
@@ -598,7 +598,7 @@ RTAI_SYSCALL_MODE int rt_spread_timed(unsigned int tty, char *msg, int msg_size,
  *
  * Arguments:
  * 		tty		serial port number
- * 		
+ *
  * Return Value:
  * 		number of chars in receive buffer
  * 		or
@@ -619,7 +619,7 @@ RTAI_SYSCALL_MODE int rt_spget_rxavbs(unsigned int tty)
  *
  * Arguments:
  * 		tty		serial port number
- * 		
+ *
  * Return Value:
  * 		number of chars in transmit buffer
  * 		or
@@ -672,31 +672,31 @@ static int rt_spisr(int irq, struct rt_spct_t *pp)
 	unsigned int base_adr;
 	int          data_to_tx;
 	int          toFifo;
-	int 	     txed, rxed;	
+	int 	     txed, rxed;
 	unsigned char data, iir, msr, lsr, error;
 	struct rt_spct_t *p = pp;
 	int i = 0;
-	
+
 	while (1) {
 		base_adr = p->base_adr;
 		toFifo   = p->tx_fifo_depth;
-		rxed = txed = 0;	
+		rxed = txed = 0;
 		todo[i].txs = todo[i].rxs = todo[i].cb = error = 0;
-	
-		iir = inb(base_adr + RT_SP_IIR);	
+
+		iir = inb(base_adr + RT_SP_IIR);
 		do {
-		//rt_printk("rt_spisr irq=%d, iir=0x%02x\n",irq,iir);	
+		//rt_printk("rt_spisr irq=%d, iir=0x%02x\n",irq,iir);
 			switch (iir & 0x0f) {
 				case 0x06: // Receiver Line Status
 				   // Overrun Error or Parity Error or
 				   // Framing Error or Break Interrupt
-				
+
 				if ((lsr = inb(base_adr + RT_SP_LSR)) & 0x1e) {
 					error &= ~0x1e;
 					error |= (lsr & 0x1e);
-				}	
+				}
 				break;
-	
+
 				case 0x04: // Received Data Available
 				case 0x0C: // Character Timeout Indication
 				rxed = 1;
@@ -717,13 +717,13 @@ static int rt_spisr(int irq, struct rt_spct_t *pp)
 				// if RTS-CTS hardware flow control, check if received
 				// buffer is full enough to stop removing RTS signal
 				if ((p->mode & RT_SP_HW_FLOW) && p->ibuf.frbs < spbuflow) {
-					// disable RTS	
+					// disable RTS
 					outb(p->mcr &= ~MCR_RTS, p->base_adr + RT_SP_MCR);
 				}
 				break;
-	
+
 				case 0x02: // Transmitter Holding Register Empty
-	
+
 				/* if possible, put data to base_adr */
 				msr = inb(base_adr + RT_SP_MSR);
 				if ( (p->mode == RT_SP_NO_HAND_SHAKE) ||
@@ -733,9 +733,9 @@ static int rt_spisr(int irq, struct rt_spct_t *pp)
                                           (MSR_CTS & msr) && (MSR_DSR & msr)) ) {
 			    	// if there are data to transmit
 					if (!(data_to_tx = rt_spget_irq(p, &data))) {
-						txed = 1;	
+						txed = 1;
 						do {
-//							rt_printk("->%c] ",data);	
+//							rt_printk("->%c] ",data);
 							outb(data, base_adr + RT_SP_TXB);
 						} while ((--toFifo > 0) && !(data_to_tx = rt_spget_irq(p, &data)));
 					}
@@ -746,11 +746,11 @@ static int rt_spisr(int irq, struct rt_spct_t *pp)
 					}
 				}
 				break;
-	
+
 				case 0x00: // MODEM Status
 				msr = inb(base_adr + RT_SP_MSR);
 				break;
-	
+
 				default:
 				break;
 			}
@@ -771,7 +771,7 @@ static int rt_spisr(int irq, struct rt_spct_t *pp)
 		if (rxed < 0 && p->rxsem.count < 0) {
 			p->rxthrs = 0;
 			todo[i].rxs = 1;
-		}	
+		}
 		if (txed < 0 && p->txsem.count < 0) {
 			p->txthrs = 0;
 			todo[i].txs = 1;
@@ -783,7 +783,7 @@ static int rt_spisr(int irq, struct rt_spct_t *pp)
 		i++;
 		hard_cli();
 	}
-}	
+}
 	ENABLE_SP(irq);
 {
 	int tsk, i = 0;
@@ -844,14 +844,14 @@ again:
  *      numbits		5,6,7,8
  *
  *      stopbits	1,2
- *					
+ *
  *
  *      parity		RT_SP_PARITY_NONE
  *      		RT_SP_PARITY_EVEN
  *      		RT_SP_PARITY_ODD
  *      		RT_SP_PARITY_HIGH
  *      		RT_SP_PARITY_LOW
- *      			
+ *
  * 	mode		RT_SP_NO_HAND_SHAKE
  * 			RT_SP_DSR_ON_TX
  * 			RT_SP_HW_FLOW
@@ -883,11 +883,11 @@ RTAI_SYSCALL_MODE int rt_spopen(unsigned int tty, unsigned int baud, unsigned in
 		 stopbits < 1 || stopbits > 2 ||
 		 numbits < 5 || numbits > 8 ||
 	     (fifotrig & 0xC0) != fifotrig )
-		return -EINVAL;	
+		return -EINVAL;
 
 	if ((p = spct + tty)->opened)
 		return -EADDRINUSE;
-	
+
 	// disable interrupt
 	rt_disable_irq(p->irq);
 
@@ -954,7 +954,7 @@ RTAI_SYSCALL_MODE int rt_spopen(unsigned int tty, unsigned int baud, unsigned in
 RTAI_SYSCALL_MODE int rt_spclose(unsigned int tty)
 {
 	int base_adr=spct[tty].base_adr;
-	
+
 	CHECK_SPINDX(tty);
 	// disable interrupt
 //	rt_disable_irq(spct[tty].irq);
@@ -1180,7 +1180,7 @@ int __rtai_serial_init(void)
 {
 	int i, k, newirq;
 	struct rt_spct_t *p;
-		
+
 	for (spcnt = 0; spcnt < CONFIG_SIZE; spcnt++) {
 		if (!sp_config[spcnt].base_adr || !sp_config[spcnt].irq) {
 			break;
@@ -1225,7 +1225,7 @@ int __rtai_serial_init(void)
 				printk("IRQ NOT AVAILABLE (TTY INDEX: %d).\n", i);
 				newirq = 0;
 			}
-		
+
 			p = &spct[i];
 			do {
 				if (!newirq || !(p->ibuf.bufadr = kmalloc(2*spbufsiz, GFP_KERNEL))) {
@@ -1271,7 +1271,7 @@ int __rtai_serial_init(void)
 		rt_sem_init(&spct[i].txsem, 0);
 		rt_sem_init(&spct[i].rxsem, 0);
 	}
-	
+
 	spbuflow = spbufsiz / 3;
 	spbufhi  = spbufsiz - spbuflow;
 	spbufull = spbufsiz / 10;
@@ -1279,7 +1279,7 @@ int __rtai_serial_init(void)
 	if (set_rt_fun_ext_index(rtai_spdrv_fun, FUN_EXT_RTAI_SP)) {
 		rt_printk("%d is a wrong index module for lxrt.\n", FUN_EXT_RTAI_SP);
 		return -EACCES;
-	}			
+	}
 
 	return 0;
 }

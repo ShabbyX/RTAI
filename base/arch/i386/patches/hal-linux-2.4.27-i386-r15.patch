@@ -892,7 +892,7 @@ diff -uNrp linux-2.4.27/adeos/generic.c linux-2.4.27-adeos/adeos/generic.c
 +
 +    if (!flags)
 +	adeos_hw_sti();	/* Absolutely needed. */
-+	
++
 +    adeos_lock_cpu(hwflags);
 +
 +    if (unlikely(mutex->sleepq != NULL))
@@ -913,7 +913,7 @@ diff -uNrp linux-2.4.27/adeos/generic.c linux-2.4.27-adeos/adeos/generic.c
 +    else
 +	{
 +	clear_bit(IPIPE_STALL_FLAG,&adp->cpudata[cpuid].status);
-+	
++
 +	if (adp->cpudata[cpuid].irq_pending_hi != 0)
 +	    __adeos_sync_stage(IPIPE_IRQMASK_ANY);
 +	}
@@ -1680,7 +1680,7 @@ diff -uNrp linux-2.4.27/adeos/x86.c linux-2.4.27-adeos/adeos/x86.c
 +
 +    if (adp->irqs[irq].control & IPIPE_SYSTEM_MASK)
 +	return -EPERM;
-+	
++
 +    adeos_spin_lock_irqsave(&__adeos_pipelock,flags);
 +
 +    if (handler != NULL)
@@ -1709,7 +1709,7 @@ diff -uNrp linux-2.4.27/adeos/x86.c linux-2.4.27-adeos/adeos/x86.c
 +	    err = -EBUSY;
 +	    goto unlock_and_exit;
 +	    }
-+	
++
 +	if ((modemask & (IPIPE_SHARED_MASK|IPIPE_PASS_MASK)) == IPIPE_SHARED_MASK)
 +	    {
 +	    err = -EINVAL;
@@ -1806,7 +1806,7 @@ diff -uNrp linux-2.4.27/adeos/x86.c linux-2.4.27-adeos/adeos/x86.c
 +
 +    if (((setmask|clrmask) & IPIPE_SHARED_MASK) != 0)
 +	return -EINVAL;
-+	
++
 +    desc = irq_desc + irq;
 +
 +    if (adp_current->irqs[irq].handler == NULL)
@@ -3047,7 +3047,7 @@ diff -uNrp linux-2.4.27/arch/i386/kernel/irq.c linux-2.4.27-adeos/arch/i386/kern
 +#endif /* CONFIG_ADEOS_CORE */
  		handle_IRQ_event(irq, &regs, action);
  		spin_lock(&desc->lock);
- 		
+
 @@ -1125,6 +1133,29 @@ static int irq_affinity_write_proc (stru
  	return full_count;
  }
@@ -3146,7 +3146,7 @@ diff -uNrp linux-2.4.27/arch/i386/kernel/smp.c linux-2.4.27-adeos/arch/i386/kern
  	__cli();
 -
 +#endif /* CONFIG_ADEOS_CORE */
- 		
+
  	/*
  	 * Wait for idle.
 @@ -185,7 +197,11 @@ static inline void send_IPI_mask_bitmask
@@ -3903,7 +3903,7 @@ diff -uNrp linux-2.4.27/include/asm-i386/pgalloc.h linux-2.4.27-adeos/include/as
 diff -uNrp linux-2.4.27/include/asm-i386/smp.h linux-2.4.27-adeos/include/asm-i386/smp.h
 --- linux-2.4.27/include/asm-i386/smp.h	2002-11-29 00:53:15.000000000 +0100
 +++ linux-2.4.27-adeos/include/asm-i386/smp.h	2004-09-12 22:27:50.000000000 +0200
-@@ -81,7 +81,11 @@ extern void smp_store_cpu_info(int id);	
+@@ -81,7 +81,11 @@ extern void smp_store_cpu_info(int id);
   * so this is correct in the x86 case.
   */
 
@@ -4638,7 +4638,7 @@ diff -uNrp linux-2.4.27/kernel/adeos.c linux-2.4.27-adeos/kernel/adeos.c
 +
 +	    /* Let the prioritary domain process the event. */
 +	    __adeos_switch_to(adp,cpuid);
-+	
++
 +#ifdef CONFIG_SMP
 +	    adeos_load_cpuid();	/* Processor might have changed. */
 +#endif /* CONFIG_SMP */
@@ -4824,7 +4824,7 @@ diff -uNrp linux-2.4.27/kernel/adeos.c linux-2.4.27-adeos/kernel/adeos.c
 +		    adp_cpu_current[cpuid]->cpudata[cpuid].irq_pending_hi != 0)
 +		    __adeos_sync_stage(IPIPE_IRQMASK_ANY);
 +		}
-+	
++
 +	    break;
 +	    }
 +	else if (_adp == adp_cpu_current[cpuid])
@@ -4894,7 +4894,7 @@ diff -uNrp linux-2.4.27/kernel/adeos.c linux-2.4.27-adeos/kernel/adeos.c
 +		adeos_hw_save_flags_and_sti(_flags);
 +		adeos_hw_local_irq_restore(_flags);
 +		}
-+	
++
 +	    __adeos_sync_stage(IPIPE_IRQMASK_ANY);
 +
 +	    adeos_load_cpuid();
@@ -5566,7 +5566,7 @@ diff -uNrp linux-2.4.27/mm/vmalloc.c linux-2.4.27-adeos/mm/vmalloc.c
 +		pgd_t olddir = *dir;
 +#endif /* CONFIG_ADEOS_CORE */
  		pmd_t *pmd;
- 		
+
  		pmd = pmd_alloc(&init_mm, dir, address);
 @@ -174,6 +177,11 @@ static inline int __vmalloc_area_pages (
  		if (alloc_area_pmd(pmd, address, end - address, gfp_mask, prot, pages))

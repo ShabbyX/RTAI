@@ -760,13 +760,13 @@ RTAI_SYSCALL_MODE int rt_timer_insert(struct rtdm_timer_struct *timer, int prior
 	if (!handler) {
 		return -EINVAL;
 	}
-	timer->handler     = handler;	
+	timer->handler     = handler;
 	timer->data        = data;
-	timer->priority    = priority;	
+	timer->priority    = priority;
 	timer->firing_time = firing_time;
 	timer->period      = period;
 	REALTIME2COUNT(firing_time)
-	
+
 	timer->cpuid = cpuid = NUM_CPUS > 1 ? rtai_cpuid() : 0;
 // timer insertion in timers_list
 	flags = rt_spin_lock_irqsave(lock = &timers_lock[LIST_CPUID]);
@@ -856,7 +856,7 @@ RTAI_MODULE_PARM(TimersManagerStacksize, int);
 static int rtai_timers_init(void)
 {
 	int cpuid;
-	
+
 	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
 		timers_lock[cpuid] = timers_lock[0];
 		timers_list[cpuid] = timers_list[0];

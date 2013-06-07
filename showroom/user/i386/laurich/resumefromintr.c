@@ -36,7 +36,7 @@ int main(void)
 	int timer_period, timer_freq, h_timer_freq;
 	int count, perns, pervar, maxpervar = 0;
 	RTIME tp, t;
-	
+
 	rt_allow_nonroot_hrt();
         pthread_create(&thread, NULL, endt, NULL);
 	iopl(3);
@@ -50,7 +50,7 @@ int main(void)
 		rt_task_delete(rtask);
 		return 1;
 	}
-	
+
 	rt_make_hard_real_time();
 	timer_period = 1;
 	timer_freq = 2;

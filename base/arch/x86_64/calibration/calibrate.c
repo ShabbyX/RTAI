@@ -232,8 +232,8 @@ int main(int argc, char *argv[])
 
 			case 'a':
 				if (!params.mp) {
-					printf("*** APIC FREQUENCY CALIBRATION NOT AVAILABLE UNDER UP ***\n");	
-					break;	
+					printf("*** APIC FREQUENCY CALIBRATION NOT AVAILABLE UNDER UP ***\n");
+					break;
 				}
 			case 'b':
 			case 'c': {

@@ -43,7 +43,7 @@
 #define TIMER_INSERT 	 5
 #define TIMER_REMOVE	 6
 #define SET_TASKLETS_PRI 7
-#define SET_FIR_TIM	 8	
+#define SET_FIR_TIM	 8
 #define SET_PER	 	 9
 #define SET_HDL		10
 #define SET_DAT	 	11
@@ -346,7 +346,7 @@ static int support_tasklet(struct support_tasklet_s *args)
 	}
 	printf("CANNOT INIT SUPPORT TASKLET\n");
 	return -1;
-	
+
 }
 #endif /* __SUPPORT_TASKLET__ */
 

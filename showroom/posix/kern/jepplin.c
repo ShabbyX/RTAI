@@ -130,7 +130,7 @@ static void *start_task_code(void *arg)
 		sem_init(&sems[i], BIN_SEM, 0);
 		attr.priority = NUM_TASKS - i;
 		pthread_create(&thread[i], &attr, (void *)task_code, (void *)i);
-	}	
+	}
 	/* create the sync semaphore */
 	sem_init(&sync_sem, CNT_SEM, 0);
 	/* create the priority-test semaphore */

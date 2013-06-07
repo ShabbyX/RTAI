@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	printf("\nPLAYER TASK RUNNING\n\n(TYPE ENTER TO END EVERYTHING)\n");
 
-	while (!end) {	
+	while (!end) {
 		lseek(player, 0, SEEK_SET);
 		while(!end && (msg = read(player, data, BUFSIZE)) > 0) {
 			polld[0] = (struct rt_poll_s){ mbx, RT_POLL_MBX_SEND };

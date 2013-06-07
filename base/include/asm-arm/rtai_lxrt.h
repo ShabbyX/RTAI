@@ -81,7 +81,7 @@ do { \
 	if (!IS_FUSION_TIMER_RUNNING()) { \
 		hal_pend_uncond(__ipipe_mach_timerint, cpuid); \
 	} \
-} while (0)		
+} while (0)
 
 /* Adeos/ARM calls all event handlers with hw-interrupts enabled (both in threaded
  * and unthreaded mode), so there is no need for RTAI to do it again. */

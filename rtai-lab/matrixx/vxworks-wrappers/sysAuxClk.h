@@ -54,23 +54,23 @@ static int get_sys_aux_clk_srq(void)
 
 static inline int sysAuxClkRateSet(long ticksPerSecond)
 {
-	struct { long code, ticks; } args = { AUX_CLK_RATE_SET, ticksPerSecond };	
+	struct { long code, ticks; } args = { AUX_CLK_RATE_SET, ticksPerSecond };
 	return rtai_srq(get_sys_aux_clk_srq(), (unsigned long)&args);
 }
 
 static inline void sysAuxClkEnable(void) {
-	struct { long code; } args = { AUX_CLK_ENABLE };	
+	struct { long code; } args = { AUX_CLK_ENABLE };
 	rtai_srq(get_sys_aux_clk_srq(), (unsigned long)&args);
 }
 
 static inline void sysAuxClkDisable(void) {
-	struct { long code; } args = { AUX_CLK_DISABLE };	
+	struct { long code; } args = { AUX_CLK_DISABLE };
 	rtai_srq(get_sys_aux_clk_srq(), (unsigned long)&args);
 }
 
 static inline int sysAuxClkRateGet(void)
 {
-	struct { long code; } args = { AUX_CLK_RATE_GET };	
+	struct { long code; } args = { AUX_CLK_RATE_GET };
 	return rtai_srq(get_sys_aux_clk_srq(), (unsigned long)&args);
 }
 
@@ -78,7 +78,7 @@ static inline int sysAuxClkRateGet(void)
 #define __SYS_AUX_CLOCK_FUN__
 static void sys_aux_clock_fun(long fun, long data)
 {
-	struct { long code; } args = { AUX_CLK_CONNECT };	
+	struct { long code; } args = { AUX_CLK_CONNECT };
 	rtai_srq(get_sys_aux_clk_srq(), (unsigned long)&args);
 	while (1) {
 #ifdef SINGLE_EXECUTION

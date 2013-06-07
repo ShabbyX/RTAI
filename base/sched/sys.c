@@ -104,7 +104,7 @@ static inline int GENERIC_DELETE(int index, void *object)
 {
 	return ((RTAI_SYSCALL_MODE int (*)(void *, ...))rt_get_lxrt_fun_entry(index))(object);
 }
-			
+
 #define lxrt_sem_delete(sem)        GENERIC_DELETE(SEM_DELETE, sem)
 #define lxrt_named_sem_delete(sem)  GENERIC_DELETE(NAMED_SEM_DELETE, sem)
 #define lxrt_rwl_delete(rwl)        GENERIC_DELETE(RWL_DELETE, rwl)
@@ -134,11 +134,11 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 {
 	int rsize, r2size, wsize, w2size, msg_size;
 	long *wmsg_adr, *w2msg_adr, *fun_args;
-		
+
 	rsize = r2size = wsize = w2size = 0 ;
 	wmsg_adr = w2msg_adr = NULL;
 	fun_args = arg - 1;
-	if (NEED_TO_R(type)) {			
+	if (NEED_TO_R(type)) {
 		rsize = USP_RSZ1(type);
 		rsize = rsize ? fun_args[rsize] : sizeof(long);
 		if (NEED_TO_R2ND(type)) {
@@ -160,7 +160,7 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 			rt_task->max_msg_size[0] = (msg_size << 7)/100;
 			rt_task->msg_buf[0] = rt_malloc(rt_task->max_msg_size[0]);
 		}
-		if (rsize) {			
+		if (rsize) {
 			long *buf_arg = fun_args + USP_RBF1(type);
 			rt_copy_from_user(rt_task->msg_buf[0], (long *)buf_arg[0], rsize);
 			buf_arg[0] = (long)rt_task->msg_buf[0];
@@ -805,7 +805,7 @@ static void kthread_fun(struct thread_args *args)
                 linux_rt_priority = 1;
 	}
 	rtai_set_linux_task_priority(current, args->policy, linux_rt_priority);
-	
+
 	if ((args->task = __task_init(rt_get_name(NULL), args->priority, 0, 0, args->cpus_allowed))) {
 		RT_TASK *task = args->task;
 		void (*fun)(long) = args->fun;
@@ -829,13 +829,13 @@ RT_TASK *rt_kthread_create(void *fun, long data, int priority, int linux_policy,
 	return args.task;
 }
 #endif
-	
+
 long rt_thread_create(void *fun, void *args, int stack_size)
 {
 	return kernel_thread(fun, args, 0);
 }
 EXPORT_SYMBOL(rt_thread_create);
-	
+
 RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int policy, int cpus_allowed)
 {
 	int linux_rt_priority;
@@ -847,7 +847,7 @@ RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int 
 	}
 	rtai_set_linux_task_priority(current, policy, linux_rt_priority);
 	rt_daemonize();
-	
+
 	if ((task = __task_init(name ? name : rt_get_name(NULL), priority, 0, max_msg_size, cpus_allowed))) {
 		rt_make_hard_real_time(task);
 	}

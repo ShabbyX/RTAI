@@ -63,7 +63,7 @@ int main(void)
 	int timer_period, timer_freq, h_timer_freq, thread;
 	int count, perns, pervar, maxpervar = 0;
 	RTIME tp, t;
-	
+
 	rt_allow_nonroot_hrt();
         thread = rt_thread_create(endt, NULL, 10000);
 	iopl(3);
@@ -77,7 +77,7 @@ int main(void)
 		rt_task_delete(rtask);
 		return 1;
 	}
-	
+
 //	rt_make_hard_real_time();
 	tmr_get_setup(timer, &timer_period, &timer_freq);
 	h_timer_freq = timer_freq/2;

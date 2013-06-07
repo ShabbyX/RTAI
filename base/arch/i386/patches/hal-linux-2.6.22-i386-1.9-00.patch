@@ -227,7 +227,7 @@ diff -uNrp 2.6.22/arch/i386/kernel/entry.S 2.6.22-ipipe/arch/i386/kernel/entry.S
 +#define HANDLE_EXCEPTION(code)		call *%code
 +#define DIVERT_EXCEPTION(code)
 +#endif /* CONFIG_IPIPE */
-+	
++
  #ifdef CONFIG_PREEMPT
  #define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
  #else
@@ -394,7 +394,7 @@ diff -uNrp 2.6.22/arch/i386/kernel/entry.S 2.6.22-ipipe/arch/i386/kernel/entry.S
 +	BUILD_INTERRUPT(ipipe_ipi3,IPIPE_SERVICE_VECTOR3)
 +#ifdef CONFIG_SMP
 +	BUILD_INTERRUPT(ipipe_ipiX,IPIPE_CRITICAL_VECTOR)
-+#endif	
++#endif
 +#endif
 +
 +#else /* !CONFIG_IPIPE */
@@ -2062,7 +2062,7 @@ diff -uNrp 2.6.22/arch/i386/mach-voyager/voyager_basic.c 2.6.22-ipipe/arch/i386/
 
 -		spin_lock(&i8253_lock);
 +		spin_lock_irqsave(&i8253_lock);
- 		
+
  		outb_p(0x00, 0x43);
  		val = inb_p(0x40);
  		val |= inb(0x40) << 8;
@@ -7854,7 +7854,7 @@ diff -uNrp 2.6.22/mm/memory.c 2.6.22-ipipe/mm/memory.c
 +		kunmap_atomic(kaddr, KM_USER0);
 +		flush_dcache_page(dst);
 +		return;
-+		
++
 +	}
 +	copy_user_highpage(dst, src, va, vma);
 +}
@@ -7883,7 +7883,7 @@ diff -uNrp 2.6.22/mm/memory.c 2.6.22-ipipe/mm/memory.c
 +
 +			cow_user_page(page, old_page, addr, vma);
 +			pte = mk_pte(page, vma->vm_page_prot);
-+			
++
 +			if (vm_flags & VM_SHARED)
 +				pte = pte_mkclean(pte);
 +			pte = pte_mkold(pte);
@@ -7972,7 +7972,7 @@ diff -uNrp 2.6.22/mm/memory.c 2.6.22-ipipe/mm/memory.c
 +{
 +	spinlock_t *ptl;
 +	pte_t *pte;
-+	
++
 +	do {
 +		pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
 +		if (!pte)
@@ -8043,7 +8043,7 @@ diff -uNrp 2.6.22/mm/memory.c 2.6.22-ipipe/mm/memory.c
 +
 +		addr = vma->vm_start;
 +		end = vma->vm_end;
-+		
++
 +		pgd = pgd_offset(mm, addr);
 +		do {
 +			next = pgd_addr_end(addr, end);

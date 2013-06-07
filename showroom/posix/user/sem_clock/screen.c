@@ -48,7 +48,7 @@ int main(void)
 	mqd_t Keyboard, Screen;
 	struct mq_attr kb_attrs = { MAX_MSGS, 1, 0, 0};
 	struct mq_attr sc_attrs = { MAX_MSGS, 12, 0, 0};
-	
+
 	signal(SIGINT, endme);
  	if (!(mytask = rt_task_init(nam2num("SCRTSK"), 20, 0, 0))) {
 		printf("CANNOT INIT SCREEN TASK\n");

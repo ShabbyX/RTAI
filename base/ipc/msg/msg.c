@@ -1880,7 +1880,7 @@ static void proxy_task(RT_TASK *me)
 	struct proxy_t *my;
 	unsigned long ret;
 
-	my = (struct proxy_t *)me->stack_bottom;        	
+	my = (struct proxy_t *)me->stack_bottom;
 	while (1) {
 		while (my->nmsgs) {
 		 	atomic_dec((atomic_t *)&my->nmsgs);
@@ -1951,7 +1951,7 @@ RTAI_SYSCALL_MODE int rt_proxy_detach(RT_TASK *proxy)
 RTAI_SYSCALL_MODE RT_TASK *rt_trigger(RT_TASK *proxy)
 {
 	struct proxy_t *his;
-	
+
 	his = (struct proxy_t *)(proxy->stack_bottom);
 	if (his && proxy->magic == RT_TASK_MAGIC) {
 		atomic_inc((atomic_t *)&his->nmsgs);

@@ -165,7 +165,7 @@ static void ClockChrono_Clock(long t)
 
 static void ClockChrono_Chrono(long t)
 {
-	MenageHmsh_tHour times;			
+	MenageHmsh_tHour times;
 	MenageHmsh_tChain11 timesChain;
 	BOOLEAN Intermediatetimes = FALSE;
 	MenageHmsh_tHour endIntermediateTimes;

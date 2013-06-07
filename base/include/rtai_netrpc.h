@@ -80,7 +80,7 @@
 #define OWNER(node, task) \
 	( (((unsigned long long)(node)) << 32)   | \
 	  (((unsigned long)(task)) & ADR_CNV_MSK) )
-	
+
 #define TSK_FRM_WNR(i)	((i) & 0xFFFFFFFF);
 
 #define WDW     3

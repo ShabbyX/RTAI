@@ -1611,7 +1611,7 @@ index a443ef6..1e04d3c 100644
  	: "=d" (x)						\
  	:							\
  	: "cc", "%d0", "memory")
-+	
++
 +#define local_irq_save_hw(x)   local_irq_save(x)
 +#define local_irq_restore_hw(x)        local_irq_restore(x)
 +#define local_irq_enable_hw()  local_irq_enable()
@@ -2743,7 +2743,7 @@ index 552e0ec..29ff24c 100644
 +	void	(*ipipe_demux)(unsigned int irq, struct irq_desc *desc);
 +	void    (*ipipe_end)(unsigned int irq, struct irq_desc *desc);
 +#endif /* CONFIG_IPIPE */
-+		
++
  	irq_flow_handler_t	handle_irq;
  	struct irq_chip		*chip;
  	struct msi_desc		*msi_desc;
@@ -3262,29 +3262,29 @@ index 8f6185e..456d2ee 100644
 +{
 +	struct fs_struct *fs;
 +	sigset_t blocked;
-+	
++
 +	current->flags |= PF_NOFREEZE;
-+	
++
 +	if (current->nsproxy != init_task.nsproxy) {
 +		get_nsproxy(init_task.nsproxy);
 +		switch_task_namespaces(current, init_task.nsproxy);
 +	}
 +	set_special_pids(&init_struct_pid);
 +	proc_clear_tty(current);
-+	
++
 +	sigfillset(&blocked);
 +	sigprocmask(SIG_BLOCK, &blocked, NULL);
 +	flush_signals(current);
-+	
++
 +	exit_fs(current);
 +	fs = init_task.fs;
 +	current->fs = fs;
 +	atomic_inc(&fs->count);
-+	
++
 +	exit_files(current);
 +	current->files = init_task.files;
 +	atomic_inc(&current->files->count);
-+	
++
 +	reparent_to_kthreadd();
 +}
 +
@@ -6808,7 +6808,7 @@ index 4e2f603..d39c463 100644
  #endif
  	if (current->set_child_tid)
  		put_user(task_pid_vnr(current), current->set_child_tid);
-+		
++
 +	ipipe_init_notify(current);
  }
 
@@ -6826,7 +6826,7 @@ index 4e2f603..d39c463 100644
 -	prepare_task_switch(rq, prev, next);
  	mm = next->mm;
  	oldmm = prev->active_mm;
-+	
++
 +
 +	if (likely(!rq)) {
 +	    switch_mm(oldmm, next->active_mm, next);
@@ -7252,7 +7252,7 @@ index 2302d22..4df90ad 100644
 +		kunmap_atomic(kaddr, KM_USER0);
 +		flush_dcache_page(dst);
 +		return;
-+		
++
 +	}
 +	copy_user_highpage(dst, src, va, vma);
 +}
@@ -7280,7 +7280,7 @@ index 2302d22..4df90ad 100644
 +			struct page *old_page = vm_normal_page(vma, addr, pte);
 +			cow_user_page(uncow_page, old_page, addr, vma);
 +			pte = mk_pte(uncow_page, vma->vm_page_prot);
-+			
++
 +			if (vm_flags & VM_SHARED)
 +				pte = pte_mkclean(pte);
 +			pte = pte_mkold(pte);
@@ -7358,7 +7358,7 @@ index 2302d22..4df90ad 100644
 +{
 +	spinlock_t *ptl;
 +	pte_t *pte;
-+	
++
 +	do {
 +		pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
 +		if (!pte)
@@ -7433,7 +7433,7 @@ index 2302d22..4df90ad 100644
 +
 +		addr = vma->vm_start;
 +		end = vma->vm_end;
-+	
++
 +		pgd = pgd_offset(mm, addr);
 +		do {
 +			next = pgd_addr_end(addr, end);

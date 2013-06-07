@@ -58,7 +58,7 @@
 
 #include <rtai_hal_names.h>
 #include <asm/rtai_vectors.h>
-#include <rtai_types.h>	
+#include <rtai_types.h>
 #include <asm/div64.h>
 
 #define RTAI_NR_CPUS	1

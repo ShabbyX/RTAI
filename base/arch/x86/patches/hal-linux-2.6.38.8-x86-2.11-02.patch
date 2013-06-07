@@ -4619,11 +4619,11 @@ index bf9a7d5..98609ae 100644
 @@ -65,6 +65,10 @@
  	thunk lockdep_sys_exit_thunk,lockdep_sys_exit
  #endif
- 	
+
 +#ifdef CONFIG_IPIPE
 +	thunk_retrax __ipipe_syscall_root_thunk,__ipipe_syscall_root
 +#endif
-+	
++
  	/* SAVE_ARGS below is used only for the .cfi directives it contains. */
  	CFI_STARTPROC
  	SAVE_ARGS
@@ -5900,7 +5900,7 @@ index 0000000..f725a66
 +		(void)(flags);		\
 +		put_cpu();		\
 +	} while (0)
-+	
++
 +#define ipipe_check_context(ipd)	do { } while(0)
 +
 +#endif	/* CONFIG_IPIPE */
@@ -7709,12 +7709,12 @@ index 0000000..51a8be6
 +			 * Already stalled albeit ipipe_restore_pipeline_head()
 +			 * should have detected it? Send a warning once.
 +			 */
-+			local_irq_enable_hw();	
++			local_irq_enable_hw();
 +			warned = 1;
 +			printk(KERN_WARNING
 +				   "I-pipe: ipipe_restore_pipeline_head() optimization failed.\n");
 +			dump_stack();
-+			local_irq_disable_hw();	
++			local_irq_disable_hw();
 +		}
 +#else /* !CONFIG_DEBUG_KERNEL */
 +		__set_bit(IPIPE_STALL_FLAG, &p->status);
@@ -7944,7 +7944,7 @@ index 0000000..51a8be6
 +	int l0b = irq / BITS_PER_LONG;
 +
 +	IPIPE_WARN_ONCE(!irqs_disabled_hw());
-+	
++
 +	if (likely(!test_bit(IPIPE_LOCK_FLAG, &ipd->irqs[irq].control))) {
 +		set_bit(irq, p->irqpend_lomap);
 +		set_bit(l0b, &p->irqpend_himap);

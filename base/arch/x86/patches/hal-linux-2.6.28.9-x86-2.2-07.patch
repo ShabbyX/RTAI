@@ -1741,7 +1741,7 @@ index 28b597e..fc9b2c6 100644
 +#define HANDLE_EXCEPTION(code)		call *%code
 +#define DIVERT_EXCEPTION(code)
 +#endif /* CONFIG_IPIPE */
-+	
++
  #ifdef CONFIG_PREEMPT
  #define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
  #else
@@ -1908,7 +1908,7 @@ index 28b597e..fc9b2c6 100644
 +	BUILD_INTERRUPT(ipipe_ipi3,IPIPE_SERVICE_VECTOR3)
 +#ifdef CONFIG_SMP
 +	BUILD_INTERRUPT(ipipe_ipiX,IPIPE_CRITICAL_VECTOR)
-+#endif	
++#endif
 +#endif
 +
 +#else /* !CONFIG_IPIPE */
@@ -2139,7 +2139,7 @@ index b86f332..d59b479 100644
 +	popq %rdi
 +	js    ret_from_sys_call
 +	jnz   sysret_fastexit
-+#endif		
++#endif
  	GET_THREAD_INFO(%rcx)
  	testl $_TIF_WORK_SYSCALL_ENTRY,TI_flags(%rcx)
  	jnz tracesys
@@ -2147,13 +2147,13 @@ index b86f332..d59b479 100644
  	 * sysretq will re-enable interrupts:
  	 */
  	TRACE_IRQS_ON
-+sysret_fastexit:	
++sysret_fastexit:
  	movq RIP-ARGOFFSET(%rsp),%rcx
  	CFI_REGISTER	rip,rcx
  	RESTORE_ARGS 0,-ARG_SKIP,1
 @@ -368,6 +389,8 @@ sysret_check:
  	/* Handle reschedules */
- 	/* edx:	work, edi: workmask */	
+ 	/* edx:	work, edi: workmask */
  sysret_careful:
 +	testl $(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|_TIF_SECCOMP),%edx
 +	jnz ret_from_sys_call_trace
@@ -2225,7 +2225,7 @@ index b86f332..d59b479 100644
 +#else /* !CONFIG_IPIPE */
  	XCPT_FRAME
  	interrupt do_IRQ
-+#endif /* !CONFIG_IPIPE */	
++#endif /* !CONFIG_IPIPE */
  	/* 0(%rsp): oldrsp-ARGOFFSET */
  ret_from_intr:
  	DISABLE_INTERRUPTS(CLBR_NONE)
@@ -2270,13 +2270,13 @@ index b86f332..d59b479 100644
 -	call preempt_schedule_irq
 +	PREEMPT_SCHEDULE_IRQ
  	jmp exit_intr
- #endif	
+ #endif
 
 @@ -805,7 +877,26 @@ END(common_interrupt)
- 	
+
  /*
   * APIC interrupts.
-- */		
+- */
 + */
 +#ifdef CONFIG_IPIPE
 +	.macro apicinterrupt num,func
@@ -2296,7 +2296,7 @@ index b86f332..d59b479 100644
 +	jmp restore_args
 +	CFI_ENDPROC
 +	.endm
-+#else /* !CONFIG_IPIPE */	
++#else /* !CONFIG_IPIPE */
  	.macro apicinterrupt num,func
  	INTR_FRAME
  	pushq $~(\num)
@@ -2304,7 +2304,7 @@ index b86f332..d59b479 100644
  	jmp ret_from_intr
  	CFI_ENDPROC
  	.endm
-+#endif /* !CONFIG_IPIPE */	
++#endif /* !CONFIG_IPIPE */
 
  ENTRY(thermal_interrupt)
  	apicinterrupt THERMAL_APIC_VECTOR,smp_thermal_interrupt
@@ -2312,19 +2312,19 @@ index b86f332..d59b479 100644
  	INVALIDATE_ENTRY 1
  	INVALIDATE_ENTRY 2
  	INVALIDATE_ENTRY 3
-+#ifndef CONFIG_IPIPE	
++#ifndef CONFIG_IPIPE
  	INVALIDATE_ENTRY 4
  	INVALIDATE_ENTRY 5
  	INVALIDATE_ENTRY 6
  	INVALIDATE_ENTRY 7
-+#endif /* !CONFIG_IPIPE */	
++#endif /* !CONFIG_IPIPE */
 
  ENTRY(call_function_interrupt)
  	apicinterrupt CALL_FUNCTION_VECTOR,smp_call_function_interrupt
 @@ -873,7 +967,7 @@ END(spurious_interrupt)
  /*
   * Exception entry points.
-  */ 		
+  */
 -	.macro zeroentry sym
 + 	.macro zeroentry sym, ex_code
  	INTR_FRAME
@@ -2341,7 +2341,7 @@ index b86f332..d59b479 100644
 +#endif
  	jmp error_entry
  	CFI_ENDPROC
- 	.endm	
+ 	.endm
 
 -	.macro errorentry sym
 + 	.macro errorentry sym, ex_code
@@ -2354,7 +2354,7 @@ index b86f332..d59b479 100644
 +	movq $\ex_code,%rax
 +#else
  	leaq  \sym(%rip),%rax
-+#endif	
++#endif
  	jmp error_entry
  	CFI_ENDPROC
  	.endm
@@ -2387,12 +2387,12 @@ index b86f332..d59b479 100644
  	.if \irqtrace
  	TRACE_IRQS_OFF
  	.endif
-+#ifdef CONFIG_IPIPE	
++#ifdef CONFIG_IPIPE
 +	xorl %eax,%eax
 +	/* WARNING: paranoidexit will check %eax to decide whether the
 +	exception has to be propagated or not. */
-+#endif	
-+3:	
++#endif
++3:
  	.endm
 
  	/*
@@ -2403,7 +2403,7 @@ index b86f332..d59b479 100644
 +#ifdef CONFIG_IPIPE
 +	testl %eax,%eax
 +	jnz paranoid_swapgs\trace
-+#endif		
++#endif
  	testl $3,CS(%rsp)
  	jnz   paranoid_userspace\trace
  paranoid_swapgs\trace:
@@ -2441,7 +2441,7 @@ index b86f332..d59b479 100644
  END(coprocessor_error)
 
  ENTRY(simd_coprocessor_error)
--	zeroentry do_simd_coprocessor_error	
+-	zeroentry do_simd_coprocessor_error
 +	zeroentry do_simd_coprocessor_error ex_do_simd_coprocessor_error
  END(simd_coprocessor_error)
 
@@ -2454,7 +2454,7 @@ index b86f332..d59b479 100644
 @@ -1226,7 +1360,7 @@ KPROBE_ENTRY(debug)
  	PARAVIRT_ADJUST_EXCEPTION_FRAME
  	pushq $0
- 	CFI_ADJUST_CFA_OFFSET 8		
+ 	CFI_ADJUST_CFA_OFFSET 8
 -	paranoidentry do_debug, DEBUG_STACK
 +	paranoidentry do_debug, DEBUG_STACK, 1, ex_do_debug
  	paranoidexit
@@ -2481,7 +2481,7 @@ index b86f332..d59b479 100644
  END(bounds)
 
  ENTRY(invalid_op)
--	zeroentry do_invalid_op	
+-	zeroentry do_invalid_op
 + 	zeroentry do_invalid_op ex_do_invalid_op
  END(invalid_op)
 
@@ -4092,7 +4092,7 @@ index 0000000..c84a687
 +	movq	8(%rsp),%rcx
 +	movq	(%rsp),%rax
 +	addq	$56,%rsp
-+out:	
++out:
 +	ret
 +END(mcount)
 diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
@@ -4411,11 +4411,11 @@ index bf9a7d5..98609ae 100644
 @@ -65,6 +65,10 @@
  	thunk lockdep_sys_exit_thunk,lockdep_sys_exit
  #endif
- 	
+
 +#ifdef CONFIG_IPIPE
 +	thunk_retrax __ipipe_syscall_root_thunk,__ipipe_syscall_root
 +#endif
-+	
++
  	/* SAVE_ARGS below is used only for the .cfi directives it contains. */
  	CFI_STARTPROC
  	SAVE_ARGS
@@ -7156,7 +7156,7 @@ index 0000000..97e6aae
 +	struct ipipe_percpu_domain_data *p = ipipe_cpudom_ptr(ipd);
 +
 +	prefetchw(p);
-+	
++
 +	if (likely(!test_bit(IPIPE_LOCK_FLAG, &ipd->irqs[irq].control))) {
 +		__set_bit(rank, &p->irqpend_lomask[level]);
 +		__set_bit(level, &p->irqpend_himask);

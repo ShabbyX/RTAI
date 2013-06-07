@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 			kill(abs(pid), SIGKILL);
 		}
 		printf("HARD LXRT REAL TIME TASK, PID = %d, %s.\n", pid, pid < 0 ? "TERMINATED" : "MADE SOFT");
-	} else {	
+	} else {
 		printf("TASK PID: %d, NOT HARD REAL TIME OR FAKY.\n", pid);
 	}
 #endif

@@ -217,7 +217,7 @@ static int rtai_shm_f_ioctl(struct inode *inode, struct file *file, unsigned int
 		}
 		case SHM_FREE: {
 			TRACE_RTAI_SHM(TRACE_RTAI_EV_SHM_FREE, arg, cmd, current->pid);
-			return _rt_shm_free(arg, rt_get_type(arg));	
+			return _rt_shm_free(arg, rt_get_type(arg));
 		}
 		case SHM_SIZE: {
 			TRACE_RTAI_SHM(TRACE_RTAI_EV_SHM_GET_SIZE, arg, cmd, current->pid);

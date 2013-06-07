@@ -52,7 +52,7 @@ static void timer_handler(unsigned long data)
 	CHECK_FLAGS();
 	while ((ovr = rt_irq_wait_if(TIMER_IRQ)) > 0) {
 		if (ovr == RT_IRQ_TASK_ERR) return;
-		if (ovr > 0) {	
+		if (ovr > 0) {
 			/* overrun processing, if any, goes here */
 			rt_sem_signal(dspsem);
 		}

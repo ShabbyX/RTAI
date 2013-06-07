@@ -63,7 +63,7 @@
 #define  FUN_EXT_RTAI_SP  14
 
 #define _SPOPEN      	  	 0
-#define _SPCLOSE    	  	 1	
+#define _SPCLOSE    	  	 1
 #define _SPREAD     	  	 2
 #define _SPEVDRP      	  	 3
 #define _SPWRITE     	  	 4
@@ -205,7 +205,7 @@ RTAI_PROTO(int, rt_spread, (unsigned int tty, char *msg, int msg_size))
 	struct { unsigned long tty; char *msg; long msg_size; } arg = { tty, lmsg, msg_size };
 	notrd = rtai_lxrt(FUN_EXT_RTAI_SP, SIZARG, _SPREAD, &arg).i[LOW];
 	if (notrd >= 0 && notrd != size) {
-		memcpy(msg, lmsg, size - notrd);	
+		memcpy(msg, lmsg, size - notrd);
 	}
 	return notrd;
 }
@@ -217,7 +217,7 @@ RTAI_PROTO(int, rt_spevdrp, (unsigned int tty, char *msg, int msg_size))
 	struct { unsigned long tty; char *msg; long msg_size; } arg = { tty, lmsg, msg_size };
 	notrd = rtai_lxrt(FUN_EXT_RTAI_SP, SIZARG, _SPEVDRP, &arg).i[LOW];
 	if ( notrd >= 0 && notrd != size ) {
-		memcpy(msg, lmsg, size - notrd);	
+		memcpy(msg, lmsg, size - notrd);
 	}
 	return notrd;
 }
@@ -227,7 +227,7 @@ RTAI_PROTO(int, rt_spwrite, (unsigned int tty, char *msg, int msg_size))
 	int size;
 	char lmsg[size = abs(msg_size)];
 	struct { unsigned long tty; char *msg; long msg_size; } arg = { tty, lmsg, msg_size };
-	memcpy(lmsg, msg, size);	
+	memcpy(lmsg, msg, size);
 	return rtai_lxrt(FUN_EXT_RTAI_SP, SIZARG, _SPWRITE, &arg).i[LOW];
 }
 

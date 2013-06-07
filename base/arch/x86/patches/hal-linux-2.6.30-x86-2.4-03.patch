@@ -2213,7 +2213,7 @@ index c929add..f2e94fa 100644
 +#define HANDLE_EXCEPTION(code)		call *%code
 +#define DIVERT_EXCEPTION(code)
 +#endif /* CONFIG_IPIPE */
-+	
++
  #ifdef CONFIG_PREEMPT
  #define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
  #else
@@ -2379,7 +2379,7 @@ index c929add..f2e94fa 100644
 +	BUILD_INTERRUPT(ipipe_ipi3,IPIPE_SERVICE_VECTOR3)
 +#ifdef CONFIG_SMP
 +	BUILD_INTERRUPT(ipipe_ipiX,IPIPE_CRITICAL_VECTOR)
-+#endif	
++#endif
 +#endif
 +
 +#else /* !CONFIG_IPIPE */
@@ -3653,8 +3653,8 @@ index 0000000..9b9d084
 +	 * rescheduling.
 +	 */
 +	BUG_ON(!irqs_disabled_hw());
-+	local_irq_save(flags);	
-+	local_irq_enable_hw();	
++	local_irq_save(flags);
++	local_irq_enable_hw();
 +	preempt_schedule_irq(); /* Ok, may reschedule now. */
 +	local_irq_disable_hw();
 +
@@ -4460,11 +4460,11 @@ index bf9a7d5..98609ae 100644
 @@ -65,6 +65,10 @@
  	thunk lockdep_sys_exit_thunk,lockdep_sys_exit
  #endif
- 	
+
 +#ifdef CONFIG_IPIPE
 +	thunk_retrax __ipipe_syscall_root_thunk,__ipipe_syscall_root
 +#endif
-+	
++
  	/* SAVE_ARGS below is used only for the .cfi directives it contains. */
  	CFI_STARTPROC
  	SAVE_ARGS
@@ -7226,7 +7226,7 @@ index 0000000..dc79d03
 +	struct ipipe_percpu_domain_data *p = ipipe_cpudom_ptr(ipd);
 +
 +	prefetchw(p);
-+	
++
 +	if (likely(!test_bit(IPIPE_LOCK_FLAG, &ipd->irqs[irq].control))) {
 +		__set_bit(rank, &p->irqpend_lomask[level]);
 +		__set_bit(level, &p->irqpend_himask);

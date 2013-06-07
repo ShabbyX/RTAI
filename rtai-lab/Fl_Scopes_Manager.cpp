@@ -319,7 +319,7 @@ inline void Fl_Scopes_Manager::enter_trigger_mode_i(Fl_Choice *b, void *v)
 	long n = (long)v;
 	int val = b->value();
 	Scope_Windows[n]->Plot->trigger_mode(modes[val]);
-	
+
 }
 
 void Fl_Scopes_Manager::enter_trigger_mode(Fl_Choice *b, void *v)
@@ -333,7 +333,7 @@ inline void Fl_Scopes_Manager::enter_options_i(Fl_Menu_Button *b, void *v)
 	s_idx_T *idx = (s_idx_T *)v;
 	int val = 0;
         int i;
- 	
+
         for(i=0;i<b->children();i++) { // loop through all menu items, and add checked items to the value
 	  if( b->child(i)->value() ) val |= (int)(long)b->child(i)->user_data();
 	}
@@ -815,7 +815,7 @@ Fl_Scopes_Manager::Fl_Scopes_Manager(int x, int y, int width, int height, Fl_MDI
 		  Trace_Pos[i] = new Fl_Dial*[Scopes[i].ntraces];
   		  Trace_Width[i] = new Fl_Dial*[Scopes[i].ntraces];
 		  Trace_Options[i] = new Fl_Menu_Button*[Scopes[i].ntraces];
-		
+
 
 		  for (int j = 0; j < Scopes[i].ntraces; j++) {
 			s_idx_T *idx = new s_idx_T;

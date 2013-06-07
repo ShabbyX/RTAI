@@ -54,7 +54,7 @@ void TraceEvent::init( const char* name, void* p1, void* p2)
 void TraceEvent::trigger( int size, void* data )
 {
 #ifdef CONFIG_RTAI_TRACE
-	__trace_raw_event(m_ID, size, data );	
+	__trace_raw_event(m_ID, size, data );
 #endif
 }
 

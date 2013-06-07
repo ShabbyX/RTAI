@@ -115,7 +115,7 @@ Task::Task(){
 }
 
 Task::~Task(){
-	std::cerr << "Task::~Task() " << (void*)this << std::endl;	
+	std::cerr << "Task::~Task() " << (void*)this << std::endl;
 
 	if(m_Task != 0)
 	{
@@ -138,7 +138,7 @@ Task::Task(int stack_size,
 	std::cerr << "Task::Task(...) " << (void*)this << std::endl;
 
 	m_TaskOwner = true;
-	m_Named = false;	
+	m_Named = false;
 	m_Task = 0;
 	for(int n=0; n < CONFIG_RTAI_CPUS;n++)
 		m_CpuUse[n] = 0;
@@ -154,7 +154,7 @@ Task::Task(const char* name,
            unsigned int cpuid)
 {
 	std::cerr << "Task::Task(...) " << (void*)this << std::endl;
-	
+
 	m_Named = true;
 	m_TaskOwner = true;
 	m_Task = 0;
@@ -167,7 +167,7 @@ Task::Task(const char* name,
 Task::Task(const char* name )
 {
 	std::cerr << "Task::Task(...) " << (void*)this << std::endl;
-	
+
 	m_Named = true;
 	m_TaskOwner = false;
 	m_Task = 0;
@@ -268,7 +268,7 @@ Task* Task::self(){
 void Task::suspend(){
 	rt_task_suspend(m_Task);
 }
-	
+
 void Task::resume(){
 	rt_task_resume(m_Task);
 }

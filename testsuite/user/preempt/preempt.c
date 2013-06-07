@@ -202,7 +202,7 @@ int main(void)
 	rt_thread_join(latency_thread);
 	rt_thread_join(fast_thread);
 	rt_thread_join(slow_thread);
-	stop_rt_timer();	
+	stop_rt_timer();
 	rt_mbx_delete(mbx);
 	rt_sem_delete(barrier);
 	rt_thread_delete(Main_Task);

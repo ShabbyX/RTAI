@@ -63,7 +63,7 @@ static unsigned int daqnode, daqport;
 
 static int test_init_board(void)
 {
-	dev = RT_comedi_open(daqnode, daqport, "/dev/comedi");		
+	dev = RT_comedi_open(daqnode, daqport, "/dev/comedi");
 	PRINT("Comedi device handle: %p.\n", dev);
 
 	subdevai = RT_comedi_find_subdevice_by_type(daqnode, daqport, dev, COMEDI_SUBD_AI, 0);
@@ -114,7 +114,7 @@ int test_cmd(void)
 
 	cmd.stop_src = TRIG_NONE;
 	cmd.stop_arg = 0;
-	
+
 	cmd.chanlist = chanlist;
 	cmd.chanlist_len = NCHAN;
 
@@ -134,7 +134,7 @@ int test_cmd(void)
 
 	cmd.stop_src = TRIG_NONE;
 	cmd.stop_arg = 0;
-	
+
 	cmd.chanlist = chanlist;
 	cmd.chanlist_len = NCHAN;
 
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
 
 	RT_comedi_register_callback(daqnode, daqport, dev, subdevai, COMEDI_CB_EOS, NULL, task);
 	PRINT("Comedi analog input registered a call back.\n");
-	
+
 	test_cmd();
 
 	val = COMEDI_CB_EOS;

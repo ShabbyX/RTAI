@@ -43,7 +43,7 @@ huge=  1.00000000000000000000e+300;
 	double asinh(x)
 	double x;
 #endif
-{	
+{
 	double t,w;
 	int32_t hx,ix;
 	GET_HIGH_WORD(hx,x);

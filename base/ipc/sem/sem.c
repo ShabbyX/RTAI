@@ -680,7 +680,7 @@ RTAI_SYSCALL_MODE int rt_sem_wait_until(SEM *sem, RTIME time)
 				schedmap = pass_prio(sem->owndby, rt_current);
 			} else {
 				schedmap = 0;
-			}	
+			}
 			sem->count--;
 			rt_current->state |= (RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED);
 			rem_ready_current(rt_current);

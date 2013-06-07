@@ -101,12 +101,12 @@ int atexit( func_ptr function )
 
 	if( atexit_function_tab_len >= atexit_function_tab_size)
 		return -1;
-	
+
 	if( function == 0 )
 		return -1;
-	
-	atexit_function_tab[ atexit_function_tab_len++ ] = function;	
-	
+
+	atexit_function_tab[ atexit_function_tab_len++ ] = function;
+
 	return 0;
 }
 
@@ -125,14 +125,14 @@ void __do_atexit( void )
 		rt_printk("atexit_function_tab == NULL\n");
 		return;
 	}
-	
+
 	while(*p)
 	{
 		rt_printk("calling atexit function %p\n",p );
 		(*(p))();
 		p++;
 		if( atexit_function_tab_len-- )
-			break;	
+			break;
 	}
 
 	vfree( atexit_function_tab );
@@ -140,8 +140,8 @@ void __do_atexit( void )
  	atexit_function_tab_size = 0;
  	atexit_function_tab_len = 0;
  	atexit_function_tab = 0;
- 			
-	rt_printk("__do_atexit END\n");	
+
+	rt_printk("__do_atexit END\n");
 }
 void __init_atexit( int max_size )
 {
@@ -154,7 +154,7 @@ void __init_atexit( int max_size )
 		rt_printk("__init_atexit atexit_function_tab != NULL\n");
 		return;
 	}
-	
+
 	atexit_function_tab_size = max_size;
 	atexit_function_tab_len = 0;
 	atexit_function_tab = vmalloc( sizeof(func_ptr) * atexit_function_tab_size);

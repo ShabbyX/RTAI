@@ -1441,7 +1441,7 @@ end:
 }
 static void *rt_get_alog_data(void *arg)
 {
-	RT_TASK *GetALogDataTask;				
+	RT_TASK *GetALogDataTask;
 	MBX *GetALogDataMbx;
 	char GetALogDataMbxName[7];
 	long GetALogDataPort;
@@ -1454,14 +1454,14 @@ static void *rt_get_alog_data(void *arg)
 	FILE *saving;
 	long size_counter = 0;
 	long logging = 0;
-	
-	
+
+
 	if((saving = fopen(alog_file_name, "a+")) == NULL){
 		printf("Error opening auto log file %s\n", alog_file_name);
 		}
-	
+
 	rt_allow_nonroot_hrt();
-	
+
 	if (!(GetALogDataTask = rt_task_init_schmod(get_an_id("HGA"), 99, 0, 0, SCHED_RR, 0xFF))) {
 		printf("Cannot init Host GetALogData Task\n");
 		return (void *)1;
@@ -1481,12 +1481,12 @@ static void *rt_get_alog_data(void *arg)
 	if (MsgLen < DataBytes) MsgLen = DataBytes;
 	if (MsgLen > MaxMsgLen) MsgLen = MaxMsgLen;
 	MsgData = MsgLen/DataBytes;
-	
+
 	//printf("MsgData %d MsgLen %d MaxMsgLen %d DataBytes %d DimBuf= %d\n", MsgData, MsgLen, MaxMsgLen, DataBytes,MAX_MSG_LEN/sizeof(float));
-	
+
 	rt_send(Target_Interface_Task, 0);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
-	
+
 	while (true) {
 		if (End_App || !Is_Target_Connected) break;
 		while (RT_mbx_receive_if(Target_Node, GetALogDataPort, GetALogDataMbx, &MsgBuf, MsgLen)) {
@@ -1519,9 +1519,9 @@ static void *rt_get_alog_data(void *arg)
 					if((saving = fopen(alog_file_name, "a+")) == NULL){
 						printf("Error opening auto log file %s\n", alog_file_name);
 						}
-				}*/		
+				}*/
 			}
-			
+
 	}
 end:
 	if (Verbose) {
@@ -1954,7 +1954,7 @@ static void rlg_manager_window(int n_elems, int type, int view_flag, int x, int 
 					RLG_Main_Menu_Table[12].set();
 					RLG_ALogs_Mgr_Button->set();
 				}
-				break;	
+				break;
 			case LEDS_MANAGER:
 				Leds_Manager = new Fl_Leds_Manager(x, y, w, h, v, "Leds Manager");
 				Leds_Manager->show();
@@ -2314,7 +2314,7 @@ static void *rt_target_interface(void *args)
 				} else {
 					p_idx = Direct_Profile_Idx;
 					p_file = strdup(Direct_Profile);
-				}	
+				}
 
 				if (Verbose) {
 					printf("Reading profile %s settings\n", p_file);
@@ -2667,7 +2667,7 @@ static void *rt_target_interface(void *args)
 					RT_rpc(Target_Node, Target_Port, If_Task, U_Request, &Is_Target_Running);
 					rt_release_port(Target_Node, Target_Port);
 					Target_Node = 0;
-					Target_Port = 0;	
+					Target_Port = 0;
 					Fl::lock();
 					if (Parameters_Manager) Parameters_Manager->hide();
 					if (Scopes_Manager) Scopes_Manager->hide();
@@ -2961,13 +2961,13 @@ void rlg_main_toolbar(Fl_Tool_Bar *RLG_MT)
 						 "Logs", "Open/close log manager");
 	RLG_Logs_Mgr_Button->callback((Fl_Callback *)rlg_logs_mgr_cb);
 	RLG_Logs_Mgr_Button->deactivate();
-	
+
 /* Target automatic real time logging blocks manager */						//aggiunto 3/5
 	RLG_ALogs_Mgr_Button = RLG_MT->add_toggle(Fl_Image::read_xpm(0, auto_log_icon_xpm), 0,
 						 "Logs", "Open/close automatic log manager");
 	RLG_ALogs_Mgr_Button->callback((Fl_Callback *)rlg_alogs_mgr_cb);
 	RLG_ALogs_Mgr_Button->deactivate();
-	
+
 
 /* Target real time leds manager */
 	RLG_Leds_Mgr_Button = RLG_MT->add_toggle(Fl_Image::read_xpm(0, led_icon), 0,
