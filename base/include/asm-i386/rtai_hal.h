@@ -1206,4 +1206,3 @@ do { \
 
 #endif /* !_RTAI_HAL_XN_H */
 
-

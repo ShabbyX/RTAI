@@ -48,4 +48,3 @@ void rtai_cpp_watchdog_cleanup(void)
 
 module_init(rtai_cpp_watchdog_init)
 module_exit(rtai_cpp_watchdog_cleanup)
-

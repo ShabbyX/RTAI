@@ -109,4 +109,3 @@ enum {
   FP_SUBNORMAL                  = 5     /*      denormal numbers
       */
 };
-

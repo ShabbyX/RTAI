@@ -87,4 +87,3 @@ void rtmeter(scicos_block *block,int flag)
   }
 }
 
-

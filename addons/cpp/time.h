@@ -121,4 +121,3 @@ protected:
 }; // namespace RTAI
 
 #endif
-

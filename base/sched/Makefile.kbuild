@@ -10,4 +10,3 @@ obj-m += $(rtai_target).o
 rtai_sched-objs := $(rtai_objs)
 
 rtai_lxrt-objs := $(rtai_objs)
-

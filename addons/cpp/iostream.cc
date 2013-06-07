@@ -224,4 +224,3 @@ void init_iostream()
 }
 
 } // end extern "C"
-

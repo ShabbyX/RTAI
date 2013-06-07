@@ -73,4 +73,3 @@ function  SetTarget_()
     x_message('Block is not a superblock');
   end
 endfunction
-

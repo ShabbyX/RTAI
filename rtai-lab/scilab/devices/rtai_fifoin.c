@@ -76,4 +76,3 @@ void rt_fifoin(scicos_block *block,int flag)
   }
 }
 
-

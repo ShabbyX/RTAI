@@ -16,4 +16,3 @@ AM_CPPFLAGS = \
 if CONFIG_RTAI_DRIVERS_16550A
 AM_CPPFLAGS += -I$(top_srcdir)/addons/drivers/16550A
 endif
-

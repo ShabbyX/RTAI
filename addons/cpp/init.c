@@ -62,4 +62,3 @@ void rtai_cpp_cleanup(void)
 
 module_init(rtai_cpp_init)
 module_exit(rtai_cpp_cleanup)
-

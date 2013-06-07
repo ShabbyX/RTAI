@@ -80,4 +80,3 @@ void rtai_cpp_tbx_cleanup(void)
 
 module_init(rtai_cpp_tbx_init)
 module_exit(rtai_cpp_tbx_cleanup)
-

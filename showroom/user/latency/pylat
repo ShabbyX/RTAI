@@ -23,4 +23,3 @@ echo "Latency task running."
 echo "Latency task exited. Press <enter> to remove the modules."
 read junk
 ../remod
-

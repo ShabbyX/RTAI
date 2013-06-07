@@ -78,4 +78,3 @@ void* __rt_tld_get_data(RT_TASK *task,int key){
 	return rt_tld_get_data(task,key);
 #endif
 }
-

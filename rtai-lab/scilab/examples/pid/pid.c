@@ -2113,4 +2113,3 @@ pid_endi( z, zptr, told,
   if(flag < 0 ) return (5-flag);
   return 0;
 } /* ending */
-

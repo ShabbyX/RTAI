@@ -236,4 +236,3 @@ long int __signbit ( double arg )
       return sign;
 }
 
-

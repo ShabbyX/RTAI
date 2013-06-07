@@ -156,4 +156,3 @@ void *xcalloc(size_t nmemb, size_t size)
 	exit(1);
 }
 
-

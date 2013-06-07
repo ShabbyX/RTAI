@@ -69,4 +69,3 @@ clean:
 	rm -f *.o mxp mxp_data.h mxp_data.hc mxp.c mxp.h rtmain.c rtmain.h
 
 .PHONY: clean
-

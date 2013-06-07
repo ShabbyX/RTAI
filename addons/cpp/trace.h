@@ -70,4 +70,3 @@ int __trace_raw_event(int id,
 #endif // CONFIG_RTAI_TRACE
 
 #endif // __TRACE_H__
-

@@ -52,4 +52,3 @@ extern int mxp_setparam(int var, int *idxv, double val);
 extern int mxp_getparam(int var, int *idxv, double *valp);
 
 #endif /* ! MXP_H */
-

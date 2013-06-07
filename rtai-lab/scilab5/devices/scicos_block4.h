@@ -742,4 +742,3 @@ extern int s_cmp();
 
 
 #endif /* __SCICOS_BLOCK_H__ */
-

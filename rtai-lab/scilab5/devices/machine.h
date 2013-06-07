@@ -480,4 +480,3 @@
 #define DIR_SEPARATOR "/"
 
 #endif /* MACHINE_H  */
-

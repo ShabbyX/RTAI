@@ -76,4 +76,3 @@ function [ok,code]=clkCode(code)
 		code=src
 	end
 endfunction
-

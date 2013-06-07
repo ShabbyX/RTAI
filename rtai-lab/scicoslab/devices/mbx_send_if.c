@@ -112,4 +112,3 @@ void rtai_mbx_send_if(scicos_block *block,int flag)
   }
 }
 
-

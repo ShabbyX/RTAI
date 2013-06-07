@@ -54,4 +54,3 @@ void rt_step(scicos_block *block,int flag)
   }
 }
 
-

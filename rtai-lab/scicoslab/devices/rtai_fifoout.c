@@ -68,4 +68,3 @@ void rt_fifoout(scicos_block *block,int flag)
   }
 }
 
-

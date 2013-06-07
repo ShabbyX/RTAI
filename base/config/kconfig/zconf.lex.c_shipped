@@ -2418,4 +2418,3 @@ const char *zconf_curname(void)
 {
 	return current_pos.file ? current_pos.file->name : "<none>";
 }
-

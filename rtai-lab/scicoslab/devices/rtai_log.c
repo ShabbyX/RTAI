@@ -101,4 +101,3 @@ void rtlog(scicos_block *block,int flag)
   }
 }
 
-

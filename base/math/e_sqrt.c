@@ -450,4 +450,3 @@ B.  sqrt(x) by Reciproot Iteration
     (4)	Special cases (see (4) of Section A).
 
  */
-

@@ -74,4 +74,3 @@ void rtai_cpp_bits_cleanup(void)
 
 module_init(rtai_cpp_bits_init)
 module_exit(rtai_cpp_bits_cleanup)
-

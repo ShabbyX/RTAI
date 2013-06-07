@@ -70,4 +70,3 @@ void rt_xxxx(scicos_block *block,int flag)
   }
 }
 
-

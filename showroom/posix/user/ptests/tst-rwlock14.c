@@ -182,4 +182,3 @@ int main(void)
 <         pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_HARD_REAL_TIME);
 ---
 >         pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_SOFT_REAL_TIME);
-

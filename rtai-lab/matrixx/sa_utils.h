@@ -164,4 +164,3 @@ extern RT_INTEGER numInputData;
 
 
 #endif /*_SA_UTILS*/
-

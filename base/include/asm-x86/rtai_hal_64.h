@@ -963,4 +963,3 @@ static inline int rt_free_global_irq(unsigned irq)
 #define NON_RTAI_SCHEDULE(cpuid)  do { schedule(); } while (0)
 
 #endif /* !_RTAI_HAL_XN_H */
-

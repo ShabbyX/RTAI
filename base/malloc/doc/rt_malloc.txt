@@ -129,4 +129,3 @@ To resume, C++ support is limited in that exception handling and global
 instantiation services are not available in the kernel due to lack of
 library support. It is possible to trick the compiler in order to avoid
 the __pure_virtual unresolved symbol.
-

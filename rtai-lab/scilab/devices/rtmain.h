@@ -25,4 +25,3 @@ int rtRegisterMeter(const char *name, int n);
 int rtRegisterLogData(const char *name, int nrow, int ncol);
 void exit_on_error(void);
 
-

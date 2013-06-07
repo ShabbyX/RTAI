@@ -2703,4 +2703,3 @@ EXPORT_SYMBOL(switch_time);
 EXPORT_SYMBOL(lxrt_prev_task);
 
 #endif /* CONFIG_KBUILD */
-

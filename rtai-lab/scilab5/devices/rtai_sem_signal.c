@@ -101,4 +101,3 @@ void rtai_sem_signal(scicos_block *block,int flag)
   }
 }
 
-

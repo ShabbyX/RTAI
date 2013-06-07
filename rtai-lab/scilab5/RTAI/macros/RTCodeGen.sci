@@ -49,4 +49,3 @@ function RTCodeGen(scs_m,k)
     end
 
 endfunction
-

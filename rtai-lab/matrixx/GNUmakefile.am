@@ -29,4 +29,3 @@ install-exec-local: $(EXTRA_INST_SRC) $(EXTRA_INST_DIR)
 		$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/matrixx/$$d ; \
 		$(INSTALL_DATA) $(srcdir)/$$d/*.* $(DESTDIR)$(pkgdatadir)/matrixx/$$d ; \
 	done
-
