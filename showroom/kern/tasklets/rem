@@ -1,8 +1,0 @@
-rmmod ktest_rt
-rmmod ktest
-rmmod kctest_rt
-rmmod kctest
-rmmod kuctest_rt
-rmmod kuctest
-rmmod rtai_tasklets
-../remod

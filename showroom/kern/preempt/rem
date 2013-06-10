@@ -1,3 +1,0 @@
-rmmod preempt_rt
-rmmod preempt
-../remod

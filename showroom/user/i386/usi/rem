@@ -1,3 +1,0 @@
-rmmod rtai_usi
-rmmod rtai_tasklets
-../../remod

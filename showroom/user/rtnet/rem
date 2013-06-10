@@ -1,4 +1,0 @@
-rmmod rtai_netrpc
-./rtnet_down
-rmmod rtai_rtdm
-../remod

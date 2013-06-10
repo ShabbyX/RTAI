@@ -1,4 +1,0 @@
-rmmod mtest_rt
-rmmod mtest
-rmmod rtai_signal
-../remod

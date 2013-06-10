@@ -1,3 +1,0 @@
-rmmod agent_rt
-rmmod rt_agent
-../remod

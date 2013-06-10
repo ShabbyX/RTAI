@@ -1,7 +1,0 @@
-#!/bin/sh
-if (`rtai-config --linux-version | grep -q 2.6`);
-then insmod ./latency_rt.ko start_timer=0;
-else insmod ./latency.o start_timer=0; fi
-./display
-rmmod latency_rt
-rmmod latency

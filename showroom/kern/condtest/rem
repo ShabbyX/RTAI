@@ -1,3 +1,0 @@
-rmmod cond_rt
-rmmod condtest
-../remod

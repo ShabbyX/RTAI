@@ -1,3 +1,0 @@
-killall speaker
-rmmod rtai_netrpc
-../../remod

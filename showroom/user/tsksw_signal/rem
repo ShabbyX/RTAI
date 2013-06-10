@@ -1,3 +1,0 @@
-rmmod kern_rt
-rmmod kern
-../remod

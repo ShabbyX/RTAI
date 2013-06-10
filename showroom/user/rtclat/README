@@ -1,4 +1,0 @@
-This example is to be used specifically to test RTC hard timing mode, i.e.
-for the case when CONFIG_RTAI_RTC_FREQ has been set at a value >= 2 when
-configuring RTAI.
-It will work anyhow, in periodic mode always, at a frequency of 10 KHz.
