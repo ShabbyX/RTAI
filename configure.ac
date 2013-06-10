@@ -1983,7 +1983,6 @@ AC_SUBST(CROSSCOMPILE_TEST)
 AC_SUBST(CONFIG_RTAI_QUIET)
 
 AC_CONFIG_FILES([ \
-	Makefile \
 	GNUmakefile \
 	base/GNUmakefile \
 	base/arch/GNUmakefile \
