@@ -18,6 +18,10 @@
 
 #include <rtai_shm.h>
 
+#ifndef VM_RESERVED 
+#define VM_RESERVED (VM_DONTEXPAND | VM_DONTDUMP)
+#endif
+
 static __inline__ int vm_remap_page_range(struct vm_area_struct *vma, unsigned long from, unsigned long to)
 {
 	vma->vm_flags |= VM_RESERVED;

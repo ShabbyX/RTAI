@@ -9,4 +9,4 @@ in the original CVS repository at https://gna.org/cvs/?group=rtai.
 
 This is magma branch, keeping track of RTAI's magma repository.
 
-Latest update: Jun 4, 2013
+Latest update: June 9 2013

@@ -834,9 +834,20 @@ RT_TASK *rt_kthread_create(void *fun, long data, int priority, int linux_policy,
 }
 #endif
 	
+#include <linux/kthread.h>
 long rt_thread_create(void *fun, void *args, int stack_size)
 {
-	return kernel_thread(fun, args, 0);
+	long retval;
+	RT_TASK *task;
+	if ((task = current->rtai_tskext(TSKEXT0)) && task->is_hard > 0) {
+		rt_make_soft_real_time(task);
+	}
+//	retval = kernel_thread(fun, args, 0);
+	retval = (long)kthread_run(fun, args, "RTAI");
+	if (task && !task->is_hard) {
+		rt_make_hard_real_time(task);
+	}
+	return retval;
 }
 EXPORT_SYMBOL(rt_thread_create);
 	
@@ -850,8 +861,7 @@ RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int 
                 linux_rt_priority = 1;
 	}
 	rtai_set_linux_task_priority(current, policy, linux_rt_priority);
-	rt_daemonize();
-	
+//	rt_daemonize();
 	if ((task = __task_init(name ? name : rt_get_name(NULL), priority, 0, max_msg_size, cpus_allowed))) {
 		rt_make_hard_real_time(task);
 	} 
