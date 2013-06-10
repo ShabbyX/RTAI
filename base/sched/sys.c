@@ -51,7 +51,7 @@ Nov. 2001, Jan Kiszka (Jan.Kiszka@web.de) fix a tiny bug in __task_init.
 struct rt_fun_entry *rt_fun_ext[MAX_FUN_EXT];
 EXPORT_SYMBOL(rt_fun_ext);
 
-/*
+/* 
  * WATCH OUT for the default max expected size of messages from/to user space.
  */
 #define USRLAND_MAX_MSG_SIZE  128  // Default max message size, used here only.
@@ -104,7 +104,7 @@ static inline int GENERIC_DELETE(int index, void *object)
 {
 	return ((RTAI_SYSCALL_MODE int (*)(void *, ...))rt_get_lxrt_fun_entry(index))(object);
 }
-
+			 
 #define lxrt_sem_delete(sem)        GENERIC_DELETE(SEM_DELETE, sem)
 #define lxrt_named_sem_delete(sem)  GENERIC_DELETE(NAMED_SEM_DELETE, sem)
 #define lxrt_rwl_delete(rwl)        GENERIC_DELETE(RWL_DELETE, rwl)
@@ -134,11 +134,11 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 {
 	int rsize, r2size, wsize, w2size, msg_size;
 	long *wmsg_adr, *w2msg_adr, *fun_args;
-
+		
 	rsize = r2size = wsize = w2size = 0 ;
 	wmsg_adr = w2msg_adr = NULL;
 	fun_args = arg - 1;
-	if (NEED_TO_R(type)) {
+	if (NEED_TO_R(type)) {			
 		rsize = USP_RSZ1(type);
 		rsize = rsize ? fun_args[rsize] : sizeof(long);
 		if (NEED_TO_R2ND(type)) {
@@ -160,7 +160,7 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 			rt_task->max_msg_size[0] = (msg_size << 7)/100;
 			rt_task->msg_buf[0] = rt_malloc(rt_task->max_msg_size[0]);
 		}
-		if (rsize) {
+		if (rsize) {			
 			long *buf_arg = fun_args + USP_RBF1(type);
 			rt_copy_from_user(rt_task->msg_buf[0], (long *)buf_arg[0], rsize);
 			buf_arg[0] = (long)rt_task->msg_buf[0];
@@ -229,7 +229,7 @@ static inline RT_TASK* __task_init(unsigned long name, int prio, int stack_size,
 		rt_free(msg_buf0);
 		return 0;
 	}
-	rt_task = rt_malloc(sizeof(RT_TASK) + 3*sizeof(struct fun_args));
+	rt_task = rt_malloc(sizeof(RT_TASK) + 3*sizeof(struct fun_args)); 
 	if (rt_task) {
 	    rt_task->magic = 0;
 	    if (num_online_cpus() > 1 && cpus_allowed) {
@@ -359,7 +359,7 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 /*
  * The next two lines of code do a lot. It makes possible to extend the use of
  * USP to any other real time module service in user space, both for soft and
- * hard real time. Concept contributed and copyrighted by: Giuseppe Renoldi
+ * hard real time. Concept contributed and copyrighted by: Giuseppe Renoldi 
  * (giuseppe@renoldi.org).
  */
 		if (unlikely(!(funcm = rt_fun_ext[INDX(lxsrq)]))) {
@@ -612,7 +612,11 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 		}
 		case GET_EXECTIME: {
 			struct arg { RT_TASK *task; RTIME *exectime; };
-			rt_get_exectime(larg->task, larg->exectime);
+			if ((larg->task)->exectime[0] && (larg->task)->exectime[1]) {
+				larg->exectime[0] = (larg->task)->exectime[0]; 
+				larg->exectime[1] = (larg->task)->exectime[1]; 
+				larg->exectime[2] = rtai_rdtsc(); 
+			}
                         return 0;
 		}
 		case GET_TIMEORIG: {
@@ -697,7 +701,7 @@ long long rtai_lxrt_invoke (unsigned int lxsrq, void *arg)
 		retval = handle_lxrt_request(lxsrq, arg, task);
 		check_to_soften_harden(task);
 		return retval;
-	}
+	} 
 
 	return handle_lxrt_request(lxsrq, arg, NULL);
 }
@@ -728,7 +732,7 @@ void linux_process_termination(void)
 	struct rt_registry_entry entry;
 	int slot;
 /*
- * Linux is just about to schedule current out of existence. With this feature,
+ * Linux is just about to schedule current out of existence. With this feature, 
  * LXRT frees the real time resources allocated to it.
 */
 	if (!(numid = is_process_registered(current))) {
@@ -773,7 +777,7 @@ void linux_process_termination(void)
 	}
 	if ((task2delete = current->rtai_tskext(TSKEXT0))) {
 		if (!clr_rtext(task2delete)) {
-			rt_drg_on_adr(task2delete);
+			rt_drg_on_adr(task2delete); 
 			rt_printk("LXRT releases PID %d (ID: %s).\n", current->pid, current->comm);
 			rt_free(task2delete->msg_buf[0]);
 			rt_free(task2delete->msg_buf[1]);
@@ -794,7 +798,7 @@ void rt_daemonize(void);
 #if 0
 struct thread_args { void *fun; long data; int priority; int policy; int cpus_allowed; RT_TASK *task; struct semaphore *sem; };
 
-static void kthread_fun(struct thread_args *args)
+static void kthread_fun(struct thread_args *args) 
 {
 	int linux_rt_priority;
 
@@ -805,7 +809,7 @@ static void kthread_fun(struct thread_args *args)
                 linux_rt_priority = 1;
 	}
 	rtai_set_linux_task_priority(current, args->policy, linux_rt_priority);
-
+	
 	if ((args->task = __task_init(rt_get_name(NULL), args->priority, 0, 0, args->cpus_allowed))) {
 		RT_TASK *task = args->task;
 		void (*fun)(long) = args->fun;
@@ -814,7 +818,7 @@ static void kthread_fun(struct thread_args *args)
 		rt_make_hard_real_time(task);
 		fun(data);
 		rt_thread_delete(task);
-	}
+	} 
 	return;
 }
 
@@ -829,13 +833,24 @@ RT_TASK *rt_kthread_create(void *fun, long data, int priority, int linux_policy,
 	return args.task;
 }
 #endif
-
+	
+#include <linux/kthread.h>
 long rt_thread_create(void *fun, void *args, int stack_size)
 {
-	return kernel_thread(fun, args, 0);
+	long retval;
+	RT_TASK *task;
+	if ((task = current->rtai_tskext(TSKEXT0)) && task->is_hard > 0) {
+		rt_make_soft_real_time(task);
+	}
+//	retval = kernel_thread(fun, args, 0);
+	retval = (long)kthread_run(fun, args, "RTAI");
+	if (task && !task->is_hard) {
+		rt_make_hard_real_time(task);
+	}
+	return retval;
 }
 EXPORT_SYMBOL(rt_thread_create);
-
+	
 RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int policy, int cpus_allowed)
 {
 	int linux_rt_priority;
@@ -846,11 +861,10 @@ RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int 
                 linux_rt_priority = 1;
 	}
 	rtai_set_linux_task_priority(current, policy, linux_rt_priority);
-	rt_daemonize();
-
+//	rt_daemonize();
 	if ((task = __task_init(name ? name : rt_get_name(NULL), priority, 0, max_msg_size, cpus_allowed))) {
 		rt_make_hard_real_time(task);
-	}
+	} 
 	return task;
 }
 EXPORT_SYMBOL(rt_thread_init);

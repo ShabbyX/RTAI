@@ -338,6 +338,10 @@ static inline int xnarch_remap_vm_page(struct vm_area_struct *vma, unsigned long
 
 #else /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) */
 
+#ifndef VM_RESERVED
+#define VM_RESERVED (VM_DONTEXPAND | VM_DONTDUMP)
+#endif
+
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,15) && defined(CONFIG_MMU)
 	vma->vm_flags |= VM_RESERVED;
 	return vm_insert_page(vma, from, vmalloc_to_page((void *)to));

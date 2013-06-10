@@ -32,6 +32,22 @@
         * base/arch/x86_64/hal/hal.immed: review and fix a few bugs of the
 	  reworked stuff related to enabling/disabling.
         * base/arch/x86/hal/hal_32.h: use CPU_MASK_ALL to fix a quick and
+
+2013-06-09 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * addons/rtdm/xn.h and base/ipc/shm/kvmem.c: define VM_RESERVED if it
+	  does not exist.
+        * base/arch/x86/calibration/smi-module.c: discard __devinit in function
+	  definitions, found no more in Linux.
+        * base/include/rtai_schedcore.h: add e new Linux version dependenc for 
+	  OOM_DISABLE.
+        * base/sched/sys.c:just a first fix to have it compile against the
+	  gone for ever Linux kernel_thread, to be fixed, it is just for 
+	  having it compile at the moment.
+
+2013-03-14 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/arch/x86/hal/hal_32.c: use CPU_MASK_ALL to fix a quick and
 	  dirty, but very very bad hack, in selecting Linux timers for RTAI.
 
 2013-02-28 John Morris <john@zultron.com>
