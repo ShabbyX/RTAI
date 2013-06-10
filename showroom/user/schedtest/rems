@@ -1,0 +1,3 @@
+sync
+rmmod sysreq_rt
+../remod

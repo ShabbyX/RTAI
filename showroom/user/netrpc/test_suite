@@ -1,0 +1,18 @@
+cd async
+./run 0
+./run 1
+cd ../basetest
+./run
+cd ../resumefromintr
+./run
+./run
+./run
+cd ../sound
+./run
+cd ../soundmsg
+./run1
+./run2
+./run3
+cd ../poll
+./run
+cd ../

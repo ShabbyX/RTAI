@@ -1,0 +1,28 @@
+****** SOUND EXAMPLE ******
+
+This example only works on i386.
+
+This example is taken from a similar one available in the NMT-RTLinux
+distribution and demonstrates how to pronounce "Linux" correctly!
+Since it is not sure that everyone will be able to make out the words,
+here they are:
+"Hello, this is Linus Torvalds. I like to pronounce 'Linux' as 'Linux'"
+
+Unlike the same test from the official NMT-RTLinux release it uses a real time
+task and not an interrupt handler to do the job.
+A periodic real time task runs at 8 kKhz and at each schedule it tries to get a
+sample from RT-FIFO number 0. If successful, it transforms the sample from 8bit
+ulaw encoding to 1-bit sample and turns the speaker on or off accordingly.
+This takes advantage of the fact that ".au" files are typically sampled
+at 8kHz.
+The sound quality is pretty low. 1-bit sampling is clearly not enough.
+
+->>>> Be warned about the macro DIVISOR in rt_process.c.
+      It divides the tick time to simulate a higher interrupt frequency.
+      Use a value appropriate for your PC.
+
+To run the example type:
+
+make clean
+make
+./run

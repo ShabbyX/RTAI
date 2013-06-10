@@ -1,0 +1,3 @@
+sync
+rmmod exectime_rt
+../remod

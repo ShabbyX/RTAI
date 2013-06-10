@@ -1,0 +1,5 @@
+rmmod fastick1_rt
+rmmod fastick1
+rmmod fastick2_rt
+rmmod fastick2
+../remod

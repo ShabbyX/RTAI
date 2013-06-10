@@ -1,0 +1,3 @@
+killall wd
+rmmod rtai_wd
+../remod

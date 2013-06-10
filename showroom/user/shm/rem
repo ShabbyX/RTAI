@@ -1,0 +1,3 @@
+rmmod shmod_rt
+rmmod shmod
+../remod

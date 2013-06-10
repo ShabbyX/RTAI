@@ -1,0 +1,8 @@
+****** PRIORITY PASSING FOLLOWING MULTI RES_SEM WAITs ******
+
+This example demonstrates that priority is correctly passed through tasks
+wait blocked on res_sems.
+
+To use it just type:
+make
+./run

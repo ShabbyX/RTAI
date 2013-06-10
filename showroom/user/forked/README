@@ -1,0 +1,10 @@
+****** FORKED EXAMPLE ******
+
+This example shows common operations in soft and hard real time mode
+of many tasks launched through forking; number of tasks, timing and
+durations controlled by macros in period.h.  Under computer load check
+jitters printed at the end, even tasks run in hard mode, odd ones in
+soft mode.
+
+See the companion example "threaded" for a demonstration on how to use
+"pthread_create" for separate coordinated processes execution.

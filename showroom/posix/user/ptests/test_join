@@ -1,0 +1,6 @@
+sync
+./run tst-join1.c
+sync
+./run tst-join4.c
+sync
+./run tst-join5.c

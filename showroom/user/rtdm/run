@@ -1,0 +1,48 @@
+#!/bin/sh
+
+prefix=`rtai-config --prefix`
+
+if [ "$prefix" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+libpath=`rtai-config --library-dir`
+if [ "$libpath" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
+
+MODULES=$prefix/modules
+
+if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
+echo
+echo "*** A TEST OF RTDM ***"
+echo "Press <enter> to load modules:"
+read junk
+#ensure RTDM finds a clean 16550A, otherwise it will not work a second time.
+setserial /dev/ttyS0 uart none
+setserial /dev/ttyS1 uart none
+setserial /dev/ttyS0 uart 16550A
+setserial /dev/ttyS1 uart 16550A
+setserial /dev/ttyS0 uart none
+setserial /dev/ttyS1 uart none
+cd ..; ./ldmod; cd -
+if (`rtai-config --linux-version | grep -q 2.6`);
+then
+insmod $MODULES/rtai_rtdm.ko
+insmod $MODULES/rtai_16550A.ko io=0x2f8,0x3f8 irq=3,4 tx_fifo=1,1
+else
+insmod $MODULES/rtai_rtdm.o
+insmod $MODULES/rtai_16550A.o io=0x2f8,0x3f8 irq=3,4 tx_fifo=1,1
+fi
+echo
+echo "Now start the realtime process <enter> and wait for its end."
+read junk
+sync
+$SUDO ./test
+echo
+echo "Done. Press <enter> to remove the modules."
+read junk
+./rem

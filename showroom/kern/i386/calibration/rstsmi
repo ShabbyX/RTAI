@@ -1,0 +1,2 @@
+insmod smi_rt.ko smiReset=1
+rmmod smi_rt

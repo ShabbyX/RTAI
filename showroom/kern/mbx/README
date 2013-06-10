@@ -1,0 +1,17 @@
+****** MBX EXAMPLE ******
+
+This example demonstrates the use of RTAI mailboxes.
+It has two senders and one receiver that exchange messages on mailboxes.
+Just run it for some time, if nothing appears on the screen than it is OK.
+See the code to understand why.
+
+To use it just type:
+
+make
+./run
+
+To stop it type:
+
+./rem
+
+Alternatively use your own insmod/rmmod after make.

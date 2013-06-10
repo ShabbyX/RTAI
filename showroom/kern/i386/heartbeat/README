@@ -1,0 +1,37 @@
+Heartbeat
+---------
+
+Simple sign of life test for RTAI. Creates a task with priority 99 that
+will drive a running light on an attached standard PC keyboard. Requires
+RTAI with RTDM support.
+
+WARNING: This tool can cause high latencies (several ms). Use only for
+debugging, not on production systems!
+
+To use:
+make
+./run
+
+Jan Kiszka - jan.kiszka@web.de
+
+*******************************************************************************
+
+Semtest
+-------
+
+Tests all RTDM sem operations.
+
+To use:
+make
+./runs
+
+Mutextest
+-------
+
+Tests all RTDM mutex operations.
+
+To use:
+make
+./runm
+
+Paolo

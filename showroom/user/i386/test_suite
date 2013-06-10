@@ -1,0 +1,16 @@
+cd fifosound
+./run
+cd ../laurich
+./run
+cd ../resumefromintr
+./run
+cd ../sound
+./run
+cd ../soundmsg
+./run
+cd ../steelworks
+./run
+cd ../usi
+./runp
+./runt
+cd ../

@@ -1,0 +1,4 @@
+sync
+rmmod speaker_rt
+rmmod speaker
+../../remod

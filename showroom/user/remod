@@ -1,0 +1,14 @@
+sync
+rmmod rtai_shm
+rmmod rtai_mq
+rmmod rtai_fifos
+rmmod rtai_bits
+rmmod rtai_tbx
+rmmod rtai_msg
+rmmod rtai_mbx
+rmmod rtai_sem
+rmmod rtai_lxrt
+rmmod rtai_ksched
+rmmod rtai_sched
+rmmod rtai_hal
+sync

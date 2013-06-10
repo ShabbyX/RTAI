@@ -1,0 +1,4 @@
+sync
+rmmod sysreq
+rmmod sysreq_rt
+rmmod rtai_hal

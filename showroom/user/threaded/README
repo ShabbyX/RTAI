@@ -1,0 +1,14 @@
+****** THREADS EXAMPLE ******
+
+This example verifies core timing operations in soft and hard real
+time modes of many tasks launched through pthrad_create; number of
+tasks, timing and durations controlled by macros in period.h.  The
+possibility of using pthread_create to generate Linux processes is
+very usefull since it allows a task layout that is close to the
+structure of modules.  That could make it easier the translation to
+kernel modules for maximum performances.  Under computer load check
+jitters printed at the end, even tasks run in hard mode, odd ones in
+soft mode.
+
+See the companion example "forked" for a demonstration on how to use
+"fork" for separate coordinated processes execution.

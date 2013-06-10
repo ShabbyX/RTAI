@@ -1,0 +1,5 @@
+killall task_code
+killall comnode
+rmmod scrambler_rt
+rmmod rtai_netrpc
+../../remod

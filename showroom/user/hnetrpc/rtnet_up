@@ -1,0 +1,7 @@
+#rtnet start
+mknod /dev/rtnet c 10 240
+insmod /usr/rtnet/modules/rtnet.ko
+insmod /usr/rtnet/modules/rtipv4.ko
+insmod /usr/rtnet/modules/rtpacket.ko
+insmod /usr/rtnet/modules/rt_loopback.ko
+/usr/rtnet/sbin/rtifconfig rtlo up 127.0.0.1

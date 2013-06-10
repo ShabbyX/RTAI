@@ -1,0 +1,21 @@
+This test shows the use of RTAI distributed processing in user space.
+It checks the use of async calls by receiving on a remote mailbox, to which
+another task write integer numbers, with an immediate return. A machine lock
+is avoided by having both the sender and receiver sleep a bit. Naturally the
+receiving task alway misses the sent values. However the sent messages can be
+recovered either by a server task or by synchronizing the asynchronous receiver.
+The choice depend on the variable SERVER in receiver.c being 1 or 0, assigned
+as an arg to the execution command.
+See the README in the parent net_rpc directory for an explanation of
+asynchronous calls.
+
+To run it on a single machine do:
+
+make
+./run [0|1], press ENTER to end it all, otherwise it will end accordingly to
+             the macro MAXLOOPS found in sender.c
+./rem
+
+To run it on different machines comment out the line executing the process to
+be run on onother node, in file run, and set the appropriate dotted decimal
+notation IP address of the speaker task on its command line.

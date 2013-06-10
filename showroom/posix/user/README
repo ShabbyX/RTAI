@@ -1,0 +1,8 @@
+This directory contains 4 examples/tests showing all the APIs of the extensive
+RTAI user space support for POSIX. They are:
+- condtest, the counterpart of the native kernel space condtest
+- jepplin,  the counterpart of the native kernel space namedstuff
+- mqtest,   the counterpart of the native kernel/user space pqueue
+- latency,  the counterpart of the native kernel/user space latency
+All examples can be compiled and tested in soft/hard real time mode by just
+leaving/commentig the macro MAKE_IT_HARD.

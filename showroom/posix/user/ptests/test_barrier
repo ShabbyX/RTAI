@@ -1,0 +1,8 @@
+sync
+./run tst-barrier1.c
+sync
+./run tst-barrier2.c
+sync
+./run tst-barrier3.c
+sync
+./run tst-barrier4.c

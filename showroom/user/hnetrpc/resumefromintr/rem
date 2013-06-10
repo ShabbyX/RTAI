@@ -1,0 +1,5 @@
+rmmod handler_rt
+rmmod rtai_netrpc
+cd ..; ./rtnet_down; cd -
+rmmod rtai_rtdm
+../../remod
