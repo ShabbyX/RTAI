@@ -1,0 +1,4 @@
+sync
+rmmod splocks_rt
+rmmod splocks
+../remod

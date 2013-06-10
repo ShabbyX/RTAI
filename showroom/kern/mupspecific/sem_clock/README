@@ -1,0 +1,18 @@
+****** SEM_CLOCK EXAMPLE ******
+
+This example demonstrates the use of semaphores in a MUP scheduler.
+It is mainly aimed at verifying that such a technique of intercpus
+synchronizations works in a MUP application. Thus we have not cared to revise
+the various timings setups used in the same UP/SMP example.
+
+It implements a digital wrist clock in the way detailed in: Andre' Schiper,
+Programmation Concurrent, Presses Polytechnique et Universitaires Romandes,
+Geneve.
+
+To run the example type:
+
+make clean
+make
+./run
+
+then follow the menu.

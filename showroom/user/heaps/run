@@ -1,0 +1,31 @@
+#!/bin/sh
+
+libpath=`rtai-config --library-dir`
+
+if [ "$libpath" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
+
+if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
+echo
+echo "*** MISC DYNAMIC MEMORY ALLOCATION AND SHARING WITH ***"
+echo "*** USER SPACE CLIENT/SERVER THROUGH A KERNEL AGENT ***"
+echo "Press <enter> to load modules:"
+read junk
+cd ..; ./ldmod; cd -
+echo
+echo "Now start the realtime process <enter> and wait for its end."
+read junk
+sync
+if (`rtai-config --linux-version | grep -q 2.6`);
+then insmod ./agent_rt.ko;
+else insmod ./rt_agent.o; fi
+$SUDO ./sender &
+$SUDO ./receiver
+echo
+echo "Done. Press <enter> to remove the modules."
+read junk
+./rem

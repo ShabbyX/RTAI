@@ -1,0 +1,34 @@
+****** RESOURCE SEMAPHORE EXAMPLE ******
+
+This program tests that the resource semaphore priority inheritance is working
+correctly. It is a based on the canonical low/high/medium priority task
+inversion scheme. The inversion is emulated in two slightly different ways, in
+rt_process1.c and rt_process2.c, using intertasks send/receive to cause,
+systematically and deterministically, the events sequence leading to a priority
+inversion.
+In the first sequence a low priority task owns a semaphore, a medium priority
+task preempts it and is in turn preempted by a high priority task that waits
+on the same resourse semaphore already acquired by the low priority task.
+In the second a low priority task owns a semaphore, a high priority task
+preempts it and blocks waiting for the semaphore owned by the low priority task,
+then a medium priority task runs preempting the low priority one.
+In both cases when the inversion happens the high priority task must wait for
+the execution of both low and medium priority tasks, while without inversion it
+waits just for the short time the low priority task owns the resorce.
+If the examples are executed with a simple binary semaphore, ./run 0, a priority
+inversion occurs and is signalled by messages on the screen showing the long
+delayed execution. If a resource semaphore is adopted, ./run 1 or ./run, the
+messages will indicate just the short execution delay caused by the slowest
+priority task.
+
+To use it type:
+
+make
+./run 0, to cause priority inversion
+./run 1, or ./run, to avoid priority inversion
+
+To remove it type:
+just enter a return or ...
+./rem if anything remain pended
+
+Alternatively use your own insmod/rmmod after make.

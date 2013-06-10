@@ -1,0 +1,8 @@
+rmmod heartbeat_rt
+rmmod heartbeat
+rmmod semtest_rt
+rmmod semtest
+rmmod mutextest_rt
+rmmod mutextest
+rmmod rtai_rtdm
+../../remod

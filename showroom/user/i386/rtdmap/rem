@@ -1,0 +1,4 @@
+rmmod realtimedriver_rt
+rmmod realtimedriver
+rmmod rtai_rtdm
+../../remod

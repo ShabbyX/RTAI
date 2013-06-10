@@ -1,0 +1,3 @@
+rmmod namedstuff_rt
+rmmod namedstuff
+../remod

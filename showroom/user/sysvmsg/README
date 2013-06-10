@@ -1,0 +1,96 @@
+                    *** RTAI UNIX SYSV IPC MESSAGES ***
+
+This is an exercise showing how relatively simple it could be to adapt a piece
+of Linux code to RTAI.
+
+REMARK:
+
+Statement in the first release:
+"By diffing the files found here with their Linux twins, found in its "ipc"
+subdirectory, it is possible to see that, by appropriately #defining a few
+interfaces, code reuse is almost total."
+
+What above relates to linux-2.4.xx. Since here we keep that same msg.c but
+can use it with Linux-2.6.xx you must not take what just said literally,
+even if it remains fairly close. Add that we have a full symmetric kernel/user
+space usage without the need to do any strange thing.
+
+End of REMARK.
+
+It includes even its specific proc file, its name is: "/proc/rtai/sysvmsg",
+to avoid clashing against the original one.
+
+There are a few unrequested changes also. They are due to my preference for
+a different calling structure for "msgsnd" and "msgrcv". I hate the idea of
+defining a structure for the msg type and its content. Just setting it up
+will take more than pushing one arg more into the call list.
+
+From the technical point of view the most important changes are related to:
+- getting rid of modifications of the process state, RTAI does it all both
+  for soft and hard real time modes already;
+- the use of real time spinlocks with irq protection, because RTAI in hard
+  real time mode we have unconditional preemption;
+- the use of either rt_task_suspend/resume or rt_receive/rt_send to
+  easily substitute Linux schedule/wake_up_process;
+- care in understanding if used from kernel/user space;
+- last, but more subtle, avoiding immediate rescheduling when using
+  rt_task_resume/rt_send in place of Linux wake_up_process, as it will lead
+  to a deadlock on a held spinlocks. That is not a problem for Linux, since
+  its wake_up_process simply readies a process, the real scheduling occuring
+  just at return from kernel space. Thus Linux can hold a spinlock till it
+  leaves the kernel. Instead RTAI schedules a readied task immediately, so
+  it will clash with any held spinlock. The solution, comes trivial: use
+  RTAI rt_sched_lock/unlock in a few appropriate places.
+- the availability of a further example on how to extend LXRT usage to a user
+  own specific application, without touching any part of the RTAI code.
+
+I'd like to remark that even if SYSV IPC messages are not the leanest
+communication tool to be used in real time they can, despite some clumsiness,
+be of help in many cases in which their options can afford a manageable
+policy for a specific application.
+
+No need to explain the implemented msg functions. Simply use the standard
+"man" command coming with any Linux/GPL. The changes to the call parameters
+in rt_msgsnd_nu and rt_msgrcv_nu can be easily inferred by looking at
+rtai_sysvmsg.h.
+
+
+There is a simple user space test to verify it works nicely. It is
+parametrizable, both in term of tasks number, msg size and looping speed.
+The related self explaining parameter macros are in testmsg.c. It can be a
+good viable stress test also for checking RTAI in user space. To use it:
+
+make clean
+make
+./run
+
+then read the prompt.
+
+
+A twin kernel space example is also available. To use it:
+
+make clean
+make
+./krun
+
+then read the prompt.
+
+In comparing the kernel space example, ktestmsg.c, with its user space
+counterpart, i.e. testmsg.c, notice the allocation of arrays not on the stack.
+To understand why recall that RTAI sysvmsg can be used in kernel space but
+only using kthreads, because a Linux task structure is needed and kthreads
+have it, while RTAI proper tasks have not. The use of kernel threads implies
+a stack size not greater than 8 KB, or even 4, so large dynamic arrays are
+forbidden in kernel threads.
+
+
+Finally the same examples above are splitted between kernel and user space.
+To use it:
+
+make clean
+make
+./ukrun
+
+then read the prompt.
+
+Paolo Mantegazza.

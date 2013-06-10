@@ -1,0 +1,42 @@
+#!/bin/sh
+
+libpath=`rtai-config --library-dir`
+
+if [ "$libpath" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
+
+if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
+echo
+echo "*** INTERTASK MSG BASED DIGITAL CLOCK (kernel) ***"
+echo "Press <enter> to load modules:"
+read junk
+cd ../..; ./ldmod; cd -
+echo
+echo "Now start the msg clock <enter>."
+read junk
+sync
+if (`rtai-config --linux-version | grep -q 2.6`);
+then
+
+insmod ./dispclk_rt.ko;
+insmod ./cmdclk_rt.ko;
+insmod ./cmdcrn_rt.ko;
+insmod ./clock_rt.ko;
+
+else
+
+insmod ./dispclk.o;
+insmod ./cmdclk.o;
+insmod ./cmdcrn.o;
+insmod ./clock.o;
+
+fi
+./keybrd
+echo
+echo "Done. Press <enter> to remove the modules."
+read junk
+./rem

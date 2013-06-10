@@ -1,0 +1,5 @@
+This test verifies the forcing of a background hard real time task to soft real
+time from a supervisor task. After killing the supervisor the, still running
+in soft real time, background process can be killed by using the kill command.
+Just ps the get the pid of rt_task, then do "kill pid", otherwise it will be
+killed by the launch script.

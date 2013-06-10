@@ -1,0 +1,3 @@
+rmmod bits_rt
+rmmod bitstest
+../remod

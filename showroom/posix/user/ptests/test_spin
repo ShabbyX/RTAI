@@ -1,0 +1,6 @@
+sync
+./run tst-spin1.c
+sync
+./run tst-spin2.c
+sync
+./run tst-spin3.c

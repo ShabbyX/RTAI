@@ -1,0 +1,20 @@
+****** ROUND ROBIN (RR) SCHEDULING EXAMPLE ******
+
+This example demonstrates RR scheduling. It features NTASKS realtime tasks each
+running to increase a counter for the same total absolute time, without
+releasing the CPU. The final printout of all of the counters will show that they
+all worked in slices because of the RR policy. A counterproof can be seen by
+setting the variable SchedPolicy to RT_SCHED_FIFO, either manually or by
+insmoding with "SchedPolicy=0"
+Various macros in rt_process allows to experiment the use of different
+parameters values, i.e.: number of tasks, RR quantum, execution time.
+
+To run the example type:
+
+make clean
+make
+./run
+
+To remove it type:
+
+./rem

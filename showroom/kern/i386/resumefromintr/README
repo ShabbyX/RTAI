@@ -1,0 +1,12 @@
+****** RESUMEFROMINT EXAMPLE ******
+
+This test shows two ways for waking up real time tasks directly from interrupt
+handlers. The task itself can then act, partly or as a whole, as an interrupt
+handler. It is based on using either suspend/resume or semaphore wait/signal.
+
+You can control period and wakeup method through macros in rt_process.h
+
+To run it do:
+make clean
+make
+./run

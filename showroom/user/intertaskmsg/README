@@ -1,0 +1,6 @@
+****** INTERTASK MESSAGES EXAMPLE ******
+
+This test verifies the use of synchronous intertask arbitrary messages
+and proxies. It is based on messaging APIs using process PID to point
+to tasks as an alternative to the real time extension handles provided
+by the corresponding native RTAI core services.

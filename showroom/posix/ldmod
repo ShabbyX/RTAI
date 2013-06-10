@@ -1,0 +1,61 @@
+#!/bin/sh
+
+prefix=`rtai-config --prefix`
+
+if [ "$prefix" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+MODULES=$prefix/modules
+
+sync;
+if (`rtai-config --linux-version | grep -q 2.6`);
+then
+
+insmod $MODULES/rtai_hal.ko IsolCpusMask=0;
+sync;
+#insmod $MODULES/rtai_lxrt.ko;
+insmod $MODULES/rtai_sched.ko;
+sync;
+insmod $MODULES/rtai_sem.ko;
+sync;
+insmod $MODULES/rtai_mbx.ko;
+sync;
+insmod $MODULES/rtai_msg.ko;
+sync;
+insmod $MODULES/rtai_fifos.ko;
+sync;
+insmod $MODULES/rtai_tbx.ko;
+sync;
+insmod $MODULES/rtai_bits.ko;
+sync;
+insmod $MODULES/rtai_mq.ko;
+sync;
+insmod $MODULES/rtai_shm.ko;
+
+else
+
+insmod $MODULES/rtai_hal.o;
+sync;
+#insmod $MODULES/rtai_lxrt.o;
+insmod $MODULES/rtai_sched.o;
+sync;
+insmod $MODULES/rtai_sem.o;
+sync;
+insmod $MODULES/rtai_mbx.o;
+sync;
+insmod $MODULES/rtai_msg.o;
+sync;
+insmod $MODULES/rtai_fifos.o;
+sync;
+insmod $MODULES/rtai_tbx.o;
+sync;
+insmod $MODULES/rtai_bits.o;
+sync;
+insmod $MODULES/rtai_mq.o;
+sync;
+insmod $MODULES/rtai_shm.o;
+
+fi
+sync;

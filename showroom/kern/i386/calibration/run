@@ -1,0 +1,29 @@
+#!/bin/sh
+
+libpath=`rtai-config --library-dir`
+
+if [ "$libpath" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
+
+if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
+echo
+echo "*** INTERACTIVE CALIBRATION OF VARIOUS TIMING PARAMETERS (user) ***"
+echo "Press <enter> to load modules:"
+read junk
+cd ../..; ./ldmod; cd -
+if (`rtai-config --linux-version | grep -q 2.6`);
+then insmod ./calmod_rt.ko;
+else insmod ./calmod.o; fi
+echo
+echo "Now start the realtime process and follow the menu."
+read junk
+sync
+./calproc
+echo
+echo "Done. Press <enter> to remove the modules."
+read junk
+./rem

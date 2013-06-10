@@ -1,0 +1,10 @@
+
+****** PRIO INHERITHANCE FOR MSGs, AS AT RTAI-LAB BEGINNING ******
+
+This example demonstrates that priority is correctly passed through tasks
+syncronised by using intertask messages. Take from the RTAI-LAB intialisation
+sequence.
+
+To use it just type:
+make
+./run

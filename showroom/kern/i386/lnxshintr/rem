@@ -1,0 +1,3 @@
+rmmod lnxshintr_rt
+rmmod lnxshintr
+../../remod

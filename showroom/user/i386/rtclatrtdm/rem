@@ -1,0 +1,6 @@
+rmmod irqlat_rt
+rmmod irqlat
+rmmod rtai_rtdm
+rmmod rtai_sem
+rmmod rtai_sched
+rmmod rtai_hal

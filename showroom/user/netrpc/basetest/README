@@ -1,0 +1,19 @@
+This test shows the use of RTAI distributed processing in user space.
+It is based on the "jepplin" test found in the kernel examples of RTAI.
+It has been chosen because it features semaphores and mail boxes, plain and
+timed out, thus allowing to verify all the basic requirements of a distributed
+application. It is implemented in a form that allows its distribution to three
+decentralised remote units, one of which affords just a centralised timer and
+all the needed semaphores and mailboxes, while not carrying out any processing.
+The 3 units can then work on a 1/2/3 different computers.
+See the corresponding implementation in kernel space in directory ktest.
+
+To run it on a single machine do:
+
+make
+./run
+./rem, when it ends.
+
+To run it on different machines comment out the lines executing processes to be
+run on other nodes, in file run, and set the appropriate dotted decimal notation
+IP addresses on the command line of each process.

@@ -1,0 +1,43 @@
+#!/bin/sh
+
+prefix=`rtai-config --prefix`
+
+if [ "$prefix" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+libpath=`rtai-config --library-dir`
+export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
+
+MODULES=$prefix/modules
+
+if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
+echo
+echo "*** BASE REMOTE RTAI SERVICES DEMONSTRATOR (user) ***"
+echo "Press <enter> to load modules:"
+read junk
+cd ../..; ./ldmod; cd -
+sync
+if (`rtai-config --linux-version | grep -q 2.6`);
+then
+insmod $MODULES/rtai_rtdm.ko
+cd ..; ./rtnet_up; cd -
+insmod $MODULES/rtai_netrpc.ko ThisNode="127.0.0.1";
+else
+insmod $MODULES/rtai_rtdm.o
+cd ..; ./rtnet_up; cd -
+insmod $MODULES/rtai_netrpc.o ThisNode="127.0.0.1";
+fi
+echo
+echo "Now start the realtime process"
+echo "<enter>, then wait for its end."
+read junk
+$SUDO ./comnode &
+$SUDO ./task_code ComNode="127.0.0.1" &
+$SUDO ./start_task ComNode="127.0.0.1" TaskNode="127.0.0.1"
+while(`ps -a | grep -q comnode` & `ps -a | grep -q task_code`); do sleep 1; done
+echo
+echo "Done. Press <enter> to remove the modules."
+read junk
+./rem

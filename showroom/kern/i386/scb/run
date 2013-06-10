@@ -1,0 +1,19 @@
+#!/bin/sh
+if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
+echo
+echo "*** SOUND USING SHARED MEMORY CIRCULAR BUFFERS (kernel) ***"
+echo "Press <enter> to load modules:"
+read junk
+cd ../..; ./ldmod; cd -
+echo
+echo "Now start the realtime process <enter>, <ctrl-C> to end it."
+read junk
+sync
+if (`rtai-config --linux-version | grep -q 2.6`);
+then insmod ./speaker_rt.ko;
+else insmod ./speaker.o; fi
+./player
+echo
+echo "Done. Press <enter> to remove the modules."
+read junk
+./rem

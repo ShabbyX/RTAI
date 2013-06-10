@@ -1,0 +1,29 @@
+****** FP EXAMPLE ******
+
+This example demonstrates the support of floating point operations in
+real-time tasks by calculating a sine, that can be seen wave squared on a scope
+connected to the parallel port. Since it interrupts a front linux process
+(check) that is carrying out a floating point summation it is possible to
+verify the appropriate working of fpu support and fp save/restores.
+
+->>>> Be carefull about the macro TICK_PERIOD its value is now set for a
+      200 MHz PPro, which can be too much for a less powerfull machine.
+      However do not lower it too much otherwise the real time task
+      is likely not to interrupt Linux at due time
+      and you will see no effect whatsoever.
+
+To run the example type:
+make clean
+make
+./run
+Alternatively use your own insmod/rmmod after make.
+
+Then toggling the 'f' key you will put the floating point support on and off
+and verify that the calculations carried out in "check" are accordingly right
+or wrong. Type ^C to exit.
+Note that the above is not true when working with the SMP scheduler as it
+always save/restores the FP environments to be safe against task CPU migration.
+Under the MUP scheduler the check can work only if it happens that rt_process
+and check are on the same CPU, a purely randomly controlled situation since
+you cannot say where Linux is going to run check.
+In any case real time FP is safe under RTAI.
