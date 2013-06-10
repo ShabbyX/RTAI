@@ -51,7 +51,7 @@ Nov. 2001, Jan Kiszka (Jan.Kiszka@web.de) fix a tiny bug in __task_init.
 struct rt_fun_entry *rt_fun_ext[MAX_FUN_EXT];
 EXPORT_SYMBOL(rt_fun_ext);
 
-/* 
+/*
  * WATCH OUT for the default max expected size of messages from/to user space.
  */
 #define USRLAND_MAX_MSG_SIZE  128  // Default max message size, used here only.
@@ -104,7 +104,7 @@ static inline int GENERIC_DELETE(int index, void *object)
 {
 	return ((RTAI_SYSCALL_MODE int (*)(void *, ...))rt_get_lxrt_fun_entry(index))(object);
 }
-			 
+			
 #define lxrt_sem_delete(sem)        GENERIC_DELETE(SEM_DELETE, sem)
 #define lxrt_named_sem_delete(sem)  GENERIC_DELETE(NAMED_SEM_DELETE, sem)
 #define lxrt_rwl_delete(rwl)        GENERIC_DELETE(RWL_DELETE, rwl)
@@ -229,7 +229,7 @@ static inline RT_TASK* __task_init(unsigned long name, int prio, int stack_size,
 		rt_free(msg_buf0);
 		return 0;
 	}
-	rt_task = rt_malloc(sizeof(RT_TASK) + 3*sizeof(struct fun_args)); 
+	rt_task = rt_malloc(sizeof(RT_TASK) + 3*sizeof(struct fun_args));
 	if (rt_task) {
 	    rt_task->magic = 0;
 	    if (num_online_cpus() > 1 && cpus_allowed) {
@@ -359,7 +359,7 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 /*
  * The next two lines of code do a lot. It makes possible to extend the use of
  * USP to any other real time module service in user space, both for soft and
- * hard real time. Concept contributed and copyrighted by: Giuseppe Renoldi 
+ * hard real time. Concept contributed and copyrighted by: Giuseppe Renoldi
  * (giuseppe@renoldi.org).
  */
 		if (unlikely(!(funcm = rt_fun_ext[INDX(lxsrq)]))) {
@@ -613,9 +613,9 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 		case GET_EXECTIME: {
 			struct arg { RT_TASK *task; RTIME *exectime; };
 			if ((larg->task)->exectime[0] && (larg->task)->exectime[1]) {
-				larg->exectime[0] = (larg->task)->exectime[0]; 
-				larg->exectime[1] = (larg->task)->exectime[1]; 
-				larg->exectime[2] = rtai_rdtsc(); 
+				larg->exectime[0] = (larg->task)->exectime[0];
+				larg->exectime[1] = (larg->task)->exectime[1];
+				larg->exectime[2] = rtai_rdtsc();
 			}
                         return 0;
 		}
@@ -701,7 +701,7 @@ long long rtai_lxrt_invoke (unsigned int lxsrq, void *arg)
 		retval = handle_lxrt_request(lxsrq, arg, task);
 		check_to_soften_harden(task);
 		return retval;
-	} 
+	}
 
 	return handle_lxrt_request(lxsrq, arg, NULL);
 }
@@ -732,7 +732,7 @@ void linux_process_termination(void)
 	struct rt_registry_entry entry;
 	int slot;
 /*
- * Linux is just about to schedule current out of existence. With this feature, 
+ * Linux is just about to schedule current out of existence. With this feature,
  * LXRT frees the real time resources allocated to it.
 */
 	if (!(numid = is_process_registered(current))) {
@@ -777,7 +777,7 @@ void linux_process_termination(void)
 	}
 	if ((task2delete = current->rtai_tskext(TSKEXT0))) {
 		if (!clr_rtext(task2delete)) {
-			rt_drg_on_adr(task2delete); 
+			rt_drg_on_adr(task2delete);
 			rt_printk("LXRT releases PID %d (ID: %s).\n", current->pid, current->comm);
 			rt_free(task2delete->msg_buf[0]);
 			rt_free(task2delete->msg_buf[1]);
@@ -798,7 +798,7 @@ void rt_daemonize(void);
 #if 0
 struct thread_args { void *fun; long data; int priority; int policy; int cpus_allowed; RT_TASK *task; struct semaphore *sem; };
 
-static void kthread_fun(struct thread_args *args) 
+static void kthread_fun(struct thread_args *args)
 {
 	int linux_rt_priority;
 
@@ -818,7 +818,7 @@ static void kthread_fun(struct thread_args *args)
 		rt_make_hard_real_time(task);
 		fun(data);
 		rt_thread_delete(task);
-	} 
+	}
 	return;
 }
 
@@ -864,7 +864,7 @@ RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int 
 //	rt_daemonize();
 	if ((task = __task_init(name ? name : rt_get_name(NULL), priority, 0, max_msg_size, cpus_allowed))) {
 		rt_make_hard_real_time(task);
-	} 
+	}
 	return task;
 }
 EXPORT_SYMBOL(rt_thread_init);

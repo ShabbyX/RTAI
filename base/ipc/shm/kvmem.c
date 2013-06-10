@@ -18,7 +18,7 @@
 
 #include <rtai_shm.h>
 
-#ifndef VM_RESERVED 
+#ifndef VM_RESERVED
 #define VM_RESERVED (VM_DONTEXPAND | VM_DONTDUMP)
 #endif
 
