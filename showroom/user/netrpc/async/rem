@@ -1,3 +1,0 @@
-killall receiver
-rmmod rtai_netrpc
-../../remod

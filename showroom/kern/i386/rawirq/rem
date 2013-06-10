@@ -1,2 +1,0 @@
-rmmod dsp_rt
-rmmod rtai_hal

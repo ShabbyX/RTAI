@@ -1,1 +1,0 @@
-a=0; while "true"; do date; a=`expr $a + 1`; echo $a; ./run; done

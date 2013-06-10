@@ -1,5 +1,0 @@
-rmmod ktestmsg_rt
-rmmod kptestmsg_rt
-rmmod rtai_sysvsmg
-rmmod util
-../remod

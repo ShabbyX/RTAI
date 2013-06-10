@@ -1,3 +1,0 @@
-rmmod intrlat_rt.ko
-rmmod intrlat
-../remod

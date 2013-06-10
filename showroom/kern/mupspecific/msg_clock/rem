@@ -1,9 +1,0 @@
-rmmod clock_rt
-rmmod clock
-rmmod cmdclk_rt
-rmmod cmdclk
-rmmod cmdcrn_rt
-rmmod cmdcrn
-rmmod dispclk_rt
-rmmod dispclk
-../../remod

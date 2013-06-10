@@ -1,3 +1,0 @@
-rmmod wd_rt
-rmmod rtai_wd
-../remod
