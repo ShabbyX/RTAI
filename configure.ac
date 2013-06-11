@@ -1,26 +1,20 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
+dnl Process this file with autoconf to create configure
+AC_PREREQ(2.68)
 
-AC_PREREQ([2.68])
-AC_INIT([RTAI], [magma], [rtai@rtai.org])
-AC_CONFIG_SRCDIR([base/sched/sched.c])
-AC_CONFIG_HEADERS([rtai_config.h])
+AC_INIT([RTAI], [magma-unofficial], [rtai@rtai.org])
 
 CONFIG_RTAI_VERSION_MAJOR=3
 CONFIG_RTAI_VERSION_MINOR=7
 CONFIG_RTAI_REVISION_LEVEL=0
 
+AC_CONFIG_HEADERS(rtai_config.h)
 AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_SRCDIR(base/sched/sched.c)
 AC_PREFIX_DEFAULT(/usr/realtime)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_PROG_INSTALL
-
-AM_INIT_AUTOMAKE([foreign no-exeext dist-bzip2])
-AM_MAINTAINER_MODE
-LT_INIT
-AM_PROG_AS
 
 AC_ARG_WITH(CC,
     [  --with-cc=compiler      use specific C compiler],
@@ -72,6 +66,10 @@ AC_DEFINE_UNQUOTED(CONFIG_RTAI_HOST_STRING,"$host",[Host system alias])
 RTAI_HOST_STRING="$host"
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_COMPILER,"`$CC -v 2>&1 | tail -n 1`",[Compiler])
 
+AM_INIT_AUTOMAKE([foreign no-exeext dist-bzip2])
+AM_MAINTAINER_MODE
+LT_INIT
+AM_PROG_AS
 dnl Find arch-specific requirements and supports. Features which
 dnl are not supported by all archs must be listed here, so that a
 dnl an Autoconf flag can later be defined/undefined in rtai_config.h.
@@ -1007,6 +1005,7 @@ if [[ $ac_cv_mingcc = no ]]; then
 else
   AC_MSG_RESULT([ok])
 fi
+MDL_HAVE_OPENGL
 SC_PATH_EFLTK($CONFIG_RTAI_EFLTK_DIR)
 fi
 
@@ -1274,6 +1273,36 @@ AC_ARG_ENABLE(quiet-build,
         y | yes) CONFIG_RTAI_QUIET=quiet_ ;;
         n | no) unset CONFIG_RTAI_QUIET ;;
         esac])
+
+dnl Catch sub-package flags
+
+AC_MSG_CHECKING(for RTAI simulator)
+AC_ARG_ENABLE(sim,
+	[ --enable-sim		Build RTAI simulator (MVM) ],
+	[case "$enableval" in
+	y | yes) CONFIG_RTAI_MVM=y ;;
+	*) unset CONFIG_RTAI_MVM ;;
+	esac])
+
+unset RTAI_MAYBE_SIMDIR
+if test \! -d $srcdir/rtai-sim; then
+    if test x$CONFIG_RTAI_MVM = xy; then
+        AC_MSG_ERROR([simulator is missing.])
+    fi
+    AC_MSG_RESULT([not present])
+else
+    if test x$CONFIG_RTAI_MVM = xy; then
+	export CONFIG_RTAI_MVM_DEBUG
+    	export CONFIG_RTAI_MVM_GCC_TARBALL
+    else
+	RTAI_MAYBE_SIMDIR=rtai-sim
+    fi
+    AC_MSG_RESULT(${CONFIG_RTAI_MVM:-no})
+fi
+if test x$arch_supports_sim = x -a x$CONFIG_RTAI_MVM = xy; then
+   AC_MSG_ERROR([simulator is not available on this architecture.])
+fi
+AC_SUBST(RTAI_MAYBE_SIMDIR)
 
 dnl We need to know this before building the APIC support
 dnl into the SMP scheduler for the x86 platform. Autoconf imposes
@@ -1750,8 +1779,7 @@ RTAI_COMPAT_CPPFLAGS=
 
 AC_MSG_CHECKING([for RTAI target architecture])
 
-dnl RTAI_USER_CFLAGS="-I$LINUX_KERNELSRC/include "
-RTAI_USER_CFLAGS="-D_GNU_SOURCE"
+RTAI_USER_CFLAGS="-I$LINUX_KERNELSRC/include "
 
 if test x"$LINUX_KERNELOUTPUT" != x"$LINUX_KERNELSRC"; then
   RTAI_REAL_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include $RTAI_REAL_USER_CFLAGS"
@@ -2110,6 +2138,10 @@ if test \! x$RTAI_MAYBE_DOCDIR = x; then
 	   doc/docbook/custom-stylesheets/xsl/html/chunk.xsl \
 	   doc/docbook/docbook-test/GNUmakefile \
       ])
+fi
+
+if test x$CONFIG_RTAI_MVM = xy; then
+   AC_CONFIG_SUBDIRS(rtai-sim)
 fi
 
 AC_OUTPUT()
