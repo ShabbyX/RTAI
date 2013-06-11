@@ -7,6 +7,7 @@ by Paolo Mantegazza (the main developer and owner of RTAI).**  However, I try
 to keep branches named after the RTAI modules up-to-date with their development
 in the original CVS repository at https://gna.org/cvs/?group=rtai.
 
-This is magma branch, keeping track of RTAI's magma repository.
+This is magma branch, keeping track of RTAI's magma repository. The showroom
+module has also been added to provide tests and examples for users and developers.
 
 Latest update: June 9 2013
