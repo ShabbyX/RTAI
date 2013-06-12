@@ -49,20 +49,20 @@ void fun1(long t)
 		RT_PRINTK("TASK %d BLOCKS RECEIVING ON MBX\n", t);
 		RT_PRINTK("TASK %d UNBLOCKS RECEIVING ON MBX %d BYTES\n", t, rt_mbx_receive(&mbx, &msg, sizeof(msg)));
 	}
-        atomic_inc(&cleanup);
+	atomic_inc(&cleanup);
 }
 
 void fun2(long t)
 {
 	RT_PRINTK("ANOTHER TASK DELETES THE MBX AND ...\n");
 	rt_mbx_delete(&mbx);
-        atomic_inc(&cleanup);
+	atomic_inc(&cleanup);
 }
 
 int init_module(void)
 {
 	int i;
-        rt_set_oneshot_mode();
+	rt_set_oneshot_mode();
 	start_rt_timer(0);
 	rt_mbx_init(&mbx, 5);
 	for (i = 0; i < NUM_TASKS; i++) {

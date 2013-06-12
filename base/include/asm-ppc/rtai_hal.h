@@ -130,11 +130,11 @@ static inline unsigned long long rtai_llimd(unsigned long long ull, unsigned lon
 #include <rtai_trace.h>
 
 struct rtai_realtime_irq_s {
-        int (*handler)(unsigned irq, void *cookie);
-        void *cookie;
-        int retmode;
-        int cpumask;
-        int (*irq_ack)(unsigned int, void *);
+	int (*handler)(unsigned irq, void *cookie);
+	void *cookie;
+	int retmode;
+	int cpumask;
+	int (*irq_ack)(unsigned int, void *);
 };
 
 #define RTAI_DOMAIN_ID  0x52544149
@@ -248,9 +248,9 @@ do { \
 
 #ifdef CONFIG_PREEMPT
 #define rtai_save_and_lock_preempt_count() \
-        do { int *prcntp, prcnt; prcnt = xchg(prcntp = &preempt_count(), 1);
+	do { int *prcntp, prcnt; prcnt = xchg(prcntp = &preempt_count(), 1);
 #define rtai_restore_preempt_count() \
-             *prcntp = prcnt; } while (0)
+	     *prcntp = prcnt; } while (0)
 #else
 #define rtai_save_and_lock_preempt_count();
 #define rtai_restore_preempt_count();
@@ -413,22 +413,22 @@ static inline void rtai_spin_gunlock(volatile unsigned long *lock)
 
 static inline void rt_get_global_lock(void)
 {
-        barrier();
-        rtai_cli();
-        if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0])) {
+	barrier();
+	rtai_cli();
+	if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0])) {
 		rtai_spin_glock(&rtai_cpu_lock[0]);
-        }
-        barrier();
+	}
+	barrier();
 }
 
 static inline void rt_release_global_lock(void)
 {
-        barrier();
-        rtai_cli();
-        if (test_and_clear_bit(hal_processor_id(), &rtai_cpu_lock[0])) {
+	barrier();
+	rtai_cli();
+	if (test_and_clear_bit(hal_processor_id(), &rtai_cpu_lock[0])) {
 		rtai_spin_gunlock(&rtai_cpu_lock[0]);
-        }
-        barrier();
+	}
+	barrier();
 }
 
 /**
@@ -468,17 +468,17 @@ static inline void rt_global_sti(void)
  */
 static inline int rt_global_save_flags_and_cli(void)
 {
-        unsigned long flags;
+	unsigned long flags;
 
-        barrier();
-        flags = rtai_save_flags_irqbit_and_cli();
-        if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0])) {
+	barrier();
+	flags = rtai_save_flags_irqbit_and_cli();
+	if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0])) {
 		rtai_spin_glock(&rtai_cpu_lock[0]);
-                barrier();
-                return flags | 1;
-        }
-        barrier();
-        return flags;
+		barrier();
+		return flags | 1;
+	}
+	barrier();
+	return flags;
 }
 
 /**
@@ -490,12 +490,12 @@ static inline int rt_global_save_flags_and_cli(void)
  */
 static inline void rt_global_save_flags(unsigned long *flags)
 {
-        unsigned long hflags = rtai_save_flags_irqbit_and_cli();
+	unsigned long hflags = rtai_save_flags_irqbit_and_cli();
 
-        *flags = test_bit(hal_processor_id(), &rtai_cpu_lock[0]) ? hflags : hflags | 1;
-        if (hflags) {
-                rtai_sti();
-        }
+	*flags = test_bit(hal_processor_id(), &rtai_cpu_lock[0]) ? hflags : hflags | 1;
+	if (hflags) {
+		rtai_sti();
+	}
 }
 
 /**
@@ -507,7 +507,7 @@ static inline void rt_global_save_flags(unsigned long *flags)
  */
 static inline void rt_global_restore_flags(unsigned long flags)
 {
-        barrier();
+	barrier();
 	if (test_and_clear_bit(0, &flags)) {
 		rt_release_global_lock();
 	} else {
@@ -516,7 +516,7 @@ static inline void rt_global_restore_flags(unsigned long flags)
 	if (flags) {
 		rtai_sti();
 	}
-        barrier();
+	barrier();
 }
 
 #else /* !CONFIG_SMP */
@@ -531,9 +531,9 @@ static inline void rt_global_restore_flags(unsigned long flags)
 
 static inline unsigned long rt_spin_lock_irqsave(spinlock_t *lock)
 {
-        unsigned long flags;
-        rtai_save_flags_and_cli(flags);
-        return flags;
+	unsigned long flags;
+	rtai_save_flags_and_cli(flags);
+	return flags;
 }
 #define rt_spin_unlock_irqrestore(flags, lock)  do { rtai_restore_flags(flags); } while (0)
 
@@ -545,9 +545,9 @@ static inline unsigned long rt_spin_lock_irqsave(spinlock_t *lock)
 
 static inline unsigned long rt_global_save_flags_and_cli(void)
 {
-        unsigned long flags;
-        rtai_save_flags_and_cli(flags);
-        return flags;
+	unsigned long flags;
+	rtai_save_flags_and_cli(flags);
+	return flags;
 }
 #define rt_global_restore_flags(flags)  do { rtai_restore_flags(flags); } while (0)
 
@@ -626,8 +626,8 @@ static inline unsigned long long rtai_rdtsc (void)
 			      "   cmpw %2,%0\n"
 			      "   bne 1b\n"
 			      : "=r" (((unsigned long *)&ts)[0]),
-			        "=r" (((unsigned long *)&ts)[1]),
-			        "=r" (chk));
+				"=r" (((unsigned long *)&ts)[1]),
+				"=r" (chk));
 	return ts;
 }
 

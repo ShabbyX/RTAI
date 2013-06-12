@@ -76,10 +76,10 @@ static unsigned long (*usi_fun_entry[ ])(unsigned long, unsigned long *) = {
 };
 
 #define IF_IS_A_USI_SRQ_CALL_IT(srq, arg, retval, psr, retpath)  \
-        if (srq > USI_SRQ_MASK) { \
+	if (srq > USI_SRQ_MASK) { \
 		*(long long*)&regs->ARM_r0 \
 		    = usi_fun_entry[srq & ~USI_SRQ_MASK](arg, &regs->ARM_cpsr); \
-                return 1; \
+		return 1; \
        	} \
 
 #endif /* __KERNEL__ */

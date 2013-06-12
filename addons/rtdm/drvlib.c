@@ -143,7 +143,7 @@ int rtdm_task_init_cpuid(rtdm_task_t *task, const char *name,
 {
 	char *lname;
 	if (rt_task_init_cpuid(task, (void *)task_proc, (long)arg, PAGE_SIZE, priority, 0, 0, cpuid)) {
-        	return -ENOMEM;
+		return -ENOMEM;
 	}
 	if (period > 0) {
 		rt_task_make_periodic_relative_ns(task, 0, period);
@@ -449,9 +449,9 @@ EXPORT_SYMBOL(rtdm_task_join_nrt);
  */
 void rtdm_task_busy_sleep(nanosecs_rel_t delay)
 {
-        xnticks_t wakeup = rtai_rdtsc() + llimd(delay, tuned.cpu_freq, 1000000000);
-        while ((xnticks_t)(rtai_rdtsc() - wakeup) < 0)
-                cpu_relax();
+	xnticks_t wakeup = rtai_rdtsc() + llimd(delay, tuned.cpu_freq, 1000000000);
+	while ((xnticks_t)(rtai_rdtsc() - wakeup) < 0)
+		cpu_relax();
 }
 
 EXPORT_SYMBOL(rtdm_task_busy_sleep);
@@ -1649,19 +1649,19 @@ int rtdm_irq_request(rtdm_irq_t *irq_handle, unsigned int irq_no,
 		     rtdm_irq_handler_t handler, unsigned long flags,
 		     const char *device_name, void *arg)
 {
-        int err;
+	int err;
 
-        xnintr_init(irq_handle, device_name, irq_no, handler, NULL, flags);
+	xnintr_init(irq_handle, device_name, irq_no, handler, NULL, flags);
 
-        err = xnintr_attach(irq_handle, arg);
-        if (err)
-                return err;
+	err = xnintr_attach(irq_handle, arg);
+	if (err)
+		return err;
 
-        err = xnintr_enable(irq_handle);
-        if (err)
-                xnintr_detach(irq_handle);
+	err = xnintr_enable(irq_handle);
+	if (err)
+		xnintr_detach(irq_handle);
 
-        return err;
+	return err;
 }
 
 EXPORT_SYMBOL(rtdm_irq_request);

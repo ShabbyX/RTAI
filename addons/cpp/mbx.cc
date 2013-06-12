@@ -62,13 +62,13 @@ Mailbox::~Mailbox(){
 	rt_printk("Mailbox::~Mailbox() %p\n",this);
 
 	if(m_Mailbox != 0){
-                if( m_Owner ){
-                        if( m_Named){
-                                rt_named_mbx_delete(m_Mailbox);
-                        } else {
-                                rt_mbx_delete(m_Mailbox);
-                        }
-                }
+		if( m_Owner ){
+			if( m_Named){
+				rt_named_mbx_delete(m_Mailbox);
+			} else {
+				rt_mbx_delete(m_Mailbox);
+			}
+		}
 	}
 }
 
@@ -109,13 +109,13 @@ bool Mailbox::init(const char* name)
 		m_Owner = false;
 		m_Named = true;
 
-        unsigned long num = nam2num(name);
-        if(  rt_get_type( num ) == IS_MBX ){
-            m_Mailbox = static_cast<MBX*>(rt_get_adr( num  ));
-            return true;
-        } else {
-            return false;
-        }
+	unsigned long num = nam2num(name);
+	if(  rt_get_type( num ) == IS_MBX ){
+	    m_Mailbox = static_cast<MBX*>(rt_get_adr( num  ));
+	    return true;
+	} else {
+	    return false;
+	}
 	} else {
 		return false;
 	}

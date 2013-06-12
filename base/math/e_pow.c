@@ -147,11 +147,11 @@ ivln2_l  =  1.92596299112661746887e-08; /* 0x3E54AE0B, 0xF85DDF44 =1/ln2 tail*/
     /* special value of y */
 	if(ly==0) {
 	    if (iy==0x7ff00000) {	/* y is +-inf */
-	        if(((ix-0x3ff00000)|lx)==0)
+		if(((ix-0x3ff00000)|lx)==0)
 		    return  y - y;	/* inf**+-1 is NaN */
-	        else if (ix >= 0x3ff00000)/* (|x|>1)**+-inf = inf,0 */
+		else if (ix >= 0x3ff00000)/* (|x|>1)**+-inf = inf,0 */
 		    return (hy>=0)? y: zero;
-	        else			/* (|x|<1)**-,+inf = inf,0 */
+		else			/* (|x|<1)**-,+inf = inf,0 */
 		    return (hy<0)?-y: zero;
 	    }
 	    if(iy==0x3ff00000) {	/* y is  +-1 */

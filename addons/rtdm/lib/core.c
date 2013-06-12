@@ -24,25 +24,25 @@
 int rt_dev_open(const char *path, int oflag, ...)
 {
   return XENOMAI_SKINCALL2( __rtdm_muxid,
-                            __rtdm_open,
-                            path,
-                            oflag);
+			    __rtdm_open,
+			    path,
+			    oflag);
 }
 
 int rt_dev_socket(int protocol_family, int socket_type, int protocol)
 {
   return XENOMAI_SKINCALL3( __rtdm_muxid,
-                            __rtdm_socket,
-                            protocol_family,
-                            socket_type,
-                            protocol);
+			    __rtdm_socket,
+			    protocol_family,
+			    socket_type,
+			    protocol);
 }
 
 int rt_dev_close(int fd)
 {
   return XENOMAI_SKINCALL1( __rtdm_muxid,
-                            __rtdm_close,
-                            fd);
+			    __rtdm_close,
+			    fd);
 }
 
 int rt_dev_ioctl(int fd, int request, ...)
@@ -55,64 +55,64 @@ int rt_dev_ioctl(int fd, int request, ...)
   va_end(ap);
 
   return XENOMAI_SKINCALL3( __rtdm_muxid,
-                            __rtdm_ioctl,
-                            fd,
-                            request,
-                            arg);
+			    __rtdm_ioctl,
+			    fd,
+			    request,
+			    arg);
 }
 
 ssize_t rt_dev_read(int fd, void *buf, size_t nbyte)
 {
   return XENOMAI_SKINCALL3( __rtdm_muxid,
-                            __rtdm_read,
-                            fd,
-                            buf,
-                            nbyte);
+			    __rtdm_read,
+			    fd,
+			    buf,
+			    nbyte);
 }
 
 ssize_t rt_dev_write(int fd, const void *buf, size_t nbyte)
 {
   return XENOMAI_SKINCALL3( __rtdm_muxid,
-                            __rtdm_write,
-                            fd,
-                            buf,
-                            nbyte);
+			    __rtdm_write,
+			    fd,
+			    buf,
+			    nbyte);
 }
 
 ssize_t rt_dev_recvmsg(int fd, struct msghdr *msg, int flags)
 {
   return XENOMAI_SKINCALL3( __rtdm_muxid,
-                            __rtdm_recvmsg,
-                            fd,
-                            msg,
-                            flags);
+			    __rtdm_recvmsg,
+			    fd,
+			    msg,
+			    flags);
 }
 
 ssize_t rt_dev_sendmsg(int fd, const struct msghdr *msg, int flags)
 {
   return XENOMAI_SKINCALL3( __rtdm_muxid,
-                            __rtdm_sendmsg,
-                            fd,
-                            msg,
-                            flags);
+			    __rtdm_sendmsg,
+			    fd,
+			    msg,
+			    flags);
 }
 
 ssize_t rt_dev_recvfrom(int fd, void *buf, size_t len, int flags,
-                        struct sockaddr *from,
-                        socklen_t *fromlen)
+			struct sockaddr *from,
+			socklen_t *fromlen)
 {
     struct iovec    iov = {buf, len};
     struct msghdr   msg =
-        {from, (from != NULL) ? *fromlen : 0, &iov, 1, NULL, 0};
+	{from, (from != NULL) ? *fromlen : 0, &iov, 1, NULL, 0};
     int             ret;
 
     ret = XENOMAI_SKINCALL3( __rtdm_muxid,
-                             __rtdm_recvmsg,
-                             fd,
-                             &msg,
-                             flags);
+			     __rtdm_recvmsg,
+			     fd,
+			     &msg,
+			     flags);
 
     if ((ret >= 0) && (from != NULL))
-        *fromlen = msg.msg_namelen;
+	*fromlen = msg.msg_namelen;
     return ret;
 }

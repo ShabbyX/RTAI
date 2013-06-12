@@ -115,7 +115,7 @@ do_test (void)
       pthread_cond_wait (&cond2, &mut);
 
       if (i & 1)
-        pthread_mutex_unlock (&mut);
+	pthread_mutex_unlock (&mut);
 
       if (i & 2)
 	pthread_cond_broadcast (&cond);
@@ -130,7 +130,7 @@ do_test (void)
 	}
 
       if ((i & 1) == 0)
-        pthread_mutex_unlock (&mut);
+	pthread_mutex_unlock (&mut);
 
       err = pthread_cond_destroy (&cond);
       if (err)
@@ -140,7 +140,7 @@ do_test (void)
 	}
 
       /* Now clobber the cond variable which has been successfully
-         destroyed above.  */
+	 destroyed above.  */
       memset (&cond, (char) i, sizeof (cond));
 
       err = pthread_barrier_wait (&b);
@@ -182,14 +182,14 @@ do_test (void)
 
 int main(void)
 {
-        pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
-        start_rt_timer(0);
-        pthread_cond_init(&cond, NULL);
-        pthread_cond_init(&cond2, NULL);
-        pthread_mutex_init(&mut, NULL);
-        do_test();
-        pthread_cond_destroy(&cond);
-        pthread_cond_destroy(&cond2);
-        pthread_mutex_destroy(&mut);
-        return 0;
+	pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
+	start_rt_timer(0);
+	pthread_cond_init(&cond, NULL);
+	pthread_cond_init(&cond2, NULL);
+	pthread_mutex_init(&mut, NULL);
+	do_test();
+	pthread_cond_destroy(&cond);
+	pthread_cond_destroy(&cond2);
+	pthread_mutex_destroy(&mut);
+	return 0;
 }

@@ -36,7 +36,7 @@ static char rcsid[] = "$NetBSD: w_acos.c,v 1.6 1995/05/10 20:48:26 jtc Exp $";
 	z = __ieee754_acos(x);
 	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
 	if(fabs(x)>1.0) {
-	        return __kernel_standard(x,x,1); /* acos(|x|>1) */
+		return __kernel_standard(x,x,1); /* acos(|x|>1) */
 	} else
 	    return z;
 #endif

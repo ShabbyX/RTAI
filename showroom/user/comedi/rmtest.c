@@ -157,8 +157,8 @@ int main(int argc, char *argv[])
 	long i;
 
 	comedi_insn insn[NCHAN];
-        unsigned int read_chan[NICHAN]  = { 2, 3, 4, 5, 6 };
-        unsigned int write_chan[NOCHAN] = { 0, 1 };
+	unsigned int read_chan[NICHAN]  = { 2, 3, 4, 5, 6 };
+	unsigned int write_chan[NOCHAN] = { 0, 1 };
 	comedi_insnlist ilist = { NCHAN, insn };
 
 	struct sockaddr_in addr;
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
 		inet_aton("127.0.0.1", &addr.sin_addr);
 		daqnode = addr.sin_addr.s_addr;
 	}
-        while ((daqport = rt_request_port(daqnode)) <= 0 && daqport != -EINVAL);
+	while ((daqport = rt_request_port(daqnode)) <= 0 && daqport != -EINVAL);
 #endif
 	printf("REMOTE COMEDI TEST BEGINS:  NODE = %x, PORT = %d.\n", daqnode, daqport);
 
@@ -249,17 +249,17 @@ int main(int argc, char *argv[])
 	RT_comedi_dio_read(daqnode, daqport, dev, subdevdg, chan, &val);
 	PRINT("DIO READ: dev = %p, subdev = %u, chan = %u, val= %x.\n", dev, subdevdg, chan, val);
 
-        for (i = 0; i < NICHAN; i++) {
+	for (i = 0; i < NICHAN; i++) {
 		data[i] = 1000 + i;
 		BUILD_AREAD_INSN(insn[i], subdevai, data[i], 1, read_chan[i], AI_RANGE, AREF_GROUND);
 		PRINT("READ INSN: insn = %u, n = %u, data = %u, subdev = %u, chanspec %u.\n", insn[i].insn, insn[i].n, insn[i].data[0], insn[i].subdev, insn[i].chanspec);
-        }
+	}
 
-        for (i = 0; i < NOCHAN; i++) {
+	for (i = 0; i < NOCHAN; i++) {
 		data[NICHAN + i] = 1000 + i;
 		BUILD_AWRITE_INSN(insn[NICHAN + i], subdevao, data[NICHAN + i], 1, write_chan[i], AO_RANGE, AREF_GROUND);
 		PRINT("WRIT INSN: insn = %u, n = %u, data = %u, subdev = %u, chanspec = %u.\n", insn[NICHAN + i].insn, insn[NICHAN + i].n, insn[NICHAN + i].data[0], insn[NICHAN + i].subdev, insn[NICHAN + i].chanspec);
-        }
+	}
 
 	for (i = 0; i < NCHAN; i++) {
 		PRINT("1 COMEDI INST: insn = %u, n = %u, data = %u, subdev = %u, chanspec = %u.\n", insn[i].insn, insn[i].n, insn[i].data[0], insn[i].subdev, insn[i].chanspec);

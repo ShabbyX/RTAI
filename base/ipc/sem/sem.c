@@ -192,8 +192,8 @@ RTAI_SYSCALL_MODE void rt_typed_sem_init(SEM *sem, int value, int type)
 	sem->poll_wait_all.pollq.prev = sem->poll_wait_all.pollq.next = &(sem->poll_wait_all.pollq);
 	sem->poll_wait_one.pollq.prev = sem->poll_wait_one.pollq.next = &(sem->poll_wait_one.pollq);
 	sem->poll_wait_all.pollq.task = sem->poll_wait_one.pollq.task = NULL;
-        spin_lock_init(&(sem->poll_wait_all.pollock));
-        spin_lock_init(&(sem->poll_wait_one.pollock));
+	spin_lock_init(&(sem->poll_wait_all.pollock));
+	spin_lock_init(&(sem->poll_wait_one.pollock));
 #endif
 }
 
@@ -385,7 +385,7 @@ res:	if (sem->type > 0) {
 			if (rt_current->suspdepth > 0) {
 				rt_current->state |= RT_SCHED_SUSPENDED;
 				rem_ready_current(rt_current);
-                        	sched = 1;
+				sched = 1;
 			} else if (task->suspdepth == RT_RESEM_SUSPDEL) {
 				rt_task_delete(rt_current);
 			}
@@ -902,7 +902,7 @@ RTAI_SYSCALL_MODE int rt_cond_wait(CND *cnd, SEM *mtx)
 	if (likely((retp = rt_current->blocked_on) != RTP_OBJREM)) {
 		if (unlikely(retp != NULL)) {
 			dequeue_blocked(rt_current);
-                        retval = RTE_UNBLKD;
+			retval = RTE_UNBLKD;
 		} else {
 			retval = 0;
 		}
@@ -965,7 +965,7 @@ RTAI_SYSCALL_MODE int rt_cond_wait_until(CND *cnd, SEM *mtx, RTIME time)
 		enq_timed_task(rt_current);
 		type = rt_cndmtx_signal(mtx, rt_current);
 		if (unlikely((retp = rt_current->blocked_on) == RTP_OBJREM)) {
-                        retval = RTE_OBJREM;
+			retval = RTE_OBJREM;
 		} else if (unlikely(retp != NULL)) {
 			dequeue_blocked(rt_current);
 			retval = likely(retp > RTP_HIGERR) ? RTE_TIMOUT : RTE_UNBLKD;
@@ -1364,7 +1364,7 @@ RTAI_SYSCALL_MODE int rt_rwl_unlock(RWL *rwl)
 		} else if (rtask) {
 			rt_sem_broadcast(&rwl->rdsem);
 		}
-        }
+	}
 	rt_global_restore_flags(flags);
 	return 0;
 }
@@ -1411,7 +1411,7 @@ RTAI_SYSCALL_MODE int rt_spl_init(SPL *spl)
 
 RTAI_SYSCALL_MODE int rt_spl_delete(SPL *spl)
 {
-        return 0;
+	return 0;
 }
 
 /**
@@ -1936,7 +1936,7 @@ void rt_wakeup_pollers(struct rt_poll_ql *ql, int reason)
 
 	rt_spin_lock_irq(qlock);
 	if ((q = queue->next) != queue) {
-	        POLL_SEM *sem;
+		POLL_SEM *sem;
 		unsigned long tosched_mask = 0UL;
 		do {
 			sem = (POLL_SEM *)q->task;
@@ -2075,12 +2075,12 @@ RTAI_SYSCALL_MODE int _rt_poll(struct rt_poll_s *pdsa, unsigned long nr, RTIME t
 			polled++;
 		}
 		if (queue) {
-        		QUEUE *q = queue;
+			QUEUE *q = queue;
 			pollq[i].task = (RT_TASK *)&sem;
 			rt_spin_lock_irq(qlock);
 			while ((q = q->next) != queue && (((POLL_SEM *)q->task)->task)->priority <= sem.task->priority);
-		        pollq[i].next = q;
-		        q->prev = (pollq[i].prev = q->prev)->next  = &pollq[i];
+			pollq[i].next = q;
+			q->prev = (pollq[i].prev = q->prev)->next  = &pollq[i];
 			rt_spin_unlock_irq(qlock);
 		} else {
 			pds[i].forwhat = 0;

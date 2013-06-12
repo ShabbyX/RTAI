@@ -31,7 +31,7 @@ extern "C" {
 
 static inline int rt_startup_irq(unsigned int irq)
 {
-        return (int)rtai_srq(USI_SRQ_MASK | _STARTUP_IRQ, irq);
+	return (int)rtai_srq(USI_SRQ_MASK | _STARTUP_IRQ, irq);
 }
 
 #define rt_shutdown_irq(irq) \

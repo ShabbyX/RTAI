@@ -133,17 +133,17 @@ static void nop_fun(BITS *bits, unsigned long mask)
 
 static int (*test_fun[])(BITS *, unsigned long) = {
 	all_set, any_set,             all_clr,             any_clr,
-	         all_set_and_any_set, all_set_and_all_clr, all_set_and_any_clr,
-	                              any_set_and_all_clr, any_set_and_any_clr,
-	                                                   all_clr_and_any_clr,
-	         all_set_or_any_set,  all_set_or_all_clr,  all_set_or_any_clr,
-	                              any_set_or_all_clr,  any_set_or_any_clr,
-	                                                   all_clr_or_any_clr
+		 all_set_and_any_set, all_set_and_all_clr, all_set_and_any_clr,
+				      any_set_and_all_clr, any_set_and_any_clr,
+							   all_clr_and_any_clr,
+		 all_set_or_any_set,  all_set_or_all_clr,  all_set_or_any_clr,
+				      any_set_or_all_clr,  any_set_or_any_clr,
+							   all_clr_or_any_clr
 };
 
 static void (*exec_fun[])(BITS *, unsigned long) = {
 	set_bits_mask, clr_bits_mask,
-	          set_clr_bits_mask,
+		  set_clr_bits_mask,
 	nop_fun
 };
 

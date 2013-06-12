@@ -58,13 +58,13 @@ int main(void)
 	unsigned int msg;
 	long i, len;
 
-        printf("\n\nGENERIC RECEIVE\n");
+	printf("\n\nGENERIC RECEIVE\n");
 	ioperm(PORT_ADR, 1, 1);
 	iopl(3);
-        if (!(spktsk = rt_task_init_schmod(nam2num("SPKTSK"), 1, 0, 0, SCHED_FIFO, 0xF))) {
-                printf("CANNOT INIT SPEAKER TASK\n");
-                exit(1);
-        }
+	if (!(spktsk = rt_task_init_schmod(nam2num("SPKTSK"), 1, 0, 0, SCHED_FIFO, 0xF))) {
+		printf("CANNOT INIT SPEAKER TASK\n");
+		exit(1);
+	}
 
 	rt_set_oneshot_mode();
 	start_rt_timer(0);
@@ -76,9 +76,9 @@ int main(void)
 	rt_task_make_periodic(spktsk, rt_get_time() + 5*period, period);
 
 	rt_returnx(rt_receivex(0, &msg, sizeof(int), &len), &msg, 1);
-        for (i = 0; i < 100; i++) {
+	for (i = 0; i < 100; i++) {
 		rt_returnx(rt_receivex(0, &msg, sizeof(int), &len), &msg, 1);
-        }
+	}
 
 	len = 0;
 	while(1) {

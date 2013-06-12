@@ -137,12 +137,12 @@ pio2_3t =  8.47842766036889956997e-32; /* 0x397B839A, 0x252049C1 */
 	    if(n<32&&ix!=npio2_hw[n-1]) {
 		y[0] = r-w;	/* quick check no cancellation */
 	    } else {
-	        u_int32_t high;
-	        j  = ix>>20;
-	        y[0] = r-w;
+		u_int32_t high;
+		j  = ix>>20;
+		y[0] = r-w;
 		GET_HIGH_WORD(high,y[0]);
-	        i = j-((high>>20)&0x7ff);
-	        if(i>16) {  /* 2nd iteration needed, good to 118 */
+		i = j-((high>>20)&0x7ff);
+		if(i>16) {  /* 2nd iteration needed, good to 118 */
 		    t  = r;
 		    w  = fn*pio2_2;
 		    r  = t-w;

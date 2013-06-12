@@ -63,7 +63,7 @@ static __inline__ unsigned long ffnz (unsigned long word) {
     /* Derived from bitops.h's ffs() */
     int r = 1;
     if (!(word & 0xff)) {
-        word >>= 8;
+	word >>= 8;
        r += 8;
     }
     if (!(word & 0xf)) {
@@ -132,11 +132,11 @@ static inline unsigned long long rtai_llimd(unsigned long long ll, unsigned int 
 extern asmlinkage int fprintk(const char *fmt, ...);
 
 struct rtai_realtime_irq_s {
-        int (*handler)(unsigned irq, void *cookie);
-        void *cookie;
-        int retmode;
-        int cpumask;
-        int (*irq_ack)(unsigned int);
+	int (*handler)(unsigned irq, void *cookie);
+	void *cookie;
+	int retmode;
+	int cpumask;
+	int (*irq_ack)(unsigned int);
 };
 
 /*

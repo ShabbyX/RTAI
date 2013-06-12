@@ -86,8 +86,8 @@ int main(void)
 	}
 
 	do {
-	        ch = get_key();
-	        if (ch == 'p' || ch == 'P') {
+		ch = get_key();
+		if (ch == 'p' || ch == 'P') {
 			menu();
 		}
 		if (write(Keyboard, &ch, 1) < 0 ) {

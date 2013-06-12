@@ -166,9 +166,9 @@ static inline int __restore_fpenv(struct i387_fxsave_struct *fx)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
 
 #define set_lnxtsk_uses_fpu(lnxtsk) \
-        do { (lnxtsk)->used_math = 1; } while(0)
+	do { (lnxtsk)->used_math = 1; } while(0)
 #define clear_lnxtsk_uses_fpu(lnxtsk) \
-        do { (lnxtsk)->used_math = 0; } while(0)
+	do { (lnxtsk)->used_math = 0; } while(0)
 #define lnxtsk_uses_fpu(lnxtsk)  ((lnxtsk)->used_math)
 
 #define set_lnxtsk_using_fpu(lnxtsk) \
@@ -181,9 +181,9 @@ static inline int __restore_fpenv(struct i387_fxsave_struct *fx)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,11)
 
 #define set_lnxtsk_uses_fpu(lnxtsk) \
-        do { set_stopped_child_used_math(lnxtsk); } while(0)
+	do { set_stopped_child_used_math(lnxtsk); } while(0)
 #define clear_lnxtsk_uses_fpu(lnxtsk) \
-        do { clear_stopped_child_used_math(lnxtsk); } while(0)
+	do { clear_stopped_child_used_math(lnxtsk); } while(0)
 #define lnxtsk_uses_fpu(lnxtsk)  (tsk_used_math(lnxtsk))
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)

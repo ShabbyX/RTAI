@@ -57,7 +57,7 @@ int main(void)
 		FD_ZERO(&input);
 		FD_SET(0, &input);
 		tv.tv_usec = 20000;
-	        if (select(1, &input, NULL, NULL, &tv)) {
+		if (select(1, &input, NULL, NULL, &tv)) {
 			ch = getchar();
 			break;
 		}

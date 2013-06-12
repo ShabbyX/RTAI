@@ -40,11 +40,11 @@ static double a[MAXDIM], b[MAXDIM];
 
 static double dot(double *a, double *b, int n)
 {
-        int k = n - 1;
-        double s = 0.0;
-        for(; k >= 0; k--) {
-                s = s + a[k]*b[k];
-        }
+	int k = n - 1;
+	double s = 0.0;
+	for(; k >= 0; k--) {
+		s = s + a[k]*b[k];
+	}
 	return s;
 }
 
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 	struct sample { RT_TASK *task; int cnt; long long min; long long max; int index, ovrn; } samp;
 	double s, sref;
 
-        if (!(mbx = rt_get_adr(nam2num("LATMBX")))) {
+	if (!(mbx = rt_get_adr(nam2num("LATMBX")))) {
 	 	if (!(mbx = rt_mbx_init(nam2num("LATMBX"), 40*sizeof(samp)))) {
 			printf("CANNOT CREATE MAILBOX\n");
 			exit(1);
@@ -98,9 +98,9 @@ int main(int argc, char *argv[])
 		period = nano2count(PERIOD);
 	}
 
-        for(i = 0; i < MAXDIM; i++) {
-                a[i] = b[i] = 3.141592;
-        }
+	for(i = 0; i < MAXDIM; i++) {
+		a[i] = b[i] = 3.141592;
+	}
 	sref = dot(a, b, MAXDIM);
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);

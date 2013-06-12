@@ -63,8 +63,8 @@ static int demo_interrupt(rtdm_irq_t *irq_context)
     // do stuff
 #ifdef TIMERINT
     if (events > EVENT_SIGNAL_COUNT) {
-        rtdm_event_signal(&ctx->irq_event);
-        events = 0;
+	rtdm_event_signal(&ctx->irq_event);
+	events = 0;
     }
 #else
     rtdm_event_signal(&ctx->irq_event);
@@ -91,8 +91,8 @@ static int demo_interrupt(rtdm_irq_t *irq_context)
 /*            DRIVER OPEN                                 */
 /**********************************************************/
 int demo_open_rt(struct rtdm_dev_context    *context,
-                 rtdm_user_info_t           *user_info,
-                 int                        oflags)
+		 rtdm_user_info_t           *user_info,
+		 int                        oflags)
 {
     struct demodrv_context  *my_context;
 #ifdef USEMMAP
@@ -109,9 +109,9 @@ int demo_open_rt(struct rtdm_dev_context    *context,
     my_context->buf = kmalloc(BUFFER_SIZE, GFP_KERNEL);
     /* mark pages reserved so that remap_pfn_range works */
     for (vaddr = (unsigned long)my_context->buf;
-         vaddr < (unsigned long)my_context->buf + BUFFER_SIZE;
-         vaddr += PAGE_SIZE)
-        SetPageReserved(virt_to_page(vaddr));
+	 vaddr < (unsigned long)my_context->buf + BUFFER_SIZE;
+	 vaddr += PAGE_SIZE)
+	SetPageReserved(virt_to_page(vaddr));
     // write some test value to the start of our buffer
     *(int *)my_context->buf = 1234;
 
@@ -121,13 +121,13 @@ int demo_open_rt(struct rtdm_dev_context    *context,
     // we also have an interrupt handler:
 #ifdef TIMERINT
     ret = rtdm_irq_request(&my_context->irq_handle, TIMER_INT, demo_interrupt,
-                 0, context->device->proc_name, my_context);
+		 0, context->device->proc_name, my_context);
 #else
     ret = rtdm_irq_request(&my_context->irq_handle, PAR_INT, demo_interrupt,
-                 0, context->device->proc_name, my_context);
+		 0, context->device->proc_name, my_context);
 #endif
     if (ret < 0)
-        return ret;
+	return ret;
 
     /* IPC initialisation - cannot fail with used parameters */
     rtdm_lock_init(&my_context->lock);
@@ -151,7 +151,7 @@ int demo_open_rt(struct rtdm_dev_context    *context,
 /*            DRIVER CLOSE                                */
 /**********************************************************/
 int demo_close_rt(struct rtdm_dev_context   *context,
-                  rtdm_user_info_t          *user_info)
+		  rtdm_user_info_t          *user_info)
 {
     struct demodrv_context  *my_context;
     rtdm_lockctx_t          lock_ctx;
@@ -167,16 +167,16 @@ int demo_close_rt(struct rtdm_dev_context   *context,
 
     // munmap our buffer
     if (my_context->mapped_user_addr) {
-        int ret = rtdm_munmap(my_context->mapped_user_info,
-                              my_context->mapped_user_addr, BUFFER_SIZE);
-        printk("rtdm_munmap = %p, %d\n", my_context->mapped_user_info, ret);
+	int ret = rtdm_munmap(my_context->mapped_user_info,
+			      my_context->mapped_user_addr, BUFFER_SIZE);
+	printk("rtdm_munmap = %p, %d\n", my_context->mapped_user_info, ret);
     }
 
     /* clear pages reserved */
     for (vaddr = (unsigned long)my_context->buf;
-         vaddr < (unsigned long)my_context->buf + BUFFER_SIZE;
-         vaddr += PAGE_SIZE)
-        ClearPageReserved(virt_to_page(vaddr));
+	 vaddr < (unsigned long)my_context->buf + BUFFER_SIZE;
+	 vaddr += PAGE_SIZE)
+	ClearPageReserved(virt_to_page(vaddr));
 
     kfree(my_context->buf);
 #endif
@@ -198,9 +198,9 @@ int demo_close_rt(struct rtdm_dev_context   *context,
 /*            DRIVER IOCTL                                */
 /**********************************************************/
 int demo_ioctl_rt(struct rtdm_dev_context   *context,
-                  rtdm_user_info_t          *user_info,
-                  unsigned int              request,
-                  void                      *arg)
+		  rtdm_user_info_t          *user_info,
+		  unsigned int              request,
+		  void                      *arg)
 {
     struct demodrv_context  *my_context;
 #ifdef USEMMAP
@@ -210,43 +210,43 @@ int demo_ioctl_rt(struct rtdm_dev_context   *context,
     my_context = (struct demodrv_context *)context->dev_private;
 
     switch (request) {
-        case MMAP: // set mmap pointer
+	case MMAP: // set mmap pointer
 #ifdef USEMMAP
-          printk("buf = %p:%x\n", my_context->buf, *(int *)my_context->buf);
+	  printk("buf = %p:%x\n", my_context->buf, *(int *)my_context->buf);
 
-          err = rtdm_mmap_to_user(user_info, my_context->buf, BUFFER_SIZE,
-                              PROT_READ|PROT_WRITE, (void **)arg, &mmap_ops,
-                              (void *)0x12345678);
-          if (!err) {
-              my_context->mapped_user_info = user_info;
-              my_context->mapped_user_addr = *(void **)arg;
-          }
-          printk("rtdm_mmap = %p %d\n", my_context->mapped_user_info, err);
+	  err = rtdm_mmap_to_user(user_info, my_context->buf, BUFFER_SIZE,
+			      PROT_READ|PROT_WRITE, (void **)arg, &mmap_ops,
+			      (void *)0x12345678);
+	  if (!err) {
+	      my_context->mapped_user_info = user_info;
+	      my_context->mapped_user_addr = *(void **)arg;
+	  }
+	  printk("rtdm_mmap = %p %d\n", my_context->mapped_user_info, err);
 #else
-          return -EPERM;
+	  return -EPERM;
 #endif
-          break;
-        case GETVALUE: // write "ioctlvalue" to user
-            if (user_info) {
-                if (!rtdm_rw_user_ok(user_info, arg, sizeof(int)) ||
-                    rtdm_copy_to_user(user_info, arg, &ioctlvalue,
-                                      sizeof(int)))
-                    return -EFAULT;
-            } else
-                memcpy(arg, &ioctlvalue, sizeof(int));
-            break;
-        case SETVALUE: // read "ioctlvalue" from user
-            if (user_info) {
-                if ((unsigned long)arg < BUFFER_SIZE)
+	  break;
+	case GETVALUE: // write "ioctlvalue" to user
+	    if (user_info) {
+		if (!rtdm_rw_user_ok(user_info, arg, sizeof(int)) ||
+		    rtdm_copy_to_user(user_info, arg, &ioctlvalue,
+				      sizeof(int)))
+		    return -EFAULT;
+	    } else
+		memcpy(arg, &ioctlvalue, sizeof(int));
+	    break;
+	case SETVALUE: // read "ioctlvalue" from user
+	    if (user_info) {
+		if ((unsigned long)arg < BUFFER_SIZE)
 		    ioctlvalue = ((int *)my_context->buf)[(unsigned long)arg];
-                else if (!rtdm_read_user_ok(user_info, arg, sizeof(int)) ||
-                    rtdm_copy_from_user(user_info, &ioctlvalue, arg,
-                                        sizeof(int)))
-                    return -EFAULT;
-            }
-            break;
-        default:
-            ret = -ENOTTY;
+		else if (!rtdm_read_user_ok(user_info, arg, sizeof(int)) ||
+		    rtdm_copy_from_user(user_info, &ioctlvalue, arg,
+					sizeof(int)))
+		    return -EFAULT;
+	    }
+	    break;
+	default:
+	    ret = -ENOTTY;
     }
     return ret;
 }
@@ -255,7 +255,7 @@ int demo_ioctl_rt(struct rtdm_dev_context   *context,
 /*            DRIVER READ                                 */
 /**********************************************************/
 int demo_read_rt(struct rtdm_dev_context *context,
-                  rtdm_user_info_t *user_info, void *buf, size_t nbyte)
+		  rtdm_user_info_t *user_info, void *buf, size_t nbyte)
 {
     struct demodrv_context *ctx;
     int                     dev_id;
@@ -266,18 +266,18 @@ int demo_read_rt(struct rtdm_dev_context *context,
 
     // zero bytes requested ? return!
     if (nbyte == 0)
-        return 0;
+	return 0;
 
     // check if R/W actions to user-space are allowed
     if (user_info && !rtdm_rw_user_ok(user_info, buf, nbyte))
-        return -EFAULT;
+	return -EFAULT;
 
     ctx    = (struct demodrv_context *)context->dev_private;
     dev_id = ctx->dev_id;
 
     // in case we need to check if reading is allowed (locking)
 /*    if (test_and_set_bit(0, &ctx->in_lock))
-        return -EBUSY;
+	return -EBUSY;
 */
 /*  // if we need to do some stuff with preemption disabled:
     rtdm_lock_get_irqsave(&ctx->lock, lock_ctx);
@@ -292,10 +292,10 @@ int demo_read_rt(struct rtdm_dev_context *context,
 
     // now write the requested stuff to user-space
     if (rtdm_copy_to_user(user_info, out_pos,
-                dummy_buffer, BUFSIZE) != 0) {
-        ret = -EFAULT;
+		dummy_buffer, BUFSIZE) != 0) {
+	ret = -EFAULT;
     } else {
-        ret = BUFSIZE;
+	ret = BUFSIZE;
     }
     return ret;
 }
@@ -304,8 +304,8 @@ int demo_read_rt(struct rtdm_dev_context *context,
 /*            DRIVER WRITE                                */
 /**********************************************************/
 int demo_write_rt(struct rtdm_dev_context *context,
-                   rtdm_user_info_t *user_info,
-                   const void *buf, size_t nbyte)
+		   rtdm_user_info_t *user_info,
+		   const void *buf, size_t nbyte)
 {
     struct demodrv_context *ctx;
     int                     dev_id;
@@ -313,18 +313,18 @@ int demo_write_rt(struct rtdm_dev_context *context,
     int                     ret;
 
     if (nbyte == 0)
-        return 0;
+	return 0;
     if (user_info && !rtdm_read_user_ok(user_info, buf, nbyte))
-        return -EFAULT;
+	return -EFAULT;
 
     ctx    = (struct demodrv_context *)context->dev_private;
     dev_id = ctx->dev_id;
 
     // make write operation atomic
 /*  ret = rtdm_mutex_timedlock(&ctx->out_lock,
-              ctx->config.rx_timeout, &timeout_seq);
+	      ctx->config.rx_timeout, &timeout_seq);
     if (ret)
-        return ret; */
+	return ret; */
 
 /*  // if we need to do some stuff with preemption disabled:
     rtdm_lock_get_irqsave(&ctx->lock, lock_ctx);
@@ -334,8 +334,8 @@ int demo_write_rt(struct rtdm_dev_context *context,
 
     // now copy the stuff from user-space to our kernel dummy_buffer
     if (rtdm_copy_from_user(user_info, dummy_buffer,
-                             in_pos, BUFSIZE) != 0) {
-        ret = -EFAULT;
+			     in_pos, BUFSIZE) != 0) {
+	ret = -EFAULT;
     } else {
        ret = BUFSIZE;
     }
@@ -364,23 +364,23 @@ static struct rtdm_device demo_device = {
     open_nrt:           demo_open_rt,
 
     ops: {
-        close_rt:       NULL,
-        close_nrt:      demo_close_rt,
+	close_rt:       NULL,
+	close_nrt:      demo_close_rt,
 
-        ioctl_rt:       NULL,
-        ioctl_nrt:      demo_ioctl_rt, // rtdm_mmap_to_user is not RT safe
+	ioctl_rt:       NULL,
+	ioctl_nrt:      demo_ioctl_rt, // rtdm_mmap_to_user is not RT safe
 
-        read_rt:        demo_read_rt,
-        read_nrt:       NULL,
+	read_rt:        demo_read_rt,
+	read_nrt:       NULL,
 
-        write_rt:       demo_write_rt,
-        write_nrt:      NULL,
+	write_rt:       demo_write_rt,
+	write_nrt:      NULL,
 
-        recvmsg_rt:     NULL,
-        recvmsg_nrt:    NULL,
+	recvmsg_rt:     NULL,
+	recvmsg_nrt:    NULL,
 
-        sendmsg_rt:     NULL,
-        sendmsg_nrt:    NULL,
+	sendmsg_rt:     NULL,
+	sendmsg_nrt:    NULL,
     },
 
     device_class:       RTDM_CLASS_EXPERIMENTAL,

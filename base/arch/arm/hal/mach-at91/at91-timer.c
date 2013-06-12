@@ -84,14 +84,14 @@ int rt_request_timer (void (*handler)(void), unsigned tick, int use_apic)
 		rt_set_timer_delay(rt_times.periodic_tick);
 	}
 
-        rt_release_irq(RTAI_TIMER_IRQ);
+	rt_release_irq(RTAI_TIMER_IRQ);
 
 	rt_request_irq(RTAI_TIMER_IRQ, (rt_irq_handler_t)handler, NULL, 0);
 	extern_timer_isr = rtai_timer_handler;	// shunt for ipipe.c __ipipe_grab_irq
 
 	rtai_critical_exit(flags);
 
-        return 0;
+	return 0;
 }
 
 void rt_free_timer (void)

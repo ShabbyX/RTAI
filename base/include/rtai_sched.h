@@ -441,33 +441,33 @@ RT_TRAP_HANDLER rt_set_task_trap_handler(struct rt_task_struct *task,
 
 static inline RTIME timeval2count(struct timeval *t)
 {
-        return nano2count(t->tv_sec*1000000000LL + t->tv_usec*1000);
+	return nano2count(t->tv_sec*1000000000LL + t->tv_usec*1000);
 }
 
 static inline void count2timeval(RTIME rt, struct timeval *t)
 {
-        t->tv_sec = rtai_ulldiv(count2nano(rt), 1000000000, (unsigned long *)&t->tv_usec);
-        t->tv_usec /= 1000;
+	t->tv_sec = rtai_ulldiv(count2nano(rt), 1000000000, (unsigned long *)&t->tv_usec);
+	t->tv_usec /= 1000;
 }
 
 static inline RTIME timespec2count(const struct timespec *t)
 {
-        return nano2count(t->tv_sec*1000000000LL + t->tv_nsec);
+	return nano2count(t->tv_sec*1000000000LL + t->tv_nsec);
 }
 
 static inline void count2timespec(RTIME rt, struct timespec *t)
 {
-        t->tv_sec = rtai_ulldiv(count2nano(rt), 1000000000, (unsigned long *)&t->tv_nsec);
+	t->tv_sec = rtai_ulldiv(count2nano(rt), 1000000000, (unsigned long *)&t->tv_nsec);
 }
 
 static inline RTIME timespec2nanos(const struct timespec *t)
 {
-        return t->tv_sec*1000000000LL + t->tv_nsec;
+	return t->tv_sec*1000000000LL + t->tv_nsec;
 }
 
 static inline void nanos2timespec(RTIME rt, struct timespec *t)
 {
-        t->tv_sec = rtai_ulldiv(rt, 1000000000, (unsigned long *)&t->tv_nsec);
+	t->tv_sec = rtai_ulldiv(rt, 1000000000, (unsigned long *)&t->tv_nsec);
 }
 
 void rt_make_hard_real_time(RT_TASK *task);

@@ -57,11 +57,11 @@ typedef union
       {
       struct {
 #if defined(__BIG_ENDIAN__)
-        unsigned long int hi;
-        unsigned long int lo;
+	unsigned long int hi;
+	unsigned long int lo;
 #else
-        unsigned long int lo;
-        unsigned long int hi;
+	unsigned long int lo;
+	unsigned long int hi;
 #endif
       } words;
       double dbl;
@@ -124,35 +124,35 @@ double rint ( double x )
 /*******************************************************************************
 *     Is |x| < 2.0^52?                                                         *
 *******************************************************************************/
-            {
-            if ( xHead < 0x3ff00000ul )
+	    {
+	    if ( xHead < 0x3ff00000ul )
 /*******************************************************************************
 *     Is |x| < 1.0?                                                            *
 *******************************************************************************/
-                  {
-                  if ( target )
-                        y = ( x + twoTo52 ) - twoTo52;  // round at binary point
-                  else
-                        y = ( x - twoTo52 ) + twoTo52;  // round at binary point
-                  if ( y == 0.0 )
-                        {                               // fix sign of zero result
-                        if ( target )
-                              return ( 0.0 );
-                        else
-                              return ( -0.0 );
-                        }
-                  return y;
-                  }
+		  {
+		  if ( target )
+			y = ( x + twoTo52 ) - twoTo52;  // round at binary point
+		  else
+			y = ( x - twoTo52 ) + twoTo52;  // round at binary point
+		  if ( y == 0.0 )
+			{                               // fix sign of zero result
+			if ( target )
+			      return ( 0.0 );
+			else
+			      return ( -0.0 );
+			}
+		  return y;
+		  }
 
 /*******************************************************************************
 *     Is 1.0 < |x| < 2.0^52?                                                   *
 *******************************************************************************/
 
-            if ( target )
-                  return ( ( x + twoTo52 ) - twoTo52 ); //   round at binary pt.
-            else
-                  return ( ( x - twoTo52 ) + twoTo52 );
-            }
+	    if ( target )
+		  return ( ( x + twoTo52 ) - twoTo52 ); //   round at binary pt.
+	    else
+		  return ( ( x - twoTo52 ) + twoTo52 );
+	    }
 
 /*******************************************************************************
 *     |x| >= 2.0^52 or x is a NaN.                                             *
@@ -185,11 +185,11 @@ double nearbyint ( double x )
 	asm ("mffs %0" : "=f" (OldEnvironment));	/* get the environement */
 
       if ( fabs ( x ) >= y )                          /* huge case is exact */
-            return x;
+	    return x;
       if ( x < 0 ) y = -y;                                   /* negative case */
       y = ( x + y ) - y;                                    /* force rounding */
       if ( y == 0.0 )                        /* zero results mirror sign of x */
-            y = copysign ( y, x );
+	    y = copysign ( y, x );
 //	restore old flags
 	asm ("mtfsf 255,%0" : /*NULLOUT*/ : /*IN*/ "f" ( OldEnvironment ));
       return ( y );
@@ -222,56 +222,56 @@ long int rinttol ( double x )
 /*******************************************************************************
 *    Sign of x is positive.                                                    *
 *******************************************************************************/
-            {
-            if ( xHead < 0x41dffffful )
-                  {                                    // x is safely in long range
-                  y = ( x + twoTo52 ) - twoTo52;       // round at binary point
-                  argument.dbl = y + doubleToLong;     // force result into argument.words.lo
-                  return ( ( long ) argument.words.lo );
-                  }
+	    {
+	    if ( xHead < 0x41dffffful )
+		  {                                    // x is safely in long range
+		  y = ( x + twoTo52 ) - twoTo52;       // round at binary point
+		  argument.dbl = y + doubleToLong;     // force result into argument.words.lo
+		  return ( ( long ) argument.words.lo );
+		  }
 
 		asm ("mffs %0" : "=f" (OldEnvironment.dbl));	// get environment
 
-            if ( xHead > 0x41dffffful )
-                  {                                    // x is safely out of long range
-                  OldEnvironment.words.lo |= SET_INVALID;
+	    if ( xHead > 0x41dffffful )
+		  {                                    // x is safely out of long range
+		  OldEnvironment.words.lo |= SET_INVALID;
 			asm ("mtfsf 255,%0" : /*NULLOUT*/ : /*IN*/ "f" ( OldEnvironment.dbl ));
-                  return ( LONG_MAX );
-                  }
+		  return ( LONG_MAX );
+		  }
 
 /*******************************************************************************
 *     x > 0.0 and may or may not be out of range of long.                      *
 *******************************************************************************/
 
-            y = ( x + twoTo52 ) - twoTo52;             // do rounding
-            if ( y > ( double ) LONG_MAX )
-                  {                                    // out of range of long
-                  OldEnvironment.words.lo |= SET_INVALID;
+	    y = ( x + twoTo52 ) - twoTo52;             // do rounding
+	    if ( y > ( double ) LONG_MAX )
+		  {                                    // out of range of long
+		  OldEnvironment.words.lo |= SET_INVALID;
 			asm ("mtfsf 255,%0" : /*NULLOUT*/ : /*IN*/ "f" ( OldEnvironment.dbl ));
-                  return ( LONG_MAX );
-                  }
-            argument.dbl = y + doubleToLong;           // in range
-            return ( ( long ) argument.words.lo );      // return result & flags
-            }
+		  return ( LONG_MAX );
+		  }
+	    argument.dbl = y + doubleToLong;           // in range
+	    return ( ( long ) argument.words.lo );      // return result & flags
+	    }
 
 /*******************************************************************************
 *    Sign of x is negative.                                                    *
 *******************************************************************************/
       if ( xHead < 0x41e00000ul )
-            {                                          // x is safely in long range
-            y = ( x - twoTo52 ) + twoTo52;
-            argument.dbl = y + doubleToLong;
-            return ( ( long ) argument.words.lo );
-            }
+	    {                                          // x is safely in long range
+	    y = ( x - twoTo52 ) + twoTo52;
+	    argument.dbl = y + doubleToLong;
+	    return ( ( long ) argument.words.lo );
+	    }
 
 	asm ("mffs %0" : "=f" (OldEnvironment.dbl));	// get environment
 
       if ( xHead > 0x41e00000ul )
-            {                                          // x is safely out of long range
-            OldEnvironment.words.lo |= SET_INVALID;
+	    {                                          // x is safely out of long range
+	    OldEnvironment.words.lo |= SET_INVALID;
 		asm ("mtfsf 255,%0" : /*NULLOUT*/ : /*IN*/ "f" ( OldEnvironment.dbl ));
-            return ( LONG_MIN );
-            }
+	    return ( LONG_MIN );
+	    }
 
 /*******************************************************************************
 *    x < 0.0 and may or may not be out of range of long.                       *
@@ -279,11 +279,11 @@ long int rinttol ( double x )
 
       y = ( x - twoTo52 ) + twoTo52;                   // do rounding
       if ( y < ( double ) LONG_MIN )
-            {                                          // out of range of long
-            OldEnvironment.words.lo |= SET_INVALID;
+	    {                                          // out of range of long
+	    OldEnvironment.words.lo |= SET_INVALID;
 		asm ("mtfsf 255,%0" : /*NULLOUT*/ : /*IN*/ "f" ( OldEnvironment.dbl ));
-            return ( LONG_MIN );
-            }
+	    return ( LONG_MIN );
+	    }
       argument.dbl = y + doubleToLong;                       // in range
       return ( ( long ) argument.words.lo );           // return result & flags
       }
@@ -313,68 +313,68 @@ double round ( double x )
 /*******************************************************************************
 *     Is |x| < 2.0^52?                                                        *
 *******************************************************************************/
-            {
-            if ( xHead < 0x3ff00000ul )
+	    {
+	    if ( xHead < 0x3ff00000ul )
 /*******************************************************************************
 *     Is |x| < 1.0?                                                           *
 *******************************************************************************/
-                  {
+		  {
 			asm ("mffs %0" : "=f" (OldEnvironment.dbl));	// get environment
-                  if ( xHead < 0x3fe00000ul )
+		  if ( xHead < 0x3fe00000ul )
 /*******************************************************************************
 *     Is |x| < 0.5?                                                           *
 *******************************************************************************/
-                        {
-                        if ( ( xHead | argument.words.lo ) != 0ul )
-                              OldEnvironment.words.lo |= 0x02000000ul;
+			{
+			if ( ( xHead | argument.words.lo ) != 0ul )
+			      OldEnvironment.words.lo |= 0x02000000ul;
 				asm ("mtfsf 255,%0" : /*NULLOUT*/ : /*IN*/ "f" ( OldEnvironment.dbl ));
-                        if ( target )
-                              return ( 0.0 );
-                        else
-                              return ( -0.0 );
-                        }
+			if ( target )
+			      return ( 0.0 );
+			else
+			      return ( -0.0 );
+			}
 /*******************************************************************************
 *     Is 0.5 ² |x| < 1.0?                                                      *
 *******************************************************************************/
-                  OldEnvironment.words.lo |= 0x02000000ul;
+		  OldEnvironment.words.lo |= 0x02000000ul;
 			asm ("mtfsf 255,%0" : /*NULLOUT*/ : /*IN*/ "f" ( OldEnvironment.dbl ));
-                  if ( target )
-                        return ( 1.0 );
-                  else
-                        return ( -1.0 );
-                  }
+		  if ( target )
+			return ( 1.0 );
+		  else
+			return ( -1.0 );
+		  }
 /*******************************************************************************
 *     Is 1.0 < |x| < 2.0^52?                                                   *
 *******************************************************************************/
-            if ( target )
-                  {                                     // positive x
-                  y = ( x + twoTo52 ) - twoTo52;        // round at binary point
-                  if ( y == x )                         // exact case
-                        return ( x );
-                  z = x + 0.5;                          // inexact case
-                  y = ( z + twoTo52 ) - twoTo52;        // round at binary point
-                  if ( y > z )
-                        return ( y - 1.0 );
-                  else
-                        return ( y );
-                  }
+	    if ( target )
+		  {                                     // positive x
+		  y = ( x + twoTo52 ) - twoTo52;        // round at binary point
+		  if ( y == x )                         // exact case
+			return ( x );
+		  z = x + 0.5;                          // inexact case
+		  y = ( z + twoTo52 ) - twoTo52;        // round at binary point
+		  if ( y > z )
+			return ( y - 1.0 );
+		  else
+			return ( y );
+		  }
 
 /*******************************************************************************
 *     Is x < 0?                                                                *
 *******************************************************************************/
-            else
-                  {
-                  y = ( x - twoTo52 ) + twoTo52;        // round at binary point
-                  if ( y == x )
-                        return ( x );
-                  z = x - 0.5;
-                  y = ( z - twoTo52 ) + twoTo52;        // round at binary point
-                  if ( y < z )
-                        return ( y + 1.0 );
-                  else
-                  return ( y );
-                  }
-            }
+	    else
+		  {
+		  y = ( x - twoTo52 ) + twoTo52;        // round at binary point
+		  if ( y == x )
+			return ( x );
+		  z = x - 0.5;
+		  y = ( z - twoTo52 ) + twoTo52;        // round at binary point
+		  if ( y < z )
+			return ( y + 1.0 );
+		  else
+		  return ( y );
+		  }
+	    }
 /*******************************************************************************
 *      |x| >= 2.0^52 or x is a NaN.                                            *
 *******************************************************************************/
@@ -585,48 +585,48 @@ double modf ( double x, double *iptr )
 /*******************************************************************************
 *     Is |x| < 2.0^53?                                                         *
 *******************************************************************************/
-            {
-            if ( xHead < 0x3ff00000ul )
+	    {
+	    if ( xHead < 0x3ff00000ul )
 /*******************************************************************************
 *     Is |x| < 1.0?                                                            *
 *******************************************************************************/
-                  {
-                  argument.words.hi = signBit;             // truncate to zero
-                  argument.words.lo = 0ul;
-                  *iptr = argument.dbl;
-                  return ( x );
-                  }
+		  {
+		  argument.words.hi = signBit;             // truncate to zero
+		  argument.words.lo = 0ul;
+		  *iptr = argument.dbl;
+		  return ( x );
+		  }
 /*******************************************************************************
 *     Is 1.0 < |x| < 2.0^52?                                                   *
 *******************************************************************************/
 			asm ("mffs %0" : "=f" (OldEnvironment));	// save environment
 			// round toward zero
 			asm ("mtfsf 255,%0" : /*NULLOUT*/ : /*IN*/ "f" ( TOWARDZERO.dbl ));
-            if ( signBit == 0ul )                         // truncate to integer
-                  xtrunc = ( x + twoTo52 ) - twoTo52;
-            else
-                  xtrunc = ( x - twoTo52 ) + twoTo52;
+	    if ( signBit == 0ul )                         // truncate to integer
+		  xtrunc = ( x + twoTo52 ) - twoTo52;
+	    else
+		  xtrunc = ( x - twoTo52 ) + twoTo52;
 		// restore caller's env
 		asm ("mtfsf 255,%0" : /*NULLOUT*/ : /*IN*/ "f" ( OldEnvironment ));
-            *iptr = xtrunc;                               // store integral part
-            if ( x != xtrunc )                            // nonzero fraction
-                  return ( x - xtrunc );
-            else
-                  {                                       // zero with x's sign
-                  argument.words.hi = signBit;
-                  argument.words.lo = 0ul;
-                  return ( argument.dbl );
-                  }
-            }
+	    *iptr = xtrunc;                               // store integral part
+	    if ( x != xtrunc )                            // nonzero fraction
+		  return ( x - xtrunc );
+	    else
+		  {                                       // zero with x's sign
+		  argument.words.hi = signBit;
+		  argument.words.lo = 0ul;
+		  return ( argument.dbl );
+		  }
+	    }
 
       *iptr = x;                                          // x is integral or NaN
       if ( x != x )                                       // NaN is returned
-            return x;
+	    return x;
       else
-            {                                             // zero with x's sign
-            argument.words.hi = signBit;
-            argument.words.lo = 0ul;
-            return ( argument.dbl );
-            }
+	    {                                             // zero with x's sign
+	    argument.words.hi = signBit;
+	    argument.words.lo = 0ul;
+	    return ( argument.dbl );
+	    }
       }
 #endif /* __ppc__ */

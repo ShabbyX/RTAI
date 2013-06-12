@@ -64,7 +64,7 @@ static RTAI_SYSCALL_MODE int sys_rtdm_open(const char *path, long oflag)
 	char krnl_path[RTDM_MAX_DEVNAME_LEN + 1];
 
 	if (unlikely(!__xn_access_ok(curr, VERIFY_READ, path, sizeof(krnl_path)))) {
-	        return -EFAULT;
+		return -EFAULT;
 	}
 	__xn_copy_from_user(curr, krnl_path, path, sizeof(krnl_path) - 1);
 	krnl_path[sizeof(krnl_path) - 1] = '\0';
@@ -160,24 +160,24 @@ extern struct { volatile int locked, rqsted; } rt_scheduling[];
 extern void rtai_handle_isched_lock(int);
 
 #define RTAI_SCHED_ISR_LOCK() \
-        do { \
+	do { \
 		int cpuid = rtai_cpuid(); \
-                if (!rt_scheduling[cpuid].locked++) { \
-                        rt_scheduling[cpuid].rqsted = 0; \
-                }
+		if (!rt_scheduling[cpuid].locked++) { \
+			rt_scheduling[cpuid].rqsted = 0; \
+		}
 #define RTAI_SCHED_ISR_UNLOCK() \
-                rtai_cli(); \
-                if (rt_scheduling[cpuid].locked && !(--rt_scheduling[cpuid].locked)) { \
-                        if (rt_scheduling[cpuid].rqsted > 0) { \
-                                rtai_handle_isched_lock(cpuid); \
-                        } \
-                } \
-        } while (0)
+		rtai_cli(); \
+		if (rt_scheduling[cpuid].locked && !(--rt_scheduling[cpuid].locked)) { \
+			if (rt_scheduling[cpuid].rqsted > 0) { \
+				rtai_handle_isched_lock(cpuid); \
+			} \
+		} \
+	} while (0)
 #else /* !CONFIG_RTAI_SCHED_ISR_LOCK */
 #define RTAI_SCHED_ISR_LOCK() \
-        do {             } while (0)
+	do {             } while (0)
 #define RTAI_SCHED_ISR_UNLOCK() \
-        do { rtai_cli(); } while (0)
+	do { rtai_cli(); } while (0)
 #endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
 
 #define XNINTR_MAX_UNHANDLED	1000
@@ -314,8 +314,8 @@ static void xnintr_edge_shirq_handler(unsigned irq, void *cookie)
 
 
 
-                } else if (end == NULL)
-                        end = intr;
+		} else if (end == NULL)
+			end = intr;
 
 		if (counter++ > MAX_EDGEIRQ_COUNTER)
 			break;
@@ -631,15 +631,15 @@ int xnintr_detach(xnintr_t *intr)
 int xnintr_enable (xnintr_t *intr)
 {
 
-        rt_enable_irq(intr->irq);
-        return 0;
+	rt_enable_irq(intr->irq);
+	return 0;
 }
 
 int xnintr_disable (xnintr_t *intr)
 {
 
-        rt_disable_irq(intr->irq);
-        return 0;
+	rt_disable_irq(intr->irq);
+	return 0;
 }
 
 extern struct epoch_struct boot_epoch;
@@ -703,7 +703,7 @@ static inline void enq_timer(struct rtdm_timer_struct *timed_timer)
 {
 	struct rtdm_timer_struct *timer;
 	timer = &timers_list[TIMED_TIMER_CPUID];
-        while (timed_timer->firing_time > (timer = timer->next)->firing_time);
+	while (timed_timer->firing_time > (timer = timer->next)->firing_time);
 	timer->prev = (timed_timer->prev = timer->prev)->next = timed_timer;
 	timed_timer->next = timer;
 }
@@ -886,24 +886,24 @@ int __init rtdm_skin_init(void)
 	int err;
 
 	rtai_timers_init();
-        if(set_rt_fun_ext_index(rtdm, RTDM_INDX)) {
-                printk("LXRT extension %d already in use. Recompile RTDM with a different extension index\n", RTDM_INDX);
-                return -EACCES;
-        }
+	if(set_rt_fun_ext_index(rtdm, RTDM_INDX)) {
+		printk("LXRT extension %d already in use. Recompile RTDM with a different extension index\n", RTDM_INDX);
+		return -EACCES;
+	}
 	if ((err = rtdm_dev_init())) {
-	        goto fail;
+		goto fail;
 	}
 
 	xnintr_mount();
 
 #ifdef CONFIG_RTAI_RTDM_SELECT
 	if (xnselect_mount()) {
-	        goto cleanup_core;
+		goto cleanup_core;
 	}
 #endif
 #ifdef CONFIG_PROC_FS
 	if ((err = rtdm_proc_init())) {
-	        goto cleanup_core;
+		goto cleanup_core;
 	}
 #endif /* CONFIG_PROC_FS */
 
@@ -929,7 +929,7 @@ void __exit rtdm_skin_exit(void)
 #endif
 	rtai_timers_cleanup();
 	rtdm_dev_cleanup();
-        reset_rt_fun_ext_index(rtdm, RTDM_INDX);
+	reset_rt_fun_ext_index(rtdm, RTDM_INDX);
 #ifdef CONFIG_PROC_FS
 	rtdm_proc_cleanup();
 #endif /* CONFIG_PROC_FS */

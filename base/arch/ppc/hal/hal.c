@@ -99,7 +99,7 @@ static void (*rtai_isr_hook)(int cpuid);
 		if (rt_scheduling[cpuid].locked && !(--rt_scheduling[cpuid].locked)) { \
 			if (rt_scheduling[cpuid].rqsted > 0 && rtai_isr_hook) { \
 				rtai_isr_hook(cpuid); \
-        		} \
+			} \
 		} \
 	} while (0)
 #else /* !CONFIG_RTAI_SCHED_ISR_LOCK */
@@ -163,7 +163,7 @@ extern struct hw_interrupt_type hal_std_irq_dtype[];
 
 #define BEGIN_PIC() \
 do { \
-        unsigned long flags, pflags, cpuid; \
+	unsigned long flags, pflags, cpuid; \
 	rtai_save_flags_and_cli(flags); \
 	cpuid = rtai_cpuid(); \
 	pflags = xchg((unsigned long *)ROOT_STATUS_ADR(cpuid), 1 << IPIPE_STALL_FLAG); \
@@ -346,13 +346,13 @@ void rt_set_irq_retmode (unsigned irq, int retmode)
 
 unsigned rt_startup_irq (unsigned irq)
 {
-        int retval;
+	int retval;
 
 	BEGIN_PIC();
 	hal_unlock_irq(hal_root_domain, irq);
 	retval = rtai_irq_desc(irq)->startup(irq);
 	END_PIC();
-        return retval;
+	return retval;
 }
 
 
@@ -785,15 +785,15 @@ static int rtai_trap_fault (unsigned event, void *evdata)
 {
 #ifdef HINT_DIAG_TRAPS
 	static unsigned long traps_in_hard_intr = 0;
-        do {
-                unsigned long flags;
-                rtai_save_flags_and_cli(flags);
-                if (!test_bit(RTAI_IFLAG, &flags)) {
-                        if (!test_and_set_bit(event, &traps_in_hard_intr)) {
-                                HINT_DIAG_MSG(rt_printk("TRAP %d HAS INTERRUPT DISABLED (TRAPS PICTURE %lx).\n", event, traps_in_hard_intr););
-                        }
-                }
-        } while (0);
+	do {
+		unsigned long flags;
+		rtai_save_flags_and_cli(flags);
+		if (!test_bit(RTAI_IFLAG, &flags)) {
+			if (!test_and_set_bit(event, &traps_in_hard_intr)) {
+				HINT_DIAG_MSG(rt_printk("TRAP %d HAS INTERRUPT DISABLED (TRAPS PICTURE %lx).\n", event, traps_in_hard_intr););
+			}
+		}
+	} while (0);
 #endif /* HINT_DIAG_TRAPS */
 
 	static const int trap2sig[] = {
@@ -943,13 +943,13 @@ asmlinkage int rtai_syscall_dispatcher (struct pt_regs *regs)
 
 	IF_IS_A_USI_SRQ_CALL_IT(srq, regs->gpr[4], (long long *)regs->gpr[5], regs->msr, 1);
 
-        *((long long *)regs->gpr[3]) = srq > RTAI_NR_SRQS ? rtai_lxrt_dispatcher(srq, regs->gpr[4], regs) : rtai_usrq_dispatcher(srq, regs->gpr[4]);
+	*((long long *)regs->gpr[3]) = srq > RTAI_NR_SRQS ? rtai_lxrt_dispatcher(srq, regs->gpr[4], regs) : rtai_usrq_dispatcher(srq, regs->gpr[4]);
 
-        if (!in_hrt_mode(srq = rtai_cpuid())) {
-                hal_test_and_fast_flush_pipeline(srq);
-                return 1;
-        }
-        return 0;
+	if (!in_hrt_mode(srq = rtai_cpuid())) {
+		hal_test_and_fast_flush_pipeline(srq);
+		return 1;
+	}
+	return 0;
 }
 
 /*
@@ -1045,7 +1045,7 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 			}
 			PROC_PRINT("\n    #%d at %p", i, rtai_realtime_irq[i].handler);
 		}
-        }
+	}
 	if (none) {
 		PROC_PRINT("none");
 	}
@@ -1064,7 +1064,7 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 			PROC_PRINT("    #%d label:%lu\n", i, rtai_sysreq_table[i].label);
 			none = 0;
 		}
-        }
+	}
 
 	if (none) {
 		PROC_PRINT("    none");
@@ -1087,13 +1087,13 @@ static int rtai_proc_register (void)
 	if (!rtai_proc_root) {
 		printk(KERN_ERR "Unable to initialize /proc/rtai.\n");
 		return -1;
-        }
+	}
 	rtai_proc_root->owner = THIS_MODULE;
 	ent = create_proc_entry("hal", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root);
 	if (!ent) {
 		printk(KERN_ERR "Unable to initialize /proc/rtai/hal.\n");
 		return -1;
-        }
+	}
 
 	ent->read_proc = rtai_read_proc;
 

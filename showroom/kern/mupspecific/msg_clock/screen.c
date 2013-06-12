@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-        close(Keyboard);
+	close(Keyboard);
 
 	if ((Screen = open("/dev/rtf1", O_RDONLY)) < 0) {
 		fprintf(stderr, "Error opening /dev/rtf1\n");

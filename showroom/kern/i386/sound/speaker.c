@@ -38,15 +38,15 @@ static int port61;
 
 static int filter(int x)
 {
-        static int oldx;
-        int ret;
+	static int oldx;
+	int ret;
 
-        if (x & 0x80) {
-                x = 382 - x;
-        }
-        ret = x > oldx;
-        oldx = x;
-        return ret;
+	if (x & 0x80) {
+		x = 382 - x;
+	}
+	ret = x > oldx;
+	oldx = x;
+	return ret;
 }
 
 static void intr_handler(long t)
@@ -65,11 +65,11 @@ static void intr_handler(long t)
 		}
 		if (go)  {
 #ifdef CONFIG_X86_64
-                        data = filter(data);
-                        temp = inb(PORT_ADR);
-                        temp &= 0xfd;
-                        temp |= (data & 1) << 1;
-                        outb(temp, PORT_ADR);
+			data = filter(data);
+			temp = inb(PORT_ADR);
+			temp &= 0xfd;
+			temp |= (data & 1) << 1;
+			outb(temp, PORT_ADR);
 #else
 			outb(port61,0x61);
 			outb(port61^1,0x61);

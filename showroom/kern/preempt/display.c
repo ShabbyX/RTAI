@@ -51,6 +51,6 @@ int main(int argc,char *argv[])
 		read(fd0, &samp, sizeof(samp));
 		printf("* latency: min: %ld, max: %ld, average: %ld; fastjit: %ld, slowjit: %ld * (all us) *\n", samp.min/1000, samp.max/1000, samp.avrg/1000, samp.jitters[0]/1000, samp.jitters[1]/1000);
 		fflush(stdout);
-        }
+	}
 	return 0;
 }

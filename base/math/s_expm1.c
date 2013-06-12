@@ -155,14 +155,14 @@ Q5  =  -2.01099218183624371326e-07; /* BE8AFDB7 6E09C32D */
     /* filter out huge and non-finite argument */
 	if(hx >= 0x4043687A) {			/* if |x|>=56*ln2 */
 	    if(hx >= 0x40862E42) {		/* if |x|>=709.78... */
-                if(hx>=0x7ff00000) {
+		if(hx>=0x7ff00000) {
 		    u_int32_t low;
 		    GET_LOW_WORD(low,x);
 		    if(((hx&0xfffff)|low)!=0)
-		         return x+x; 	 /* NaN */
+			 return x+x; 	 /* NaN */
 		    else return (xsb==0)? x:-1.0;/* exp(+-inf)={inf,-1} */
-	        }
-	        if(x > o_threshold) return huge*huge; /* overflow */
+		}
+		if(x > o_threshold) return huge*huge; /* overflow */
 	    }
 	    if(xsb!=0) { /* x < -56*ln2, return -1.0 with inexact */
 		if(x+tiny<0.0)		/* raise inexact */
@@ -208,21 +208,21 @@ Q5  =  -2.01099218183624371326e-07; /* BE8AFDB7 6E09C32D */
 	       	else 	      return  one+2.0*(x-e);
 	    }
 	    if (k <= -2 || k>56) {   /* suffice to return exp(x)-1 */
-	        u_int32_t high;
-	        y = one-(e-x);
+		u_int32_t high;
+		y = one-(e-x);
 		GET_HIGH_WORD(high,y);
 		SET_HIGH_WORD(y,high+(k<<20));	/* add k to y's exponent */
-	        return y-one;
+		return y-one;
 	    }
 	    t = one;
 	    if(k<20) {
-	        u_int32_t high;
-	        SET_HIGH_WORD(t,0x3ff00000 - (0x200000>>k));  /* t=1-2^-k */
+		u_int32_t high;
+		SET_HIGH_WORD(t,0x3ff00000 - (0x200000>>k));  /* t=1-2^-k */
 	       	y = t-(e-x);
 		GET_HIGH_WORD(high,y);
 		SET_HIGH_WORD(y,high+(k<<20));	/* add k to y's exponent */
 	   } else {
-	        u_int32_t high;
+		u_int32_t high;
 		SET_HIGH_WORD(t,((0x3ff-k)<<20));	/* 2^-k */
 	       	y = x-(e+t);
 	       	y += one;

@@ -13,7 +13,7 @@
  *
  *
 ===============================================================================
-                            COPYRIGHT NOTICE
+			    COPYRIGHT NOTICE
 
     Copyright (C) 2002 VMIC
     International Copyright Secured.  All Rights Reserved.

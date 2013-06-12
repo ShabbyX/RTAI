@@ -79,7 +79,7 @@ static void mfun(int t)
 		}
 		if (msg[0] != t || msg[1] != 0xFFFFFFFF) {
 			rt_printk("WRONG REPLY TO TASK: %d.\n", t);
-                        goto prem;
+			goto prem;
 		}
 		cnt[t]++;
 //		rt_printk("TASK: %d, OK (%d).\n", t, cnt[t]);

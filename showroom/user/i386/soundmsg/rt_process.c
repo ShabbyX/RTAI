@@ -71,7 +71,7 @@ static void *speaker_handler(void *args)
 	rt_sendx(rt_get_adr(nam2num("SNDMAS")), buf, 1);
 	rt_task_make_periodic(mytask, rt_get_time() + 100*period, period);
 
-        len = 0;
+	len = 0;
 	while(1) {
 		if (len) {
 			data = filter(buf[i++]);
@@ -144,8 +144,8 @@ int main(void)
 		}
 	}
 
-        msg = 0xFFFFFFFF;
-        rt_rpcx(rt_get_adr(nam2num("SOUND")), &msg, &msg, sizeof(int), 1);
+	msg = 0xFFFFFFFF;
+	rt_rpcx(rt_get_adr(nam2num("SOUND")), &msg, &msg, sizeof(int), 1);
 	waitpid(thread, 0, 0);
 	rt_task_delete(mytask);
 	stop_rt_timer();

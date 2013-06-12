@@ -64,10 +64,10 @@ do_test (void)
   if (e == 0)
     {
       puts ("rwlock_wrlock on rwlock with writer succeeded");
-        if (!pthread_rwlock_unlock (&r)) {
-                puts ("OK for RTAI recursive rwlock_trywrlock, continuing after unlock\n");
-                goto c1;
-        }
+	if (!pthread_rwlock_unlock (&r)) {
+		puts ("OK for RTAI recursive rwlock_trywrlock, continuing after unlock\n");
+		goto c1;
+	}
       return 1;
     }
   if (e != EDEADLK)
@@ -98,7 +98,7 @@ c1:
 
 int main(void)
 {
-        pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_HARD_REAL_TIME);        start_rt_timer(0);
-        do_test();
-        return 0;
+	pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_HARD_REAL_TIME);        start_rt_timer(0);
+	do_test();
+	return 0;
 }

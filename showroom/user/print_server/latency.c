@@ -45,11 +45,11 @@ static double a[MAXDIM], b[MAXDIM];
 
 static double dot(double *a, double *b, int n)
 {
-        int k = n - 1;
-        double s = 0.0;
-        for(; k >= 0; k--) {
-                s = s + a[k]*b[k];
-        }
+	int k = n - 1;
+	double s = 0.0;
+	for(; k >= 0; k--) {
+		s = s + a[k]*b[k];
+	}
 	return s;
 }
 
@@ -125,9 +125,9 @@ int main(int argc, char *argv[])
 		period = nano2count(PERIOD);
 	}
 
-        for(i = 0; i < MAXDIM; i++) {
-                a[i] = b[i] = 3.141592;
-        }
+	for(i = 0; i < MAXDIM; i++) {
+		a[i] = b[i] = 3.141592;
+	}
 	sref = dot(a, b, MAXDIM);
 	s = 0.0;
 

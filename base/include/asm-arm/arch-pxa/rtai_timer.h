@@ -107,5 +107,3 @@ static inline void rt_set_timer_match_reg(int delay)
 #endif
 
 #define rt_set_timer_delay(x)  rt_set_timer_match_reg(x)
-
-

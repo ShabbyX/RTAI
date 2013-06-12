@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2001-2006  Paolo Mantegazza  (mantegazza@aero.polimi.it)
-                         Giuseppe Quaranta (quaranta@aero.polimi.it)
+			 Giuseppe Quaranta (quaranta@aero.polimi.it)
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License as
@@ -54,7 +54,7 @@ static void rtc_periodic_timer_setup(int pwr2)
 	rt_release_irq(RTC_IRQ);
 	rtai_hw_cli();
 	CMOS_WRITE(CMOS_READ(RTC_FREQ_SELECT), RTC_FREQ_SELECT);
-        CMOS_WRITE(CMOS_READ(RTC_CONTROL),     RTC_CONTROL);
+	CMOS_WRITE(CMOS_READ(RTC_CONTROL),     RTC_CONTROL);
 	CMOS_WRITE(RTC_REF_CLCK_32KHZ | (16 - pwr2),          RTC_FREQ_SELECT);
 	CMOS_WRITE((CMOS_READ(RTC_CONTROL) & 0x8F) | RTC_PIE, RTC_CONTROL);
 	rtai_hw_sti();

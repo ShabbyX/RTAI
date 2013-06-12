@@ -116,8 +116,8 @@ int main(void)
 				rtai_srq(srq, (unsigned long)args);
 				read(fifo, &average, sizeof(average));
 				average /= (int)args[2];
-			        if (params.mp) {
-			        	printf("\n*** '#define LATENCY_APIC %d' (IN USE %lu)\n\n", (int)params.latency_apic + average, params.latency_apic);
+				if (params.mp) {
+					printf("\n*** '#define LATENCY_APIC %d' (IN USE %lu)\n\n", (int)params.latency_apic + average, params.latency_apic);
 				} else {
 					printf("\n*** '#define LATENCY_8254 %d' (IN USE %lu)\n\n", (int)params.latency_8254 + average, params.latency_8254);
 				}
@@ -144,8 +144,8 @@ int main(void)
 				read(fifo, &average, sizeof(average));
 				waitpid(pid, 0, 0);
 				average /= (int)args[2];
-			        if (params.mp) {
-			        	printf("\n*** '#define LATENCY_APIC %d' (IN USE %lu)\n\n", (int)params.latency_apic + average, params.latency_apic);
+				if (params.mp) {
+					printf("\n*** '#define LATENCY_APIC %d' (IN USE %lu)\n\n", (int)params.latency_apic + average, params.latency_apic);
 				} else {
 					printf("\n*** '#define LATENCY_8254 %d' (IN USE %lu)\n\n", (int)params.latency_8254 + average, params.latency_8254);
 				}

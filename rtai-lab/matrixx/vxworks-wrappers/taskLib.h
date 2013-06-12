@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2001-2006  Paolo Mantegazza  (mantegazza@aero.polimi.it)
-                         Giuseppe Quaranta (quaranta@aero.polimi.it)
+			 Giuseppe Quaranta (quaranta@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -62,7 +62,7 @@ static void *support_fun(struct thread_args *args)
 	}
 	iopl(3);
 	if (args->fpu == VX_FP_TASK) {
-        	rt_task_use_fpu(args->task, 1);
+		rt_task_use_fpu(args->task, 1);
 	}
 	rt_set_usp_flags_mask(FORCE_SOFT);
 	rt_grow_and_lock_stack(args->stksiz - 10000);
@@ -83,7 +83,7 @@ static void *support_fun(struct thread_args *args)
 static inline long taskSpawn(char *name, long priority, long options, long stackSize, FUNCPTR entryPt, long arg1, long arg2, long arg3, long arg4, long arg5, long arg6, long arg7, long arg8, long arg9, long arg10)
 {
 	struct thread_args *args;
-        pthread_attr_t attr;
+	pthread_attr_t attr;
 
 	args = malloc(sizeof(struct thread_args));
 	strncpy(args->name, name, NAME_SIZE - 1);
@@ -103,16 +103,16 @@ static inline long taskSpawn(char *name, long priority, long options, long stack
 	args->fpu    = options == VX_FP_TASK ? 1 : 0;
 	args->stksiz = stackSize;
 	args->task   = NULL;
-        pthread_attr_init(&attr);
-        if (pthread_attr_setstacksize(&attr, stackSize > PTHREAD_STACK_MIN ? stackSize : PTHREAD_STACK_MIN)) {
+	pthread_attr_init(&attr);
+	if (pthread_attr_setstacksize(&attr, stackSize > PTHREAD_STACK_MIN ? stackSize : PTHREAD_STACK_MIN)) {
 		free(args);
-                return ERROR;
-        }
+		return ERROR;
+	}
 	args->sem = semBCreate(SEM_Q_FIFO, SEM_EMPTY);
-        if (pthread_create(&args->thread, &attr, (void *(*)(void *))support_fun, args)) {
+	if (pthread_create(&args->thread, &attr, (void *(*)(void *))support_fun, args)) {
 		free(args);
-                return ERROR;
-        }
+		return ERROR;
+	}
 	semTake(args->sem, WAIT_FOREVER);
 	semDelete(args->sem);
 	return (long)args;

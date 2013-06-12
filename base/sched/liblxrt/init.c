@@ -28,11 +28,11 @@
 
 void init_linux_scheduler(int sched, int pri)
 {
-        struct sched_param mysched;
+	struct sched_param mysched;
 
 	if(sched != SCHED_RR && sched != SCHED_FIFO) {
-                puts("Invalid scheduling scheme");
-                exit(1);
+		puts("Invalid scheduling scheme");
+		exit(1);
 	}
 
 	if((pri < sched_get_priority_min(sched)) || (pri > sched_get_priority_max(sched))) {
@@ -40,10 +40,10 @@ void init_linux_scheduler(int sched, int pri)
 		exit(2);
 	}
 
-        mysched.sched_priority = pri ;
-        if( sched_setscheduler( 0, SCHED_FIFO, &mysched ) == -1 ) {
-                puts("Error in setting the Linux scheduler");
-                perror("errno");
-                exit(3);
-        }
+	mysched.sched_priority = pri ;
+	if( sched_setscheduler( 0, SCHED_FIFO, &mysched ) == -1 ) {
+		puts("Error in setting the Linux scheduler");
+		perror("errno");
+		exit(3);
+	}
 }

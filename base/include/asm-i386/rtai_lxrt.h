@@ -88,7 +88,7 @@
 
 #define SET_LXRT_RETVAL_IN_SYSCALL(regs, retval) \
 	do { \
-                if (regs->RTAI_SYSCALL_RETPNT) { \
+		if (regs->RTAI_SYSCALL_RETPNT) { \
 			rt_copy_to_user((void *)regs->RTAI_SYSCALL_RETPNT, &retval, sizeof(retval)); \
 		} \
 	} while (0)

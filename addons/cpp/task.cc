@@ -130,10 +130,10 @@ Task::~Task(){
 }
 
 Task::Task(int stack_size,
-           int priority,
-           bool uses_fpu,
-           bool use_signal,
-           unsigned int cpuid)
+	   int priority,
+	   bool uses_fpu,
+	   bool use_signal,
+	   unsigned int cpuid)
 {
 	std::cerr << "Task::Task(...) " << (void*)this << std::endl;
 
@@ -148,10 +148,10 @@ Task::Task(int stack_size,
 
 Task::Task(const char* name,
 	   int stack_size,
-           int priority,
-           bool uses_fpu,
-           bool use_signal,
-           unsigned int cpuid)
+	   int priority,
+	   bool uses_fpu,
+	   bool use_signal,
+	   unsigned int cpuid)
 {
 	std::cerr << "Task::Task(...) " << (void*)this << std::endl;
 
@@ -178,10 +178,10 @@ Task::Task(const char* name )
 }
 
 bool Task::init(int stack_size,
-	        int priority,
-                bool uses_fpu,
-                bool use_signal,
-                unsigned int cpuid)
+		int priority,
+		bool uses_fpu,
+		bool use_signal,
+		unsigned int cpuid)
 {
 	rt_printk("Task::init(...) %p\n",this);
 
@@ -196,19 +196,19 @@ bool Task::init(int stack_size,
 
 	if(use_signal)
 	    rt_task_init(m_Task, ::entry_point,(int)this,
-        	               stack_size,priority,uses_fpu,::signal_handler);
+			       stack_size,priority,uses_fpu,::signal_handler);
 	else
 		rt_task_init(m_Task, ::entry_point,(int)this,
-        	               stack_size,priority,uses_fpu,0);
+			       stack_size,priority,uses_fpu,0);
 	return true;
 }
 
 bool Task::init(const char* name,
 		int stack_size,
-	        int priority,
-                bool uses_fpu,
-                bool use_signal,
-                unsigned int cpuid)
+		int priority,
+		bool uses_fpu,
+		bool use_signal,
+		unsigned int cpuid)
 {
 	rt_printk("Task::init(...) %p\n",this);
 
@@ -223,10 +223,10 @@ bool Task::init(const char* name,
 
 	if(use_signal)
 		m_Task = rt_named_task_init(name, ::entry_point,(int)this,
-        	               stack_size,priority,uses_fpu,::signal_handler);
+			       stack_size,priority,uses_fpu,::signal_handler);
 	else
 		m_Task = rt_named_task_init(name, ::entry_point,(int)this,
-        	               stack_size,priority,uses_fpu,0);
+			       stack_size,priority,uses_fpu,0);
 
 	if( m_Task == 0)
 		return false;

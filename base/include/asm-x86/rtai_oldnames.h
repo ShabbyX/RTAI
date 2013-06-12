@@ -152,9 +152,9 @@ static inline unsigned long get_cr2 (void) {
 #else
 
 static inline unsigned long get_cr2 (void) {
-        unsigned long address;
-        __asm__("movq %%cr2,%0":"=r" (address));
-        return address;
+	unsigned long address;
+	__asm__("movq %%cr2,%0":"=r" (address));
+	return address;
 }
 
 #endif

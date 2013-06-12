@@ -65,7 +65,7 @@ int main(void)
 	RTIME tp, t;
 
 	rt_allow_nonroot_hrt();
-        thread = rt_thread_create(endt, NULL, 10000);
+	thread = rt_thread_create(endt, NULL, 10000);
 	iopl(3);
 
 	if (!(rtask = rt_task_init_schmod(nam2num("RTASK"), 0, 0, 0, SCHED_FIFO, ALLOWED_CPUS))) {
@@ -126,7 +126,7 @@ int main(void)
 		if (pervar > maxpervar) {
 			maxpervar = pervar;
 		}
-	        rt_mbx_send_if(mbx, &latency, sizeof(latency));
+		rt_mbx_send_if(mbx, &latency, sizeof(latency));
 //		rt_printk("MXI %d, MXS %d\n", maxisr, maxsched);
 	}
 

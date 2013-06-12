@@ -60,10 +60,10 @@ static inline void *_rt_shm_alloc(unsigned long name, int size, int suprt)
 		if ((adr = suprt ? rkmalloc(&size, SUPRT[suprt]) : rvmalloc(size))) {
 			if (!rt_register(name, adr, suprt ? -size : size, 0)) {
 				if (suprt) {
-                                        rkfree(adr, size);
-                                } else {
-                                        rvfree(adr, size);
-                                }
+					rkfree(adr, size);
+				} else {
+					rvfree(adr, size);
+				}
 				return 0;
 			}
 			memset(ALIGN2PAGE(adr), 0, size);
@@ -344,9 +344,9 @@ void *rt_named_malloc(unsigned long name, int size)
 	}
 	if ((mem_ptr = _rt_halloc(size, &rt_smp_linux_task->heap[GLOBAL]))) {
 		if (rt_register(name, mem_ptr, IS_HPCK, 0)) {
-                        return mem_ptr;
-                }
-                rt_hfree(mem_ptr);
+			return mem_ptr;
+		}
+		rt_hfree(mem_ptr);
 	}
 	return NULL;
 }
@@ -420,8 +420,8 @@ static inline void *rt_named_halloc_typed(unsigned long name, int size, int htyp
 	}
 	if ((mem_ptr = _rt_halloc(size, &task->heap[htype]))) {
 		if (rt_register(name, task->heap[htype].kadr + (mem_ptr - task->heap[htype].uadr), IS_HPCK, 0)) {
-                        return mem_ptr;
-                }
+			return mem_ptr;
+		}
 		_rt_hfree(mem_ptr, &task->heap[htype]);
 	}
 	return NULL;
@@ -642,21 +642,21 @@ void *rt_heap_open(unsigned long name, int size, int suprt)
 #endif
 
 struct rt_native_fun_entry rt_shm_entries[] = {
-        { { 0, rt_shm_alloc_usp },		SHM_ALLOC },
-        { { 0, rt_shm_free },			SHM_FREE },
-        { { 0, rt_shm_size },			SHM_SIZE },
+	{ { 0, rt_shm_alloc_usp },		SHM_ALLOC },
+	{ { 0, rt_shm_free },			SHM_FREE },
+	{ { 0, rt_shm_size },			SHM_SIZE },
 #ifdef CONFIG_RTAI_MALLOC
-        { { 0, rt_set_heap },			HEAP_SET},
-        { { 0, rt_halloc },			HEAP_ALLOC },
-        { { 0, rt_hfree },			HEAP_FREE },
-        { { 0, rt_named_halloc },		HEAP_NAMED_ALLOC },
-        { { 0, rt_named_hfree },		HEAP_NAMED_FREE },
-        { { 0, rt_malloc_usp },			MALLOC },
-        { { 0, rt_free_usp },			FREE },
-        { { 0, rt_named_malloc_usp },		NAMED_MALLOC },
-        { { 0, rt_named_free_usp },		NAMED_FREE },
+	{ { 0, rt_set_heap },			HEAP_SET},
+	{ { 0, rt_halloc },			HEAP_ALLOC },
+	{ { 0, rt_hfree },			HEAP_FREE },
+	{ { 0, rt_named_halloc },		HEAP_NAMED_ALLOC },
+	{ { 0, rt_named_hfree },		HEAP_NAMED_FREE },
+	{ { 0, rt_malloc_usp },			MALLOC },
+	{ { 0, rt_free_usp },			FREE },
+	{ { 0, rt_named_malloc_usp },		NAMED_MALLOC },
+	{ { 0, rt_named_free_usp },		NAMED_FREE },
 #endif
-        { { 0, 0 },				000 }
+	{ { 0, 0 },				000 }
 };
 
 extern int set_rt_fun_entries(struct rt_native_fun_entry *entry);
@@ -702,8 +702,8 @@ int __rtai_shm_init (void)
 void __rtai_shm_exit (void)
 {
 	extern int max_slots;
-        int slot;
-        struct rt_registry_entry entry;
+	int slot;
+	struct rt_registry_entry entry;
 
 #ifdef CONFIG_RTAI_MALLOC_VMALLOC
 	rt_drg_on_name_cnt(GLOBAL_HEAP_ID);
@@ -711,11 +711,11 @@ void __rtai_shm_exit (void)
 	for (slot = 1; slot <= max_slots; slot++) {
 		if (rt_get_registry_slot(slot, &entry)) {
 			if (abs(entry.type) >= PAGE_SIZE) {
-        			char name[8];
+				char name[8];
 				while (_rt_shm_free(entry.name, entry.type));
-                        	num2nam(entry.name, name);
-	                        rt_printk("\nSHM_CLEANUP_MODULE releases: '%s':0x%lx:%lu (%d).\n", name, entry.name, entry.name, entry.type);
-                        }
+				num2nam(entry.name, name);
+				rt_printk("\nSHM_CLEANUP_MODULE releases: '%s':0x%lx:%lu (%d).\n", name, entry.name, entry.name, entry.type);
+			}
 		}
 	}
 	reset_rt_fun_entries(rt_shm_entries);

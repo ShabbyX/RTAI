@@ -28,9 +28,9 @@ int main(void)
 
 	while (!end) {
 		lseek(player, 0, SEEK_SET);
-                while(!end && (cnt = read(player, data, BUFSIZE)) > 0) {
-                        while (!end && rt_scb_put(scb, data, cnt));
-                }
+		while(!end && (cnt = read(player, data, BUFSIZE)) > 0) {
+			while (!end && rt_scb_put(scb, data, cnt));
+		}
 	}
 
 //	rt_scb_delete(nam2num("SCB"));

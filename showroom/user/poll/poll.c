@@ -105,9 +105,9 @@ int main(void)
 	}
 
 	buf[0] = 0;
-        for (i = 0; i < NTHR; i++) {
+	for (i = 0; i < NTHR; i++) {
 		rt_mbx_send(mbx[0], buf, sizeof(buf));
-        }
+	}
 
 	for (i = 0; i < (NMBX + 1); i++) {
 		rt_mbx_delete(mbx[i]);

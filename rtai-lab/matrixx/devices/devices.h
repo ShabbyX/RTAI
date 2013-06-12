@@ -23,53 +23,50 @@
 
 EXTERN_FUNC(void C_BLK_1, ( ) );
 EXTERN_FUNC(void rtai_scope, (struct STATUS_RECORD *INFO,
-                            RT_DURATION           T,
-                            RT_FLOAT              U[],
-                            RT_INTEGER            NU,
-                            RT_FLOAT              X[],
-                            RT_FLOAT              XDOT[],
-                            RT_INTEGER            NX,
-                            RT_FLOAT              Y[],
-                            RT_INTEGER            NY,
-                            RT_FLOAT              RP[],
-                            RT_INTEGER            IP[]) );
+			    RT_DURATION           T,
+			    RT_FLOAT              U[],
+			    RT_INTEGER            NU,
+			    RT_FLOAT              X[],
+			    RT_FLOAT              XDOT[],
+			    RT_INTEGER            NX,
+			    RT_FLOAT              Y[],
+			    RT_INTEGER            NY,
+			    RT_FLOAT              RP[],
+			    RT_INTEGER            IP[]) );
 
 EXTERN_FUNC(void rtai_log, (struct STATUS_RECORD *INFO,
-                            RT_DURATION           T,
-                            RT_FLOAT              U[],
-                            RT_INTEGER            NU,
-                            RT_FLOAT              X[],
-                            RT_FLOAT              XDOT[],
-                            RT_INTEGER            NX,
-                            RT_FLOAT              Y[],
-                            RT_INTEGER            NY,
-                            RT_FLOAT              RP[],
-                            RT_INTEGER            IP[]) );
+			    RT_DURATION           T,
+			    RT_FLOAT              U[],
+			    RT_INTEGER            NU,
+			    RT_FLOAT              X[],
+			    RT_FLOAT              XDOT[],
+			    RT_INTEGER            NX,
+			    RT_FLOAT              Y[],
+			    RT_INTEGER            NY,
+			    RT_FLOAT              RP[],
+			    RT_INTEGER            IP[]) );
 
 EXTERN_FUNC(void rtai_meter, (struct STATUS_RECORD *INFO,
-                            RT_DURATION           T,
-                            RT_FLOAT              U[],
-                            RT_INTEGER            NU,
-                            RT_FLOAT              X[],
-                            RT_FLOAT              XDOT[],
-                            RT_INTEGER            NX,
-                            RT_FLOAT              Y[],
-                            RT_INTEGER            NY,
-                            RT_FLOAT              RP[],
-                            RT_INTEGER            IP[]) );
+			    RT_DURATION           T,
+			    RT_FLOAT              U[],
+			    RT_INTEGER            NU,
+			    RT_FLOAT              X[],
+			    RT_FLOAT              XDOT[],
+			    RT_INTEGER            NX,
+			    RT_FLOAT              Y[],
+			    RT_INTEGER            NY,
+			    RT_FLOAT              RP[],
+			    RT_INTEGER            IP[]) );
 
 EXTERN_FUNC(void rtai_led, (struct STATUS_RECORD *INFO,
-                            RT_DURATION           T,
-                            RT_FLOAT              U[],
-                            RT_INTEGER            NU,
-                            RT_FLOAT              X[],
-                            RT_FLOAT              XDOT[],
-                            RT_INTEGER            NX,
-                            RT_FLOAT              Y[],
-                            RT_INTEGER            NY,
-                            RT_FLOAT              RP[],
-                            RT_INTEGER            IP[]) );
+			    RT_DURATION           T,
+			    RT_FLOAT              U[],
+			    RT_INTEGER            NU,
+			    RT_FLOAT              X[],
+			    RT_FLOAT              XDOT[],
+			    RT_INTEGER            NX,
+			    RT_FLOAT              Y[],
+			    RT_INTEGER            NY,
+			    RT_FLOAT              RP[],
+			    RT_INTEGER            IP[]) );
 #endif
-
-
-

@@ -61,7 +61,7 @@ MODULE_LICENSE("GPL");
 static int rtai_comedi_callback(unsigned int, RT_TASK *) __attribute__ ((__unused__));
 static int rtai_comedi_callback(unsigned int val, RT_TASK *task)
 {
-        if (task->magic == RT_TASK_MAGIC) {
+	if (task->magic == RT_TASK_MAGIC) {
 		task->resumsg = val;
 		rt_task_resume(task);
 	}
@@ -160,15 +160,15 @@ RTAI_SYSCALL_MODE long rt_comedi_command_data_read(void *dev, unsigned int subde
 	comedi_mark_buffer_read(dev, subdev, ofstf - ofsti);
 	RTAI_COMEDI_UNLOCK(dev, subdev);
 #else
-        comedi_device *cdev = (comedi_device *)dev;
+	comedi_device *cdev = (comedi_device *)dev;
 	comedi_async *async;
 
 	RTAI_COMEDI_LOCK(dev, subdev);
-        if (subdev >= cdev->n_subdevices) {
+	if (subdev >= cdev->n_subdevices) {
 		return RTE_OBJINV;
-        }
-        if ((async = (cdev->subdevices + cdev->n_subdevices)->async) == NULL) {
-                return RTE_OBJINV;
+	}
+	if ((async = (cdev->subdevices + cdev->n_subdevices)->async) == NULL) {
+		return RTE_OBJINV;
 	}
 	aibuf = (sampl_t *)async->prealloc_buf;
 	if ((i = comedi_buf_read_n_available(async)) < nchans) {
@@ -430,18 +430,18 @@ RTAI_SYSCALL_MODE int RT_comedi_do_insnlist(void *dev, long n_insns, struct insn
 
 static inline int _rt_comedi_trigger(void *dev, unsigned int subdev)
 {
-        comedi_insn insn;
-        lsampl_t data = 0;
-        insn.insn   = INSN_INTTRIG;
-        insn.subdev = subdev;
-        insn.n      = 1;
-        insn.data   = &data;
-        return _comedi_do_insn(dev, &insn);
+	comedi_insn insn;
+	lsampl_t data = 0;
+	insn.insn   = INSN_INTTRIG;
+	insn.subdev = subdev;
+	insn.n      = 1;
+	insn.data   = &data;
+	return _comedi_do_insn(dev, &insn);
 }
 
 RTAI_SYSCALL_MODE int rt_comedi_trigger(void *dev, unsigned int subdev)
 {
-        return _rt_comedi_trigger(dev, subdev);
+	return _rt_comedi_trigger(dev, subdev);
 }
 
 static RTAI_SYSCALL_MODE int _comedi_poll(void *dev, unsigned int subdev)

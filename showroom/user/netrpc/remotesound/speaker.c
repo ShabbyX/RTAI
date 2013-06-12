@@ -58,11 +58,11 @@ int main(void)
 
 //	ioperm(PORT_ADR, 1, 1);
 	iopl(3);
-        if (!(spktsk = rt_task_init_schmod(nam2num("SPKTSK"), 1, 0, 0, SCHED_FIFO, 0xF))) {
-                printf("CANNOT INIT SPEAKER TASK\n");
-                exit(1);
-        }
-        mbx = rt_mbx_init(nam2num("SNDMBX"), 4000);
+	if (!(spktsk = rt_task_init_schmod(nam2num("SPKTSK"), 1, 0, 0, SCHED_FIFO, 0xF))) {
+		printf("CANNOT INIT SPEAKER TASK\n");
+		exit(1);
+	}
+	mbx = rt_mbx_init(nam2num("SNDMBX"), 4000);
 	printf("\nSPEAKER TASK RUNNING\n");
 
 	rt_set_oneshot_mode();
@@ -73,10 +73,10 @@ int main(void)
 	period = nano2count(PERIOD);
 	rt_task_make_periodic(spktsk, rt_get_time() + 5*period, period);
 
-        for (i = 0; i < 100; i++) {
+	for (i = 0; i < 100; i++) {
 		plrtsk = rt_receive(0, &msg);
 		rt_return(plrtsk, msg);
-        }
+	}
 
 	while(1) {
 		if (!rt_mbx_receive_if(mbx, &data, 1)) {

@@ -125,7 +125,7 @@ static double zero = 0.0;
 	    }
 	    if(ax<0x3e200000) {			/* |x| < 2**-29 */
 		if(two54+x>zero			/* raise inexact */
-	            &&ax<0x3c900000) 		/* |x| < 2**-54 */
+		    &&ax<0x3c900000) 		/* |x| < 2**-54 */
 		    return x;
 		else
 		    return x - x*x*0.5;
@@ -138,22 +138,22 @@ static double zero = 0.0;
 	    if(hx<0x43400000) {
 		u  = 1.0+x;
 		GET_HIGH_WORD(hu,u);
-	        k  = (hu>>20)-1023;
-	        c  = (k>0)? 1.0-(u-x):x-(u-1.0);/* correction term */
+		k  = (hu>>20)-1023;
+		c  = (k>0)? 1.0-(u-x):x-(u-1.0);/* correction term */
 		c /= u;
 	    } else {
 		u  = x;
 		GET_HIGH_WORD(hu,u);
-	        k  = (hu>>20)-1023;
+		k  = (hu>>20)-1023;
 		c  = 0;
 	    }
 	    hu &= 0x000fffff;
 	    if(hu<0x6a09e) {
-	        SET_HIGH_WORD(u,hu|0x3ff00000);	/* normalize u */
+		SET_HIGH_WORD(u,hu|0x3ff00000);	/* normalize u */
 	    } else {
-	        k += 1;
+		k += 1;
 		SET_HIGH_WORD(u,hu|0x3fe00000);	/* normalize u/2 */
-	        hu = (0x00100000-hu)>>2;
+		hu = (0x00100000-hu)>>2;
 	    }
 	    f = u-1.0;
 	}

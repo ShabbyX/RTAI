@@ -109,7 +109,7 @@ MODULE_LICENSE("GPL");
 #include <rtai_proc_fs.h>
 static struct proc_dir_entry *wd_proc;
 static int    wdog_read_proc(char *page, char **start, off_t off, int count,
-                             int *eof, void *data);
+			     int *eof, void *data);
 #endif
 
 #include <rtai_sched.h>
@@ -411,7 +411,7 @@ static void handle_badtask(int wd, RT_TASK *t, BAD_RT_TASK *bt, RTIME overrun)
     if (!overrun) {
 	bt->count = - LooperTimeLimit;
 	bt->forced = 1;
-        bt->policy = WD_SUSPEND;
+	bt->policy = WD_SUSPEND;
 	bt->orig_period = 0;
 	WDLOG("Suspending task %p\n", t);
 	smpproof_task_suspend(t);
@@ -590,7 +590,7 @@ static void dummy(long wd)
 // ----------------------------- PROC INTERFACE --------------------------------
 #ifdef CONFIG_PROC_FS
 static int wdog_read_proc(char *page, char **start, off_t off, int count,
-                          int *eof, void *data)
+			  int *eof, void *data)
 {
     PROC_PRINT_VARS;
     RT_TASK	*task;
@@ -658,11 +658,11 @@ static int wdog_read_proc(char *page, char **start, off_t off, int count,
 		}
 		cpuid = task->runnable_on_cpus;
 		osec  = ulldiv( count2nano_cpuid(bt->orig_period, cpuid),
-			        NSECS_PER_SEC,
-			        &onsec);
+				NSECS_PER_SEC,
+				&onsec);
 		asec  = ulldiv( count2nano_cpuid(task->period, cpuid),
-			        NSECS_PER_SEC,
-			        &ansec);
+				NSECS_PER_SEC,
+				&ansec);
 		PROC_PRINT( "0x%08lx %-2d "
 			    "%s%-2d%s "
 			    "%-8d 0x%-3x %-5d "
@@ -690,13 +690,13 @@ static int wdog_read_proc(char *page, char **start, off_t off, int count,
 static struct rt_fun_entry rt_watchdog_fun[]  __attribute__ ((__unused__));
 
 static struct rt_fun_entry rt_watchdog_fun[] = {
-        [WD_SET_GRACE]	  = { 0, rt_wdset_grace },
-        [WD_SET_GRACEDIV] = { 0, rt_wdset_gracediv },
-        [WD_SET_SAFETY]   = { 0, rt_wdset_safety },
-        [WD_SET_POLICY]   = { 0, rt_wdset_policy },
-        [WD_SET_SLIP]     = { 0, rt_wdset_slip },
-        [WD_SET_STRETCH]  = { 0, rt_wdset_stretch },
-        [WD_SET_LIMIT]    = { 0, rt_wdset_limit }
+	[WD_SET_GRACE]	  = { 0, rt_wdset_grace },
+	[WD_SET_GRACEDIV] = { 0, rt_wdset_gracediv },
+	[WD_SET_SAFETY]   = { 0, rt_wdset_safety },
+	[WD_SET_POLICY]   = { 0, rt_wdset_policy },
+	[WD_SET_SLIP]     = { 0, rt_wdset_slip },
+	[WD_SET_STRETCH]  = { 0, rt_wdset_stretch },
+	[WD_SET_LIMIT]    = { 0, rt_wdset_limit }
 };
 
 // ----------------------------- MODULE CONTROL --------------------------------

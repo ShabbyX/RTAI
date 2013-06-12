@@ -43,14 +43,14 @@ extern "C" {
 
 static inline RTIME rt_timer_ns2tsc(RTIME ns)
 {
-        struct { RTIME ns; } arg = { ns };
-        return rtai_lxrt(BIDX, SIZARG, NANO2COUNT, &arg).rt;
+	struct { RTIME ns; } arg = { ns };
+	return rtai_lxrt(BIDX, SIZARG, NANO2COUNT, &arg).rt;
 }
 
 static inline RTIME rt_timer_tsc2ns(RTIME ticks)
 {
-        struct { RTIME ticks; } arg = { ticks };
-        return rtai_lxrt(BIDX, SIZARG, COUNT2NANO, &arg).rt;
+	struct { RTIME ticks; } arg = { ticks };
+	return rtai_lxrt(BIDX, SIZARG, COUNT2NANO, &arg).rt;
 }
 
 static inline RTIME rt_timer_read(void)
@@ -87,16 +87,16 @@ static inline RTIME rt_timer_tsc(void)
 			      "   cmpw %2,%0\n"
 			      "   bne 1b\n"
 			      : "=r" (((unsigned long *)((void *)&ts))[0]),
-			        "=r" (((unsigned long *)((void *)&ts))[1]),
-			        "=r" (chk));
-        return ts;
+				"=r" (((unsigned long *)((void *)&ts))[1]),
+				"=r" (chk));
+	return ts;
 #endif
 #endif
 }
 
 #define rt_timer_set_mode(x) \
 do { \
-        struct { unsigned long dummy; } arg; \
+	struct { unsigned long dummy; } arg; \
 	if (!rtai_lxrt(BIDX, SIZARG, HARD_TIMER_RUNNING, &arg).i[LOW]) { \
 		RT_TIMER_INFO timer_info; \
 		rt_timer_inquire(&timer_info); \
@@ -114,7 +114,7 @@ static inline void rt_timer_spin(RTIME ns)
 
 static inline int rt_timer_start(RTIME nstick)
 {
-        struct { long dummy; } arg = { 0 };
+	struct { long dummy; } arg = { 0 };
 	rtai_lxrt(BIDX, SIZARG, SET_ONESHOT_MODE, &arg);
 	rtai_lxrt(BIDX, SIZARG, START_TIMER, &arg);
 	return 0;
@@ -128,7 +128,7 @@ static inline void rt_timer_stop(void)
 
 static inline int rt_timer_inquire(RT_TIMER_INFO *info)
 {
-        struct { unsigned long dummy; } arg;
+	struct { unsigned long dummy; } arg;
 	info->period = rtai_lxrt(BIDX, SIZARG, HARD_TIMER_RUNNING, &arg).i[LOW] - 1;
 	info->date = info->tsc = rt_timer_tsc();
 	info->date = rt_timer_tsc2ns(info->date);

@@ -1268,10 +1268,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
 
     if (ntvec >= 1) {
       if (funtyp[22] == -1) {
-        ++(*urg);
-        i2 = ntvec + clkptr[22] - 1;
-        C2F(putevs)(&tevts[1], &evtspt[1],  nevts, pointi, told, &i2, &ierr1);
-        if (ierr1 != 0) return 3;
+	++(*urg);
+	i2 = ntvec + clkptr[22] - 1;
+	C2F(putevs)(&tevts[1], &evtspt[1],  nevts, pointi, told, &i2, &ierr1);
+	if (ierr1 != 0) return 3;
     }
   }
     break;

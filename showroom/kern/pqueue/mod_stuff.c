@@ -63,7 +63,7 @@ int init_module(void) {
     printk("==== Periodic mode selected ====\n");
     rt_set_periodic_mode();
     rt_task_init(&parent_task, parent_func, 1, STACK_SIZE,
-                                                PARENT_PRIORITY, 1, 0);
+						PARENT_PRIORITY, 1, 0);
 //    init_z_apps(&parent_task);
     rt_set_runnable_on_cpus(&parent_task, RUN_ON_CPUS);
     tick_period = start_rt_timer((int)nano2count(TICK_PERIOD));
@@ -73,7 +73,7 @@ int init_module(void) {
     rt_task_make_periodic(&parent_task, now + 2*tick_period, tick_period);
 #else
   rt_task_init(&parent_task, parent_func, 1, STACK_SIZE,
-                                                PARENT_PRIORITY, 1, 0);
+						PARENT_PRIORITY, 1, 0);
 //  init_z_apps(&parent_task);
   rt_set_runnable_on_cpus(&parent_task, RUN_ON_CPUS);
   tick_period = start_rt_timer((int)nano2count(TICK_PERIOD));

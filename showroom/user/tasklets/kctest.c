@@ -51,7 +51,7 @@ void ph(unsigned long data)
 
 int init_module(void)
 {
-        mem = rt_shm_alloc(0xabcd, sizeof(struct mymem), SUPRT);
+	mem = rt_shm_alloc(0xabcd, sizeof(struct mymem), SUPRT);
 	mem->flag = 0;
 #ifdef ONE_SHOT
 	rt_set_oneshot_mode();
@@ -66,5 +66,5 @@ int init_module(void)
 void cleanup_module(void)
 {
 	stop_rt_timer();
-        rt_shm_free(0xabcd);
+	rt_shm_free(0xabcd);
 }

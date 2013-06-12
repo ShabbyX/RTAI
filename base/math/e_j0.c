@@ -130,8 +130,8 @@ static double zero = 0.0;
 	}
 	if(ix<0x3f200000) {	/* |x| < 2**-13 */
 	    if(huge+x>one) {	/* raise inexact if x != 0 */
-	        if(ix<0x3e400000) return one;	/* |x|<2**-27 */
-	        else 	      return one - 0.25*x*x;
+		if(ix<0x3e400000) return one;	/* |x|<2**-27 */
+		else 	      return one - 0.25*x*x;
 	    }
 	}
 	z = x*x;
@@ -173,42 +173,42 @@ v04  =  4.41110311332675467403e-10; /* 0x3DFE5018, 0x3BD6D9EF */
 	int32_t hx,ix,lx;
 
 	EXTRACT_WORDS(hx,lx,x);
-        ix = 0x7fffffff&hx;
+	ix = 0x7fffffff&hx;
     /* Y0(NaN) is NaN, y0(-inf) is Nan, y0(inf) is 0  */
 	if(ix>=0x7ff00000) return  one/(x+x*x);
-        if((ix|lx)==0) return -one/zero;
-        if(hx<0) return zero/zero;
-        if(ix >= 0x40000000) {  /* |x| >= 2.0 */
-        /* y0(x) = sqrt(2/(pi*x))*(p0(x)*sin(x0)+q0(x)*cos(x0))
-         * where x0 = x-pi/4
-         *      Better formula:
-         *              cos(x0) = cos(x)cos(pi/4)+sin(x)sin(pi/4)
-         *                      =  1/sqrt(2) * (sin(x) + cos(x))
-         *              sin(x0) = sin(x)cos(3pi/4)-cos(x)sin(3pi/4)
-         *                      =  1/sqrt(2) * (sin(x) - cos(x))
-         * To avoid cancellation, use
-         *              sin(x) +- cos(x) = -cos(2x)/(sin(x) -+ cos(x))
-         * to compute the worse one.
-         */
-                s = sin(x);
-                c = cos(x);
-                ss = s-c;
-                cc = s+c;
+	if((ix|lx)==0) return -one/zero;
+	if(hx<0) return zero/zero;
+	if(ix >= 0x40000000) {  /* |x| >= 2.0 */
+	/* y0(x) = sqrt(2/(pi*x))*(p0(x)*sin(x0)+q0(x)*cos(x0))
+	 * where x0 = x-pi/4
+	 *      Better formula:
+	 *              cos(x0) = cos(x)cos(pi/4)+sin(x)sin(pi/4)
+	 *                      =  1/sqrt(2) * (sin(x) + cos(x))
+	 *              sin(x0) = sin(x)cos(3pi/4)-cos(x)sin(3pi/4)
+	 *                      =  1/sqrt(2) * (sin(x) - cos(x))
+	 * To avoid cancellation, use
+	 *              sin(x) +- cos(x) = -cos(2x)/(sin(x) -+ cos(x))
+	 * to compute the worse one.
+	 */
+		s = sin(x);
+		c = cos(x);
+		ss = s-c;
+		cc = s+c;
 	/*
 	 * j0(x) = 1/sqrt(pi) * (P(0,x)*cc - Q(0,x)*ss) / sqrt(x)
 	 * y0(x) = 1/sqrt(pi) * (P(0,x)*ss + Q(0,x)*cc) / sqrt(x)
 	 */
-                if(ix<0x7fe00000) {  /* make sure x+x not overflow */
-                    z = -cos(x+x);
-                    if ((s*c)<zero) cc = z/ss;
-                    else            ss = z/cc;
-                }
-                if(ix>0x48000000) z = (invsqrtpi*ss)/sqrt(x);
-                else {
-                    u = pzero(x); v = qzero(x);
-                    z = invsqrtpi*(u*ss+v*cc)/sqrt(x);
-                }
-                return z;
+		if(ix<0x7fe00000) {  /* make sure x+x not overflow */
+		    z = -cos(x+x);
+		    if ((s*c)<zero) cc = z/ss;
+		    else            ss = z/cc;
+		}
+		if(ix>0x48000000) z = (invsqrtpi*ss)/sqrt(x);
+		else {
+		    u = pzero(x); v = qzero(x);
+		    z = invsqrtpi*(u*ss+v*cc)/sqrt(x);
+		}
+		return z;
 	}
 	if(ix<=0x3e400000) {	/* x < 2**-27 */
 	    return(u00 + tpi*__ieee754_log(x));

@@ -32,10 +32,10 @@ int main(int argc, char *argv[])
 	RT_TASK *task;
 	RTIME expected;
 
-        if ((fifo = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_WRONLY)) < 0) {
-                printf("Error opening %s in calibration helper\n",nm);
-                exit(1);
-        }
+	if ((fifo = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_WRONLY)) < 0) {
+		printf("Error opening %s in calibration helper\n",nm);
+		exit(1);
+	}
  	if (!(task = rt_task_init_schmod(nam2num("UCAL"), 0, 0, 0, SCHED_FIFO, 0xF))) {
 		printf("Cannot init calibration helper\n");
 		exit(1);

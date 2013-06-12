@@ -114,9 +114,9 @@ static void Task4(long t)
 		count++;
 		msg.progressive = count;
 		msg.sending_task = 4;
-	        /*
-        	 * Please note that tasks using rt_receive_if() will not receive
-	         * this message because they aren't sleeping
+		/*
+		 * Please note that tasks using rt_receive_if() will not receive
+		 * this message because they aren't sleeping
 
 		 */
 		wakedup = rt_tbx_broadcast_if(&bx, (char*)&msg, sizeof(msg));

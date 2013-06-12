@@ -81,17 +81,17 @@ public:
 	virtual ~Task();
 
 	virtual bool init(int stack_size,
-	                  int priority,
-	                  bool uses_fpu,
-	                  bool use_signal,
-	                  unsigned int cpuid);
+			  int priority,
+			  bool uses_fpu,
+			  bool use_signal,
+			  unsigned int cpuid);
 
 	virtual bool init(const char* name,
 			  int stack_size,
-	                  int priority,
-	                  bool uses_fpu,
-	                  bool use_signal,
-	                  unsigned int cpuid);
+			  int priority,
+			  bool uses_fpu,
+			  bool use_signal,
+			  unsigned int cpuid);
 
 
 	virtual bool init(const char* name);

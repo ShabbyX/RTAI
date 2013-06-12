@@ -79,8 +79,8 @@ static double one = 1.0, Zero[] = {0.0, -0.0,};
 	else {		/* subnormal x, shift x to normal */
 	    n = -1022-ix;
 	    if(n<=31) {
-	        hx = (hx<<n)|(lx>>(32-n));
-	        lx <<= n;
+		hx = (hx<<n)|(lx>>(32-n));
+		lx <<= n;
 	    } else {
 		hx = lx<<(n-32);
 		lx = 0;
@@ -91,8 +91,8 @@ static double one = 1.0, Zero[] = {0.0, -0.0,};
 	else {		/* subnormal y, shift y to normal */
 	    n = -1022-iy;
 	    if(n<=31) {
-	        hy = (hy<<n)|(ly>>(32-n));
-	        ly <<= n;
+		hy = (hy<<n)|(ly>>(32-n));
+		ly <<= n;
 	    } else {
 		hy = ly<<(n-32);
 		ly = 0;

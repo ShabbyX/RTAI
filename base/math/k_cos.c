@@ -87,7 +87,7 @@ C6  = -1.13596475577881948265e-11; /* 0xBDA8FAE9, 0xBE8838D4 */
 	    if(ix > 0x3fe90000) {		/* x > 0.78125 */
 		qx = 0.28125;
 	    } else {
-	        INSERT_WORDS(qx,ix-0x00200000,0);	/* x/4 */
+		INSERT_WORDS(qx,ix-0x00200000,0);	/* x/4 */
 	    }
 	    hz = 0.5*z-qx;
 	    a  = one-qx;

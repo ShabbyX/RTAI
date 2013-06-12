@@ -29,11 +29,11 @@ typedef union
       {
       struct {
 #if defined(__BIG_ENDIAN__)
-        unsigned long int hi;
-        unsigned long int lo;
+	unsigned long int hi;
+	unsigned long int lo;
 #else
-        unsigned long int lo;
-        unsigned long int hi;
+	unsigned long int lo;
+	unsigned long int hi;
 #endif
       } words;
       double dbl;
@@ -42,9 +42,9 @@ typedef union
 double ldexp ( double value, int exp )
       {
       if ( exp > SHRT_MAX )
-            exp = SHRT_MAX;
+	    exp = SHRT_MAX;
       else if ( exp < -SHRT_MAX )
-            exp = -SHRT_MAX;
+	    exp = -SHRT_MAX;
       return scalb ( value, exp  );
       }
 

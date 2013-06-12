@@ -174,11 +174,11 @@ static inline unsigned long long rtai_u64div32c(unsigned long long a,
 #endif
 
 struct rtai_realtime_irq_s {
-        int (*handler)(unsigned irq, void *cookie);
-        void *cookie;
-        int retmode;
-        int cpumask;
-        int (*irq_ack)(unsigned int, void *);
+	int (*handler)(unsigned irq, void *cookie);
+	void *cookie;
+	int retmode;
+	int cpumask;
+	int (*irq_ack)(unsigned int, void *);
 };
 
 /*
@@ -306,21 +306,21 @@ do { \
 #else
 #define hal_pend_domain_uncond(irq, domain, cpuid) \
 do { \
-        if (likely(!test_bit(IPIPE_LOCK_FLAG, &(domain)->irqs[irq].control))) { \
+	if (likely(!test_bit(IPIPE_LOCK_FLAG, &(domain)->irqs[irq].control))) { \
 		__set_bit((irq) & IPIPE_IRQ_IMASK, &ipipe_cpudom_var(domain, irqpend_lomask)[(irq) >> IPIPE_IRQ_ISHIFT]); \
 		__set_bit((irq) >> IPIPE_IRQ_ISHIFT, &ipipe_cpudom_var(domain, irqpend_himask)); \
 	} else { \
 		__set_bit((irq) & IPIPE_IRQ_IMASK, &ipipe_cpudom_var(domain, irqheld_mask)[(irq) >> IPIPE_IRQ_ISHIFT]); \
 	} \
-        ipipe_cpudom_var(domain, irqall)[irq]++; \
+	ipipe_cpudom_var(domain, irqall)[irq]++; \
 } while (0)
 
 #define hal_fast_flush_pipeline(cpuid) \
 do { \
-        if (ipipe_cpudom_var(hal_root_domain, irqpend_himask) != 0) { \
-                rtai_cli(); \
-                hal_sync_stage(IPIPE_IRQMASK_ANY); \
-        } \
+	if (ipipe_cpudom_var(hal_root_domain, irqpend_himask) != 0) { \
+		rtai_cli(); \
+		hal_sync_stage(IPIPE_IRQMASK_ANY); \
+	} \
 } while (0)
 #endif
 
@@ -391,15 +391,15 @@ extern volatile unsigned long rtai_cpu_lock[];
 //#define RTAI_TASKPRI 0xf0  // simplest usage without changing Linux code base
 #if defined(CONFIG_X86_LOCAL_APIC) && defined(RTAI_TASKPRI)
 #define SET_TASKPRI(cpuid) \
-        if (!rtai_linux_context[cpuid].set_taskpri) { \
-                apic_write_around(APIC_TASKPRI, ((apic_read(APIC_TASKPRI) & ~APIC_TPRI_MASK) | RTAI_TASKPRI)); \
-                rtai_linux_context[cpuid].set_taskpri = 1; \
-        }
+	if (!rtai_linux_context[cpuid].set_taskpri) { \
+		apic_write_around(APIC_TASKPRI, ((apic_read(APIC_TASKPRI) & ~APIC_TPRI_MASK) | RTAI_TASKPRI)); \
+		rtai_linux_context[cpuid].set_taskpri = 1; \
+	}
 #define CLR_TASKPRI(cpuid) \
-        if (rtai_linux_context[cpuid].set_taskpri) { \
-                apic_write_around(APIC_TASKPRI, (apic_read(APIC_TASKPRI) & ~APIC_TPRI_MASK)); \
-                rtai_linux_context[cpuid].set_taskpri = 0; \
-        }
+	if (rtai_linux_context[cpuid].set_taskpri) { \
+		apic_write_around(APIC_TASKPRI, (apic_read(APIC_TASKPRI) & ~APIC_TPRI_MASK)); \
+		rtai_linux_context[cpuid].set_taskpri = 0; \
+	}
 #else
 #define SET_TASKPRI(cpuid)
 #define CLR_TASKPRI(cpuid)
@@ -702,26 +702,26 @@ extern struct hal_domain_struct rtai_domain;
 
 #define _rt_switch_to_real_time(cpuid) \
 do { \
-        rtai_linux_context[cpuid].lflags = xchg(ROOT_STATUS_ADR(cpuid), (1 << IPIPE_STALL_FLAG)); \
-        rtai_linux_context[cpuid].sflags = 1; \
-        hal_current_domain(cpuid) = &rtai_domain; \
+	rtai_linux_context[cpuid].lflags = xchg(ROOT_STATUS_ADR(cpuid), (1 << IPIPE_STALL_FLAG)); \
+	rtai_linux_context[cpuid].sflags = 1; \
+	hal_current_domain(cpuid) = &rtai_domain; \
 } while (0)
 
 #define rt_switch_to_linux(cpuid) \
 do { \
-        if (rtai_linux_context[cpuid].sflags) { \
-                hal_current_domain(cpuid) = hal_root_domain; \
-                ROOT_STATUS_VAL(cpuid) = rtai_linux_context[cpuid].lflags; \
-                rtai_linux_context[cpuid].sflags = 0; \
-                CLR_TASKPRI(cpuid); \
-        } \
+	if (rtai_linux_context[cpuid].sflags) { \
+		hal_current_domain(cpuid) = hal_root_domain; \
+		ROOT_STATUS_VAL(cpuid) = rtai_linux_context[cpuid].lflags; \
+		rtai_linux_context[cpuid].sflags = 0; \
+		CLR_TASKPRI(cpuid); \
+	} \
 } while (0)
 
 #define rt_switch_to_real_time(cpuid) \
 do { \
-        if (!rtai_linux_context[cpuid].sflags) { \
-                _rt_switch_to_real_time(cpuid); \
-        } \
+	if (!rtai_linux_context[cpuid].sflags) { \
+		_rt_switch_to_real_time(cpuid); \
+	} \
 } while (0)
 
 #define rtai_get_intr_handler(v) \
@@ -738,22 +738,22 @@ do { \
 
 static inline int rt_save_switch_to_real_time(int cpuid)
 {
-        SET_TASKPRI(cpuid);
-        if (!rtai_linux_context[cpuid].sflags) {
-                _rt_switch_to_real_time(cpuid);
-                return 0;
-        }
-        return 1;
+	SET_TASKPRI(cpuid);
+	if (!rtai_linux_context[cpuid].sflags) {
+		_rt_switch_to_real_time(cpuid);
+		return 0;
+	}
+	return 1;
 }
 
 #define rt_restore_switch_to_linux(sflags, cpuid) \
 do { \
-        if (!sflags) { \
-                rt_switch_to_linux(cpuid); \
-        } else if (!rtai_linux_context[cpuid].sflags) { \
-                SET_TASKPRI(cpuid); \
-                _rt_switch_to_real_time(cpuid); \
-        } \
+	if (!sflags) { \
+		rt_switch_to_linux(cpuid); \
+	} else if (!rtai_linux_context[cpuid].sflags) { \
+		SET_TASKPRI(cpuid); \
+		_rt_switch_to_real_time(cpuid); \
+	} \
 } while (0)
 
 #define in_hrt_mode(cpuid)  (rtai_linux_context[cpuid].sflags)
@@ -773,15 +773,15 @@ static inline unsigned long save_and_set_taskpri(unsigned long taskpri)
 static inline void rt_set_timer_delay (int delay) {
 
     if (delay) {
-        unsigned long flags;
-        rtai_hw_save_flags_and_cli(flags);
+	unsigned long flags;
+	rtai_hw_save_flags_and_cli(flags);
 #ifdef CONFIG_X86_LOCAL_APIC
 	apic_write_around(APIC_TMICT, delay);
 #else /* !CONFIG_X86_LOCAL_APIC */
 	outb(delay & 0xff,0x40);
 	outb(delay >> 8,0x40);
 #endif /* CONFIG_X86_LOCAL_APIC */
-        rtai_hw_restore_flags(flags);
+	rtai_hw_restore_flags(flags);
     }
 }
 
@@ -826,11 +826,11 @@ int rt_set_irq_ack(unsigned int irq, int (*irq_ack)(unsigned int, void *));
 
 static inline int rt_request_irq_wack(unsigned irq, int (*handler)(unsigned irq, void *cookie), void *cookie, int retmode, int (*irq_ack)(unsigned int, void *))
 {
-        int retval;
-        if ((retval = rt_request_irq(irq, handler, cookie, retmode)) < 0) {
-                return retval;
-        }
-        return rt_set_irq_ack(irq, irq_ack);
+	int retval;
+	if ((retval = rt_request_irq(irq, handler, cookie, retmode)) < 0) {
+		return retval;
+	}
+	return rt_set_irq_ack(irq, irq_ack);
 }
 
 void rt_set_irq_cookie(unsigned irq, void *cookie);

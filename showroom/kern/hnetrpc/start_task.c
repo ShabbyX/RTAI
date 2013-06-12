@@ -51,20 +51,20 @@ static void start_task_code(long none)
 	int i, srvport;
 	char buf[9];
 
-        while ((srvport = rt_request_hard_port(tasknode)) <= 0);
+	while ((srvport = rt_request_hard_port(tasknode)) <= 0);
 rt_printk("START TASK GOT SYNC TASKNODE PORT %lx, %d\n", tasknode, srvport);
 	while (!RT_get_adr(tasknode, srvport, task[NUM_TASKS - 1]));
 rt_printk("START TASK REL SYNC TASKNODE PORT %lx, %d\n", tasknode, srvport);
-        rt_release_port(tasknode, srvport);
+	rt_release_port(tasknode, srvport);
 
-        srvport = rt_request_hard_port(comnode);
+	srvport = rt_request_hard_port(comnode);
 rt_printk("START TASK GOT ITS INIT AND EXEC COMNODE PORT %lx, %d\n", comnode, srvport);
 
 	print_sem = RT_get_adr(comnode, srvport, "PRTSEM");
-        sync_sem = RT_get_adr(comnode, srvport, "SYNCSM");
-        prio_sem = RT_get_adr(comnode, srvport, "PRIOSM");
-        mbx_in   = RT_get_adr(comnode, srvport, "MBXIN");
-        mbx_out  = RT_get_adr(comnode, srvport, "MBXOUT");
+	sync_sem = RT_get_adr(comnode, srvport, "SYNCSM");
+	prio_sem = RT_get_adr(comnode, srvport, "PRIOSM");
+	mbx_in   = RT_get_adr(comnode, srvport, "MBXIN");
+	mbx_out  = RT_get_adr(comnode, srvport, "MBXOUT");
 
 	for (i = 0; i < NUM_TASKS; ++i) {
 		sems[i] = RT_get_adr(comnode, srvport, sem[i]);
@@ -117,7 +117,7 @@ rt_printk("START TASK GOT ITS INIT AND EXEC COMNODE PORT %lx, %d\n", comnode, sr
 	TAKE_PRINT;
 	rt_printk("\ninit task complete\n");
 	GIVE_PRINT;
-        rt_release_port(comnode, srvport);
+	rt_release_port(comnode, srvport);
 rt_printk("START TASK REL ITS EXEC COMNODE PORT %lx, %d\n", comnode, srvport);
 	atomic_inc(&cleanup);
 }
@@ -126,8 +126,8 @@ static RT_TASK thread;
 
 int init_module(void)
 {
-        comnode  = ddn2nl(ComNode);
-        tasknode = ddn2nl(TaskNode);
+	comnode  = ddn2nl(ComNode);
+	tasknode = ddn2nl(TaskNode);
 	rt_task_init(&thread, start_task_code, 0, 4000, 10, 0, 0);
 	rt_task_resume(&thread);
 	return 0;
@@ -135,9 +135,9 @@ int init_module(void)
 
 void cleanup_module(void)
 {
-        while (atomic_read(&cleanup) < (NUM_TASKS + 2)) {
-                current->state = TASK_INTERRUPTIBLE;
-                schedule_timeout(HZ/10);
-        }
+	while (atomic_read(&cleanup) < (NUM_TASKS + 2)) {
+		current->state = TASK_INTERRUPTIBLE;
+		schedule_timeout(HZ/10);
+	}
 	rt_task_delete(&thread);
 }

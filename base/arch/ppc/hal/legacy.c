@@ -1,7 +1,7 @@
 /*
 COPYRIGHT (C) 2000  Paolo Mantegazza (mantegazza@aero.polimi.it)
-              2001  David Schleef <ds@schleef.org>
-              2001  Lineo, Inc. <ds@lineo.com>
+	      2001  David Schleef <ds@schleef.org>
+	      2001  Lineo, Inc. <ds@lineo.com>
 	      2002  Wolfgang Grandegger (wg@denx.de)
 
 This program is free software; you can redistribute it and/or modify
@@ -397,10 +397,10 @@ static void run_pending_irqs(void)
 				clear_bit(irq, &global.pending_irqs);
 				rt_spin_unlock_irq(&(global.data_lock));
 				set_intr_flag(cpu->intr_flag,0);
-                                /* from Linux do_IRQ */
-                                hardirq_enter(cpuid);
+				/* from Linux do_IRQ */
+				hardirq_enter(cpuid);
 				ppc_irq_dispatch_handler(&rtai_regs, global_irq[irq].ppc_irq);
-                                hardirq_exit(cpuid);
+				hardirq_exit(cpuid);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,10) /* ? */
 				if (softirq_pending(cpuid)) {
 					do_softirq();
@@ -454,7 +454,7 @@ unsigned int linux_save_flags_and_cli_cpuid(int cpuid)  // LXRT specific
 
 void rtai_just_copy_back(unsigned long flags, int cpuid)
 {
-        set_intr_flag(processor[cpuid].intr_flag,flags);
+	set_intr_flag(processor[cpuid].intr_flag,flags);
 }
 
 static void (*ic_ack_irq[NR_IRQS])    (unsigned int irq);
@@ -640,7 +640,7 @@ static int dispatch_srq(struct pt_regs *regs)
 
 	if (regs->gpr[0] && regs->gpr[0] == ((srq = regs->gpr[3]) + (whatever = regs->gpr[4]))) {
 
-	        TRACE_RTAI_SRQ_ENTRY(srq, !user_mode(regs));
+		TRACE_RTAI_SRQ_ENTRY(srq, !user_mode(regs));
 
 		if (!(vec = srq >> 24)) {
 			if (srq > 1 && srq < NR_SYSRQS && sysrq[srq].user_handler) {
@@ -715,7 +715,7 @@ static int trpd_get_irq(struct pt_regs *regs)
 static void trpd_ack_irq(unsigned int irq)
 {
 #if 0
-        rt_spin_lock_irq(&global.ic_lock);
+	rt_spin_lock_irq(&global.ic_lock);
 	if(linux_irq_desc_handler[irq]->ack)
 		linux_irq_desc_handler[irq]->ack(irq);
 	rt_spin_unlock_irq(&global.ic_lock);
@@ -724,7 +724,7 @@ static void trpd_ack_irq(unsigned int irq)
 
 static void trpd_end_irq(unsigned int irq)
 {
-        rt_spin_lock_irq(&global.ic_lock);
+	rt_spin_lock_irq(&global.ic_lock);
 	if(linux_irq_desc_handler[irq]->end)
 		linux_irq_desc_handler[irq]->end(irq);
 	else if(linux_irq_desc_handler[irq]->enable)
@@ -1187,12 +1187,12 @@ void __rt_umount_rtai(void)
 	global_irq[HARD_LOCK_IPI].dest_status = 0;
 #endif
 #ifdef CONFIG_4xx
-        /* Reenable auto-reload mode used by Linux */
-        if ((mfspr(SPRN_TCR) & TCR_ARE) == 0) {
+	/* Reenable auto-reload mode used by Linux */
+	if ((mfspr(SPRN_TCR) & TCR_ARE) == 0) {
 		while (get_dec_4xx() > 0);
 		mtspr(SPRN_TCR,  mfspr(SPRN_TCR) | TCR_ARE);
 		set_dec_4xx(tb_ticks_per_jiffy);
-        }
+	}
 #else
 	while (get_dec() <= tb_ticks_per_jiffy);
 	set_dec(tb_ticks_per_jiffy);
@@ -1286,11 +1286,11 @@ int init_module(void)
 		processor[i].rt_timer_handler  = 0;
 		processor[i].trailing_irq_handler      = 0;
 	}
-        for (i = 0; i < NR_SYSRQS; i++) {
+	for (i = 0; i < NR_SYSRQS; i++) {
 		sysrq[i].rtai_handler = 0;
 		sysrq[i].user_handler = 0;
 		sysrq[i].label        = 0;
-        }
+	}
 	for (i = 0; i < NR_RTAI_IRQS; i++) {
 		global_irq[i].ppc_irq = 0;
 		global_irq[i].mapped  = RTAI_IRQ_UNMAPPED;
@@ -1354,38 +1354,38 @@ void cleanup_module(void)
 struct proc_dir_entry *rtai_proc_root = NULL;
 
 static int rtai_read_rtai(char *page, char **start, off_t off, int count,
-                          int *eof, void *data)
+			  int *eof, void *data)
 {
 	PROC_PRINT_VARS;
-        int i;
+	int i;
 
-        PROC_PRINT("\nRTAI Real Time Kernel, Version: %s\n\n", RTAI_RELEASE);
-        PROC_PRINT("    Mount count: %d\n", rtai_mounted);
-        PROC_PRINT("    Frequency  : %d\n", FREQ_DECR);
-        PROC_PRINT("    Latency    : %d ns\n", LATENCY_DECR);
-        PROC_PRINT("    Setup time : %d ns\n", SETUP_TIME_DECR);
-        PROC_PRINT("\nGlobal irqs used by RTAI:\n");
-        for (i = 0; i <= LAST_GLOBAL_RTAI_IRQ; i++) {
-          if (global_irq[i].handler) {
-            PROC_PRINT("%3d: %10i\n",
+	PROC_PRINT("\nRTAI Real Time Kernel, Version: %s\n\n", RTAI_RELEASE);
+	PROC_PRINT("    Mount count: %d\n", rtai_mounted);
+	PROC_PRINT("    Frequency  : %d\n", FREQ_DECR);
+	PROC_PRINT("    Latency    : %d ns\n", LATENCY_DECR);
+	PROC_PRINT("    Setup time : %d ns\n", SETUP_TIME_DECR);
+	PROC_PRINT("\nGlobal irqs used by RTAI:\n");
+	for (i = 0; i <= LAST_GLOBAL_RTAI_IRQ; i++) {
+	  if (global_irq[i].handler) {
+	    PROC_PRINT("%3d: %10i\n",
 		       global_irq[i].ppc_irq, global_irq[i].irq_count);
-          }
-        }
+	  }
+	}
 #ifdef CONFIG_SMP
-        PROC_PRINT("\nCpu_Own irqs used by RTAI: \n");
-        for (i = LAST_GLOBAL_RTAI_IRQ + 1; i < NR_RTAI_IRQS; i++) {
-          if (global_irq[i].handler) {
-            PROC_PRINT("%d ", global_irq[i].ppc_irq);
-          }
-        }
+	PROC_PRINT("\nCpu_Own irqs used by RTAI: \n");
+	for (i = LAST_GLOBAL_RTAI_IRQ + 1; i < NR_RTAI_IRQS; i++) {
+	  if (global_irq[i].handler) {
+	    PROC_PRINT("%d ", global_irq[i].ppc_irq);
+	  }
+	}
 #endif
-        PROC_PRINT("\nRTAI sysreqs in use: \n");
-        for (i = 0; i < NR_SYSRQS; i++) {
-          if (sysrq[i].rtai_handler || sysrq[i].user_handler) {
-            PROC_PRINT("%d ", i);
-          }
-        }
-        PROC_PRINT("\n\n");
+	PROC_PRINT("\nRTAI sysreqs in use: \n");
+	for (i = 0; i < NR_SYSRQS; i++) {
+	  if (sysrq[i].rtai_handler || sysrq[i].user_handler) {
+	    PROC_PRINT("%d ", i);
+	  }
+	}
+	PROC_PRINT("\n\n");
 
 	PROC_PRINT_DONE;
 }       /* End function - rtai_read_rtai */
@@ -1395,26 +1395,26 @@ static int rtai_proc_register(void)
 
 	struct proc_dir_entry *ent;
 
-        rtai_proc_root = create_proc_entry("rtai", S_IFDIR, 0);
-        if (!rtai_proc_root) {
+	rtai_proc_root = create_proc_entry("rtai", S_IFDIR, 0);
+	if (!rtai_proc_root) {
 		printk("Unable to initialize /proc/rtai\n");
-                return(-1);
-        }
+		return(-1);
+	}
 	rtai_proc_root->owner = THIS_MODULE;
-        ent = create_proc_entry("rtai", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root);
-        if (!ent) {
+	ent = create_proc_entry("rtai", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root);
+	if (!ent) {
 		printk("Unable to initialize /proc/rtai/rtai\n");
-                return(-1);
-        }
+		return(-1);
+	}
 	ent->read_proc = rtai_read_rtai;
-        return(0);
+	return(0);
 }       /* End function - rtai_proc_register */
 
 
 static void rtai_proc_unregister(void)
 {
-        remove_proc_entry("rtai", rtai_proc_root);
-        remove_proc_entry("rtai", 0);
+	remove_proc_entry("rtai", rtai_proc_root);
+	remove_proc_entry("rtai", 0);
 }       /* End function - rtai_proc_unregister */
 
 #endif /* CONFIG_PROC_FS */
@@ -1554,24 +1554,24 @@ void rt_free_apic_timers(void)
 
 int rtai_print_to_screen(const char *format, ...)
 {
-        static spinlock_t display_lock = SPIN_LOCK_UNLOCKED;
-        static char display[25*80];
-        unsigned long flags;
-        struct console *c;
-        va_list args;
-        int len;
+	static spinlock_t display_lock = SPIN_LOCK_UNLOCKED;
+	static char display[25*80];
+	unsigned long flags;
+	struct console *c;
+	va_list args;
+	int len;
 
-        flags = rt_spin_lock_irqsave(&display_lock);
-        va_start(args, format);
-        len = vsprintf(display, format, args);
-        va_end(args);
-        c = console_drivers;
-        while(c) {
-                if ((c->flags & CON_ENABLED) && c->write)
-                        c->write(c, display, len);
-                c = c->next;
+	flags = rt_spin_lock_irqsave(&display_lock);
+	va_start(args, format);
+	len = vsprintf(display, format, args);
+	va_end(args);
+	c = console_drivers;
+	while(c) {
+		if ((c->flags & CON_ENABLED) && c->write)
+			c->write(c, display, len);
+		c = c->next;
 	}
-        rt_spin_unlock_irqrestore(flags, &display_lock);
+	rt_spin_unlock_irqrestore(flags, &display_lock);
 
 	return len;
 }
@@ -1596,12 +1596,12 @@ static char buf[TEMP_BUF_LEN];
 
 int rt_printk(const char *fmt, ...)
 {
-        static spinlock_t display_lock = SPIN_LOCK_UNLOCKED;
+	static spinlock_t display_lock = SPIN_LOCK_UNLOCKED;
 	va_list args;
 	int len, i;
 	unsigned long flags;
 
-        flags = rt_spin_lock_irqsave(&display_lock);
+	flags = rt_spin_lock_irqsave(&display_lock);
 	va_start(args, fmt);
 	len = vsprintf(buf, fmt, args);
 	va_end(args);
@@ -1614,7 +1614,7 @@ int rt_printk(const char *fmt, ...)
 		memcpy(rt_printk_buf + buf_front, buf, len);
 		buf_front += len;
 	}
-        rt_spin_unlock_irqrestore(flags, &display_lock);
+	rt_spin_unlock_irqrestore(flags, &display_lock);
 	rt_pend_linux_srq(1);
 
 	return len;

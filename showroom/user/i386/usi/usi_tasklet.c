@@ -81,7 +81,7 @@ int main(void)
 		exit(1);
 	}
 	tasklet = rt_init_tasklet();
-        mlockall(MCL_CURRENT | MCL_FUTURE);
+	mlockall(MCL_CURRENT | MCL_FUTURE);
 	rt_insert_tasklet(tasklet, 0, timer_handler, 111, nam2num("TSKLET"), 1);
 	rt_request_irq_task(TIMER_IRQ, tasklet, RT_IRQ_TASKLET, 1);
 	rtc_start(TIMER_FRQ);
@@ -92,7 +92,7 @@ int main(void)
 		printf("OVERRUNS %d, INTERRUPT COUNT %d\n", ovr, intcnt);
 	}
 	rtc_stop();
-        rt_release_irq_task(TIMER_IRQ);
+	rt_release_irq_task(TIMER_IRQ);
 	printf("TEST ENDS\n");
 	rt_remove_tasklet(tasklet);
 	rt_delete_tasklet(tasklet);

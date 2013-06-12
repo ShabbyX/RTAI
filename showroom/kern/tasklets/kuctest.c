@@ -57,7 +57,7 @@ void ph(unsigned long data)
 
 int init_module(void)
 {
-        mem = rtai_kmalloc(0xabcd, sizeof(struct mymem));
+	mem = rtai_kmalloc(0xabcd, sizeof(struct mymem));
 	rt_insert_timer(&pt, 1, rt_get_time(), nano2count(TICK_PERIOD), ph, 0, 0);
 	return 0;
 }
@@ -65,5 +65,5 @@ int init_module(void)
 
 void cleanup_module(void)
 {
-        rtai_kfree(0xabcd);
+	rtai_kfree(0xabcd);
 }

@@ -369,7 +369,7 @@ RTAI_PROTO(struct rt_tasklet_struct *, rt_init_tasklet, (void))
 		if ((arg.thread = rt_thread_create((void *)support_tasklet, &arg.tasklet, TASKLET_STACK_SIZE))) {
 			int i;
 #define POLLS_PER_SEC 100
-		        for (i = 0; i < POLLS_PER_SEC/5 && !arg.done; i++) {
+			for (i = 0; i < POLLS_PER_SEC/5 && !arg.done; i++) {
 				struct timespec delay = { 0, 1000000000/POLLS_PER_SEC };
 				nanosleep(&delay, NULL);
        			}

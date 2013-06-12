@@ -368,19 +368,19 @@ static inline void *rt_malloc(int size)
 
 static inline void rt_free(void *addr)
 {
-        struct { void *addr; } arg = { addr };
-        rtai_lxrt(BIDX, SIZARG, FREE, &arg);
+	struct { void *addr; } arg = { addr };
+	rtai_lxrt(BIDX, SIZARG, FREE, &arg);
 }
 
 static inline void *rt_get_handle(unsigned long id)
 {
-        struct { unsigned long id; } arg = { id };
-        return (void *)rtai_lxrt(BIDX, SIZARG, GET_ADR, &arg).v[LOW];
+	struct { unsigned long id; } arg = { id };
+	return (void *)rtai_lxrt(BIDX, SIZARG, GET_ADR, &arg).v[LOW];
 }
 
 static inline unsigned long nam2id (const char *name)
 {
-        unsigned long retval = 0;
+	unsigned long retval = 0;
 	int c, i;
 
 	for (i = 0; i < 6; i++) {
@@ -407,7 +407,7 @@ static inline void rt_release_waiters(unsigned long id)
 {
 	struct { void *sem; } arg;
 	if ((arg.sem = rt_get_handle(~id))) {
-        	rtai_lxrt(BIDX, SIZARG, SEM_BROADCAST, &arg);
+		rtai_lxrt(BIDX, SIZARG, SEM_BROADCAST, &arg);
 	}
 }
 
@@ -426,7 +426,7 @@ static inline int rt_obj_bind(void *p, const char *name)
 				return -EFAULT;
 			}
 		}
-        	if ((rtai_lxrt(BIDX, sizeof(sem), SEM_WAIT, &sem).i[LOW] >= SEM_TIMOUT)) {
+		if ((rtai_lxrt(BIDX, sizeof(sem), SEM_WAIT, &sem).i[LOW] >= SEM_TIMOUT)) {
 			return -EFAULT;
 		}
 	}

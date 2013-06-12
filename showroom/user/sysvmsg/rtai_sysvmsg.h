@@ -141,14 +141,14 @@ static inline int rt_msgrcv(int msqid, struct msgbuf *msgp, size_t msgsz, long m
 
 static inline int rt_msgget(key_t key, unsigned long msgflg)
 {
-        struct { key_t key; unsigned long msgflg; } arg = { key, msgflg };
-        return rtai_lxrt(SYSV_MSG_IDX, SIZARG, SYSV_MSGGET, &arg).i[LOW];
+	struct { key_t key; unsigned long msgflg; } arg = { key, msgflg };
+	return rtai_lxrt(SYSV_MSG_IDX, SIZARG, SYSV_MSGGET, &arg).i[LOW];
 }
 
 static inline int rt_msgctl(int msqid, int cmd, struct msqid_ds *buf)
 {
-        struct { int msqid, cmd; struct msqid_ds *buf; int space; } arg = { msqid, cmd, buf, 1 };
-        return rtai_lxrt(SYSV_MSG_IDX, SIZARG, SYSV_MSGCTL, &arg).i[LOW];
+	struct { int msqid, cmd; struct msqid_ds *buf; int space; } arg = { msqid, cmd, buf, 1 };
+	return rtai_lxrt(SYSV_MSG_IDX, SIZARG, SYSV_MSGCTL, &arg).i[LOW];
 }
 
 struct msgbuf { long int mtype; char mtext[1]; };
@@ -157,14 +157,14 @@ struct msgbuf { long int mtype; char mtext[1]; };
 
 static inline int rt_msgsnd_nu(int msqid, int mtype, void *mtext, size_t msgsz, int msgflg)
 {
-        struct { int msqid; int mtype; void *mtext; size_t msgsz; int msgflg; int space; } arg = { msqid, mtype, mtext, msgsz, msgflg, 1 };
-        return rtai_lxrt(SYSV_MSG_IDX, SIZARG, SYSV_MSGSND, &arg).i[LOW];
+	struct { int msqid; int mtype; void *mtext; size_t msgsz; int msgflg; int space; } arg = { msqid, mtype, mtext, msgsz, msgflg, 1 };
+	return rtai_lxrt(SYSV_MSG_IDX, SIZARG, SYSV_MSGSND, &arg).i[LOW];
 }
 
 static inline ssize_t rt_msgrcv_nu(int msqid, int *mtype, void *mtext, size_t msgsz, long msgtyp, int msgflg)
 {
-        struct { int msqid; int *mtype; void *mtext; size_t msgsz; long msgtyp; int msgflg; int space; } arg = { msqid, mtype, mtext, msgsz, msgtyp, msgflg, 1 };
-        return rtai_lxrt(SYSV_MSG_IDX, SIZARG, SYSV_MSGRCV, &arg).i[LOW];
+	struct { int msqid; int *mtype; void *mtext; size_t msgsz; long msgtyp; int msgflg; int space; } arg = { msqid, mtype, mtext, msgsz, msgtyp, msgflg, 1 };
+	return rtai_lxrt(SYSV_MSG_IDX, SIZARG, SYSV_MSGRCV, &arg).i[LOW];
 }
 
 // ... and this is the Unix standard, i.e. using the left hand to scrap the
@@ -172,14 +172,14 @@ static inline ssize_t rt_msgrcv_nu(int msqid, int *mtype, void *mtext, size_t ms
 
 static inline int rt_msgsnd(int msqid, struct msgbuf *msgp, size_t msgsz, int msgflg)
 {
-        struct { int msqid; long mtype; void *mtext; size_t msgsz; int msgflg; int space; } arg = { msqid, msgp->mtype, msgp->mtext, msgsz, msgflg, 1 };
-        return rtai_lxrt(SYSV_MSG_IDX, SIZARG, SYSV_MSGSND, &arg).i[LOW];
+	struct { int msqid; long mtype; void *mtext; size_t msgsz; int msgflg; int space; } arg = { msqid, msgp->mtype, msgp->mtext, msgsz, msgflg, 1 };
+	return rtai_lxrt(SYSV_MSG_IDX, SIZARG, SYSV_MSGSND, &arg).i[LOW];
 }
 
 static inline ssize_t rt_msgrcv(int msqid, struct msgbuf *msgp, size_t msgsz, long msgtyp, int msgflg)
 {
-        struct { int msqid; long *mtype; void *mtext; size_t msgsz; long msgtyp; int msgflg; int space; } arg = { msqid, &msgp->mtype, msgp->mtext, msgsz, msgtyp, msgflg, 1 };
-        return rtai_lxrt(SYSV_MSG_IDX, SIZARG, SYSV_MSGRCV, &arg).i[LOW];
+	struct { int msqid; long *mtype; void *mtext; size_t msgsz; long msgtyp; int msgflg; int space; } arg = { msqid, &msgp->mtype, msgp->mtext, msgsz, msgtyp, msgflg, 1 };
+	return rtai_lxrt(SYSV_MSG_IDX, SIZARG, SYSV_MSGRCV, &arg).i[LOW];
 }
 
 #endif /* __KERNEL__ */

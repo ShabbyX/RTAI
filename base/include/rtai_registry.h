@@ -36,7 +36,7 @@ struct rt_registry_entry {
 	void *adr;		 // Physical rt memory address of resource
 	struct task_struct *tsk; // Linux task owner of the resource
 	int type;		 // Type of resource
-        unsigned short count;	 // Usage registry
+	unsigned short count;	 // Usage registry
 	unsigned short alink;
 	unsigned short nlink;
 };

@@ -177,13 +177,13 @@ static	double	one	= 1.0, tiny=1.0e-300;
 	if((ix0|ix1)!=0) {
 	    z = one-tiny; /* trigger inexact flag */
 	    if (z>=one) {
-	        z = one+tiny;
-	        if (q1==(u_int32_t)0xffffffff) { q1=0; q += 1;}
+		z = one+tiny;
+		if (q1==(u_int32_t)0xffffffff) { q1=0; q += 1;}
 		else if (z>one) {
 		    if (q1==(u_int32_t)0xfffffffe) q+=1;
 		    q1+=2;
 		} else
-	            q1 += (q1&1);
+		    q1 += (q1&1);
 	    }
 	}
 	ix0 = (q>>1)+0x3fe00000;
@@ -295,9 +295,9 @@ A.  sqrt(x) by Newton Iteration
 		z := x/y;	... chopped quotient, possibly inexact
 		If(not I) then {	... if the quotient is exact
 		    if(z=y) {
-		        I := i;	 ... restore inexact flag
-		        R := r;  ... restore rounded mode
-		        return sqrt(x):=y.
+			I := i;	 ... restore inexact flag
+			R := r;  ... restore rounded mode
+			return sqrt(x):=y.
 		    } else {
 			z := z - ulp;	... special rounding
 		    }
@@ -309,9 +309,9 @@ A.  sqrt(x) by Newton Iteration
 		}
 		y := y+z;		... chopped sum
 		y0:=y0-0x00100000;	... y := y/2 is correctly rounded.
-	        I := i;	 		... restore inexact flag
-	        R := r;  		... restore rounded mode
-	        return sqrt(x):=y.
+		I := i;	 		... restore inexact flag
+		R := r;  		... restore rounded mode
+		return sqrt(x):=y.
 
     (4)	Special cases
 

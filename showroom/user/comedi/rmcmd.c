@@ -143,16 +143,16 @@ int main(int argc, char *argv[])
 	start_rt_timer(0);
 	task = rt_task_init_schmod(nam2num("MYTASK"), 1, 0, 0, SCHED_FIFO, 0xF);
 
-        daqnode = 0;
-        if (argc == 2 && strstr(argv[1], "RcvNode=")) {
-                inet_aton(argv[1] + 8, &addr.sin_addr);
-                daqnode = addr.sin_addr.s_addr;
-        }
-        if (!daqnode) {
-                inet_aton("127.0.0.1", &addr.sin_addr);
-                daqnode = addr.sin_addr.s_addr;
-        }
-        while ((daqport = rt_request_port(daqnode)) <= 0 && daqport != -EINVAL);
+	daqnode = 0;
+	if (argc == 2 && strstr(argv[1], "RcvNode=")) {
+		inet_aton(argv[1] + 8, &addr.sin_addr);
+		daqnode = addr.sin_addr.s_addr;
+	}
+	if (!daqnode) {
+		inet_aton("127.0.0.1", &addr.sin_addr);
+		daqnode = addr.sin_addr.s_addr;
+	}
+	while ((daqport = rt_request_port(daqnode)) <= 0 && daqport != -EINVAL);
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	printf("COMEDI CMD TEST BEGINS: SAMPLING FREQ: %d, RUN TIME: %d, NODE: %x, PORT: %d.\n", SAMP_FREQ, RUN_TIME, daqnode, daqport);

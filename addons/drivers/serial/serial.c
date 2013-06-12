@@ -59,9 +59,9 @@ struct rt_spct_t *spct;
 
 static int spcnt;	// number of available serial ports
 static int spbuflow;	// received buffer low level threshold for
-                        // RTS-CTS hardware flow control
+			// RTS-CTS hardware flow control
 static int spbufhi;	// received buffer high level threshold for
-                        // RTS-CTS hardware flow control
+			// RTS-CTS hardware flow control
 static int spbufull;	// threshold for receive buffer to have the
 			// buffer full error
 
@@ -730,7 +730,7 @@ static int rt_spisr(int irq, struct rt_spct_t *pp)
 					 ((p->mode == RT_SP_DSR_ON_TX) && (MSR_DSR & msr)) ||
 					 ((p->mode == RT_SP_HW_FLOW) && (MSR_CTS & msr)) ||
 					 ((p->mode == (RT_SP_HW_FLOW|RT_SP_DSR_ON_TX)) &&
-                                          (MSR_CTS & msr) && (MSR_DSR & msr)) ) {
+					  (MSR_CTS & msr) && (MSR_DSR & msr)) ) {
 			    	// if there are data to transmit
 					if (!(data_to_tx = rt_spget_irq(p, &data))) {
 						txed = 1;
@@ -740,8 +740,8 @@ static int rt_spisr(int irq, struct rt_spct_t *pp)
 						} while ((--toFifo > 0) && !(data_to_tx = rt_spget_irq(p, &data)));
 					}
 					if (data_to_tx) {
-		            	/* no more data in output buffer, disable Transmitter
-			               Holding Register Empty Interrupt */
+			    	/* no more data in output buffer, disable Transmitter
+				       Holding Register Empty Interrupt */
 						outb(p->ier &= ~IER_ETBEI, base_adr + RT_SP_IER);
 					}
 				}
@@ -811,7 +811,7 @@ static int rt_spisr(int irq, struct rt_spct_t *pp)
 				rt_sem_signal(&pp->rxsem);
 			}
 			goto again;
-                }
+		}
 		if (todo[i].rxs) {
 			rt_sem_signal(&pp->rxsem);
 			goto again;
@@ -870,7 +870,7 @@ again:
  *
  */
 RTAI_SYSCALL_MODE int rt_spopen(unsigned int tty, unsigned int baud, unsigned int numbits,
-              unsigned int stopbits, unsigned int parity, int mode,
+	      unsigned int stopbits, unsigned int parity, int mode,
 			  int fifotrig)
 {
 	struct rt_spct_t *p;
@@ -1031,7 +1031,7 @@ RTAI_SYSCALL_MODE int rt_spset_thrs(unsigned int tty, int rxthrs, int txthrs)
  *
  */
 long rt_spset_callback_fun(unsigned int tty, void (*callback_fun)(int, int),
-                          int rxthrs, int txthrs)
+			  int rxthrs, int txthrs)
 {
 	long prev_callback_fun;
 

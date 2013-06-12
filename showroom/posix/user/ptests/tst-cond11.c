@@ -157,8 +157,8 @@ do_test (void)
 #define TIMEOUT 3
 int main(void)
 {
-        pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
-        start_rt_timer(0);
-        do_test();
-        return 0;
+	pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
+	start_rt_timer(0);
+	do_test();
+	return 0;
 }

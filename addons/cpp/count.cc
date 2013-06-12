@@ -123,8 +123,8 @@ Count  Count::operator+(const Count& count) const {
 }
 
 Count  Count::operator+(long long count) const {
-        Count tmp(m_Count + count);
-        return tmp;
+	Count tmp(m_Count + count);
+	return tmp;
 }
 
 Count  Count::operator-(const Count& count) const {

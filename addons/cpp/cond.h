@@ -40,7 +40,7 @@ public:
 	Condition();
 	~Condition();
 	int wait( Mutex& mtx );
-        int wait_until( Mutex& mtx, const Count& time);
+	int wait_until( Mutex& mtx, const Count& time);
 	int wait_timed( Mutex& mtx, const Count& delay);
 private:
 	Condition(const Condition&);

@@ -31,7 +31,7 @@ static pthread_barrier_t b;
 static void *
 tf (void *arg)
 {
-        pthread_init_real_time_np("CHILD", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
+	pthread_init_real_time_np("CHILD", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
   int e = pthread_mutex_unlock (&m);
   if (e == 0)
     {
@@ -225,8 +225,8 @@ do_test (void)
 
 int main(void)
 {
-        pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
-        start_rt_timer(0);
-        do_test();
-        return 0;
+	pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
+	start_rt_timer(0);
+	do_test();
+	return 0;
 }

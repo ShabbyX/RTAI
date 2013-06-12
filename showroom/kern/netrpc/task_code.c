@@ -101,7 +101,7 @@ rt_printk("TASK_NO %d GOT ITS EXEC COMNODE PORT %lx, %d\n", task_no, comnode, sr
 	GIVE_PRINT;
 rt_printk("TASK_NO %d REL ITS EXEC COMNODE PORT %lx, %d\n", task_no, comnode, srvport);
 	rt_release_port(comnode, srvport);
-        atomic_inc(&cleanup);
+	atomic_inc(&cleanup);
 }
 
 static RT_TASK init_thread;
@@ -110,22 +110,22 @@ static void init_code(long none)
 {
 	int i, srvport;
 
-        while ((srvport = rt_request_port(comnode)) <= 0);
+	while ((srvport = rt_request_port(comnode)) <= 0);
 rt_printk("TASK CODE GOT INIT COMNODE PORT %lx, %d\n", comnode, srvport);
 
-        while (!(print_sem = RT_get_adr(comnode, srvport, "PRTSEM")));
+	while (!(print_sem = RT_get_adr(comnode, srvport, "PRTSEM")));
 	sync_sem = RT_get_adr(comnode, srvport, "SYNCSM");
 	prio_sem = RT_get_adr(comnode, srvport, "PRIOSM");
 	mbx_in   = RT_get_adr(comnode, srvport, "MBXIN");
 	mbx_out  = RT_get_adr(comnode, srvport, "MBXOUT");
-        for (i = 0; i < NUM_TASKS; i++) {
+	for (i = 0; i < NUM_TASKS; i++) {
 		sems[i] = RT_get_adr(comnode, srvport, sem[i]);
-                tasks[i] = rt_named_task_init(task[i], task_code, i, 3000, NUM_TASKS - i, 0, 0);
+		tasks[i] = rt_named_task_init(task[i], task_code, i, 3000, NUM_TASKS - i, 0, 0);
 		rt_task_resume(tasks[i]);
-        }
+	}
 rt_printk("TASK CODE REL INIT COMNODE PORT %lx, %d\n", comnode, srvport);
 	rt_release_port(comnode, srvport);
-        atomic_inc(&cleanup);
+	atomic_inc(&cleanup);
 }
 
 int init_module(void)
@@ -138,13 +138,13 @@ int init_module(void)
 
 void cleanup_module(void)
 {
-        int i;
-        while (atomic_read(&cleanup) < (NUM_TASKS + 2)) {
-                current->state = TASK_INTERRUPTIBLE;
-                schedule_timeout(HZ/10);
-        }
-        rt_task_delete(&init_thread);
-        for (i = 0; i < NUM_TASKS; ++i) {
+	int i;
+	while (atomic_read(&cleanup) < (NUM_TASKS + 2)) {
+		current->state = TASK_INTERRUPTIBLE;
+		schedule_timeout(HZ/10);
+	}
+	rt_task_delete(&init_thread);
+	for (i = 0; i < NUM_TASKS; ++i) {
 		rt_named_task_delete(tasks[i]);
-        }
+	}
 }

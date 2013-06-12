@@ -580,17 +580,17 @@ void rt_end_irq (unsigned irq)
 
 void rt_eoi_irq (unsigned irq)
 {
-        if (
+	if (
 #ifdef CONFIG_X86_IO_APIC
-            !IO_APIC_IRQ(irq) ||
+	    !IO_APIC_IRQ(irq) ||
 #endif /* CONFIG_X86_IO_APIC */
-            !(rtai_irq_desc(irq).status_use_accessors & (IRQD_IRQ_DISABLED | IRQD_IRQ_INPROGRESS))) {
-        }
+	    !(rtai_irq_desc(irq).status_use_accessors & (IRQD_IRQ_DISABLED | IRQD_IRQ_INPROGRESS))) {
+	}
 #if defined(CONFIG_X86_IO_APIC) && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19)
-        rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(eoi, irq);
+	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(eoi, irq);
 #else /* !(CONFIG_X86_IO_APIC && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19))
 */
-        rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(end, irq);
+	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(end, irq);
 #endif
 }
 
@@ -1035,9 +1035,9 @@ unsigned long rt_reset_irq_to_sym_mode (int irq)
 		}
 		cpumask_copy((void *)&oldmask, irq_to_desc(irq)->irq_data.affinity);
 		if (rtai_old_irq_affinity[irq]) {
-	        	hal_set_irq_affinity(irq, CPUMASK_T(rtai_old_irq_affinity[irq]));
-	        	rtai_old_irq_affinity[irq] = 0;
-        	}
+			hal_set_irq_affinity(irq, CPUMASK_T(rtai_old_irq_affinity[irq]));
+			rtai_old_irq_affinity[irq] = 0;
+		}
 		spin_unlock(&rtai_iset_lock);
 		rtai_restore_flags(flags);
 
@@ -1224,7 +1224,7 @@ EXPORT_SYMBOL(rtai_isr_sched);
 		if (rt_scheduling[cpuid].locked && !(--rt_scheduling[cpuid].locked)) { \
 			if (rt_scheduling[cpuid].rqsted > 0 && rtai_isr_sched) { \
 				rtai_isr_sched(cpuid); \
-        		} \
+			} \
 		} \
 	} while (0)
 #else  /* !CONFIG_RTAI_SCHED_ISR_LOCK */
@@ -1263,15 +1263,15 @@ static int rtai_trap_fault (unsigned event, void *evdata)
 {
 #ifdef HINT_DIAG_TRAPS
 	static unsigned long traps_in_hard_intr = 0;
-        do {
-                unsigned long flags;
-                rtai_save_flags_and_cli(flags);
-                if (!test_bit(RTAI_IFLAG, &flags)) {
-                        if (!test_and_set_bit(event, &traps_in_hard_intr)) {
-                                HINT_DIAG_MSG(rt_printk("TRAP %d HAS INTERRUPT DISABLED (TRAPS PICTURE %lx).\n", event, traps_in_hard_intr););
-                        }
-                }
-        } while (0);
+	do {
+		unsigned long flags;
+		rtai_save_flags_and_cli(flags);
+		if (!test_bit(RTAI_IFLAG, &flags)) {
+			if (!test_and_set_bit(event, &traps_in_hard_intr)) {
+				HINT_DIAG_MSG(rt_printk("TRAP %d HAS INTERRUPT DISABLED (TRAPS PICTURE %lx).\n", event, traps_in_hard_intr););
+			}
+		}
+	} while (0);
 #endif
 
 	static const int trap2sig[] = {
@@ -1576,7 +1576,7 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 			}
 			PROC_PRINT("\n    #%d at %p", i, rtai_domain.irqs[i].handler);
 		}
-        }
+	}
 	if (none) {
 		PROC_PRINT("none");
 	}
@@ -1592,7 +1592,7 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 			PROC_PRINT("#%d ", i);
 			none = 0;
 		}
-        }
+	}
 	if (none) {
 		PROC_PRINT("none");
 	}
@@ -1602,7 +1602,7 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	PROC_PRINT("** RTAI TSC OFFSETs (TSC units, 0 ref. CPU): ");
     	for (i = 0; i < num_online_cpus(); i++) {
 		PROC_PRINT("CPU#%d > %ld; ", i, rtai_tsc_ofst[i]);
-        }
+	}
     	PROC_PRINT("\n\n");
 #endif
 
@@ -1617,7 +1617,7 @@ static int rtai_proc_register (void)
 	if (!rtai_proc_root) {
 		printk(KERN_ERR "Unable to initialize /proc/rtai.\n");
 		return -1;
-        }
+	}
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
 	rtai_proc_root->owner = THIS_MODULE;
 #endif
@@ -1625,7 +1625,7 @@ static int rtai_proc_register (void)
 	if (!ent) {
 		printk(KERN_ERR "Unable to initialize /proc/rtai/hal.\n");
 		return -1;
-        }
+	}
 	ent->read_proc  = rtai_read_proc;
 
 	return 0;
@@ -1835,9 +1835,9 @@ asmlinkage int rt_printk(const char *fmt, ...)
 	char buf[VSNPRINTF_BUF];
 	va_list args;
 
-        va_start(args, fmt);
-        vsnprintf(buf, VSNPRINTF_BUF, fmt, args);
-        va_end(args);
+	va_start(args, fmt);
+	vsnprintf(buf, VSNPRINTF_BUF, fmt, args);
+	va_end(args);
 	return printk("%s", buf);
 }
 
@@ -1847,9 +1847,9 @@ asmlinkage int rt_sync_printk(const char *fmt, ...)
 	va_list args;
 	int r;
 
-        va_start(args, fmt);
-        vsnprintf(buf, VSNPRINTF_BUF, fmt, args);
-        va_end(args);
+	va_start(args, fmt);
+	vsnprintf(buf, VSNPRINTF_BUF, fmt, args);
+	va_end(args);
 	hal_set_printk_sync(&rtai_domain);
 	r = printk("%s", buf);
 	hal_set_printk_async(&rtai_domain);

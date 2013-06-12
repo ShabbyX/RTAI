@@ -47,19 +47,19 @@ extern void __restore_fpenv(void *fpenv);
 #define restore_fpenv(x) __restore_fpenv(&(x))
 
 #define restore_task_fpenv(t) \
-        do { \ restore_fpenv((t)->thread.fpr); \ } while (0)
+	do { \ restore_fpenv((t)->thread.fpr); \ } while (0)
 
 #define restore_fpenv_lxrt(t) restore_task_fpenv(t)
 
 #define restore_fpu(tsk) \
-        do { \
+	do { \
 		giveup_fpu(last_task_used_math); \
 		__restore_fpenv((tsk)->thread.fpr); \
 		last_task_used_math = tsk; \
 	} while (0)
 
 #define init_fpu(tsk) \
-        do { restore_fpu(tsk); } while(0)
+	do { restore_fpu(tsk); } while(0)
 
 //#define lnxtsk_uses_fpu(lnxtsk)  (1)
 
@@ -87,7 +87,7 @@ extern void __restore_fpenv(void *fpenv);
 #else /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) */
 
 #define clear_lnxtsk_uses_fpu(lnxtsk) \
-        do { clear_stopped_child_used_math(lnxtsk); } while(0)
+	do { clear_stopped_child_used_math(lnxtsk); } while(0)
 #define lnxtsk_uses_fpu(lnxtsk)  (tsk_used_math(lnxtsk))
 
 #endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0) */

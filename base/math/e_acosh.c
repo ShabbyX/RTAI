@@ -54,7 +54,7 @@ ln2	= 6.93147180559945286227e-01;  /* 0x3FE62E42, 0xFEFA39EF */
 	    return (x-x)/(x-x);
 	} else if(hx >=0x41b00000) {	/* x > 2**28 */
 	    if(hx >=0x7ff00000) {	/* x is inf of NaN */
-	        return x+x;
+		return x+x;
 	    } else
 		return __ieee754_log(x)+ln2;	/* acosh(huge)=log(2x) */
 	} else if(((hx-0x3ff00000)|lx)==0) {

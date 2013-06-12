@@ -174,46 +174,46 @@ static double V0[5] = {
 	int32_t hx,ix,lx;
 
 	EXTRACT_WORDS(hx,lx,x);
-        ix = 0x7fffffff&hx;
+	ix = 0x7fffffff&hx;
     /* if Y1(NaN) is NaN, Y1(-inf) is NaN, Y1(inf) is 0 */
 	if(ix>=0x7ff00000) return  one/(x+x*x);
-        if((ix|lx)==0) return -one/zero;
-        if(hx<0) return zero/zero;
-        if(ix >= 0x40000000) {  /* |x| >= 2.0 */
-                s = sin(x);
-                c = cos(x);
-                ss = -s-c;
-                cc = s-c;
-                if(ix<0x7fe00000) {  /* make sure x+x not overflow */
-                    z = cos(x+x);
-                    if ((s*c)>zero) cc = z/ss;
-                    else            ss = z/cc;
-                }
-        /* y1(x) = sqrt(2/(pi*x))*(p1(x)*sin(x0)+q1(x)*cos(x0))
-         * where x0 = x-3pi/4
-         *      Better formula:
-         *              cos(x0) = cos(x)cos(3pi/4)+sin(x)sin(3pi/4)
-         *                      =  1/sqrt(2) * (sin(x) - cos(x))
-         *              sin(x0) = sin(x)cos(3pi/4)-cos(x)sin(3pi/4)
-         *                      = -1/sqrt(2) * (cos(x) + sin(x))
-         * To avoid cancellation, use
-         *              sin(x) +- cos(x) = -cos(2x)/(sin(x) -+ cos(x))
-         * to compute the worse one.
-         */
-                if(ix>0x48000000) z = (invsqrtpi*ss)/sqrt(x);
-                else {
-                    u = pone(x); v = qone(x);
-                    z = invsqrtpi*(u*ss+v*cc)/sqrt(x);
-                }
-                return z;
-        }
-        if(ix<=0x3c900000) {    /* x < 2**-54 */
-            return(-tpi/x);
-        }
-        z = x*x;
-        u = U0[0]+z*(U0[1]+z*(U0[2]+z*(U0[3]+z*U0[4])));
-        v = one+z*(V0[0]+z*(V0[1]+z*(V0[2]+z*(V0[3]+z*V0[4]))));
-        return(x*(u/v) + tpi*(__ieee754_j1(x)*__ieee754_log(x)-one/x));
+	if((ix|lx)==0) return -one/zero;
+	if(hx<0) return zero/zero;
+	if(ix >= 0x40000000) {  /* |x| >= 2.0 */
+		s = sin(x);
+		c = cos(x);
+		ss = -s-c;
+		cc = s-c;
+		if(ix<0x7fe00000) {  /* make sure x+x not overflow */
+		    z = cos(x+x);
+		    if ((s*c)>zero) cc = z/ss;
+		    else            ss = z/cc;
+		}
+	/* y1(x) = sqrt(2/(pi*x))*(p1(x)*sin(x0)+q1(x)*cos(x0))
+	 * where x0 = x-3pi/4
+	 *      Better formula:
+	 *              cos(x0) = cos(x)cos(3pi/4)+sin(x)sin(3pi/4)
+	 *                      =  1/sqrt(2) * (sin(x) - cos(x))
+	 *              sin(x0) = sin(x)cos(3pi/4)-cos(x)sin(3pi/4)
+	 *                      = -1/sqrt(2) * (cos(x) + sin(x))
+	 * To avoid cancellation, use
+	 *              sin(x) +- cos(x) = -cos(2x)/(sin(x) -+ cos(x))
+	 * to compute the worse one.
+	 */
+		if(ix>0x48000000) z = (invsqrtpi*ss)/sqrt(x);
+		else {
+		    u = pone(x); v = qone(x);
+		    z = invsqrtpi*(u*ss+v*cc)/sqrt(x);
+		}
+		return z;
+	}
+	if(ix<=0x3c900000) {    /* x < 2**-54 */
+	    return(-tpi/x);
+	}
+	z = x*x;
+	u = U0[0]+z*(U0[1]+z*(U0[2]+z*(U0[3]+z*U0[4])));
+	v = one+z*(V0[0]+z*(V0[1]+z*(V0[2]+z*(V0[3]+z*V0[4]))));
+	return(x*(u/v) + tpi*(__ieee754_j1(x)*__ieee754_log(x)-one/x));
 }
 
 /* For x >= 8, the asymptotic expansions of pone is
@@ -335,17 +335,17 @@ static double ps2[5] = {
 	double *p = 0,*q = 0;
 #endif
 	double z,r,s;
-        int32_t ix;
+	int32_t ix;
 	GET_HIGH_WORD(ix,x);
 	ix &= 0x7fffffff;
-        if(ix>=0x40200000)     {p = pr8; q= ps8;}
-        else if(ix>=0x40122E8B){p = pr5; q= ps5;}
-        else if(ix>=0x4006DB6D){p = pr3; q= ps3;}
-        else if(ix>=0x40000000){p = pr2; q= ps2;}
-        z = one/(x*x);
-        r = p[0]+z*(p[1]+z*(p[2]+z*(p[3]+z*(p[4]+z*p[5]))));
-        s = one+z*(q[0]+z*(q[1]+z*(q[2]+z*(q[3]+z*q[4]))));
-        return one+ r/s;
+	if(ix>=0x40200000)     {p = pr8; q= ps8;}
+	else if(ix>=0x40122E8B){p = pr5; q= ps5;}
+	else if(ix>=0x4006DB6D){p = pr3; q= ps3;}
+	else if(ix>=0x40000000){p = pr2; q= ps2;}
+	z = one/(x*x);
+	r = p[0]+z*(p[1]+z*(p[2]+z*(p[3]+z*(p[4]+z*p[5]))));
+	s = one+z*(q[0]+z*(q[1]+z*(q[2]+z*(q[3]+z*q[4]))));
+	return one+ r/s;
 }
 
 

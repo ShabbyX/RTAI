@@ -62,7 +62,7 @@ static SIMD_T vdot(SIMD_T a[], SIMD_T b[], int n)
 	vector s = { 0.0, 0.0, 0.0, 0.0 };
 	vec_enter();
 	vec_mov_mr(s, reg0);
-        for (i = n - VECLEN; i >= 0; i -= VECLEN) {
+	for (i = n - VECLEN; i >= 0; i -= VECLEN) {
 		vec_mov_mr_a(a + i, reg1);
 		vec_mul_mr_a(b + i, reg1);
 		vec_add_rr(reg1, reg0);
@@ -78,12 +78,12 @@ static SIMD_T vdot(SIMD_T a[], SIMD_T b[], int n)
 #else
 static SIMD_T vdot(SIMD_T a[], SIMD_T b[], int n)
 {
-        int k = n - 1;
-        double s = 0.0;
-        for(; k >= 0; k--) {
-                s = s + a[k]*b[k];
-        }
-        return s;
+	int k = n - 1;
+	double s = 0.0;
+	for(; k >= 0; k--) {
+		s = s + a[k]*b[k];
+	}
+	return s;
 }
 #endif
 
@@ -117,9 +117,9 @@ int main(int argc, char *argv[])
 		start_rt_timer(0);
 	}
 
-        for(i = 0; i < MAXDIM; i++) {
-                a[i] = b[i] = 3.141592;
-        }
+	for(i = 0; i < MAXDIM; i++) {
+		a[i] = b[i] = 3.141592;
+	}
 	vdot(a, b, MAXDIM);
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);

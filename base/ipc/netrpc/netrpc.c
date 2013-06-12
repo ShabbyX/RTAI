@@ -375,7 +375,7 @@ static int soft_kthread_delete(RT_TASK *task)
 		current->state = TASK_INTERRUPTIBLE;
 		schedule_timeout(HZ/NETRPC_TIMER_FREQ);
 	}
-        clr_rtext(task);
+	clr_rtext(task);
 	return 0;
 }
 
@@ -465,7 +465,7 @@ static void soft_stub_fun(struct portslot_t *portslotp)
 	struct sockaddr *addr;
 	RT_TASK *task;
 	SEM *sem;
-        struct par_t *par;
+	struct par_t *par;
 	long wsize, w2size, sock;
 	long *ain;
 	long type;
@@ -895,10 +895,10 @@ static inline void mbx_send_if(MBX *mbx, void *sendmsg, int msg_size)
 		if ((task = mbx->waiting_task)) {
 			rem_timed_task(task);
 			mbx->waiting_task = (void *)0;
-        	        if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_MBXSUSP | RT_SCHED_DELAYED)) == RT_SCHED_READY) {
-                	        enq_ready_task(task);
+			if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_MBXSUSP | RT_SCHED_DELAYED)) == RT_SCHED_READY) {
+				enq_ready_task(task);
 				rt_schedule();
-	        	}
+			}
 		}
 		rt_global_restore_flags(flags);
 	}
@@ -1297,7 +1297,7 @@ int soft_rt_sendto(int sock, const void *msg, int msglen, unsigned int sflags, s
 		memcpy(&socks[sock].addr, to, tolen);
 		flags = rt_spin_lock_irqsave(&sysrq_lock);
 		sysrq.sockindx[sysrq.in] = sock;
-	        sysrq.in = (sysrq.in + 1) & MaxSockSrq;
+		sysrq.in = (sysrq.in + 1) & MaxSockSrq;
 		rt_spin_unlock_irqrestore(flags, &sysrq_lock);
 		rt_pend_linux_srq(sysrq.srq);
 		return msglen;
@@ -1614,7 +1614,7 @@ static inline int krecvmsg(int fd, struct msghdr *msg, unsigned flags)
 
 static inline int ksend(int fd, void *buff, size_t len, unsigned flags)
 {
-        return ksendto(fd, buff, len, flags, NULL, 0);
+	return ksendto(fd, buff, len, flags, NULL, 0);
 }
 
 static inline int krecv(int fd, void *ubuf, size_t size, unsigned flags)

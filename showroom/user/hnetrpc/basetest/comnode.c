@@ -69,21 +69,21 @@ static void cleanup_module(void)
 
 void msleep(int ms)
 {
-        struct timeval timout;
-        timout.tv_sec = 0;
-        timout.tv_usec = ms*1000;
-        select(1, NULL, NULL, NULL, &timout);
+	struct timeval timout;
+	timout.tv_sec = 0;
+	timout.tv_usec = ms*1000;
+	select(1, NULL, NULL, NULL, &timout);
 }
 
 int main(void)
 {
 	int i;
-        RT_TASK *task;
+	RT_TASK *task;
 
-        if (!(task = rt_task_init(nam2num("CMNODE"), 0, 0, 0))) {
-                printf("CANNOT INIT COMNODE TASK\n");
-                exit(1);
-        }
+	if (!(task = rt_task_init(nam2num("CMNODE"), 0, 0, 0))) {
+		printf("CANNOT INIT COMNODE TASK\n");
+		exit(1);
+	}
 
 	init_module();
 	for (i = 0; i < 7; i++) {

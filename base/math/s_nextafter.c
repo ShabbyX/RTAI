@@ -70,7 +70,7 @@ static char rcsid[] = "$NetBSD: s_nextafter.c,v 1.8 1995/05/10 20:47:58 jtc Exp 
 	if(hy<0x00100000) {		/* underflow */
 	    y = x*x;
 	    if(y!=x) {		/* raise underflow flag */
-	        INSERT_WORDS(y,hx,lx);
+		INSERT_WORDS(y,hx,lx);
 		return y;
 	    }
 	}

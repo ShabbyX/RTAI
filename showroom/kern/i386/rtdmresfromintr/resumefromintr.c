@@ -144,26 +144,26 @@ static void thread_fun(long dummy)
 	rt_return(task, 0UL);
 	go = 1;
 
-        while(!rt_task_suspend(&thread)) {
+	while(!rt_task_suspend(&thread)) {
 		cpu_used[hard_cpu_id()]++;
-                if (!count) {
-                        t = rt_get_cpu_time_ns();
-                        if ((jit = t - t0 - PERIOD) < 0) {
-                                jit = -jit;
-                        }
-                        if (jit > maxj) {
-                                maxj = jit;
-                        }
-                        t0 = t;
-                        if (echo++ > RTC_FREQ/10) {
-                                echo = 0;
+		if (!count) {
+			t = rt_get_cpu_time_ns();
+			if ((jit = t - t0 - PERIOD) < 0) {
+				jit = -jit;
+			}
+			if (jit > maxj) {
+				maxj = jit;
+			}
+			t0 = t;
+			if (echo++ > RTC_FREQ/10) {
+				echo = 0;
 				rt_send_if(task, maxj);
-                        }
-                } else {
-                        t0 = rt_get_cpu_time_ns();
-                        count--;
-                }
-        }
+			}
+		} else {
+			t0 = rt_get_cpu_time_ns();
+			count--;
+		}
+	}
 }
 
 
@@ -183,7 +183,7 @@ void _cleanup_module(void)
 	int cpuid;
 	rtc_stop();
 	rt_reset_irq_to_sym_mode(RTC_IRQ);
-        rt_drg_on_name(nam2num("RPCTSK"));
+	rt_drg_on_name(nam2num("RPCTSK"));
 	rt_task_delete(&thread);
 	printk("\n\nCPU USE SUMMARY\n");
 	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {

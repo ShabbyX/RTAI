@@ -65,10 +65,10 @@ static void *task_code(void *arg)
 
 	task_no = *((int *)arg);
 	buf[8] = 0;
-        if (!(mytask = rt_thread_init(nam2num(task[task_no]), NUM_TASKS - task_no, 0, SCHED_FIFO, 0xF))) {
-                printf("CANNOT INIT TASK TASK %d\n", task_no);
-                exit(1);
-        }
+	if (!(mytask = rt_thread_init(nam2num(task[task_no]), NUM_TASKS - task_no, 0, SCHED_FIFO, 0xF))) {
+		printf("CANNOT INIT TASK TASK %d\n", task_no);
+		exit(1);
+	}
 	srvport = rt_request_port(comnode);
 printf("TASK_NO %d GOT ITS EXEC COMNODE PORT %lx, %d\n", task_no, comnode, srvport);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
@@ -131,10 +131,10 @@ static pthread_t thread[NUM_TASKS];
 
 void msleep(int ms)
 {
-        struct timeval timout;
-        timout.tv_sec = 0;
-        timout.tv_usec = ms*1000;
-        select(1, NULL, NULL, NULL, &timout);
+	struct timeval timout;
+	timout.tv_sec = 0;
+	timout.tv_usec = ms*1000;
+	select(1, NULL, NULL, NULL, &timout);
 }
 
 static int init_module(void)
@@ -153,14 +153,14 @@ printf("TASK CODE GOT INIT COMNODE PORT %lx, %d\n", comnode, srvport);
 	end_sem = RT_get_adr(comnode, srvport, "ENDSEM");
 	mbx_in   = RT_get_adr(comnode, srvport, "MBXIN");
 	mbx_out  = RT_get_adr(comnode, srvport, "MBXOUT");
-        for (i = 0; i < NUM_TASKS; i++) {
+	for (i = 0; i < NUM_TASKS; i++) {
 		sems[i] = RT_get_adr(comnode, srvport, sem[i]);
 		if (!(thread[i] = rt_thread_create(task_code, (void *)&i, 10000))) {
-                        printf("ERROR IN CREATING THREAD %d\n", i);
-                        exit(1);
-                }
+			printf("ERROR IN CREATING THREAD %d\n", i);
+			exit(1);
+		}
 		msleep(100);
-        }
+	}
 printf("TASK CODE REL INIT COMNODE PORT %lx, %d\n", comnode, srvport);
 	rt_release_port(comnode, srvport);
 	return 0;
@@ -168,27 +168,27 @@ printf("TASK CODE REL INIT COMNODE PORT %lx, %d\n", comnode, srvport);
 
 int main(int argc, char *argv[])
 {
-        RT_TASK *task;
-        struct sockaddr_in addr;
+	RT_TASK *task;
+	struct sockaddr_in addr;
 	int i, srvport;
 
-        if (!(task = rt_task_init(nam2num("TSKCOD"), 0, 0, 0))) {
-                printf("CANNOT INIT TASK CODE\n");
-                exit(1);
-        }
-        comnode = 0;
-        if (argc == 2 && strstr(argv[1], "ComNode=")) {
-              	inet_aton(argv[1] + 8, &addr.sin_addr);
-                comnode = addr.sin_addr.s_addr;
-        }
-        if (!comnode) {
-                inet_aton("127.0.0.1", &addr.sin_addr);
-                comnode = addr.sin_addr.s_addr;
-        }
-        init_module();
-        for (i = 0; i < NUM_TASKS; i++) {
+	if (!(task = rt_task_init(nam2num("TSKCOD"), 0, 0, 0))) {
+		printf("CANNOT INIT TASK CODE\n");
+		exit(1);
+	}
+	comnode = 0;
+	if (argc == 2 && strstr(argv[1], "ComNode=")) {
+	      	inet_aton(argv[1] + 8, &addr.sin_addr);
+		comnode = addr.sin_addr.s_addr;
+	}
+	if (!comnode) {
+		inet_aton("127.0.0.1", &addr.sin_addr);
+		comnode = addr.sin_addr.s_addr;
+	}
+	init_module();
+	for (i = 0; i < NUM_TASKS; i++) {
 		rt_thread_join(thread[i]);
-        }
+	}
 	while ((srvport = rt_request_port(comnode)) <= 0) {
 		msleep(100);
 	}

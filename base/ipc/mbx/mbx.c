@@ -169,7 +169,7 @@ static int mbxovrwrput(MBX *mbx, char **msg, int msg_size, int space)
 			flags = rt_spin_lock_irqsave(&(mbx->lock));
 			mbx->frbs -= tocpy;
 			mbx->avbs += tocpy;
-        		rt_spin_unlock_irqrestore(flags, &(mbx->lock));
+			rt_spin_unlock_irqrestore(flags, &(mbx->lock));
 			msg_size -= tocpy;
 			*msg     += tocpy;
 			mbx->lbyte = MOD_SIZE(mbx->lbyte + tocpy);
@@ -182,10 +182,10 @@ static int mbxovrwrput(MBX *mbx, char **msg, int msg_size, int space)
 				if (tocpy > mbx->avbs) {
 					tocpy = mbx->avbs;
 				}
-	        		flags = rt_spin_lock_irqsave(&(mbx->lock));
+				flags = rt_spin_lock_irqsave(&(mbx->lock));
 				mbx->frbs  += tocpy;
 				mbx->avbs  -= tocpy;
-        			rt_spin_unlock_irqrestore(flags, &(mbx->lock));
+				rt_spin_unlock_irqrestore(flags, &(mbx->lock));
 				mbx->fbyte = MOD_SIZE(mbx->fbyte + tocpy);
 			}
 		}
@@ -309,13 +309,13 @@ RTAI_SYSCALL_MODE int rt_typed_mbx_init(MBX *mbx, int size, int type)
 	mbx->size = mbx->frbs = size;
 	mbx->owndby = mbx->waiting_task = NULL;
 	mbx->fbyte = mbx->lbyte = mbx->avbs = 0;
-        spin_lock_init(&(mbx->lock));
+	spin_lock_init(&(mbx->lock));
 #ifdef CONFIG_RTAI_RT_POLL
 	mbx->poll_recv.pollq.prev = mbx->poll_recv.pollq.next = &(mbx->poll_recv.pollq);
 	mbx->poll_send.pollq.prev = mbx->poll_send.pollq.next = &(mbx->poll_send.pollq);
 	mbx->poll_recv.pollq.task = mbx->poll_send.pollq.task = NULL;
-        spin_lock_init(&(mbx->poll_recv.pollock));
-        spin_lock_init(&(mbx->poll_send.pollock));
+	spin_lock_init(&(mbx->poll_recv.pollock));
+	spin_lock_init(&(mbx->poll_send.pollock));
 #endif
 	return 0;
 }
@@ -936,7 +936,7 @@ struct rt_native_fun_entry rt_mbx_entries[] = {
 	{ { 1, _rt_mbx_send_until },    	MBX_SEND_UNTIL },
 	{ { 1, _rt_mbx_send_timed },    	MBX_SEND_TIMED },
 	{ { 1, _rt_mbx_ovrwr_send },    	MBX_OVRWR_SEND },
-        { { 1, _rt_mbx_evdrp },         	MBX_EVDRP },
+	{ { 1, _rt_mbx_evdrp },         	MBX_EVDRP },
 	{ { 1, _rt_mbx_receive },       	MBX_RECEIVE },
 	{ { 1, _rt_mbx_receive_wp },    	MBX_RECEIVE_WP },
 	{ { 1, _rt_mbx_receive_if },    	MBX_RECEIVE_IF },

@@ -85,7 +85,7 @@ static char rcsid[] = "$NetBSD: e_hypot.c,v 1.9 1995/05/12 04:57:27 jtc Exp $";
 	}
 	if(hb < 0x20b00000) {	/* b < 2**-500 */
 	    if(hb <= 0x000fffff) {	/* subnormal b or 0 */
-	        u_int32_t low;
+		u_int32_t low;
 		GET_LOW_WORD(low,b);
 		if((hb|low)==0) return a;
 		t1=0;
@@ -94,7 +94,7 @@ static char rcsid[] = "$NetBSD: e_hypot.c,v 1.9 1995/05/12 04:57:27 jtc Exp $";
 		a *= t1;
 		k -= 1022;
 	    } else {		/* scale a and b by 2^600 */
-	        ha += 0x25800000; 	/* a *= 2^600 */
+		ha += 0x25800000; 	/* a *= 2^600 */
 		hb += 0x25800000;	/* b *= 2^600 */
 		k -= 600;
 		SET_HIGH_WORD(a,ha);

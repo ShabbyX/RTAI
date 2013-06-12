@@ -75,8 +75,8 @@ static void mfun(long t)
 		}
 
 		if (msg != 0xccccccccccccccccLL) {
-                        rt_printk("WRONG REPLY TO TASK: %d, MSG: %x %x.\n", t, ((int *)&msg)[0], ((int *)&msg)[1]);
-                        goto prem;
+			rt_printk("WRONG REPLY TO TASK: %d, MSG: %x %x.\n", t, ((int *)&msg)[0], ((int *)&msg)[1]);
+			goto prem;
 		}
 		mstat[t] = 'd';
 		if ((itime = rt_get_cpu_time_ns() - time) > maxt) {

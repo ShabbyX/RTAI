@@ -192,16 +192,16 @@ __inline__
 	    y   = 2.0*(y - floor(y));		/* y = |x| mod 2.0 */
 	    n   = (int) (y*4.0);
 	} else {
-            if(ix>=0x43400000) {
-                y = zero; n = 0;                 /* y must be even */
-            } else {
-                if(ix<0x43300000) z = y+two52;	/* exact */
+	    if(ix>=0x43400000) {
+		y = zero; n = 0;                 /* y must be even */
+	    } else {
+		if(ix<0x43300000) z = y+two52;	/* exact */
 		GET_LOW_WORD(n,z);
 		n &= 1;
-                y  = n;
-                n<<= 2;
-            }
-        }
+		y  = n;
+		n<<= 2;
+	    }
+	}
 	switch (n) {
 	    case 0:   y =  __kernel_sin(pi*y,zero,0); break;
 	    case 1:
@@ -235,8 +235,8 @@ __inline__
 	if((ix|lx)==0) return one/zero;
 	if(ix<0x3b900000) {	/* |x|<2**-70, return -log(|x|) */
 	    if(hx<0) {
-	        *signgamp = -1;
-	        return -__ieee754_log(-x);
+		*signgamp = -1;
+		return -__ieee754_log(-x);
 	    } else return -__ieee754_log(x);
 	}
 	if(hx<0) {
@@ -260,8 +260,8 @@ __inline__
 	  	else {y = x; i=2;}
 	    } else {
 	  	r = zero;
-	        if(ix>=0x3FFBB4C3) {y=2.0-x;i=0;} /* [1.7316,2] */
-	        else if(ix>=0x3FF3B4C4) {y=x-tc;i=1;} /* [1.23,1.73] */
+		if(ix>=0x3FFBB4C3) {y=2.0-x;i=0;} /* [1.7316,2] */
+		else if(ix>=0x3FF3B4C4) {y=x-tc;i=1;} /* [1.23,1.73] */
 		else {y=x-one;i=2;}
 	    }
 	    switch(i) {

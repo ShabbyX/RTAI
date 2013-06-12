@@ -61,7 +61,7 @@
 #define NR_syscalls 322
 
 #define LXRT_DO_IMMEDIATE_LINUX_SYSCALL(regs) \
-        do { /* NOP */ } while (0)
+	do { /* NOP */ } while (0)
 
 /* endianess */
 #define LOW  0
@@ -143,7 +143,7 @@ static inline long long _rtai_lxrt(long srq, void *args)
 {
 	long long retval;
 #ifdef USE_LINUX_SYSCALL
-        syscall(RTAI_SRQ_SYSCALL_NR, srq, args, &retval);
+	syscall(RTAI_SRQ_SYSCALL_NR, srq, args, &retval);
 #else
 #warning "RTAI_DO_SWI is not working yet. Please configure RTAI with --enable-lxrt-use-linux-syscall."
 	retval = RTAI_DO_SWI(RTAI_SYS_VECTOR, (srq), (args));

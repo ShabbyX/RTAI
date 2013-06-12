@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2003  Trevor Woolven (trevw@zentropix.com)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		    Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -41,8 +41,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 static inline void count2timespec(RTIME rt, struct timespec *t)
 {
-        t->tv_sec = (rt = count2nano(rt))/1000000000;
-        t->tv_nsec = rt - t->tv_sec*1000000000LL;
+	t->tv_sec = (rt = count2nano(rt))/1000000000;
+	t->tv_nsec = rt - t->tv_sec*1000000000LL;
 }
 
 #define MAKE_IT_HARD

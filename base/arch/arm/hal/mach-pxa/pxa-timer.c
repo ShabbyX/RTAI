@@ -94,7 +94,7 @@ int	rt_request_timer(rt_timer_irq_handler_t handler, unsigned tick, int use_apic
 	do {
 //		t = rdtsc();
  } while ( (signed long)(OSMR0 - OSCR) >= 0 );
-        OSSR = OSSR_M0;
+	OSSR = OSSR_M0;
 
 	/* set up rt_times structure */
 	rt_times.linux_tick = LATCH;

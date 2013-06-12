@@ -33,16 +33,16 @@ extern "C" {
 static inline int rt_cond_create(RT_COND *cond, const char *name)
 {
 	struct { unsigned long name, icount, mode; } arg = { name ? nam2id(name) : (unsigned long)name, 0, RES_SEM };
-        if ((cond->cond = (void *)rtai_lxrt(BIDX, SIZARG, LXRT_SEM_INIT, &arg).v[LOW])) {
-                rt_release_waiters(arg.name);
-                return 0;
-        }
-        return -EINVAL;
+	if ((cond->cond = (void *)rtai_lxrt(BIDX, SIZARG, LXRT_SEM_INIT, &arg).v[LOW])) {
+		rt_release_waiters(arg.name);
+		return 0;
+	}
+	return -EINVAL;
 }
 
 static inline int rt_cond_delete(RT_COND *cond)
 {
-        struct { void *cond; } arg = { cond->cond };
+	struct { void *cond; } arg = { cond->cond };
 	return rtai_lxrt(BIDX, SIZARG, LXRT_SEM_DELETE, &arg).i[LOW];
 }
 
@@ -61,24 +61,24 @@ static inline int rt_cond_wait(RT_COND *cond, RT_MUTEX *mutex, RTIME timeout)
 
 static inline int rt_cond_signal(RT_COND *cond)
 {
-        struct { void *cond; } arg = { cond->cond };
-        return rtai_lxrt(BIDX, SIZARG, COND_SIGNAL, &arg).i[LOW] == SEM_ERR ? -EINVAL : 0;
+	struct { void *cond; } arg = { cond->cond };
+	return rtai_lxrt(BIDX, SIZARG, COND_SIGNAL, &arg).i[LOW] == SEM_ERR ? -EINVAL : 0;
 }
 
 static inline int rt_cond_broadcast(RT_COND *cond)
 {
-        struct { void *cond; } arg = { cond->cond };
-        return rtai_lxrt(BIDX, SIZARG, SEM_BROADCAST, &arg).i[LOW] == SEM_ERR ? -EINVAL : 0;
+	struct { void *cond; } arg = { cond->cond };
+	return rtai_lxrt(BIDX, SIZARG, SEM_BROADCAST, &arg).i[LOW] == SEM_ERR ? -EINVAL : 0;
 }
 
 static inline int rt_cond_bind(RT_COND *cond, const char *name)
 {
-        return rt_obj_bind(cond, name);
+	return rt_obj_bind(cond, name);
 }
 
 static inline int rt_cond_unbind (RT_COND *cond)
 {
-        return rt_obj_unbind(cond);
+	return rt_obj_unbind(cond);
 }
 
 static inline int rt_cond_inquire(RT_COND *cond, void *info)

@@ -206,7 +206,7 @@ RTAI_SYSCALL_MODE int rt_wait_signal(RT_TASK *sigtask, RT_TASK *task)
 			sigtask->state |= RT_SCHED_SIGSUSP;
 			rem_ready_current(sigtask);
 			if (task->pstate > 0 && !(--task->pstate) && (task->state &= ~RT_SCHED_SIGSUSP) == RT_SCHED_READY) {
-                	       	enq_ready_task(task);
+			       	enq_ready_task(task);
 	       		}
 			rt_schedule();
 		}

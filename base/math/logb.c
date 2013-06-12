@@ -37,11 +37,11 @@ typedef union
       {
       struct {
 #if defined(__BIG_ENDIAN__)
-        unsigned long int hi;
-        unsigned long int lo;
+	unsigned long int hi;
+	unsigned long int lo;
 #else
-        unsigned long int lo;
-        unsigned long int hi;
+	unsigned long int lo;
+	unsigned long int hi;
 #endif
       } words;
       double dbl;
@@ -68,37 +68,37 @@ double logb (  double x  )
       shiftedExp = ( xInHex.words.hi & 0x7ff00000UL ) >> 20;
 
       if ( shiftedExp == 2047 )
-            {                                            // NaN or INF
-            if ( ( ( xInHex.words.hi & signMask ) == 0 ) || ( x != x ) )
-                  return x;                              // NaN or +INF return x
-            else
-                  return -x;                             // -INF returns +INF
-            }
+	    {                                            // NaN or INF
+	    if ( ( ( xInHex.words.hi & signMask ) == 0 ) || ( x != x ) )
+		  return x;                              // NaN or +INF return x
+	    else
+		  return -x;                             // -INF returns +INF
+	    }
 
       if ( shiftedExp != 0 )                             // normal number
-            shiftedExp -= 1023;                          // unbias exponent
+	    shiftedExp -= 1023;                          // unbias exponent
 
       else if ( x == 0.0 )
-            {                                            // zero
-            xInHex.words.hi = 0x0UL;                      // return -infinity
-            return (  minusInf.dbl  );
-            }
+	    {                                            // zero
+	    xInHex.words.hi = 0x0UL;                      // return -infinity
+	    return (  minusInf.dbl  );
+	    }
 
       else
-            {                                            // subnormal number
-            xInHex.dbl *= twoTo52;                       // scale up
-            shiftedExp = ( xInHex.words.hi & 0x7ff00000UL ) >> 20;
-            shiftedExp -= 1075;                          // unbias exponent
-            }
+	    {                                            // subnormal number
+	    xInHex.dbl *= twoTo52;                       // scale up
+	    shiftedExp = ( xInHex.words.hi & 0x7ff00000UL ) >> 20;
+	    shiftedExp -= 1075;                          // unbias exponent
+	    }
 
       if ( shiftedExp == 0 )                             // zero result
-            return ( 0.0 );
+	    return ( 0.0 );
 
       else
-            {                                            // nonzero result
-            xInHex.dbl = klTod;
-            xInHex.words.lo += shiftedExp;
-            return ( xInHex.dbl - klTod );
-            }
+	    {                                            // nonzero result
+	    xInHex.dbl = klTod;
+	    xInHex.words.lo += shiftedExp;
+	    return ( xInHex.dbl - klTod );
+	    }
       }
 #endif /* __ppc__ */

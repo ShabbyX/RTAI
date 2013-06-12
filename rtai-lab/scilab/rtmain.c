@@ -171,7 +171,7 @@ int rtRegisterScope(char *name, char **traceName, int n)
       rtaiScope[i].traceName = traceName;
       int j;
       for(j=0; j<n; j++) {
-        printf("%s\n",rtaiScope[i].traceName[j]);
+	printf("%s\n",rtaiScope[i].traceName[j]);
       }
       return 0;
     }
@@ -839,7 +839,7 @@ void print_usage(void)
 	 "  -v, --verbose\n"
 	 "      verbose output\n"
 	 "  -V, --version\n"
-         "      print rtmain version\n"
+	 "      print rtmain version\n"
 	 "  -s, --soft\n"
 	 "      run RT-model in soft real time (default hard RT)\n"
 	 "  -w, --wait\n"

@@ -38,10 +38,10 @@
 double copysign ( double arg2, double arg1 )
       {
       union
-            {
-            dHexParts hex;
-            double dbl;
-            } x, y;
+	    {
+	    dHexParts hex;
+	    double dbl;
+	    } x, y;
 
 /*******************************************************************************
 *     No need to flush NaNs out.                                               *

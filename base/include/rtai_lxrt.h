@@ -444,7 +444,7 @@ struct linux_syscalls_list { int in, out, nr, id, mode; void (*cbfun)(long, long
 
 /*
      Encoding of system call argument
-            31                                    0
+	    31                                    0
 soft SRQ    .... |||| |||| |||| .... .... .... ....  0 - 4095 max
 int  NARG   .... .... .... .... |||| |||| |||| ||||
 arg  INDX   |||| .... .... .... .... .... .... ....
@@ -525,7 +525,7 @@ extern "C" {
 static inline struct rt_task_struct *pid2rttask(long pid)
 {
 	struct task_struct *lnxtsk = find_task_by_pid(pid);
-        return lnxtsk ? lnxtsk->rtai_tskext(TSKEXT0) : NULL;
+	return lnxtsk ? lnxtsk->rtai_tskext(TSKEXT0) : NULL;
 	return ((unsigned long)pid) > PID_MAX_LIMIT ? (struct rt_task_struct *)pid : find_task_by_pid(pid)->rtai_tskext(TSKEXT0);
 }
 
@@ -634,17 +634,17 @@ RTAI_PROTO(unsigned long, rt_get_name, (void *adr))
 
 RTAI_PROTO(RT_TASK *, rt_task_init_schmod, (unsigned long name, int priority, int stack_size, int max_msg_size, int policy, int cpus_allowed))
 {
-        struct sched_param mysched;
-        struct { unsigned long name; long priority, stack_size, max_msg_size, cpus_allowed; } arg = { name ? name : rt_get_name(NULL), priority, stack_size, max_msg_size, cpus_allowed };
+	struct sched_param mysched;
+	struct { unsigned long name; long priority, stack_size, max_msg_size, cpus_allowed; } arg = { name ? name : rt_get_name(NULL), priority, stack_size, max_msg_size, cpus_allowed };
 
-        if (policy == SCHED_OTHER) {
-        	mysched.sched_priority = 0;
+	if (policy == SCHED_OTHER) {
+		mysched.sched_priority = 0;
 	} else if ((mysched.sched_priority = sched_get_priority_max(policy) - priority) < 1) {
 		mysched.sched_priority = 1;
 	}
-        if (sched_setscheduler(0, policy, &mysched) < 0) {
-                return 0;
-        }
+	if (sched_setscheduler(0, policy, &mysched) < 0) {
+		return 0;
+	}
 	rtai_iopl();
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
@@ -671,7 +671,7 @@ RTAI_PROTO(long, rt_thread_create, (void *fun, void *args, int stack_size))
 	long thread;
 	pthread_attr_t attr;
 
-        pthread_attr_init(&attr);
+	pthread_attr_init(&attr);
 	if (!pthread_attr_setstacksize(&attr, stack_size > RT_THREAD_STACK_MIN ? stack_size : RT_THREAD_STACK_MIN)) {
 		struct { unsigned long hs; } arg = { 0 };
 		if ((arg.hs = rtai_lxrt(BIDX, SIZARG, IS_HARD, &arg).i[LOW])) {
@@ -712,7 +712,7 @@ static void linux_syscall_server_fun(struct linux_syscalls_list *list)
 		struct linux_syscall calldata[syscalls.nr];
 		syscalls.syscall = calldata;
 		memset(calldata, 0, sizeof(calldata));
-                mlockall(MCL_CURRENT | MCL_FUTURE);
+		mlockall(MCL_CURRENT | MCL_FUTURE);
 		list->serv = &syscalls;
 		rtai_lxrt(BIDX, sizeof(RT_TASK *), RESUME, &syscalls.task);
 		while (abs(rtai_lxrt(BIDX, sizeof(RT_TASK *), SUSPEND, &syscalls.serv).i[LOW]) < RTE_LOWERR) {
@@ -731,7 +731,7 @@ static void linux_syscall_server_fun(struct linux_syscalls_list *list)
 				syscalls.out = 0;
 			}
 		}
-        }
+	}
 	rtai_lxrt(BIDX, sizeof(RT_TASK *), LXRT_TASK_DELETE, &syscalls.serv);
 }
 
@@ -1158,16 +1158,16 @@ RTAI_PROTO(int, rt_task_signal_handler, (RT_TASK *task, void (*handler)(void)))
 
 RTAI_PROTO(int,rt_task_use_fpu,(RT_TASK *task, int use_fpu_flag))
 {
-        struct { RT_TASK *task; long use_fpu_flag; } arg = { task, use_fpu_flag };
-        if (rtai_lxrt(BIDX, SIZARG, RT_BUDDY, &arg).v[LOW] != task) {
-                return rtai_lxrt(BIDX, SIZARG, TASK_USE_FPU, &arg).i[LOW];
-        } else {
+	struct { RT_TASK *task; long use_fpu_flag; } arg = { task, use_fpu_flag };
+	if (rtai_lxrt(BIDX, SIZARG, RT_BUDDY, &arg).v[LOW] != task) {
+		return rtai_lxrt(BIDX, SIZARG, TASK_USE_FPU, &arg).i[LOW];
+	} else {
 // note that it would be enough to do whatever FP op here to have it OK. But
 // that is scary if it is done when already in hard real time, and we do not
 // want to force users to call this before making it hard.
-                rtai_lxrt(BIDX, SIZARG, HRT_USE_FPU, &arg);
-                return 0;
-        }
+		rtai_lxrt(BIDX, SIZARG, HRT_USE_FPU, &arg);
+		return 0;
+	}
 }
 
 RTAI_PROTO(int,rt_buddy_task_use_fpu,(RT_TASK *task, int use_fpu_flag))

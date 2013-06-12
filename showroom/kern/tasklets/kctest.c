@@ -47,7 +47,7 @@ void ph(unsigned long data)
 
 int init_module(void)
 {
-        mem = rtai_kmalloc(0xabcd, sizeof(struct mymem));
+	mem = rtai_kmalloc(0xabcd, sizeof(struct mymem));
 	mem->flag = 0;
 #ifdef ONE_SHOT
 	rt_set_oneshot_mode();
@@ -62,5 +62,5 @@ int init_module(void)
 void cleanup_module(void)
 {
 	stop_rt_timer();
-        rtai_kfree(0xabcd);
+	rtai_kfree(0xabcd);
 }

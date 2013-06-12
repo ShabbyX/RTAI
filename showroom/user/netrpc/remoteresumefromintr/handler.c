@@ -71,7 +71,7 @@ static RT_TASK sup_task;
 static void sup_fun(long none)
 {
 	rt_printk("INTERRUPT MODULE STARTED\n");
-        while ((taskport = rt_request_port(tasknode)) <= 0);
+	while ((taskport = rt_request_port(tasknode)) <= 0);
 	rt_mbx_receive(&mbx, &run, sizeof(run));
 	rmt_task = RT_NET_ADR(taskport, run);
 	rt_mbx_receive(&mbx, &run, sizeof(run));
@@ -84,11 +84,11 @@ static void sup_fun(long none)
 
 int init_module(void)
 {
-        tasknode = ddn2nl(TaskNode);
+	tasknode = ddn2nl(TaskNode);
 	rt_mbx_init(&mbx, 1);
 	rt_register(nam2num("HDLMBX"), &mbx, IS_MBX, 0);
-        rt_task_init(&sup_task, sup_fun, 0, 4000, 0, 0, 0);
-        rt_task_resume(&sup_task);
+	rt_task_init(&sup_task, sup_fun, 0, 4000, 0, 0, 0);
+	rt_task_resume(&sup_task);
 	rt_request_timer(timer_tick, imuldiv(PERIOD, FREQ_8254, 1000000000), 0);
 	return 0;
 }
@@ -97,6 +97,6 @@ void cleanup_module(void)
 {
 	rt_free_timer();
 	rt_mbx_delete(&mbx);
-        rt_task_delete(&sup_task);
+	rt_task_delete(&sup_task);
 	rt_printk("HANDLER INTERRUPT MODULE REMOVED, OVERUNS %d\n", overuns);
 }

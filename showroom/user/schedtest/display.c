@@ -56,7 +56,7 @@ int main(void)
 
 	rt_make_soft_real_time();
 	stop_rt_timer();
-        rt_task_delete(NULL);
+	rt_task_delete(NULL);
 	rt_printk("END SCHEDULER TEST WITH SRQs.\n\n");
 	return 0;
 }

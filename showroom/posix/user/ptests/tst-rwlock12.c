@@ -130,7 +130,7 @@ do_test (void)
   else if (pid == 0)
     {
 sleep(1);
-        pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_HARD_REAL_TIME);
+	pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_HARD_REAL_TIME);
       /* Lock the mutex.  */
       if (pthread_mutex_lock (m) != 0)
 	{
@@ -213,7 +213,7 @@ sleep(1);
 
 int main(void)
 {
-        pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_HARD_REAL_TIME);        start_rt_timer(0);
-        do_test();
-        return 0;
+	pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_HARD_REAL_TIME);        start_rt_timer(0);
+	do_test();
+	return 0;
 }

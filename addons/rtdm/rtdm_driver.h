@@ -1121,16 +1121,16 @@ static inline int rtdm_task_wait_period(void)
 //RTA_SYSCALL_MODE int rt_sleep(longlong);
 static inline int rtdm_task_sleep(nanosecs_rel_t delay)
 {
-        if (delay < 0) {
-                return 0;
-        }
-        if (delay < 0) {
-                delay = RT_TIME_END;
-        }
-        if (rt_sleep(nano2count(delay)) && _rt_whoami()->unblocked) {
-                return -EINTR;
-        }
-        return 0;
+	if (delay < 0) {
+		return 0;
+	}
+	if (delay < 0) {
+		delay = RT_TIME_END;
+	}
+	if (rt_sleep(nano2count(delay)) && _rt_whoami()->unblocked) {
+		return -EINTR;
+	}
+	return 0;
 }
 
 static inline int
@@ -1360,8 +1360,8 @@ static inline int rtdm_rt_capable(rtdm_user_info_t *user_info)
 {
 
 
-        return (user_info ? xnshadow_thread(user_info) != NULL
-                          : !xnpod_root_p());
+	return (user_info ? xnshadow_thread(user_info) != NULL
+			  : !xnpod_root_p());
 }
 
 #endif /* !DOXYGEN_CPP */

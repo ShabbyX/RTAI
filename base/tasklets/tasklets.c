@@ -193,7 +193,7 @@ static inline void enq_timer(struct rt_tasklet_struct *timed_timer)
 {
 	struct rt_tasklet_struct *timer;
 	timer = &timers_list[TIMED_TIMER_CPUID];
-        while (timed_timer->firing_time > (timer = timer->next)->firing_time);
+	while (timed_timer->firing_time > (timer = timer->next)->firing_time);
 	timer->prev = (timed_timer->prev = timer->prev)->next = timed_timer;
 	timed_timer->next = timer;
 }
@@ -969,7 +969,7 @@ int __rtai_tasklets_init(void)
 	if(set_rt_fun_ext_index(rt_tasklet_fun, TASKLETS_IDX)) {
 		printk("Recompile your module with a different index\n");
 		return -EACCES;
-        }
+	}
 	if (init_ptimers()) {
 		return -ENOMEM;
 	}

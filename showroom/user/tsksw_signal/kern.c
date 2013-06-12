@@ -40,7 +40,7 @@ static void tsk_sighdl(long signal, RT_TASK *task)
 {
 	static unsigned long cnt = 0, rpt = 1000000000/PERIOD;
 	if (++cnt > rpt) {
-	        rt_printk("TSK SIGHDL > # sw: %lu, tsk: %p, sig: %lu.\n", rpt, task, signal);
+		rt_printk("TSK SIGHDL > # sw: %lu, tsk: %p, sig: %lu.\n", rpt, task, signal);
 		rpt += 1000000000/PERIOD;
 	}
 }
@@ -49,7 +49,7 @@ static void sighdl(void)
 {
 	static unsigned long cnt = 0, rpt = 1000000000/PERIOD;
 	if (++cnt > rpt) {
-	        rt_printk("FUN SIGHDL > # sw: %lu, tsk: %p.\n", rpt, rt_whoami());
+		rt_printk("FUN SIGHDL > # sw: %lu, tsk: %p.\n", rpt, rt_whoami());
 		rpt += 1000000000/PERIOD;
 	}
 }

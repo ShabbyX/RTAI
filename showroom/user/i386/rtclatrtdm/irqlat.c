@@ -52,9 +52,9 @@ RTAI_MODULE_PARM(ECHO_PERIOD, int);
 
 static inline unsigned char CMOS_READ(unsigned char addr)
 {
-        outb((addr),RTC_PORT(0));
-        pause_io();
-        return inb(RTC_PORT(1));
+	outb((addr),RTC_PORT(0));
+	pause_io();
+	return inb(RTC_PORT(1));
 }
 
 #define CMOS_WRITE(val, addr) ({ \

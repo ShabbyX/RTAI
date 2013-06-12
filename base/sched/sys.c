@@ -104,7 +104,7 @@ static inline int GENERIC_DELETE(int index, void *object)
 {
 	return ((RTAI_SYSCALL_MODE int (*)(void *, ...))rt_get_lxrt_fun_entry(index))(object);
 }
-			
+
 #define lxrt_sem_delete(sem)        GENERIC_DELETE(SEM_DELETE, sem)
 #define lxrt_named_sem_delete(sem)  GENERIC_DELETE(NAMED_SEM_DELETE, sem)
 #define lxrt_rwl_delete(rwl)        GENERIC_DELETE(RWL_DELETE, rwl)
@@ -134,11 +134,11 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 {
 	int rsize, r2size, wsize, w2size, msg_size;
 	long *wmsg_adr, *w2msg_adr, *fun_args;
-		
+
 	rsize = r2size = wsize = w2size = 0 ;
 	wmsg_adr = w2msg_adr = NULL;
 	fun_args = arg - 1;
-	if (NEED_TO_R(type)) {			
+	if (NEED_TO_R(type)) {
 		rsize = USP_RSZ1(type);
 		rsize = rsize ? fun_args[rsize] : sizeof(long);
 		if (NEED_TO_R2ND(type)) {
@@ -160,7 +160,7 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 			rt_task->max_msg_size[0] = (msg_size << 7)/100;
 			rt_task->msg_buf[0] = rt_malloc(rt_task->max_msg_size[0]);
 		}
-		if (rsize) {			
+		if (rsize) {
 			long *buf_arg = fun_args + USP_RBF1(type);
 			rt_copy_from_user(rt_task->msg_buf[0], (long *)buf_arg[0], rsize);
 			buf_arg[0] = (long)rt_task->msg_buf[0];
@@ -238,7 +238,7 @@ static inline RT_TASK* __task_init(unsigned long name, int prio, int stack_size,
 			cpus_allowed = rtai_cpuid();
 	    }
 	    if (!set_rtext(rt_task, prio, 0, 0, cpus_allowed, 0)) {
-	        rt_task->fun_args = (long *)((struct fun_args *)(rt_task + 1));
+		rt_task->fun_args = (long *)((struct fun_args *)(rt_task + 1));
 		rt_task->msg_buf[0] = msg_buf0;
 		rt_task->msg_buf[1] = msg_buf1;
 		rt_task->max_msg_size[0] =
@@ -283,7 +283,7 @@ static int __task_delete(RT_TASK *rt_task)
 		server->suspdepth = -RTE_HIGERR;
 		rt_task_masked_unblock(server, ~RT_SCHED_READY);
        		lnxtsk->state = TASK_INTERRUPTIBLE;
-	        schedule_timeout(HZ/10);
+		schedule_timeout(HZ/10);
 	}
 	if (clr_rtext(rt_task)) {
 		return -EFAULT;
@@ -373,7 +373,7 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 			lxrt_fun_call_wbuf(task, funcm[srq].fun, LXRT_NARG(lxsrq), arg, type);
 		} else {
 			lxrt_fun_call(task, funcm[srq].fun, LXRT_NARG(lxsrq), arg);
-	        }
+		}
 		return task->retval;
 	}
 
@@ -570,41 +570,41 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 			return 0;
 		}
 
-                case GET_USP_FLAGS: {
-                        arg0.name = arg0.rt_task->usp_flags;
+		case GET_USP_FLAGS: {
+			arg0.name = arg0.rt_task->usp_flags;
 			return arg0.ll;
-                }
-                case SET_USP_FLAGS: {
-                        struct arg { RT_TASK *task; unsigned long flags; };
-                        arg0.rt_task->usp_flags = larg->flags;
-                        arg0.rt_task->force_soft = (arg0.rt_task->is_hard > 0) && (larg->flags & arg0.rt_task->usp_flags_mask & FORCE_SOFT);
-                        return 0;
-                }
+		}
+		case SET_USP_FLAGS: {
+			struct arg { RT_TASK *task; unsigned long flags; };
+			arg0.rt_task->usp_flags = larg->flags;
+			arg0.rt_task->force_soft = (arg0.rt_task->is_hard > 0) && (larg->flags & arg0.rt_task->usp_flags_mask & FORCE_SOFT);
+			return 0;
+		}
 
-                case GET_USP_FLG_MSK: {
-                        arg0.name = arg0.rt_task->usp_flags_mask;
+		case GET_USP_FLG_MSK: {
+			arg0.name = arg0.rt_task->usp_flags_mask;
 			return arg0.ll;
-                }
+		}
 
-                case SET_USP_FLG_MSK: {
-                        task->usp_flags_mask = arg0.name;
-                        task->force_soft = (task->is_hard > 0) && (task->usp_flags & arg0.name & FORCE_SOFT);
-                        return 0;
-                }
+		case SET_USP_FLG_MSK: {
+			task->usp_flags_mask = arg0.name;
+			task->force_soft = (task->is_hard > 0) && (task->usp_flags & arg0.name & FORCE_SOFT);
+			return 0;
+		}
 
-                case FORCE_TASK_SOFT: {
+		case FORCE_TASK_SOFT: {
 			extern void rt_do_force_soft(RT_TASK *rt_task);
-                        struct task_struct *ltsk;
-                        if ((ltsk = find_task_by_pid(arg0.name)))  {
-                                if ((arg0.rt_task = ltsk->rtai_tskext(TSKEXT0))) {
+			struct task_struct *ltsk;
+			if ((ltsk = find_task_by_pid(arg0.name)))  {
+				if ((arg0.rt_task = ltsk->rtai_tskext(TSKEXT0))) {
 					if ((arg0.rt_task->force_soft = (arg0.rt_task->is_hard != 0) && FORCE_SOFT)) {
 						rt_do_force_soft(arg0.rt_task);
 					}
 					return arg0.ll;
-                                }
-                        }
-                        return 0;
-                }
+				}
+			}
+			return 0;
+		}
 
 		case IS_HARD: {
 			arg0.i = arg0.rt_task || (arg0.rt_task = current->rtai_tskext(TSKEXT0)) ? arg0.rt_task->is_hard : 0;
@@ -617,7 +617,7 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 				larg->exectime[1] = (larg->task)->exectime[1];
 				larg->exectime[2] = rtai_rdtsc();
 			}
-                        return 0;
+			return 0;
 		}
 		case GET_TIMEORIG: {
 			struct arg { RTIME *time_orig; };
@@ -628,7 +628,7 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 			} else {
 				rt_gettimeorig(NULL);
 			}
-                        return 0;
+			return 0;
 		}
 
 		case LINUX_SERVER: {
@@ -660,7 +660,7 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 			return 0;
 		}
 
-	        default: {
+		default: {
 		    rt_printk("RTAI/LXRT: Unknown srq #%d\n", srq);
 		    arg0.i = -ENOSYS;
 		    return arg0.ll;
@@ -803,13 +803,13 @@ static void kthread_fun(struct thread_args *args)
 	int linux_rt_priority;
 
 	rt_daemonize();
-        if (args->policy == SCHED_NORMAL) {
-                linux_rt_priority = 0;
-        } else if ((linux_rt_priority = MAX_RT_PRIO - 1 - args->priority) < 1) {
-                linux_rt_priority = 1;
+	if (args->policy == SCHED_NORMAL) {
+		linux_rt_priority = 0;
+	} else if ((linux_rt_priority = MAX_RT_PRIO - 1 - args->priority) < 1) {
+		linux_rt_priority = 1;
 	}
 	rtai_set_linux_task_priority(current, args->policy, linux_rt_priority);
-	
+
 	if ((args->task = __task_init(rt_get_name(NULL), args->priority, 0, 0, args->cpus_allowed))) {
 		RT_TASK *task = args->task;
 		void (*fun)(long) = args->fun;
@@ -833,7 +833,7 @@ RT_TASK *rt_kthread_create(void *fun, long data, int priority, int linux_policy,
 	return args.task;
 }
 #endif
-	
+
 #include <linux/kthread.h>
 long rt_thread_create(void *fun, void *args, int stack_size)
 {
@@ -850,15 +850,15 @@ long rt_thread_create(void *fun, void *args, int stack_size)
 	return retval;
 }
 EXPORT_SYMBOL(rt_thread_create);
-	
+
 RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int policy, int cpus_allowed)
 {
 	int linux_rt_priority;
 	RT_TASK *task;
-        if (policy == SCHED_NORMAL) {
-                linux_rt_priority = 0;
-        } else if ((linux_rt_priority = MAX_RT_PRIO - 1 - priority) < 1) {
-                linux_rt_priority = 1;
+	if (policy == SCHED_NORMAL) {
+		linux_rt_priority = 0;
+	} else if ((linux_rt_priority = MAX_RT_PRIO - 1 - priority) < 1) {
+		linux_rt_priority = 1;
 	}
 	rtai_set_linux_task_priority(current, policy, linux_rt_priority);
 //	rt_daemonize();

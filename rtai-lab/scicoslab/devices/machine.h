@@ -60,7 +60,7 @@
 /*
    Define integer C type which must fit Fortran integer
    For Scilab to work, the rule is:
-          size of Fortran double precision = 2 * size of Fortran integer
+	  size of Fortran double precision = 2 * size of Fortran integer
 
    At the present time, we suppose:
        size of Fortran integer = 4 bytes

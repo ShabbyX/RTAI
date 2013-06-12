@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2000  Emanuele Bianchi (bianchi@aero.polimi.it)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		    Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -140,7 +140,7 @@ int main(void)
 	tss = rt_get_cpu_time_ns();
 	for (i = 0; i < LOOPS; i++) {
 		for (k = 0; k < NR_RT_TASKS; k++) {
-	        	rt_sem_signal(sem);
+			rt_sem_signal(sem);
 		}
 	}
 	tss = rt_get_cpu_time_ns() - tss;

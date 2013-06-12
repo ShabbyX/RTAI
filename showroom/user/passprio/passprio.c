@@ -49,11 +49,11 @@ int main(void)
 
 	rt_sem_wait(sem[0]);
 
-        for (i = 1; i < NTASKS; i++) {
+	for (i = 1; i < NTASKS; i++) {
 		rt_thread_create(tskfun, (void *)i, 0);
 		rt_receive(NULL, &k);
 		rt_printk("AFTER TSKNR %d CREATED > (TSKNR-PRI):\n", i);
-        	for (k = 0; k < i; k++) {
+		for (k = 0; k < i; k++) {
 			rt_get_priorities(task[k], &prio, &bprio);
 			rt_printk("%d-%d|", k, prio);
 		}

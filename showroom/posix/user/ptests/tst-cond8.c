@@ -63,7 +63,7 @@ tf1 (void *p)
 {
   int err;
 
-        pthread_init_real_time_np("TASK1", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
+	pthread_init_real_time_np("TASK1", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
   if (pthread_setcancelstate (PTHREAD_CANCEL_ENABLE, NULL) != 0
       || pthread_setcanceltype (PTHREAD_CANCEL_DEFERRED, NULL) != 0)
     {
@@ -104,7 +104,7 @@ tf2 (void *p)
 {
   int err;
 
-        pthread_init_real_time_np("TASK2", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
+	pthread_init_real_time_np("TASK2", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
   if (pthread_setcancelstate (PTHREAD_CANCEL_ENABLE, NULL) != 0
       || pthread_setcanceltype (PTHREAD_CANCEL_DEFERRED, NULL) != 0)
     {
@@ -278,12 +278,12 @@ do_test (void)
 int main(void)
 {
 	pthread_mutexattr_t a;
-        pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
-        start_rt_timer(0);
-        pthread_mutexattr_init(&a);
-        pthread_mutexattr_settype(&a, PTHREAD_MUTEX_ERRORCHECK);
-        pthread_mutex_init(&mut, &a);
-        pthread_cond_init(&cond, NULL);
-        do_test();
-        return 0;
+	pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
+	start_rt_timer(0);
+	pthread_mutexattr_init(&a);
+	pthread_mutexattr_settype(&a, PTHREAD_MUTEX_ERRORCHECK);
+	pthread_mutex_init(&mut, &a);
+	pthread_cond_init(&cond, NULL);
+	do_test();
+	return 0;
 }

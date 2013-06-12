@@ -57,7 +57,7 @@ static void init(scicos_block *block)
     inet_aton(str, &addr.sin_addr);
     mbx->tNode = addr.sin_addr.s_addr;
     while ((mbx->tPort = rt_request_port(mbx->tNode)) <= 0
-           && mbx->tPort != -EINVAL);
+	   && mbx->tPort != -EINVAL);
   }
 
   mbx->mbx = (MBX *) RT_typed_named_mbx_init(mbx->tNode,mbx->tPort,mbx->mbxName,nch*sizeof(double),FIFO_Q);
@@ -111,4 +111,3 @@ void rtai_mbx_send_if(scicos_block *block,int flag)
     init(block);
   }
 }
-

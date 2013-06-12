@@ -57,6 +57,6 @@ int main(int argc,char *argv[])
 		rd = read(fd0, &samp, sizeof(samp));
 		printf("RTD|%12ld|%12ld|%12ld|%12ld|%12ld\n", samp.min, samp.avrg, samp.max, samp.jitters[0], samp.jitters[1]);
 		fflush(stdout);
-        }
+	}
 	return 0;
 }

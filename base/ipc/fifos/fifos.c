@@ -591,7 +591,7 @@ static inline void mbx_init(F_MBX *mbx, int size, char *bufadr)
 	mbx->size = mbx->frbs = size;
 	mbx->fbyte = mbx->lbyte = mbx->avbs = 0;
 #ifdef CONFIG_SMP
-        spin_lock_init(&mbx->buflock);
+	spin_lock_init(&mbx->buflock);
 #endif
 	spin_lock_init(&(mbx->buflock));
 }
@@ -1577,7 +1577,7 @@ static int rtf_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, u
 		}
 		case FIONREAD: {
 			return put_user(fifo[minor].mbx.avbs, (int *)arg);
-	        }
+		}
 		/*
 		 * Support for named FIFOS : Ian Soanes (ians@zentropix.com)
 		 * Based on ideas from Stuart Hughes and David Schleef
@@ -1611,22 +1611,22 @@ static int rtf_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, u
 
 			rt_copy_from_user(&args, (void *)arg, sizeof(args));
 			return rtf_named_create(args.name, args.size);
-	        }
+		}
 		case RTF_CREATE_NAMED: {
 			char name[RTF_NAMELEN+1];
 
 			rt_copy_from_user(name, (void *)arg, RTF_NAMELEN+1);
 			return rtf_create_named(name);
-	        }
+		}
 		case RTF_NAME_LOOKUP: {
 			char name[RTF_NAMELEN+1];
 
 			rt_copy_from_user(name, (void *)arg, RTF_NAMELEN+1);
 			return rtf_getfifobyname(name);
 		}
-	        case TCGETS:
-		        /* Keep isatty() probing silent */
-		        return -ENOTTY;
+		case TCGETS:
+			/* Keep isatty() probing silent */
+			return -ENOTTY;
 
 		default : {
 			printk("RTAI-FIFO: cmd %d is not implemented\n", cmd);
@@ -1757,7 +1757,7 @@ int __rtai_fifos_init(void)
 		if (CLASS_DEVICE_CREATE(fifo_class, MKDEV(RTAI_FIFOS_MAJOR, minor), NULL, "rtf%d", minor) == NULL) {
 			printk("RTAI-FIFO: cannot attach class.\n");
 			class_destroy(fifo_class);
-                        return -EBUSY;
+			return -EBUSY;
 		}
 	}
 #endif
@@ -1805,7 +1805,7 @@ void __rtai_fifos_exit(void)
 		printk("RTAI-FIFO: rtai srq %d illegal or already free.\n", fifo_srq);
 	}
 #ifdef CONFIG_PROC_FS
-        rtai_proc_fifo_unregister();
+	rtai_proc_fifo_unregister();
 #endif
 	kfree(fifo);
 }
@@ -1849,7 +1849,7 @@ static int rtai_read_fifos(char* buf, char** start, off_t offset,
 	for (i = 0; i < MAX_FIFOS; i++) {
 		if (fifo[i].opncnt > 0) {
 			len += sprintf( buf+len, "%-8d %-9d %-10d %-10p %-12s", i,
-                        	        fifo[i].opncnt, fifo[i].mbx.size,
+					fifo[i].opncnt, fifo[i].mbx.size,
 					fifo[i].handler,
 					fifo[i].malloc_type == 'v'
 					    ? "vmalloc" : "kmalloc"
@@ -1869,14 +1869,14 @@ static int rtai_read_fifos(char* buf, char** start, off_t offset,
 
 static int rtai_proc_fifo_register(void)
 {
-        struct proc_dir_entry *proc_fifo_ent;
-        proc_fifo_ent = create_proc_entry("fifos", S_IFREG|S_IRUGO|S_IWUSR,
+	struct proc_dir_entry *proc_fifo_ent;
+	proc_fifo_ent = create_proc_entry("fifos", S_IFREG|S_IRUGO|S_IWUSR,
 								rtai_proc_root);
-        if (!proc_fifo_ent) {
-                printk("Unable to initialize /proc/rtai/fifos\n");
-                return(-1);
-        }
-        proc_fifo_ent->read_proc = rtai_read_fifos;
+	if (!proc_fifo_ent) {
+		printk("Unable to initialize /proc/rtai/fifos\n");
+		return(-1);
+	}
+	proc_fifo_ent->read_proc = rtai_read_fifos;
 	return 0;
 }
 
@@ -1905,11 +1905,11 @@ int rtf_named_create(const char *name, int size)
 	    	if (!strncmp(name, fifo[minor].name, RTF_NAMELEN)) {
 			break;
 		} else if (!fifo[minor].opncnt && !fifo[minor].name[0]) {
-		        strncpy(fifo[minor].name, name, RTF_NAMELEN + 1);
+			strncpy(fifo[minor].name, name, RTF_NAMELEN + 1);
 			rtf_spin_unlock_irqrestore(flags, rtf_name_lock);
-		        if ((err = rtf_create(minor, size)) < 0) {
-		        	fifo[minor].name[0] = 0;
-			        return err;
+			if ((err = rtf_create(minor, size)) < 0) {
+				fifo[minor].name[0] = 0;
+				return err;
 			}
 			return minor;
 		}

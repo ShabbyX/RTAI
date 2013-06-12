@@ -87,26 +87,26 @@ typedef struct _trace_rtai_global_irq_entry
 } LTT_PACKED_STRUCT trace_rtai_global_irq_entry;
 #if CONFIG_X86
 #define TRACE_RTAI_GLOBAL_IRQ_ENTRY(ID, __dummy) \
-           do \
-           {\
-           uint32_t                    eflags, xcs; \
-           trace_rtai_global_irq_entry irq_entry;\
-           irq_entry.irq_id = ID;\
-           __asm__ __volatile__("pushfl; pop %0": "=g" (eflags)); \
-           __asm__ __volatile__("pushl %%cs; pop %0": "=g" (xcs)); \
-           irq_entry.kernel = !((VM_MASK & eflags) || (3 & xcs));\
-           rt_trace_event(TRACE_RTAI_EV_GLOBAL_IRQ_ENTRY, &irq_entry);\
-           } while(0)
+	   do \
+	   {\
+	   uint32_t                    eflags, xcs; \
+	   trace_rtai_global_irq_entry irq_entry;\
+	   irq_entry.irq_id = ID;\
+	   __asm__ __volatile__("pushfl; pop %0": "=g" (eflags)); \
+	   __asm__ __volatile__("pushl %%cs; pop %0": "=g" (xcs)); \
+	   irq_entry.kernel = !((VM_MASK & eflags) || (3 & xcs));\
+	   rt_trace_event(TRACE_RTAI_EV_GLOBAL_IRQ_ENTRY, &irq_entry);\
+	   } while(0)
 #endif
 #if CONFIG_PPC
 #define TRACE_RTAI_GLOBAL_IRQ_ENTRY(ID, KERNEL) \
-           do \
-           {\
-           trace_rtai_global_irq_entry irq_entry;\
-           irq_entry.irq_id = ID;\
-           irq_entry.kernel = KERNEL;\
-           rt_trace_event(TRACE_RTAI_EV_GLOBAL_IRQ_ENTRY, &irq_entry);\
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_global_irq_entry irq_entry;\
+	   irq_entry.irq_id = ID;\
+	   irq_entry.kernel = KERNEL;\
+	   rt_trace_event(TRACE_RTAI_EV_GLOBAL_IRQ_ENTRY, &irq_entry);\
+	   } while(0)
 #endif
 
 /*  TRACE_RTAI_GLOBAL_IRQ_EXIT */
@@ -120,26 +120,26 @@ typedef struct _trace_rtai_own_irq_entry
 } LTT_PACKED_STRUCT trace_rtai_own_irq_entry;
 #if CONFIG_X86
 #define TRACE_RTAI_OWN_IRQ_ENTRY(ID) \
-           do \
-           {\
-           uint32_t                 eflags, xcs; \
-           trace_rtai_own_irq_entry irq_entry;\
-           irq_entry.irq_id = ID;\
-           __asm__ __volatile__("pushfl; pop %0": "=g" (eflags)); \
-           __asm__ __volatile__("pushl %%cs; pop %0": "=g" (xcs)); \
-           irq_entry.kernel = !((VM_MASK & eflags) || (3 & xcs));\
-           rt_trace_event(TRACE_RTAI_EV_OWN_IRQ_ENTRY, &irq_entry);\
-           } while(0)
+	   do \
+	   {\
+	   uint32_t                 eflags, xcs; \
+	   trace_rtai_own_irq_entry irq_entry;\
+	   irq_entry.irq_id = ID;\
+	   __asm__ __volatile__("pushfl; pop %0": "=g" (eflags)); \
+	   __asm__ __volatile__("pushl %%cs; pop %0": "=g" (xcs)); \
+	   irq_entry.kernel = !((VM_MASK & eflags) || (3 & xcs));\
+	   rt_trace_event(TRACE_RTAI_EV_OWN_IRQ_ENTRY, &irq_entry);\
+	   } while(0)
 #endif
 #if CONFIG_PPC
 #define TRACE_RTAI_OWN_IRQ_ENTRY(ID, KERNEL) \
-           do \
-           {\
-           trace_rtai_own_irq_entry irq_entry;\
-           irq_entry.irq_id = ID;\
-           irq_entry.kernel = KERNEL;\
-           rt_trace_event(TRACE_RTAI_EV_OWN_IRQ_ENTRY, &irq_entry);\
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_own_irq_entry irq_entry;\
+	   irq_entry.irq_id = ID;\
+	   irq_entry.kernel = KERNEL;\
+	   rt_trace_event(TRACE_RTAI_EV_OWN_IRQ_ENTRY, &irq_entry);\
+	   } while(0)
 #endif
 
 /*  TRACE_RTAI_OWN_IRQ_EXIT */
@@ -152,17 +152,17 @@ typedef struct _trace_rtai_trap_entry
   uint32_t  address;        /* Address where trap occured */
 } LTT_PACKED_STRUCT trace_rtai_trap_entry;
 #define TRACE_RTAI_TRAP_ENTRY(ID,ADDR) \
-           do \
-           {\
-           trace_rtai_trap_entry trap_event;\
-           trap_event.trap_id = ID;\
-           trap_event.address = ADDR; \
-           rt_trace_event(TRACE_RTAI_EV_TRAP_ENTRY, &trap_event);\
+	   do \
+	   {\
+	   trace_rtai_trap_entry trap_event;\
+	   trap_event.trap_id = ID;\
+	   trap_event.address = ADDR; \
+	   rt_trace_event(TRACE_RTAI_EV_TRAP_ENTRY, &trap_event);\
 	   } while(0)
 /*
-           uint32_t              eip; \
-           __asm__ __volatile__("pushl %%ip; pop %0": "=g" (eip)); \
-           trap_event.address = eip;\
+	   uint32_t              eip; \
+	   __asm__ __volatile__("pushl %%ip; pop %0": "=g" (eip)); \
+	   trap_event.address = eip;\
 */
 
 /*  TRACE_RTAI_TRAP_EXIT */
@@ -176,26 +176,26 @@ typedef struct _trace_rtai_srq_entry
 } LTT_PACKED_STRUCT trace_rtai_srq_entry;
 #if CONFIG_X86
 #define TRACE_RTAI_SRQ_ENTRY(ID) \
-           do \
-           {\
-           uint32_t             eflags, xcs; \
-           trace_rtai_srq_entry srq_entry;\
-           srq_entry.srq_id = ID;\
-           __asm__ __volatile__("pushfl; pop %0": "=g" (eflags)); \
-           __asm__ __volatile__("pushl %%cs; pop %0": "=g" (xcs)); \
-           srq_entry.kernel = !((VM_MASK & eflags) || (3 & xcs));\
-           rt_trace_event(TRACE_RTAI_EV_SRQ_ENTRY, &srq_entry);\
-           } while(0)
+	   do \
+	   {\
+	   uint32_t             eflags, xcs; \
+	   trace_rtai_srq_entry srq_entry;\
+	   srq_entry.srq_id = ID;\
+	   __asm__ __volatile__("pushfl; pop %0": "=g" (eflags)); \
+	   __asm__ __volatile__("pushl %%cs; pop %0": "=g" (xcs)); \
+	   srq_entry.kernel = !((VM_MASK & eflags) || (3 & xcs));\
+	   rt_trace_event(TRACE_RTAI_EV_SRQ_ENTRY, &srq_entry);\
+	   } while(0)
 #endif
 #if CONFIG_PPC || CONFIG_ARM
 #define TRACE_RTAI_SRQ_ENTRY(ID,KERNEL) \
-           do \
-           {\
-           trace_rtai_srq_entry srq_entry;\
-           srq_entry.srq_id = ID;\
-           srq_entry.kernel = KERNEL;\
-           rt_trace_event(TRACE_RTAI_EV_SRQ_ENTRY, &srq_entry);\
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_srq_entry srq_entry;\
+	   srq_entry.srq_id = ID;\
+	   srq_entry.kernel = KERNEL;\
+	   rt_trace_event(TRACE_RTAI_EV_SRQ_ENTRY, &srq_entry);\
+	   } while(0)
 #endif
 
 /*  TRACE_RTAI_SRQ_EXIT */
@@ -207,12 +207,12 @@ typedef struct _trace_rtai_switchto_linux
   uint8_t   cpu_id;         /* The CPUID being switched to Linux */
 } LTT_PACKED_STRUCT trace_rtai_switchto_linux;
 #define TRACE_RTAI_SWITCHTO_LINUX(ID) \
-           do \
-           {\
-           trace_rtai_switchto_linux switch_event; \
-           switch_event.cpu_id = (uint8_t) ID; \
-           rt_trace_event(TRACE_RTAI_EV_SWITCHTO_LINUX, &switch_event); \
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_switchto_linux switch_event; \
+	   switch_event.cpu_id = (uint8_t) ID; \
+	   rt_trace_event(TRACE_RTAI_EV_SWITCHTO_LINUX, &switch_event); \
+	   } while(0)
 
 /*  TRACE_RTAI_SWITCHTO_RT */
 typedef struct _trace_rtai_switchto_rt
@@ -220,12 +220,12 @@ typedef struct _trace_rtai_switchto_rt
   uint8_t   cpu_id;         /* The CPUID being switched to RT */
 } LTT_PACKED_STRUCT trace_rtai_switchto_rt;
 #define TRACE_RTAI_SWITCHTO_RT(ID) \
-           do \
-           {\
-           trace_rtai_switchto_rt switch_event; \
-           switch_event.cpu_id = (uint8_t) ID; \
-           rt_trace_event(TRACE_RTAI_EV_SWITCHTO_RT, &switch_event); \
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_switchto_rt switch_event; \
+	   switch_event.cpu_id = (uint8_t) ID; \
+	   rt_trace_event(TRACE_RTAI_EV_SWITCHTO_RT, &switch_event); \
+	   } while(0)
 
 /*  TRACE_RTAI_SCHED_CHANGE */
 typedef struct _trace_rtai_sched_change
@@ -235,14 +235,14 @@ typedef struct _trace_rtai_sched_change
   uint32_t  out_state;   /* Outgoing process' state */
 } LTT_PACKED_STRUCT trace_rtai_sched_change;
 #define TRACE_RTAI_SCHED_CHANGE(OUT, IN, OUT_STATE) \
-           do \
-           {\
-           trace_rtai_sched_change sched_event;\
-           sched_event.out       = (uint32_t) OUT;\
-           sched_event.in        = (uint32_t) IN;\
-           sched_event.out_state = (uint32_t) OUT_STATE; \
-           rt_trace_event(TRACE_RTAI_EV_SCHED_CHANGE, &sched_event);\
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_sched_change sched_event;\
+	   sched_event.out       = (uint32_t) OUT;\
+	   sched_event.in        = (uint32_t) IN;\
+	   sched_event.out_state = (uint32_t) OUT_STATE; \
+	   rt_trace_event(TRACE_RTAI_EV_SCHED_CHANGE, &sched_event);\
+	   } while(0)
 
 /*  TRACE_RTAI_TASK */
 #define TRACE_RTAI_EV_TASK_INIT                    1     /* Initialize task */
@@ -265,15 +265,15 @@ typedef struct _trace_rtai_task
   uint64_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_task;
 #define TRACE_RTAI_TASK(ID, DATA1, DATA2, DATA3) \
-           do \
-           {\
-           trace_rtai_task task_event;\
-           task_event.event_sub_id = (uint8_t)  ID;\
-           task_event.event_data1  = (uint32_t) DATA1; \
-           task_event.event_data2  = (uint64_t) DATA2; \
-           task_event.event_data3  = (uint64_t) DATA3; \
-           rt_trace_event(TRACE_RTAI_EV_TASK, &task_event);\
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_task task_event;\
+	   task_event.event_sub_id = (uint8_t)  ID;\
+	   task_event.event_data1  = (uint32_t) DATA1; \
+	   task_event.event_data2  = (uint64_t) DATA2; \
+	   task_event.event_data3  = (uint64_t) DATA3; \
+	   rt_trace_event(TRACE_RTAI_EV_TASK, &task_event);\
+	   } while(0)
 
 /*  TRACE_RTAI_TIMER */
 #define TRACE_RTAI_EV_TIMER_REQUEST                1     /* Request timer */
@@ -288,14 +288,14 @@ typedef struct _trace_rtai_timer
   uint32_t  event_data2;   /* Event data 2 */
 } LTT_PACKED_STRUCT trace_rtai_timer;
 #define TRACE_RTAI_TIMER(ID, DATA1, DATA2) \
-           do \
-           {\
-           trace_rtai_timer timer_event; \
-           timer_event.event_sub_id = (uint8_t)  ID; \
-           timer_event.event_data1  = (uint32_t) DATA1; \
-           timer_event.event_data2  = (uint32_t) DATA2; \
-           rt_trace_event(TRACE_RTAI_EV_TIMER, &timer_event); \
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_timer timer_event; \
+	   timer_event.event_sub_id = (uint8_t)  ID; \
+	   timer_event.event_data1  = (uint32_t) DATA1; \
+	   timer_event.event_data2  = (uint32_t) DATA2; \
+	   rt_trace_event(TRACE_RTAI_EV_TIMER, &timer_event); \
+	   } while(0)
 
 /*  TRACE_RTAI_SEM */
 #define TRACE_RTAI_EV_SEM_INIT                     1     /* Initialize semaphore */
@@ -311,14 +311,14 @@ typedef struct _trace_rtai_sem
   uint64_t  event_data2;   /* Event data 2 */
 } LTT_PACKED_STRUCT trace_rtai_sem;
 #define TRACE_RTAI_SEM(ID, DATA1, DATA2) \
-           do \
-           {\
-           trace_rtai_sem sem_event; \
-           sem_event.event_sub_id = (uint8_t)  ID; \
-           sem_event.event_data1  = (uint32_t) DATA1; \
-           sem_event.event_data2  = (uint64_t) DATA2; \
-           rt_trace_event(TRACE_RTAI_EV_SEM, &sem_event); \
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_sem sem_event; \
+	   sem_event.event_sub_id = (uint8_t)  ID; \
+	   sem_event.event_data1  = (uint32_t) DATA1; \
+	   sem_event.event_data2  = (uint64_t) DATA2; \
+	   rt_trace_event(TRACE_RTAI_EV_SEM, &sem_event); \
+	   } while(0)
 
 /*  TRACE_RTAI_MSG */
 #define TRACE_RTAI_EV_MSG_SEND                      1    /* Send a message */
@@ -335,15 +335,15 @@ typedef struct _trace_rtai_msg
   uint64_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_msg;
 #define TRACE_RTAI_MSG(ID, DATA1, DATA2, DATA3) \
-           do \
-           {\
-           trace_rtai_msg msg_event; \
-           msg_event.event_sub_id = (uint8_t)  ID; \
-           msg_event.event_data1  = (uint32_t) DATA1; \
-           msg_event.event_data2  = (uint32_t) DATA2; \
-           msg_event.event_data3  = (uint64_t) DATA3; \
-           rt_trace_event(TRACE_RTAI_EV_MSG, &msg_event); \
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_msg msg_event; \
+	   msg_event.event_sub_id = (uint8_t)  ID; \
+	   msg_event.event_data1  = (uint32_t) DATA1; \
+	   msg_event.event_data2  = (uint32_t) DATA2; \
+	   msg_event.event_data3  = (uint64_t) DATA3; \
+	   rt_trace_event(TRACE_RTAI_EV_MSG, &msg_event); \
+	   } while(0)
 
 /*  TRACE_RTAI_RPC */
 #define TRACE_RTAI_EV_RPC_MAKE                       1    /* Make a remote procedure call */
@@ -358,15 +358,15 @@ typedef struct _trace_rtai_rpc
   uint64_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_rpc;
 #define TRACE_RTAI_RPC(ID, DATA1, DATA2, DATA3) \
-           do \
-           {\
-           trace_rtai_rpc rpc_event; \
-           rpc_event.event_sub_id = (uint8_t)  ID; \
-           rpc_event.event_data1  = (uint32_t) DATA1; \
-           rpc_event.event_data2  = (uint32_t) DATA2; \
-           rpc_event.event_data3  = (uint64_t) DATA3; \
-           rt_trace_event(TRACE_RTAI_EV_RPC, &rpc_event); \
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_rpc rpc_event; \
+	   rpc_event.event_sub_id = (uint8_t)  ID; \
+	   rpc_event.event_data1  = (uint32_t) DATA1; \
+	   rpc_event.event_data2  = (uint32_t) DATA2; \
+	   rpc_event.event_data3  = (uint64_t) DATA3; \
+	   rt_trace_event(TRACE_RTAI_EV_RPC, &rpc_event); \
+	   } while(0)
 
 /*  TRACE_RTAI_MBX */
 #define TRACE_RTAI_EV_MBX_INIT                       1    /* Initialize Message BoX */
@@ -387,15 +387,15 @@ typedef struct _trace_rtai_mbx
   uint64_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_mbx;
 #define TRACE_RTAI_MBX(ID, DATA1, DATA2, DATA3) \
-           do \
-           {\
-           trace_rtai_mbx mbx_event; \
-           mbx_event.event_sub_id = (uint8_t)  ID; \
-           mbx_event.event_data1  = (uint32_t) DATA1; \
-           mbx_event.event_data2  = (uint32_t) DATA2; \
-           mbx_event.event_data3  = (uint64_t) DATA3; \
-           rt_trace_event(TRACE_RTAI_EV_MBX, &mbx_event); \
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_mbx mbx_event; \
+	   mbx_event.event_sub_id = (uint8_t)  ID; \
+	   mbx_event.event_data1  = (uint32_t) DATA1; \
+	   mbx_event.event_data2  = (uint32_t) DATA2; \
+	   mbx_event.event_data3  = (uint64_t) DATA3; \
+	   rt_trace_event(TRACE_RTAI_EV_MBX, &mbx_event); \
+	   } while(0)
 
 /*  TRACE_RTAI_FIFO */
 #define TRACE_RTAI_EV_FIFO_CREATE                     1   /* Create FIFO */
@@ -431,14 +431,14 @@ typedef struct _trace_rtai_fifo
   uint32_t  event_data2;   /* Event data 2 */
 } LTT_PACKED_STRUCT trace_rtai_fifo;
 #define TRACE_RTAI_FIFO(ID, DATA1, DATA2) \
-           do \
-           {\
-           trace_rtai_fifo fifo_event; \
-           fifo_event.event_sub_id = (uint8_t)  ID; \
-           fifo_event.event_data1  = (uint32_t) DATA1; \
-           fifo_event.event_data2  = (uint32_t) DATA2; \
-           rt_trace_event(TRACE_RTAI_EV_FIFO, &fifo_event); \
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_fifo fifo_event; \
+	   fifo_event.event_sub_id = (uint8_t)  ID; \
+	   fifo_event.event_data1  = (uint32_t) DATA1; \
+	   fifo_event.event_data2  = (uint32_t) DATA2; \
+	   rt_trace_event(TRACE_RTAI_EV_FIFO, &fifo_event); \
+	   } while(0)
 
 /*  TRACE_RTAI_SHM */
 #define TRACE_RTAI_EV_SHM_MALLOC                       1  /* Allocate shared memory */
@@ -454,15 +454,15 @@ typedef struct _trace_rtai_shm
   uint32_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_shm;
 #define TRACE_RTAI_SHM(ID, DATA1, DATA2, DATA3) \
-           do \
-           {\
-           trace_rtai_shm shm_event; \
-           shm_event.event_sub_id = (uint8_t)  ID; \
-           shm_event.event_data1  = (uint32_t) DATA1; \
-           shm_event.event_data2  = (uint32_t) DATA2; \
-           shm_event.event_data3  = (uint32_t) DATA3; \
-           rt_trace_event(TRACE_RTAI_EV_SHM, &shm_event); \
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_shm shm_event; \
+	   shm_event.event_sub_id = (uint8_t)  ID; \
+	   shm_event.event_data1  = (uint32_t) DATA1; \
+	   shm_event.event_data2  = (uint32_t) DATA2; \
+	   shm_event.event_data3  = (uint32_t) DATA3; \
+	   rt_trace_event(TRACE_RTAI_EV_SHM, &shm_event); \
+	   } while(0)
 
 /*  TRACE_RTAI_POSIX */
 #define TRACE_RTAI_EV_POSIX_MQ_OPEN                       1  /* Open/create message queue */
@@ -517,15 +517,15 @@ typedef struct _trace_rtai_posix
   uint32_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_posix;
 #define TRACE_RTAI_POSIX(ID, DATA1, DATA2, DATA3) \
-           do \
-           {\
-           trace_rtai_posix posix_event; \
-           posix_event.event_sub_id = (uint8_t)  ID; \
-           posix_event.event_data1  = (uint32_t) DATA1; \
-           posix_event.event_data2  = (uint32_t) DATA2; \
-           posix_event.event_data3  = (uint32_t) DATA3; \
-           rt_trace_event(TRACE_RTAI_EV_POSIX, &posix_event); \
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_posix posix_event; \
+	   posix_event.event_sub_id = (uint8_t)  ID; \
+	   posix_event.event_data1  = (uint32_t) DATA1; \
+	   posix_event.event_data2  = (uint32_t) DATA2; \
+	   posix_event.event_data3  = (uint32_t) DATA3; \
+	   rt_trace_event(TRACE_RTAI_EV_POSIX, &posix_event); \
+	   } while(0)
 
 /*  TRACE_RTAI_LXRT */
 #define TRACE_RTAI_EV_LXRT_RTAI_SYSCALL_ENTRY             1  /* Entry in LXRT syscall */
@@ -544,15 +544,15 @@ typedef struct _trace_rtai_lxrt
   uint32_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_lxrt;
 #define TRACE_RTAI_LXRT(ID, DATA1, DATA2, DATA3) \
-           do \
-           {\
-           trace_rtai_lxrt lxrt_event; \
-           lxrt_event.event_sub_id = (uint8_t)  ID; \
-           lxrt_event.event_data1  = (uint32_t) DATA1; \
-           lxrt_event.event_data2  = (uint32_t) DATA2; \
-           lxrt_event.event_data3  = (uint32_t) DATA3; \
-           rt_trace_event(TRACE_RTAI_EV_LXRT, &lxrt_event); \
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_lxrt lxrt_event; \
+	   lxrt_event.event_sub_id = (uint8_t)  ID; \
+	   lxrt_event.event_data1  = (uint32_t) DATA1; \
+	   lxrt_event.event_data2  = (uint32_t) DATA2; \
+	   lxrt_event.event_data3  = (uint32_t) DATA3; \
+	   rt_trace_event(TRACE_RTAI_EV_LXRT, &lxrt_event); \
+	   } while(0)
 
 /*  TRACE_RTAI_LXRTI */
 #define TRACE_RTAI_EV_LXRTI_NAME_ATTACH                    1  /* Register current process as name */
@@ -573,15 +573,15 @@ typedef struct _trace_rtai_lxrti
   uint64_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_lxrti;
 #define TRACE_RTAI_LXRTI(ID, DATA1, DATA2, DATA3) \
-           do \
-           {\
-           trace_rtai_lxrti lxrti_event; \
-           lxrti_event.event_sub_id = (uint8_t)  ID; \
-           lxrti_event.event_data1  = (uint32_t) DATA1; \
-           lxrti_event.event_data2  = (uint32_t) DATA2; \
-           lxrti_event.event_data3  = (uint64_t) DATA3; \
-           rt_trace_event(TRACE_RTAI_EV_LXRTI, &lxrti_event); \
-           } while(0)
+	   do \
+	   {\
+	   trace_rtai_lxrti lxrti_event; \
+	   lxrti_event.event_sub_id = (uint8_t)  ID; \
+	   lxrti_event.event_data1  = (uint32_t) DATA1; \
+	   lxrti_event.event_data2  = (uint32_t) DATA2; \
+	   lxrti_event.event_data3  = (uint64_t) DATA3; \
+	   rt_trace_event(TRACE_RTAI_EV_LXRTI, &lxrti_event); \
+	   } while(0)
 
 #else /* !(CONFIG_RTAI_TRACE && __KERNEL__) */
 #define RT_TRACE_EVENT(ID, DATA)

@@ -68,10 +68,10 @@ static int cpu_used[NR_RT_CPUS];
 static void rt_fractionated_sleep(RTIME OneUnit)
 {
 #define FRACT 100
-        int i = FRACT;
-        while (i--) {
-                rt_sleep(llimd(OneUnit, 1, FRACT));
-        }
+	int i = FRACT;
+	while (i--) {
+		rt_sleep(llimd(OneUnit, 1, FRACT));
+	}
 }
 
 
