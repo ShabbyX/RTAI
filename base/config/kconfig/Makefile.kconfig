@@ -123,7 +123,7 @@ check-lxdialog  := $(srctree)/base/config/kconfig/lxdialog/check-lxdialog.sh
 # Use recursively expanded variables so we do not call gcc unless
 # we really need to do so. (Do not call gcc as part of make mrproper)
 EXTRACFLAGS += $(shell $(SHELL) $(check-lxdialog) -ccflags) \
-                    -DLOCALE
+		    -DLOCALE
 
 # ===========================================================================
 # Shared Makefile for the various kconfig executables:
@@ -216,7 +216,7 @@ CXXFLAGS_qconf.o	= $(KC_QT_CFLAGS)
 
 LOADLIBES_gconf	= `pkg-config --libs gtk+-2.0 gmodule-2.0 libglade-2.0`
 CFLAGS_gconf.o	= `pkg-config --cflags gtk+-2.0 gmodule-2.0 libglade-2.0` \
-                          -Wno-missing-prototypes
+			  -Wno-missing-prototypes
 
 LOADLIBES_mconf   = $(shell $(SHELL) $(check-lxdialog) -ldflags $(CC))
 
@@ -241,20 +241,20 @@ ifeq ($(qconf-target),1)
 	      dir="$$(pkg-config $$pkg --variable=prefix)"; \
 	    else \
 	      for d in $$QTDIR /usr/share/qt* /usr/lib/qt*; do \
-	        if [ -f $$d/include/qconfig.h ]; then dir=$$d; break; fi; \
+		if [ -f $$d/include/qconfig.h ]; then dir=$$d; break; fi; \
 	      done; \
 	      if [ -z "$$dir" ]; then \
-	        echo >&2 "*"; \
-	        echo >&2 "* Unable to find any QT installation. Please make sure that"; \
-	        echo >&2 "* the QT4 or QT3 development package is correctly installed and"; \
-	        echo >&2 "* either qmake can be found or install pkg-config or set"; \
-	        echo >&2 "* the QTDIR environment variable to the correct location."; \
-	        echo >&2 "*"; \
-	        false; \
+		echo >&2 "*"; \
+		echo >&2 "* Unable to find any QT installation. Please make sure that"; \
+		echo >&2 "* the QT4 or QT3 development package is correctly installed and"; \
+		echo >&2 "* either qmake can be found or install pkg-config or set"; \
+		echo >&2 "* the QTDIR environment variable to the correct location."; \
+		echo >&2 "*"; \
+		false; \
 	      fi; \
 	      libpath=$$dir/lib; lib=qt; osdir=""; \
 	      $(CXX) -print-multi-os-directory > /dev/null 2>&1 && \
-	        osdir=x$$($(CXX) -print-multi-os-directory); \
+		osdir=x$$($(CXX) -print-multi-os-directory); \
 	      test -d $$libpath/$$osdir && libpath=$$libpath/$$osdir; \
 	      test -f $$libpath/libqt-mt.so && lib=qt-mt; \
 	      cflags="-I$$dir/include"; \
@@ -473,9 +473,9 @@ host-cshobjs	:= $(host-cshobjs)
 # Handle options to gcc. Support building with separate output directory
 
 hostc_flags   = $(CFLAGS)   $(EXTRACFLAGS)   \
-                 $(CFLAGS_$(basetarget).o)
+		 $(CFLAGS_$(basetarget).o)
 hostcxx_flags = $(CXXFLAGS) $(EXTRACXXFLAGS) \
-                 $(CXXFLAGS_$(basetarget).o)
+		 $(CXXFLAGS_$(basetarget).o)
 
 #####
 # Compile programs on the host

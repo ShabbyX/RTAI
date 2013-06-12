@@ -18,7 +18,7 @@ noinst_HEADERS = \
 		rtai_pqueue_wrapper.h \
 		rtai_pthread_int_wrapper.h \
 		rtai_pthread_wrapper.h \
-	        tld_key.h \
+		tld_key.h \
 		rtf.h \
 		sem.h \
 		task.h \
@@ -40,7 +40,7 @@ libcpp_a_SOURCES = \
 		sem.cc \
 		task.cc \
 		time.cc \
-	        tld_key.c \
+		tld_key.c \
 		rtai_wrapper.c
 
 if CONFIG_RTAI_TRACE
