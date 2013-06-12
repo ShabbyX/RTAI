@@ -70,22 +70,22 @@ case "$host" in
 	arch_supports_sim=y
 	arch_supports_rtailab=y
 	wanted_kernel_arch=CONFIG_X86_32
-        ;;
+	;;
  x86_64*-*)
-        RTAI_TARGET_ARCH=x86
+	RTAI_TARGET_ARCH=x86
 	RTAI_TARGET_SUBARCH=64
-        arch_supports_lxrt=y
-        arch_supports_rtailab=n
-        wanted_kernel_arch=CONFIG_X86_64
-        ;;
+	arch_supports_lxrt=y
+	arch_supports_rtailab=n
+	wanted_kernel_arch=CONFIG_X86_64
+	;;
  arm-*)
 	RTAI_TARGET_ARCH=arm
 	wanted_kernel_arch=CONFIG_ARM
-        ;;
+	;;
  powerpc-*|ppc-*)
 	RTAI_TARGET_ARCH=ppc
 	wanted_kernel_arch=CONFIG_PPC
-        ;;
+	;;
  m68knommu-*)
  	RTAI_TARGET_ARCH=m68k
 	wanted_kernel_arch=CONFIG_M68K
@@ -1049,7 +1049,7 @@ AC_ARG_ENABLE(master-tsc-cpu,
 	[ --enable-master-tsc-cpu	Enable master TSC CPU],
 	[case "$enableval" in
  changequote(,)dnl
-        [0-7])
+	[0-7])
  changequote([,])dnl
 		if test x$CONFIG_RTAI_CPUS = x ; then
 			AC_MSG_ERROR([Option --enable-cpus must be defined before --enable-master-tsc-cpu])
@@ -1093,7 +1093,7 @@ AC_ARG_ENABLE(doc,
 if test \! -d $srcdir/doc; then
     if test x$CONFIG_RTAI_DOX_DOC = xy ;
     then
-        AC_MSG_ERROR([documentation tree is missing.])
+	AC_MSG_ERROR([documentation tree is missing.])
     fi
     AC_MSG_RESULT([not present])
 else
@@ -1115,12 +1115,12 @@ AC_MSG_RESULT(${dox_version:-not installed})
 if test x${CONFIG_RTAI_DOX_DOC} = xy
 then
    dox_version_number=`echo $dox_version | sed 'y,., ,' | {
-        read dox_major dox_minor dox_rev dox_patch
-        expr $dox_major \* 10000 + $dox_minor \* 100 + $dox_rev
+	read dox_major dox_minor dox_rev dox_patch
+	expr $dox_major \* 10000 + $dox_minor \* 100 + $dox_rev
    }`
    if test $dox_version_number -lt 10304
    then
-        AC_MSG_ERROR([Doxygen version 1.3.4 or higher is needed.])
+	AC_MSG_ERROR([Doxygen version 1.3.4 or higher is needed.])
    fi
 fi
 
@@ -1144,11 +1144,11 @@ DBX_DOC_INIT(doc/docbook, doc/generated, 4.2)
 
 AC_MSG_CHECKING(whether using LaTeX non-stop mode)
 AC_ARG_ENABLE(verbose-latex,
-        [ --enable-verbose-latex Uses LaTeX non-stop mode],
-        [case "$enableval" in
-        y | yes) CONFIG_RTAI_DOC_LATEX_NONSTOP=y ;;
-        *) unset CONFIG_RTAI_DOC_LATEX_NONSTOP ;;
-        esac])
+	[ --enable-verbose-latex Uses LaTeX non-stop mode],
+	[case "$enableval" in
+	y | yes) CONFIG_RTAI_DOC_LATEX_NONSTOP=y ;;
+	*) unset CONFIG_RTAI_DOC_LATEX_NONSTOP ;;
+	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_DOC_LATEX_NONSTOP:-no})
 
 if test x${CONFIG_RTAI_DOC_LATEX_NONSTOP} = xy; then
@@ -1224,7 +1224,7 @@ AC_ARG_ENABLE(sim,
 unset RTAI_MAYBE_SIMDIR
 if test \! -d $srcdir/rtai-sim; then
     if test x$CONFIG_RTAI_MVM = xy; then
-        AC_MSG_ERROR([simulator is missing.])
+	AC_MSG_ERROR([simulator is missing.])
     fi
     AC_MSG_RESULT([not present])
 else
@@ -1674,7 +1674,7 @@ else
    RTAI_KBUILD_BOTTOM=
    RTAI_KBUILD_CMD="for src in \$^; do if test \\! -r \`basename \$\$src\`; then \$(LN_S) \$\$src; fi; done; \
 		    rm -f $RTAI_LINUX_DIR/.tmp_versions/rtai_*.mod $RTAI_LINUX_DIR/.tmp_versions/*_rt.mod; \
-                    \$(MAKE) -C $RTAI_LINUX_DIR CC=$CC ARCH=$RTAI_TARGET_ARCH_NAME \
+		    \$(MAKE) -C $RTAI_LINUX_DIR CC=$CC ARCH=$RTAI_TARGET_ARCH_NAME \
 		    SUBDIRS=\$\$PWD M=\$\$PWD rtai_srctree=\`cd \$(top_srcdir) && pwd\` rtai_srcdir=\`cd \$(srcdir) && pwd\` V=\$(V) modules \
 		    rtai_objs='\$(call src2obj,c,\$^) \$(call src2obj,S,\$^) \$(call src2obj,cc,\$^) \$(call src2obj,cpp,\$^)' rtai_target=\$(basename \$@)"
    RTAI_KBUILD_CLEAN='rm -f *.ko *.mod.c .*.cmd *.o Module.symvers Module.markers modules.order && rm -Rf .tmp_versions'
@@ -1763,20 +1763,20 @@ case $RTAI_TARGET_ARCH in
 	else
 	   RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -msoft-float"
 	fi
-        ;;
+	;;
    64)
-        RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
-        RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
-        if test x$CONFIG_RTAI_FPU_SUPPORT = xy; then
-           RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -mhard-float"
-        else
-           RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -msoft-float"
-        fi
+	RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
+	RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
+	if test x$CONFIG_RTAI_FPU_SUPPORT = xy; then
+	   RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -mhard-float"
+	else
+	   RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -msoft-float"
+	fi
 	# 2009-03-23
 	# `-msse2' temporarily removed by Pierangelo Masarati
 	# as suggested by Paul <paul_c AT tuxcnc DOT org>
 	RTAI_TARGET_ARCH_OPTS="$RTAI_TARGET_ARCH_OPTS -msse"
-        ;;
+	;;
    esac
    ;;
  arm)
@@ -1799,7 +1799,7 @@ case $RTAI_TARGET_ARCH in
 	RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
 	RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -msoft-float"
 	AC_CONFIG_LINKS(base/include/asm-arm/arch:base/include/asm-arm/arch-$RTAI_TARGET_SUBARCH)
-        ;;
+	;;
  ppc)
 	RTAI_TARGET_SUBARCH=
 	dnl apparently, powerpc needs specific include/asm path to find errno.h
@@ -1864,7 +1864,7 @@ else
    if test x$CONFIG_RTAI_USER_DEBUG = xy; then
       RTAI_USER_CFLAGS="-g $RTAI_USER_CFLAGS"
       if test $CONFIG_RTAI_LXRT_INLINE = 2; then
-         RTAI_LXRT_LDADD="-llxrt"
+	 RTAI_LXRT_LDADD="-llxrt"
       fi
    else
       RTAI_USER_CFLAGS="-O2 $RTAI_USER_CFLAGS"
@@ -1981,25 +1981,25 @@ AC_CONFIG_FILES([ \
 	base/scripts/GNUmakefile \
 	base/scripts/rtai-config \
 	base/scripts/rtai-load \
-        base/arch/i386/GNUmakefile \
+	base/arch/i386/GNUmakefile \
 	base/arch/i386/hal/GNUmakefile \
 	base/arch/i386/calibration/GNUmakefile \
 	base/arch/i386/calibration/setsmi \
 	base/include/asm-i386/GNUmakefile \
 	base/arch/x86_64/GNUmakefile \
-        base/arch/x86_64/hal/GNUmakefile \
-        base/arch/x86_64/calibration/GNUmakefile \
+	base/arch/x86_64/hal/GNUmakefile \
+	base/arch/x86_64/calibration/GNUmakefile \
 	base/arch/x86_64/calibration/setsmi \
-        base/include/asm-x86_64/GNUmakefile \
+	base/include/asm-x86_64/GNUmakefile \
 	base/arch/x86/GNUmakefile \
-        base/arch/x86/hal/GNUmakefile \
-        base/arch/x86/calibration/GNUmakefile \
+	base/arch/x86/hal/GNUmakefile \
+	base/arch/x86/calibration/GNUmakefile \
 	base/arch/x86/calibration/setsmi \
-        base/include/asm-x86/GNUmakefile \
-        base/arch/arm/GNUmakefile \
+	base/include/asm-x86/GNUmakefile \
+	base/arch/arm/GNUmakefile \
 	base/arch/arm/hal/GNUmakefile \
 	base/include/asm-arm/GNUmakefile \
-        base/arch/ppc/GNUmakefile \
+	base/arch/ppc/GNUmakefile \
 	base/arch/ppc/hal/GNUmakefile \
 	base/include/asm-ppc/GNUmakefile \
 	base/arch/m68k/GNUmakefile \
@@ -2046,12 +2046,12 @@ AM_CONDITIONAL(CONFIG_RTAI_ADDONS,[test \! x$build_addons = x])
 
 if test -d $srcdir/rtai-lab; then
    AC_CONFIG_FILES([ \
-        rtai-lab/GNUmakefile \
-        rtai-lab/matlab/GNUmakefile \
-        rtai-lab/matrixx/GNUmakefile \
-        rtai-lab/scilab/GNUmakefile \
-        rtai-lab/scicoslab/GNUmakefile \
-        rtai-lab/scilab/utility/GNUmakefile \
+	rtai-lab/GNUmakefile \
+	rtai-lab/matlab/GNUmakefile \
+	rtai-lab/matrixx/GNUmakefile \
+	rtai-lab/scilab/GNUmakefile \
+	rtai-lab/scicoslab/GNUmakefile \
+	rtai-lab/scilab/utility/GNUmakefile \
    ])
 elif test \! x$CONFIG_RTAI_LAB = x; then
      AC_MSG_ERROR([rtai-lab package is missing])
@@ -2059,7 +2059,7 @@ fi
 
 if test -d $srcdir/testsuite; then
    AC_CONFIG_FILES([ \
-        testsuite/GNUmakefile \
+	testsuite/GNUmakefile \
 	testsuite/kern/GNUmakefile \
 	testsuite/kern/latency/GNUmakefile \
 	testsuite/kern/preempt/GNUmakefile \
@@ -2068,7 +2068,7 @@ if test -d $srcdir/testsuite; then
 	testsuite/user/latency/GNUmakefile \
 	testsuite/user/preempt/GNUmakefile \
 	testsuite/user/switches/GNUmakefile \
-        ])
+	])
 elif test \! x$CONFIG_RTAI_TESTSUITE = x; then
      AC_MSG_ERROR([testsuite package is missing])
 fi
@@ -2077,8 +2077,8 @@ dnl FIXME: configurable?
 CONFIG_RTAI_PYTHON=y
 if test -d $srcdir/rtai-py; then
    AC_CONFIG_FILES([ \
-        rtai-py/GNUmakefile \
-        ])
+	rtai-py/GNUmakefile \
+	])
 elif test \! x$CONFIG_RTAI_PYTHON = x; then
      AC_MSG_ERROR([python package is missing])
 fi
