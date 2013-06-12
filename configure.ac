@@ -305,7 +305,7 @@ case "$RTAI_LINUX_VERSION" in
   3.*)
 	CONFIG_KBUILD=y
     ;;
-  *) 
+  *)
     AC_MSG_ERROR([Unsupported kernel version $RTAI_LINUX_VERSION])
 esac
 
@@ -360,7 +360,7 @@ fi
 
 dnl No longer used.
 dnl if test x${CONFIG_REGPARM} = xy ; then
-dnl   AC_MSG_ERROR([Please unset CONFIG_REGPARM for $RTAI_LINUX_DIR and 
+dnl   AC_MSG_ERROR([Please unset CONFIG_REGPARM for $RTAI_LINUX_DIR and
 dnl rebuild your kernel])
 dnl fi
 
@@ -1075,7 +1075,7 @@ dnl
 dnl Check for additional build options.
 dnl
 
-if test \! -d $srcdir/doc; then 
+if test \! -d $srcdir/doc; then
     unset RTAI_MAYBE_DOCDIR
 else
     RTAI_MAYBE_DOCDIR=doc
@@ -1091,7 +1091,7 @@ AC_ARG_ENABLE(doc,
 	esac])
 
 if test \! -d $srcdir/doc; then
-    if test x$CONFIG_RTAI_DOX_DOC = xy ; 
+    if test x$CONFIG_RTAI_DOX_DOC = xy ;
     then
         AC_MSG_ERROR([documentation tree is missing.])
     fi

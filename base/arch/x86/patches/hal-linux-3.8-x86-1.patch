@@ -7407,7 +7407,7 @@ index 0000000..5b4adbf
 +	void *timer_set;	/* pointer passed to ->set() callback */
 +	struct clock_event_device *host_timer;
 +	struct list_head link;
-+	
++
 +	/* Conversions between clock frequency and timer frequency */
 +	unsigned c2t_integ;
 +	unsigned c2t_frac;
@@ -10747,7 +10747,7 @@ index 0000000..1092abf
 +	(void)pdd;
 +#endif /* !CONFIG_IPIPE_DEBUG_CONTEXT */
 +	hard_local_irq_restore(flags);
-+	
++
 +}
 +EXPORT_SYMBOL_GPL(__ipipe_uaccess_might_fault);
 +#endif

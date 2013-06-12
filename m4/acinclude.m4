@@ -20,7 +20,7 @@ dnl   59 Temple Place
 dnl   Boston, MA 02111-1307, USA.
 dnl ####################################################################
 dnl @synopsis MDL_HAVE_OPENGL
-dnl 
+dnl
 dnl Search for OpenGL.  We search first for Mesa (a GPL'ed version of
 dnl OpenGL) before a vendor's version of OpenGL, unless we were
 dnl specifically asked not to with `--with-Mesa=no' or `--without-Mesa'.
@@ -80,7 +80,7 @@ dnl Check for Mesa first, unless we were asked not to.
        GL_search_list="GL  MesaGL"
       GLU_search_list="GLU MesaGLU"
       GLX_search_list="GLX MesaGLX"
-    fi      
+    fi
 
     AC_LANG_SAVE
     AC_LANG_C
