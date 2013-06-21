@@ -1,13 +1,10 @@
-#! /bin/sh
-
-srcdir=`dirname "$0"`
-test -z "$srcdir" && srcdir=.
-
-ORIGDIR=`pwd`
-cd "$srcdir"
-
-autoreconf -v --install || exit 1
-cd $ORIGDIR || exit $?
-
-# Do a temporary configure to generate initial makefiles
-"$srcdir"/configure --with-linux-dir="/lib/modules/$(uname -r)/build" "$@" --enable-quiet-build=y
+#!/bin/bash
+rm -rf auto4mte.cache
+AUTOGEN_TARGET=${AUTOGEN_TARGET-configure:config.h.in}
+set -e
+case :$AUTOGEN_TARGET: in
+*:configure:*) autoconf; touch configure ;;
+esac
+case :$AUTOGEN_TARGET: in
+*:config.h.in:*) autoheader; touch config.h.in ;;
+esac
