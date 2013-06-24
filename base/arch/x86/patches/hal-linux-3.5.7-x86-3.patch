@@ -3357,7 +3357,7 @@ new file mode 100644
 index 0000000..f833663
 --- /dev/null
 +++ b/arch/x86/kernel/ipipe.c
-@@ -0,0 +1,673 @@
+@@ -0,0 +1,675 @@
 +/*   -*- linux-c -*-
 + *   linux/arch/x86/kernel/ipipe.c
 + *
@@ -3417,6 +3417,8 @@ index 0000000..f833663
 +
 +EXPORT_SYMBOL(io_apic_irqs);
 +EXPORT_SYMBOL(find_task_by_pid_ns);
++extern void *sys_call_table;
++EXPORT_SYMBOL(sys_call_table);
 +#ifdef CONFIG_X86_32
 +extern spinlock_t i8259A_lock;
 +EXPORT_SYMBOL(i8259A_lock);
