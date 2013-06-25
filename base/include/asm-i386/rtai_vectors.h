@@ -41,7 +41,7 @@
 #ifdef __KERNEL__
 
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,19)
-#include <asm/ipipe.h>
+#include <linux/ipipe.h>
 #endif
 
 #include <rtai_hal_names.h>
