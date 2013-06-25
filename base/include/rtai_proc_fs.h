@@ -46,11 +46,11 @@ do {	\
     len += sprintf(page + len , fmt, ##args);           \
     pos += len;                                         \
     if(pos < off) {                                     \
-        len = 0;                                        \
-        begin = pos;                                    \
+	len = 0;                                        \
+	begin = pos;                                    \
     }                                                   \
     if(pos > off + count)                               \
-        goto done; \
+	goto done; \
 } while(0)
 
 // macro to leave the read function for a other
@@ -66,15 +66,15 @@ do {	\
 // read function use the PROC_PRINT_RETURN macro.
 #define PROC_PRINT_DONE                                 \
 do {	\
-        *eof = 1;                                       \
+	*eof = 1;                                       \
     done:                                               \
-        *start = page + (off - begin);                  \
-        len -= (off - begin);                           \
-        if(len > count)                                 \
-            len = count;                                \
-        if(len < 0)                                     \
-            len = 0;                                    \
-        return len; \
+	*start = page + (off - begin);                  \
+	len -= (off - begin);                           \
+	if(len > count)                                 \
+	    len = count;                                \
+	if(len < 0)                                     \
+	    len = 0;                                    \
+	return len; \
 } while(0)
 
 // End of proc print macros

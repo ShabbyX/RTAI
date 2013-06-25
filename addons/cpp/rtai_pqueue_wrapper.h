@@ -141,7 +141,7 @@ struct _pqueue_descr_struct {
     char q_name[MQ_NAME_MAX];	//Name supplied for queue
     uint q_id;			//Queue Id (index into static list of queues)
     BOOL marked_for_deletion;	//Queue can be deleted once all tasks have
-				// closed it	
+				// closed it
     Q_CTRL data;		//Data queue (real messages)
     mode_t permissions;		//Permissions granted by creator (ugo, rwx)
     struct notify notify;	//Notification data (empty -> !empty)

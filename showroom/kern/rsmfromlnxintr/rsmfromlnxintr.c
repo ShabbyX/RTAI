@@ -212,4 +212,3 @@ void cleanup_module(void)
 	rt_sem_delete(&linux_sem);
 	rt_mbx_delete(&mbx);
 }
-

@@ -35,8 +35,8 @@ struct rt_tasklet_struct {
 	struct rt_task_struct *task;
 	struct rt_tasklet_struct *usptasklet;
 #ifdef  CONFIG_RTAI_LONG_TIMED_LIST
-        rb_root_t rbr;
-        rb_node_t rbn;
+	rb_root_t rbr;
+	rb_node_t rbn;
 #endif
 };
 
@@ -85,7 +85,7 @@ static inline unsigned long long xnarch_ulldiv(unsigned long long ull, unsigned 
 {
 	unsigned long rem = do_div(ull, uld);
 	if (r) {
-	        *r = rem;
+		*r = rem;
 	}
 	return ull;
 }

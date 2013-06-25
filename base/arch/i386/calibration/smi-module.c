@@ -166,9 +166,9 @@ static int rtai_smi_notify_reboot(struct notifier_block *nb, unsigned long event
 }
 
 static struct notifier_block rtai_smi_reboot_notifier = {
-        .notifier_call  = &rtai_smi_notify_reboot,
-        .next           = NULL,
-        .priority       = 0
+	.notifier_call  = &rtai_smi_notify_reboot,
+	.next           = NULL,
+	.priority       = 0
 };
 
 static void hal_smi_restore(void)
@@ -208,14 +208,14 @@ static int __devinit hal_smi_init(void)
  * Just register the used ports.
  */
 	for (id = &hal_smi_pci_tbl[0]; dev == NULL && id->vendor != 0; id++) {
-	        dev = pci_get_device(id->vendor, id->device, NULL);
+		dev = pci_get_device(id->vendor, id->device, NULL);
 	}
 
 	if (dev == NULL || dev->bus->number || dev->devfn != DEVFN) {
 		pci_dev_put(dev);
 		printk("RTAI: Intel chipset not found.\n");
   		return -ENODEV;
-        }
+	}
 
 	printk("RTAI: Intel chipset found, enabling SMI workaround.\n");
 	hal_smi_en_addr = get_smi_en_addr(dev);
@@ -266,15 +266,15 @@ MODULE_LICENSE("GPL");
        SMI, depending on registers configuration :
        register DEVTRAP_EN, DEVTRAP_STS
        BIG FAT WARNING : globally disabling SMI on a box with SATA disks and
-           SATA controller in "legacy" mode, probably prevents disks from
-           working.
+	   SATA controller in "legacy" mode, probably prevents disks from
+	   working.
 
    pages 382, 383, 400; Monitors ?
        seem to be a generic legacy device emulation (like previous), registers
        MON[4-7]_FWD_EN, enables forwarding of I/O to LPC
        MON[4-7]_TRP_RNG, address of the emulated devices
        MON[4-7]_TRP_MSK and MON_SMI (registers MON[4-7]_TRAP_EN and
-                                     MON[4-7]_TRAP_STS)
+				     MON[4-7]_TRAP_STS)
 
    page 407: TCO
        register TCO1_CNT, bit NMI2SMI_EN, enables TCO to use SMI instead of NMI,

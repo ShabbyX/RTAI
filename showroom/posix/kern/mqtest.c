@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2003  Trevor Woolven (trevw@zentropix.com)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		    Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -181,7 +181,7 @@ static void *parent_func(void *arg)
 
 int init_module(void)
 {
-        pthread_attr_t attr = { STACK_SIZE, 0, 0, 0 };
+	pthread_attr_t attr = { STACK_SIZE, 0, 0, 0 };
 	pthread_barrier_init(&barrier, NULL, 2);
 	sem_init(&sem1, 0, 0);
 	sem_init(&sem2, 0, 0);
@@ -195,8 +195,8 @@ int init_module(void)
 	printk("\n==== All Posix Queues threads running ====\n");
 	while (!cleanup) {
 		current->state = TASK_INTERRUPTIBLE;
-                schedule_timeout(HZ/10);
-        }
+		schedule_timeout(HZ/10);
+	}
 	return 0;
 }
 
@@ -206,5 +206,5 @@ void cleanup_module(void)
 	sem_destroy(&sem1);
 	sem_destroy(&sem2);
 	stop_rt_timer();
-        printk("\n==== Posix Queues test program removed====\n");
+	printk("\n==== Posix Queues test program removed====\n");
 }

@@ -6,7 +6,7 @@ config MODULES
 
 config RTAI_VERSION
 	string
-	default "3.8 (vulcano)"
+	default "3.9.1 (magma)"
 
 menu "General"
 
@@ -43,14 +43,14 @@ config RTAI_DOX_DOC
 	the Doxygen toolsuite for regenerating the documentation.
 
 config RTAI_DOC_LATEX_NONSTOP
-        bool "Enable LaTeX verbose output"
-        default n
-        help
-        By default, all documentation generated with LaTeX uses the
-        silent (batchmode) of LaTeX. If this option is enabled, the
-        verbose (nonstopmode) of LaTeX will be used instead. This
-        option is mainly intended for people writing RTAI
-        documentation.
+	bool "Enable LaTeX verbose output"
+	default n
+	help
+	By default, all documentation generated with LaTeX uses the
+	silent (batchmode) of LaTeX. If this option is enabled, the
+	verbose (nonstopmode) of LaTeX will be used instead. This
+	option is mainly intended for people writing RTAI
+	documentation.
 
 config RTAI_DBX_DOC
 	bool "Build DocBook XML documentation (HTML/PDF)"
@@ -62,30 +62,30 @@ config RTAI_DBX_DOC
 	regular users can just use the latter directly.
 
 config RTAI_DBX_NET
-        bool "Let the DocBook XML tools use network"
+	bool "Let the DocBook XML tools use network"
 	depends on RTAI_DBX_DOC
-        default n
-        help
-        Let the DocBook tools use internet to fetch the DTD and XSL stylesheets.
-        If disabled, the documentation generation will fail if the necessary
-        DTD(s) and XSL stylesheets can not be found on the local computer.
+	default n
+	help
+	Let the DocBook tools use internet to fetch the DTD and XSL stylesheets.
+	If disabled, the documentation generation will fail if the necessary
+	DTD(s) and XSL stylesheets can not be found on the local computer.
 
 config RTAI_DBX_ROOT
-        string "Docbook XML root"
+	string "Docbook XML root"
 	depends on RTAI_DBX_DOC
-        default ""
-        help
-        Specify the DocBook XML root (that is, the directory where docbook.dtd
-        should be taken). Leave blank to let configure try the "well-known"
-        locations.
+	default ""
+	help
+	Specify the DocBook XML root (that is, the directory where docbook.dtd
+	should be taken). Leave blank to let configure try the "well-known"
+	locations.
 
 config RTAI_DBX_XSL_ROOT
-        string "Docbook XML XSL stylesheet root"
+	string "Docbook XML XSL stylesheet root"
 	depends on RTAI_DBX_DOC
-        default ""
-        help
-        Specify the DocBook XML XSL root. Leave blank to let configure try the
-        "well-known" locations.
+	default ""
+	help
+	Specify the DocBook XML XSL root. Leave blank to let configure try the
+	"well-known" locations.
 
 endmenu
 
@@ -373,7 +373,7 @@ config RTAI_LXRT_USE_LINUX_SYSCALL
 	you want to use the LXRT syscall mechanism.
 	RTAI will then operate in mixed mode selectively by using both
 	its own and Linux syscall mechanisms.
-	
+
 	If in doubt, say no.
 
 config RTAI_ALIGN_LINUX_PRIORITY
@@ -604,8 +604,8 @@ config RTAI_TASKLETS
 	you have many tasks, both in kernel and user space, needing to
 	execute specific functions. Such functions are called tasklets
 	and can be of two kinds:
-        - a simple tasklet;
-        - timed tasklets (timers).
+	- a simple tasklet;
+	- timed tasklets (timers).
 	The tasklets implementation of timed tasklets relies on a
 	server support task that executes the related timer functions,
 	either in oneshot or periodic mode, on the base of their time
@@ -904,7 +904,7 @@ config RTAI_RTDM_FD_MAX
 config RTAI_RTDM_SELECT
 	depends on RTAI_RTDM
 	bool "Enable select multiplexing for RTDM services"
-        default n
+	default n
 	help
 	By enabling this option, select(2) support can be used to monitor
 	access to multiple RTDM services all in one, as for the standard UNIX
@@ -914,18 +914,18 @@ config RTAI_RTDM_SELECT
 
 config RTAI_RTDM_SHIRQ
 	depends on RTAI_RTDM
-        bool "Shared interrupts"
-        default n
-        help
-        Make it possible for RTDM own interrupt handlers to manage shared
+	bool "Shared interrupts"
+	default n
+	help
+	Make it possible for RTDM own interrupt handlers to manage shared
 	interrupts.
 
 config RTAI_DEBUG_RTDM
 	depends on RTAI_RTDM
-        bool "Enable some elementary RTDM debugging messages"
-        default n
-        help
-        Enable some elementary debugging of wrong requests to RTDM, in the
+	bool "Enable some elementary RTDM debugging messages"
+	default n
+	help
+	Enable some elementary debugging of wrong requests to RTDM, in the
 	form of messages asserting what's improper and where it's happening.
 
 menu "Drivers"
@@ -946,7 +946,7 @@ choice
 	Allows choosing among:
 
 	- Port based:    driver uses I/O ports, as defined by module vector
-                         parameters "io=port1,port2,...".
+			 parameters "io=port1,port2,...".
 
 	- Memory mapped: driver uses memory mapping, as defined by module
 			 vector parameters "mem=addr1,addr2,...".

@@ -134,27 +134,27 @@ pio2_3t =  8.47842766036889956997e-32; /* 0x397B839A, 0x252049C1 */
 	    fn = (double)n;
 	    r  = t-fn*pio2_1;
 	    w  = fn*pio2_1t;	/* 1st round good to 85 bit */
-	    if(n<32&&ix!=npio2_hw[n-1]) {	
+	    if(n<32&&ix!=npio2_hw[n-1]) {
 		y[0] = r-w;	/* quick check no cancellation */
 	    } else {
-	        u_int32_t high;
-	        j  = ix>>20;
-	        y[0] = r-w;
+		u_int32_t high;
+		j  = ix>>20;
+		y[0] = r-w;
 		GET_HIGH_WORD(high,y[0]);
-	        i = j-((high>>20)&0x7ff);
-	        if(i>16) {  /* 2nd iteration needed, good to 118 */
+		i = j-((high>>20)&0x7ff);
+		if(i>16) {  /* 2nd iteration needed, good to 118 */
 		    t  = r;
-		    w  = fn*pio2_2;	
+		    w  = fn*pio2_2;
 		    r  = t-w;
-		    w  = fn*pio2_2t-((t-r)-w);	
+		    w  = fn*pio2_2t-((t-r)-w);
 		    y[0] = r-w;
 		    GET_HIGH_WORD(high,y[0]);
 		    i = j-((high>>20)&0x7ff);
 		    if(i>49)  {	/* 3rd iteration need, 151 bits acc */
 		    	t  = r;	/* will cover all possible cases */
-		    	w  = fn*pio2_3;	
+		    	w  = fn*pio2_3;
 		    	r  = t-w;
-		    	w  = fn*pio2_3t-((t-r)-w);	
+		    	w  = fn*pio2_3t-((t-r)-w);
 		    	y[0] = r-w;
 		    }
 		}

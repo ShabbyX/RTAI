@@ -36,7 +36,7 @@
 #define XNSELECT_MAX_TYPES 3
 
 struct xnselector {
-        xnsynch_t synchbase;
+	xnsynch_t synchbase;
 	struct fds {
 		fd_set expected;
 		fd_set pending;

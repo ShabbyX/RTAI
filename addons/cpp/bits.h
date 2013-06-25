@@ -144,7 +144,7 @@ public:
 		unsigned long *resulting_mask);
 protected:
 	BITS* m_Bits;
-private:	
+private:
 	Bits(const Bits&);
 	Bits& operator=(const Bits&);
 };

@@ -212,12 +212,12 @@ struct suprt_fun_arg { mqd_t mq; RT_TASK *task; unsigned long cpuid; pthread_t s
 #define __SIGNAL_SUPPORT_FUN_MQ__
 
 static void signal_suprt_fun_mq(struct suprt_fun_arg *fun_arg)
-{		
+{
 	struct sigtsk_t { RT_TASK *sigtask; RT_TASK *task; };
 	struct suprt_fun_arg arg = *fun_arg;
- 	struct sigreq_t { RT_TASK *sigtask; RT_TASK *task; long signal;} sigreq = {NULL, arg.task, (arg.mq + MAXSIGNALS)};	
+ 	struct sigreq_t { RT_TASK *sigtask; RT_TASK *task; long signal;} sigreq = {NULL, arg.task, (arg.mq + MAXSIGNALS)};
  	struct sigevent notification;
-	
+
 	if ((sigreq.sigtask = rt_thread_init(rt_get_name(0), SIGNAL_TASK_INIPRIO, 0, SCHED_FIFO, 1 << arg.cpuid))) {
 		if (!rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(struct sigreq_t), RT_SIGNAL_REQUEST, &sigreq).i[LOW]) {
 			struct arg_reg { mqd_t mq; RT_TASK *task; struct sigevent *usp_notification;} arg_reg = {arg.mq, arg.task, &notification};
@@ -235,7 +235,7 @@ static void signal_suprt_fun_mq(struct suprt_fun_arg *fun_arg)
 		}
 		rt_task_delete(sigreq.sigtask);
 	}
-}	
+}
 
 #endif
 
@@ -243,13 +243,13 @@ RTAI_PROTO(int, rt_request_signal_mq, (mqd_t mq))
 {
 		struct suprt_fun_arg arg = { mq, NULL, 0, pthread_self() };
 		arg.cpuid = rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(void *), RT_SIGNAL_HELPER, (void *)&arg.task).i[LOW];
-		arg.task = rt_buddy();	
+		arg.task = rt_buddy();
 		if (rt_thread_create(signal_suprt_fun_mq, &arg, SIGNAL_TASK_STACK_SIZE)) {
 			int ret;
 			ret = rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(RT_TASK *), RT_SIGNAL_HELPER, &arg.task).i[LOW];
 			return ret;
 		}
-	return -1;		
+	return -1;
 }
 
 
@@ -262,7 +262,7 @@ RTAI_PROTO(mqd_t, mq_open,(char *mq_name, int oflags, mode_t permissions, struct
 		if (oflags & O_NOTIFY_NP)	{
 			rt_request_signal_mq (ret);
 		}
-	}	
+	}
 	return ret;
 }
 

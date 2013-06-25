@@ -157,7 +157,7 @@ return:
   		   RT_SP_PARITY_ERR    parity error
   		   RT_SP_FRAMING_ERR   framing error
   		   RT_SP_BREAK         break condition
-  		
+
 	-ENODEV    no entry in spct slots for that device.
 
 +------------------------------------------------------------------------------+
@@ -173,7 +173,7 @@ params:
 	msg        pointer to buffer of char to send.
 
 	msg_size   abs(msg_size) is the number of bytes to write.
-                   If > 0, write bytes that are possible to send.	
+                   If > 0, write bytes that are possible to send.
 	           If < 0, write bytes only if possible to write them all
 		   together.
 
@@ -391,14 +391,14 @@ Send one or more bytes with timeout
 
  Arguments:
  		tty		serial port number.
- 		
+
  		msg		pointer to the chars to send.
 
 		msg_size	number of bytes to send.
 
 		delay		timeout in internal count unit,
 				use DELAY_FOREVER for a blocking send.
-      			
+
 Return Value:
  		-ENODEV, if wrong tty number;
  		msg_size, if < 0 or another writer is already using tty;
@@ -414,14 +414,14 @@ Receive one or more bytes with timeout
 
 Arguments:
 		tty		serial port number.
- 		
+
  		msg		pointer to the chars to receive.
 
 		msg_size	the number of bytes to receive.
 
 		delay		timeout in internal count unit,
 				use DELAY_FOREVER for a blocking receive.
-      			
+
 Return Value:
  		-ENODEV, if wrong tty number;
  		msg_size, if < 0 or another reader is already using tty;

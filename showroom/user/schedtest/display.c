@@ -44,7 +44,7 @@ int main(void)
 	rt_grow_and_lock_stack(100000);
 #ifdef MAKE_HARD
 	MAKE_HARD();
-#endif	
+#endif
 
 	for (i = 0; i < LOOPS; i++) {
 		rtai_srq(srq, (unsigned long)nano2count(DELAY));
@@ -56,7 +56,7 @@ int main(void)
 
 	rt_make_soft_real_time();
 	stop_rt_timer();
-        rt_task_delete(NULL);
+	rt_task_delete(NULL);
 	rt_printk("END SCHEDULER TEST WITH SRQs.\n\n");
 	return 0;
 }

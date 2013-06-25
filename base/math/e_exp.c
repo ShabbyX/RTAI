@@ -45,13 +45,13 @@ static char rcsid[] = "$NetBSD: e_exp.c,v 1.8 1995/05/10 20:45:03 jtc Exp $";
  *                             2*r
  *		exp(r) = 1 + -------
  *		              R - r
- *                                 r*R1(r)	
+ *                                 r*R1(r)
  *		       = 1 + r + ----------- (for better accuracy)
  *		                  2 - R1(r)
  *	where
  *			         2       4             10
  *		R1(r) = r - (P1*r  + P2*r  + ... + P5*r   ).
- *	
+ *
  *   3. Scale back to obtain exp(x):
  *	From step 1, we have
  *	   exp(x) = 2^k * exp(r)
@@ -123,8 +123,8 @@ P5   =  4.13813679705723846039e-08; /* 0x3E663769, 0x72BEA4D0 */
 
     /* filter out non-finite argument */
 	if(hx >= 0x40862E42) {			/* if |x|>=709.78... */
-            if(hx>=0x7ff00000) {
-	        u_int32_t lx;
+	    if(hx>=0x7ff00000) {
+		u_int32_t lx;
 		GET_LOW_WORD(lx,x);
 		if(((hx&0xfffff)|lx)!=0)
 		     return x+x; 		/* NaN */

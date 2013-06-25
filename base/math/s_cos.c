@@ -76,7 +76,7 @@ static char rcsid[] = "$NetBSD: s_cos.c,v 1.7 1995/05/10 20:47:02 jtc Exp $";
 		case 1: return -__kernel_sin(y[0],y[1],1);
 		case 2: return -__kernel_cos(y[0],y[1]);
 		default:
-		        return  __kernel_sin(y[0],y[1],1);
+			return  __kernel_sin(y[0],y[1],1);
 	    }
 	}
 }

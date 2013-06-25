@@ -40,8 +40,8 @@
 
 #define RTAI_ASSERT(subsystem, cond, action)  do { \
     if (unlikely(CONFIG_RTAI_DEBUG_##subsystem > 0 && !(cond))) { \
-        xnlogerr("assertion failed at %s:%d (%s)\n", __FILE__, __LINE__, (#cond)); \
-        action; \
+	xnlogerr("assertion failed at %s:%d (%s)\n", __FILE__, __LINE__, (#cond)); \
+	action; \
     } \
 } while(0)
 
@@ -62,26 +62,26 @@
 #define rthal_domain rtai_domain
 #define rthal_local_irq_disabled()                              \
 ({                                                              \
-        unsigned long __flags, __ret;                           \
-        local_irq_save_hw_smp(__flags);                         \
-        __ret = ipipe_test_pipeline_from(&rthal_domain);        \
-        local_irq_restore_hw_smp(__flags);                      \
-        __ret;                                                  \
+	unsigned long __flags, __ret;                           \
+	local_irq_save_hw_smp(__flags);                         \
+	__ret = ipipe_test_pipeline_from(&rthal_domain);        \
+	local_irq_restore_hw_smp(__flags);                      \
+	__ret;                                                  \
 })
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 
 #define _MODULE_PARM_STRING_charp "s"
 #define compat_module_param_array(name, type, count, perm) \
-        static inline void *__check_existence_##name(void) { return &name; } \
-        MODULE_PARM(name, "1-" __MODULE_STRING(count) _MODULE_PARM_STRING_##type)
+	static inline void *__check_existence_##name(void) { return &name; } \
+	MODULE_PARM(name, "1-" __MODULE_STRING(count) _MODULE_PARM_STRING_##type)
 
 typedef unsigned long phys_addr_t;
 
 #else
 
 #define compat_module_param_array(name, type, count, perm) \
-        module_param_array(name, type, NULL, perm)
+	module_param_array(name, type, NULL, perm)
 
 #endif
 
@@ -105,7 +105,7 @@ typedef struct { volatile unsigned long lock[2]; } xnlock_t;
 
 #ifndef list_first_entry
 #define list_first_entry(ptr, type, member) \
-        list_entry((ptr)->next, type, member)
+	list_entry((ptr)->next, type, member)
 #endif
 
 #ifndef local_irq_save_hw_smp
@@ -129,10 +129,10 @@ typedef struct { volatile unsigned long lock[2]; } xnlock_t;
 
 #if 1
 #define __WORK_INITIALIZER(n,f,d) {                             \
-        .list   = { &(n).list, &(n).list },                     \
-        .sync = 0,                                              \
-        .routine = (f),                                         \
-        .data = (d),                                            \
+	.list   = { &(n).list, &(n).list },                     \
+	.sync = 0,                                              \
+	.routine = (f),                                         \
+	.data = (d),                                            \
 }
 #endif
 
@@ -338,6 +338,10 @@ static inline int xnarch_remap_vm_page(struct vm_area_struct *vma, unsigned long
 
 #else /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) */
 
+#ifndef VM_RESERVED
+#define VM_RESERVED (VM_DONTEXPAND | VM_DONTDUMP)
+#endif
+
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,15) && defined(CONFIG_MMU)
 	vma->vm_flags |= VM_RESERVED;
 	return vm_insert_page(vma, from, vmalloc_to_page((void *)to));
@@ -394,12 +398,12 @@ typedef atomic_t atomic_counter_t;
 typedef RTIME xnticks_t;
 
 typedef struct xnstat_exectime {
-        xnticks_t start;
-        xnticks_t total;
+	xnticks_t start;
+	xnticks_t total;
 } xnstat_exectime_t;
 
 typedef struct xnstat_counter {
-        int counter;
+	int counter;
 } xnstat_counter_t;
 #define xnstat_counter_inc(c)  ((c)->counter++)
 
@@ -468,14 +472,14 @@ extern unsigned long IsolCpusMask;
 // support for RTDM timers
 
 struct rtdm_timer_struct {
-        struct rtdm_timer_struct *next, *prev;
-        int priority, cpuid;
-        RTIME firing_time, period;
-        void (*handler)(unsigned long);
-        unsigned long data;
+	struct rtdm_timer_struct *next, *prev;
+	int priority, cpuid;
+	RTIME firing_time, period;
+	void (*handler)(unsigned long);
+	unsigned long data;
 #ifdef  CONFIG_RTAI_LONG_TIMED_LIST
-        rb_root_t rbr;
-        rb_node_t rbn;
+	rb_root_t rbr;
+	rb_node_t rbn;
 #endif
 };
 
@@ -489,18 +493,18 @@ typedef struct rtdm_timer_struct xntimer_t;
 
 /* Timer modes */
 typedef enum xntmode {
-        XN_RELATIVE,
-        XN_ABSOLUTE,
-        XN_REALTIME
+	XN_RELATIVE,
+	XN_ABSOLUTE,
+	XN_REALTIME
 } xntmode_t;
 
 #define xntbase_ns2ticks(rtdm_tbase, expiry)  nano2count(expiry)
 
 static inline void xntimer_init(xntimer_t *timer, void (*handler)(xntimer_t *))
 {
-        memset(timer, 0, sizeof(struct rtdm_timer_struct));
-        timer->handler = (void *)handler;
-        timer->data    = (unsigned long)timer;
+	memset(timer, 0, sizeof(struct rtdm_timer_struct));
+	timer->handler = (void *)handler;
+	timer->data    = (unsigned long)timer;
 	timer->next    =  timer->prev = timer;
 }
 
@@ -513,12 +517,12 @@ static inline int xntimer_start(xntimer_t *timer, xnticks_t value, xnticks_t int
 
 static inline void xntimer_destroy(xntimer_t *timer)
 {
-        rt_timer_remove(timer);
+	rt_timer_remove(timer);
 }
 
 static inline void xntimer_stop(xntimer_t *timer)
 {
-        rt_timer_remove(timer);
+	rt_timer_remove(timer);
 }
 
 // support for use in RTDM usage testing found in RTAI SHOWROOM CVS
@@ -526,11 +530,11 @@ static inline void xntimer_stop(xntimer_t *timer)
 static inline unsigned long long xnarch_ulldiv(unsigned long long ull, unsigned
 long uld, unsigned long *r)
 {
-        unsigned long rem = do_div(ull, uld);
-        if (r) {
-                *r = rem;
-        }
-        return ull;
+	unsigned long rem = do_div(ull, uld);
+	if (r) {
+		*r = rem;
+	}
+	return ull;
 }
 
 // support for RTDM select
@@ -630,9 +634,9 @@ static inline void xnsynch_sleep_on(void *synch, xnticks_t timeout, xntmode_t ti
 #define SELECT_SIGNAL(select_block, state) \
 do { \
 	spl_t flags; \
-        xnlock_get_irqsave(&nklock, flags); \
-        if (xnselect_signal(select_block, state) && state) { \
-                xnpod_schedule(); \
+	xnlock_get_irqsave(&nklock, flags); \
+	if (xnselect_signal(select_block, state) && state) { \
+		xnpod_schedule(); \
 	} \
 	xnlock_put_irqrestore(&nklock, flags); \
 } while (0)

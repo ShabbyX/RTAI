@@ -37,12 +37,12 @@ MODULE_DESCRIPTION("RTAI C++ BITS support");
 
 BITS* __rt_bits_init(unsigned long mask){
 	BITS * bits;
-	
+
 	bits = rt_malloc(sizeof(BITS));
-	
+
 	if(bits == 0)
 		return 0;
-		
+
 
 	memset(bits,0,sizeof(BITS));
 
@@ -53,7 +53,7 @@ BITS* __rt_bits_init(unsigned long mask){
 
 int __rt_bits_delete(BITS *bits){
 	int result;
-	
+
 	if(bits == 0)
 		return -1;
 
@@ -74,4 +74,3 @@ void rtai_cpp_bits_cleanup(void)
 
 module_init(rtai_cpp_bits_init)
 module_exit(rtai_cpp_bits_cleanup)
-

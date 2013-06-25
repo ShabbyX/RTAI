@@ -141,4 +141,3 @@ void __exit cleanup_heartbeat(void)
 
 module_init(init_heartbeat);
 module_exit(cleanup_heartbeat);
-

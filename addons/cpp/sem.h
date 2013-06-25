@@ -68,7 +68,7 @@ public:
 protected:
 private:
 	BinarySemaphore(const BinarySemaphore&);
-	BinarySemaphore& operator=(const BinarySemaphore&);   	
+	BinarySemaphore& operator=(const BinarySemaphore&);
 };
 
 /**
@@ -80,7 +80,7 @@ class CountingSemaphore
 public:
 	CountingSemaphore();
 	virtual ~CountingSemaphore();
-protected:	
+protected:
 private:
 	CountingSemaphore(const CountingSemaphore&);
 	CountingSemaphore& operator=(const CountingSemaphore&);

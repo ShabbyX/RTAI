@@ -49,7 +49,7 @@ int main(void)
 	double d;
 	RT_TASK *mytask;
 	RTIME t;
-        struct timeval timout;
+	struct timeval timout;
 	struct timespec tns;
 
  	if (!(mytask = rt_task_init_schmod(nam2num("HRTSK"), 0, 0, 0, SCHED_FIFO, 0x1))) {
@@ -65,8 +65,8 @@ int main(void)
 	printf("(SCANF) Input a: string, integer, long long, float, double: ");
 	scanf("%s %i %lld %f %lf", s, &i, &ll, &f, &d);
 	printf("(SELECT) Got string, integer, long long, now we wait %d s using select.\n", WAITIME);
-        timout.tv_sec = WAITIME;
-        timout.tv_usec = 0;
+	timout.tv_sec = WAITIME;
+	timout.tv_usec = 0;
 	select(1, NULL, NULL, NULL, &timout);
 	printf("(PRINTF) Select expired and we print what we read: %s %i %lld %f %lf\n", s, i, ll, f, d);
 	printf("(OPEN) Open a file.\n");
@@ -129,7 +129,7 @@ int main(void)
 	printf("(NANOWAITIME) File closed, let's wait %d s using nanosleep.\n", WAITIME);
 	tns.tv_sec = WAITIME;
 	tns.tv_nsec = 0;
-        nanosleep(&tns, NULL);
+	nanosleep(&tns, NULL);
 	printf("(PRINTF) Test done, exiting.\n");
 #endif
 

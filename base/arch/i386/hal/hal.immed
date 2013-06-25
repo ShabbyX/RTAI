@@ -1002,7 +1002,7 @@ int _rtai_sched_on_ipi_handler(void)
 {
 	unsigned long cpuid;
 	unsigned long sflags;
-	
+
 	HAL_LOCK_LINUX();
 	__ack_APIC_irq();
 	RTAI_SCHED_ISR_LOCK();

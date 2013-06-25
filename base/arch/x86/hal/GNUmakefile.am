@@ -6,10 +6,10 @@ CROSS_COMPILE = @CROSS_COMPILE@
 
 libhal_a_SOURCES = hal.c
 
-if CONFIG_I386
-libhal_a_SOURCES += hal_32.c
-else
+if CONFIG_X86_64
 libhal_a_SOURCES += hal_64.c
+else
+libhal_a_SOURCES += hal_32.c
 endif
 
 if CONFIG_KBUILD
@@ -29,7 +29,7 @@ noinst_LIBRARIES = libhal.a
 
 libhal_a_AR = $(CROSS_COMPILE)ar cru
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
 	-I$(top_srcdir)/base/include \
 	-I../../../include

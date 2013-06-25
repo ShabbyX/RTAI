@@ -70,21 +70,21 @@ static inline unsigned long atomic_cmpxchg (volatile void *ptr, unsigned long o,
 
 static __inline__ int atomic_dec_and_test(atomic_t *v)
 {
-        unsigned char c;
+	unsigned char c;
 
-        __asm__ __volatile__(
-                LOCK_PREFIX "decl %0; sete %1"
-                :"=m" (v->counter), "=qm" (c)
-                :"m" (v->counter) : "memory");
-        return c != 0;
+	__asm__ __volatile__(
+		LOCK_PREFIX "decl %0; sete %1"
+		:"=m" (v->counter), "=qm" (c)
+		:"m" (v->counter) : "memory");
+	return c != 0;
 }
 
 static __inline__ void atomic_inc(atomic_t *v)
 {
-        __asm__ __volatile__(
-                LOCK_PREFIX "incl %0"
-                :"=m" (v->counter)
-                :"m" (v->counter));
+	__asm__ __volatile__(
+		LOCK_PREFIX "incl %0"
+		:"=m" (v->counter)
+		:"m" (v->counter));
 }
 
 /* Depollute the namespace a bit. */

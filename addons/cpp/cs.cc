@@ -17,24 +17,24 @@ void operator delete(void* vp)
 	rt_printk("my __builtin_delete %p\n",vp);
 
 	if(vp != 0)
-        	rt_free(vp);
+		rt_free(vp);
 }
 
 /* for gcc-3.3 */
 
 void operator delete[](void* vp){
-        if(vp != 0)
-                rt_free(vp);
+	if(vp != 0)
+		rt_free(vp);
 }
 
 void *operator new(size_t size){
-        void* vp = rt_malloc(size);
-        return vp;
+	void* vp = rt_malloc(size);
+	return vp;
 }
 
 void *operator new[](size_t size){
-        void* vp = rt_malloc(size);
-        return vp;
+	void* vp = rt_malloc(size);
+	return vp;
 }
 
 /* __cxa_pure_virtual(void) support */
@@ -42,7 +42,7 @@ void *operator new[](size_t size){
 extern "C" void __cxa_pure_virtual(void)
 {
 	rt_printk("attempt to use a virtual function before object has been constructed\n");
-        for ( ; ; );
+	for ( ; ; );
 }
 
 

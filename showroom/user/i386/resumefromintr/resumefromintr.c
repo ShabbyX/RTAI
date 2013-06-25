@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 
 	printf("\nTest time (s): ");
 	scanf("%d", &test_time);
-        printf("\n... DO NOT PANIC, WAIT FOR %d SECONDS (RUNNING AT %d hz).\n", test_time, 1000000000/PERIOD);
+	printf("\n... DO NOT PANIC, WAIT FOR %d SECONDS (RUNNING AT %d hz).\n", test_time, 1000000000/PERIOD);
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 

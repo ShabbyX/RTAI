@@ -107,9 +107,9 @@ do_test (void)
 
 int main(void)
 {
-        pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
-        start_rt_timer(0);
+	pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
+	start_rt_timer(0);
 	pthread_cond_init(&cond, NULL);
-        do_test();
-        return 0;
+	do_test();
+	return 0;
 }

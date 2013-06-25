@@ -166,13 +166,13 @@ do_test (void)
 int main(void)
 {
 	pthread_mutexattr_t matr;
-        pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
-        start_rt_timer(0);
+	pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
+	start_rt_timer(0);
 	pthread_cond_init(&cond, NULL);
 	pthread_mutexattr_init(&matr);
 	pthread_mutexattr_settype(&matr, PTHREAD_MUTEX_RECURSIVE);
 	pthread_mutex_init(&mut, &matr);
 	pthread_mutex_init(&mut2, NULL);
-        do_test();
-        return 0;
+	do_test();
+	return 0;
 }

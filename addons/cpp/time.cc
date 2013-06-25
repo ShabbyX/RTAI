@@ -51,7 +51,7 @@ Time& Time::operator=(const Time& time)
 Time& Time::operator=(long long time)
 {
 	m_Time = time;
-	
+
 	return *this;
 }
 
@@ -125,8 +125,8 @@ Time  Time::operator+(const Time& time) const {
 }
 
 Time  Time::operator+(long long time) const {
-        Time tmp(m_Time + time);
-        return tmp;
+	Time tmp(m_Time + time);
+	return tmp;
 }
 
 Time  Time::operator-(const Time& time) const {

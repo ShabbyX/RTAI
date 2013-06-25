@@ -229,7 +229,7 @@ static void grow_and_lock_stack(int inc)
 static void (*WaitTimingEvent)(unsigned long);
 static void (*SendTimingEvent)(unsigned long);
 static unsigned long TimingEventArg;
-	
+
 #define XNAME(x,y)  x##y
 #define NAME(x,y)   XNAME(x,y)
 
@@ -404,7 +404,7 @@ static void *rt_HostInterface(void *args)
 	rt_return(task, (isRunning << 16) | ((NTOTRPAR + NTOTIPAR) & 0xFFFF));
 	rt_receivex(task, &Request, 1, &len);
 	rt_returnx(task, &rtParam, sizeof(rtParam));
-					
+
 	for (i = 0; i < NRPAR; i++) {
 	  sprintf(rtParam.blockName,"%s/%s",rtParam.modelName,strRPAR[i]);
 	  if(i==0) Idx = 0;
@@ -544,7 +544,7 @@ static void *rt_HostInterface(void *args)
 
 	modify_any_param(index, param);
 	rt_returnx(task, &Reply, sizeof(int));
-	break;			
+	break;
       }
       case 'g': {
 	int i, j, Idx=0;
@@ -630,7 +630,7 @@ static int calculateParametersChecksum(void) {
 
   for(i=0; i<NIPAR; i++) {
     checksum ^= lenIPAR[i];
-  }	
+  }
   for(i=0; i<NRPAR; i++) {
     checksum ^= lenRPAR[i];
   }
@@ -671,9 +671,9 @@ static void loadParametersFromFile(char* filename) {
   for(i=0; i<NIPAR; i++) {
     for(j=0;j<lenIPAR[i];j++){
       if(fgets(buf, sizeof(buf), fd) == NULL) {
-        fprintf(stderr,"Error during loading IPAR\n");
-        fclose(fd);
-        return;
+	fprintf(stderr,"Error during loading IPAR\n");
+	fclose(fd);
+	return;
       }
       rtModifyIParam(i, j, (int)strtol(buf, NULL, 10));
     }
@@ -681,9 +681,9 @@ static void loadParametersFromFile(char* filename) {
   for(i=0; i<NRPAR; i++) {
     for(j=0;j<lenRPAR[i];j++){
       if(fgets(buf, sizeof(buf), fd) == NULL) {
-        fprintf(stderr,"Error during loading RPAR\n");
-        fclose(fd);
-        return;
+	fprintf(stderr,"Error during loading RPAR\n");
+	fclose(fd);
+	return;
       }
       double d = strtod(buf, NULL);
       rtModifyRParam(i, j, &d);
@@ -833,7 +833,7 @@ static int rt_Main(int priority)
       rt_sem_delete(hard_timers_cnt);
     }
   }
-	
+
  finish:
   if(saveParFile != NULL) {
     saveParametersToFile(saveParFile);
@@ -877,7 +877,7 @@ void print_usage(void)
 	 "  -v, --verbose\n"
 	 "      verbose output\n"
 	 "  -V, --version\n"
-         "      print rtmain version\n"
+	 "      print rtmain version\n"
 	 "  -s, --soft\n"
 	 "      run RT-model in soft real time (default hard RT)\n"
 	 "  -w, --wait\n"
@@ -965,7 +965,7 @@ int main(int argc, char *argv[])
       break;
     case 'a':
       TargetALogMbxID = strdup(optarg);
-      break;	
+      break;
     case 't':
       TargetMeterMbxID = strdup(optarg);
       break;
@@ -1026,7 +1026,7 @@ int main(int argc, char *argv[])
   if (verbose) {
     printf("\nTarget settings\n");
     printf("===============\n");
-    printf("  Real-time : %s\n", UseHRT ? "HARD" : "SOFT");	
+    printf("  Real-time : %s\n", UseHRT ? "HARD" : "SOFT");
     printf("  Timing    : %s / ", InternTimer ? "internal" : "external");
     printf("%s\n", ClockTick ? "periodic" : "oneshot");
     printf("  Priority  : %d\n", priority);

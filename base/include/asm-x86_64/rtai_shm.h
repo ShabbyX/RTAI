@@ -53,9 +53,9 @@ static inline unsigned long uvirt_to_kva(pgd_t *pgd, unsigned long adr)
 
 	if(!pgd_none(*pgd)) {
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-                pmd = pmd_offset(pgd, adr);
+		pmd = pmd_offset(pgd, adr);
 #else /* >= 2.6.11 */
-                pmd = pmd_offset(pud_offset(pgd, adr), adr);
+		pmd = pmd_offset(pud_offset(pgd, adr), adr);
 #endif /* < 2.6.11 */
 		if (!pmd_none(*pmd)) {
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)

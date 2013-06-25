@@ -235,7 +235,7 @@ struct Profile_Struct
 	int Log_Mgr_PSave[MAX_RTAI_LOGS];	/* logs manager n points to save */
 	float Log_Mgr_TSave[MAX_RTAI_LOGS];	/* logs manager n seconds to save */
 	char *Log_Mgr_File[MAX_RTAI_LOGS];	/* logs manager save file name */
-	
+
 	W_Geometry_T ALog_Mgr_W;		/* logs manager geometry */			//added 4/5
 	char *ALog_Mgr_File[MAX_RTAI_LOGS];	/* logs manager save file name */
 

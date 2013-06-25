@@ -69,7 +69,7 @@ static void calibrate(void)
 
 static void just_ret(void)
 {
-        return;
+	return;
 }
 
 static RT_TASK rtask;
@@ -130,19 +130,19 @@ static int rt_timer_tick_ext(int irq, unsigned long data)
 //this is not to be used
 int calibrate_apic (void)
 {
-        unsigned long flags;
-        RTIME t, dt;
-        int i;
+	unsigned long flags;
+	RTIME t, dt;
+	int i;
 
-        flags = rtai_critical_enter(NULL);
-        t = rtai_rdtsc();
-        for (i = 0; i < 1000000; i++) {
+	flags = rtai_critical_enter(NULL);
+	t = rtai_rdtsc();
+	for (i = 0; i < 1000000; i++) {
 		apic_write_around(APIC_TMICT, 8000);
-        }
-        dt = rtai_rdtsc() - t;
-        rtai_critical_exit(flags);
+	}
+	dt = rtai_rdtsc() - t;
+	rtai_critical_exit(flags);
 
-        return rtai_imuldiv(dt, 1000, RTAI_CPU_FREQ);
+	return rtai_imuldiv(dt, 1000, RTAI_CPU_FREQ);
 }
 #endif
 
@@ -190,9 +190,9 @@ static long long user_srq(unsigned long whatever)
 		}
 
 		case END_FREQ_CAL: {
-		        rt_free_timer();
-		        rt_reset_irq_to_sym_mode(TIMER_8254_IRQ);
-		        rt_free_global_irq(TIMER_8254_IRQ);
+			rt_free_timer();
+			rt_reset_irq_to_sym_mode(TIMER_8254_IRQ);
+			rt_free_global_irq(TIMER_8254_IRQ);
 			break;
 		}
 
@@ -208,8 +208,8 @@ static long long user_srq(unsigned long whatever)
 		}
 
 		case END_BUS_CHECK: {
-		        rt_free_timer();
-		        rt_reset_irq_to_sym_mode(TIMER_8254_IRQ);
+			rt_free_timer();
+			rt_reset_irq_to_sym_mode(TIMER_8254_IRQ);
 			break;
 		}
 	}
@@ -228,8 +228,8 @@ int init_module(void)
 	rtf_create(0, FIFOBUFSIZE);
 	rtf_put(0, &params, sizeof(params));
 	if ((srq = rt_request_srq(CALSRQ, (void *)user_srq, user_srq)) < 0) {
-                printk("No sysrq available for the calibration.\n");
-                return srq;
+		printk("No sysrq available for the calibration.\n");
+		return srq;
 	}
 	return 0;
 }

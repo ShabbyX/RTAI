@@ -222,4 +222,3 @@ __restore_fpenv:
 
 	blr
 #endif
-

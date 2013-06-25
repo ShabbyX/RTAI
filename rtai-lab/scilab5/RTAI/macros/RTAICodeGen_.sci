@@ -531,7 +531,7 @@ function ok = compile_standalone()
   end
   chdir(wd);
   ok = %t;
-endfunction	
+endfunction
 
 //==========================================================================
 // Transforms a given Scicos discrete and continuous SuperBlock into a C defined Block

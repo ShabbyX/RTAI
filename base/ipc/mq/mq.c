@@ -52,7 +52,7 @@ MODULE_LICENSE("GPL");
 		if (abs(rt_sem_wait(mutex)) >= RTE_LOWERR) { \
 			return -EBADF; \
 		} \
-	} while (0)		
+	} while (0)
 #define mq_mutex_timedlock(mutex, abstime) \
 	do { \
 		RTIME t = timespec2count(abstime); \
@@ -151,10 +151,10 @@ static inline MSG_HDR* getnode(Q_CTRL *queue)
 static inline int freenode(void *node, Q_CTRL *queue)
 {
 	if (queue->attrs.mq_curmsgs > 0) {
-                queue->nodes[--queue->attrs.mq_curmsgs] = node;
-                return 0;
-        }
-        return -EINVAL;
+		queue->nodes[--queue->attrs.mq_curmsgs] = node;
+		return 0;
+	}
+	return -EINVAL;
 }
 
 
@@ -180,8 +180,8 @@ static void insert_message(Q_CTRL *q, MSG_HDR *this_msg)
 //POSIX queues preserve FIFO ordering of messages within
 //a particular priority level
 		while (insertpt->priority >= this_msg->priority) {
-		        prev = insertpt;
-		        insertpt = insertpt->next;
+			prev = insertpt;
+			insertpt = insertpt->next;
 		}
 //We've now found a message (or messages) of equal or lower
 //priority than the one we're trying to put onto the queue
@@ -284,15 +284,15 @@ static void delete_queue(int q_index)
 	mq_cond_destroy(&rt_pqueue_descr[q_index].emp_cond);
 	mq_cond_destroy(&rt_pqueue_descr[q_index].full_cond);
 
-	if (num_pqueues > 0) {	
-		num_pqueues--;	
+	if (num_pqueues > 0) {
+		num_pqueues--;
 	}
 }
 
 static void signal_suprt_fun_mq(void *fun_arg)
-{			
+{
 	struct suprt_fun_arg { RT_TASK *sigtask; RT_TASK *task; mqd_t mq; } arg = *(struct suprt_fun_arg *)fun_arg;
-	
+
 	arg.sigtask = RT_CURRENT;
 	if (!rt_request_signal_(arg.sigtask, arg.task, (arg.mq + MAXSIGNALS))) {
 		while (rt_wait_signal(arg.sigtask, arg.task)) {
@@ -366,10 +366,10 @@ RTAI_SYSCALL_MODE mqd_t _mq_open(char *mq_name, int oflags, mode_t permissions, 
 			} else if(task_data_ptr->q_access[q_ind].q_id == INVALID_PQUEUE) {
 				if (spare_count == 0) {
 					first_spare = q_ind;
-				}			
+				}
 				spare_count++;
 			}
-		}	
+		}
 	//If the task has not already opened this queue and there are no
 	//more available slots, can't do anymore...
 		if (!q_found && spare_count == 0) {
@@ -464,7 +464,7 @@ RTAI_SYSCALL_MODE mqd_t _mq_open(char *mq_name, int oflags, mode_t permissions, 
 				task_data_ptr->q_access[q_ind].oflags = oflags;
 				break;
 			}
-        	}
+		}
 		if(q_index >= MAX_PQUEUES) {
 			mq_mutex_unlock(&pqueue_mutex);
 			return -EMFILE;
@@ -477,16 +477,16 @@ RTAI_SYSCALL_MODE mqd_t _mq_open(char *mq_name, int oflags, mode_t permissions, 
 		mq_mutex_unlock(&pqueue_mutex);
 		return -ENOENT;
 	}
-	
+
 	// Return the message queue's id and mark it as open
 	rt_pqueue_descr[q_index].open_count++;
 	mq_mutex_unlock(&pqueue_mutex);
-	
+
 	// Prepare notify task
 	if ((oflags & O_NOTIFY_NP) && space == 0)	{
 		rt_request_signal_mq(rt_pqueue_descr[q_index].q_id);
 	}
-	
+
 	return (mqd_t)rt_pqueue_descr[q_index].q_id;
 }
 EXPORT_SYMBOL(_mq_open);
@@ -521,7 +521,7 @@ RTAI_SYSCALL_MODE size_t _mq_receive(mqd_t mq, char *msg_buffer, size_t buflen, 
 		}
 	}
     	msg_ptr = q->data.head;
-        if (msg_ptr->hdr.size <= buflen) {
+	if (msg_ptr->hdr.size <= buflen) {
 		size = msg_ptr->hdr.size;
 		if (space) {
 			memcpy(msg_buffer, &msg_ptr->data, size);
@@ -556,7 +556,7 @@ RTAI_SYSCALL_MODE size_t _mq_timedreceive(mqd_t mq, char *msg_buffer, size_t buf
 	MQMSG *msg_ptr;
 	MSG_QUEUE *q;
 	struct timespec time;
-	
+
 	if (q_index < 0 || q_index >= MAX_PQUEUES) {
 		return -EBADF;
 	}
@@ -687,7 +687,7 @@ RTAI_SYSCALL_MODE int _mq_timedsend(mqd_t mq, const char *msg, size_t msglen, un
 	}
 	if (msgprio > MQ_PRIO_MAX) {
 		return -EINVAL;
-	}			
+	}
 	if (!space) {
 		rt_copy_from_user(&time, abstime, sizeof(struct timespec));
 		abstime = &time;
@@ -765,13 +765,13 @@ RTAI_SYSCALL_MODE int mq_close(mqd_t mq)
 	if (rt_pqueue_descr[q_index].notify.task == this_task) {
 		rt_pqueue_descr[q_index].notify.task = NULL;
 	}
-        if (--rt_pqueue_descr[q_index].open_count <= 0 &&
+	if (--rt_pqueue_descr[q_index].open_count <= 0 &&
  	    rt_pqueue_descr[q_index].marked_for_deletion == TRUE ) {
 		delete_queue(q_index);
 	}
 	mq_mutex_unlock(&rt_pqueue_descr[q_index].mutex);
 	mq_mutex_unlock(&pqueue_mutex);
-        return OK;
+	return OK;
 }
 EXPORT_SYMBOL(mq_close);
 
@@ -862,18 +862,18 @@ RTAI_SYSCALL_MODE int _mq_notify(mqd_t mq, RT_TASK *task, long space, long rem, 
 	}
 	mq_mutex_lock(&rt_pqueue_descr[q_index].mutex);
 	if (rt_pqueue_descr[q_index].notify.task == NULL) {
-        	rt_pqueue_descr[q_index].notify.task = task;
-	        rt_pqueue_descr[q_index].notify.data = *notification;
-	        if (space) {
-	        	if (((QUEUE_CTRL)task->mqueues)->q_access[mq -1].usp_notifier) {
+		rt_pqueue_descr[q_index].notify.task = task;
+		rt_pqueue_descr[q_index].notify.data = *notification;
+		if (space) {
+			if (((QUEUE_CTRL)task->mqueues)->q_access[mq -1].usp_notifier) {
 					rt_copy_to_user(((QUEUE_CTRL)task->mqueues)->q_access[mq -1].usp_notifier, &rt_pqueue_descr[mq -1].notify.data, sizeof(struct sigevent));
 					rtn = OK;
-	        	} else {
+			} else {
 					rtn = O_NOTIFY_NP;
-	        	}
-	        } else {
+			}
+		} else {
 				rtn = OK;
-	        }
+		}
 	} else {
 		rtn = -EBUSY;
 	}
@@ -935,7 +935,7 @@ int ind;
 			rt_pqueue_descr[ind].open_count
 			);
 	    PROC_PRINT( "%-6ld %-6ld   %-5ld  ",
-		        rt_pqueue_descr[ind].data.attrs.mq_curmsgs,
+			rt_pqueue_descr[ind].data.attrs.mq_curmsgs,
 			rt_pqueue_descr[ind].data.attrs.mq_maxmsg,
 			rt_pqueue_descr[ind].data.attrs.mq_msgsize
 			);
@@ -971,16 +971,16 @@ static int pqueue_proc_unregister(void)
 
 struct rt_native_fun_entry rt_pqueue_entries[] = {
 	{ { UR1(1, 5) | UR2(4, 6), _mq_open },  	        MQ_OPEN },
-        { { 1, _mq_receive },  		                MQ_RECEIVE },
-        { { 1, _mq_send },    		                MQ_SEND },
-        { { 1, mq_close },                              MQ_CLOSE },
-        { { UW1(2, 3), mq_getattr },                    MQ_GETATTR },
-        { { UR1(2, 4) | UW1(3, 4), mq_setattr },	MQ_SETATTR },
-        { { UR1(5, 6), _mq_notify },                     MQ_NOTIFY },
-        { { UR1(1, 2), mq_unlink },                     MQ_UNLINK },
-        { { 1, _mq_timedreceive },		  	MQ_TIMEDRECEIVE },
-        { { 1, _mq_timedsend }, 	       		MQ_TIMEDSEND },
-        { { 1,	mq_reg_usp_notifier }, 	       		MQ_REG_USP_NOTIFIER },
+	{ { 1, _mq_receive },  		                MQ_RECEIVE },
+	{ { 1, _mq_send },    		                MQ_SEND },
+	{ { 1, mq_close },                              MQ_CLOSE },
+	{ { UW1(2, 3), mq_getattr },                    MQ_GETATTR },
+	{ { UR1(2, 4) | UW1(3, 4), mq_setattr },	MQ_SETATTR },
+	{ { UR1(5, 6), _mq_notify },                     MQ_NOTIFY },
+	{ { UR1(1, 2), mq_unlink },                     MQ_UNLINK },
+	{ { 1, _mq_timedreceive },		  	MQ_TIMEDRECEIVE },
+	{ { 1, _mq_timedsend }, 	       		MQ_TIMEDSEND },
+	{ { 1,	mq_reg_usp_notifier }, 	       		MQ_REG_USP_NOTIFIER },
 	{ { 0, 0 },  		      	       		000 }
 };
 

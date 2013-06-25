@@ -151,7 +151,7 @@ static int __switches_init(void)
 	printk("\nWait for it ...\n");
 	rt_typed_sem_init(&sem, 1, SEM_TYPE);
 	rt_linux_use_fpu(1);
-        thread = (RT_TASK *)kmalloc(ntasks*sizeof(RT_TASK), GFP_KERNEL);
+	thread = (RT_TASK *)kmalloc(ntasks*sizeof(RT_TASK), GFP_KERNEL);
 	for (i = 0; i < ntasks; i++) {
 #ifdef DISTRIBUTE
 		e = rt_task_init_cpuid(thread + i, pend_task, i, stack_size, 0, use_fpu, 0,  i%2);
@@ -182,7 +182,7 @@ static void __switches_exit(void)
 		rt_task_delete(thread + i);
 	}
 	rt_task_delete(&task);
-        kfree(thread);
+	kfree(thread);
 	printk("\nCPU USE SUMMARY\n");
 	for (i = 0; i < NR_RT_CPUS; i++) {
 		printk("# %d -> %d\n", i, cpu_used[i]);

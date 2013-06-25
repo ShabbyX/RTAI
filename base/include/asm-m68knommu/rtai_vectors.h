@@ -48,7 +48,7 @@
 #ifdef CONFIG_X86_LOCAL_APIC
 #define RTAI_APIC_HIGH_VECTOR  HAL_APIC_HIGH_VECTOR
 #define RTAI_APIC_LOW_VECTOR   HAL_APIC_LOW_VECTOR
-#else 
+#else
 #define RTAI_APIC_HIGH_VECTOR  0xff
 #define RTAI_APIC_LOW_VECTOR   0xff
 #endif
@@ -74,9 +74,9 @@
 static inline void RTAI_DO_TRAP_SYS(long long *ret, int srq, unsigned long args)
 {
 	register int __srq __asm__ ("%d0") = srq;
-        register unsigned long __args __asm__ ("%d1") = args;
-        register unsigned long __ret1 __asm__ ("%d2");
-        register unsigned long __ret2 __asm__ ("%d3");
+	register unsigned long __args __asm__ ("%d1") = args;
+	register unsigned long __ret1 __asm__ ("%d2");
+	register unsigned long __ret2 __asm__ ("%d3");
 	__asm__ __volatile__ ( "trap #11\n\t" : "+d" (__ret1),"+d" (__ret2) : "d" (__srq), "d" (__args) : "memory" );
 	*ret = __ret1 + ((long long)__ret2 << 32);
 }

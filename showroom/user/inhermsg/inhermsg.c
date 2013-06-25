@@ -51,12 +51,12 @@ void *thread_fun(void *arg)
 	if (USE_RPC) {
 		unsigned long msg;
 		rt_printk("FUN RPC\n");
-	        rt_rpc(maintask, 0, &msg);
+		rt_rpc(maintask, 0, &msg);
 	} else {
 		rt_printk("FUN SEND\n");
-        	rt_send(maintask, 0);
+		rt_send(maintask, 0);
 		rt_printk("FUN SUSP\n");
-        	rt_task_suspend(funtask);
+		rt_task_suspend(funtask);
 	}
 	rt_printk("FUN DONE\n");
 
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 		SNDBRCV  = atoi(argv[2]);
 		HARDMAIN = atoi(argv[3]);
 	}
-	
+
  	if (!(maintask = rt_task_init_schmod(0xcacca, 1, 0, 0, SCHED_FIFO, 0x1))) {
 		rt_printk("CANNOT INIT MAIN\n");
 		exit(1);

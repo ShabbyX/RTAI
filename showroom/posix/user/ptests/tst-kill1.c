@@ -109,6 +109,6 @@ int main(void)
 	start_rt_timer(0);
 	pthread_mutex_init(&m, NULL);
 	pthread_cond_init(&c, NULL);
-        do_test();
-        return 0;
+	do_test();
+	return 0;
 }

@@ -135,7 +135,7 @@ diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/arch/arm/mach-at91rm9200/at91
 +		printk("> %s does not exist.",clk_name);
 +	else
 +		clk_enable(tc);
- 	
+
  	/* No Sync. */
  	at91_tc_write(AT91_TC_BCR, 0);
 diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/arch/arm/mach-at91rm9200/Kconfig linux-2.6.20.13-9263/arch/arm/mach-at91rm9200/Kconfig
@@ -178,4 +178,3 @@ diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/include/asm-arm/arch-at91rm92
 +#endif /* CONFIG_ARCH_AT91 */
 
  #endif /* CONFIG_IPIPE && !__ASSEMBLY__ */
-

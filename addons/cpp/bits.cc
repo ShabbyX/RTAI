@@ -46,7 +46,7 @@ void Bits::init(unsigned long mask)
 {
 	rt_bits_init(m_Bits,  mask );
 }
-	
+
 unsigned long Bits::get_bits(){
 	return rt_get_bits( m_Bits );
 }

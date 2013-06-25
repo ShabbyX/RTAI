@@ -256,7 +256,7 @@ static void ss_wakeup(struct list_head* h, int kill)
 	tmp = h->next;
 	while (tmp != h) {
 		struct msg_sender* mss;
-		
+
 		mss = list_entry(tmp,struct msg_sender,list);
 		tmp = tmp->next;
 		if(kill)
@@ -272,7 +272,7 @@ static void expunge_all(struct msg_queue* msq, int res)
 	tmp = msq->q_receivers.next;
 	while (tmp != &msq->q_receivers) {
 		struct msg_receiver* msr;
-		
+
 		msr = list_entry(tmp,struct msg_receiver,r_list);
 		tmp = tmp->next;
 		msr->r_msg = ERR_PTR(res);
@@ -294,7 +294,7 @@ static void freeque (int id)
 	msg_unlock(id);
 
 	rt_sched_unlock();
-		
+
 	tmp = msq->q_messages.next;
 	while(tmp != &msq->q_messages) {
 		struct msg_msg* msg = list_entry(tmp,struct msg_msg,m_list);
@@ -310,7 +310,7 @@ int rt_msgget (key_t key, int msgflg)
 {
 	int id, ret = -EPERM;
 	struct msg_queue *msq;
-	
+
 	down(&msg_ids.sem);
 	if (key == IPC_PRIVATE)
 		ret = newque(key, msgflg);
@@ -450,7 +450,7 @@ int _rt_msgctl (int msqid, int cmd, struct msqid_ds *buf, int space)
 	struct msg_queue *msq;
 	struct msq_setbuf setbuf;
 	struct kern_ipc_perm *ipcp;
-	
+
 	if (msqid < 0 || cmd < 0)
 		return -EINVAL;
 
@@ -468,7 +468,7 @@ int _rt_msgctl (int msqid, int cmd, struct msqid_ds *buf, int space)
 		 * due to padding, it's not enough
 		 * to set all member fields.
 		 */
-		memset(&msginfo,0,sizeof(msginfo));	
+		memset(&msginfo,0,sizeof(msginfo));
 		msginfo.msgmni = msg_ctlmni;
 		msginfo.msgmax = msg_ctlmax;
 		msginfo.msgmnb = msg_ctlmnb;
@@ -663,7 +663,7 @@ int _rt_msgsnd(int msqid, int mtype, void *mtext, size_t msgsz, int msgflg, int 
 	struct msg_queue *msq;
 	struct msg_msg *msg;
 	int err;
-	
+
 	if (msgsz > msg_ctlmax || (long) msgsz < 0 || msqid < 0)
 		return -EINVAL;
 	if (mtype < 1)
@@ -706,7 +706,7 @@ retry:
 		if(msq==NULL)
 			goto out_free;
 		ss_del(&s);
-		
+
 		if (signal_pending(current)) {
 			err=-EINTR;
 			goto out_unlock_free;
@@ -726,7 +726,7 @@ retry:
 		atomic_add(msgsz,&msg_bytes);
 		atomic_inc(&msg_hdrs);
 	}
-	
+
 	err = 0;
 	msg = NULL;
 

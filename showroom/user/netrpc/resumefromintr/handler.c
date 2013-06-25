@@ -60,10 +60,10 @@ static RT_TASK sup_task;
 
 static inline unsigned char CMOS_READ(addr)
 {
-        unsigned char val;
-        outb((addr),RTC_PORT(0));
-        pause_io();
-        return inb(RTC_PORT(1));
+	unsigned char val;
+	outb((addr),RTC_PORT(0));
+	pause_io();
+	return inb(RTC_PORT(1));
 }
 
 #define CMOS_WRITE(val, addr) ({ \
@@ -142,7 +142,7 @@ static void rtc_stop(void)
 
 static void sup_fun(long none)
 {
-        while ((taskport = rt_request_port(tasknode)) <= 0);
+	while ((taskport = rt_request_port(tasknode)) <= 0);
 	rt_mbx_receive(&mbx, &rmt_task, sizeof(rmt_task));
 	rt_mbx_receive(&mbx, &rmt_sem, sizeof(rmt_sem));
 	rt_mbx_receive(&mbx, &run, sizeof(run));
@@ -154,21 +154,21 @@ static void sup_fun(long none)
 
 int init_module(void)
 {
-        tasknode = ddn2nl(TaskNode);
+	tasknode = ddn2nl(TaskNode);
 	rt_mbx_init(&mbx, 1);
 	rt_register(nam2num("HDLMBX"), &mbx, IS_MBX, 0);
-        rt_task_init(&sup_task, sup_fun, 0, 2000, 0, 0, 0);
-        rt_task_resume(&sup_task);
-        rt_assign_irq_to_cpu(RTC_IRQ, IRQ_CPU);
-        rtc_start(RTC_FREQ);
+	rt_task_init(&sup_task, sup_fun, 0, 2000, 0, 0, 0);
+	rt_task_resume(&sup_task);
+	rt_assign_irq_to_cpu(RTC_IRQ, IRQ_CPU);
+	rtc_start(RTC_FREQ);
 	return 0;
 }
 
 void cleanup_module(void)
 {
-        rt_reset_irq_to_sym_mode(RTC_IRQ);
-        rtc_stop();
+	rt_reset_irq_to_sym_mode(RTC_IRQ);
+	rtc_stop();
 	rt_mbx_delete(&mbx);
-        rt_task_delete(&sup_task);
+	rt_task_delete(&sup_task);
 	rt_printk("HANDLER INTERRUPT MODULE REMOVED, OVERUNS %d\n", overuns);
 }

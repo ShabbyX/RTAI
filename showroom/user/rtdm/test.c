@@ -98,7 +98,7 @@ int main(void)
 	if ((sfd = rt_dev_open("rtser0", O_RDWR)) < 0 || (rfd = rt_dev_open("rtser1", O_RDWR)) < 0) {
 		PRINT("hello_world_lxrt: error in rt_dev_open()\n");
 		return 1;
-	} else {	
+	} else {
 // GET_CONFIGs not needed, as the duplicated initializations, just for testing.
 		rt_dev_ioctl(sfd, RTSER_RTIOC_GET_CONFIG, &serconf);
 		serconf.config_mask = RTSER_SET_BAUD | RTSER_SET_TIMEOUT_TX;

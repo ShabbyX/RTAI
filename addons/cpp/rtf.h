@@ -39,9 +39,9 @@ public:
 	fifo();
 	fifo(int id, int size);
 	virtual ~fifo();
-	
+
 	int create(int id, int size);
-	
+
 	int reset();
 	int resize(int size);
 	int put(const void* buffer, int count);
@@ -49,10 +49,10 @@ public:
 
 	int activate_handler();
 	int deactivate_handler();
-	
+
 	virtual void handler(){};
-protected:	
-	int m_fifo;	
+protected:
+	int m_fifo;
 	static fifo* m_this_table[MAX_FIFOS];
 };
 
@@ -67,7 +67,7 @@ public:
 	int put(const Type* type) {
 		return fifo::put((const void*)type,sizeof(Type));
 	}
-	
+
 	int get(Type* type) {
 		return fifo::get((void*)type,sizeof(Type));
 	}

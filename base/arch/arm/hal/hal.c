@@ -104,7 +104,7 @@ extern struct hw_interrupt_type hal_std_irq_dtype[];
 
 #define BEGIN_PIC() \
 do { \
-        unsigned long flags, pflags, cpuid; \
+	unsigned long flags, pflags, cpuid; \
 	rtai_save_flags_and_cli(flags); \
 	cpuid = rtai_cpuid(); \
 	pflags = xchg(ipipe_root_status[cpuid], 1 << IPIPE_STALL_FLAG); \
@@ -289,7 +289,7 @@ rt_startup_irq(unsigned irq)
 	rtai_irq_desc(irq)->unmask(irq);
 	retval = rtai_irq_desc(irq)->startup(irq);
     END_PIC();
-        return retval;
+	return retval;
 }
 
 void
@@ -554,14 +554,14 @@ static void (*rtai_isr_hook)(int cpuid);
 #define RTAI_SCHED_ISR_LOCK() \
     do { \
 		if (!rt_scheduling[cpuid = rtai_cpuid()].locked++) { \
-            rt_scheduling[cpuid].rqsted = 0; \
+	    rt_scheduling[cpuid].rqsted = 0; \
 	} \
     } while (0)
 #define RTAI_SCHED_ISR_UNLOCK() \
     do { \
 	if (rt_scheduling[cpuid].locked && !(--rt_scheduling[cpuid].locked)) { \
 	    if (rt_scheduling[cpuid].rqsted > 0 && rtai_isr_hook) { \
-             	rtai_isr_hook(cpuid); \
+	     	rtai_isr_hook(cpuid); \
 	    } \
 	} \
     } while (0)
@@ -589,22 +589,22 @@ static void (*rtai_isr_hook)(int cpuid);
 /* this can be a prototype for a handler pending something for Linux */
 int rtai_timer_handler(struct pt_regs *regs)
 {
-        unsigned long cpuid=rtai_cpuid();
+	unsigned long cpuid=rtai_cpuid();
 	unsigned long sflags;
 
-        RTAI_SCHED_ISR_LOCK();
-        HAL_LOCK_LINUX();
+	RTAI_SCHED_ISR_LOCK();
+	HAL_LOCK_LINUX();
 	rtai_realtime_irq[RTAI_TIMER_IRQ].irq_ack(RTAI_TIMER_IRQ);
 	((void (*)(void))rtai_realtime_irq[RTAI_TIMER_IRQ].handler)();
-        HAL_UNLOCK_LINUX();
-        RTAI_SCHED_ISR_UNLOCK();
+	HAL_UNLOCK_LINUX();
+	RTAI_SCHED_ISR_UNLOCK();
 
-        if (test_and_clear_bit(cpuid, &hal_pended) && !test_bit(IPIPE_STALL_FLAG, ipipe_root_status[cpuid])) {
-                rtai_sti();
-                hal_fast_flush_pipeline(cpuid);
-                return 1;
-        }
-        return 0;
+	if (test_and_clear_bit(cpuid, &hal_pended) && !test_bit(IPIPE_STALL_FLAG, ipipe_root_status[cpuid])) {
+		rtai_sti();
+		hal_fast_flush_pipeline(cpuid);
+		return 1;
+	}
+	return 0;
 }
 
 /* rt_request_timer(): install a timer interrupt handler and set hardware-timer
@@ -626,31 +626,31 @@ static void rtai_hirq_dispatcher(int irq, struct pt_regs *regs)
 {
 	unsigned long cpuid;
     if (rtai_realtime_irq[irq].handler) {
-                unsigned long sflags;
+		unsigned long sflags;
 
 	RTAI_SCHED_ISR_LOCK();
-                HAL_LOCK_LINUX();
-                rtai_realtime_irq[irq].irq_ack(irq); mb();
+		HAL_LOCK_LINUX();
+		rtai_realtime_irq[irq].irq_ack(irq); mb();
 	rtai_realtime_irq[irq].handler(irq, rtai_realtime_irq[irq].cookie);
-                HAL_UNLOCK_LINUX();
+		HAL_UNLOCK_LINUX();
 	RTAI_SCHED_ISR_UNLOCK();
-                if (rtai_realtime_irq[irq].retmode || !test_and_clear_bit(cpuid, &hal_pended) || test_bit(IPIPE_STALL_FLAG, ipipe_root_status[cpuid])) {
-                        return;
+		if (rtai_realtime_irq[irq].retmode || !test_and_clear_bit(cpuid, &hal_pended) || test_bit(IPIPE_STALL_FLAG, ipipe_root_status[cpuid])) {
+			return;
     }
-        } else {
-                unsigned long lflags;
+	} else {
+		unsigned long lflags;
 
-                lflags = xchg(ipipe_root_status[cpuid = rtai_cpuid()], (1 << IPIPE_STALL_FLAG));
-                rtai_realtime_irq[irq].irq_ack(irq); mb();
-                hal_pend_uncond(irq, cpuid);
-                *ipipe_root_status[cpuid] = lflags;
-                if (test_bit(IPIPE_STALL_FLAG, &lflags)) {
-                        return;
+		lflags = xchg(ipipe_root_status[cpuid = rtai_cpuid()], (1 << IPIPE_STALL_FLAG));
+		rtai_realtime_irq[irq].irq_ack(irq); mb();
+		hal_pend_uncond(irq, cpuid);
+		*ipipe_root_status[cpuid] = lflags;
+		if (test_bit(IPIPE_STALL_FLAG, &lflags)) {
+			return;
 	}
     }
-        rtai_sti();
-        hal_fast_flush_pipeline(cpuid);
-        return;
+	rtai_sti();
+	hal_fast_flush_pipeline(cpuid);
+	return;
 }
 
 RT_TRAP_HANDLER
@@ -760,19 +760,19 @@ long long (*rtai_lxrt_dispatcher)(unsigned long, unsigned long, void *);
 static int (*sched_intercept_syscall_prologue)(struct pt_regs *);
 
 static int intercept_syscall_prologue(unsigned long event, struct pt_regs *regs){
-        if (likely(regs->ARM_r0 >= RTAI_SYSCALL_NR)) {
-                unsigned long srq  = regs->ARM_r1;
+	if (likely(regs->ARM_r0 >= RTAI_SYSCALL_NR)) {
+		unsigned long srq  = regs->ARM_r1;
 		unsigned long arg  = regs->ARM_r2;
 
-                IF_IS_A_USI_SRQ_CALL_IT(srq, arg, (long long *)regs->ARM_r5, regs->msr, 1);
-                *((long long *)regs->ARM_r3) = srq > RTAI_NR_SRQS ?  rtai_lxrt_dispatcher(srq, arg, regs) : rtai_usrq_dispatcher(srq, arg);
-                if (!in_hrt_mode(srq = rtai_cpuid())) {
-                        hal_test_and_fast_flush_pipeline(srq);
-                        return 0;
+		IF_IS_A_USI_SRQ_CALL_IT(srq, arg, (long long *)regs->ARM_r5, regs->msr, 1);
+		*((long long *)regs->ARM_r3) = srq > RTAI_NR_SRQS ?  rtai_lxrt_dispatcher(srq, arg, regs) : rtai_usrq_dispatcher(srq, arg);
+		if (!in_hrt_mode(srq = rtai_cpuid())) {
+			hal_test_and_fast_flush_pipeline(srq);
+			return 0;
     }
-                return 1;
-        }
-        return likely(sched_intercept_syscall_prologue != NULL) ? sched_intercept_syscall_prologue(regs) : 0;
+		return 1;
+	}
+	return likely(sched_intercept_syscall_prologue != NULL) ? sched_intercept_syscall_prologue(regs) : 0;
 }
 
 int rtai_syscall_dispatcher (struct pt_regs *regs)
@@ -783,11 +783,11 @@ int rtai_syscall_dispatcher (struct pt_regs *regs)
 	IF_IS_A_USI_SRQ_CALL_IT(srq, regs->ARM_r2, (long long *)regs->ARM_r3, regs->msr, 1);
 
 	*((long long*)&regs->ARM_r0) = srq > RTAI_NR_SRQS ?  rtai_lxrt_dispatcher(srq, arg, regs) : rtai_usrq_dispatcher(srq, arg);
-        if (!in_hrt_mode(srq = rtai_cpuid())) {
-                hal_test_and_fast_flush_pipeline(srq);
-                return 1;
-        }
-        return 0;
+	if (!in_hrt_mode(srq = rtai_cpuid())) {
+		hal_test_and_fast_flush_pipeline(srq);
+		return 1;
+	}
+	return 0;
 }
 
 static void rtai_domain_entry(int iflag)
@@ -801,10 +801,10 @@ static void rtai_domain_entry(int iflag)
 
 long rtai_catch_event (struct hal_domain_struct *from, unsigned long event, int (*handler)(unsigned long, void *))
 {
-        if (event == HAL_SYSCALL_PROLOGUE) {
-                sched_intercept_syscall_prologue = (void *)handler;
-                return 0;
-        }
+	if (event == HAL_SYSCALL_PROLOGUE) {
+		sched_intercept_syscall_prologue = (void *)handler;
+		return 0;
+	}
 	return (long)hal_catch_event(from, event, (void *)handler);
 }
 
@@ -947,7 +947,7 @@ static void rtai_install_archdep (void)
 {
 	struct hal_sysinfo_struct sysinfo;
 
-#if !defined(USE_LINUX_SYSCALL) && !defined(CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL)	
+#if !defined(USE_LINUX_SYSCALL) && !defined(CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL)
 	/* empty till a direct RTAI syscall way is decided */
 #endif
 

@@ -39,7 +39,7 @@ void task1(void)
 	rt_grow_and_lock_stack(STACK_SIZE - 10000);
 #ifdef MAKE_HARD
 	MAKE_HARD();
-#endif	
+#endif
 	rt_make_hard_real_time();
 	rt_printk("TASK1 TID = %d : ", rt_gettid());
 
@@ -48,7 +48,7 @@ void task1(void)
 		rt_sem_signal(sem2);
 	}
 
-        rt_task_delete(NULL);
+	rt_task_delete(NULL);
 	rt_printk("TASK1 EXITING.\n");
 	return;
 }
@@ -61,7 +61,7 @@ void task2(void)
 	rt_grow_and_lock_stack(STACK_SIZE - 10000);
 #ifdef MAKE_HARD
 	MAKE_HARD();
-#endif	
+#endif
 	rt_printk("TASK2 TID = %d.\n\n", rt_gettid());
 
 	rt_printk("TESTING FAILING WAIT IF ......");
@@ -93,7 +93,7 @@ void task2(void)
 	}
 	rt_printk(" %s OK.\n", i == LOOPS ? "" : "NOT");
 
-        rt_task_delete(NULL);
+	rt_task_delete(NULL);
 	rt_printk("\nTASK2 EXITING : ");
 	return;
 }
@@ -120,7 +120,7 @@ int main(void)
 	rt_sem_delete(sem1);
 	rt_sem_delete(sem2);
 
-        rt_task_delete(NULL);
+	rt_task_delete(NULL);
 	rt_printk("END SCHEDULER TEST WITH SEMs.\n\n");
 	return 0;
 }

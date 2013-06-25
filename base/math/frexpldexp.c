@@ -29,11 +29,11 @@ typedef union
       {
       struct {
 #if defined(__BIG_ENDIAN__)
-        unsigned long int hi;
-        unsigned long int lo;
+	unsigned long int hi;
+	unsigned long int lo;
 #else
-        unsigned long int lo;
-        unsigned long int hi;
+	unsigned long int lo;
+	unsigned long int hi;
 #endif
       } words;
       double dbl;
@@ -42,9 +42,9 @@ typedef union
 double ldexp ( double value, int exp )
       {
       if ( exp > SHRT_MAX )
-            exp = SHRT_MAX;
+	    exp = SHRT_MAX;
       else if ( exp < -SHRT_MAX )
-            exp = -SHRT_MAX;
+	    exp = -SHRT_MAX;
       return scalb ( value, exp  );
       }
 
@@ -59,7 +59,7 @@ double frexp ( double value, int *eptr )
       *eptr = 0;
 	if ( valueHead >= 0x7ff00000 || ( valueHead | argument.words.lo ) == 0 )
 		return value;		// 0, inf, or NaN
-	
+
 	if ( valueHead < 0x00100000 )
 		{	// denorm
 		argument.dbl = two54 * value;

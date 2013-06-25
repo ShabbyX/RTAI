@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2006  Roberto Bucher (roberto.bucher@supsi.ch)
-              2011  Holger Nahrstaedt
+	      2011  Holger Nahrstaedt
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -54,5 +54,3 @@ void rt_step(scicos_block *block,int flag)
     init(block);
   }
 }
-
-

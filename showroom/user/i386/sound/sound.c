@@ -131,7 +131,7 @@ int main(void)
 	thread = rt_thread_create(intr_handler, NULL, 10000);
 	rt_mbx_receive(mbx, &data, 1);
 
-	while (!end) {	
+	while (!end) {
 		lseek(player, 0, SEEK_SET);
 		while(!end && (cnt = read(player, &data, BUFSIZE)) > 0) {
 			rt_mbx_send(mbx, data, cnt);

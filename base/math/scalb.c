@@ -24,11 +24,11 @@ typedef union
       {
       struct {
 #if defined(__BIG_ENDIAN__)
-        unsigned long int hi;
-        unsigned long int lo;
+	unsigned long int hi;
+	unsigned long int lo;
 #else
-        unsigned long int lo;
-        unsigned long int hi;
+	unsigned long int lo;
+	unsigned long int hi;
 #endif
       } words;
       double dbl;
@@ -44,7 +44,7 @@ static const double twoToM1022 = 2.225073858507201383e-308;  // 0x1p-1022
       by this function regardless of the value of n.
 
       Exceptions:  OVERFLOW/INEXACT or UNDERFLOW inexact may occur;
-                         INVALID for signaling NaN inputs ( quiet NaN returned ).
+			 INVALID for signaling NaN inputs ( quiet NaN returned ).
 
       Calls:  none.
 ***********************************************************************/
@@ -56,26 +56,26 @@ double scalb ( double x, int n  )
       xInHex.words.lo = 0UL;                     // init. low half of xInHex
 
       if ( n > 1023 )
-            {                                   // large positive scaling
-            if ( n > 2097 )                     // huge scaling
-            	return ( ( x * twoTo1023 ) * twoTo1023 ) * twoTo1023;
-            while ( n > 1023 )
-                  {                             // scale reduction loop
-                  x *= twoTo1023;               // scale x by 2^1023
-                  n -= 1023;                    // reduce n by 1023
-                  }
-            }
+	    {                                   // large positive scaling
+	    if ( n > 2097 )                     // huge scaling
+	    	return ( ( x * twoTo1023 ) * twoTo1023 ) * twoTo1023;
+	    while ( n > 1023 )
+		  {                             // scale reduction loop
+		  x *= twoTo1023;               // scale x by 2^1023
+		  n -= 1023;                    // reduce n by 1023
+		  }
+	    }
 
       else if ( n < -1022 )
-            {                                   // large negative scaling
-            if ( n < -2098 )                    // huge negative scaling
-            	return ( ( x * twoToM1022 ) * twoToM1022 ) * twoToM1022;
-            while ( n < -1022 )
-                  {                             // scale reduction loop
-                  x *= twoToM1022;              // scale x by 2^( -1022 )
-                  n += 1022;                    // incr n by 1022
-                  }
-            }
+	    {                                   // large negative scaling
+	    if ( n < -2098 )                    // huge negative scaling
+	    	return ( ( x * twoToM1022 ) * twoToM1022 ) * twoToM1022;
+	    while ( n < -1022 )
+		  {                             // scale reduction loop
+		  x *= twoToM1022;              // scale x by 2^( -1022 )
+		  n += 1022;                    // incr n by 1022
+		  }
+	    }
 
 /*******************************************************************************
 *      -1022 <= n <= 1023; convert n to double scale factor.                   *

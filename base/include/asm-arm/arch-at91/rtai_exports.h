@@ -30,4 +30,3 @@ Acknowledgements
 #define _ASM_ARCH_RTAI_EXPORT_H_
 
 #endif
-

@@ -46,32 +46,32 @@ static void asm_handler (void)
 {
     __asm__ __volatile__ ( \
 	"cld\n\t" \
-        __PUSH_GS \
-        "pushl %es\n\t" \
-        "pushl %ds\n\t" \
-        "pushl %eax\n\t" \
-        "pushl %ebp\n\t" \
+	__PUSH_GS \
+	"pushl %es\n\t" \
+	"pushl %ds\n\t" \
+	"pushl %eax\n\t" \
+	"pushl %ebp\n\t" \
 	"pushl %edi\n\t" \
-        "pushl %esi\n\t" \
-        "pushl %edx\n\t" \
-        "pushl %ecx\n\t" \
+	"pushl %esi\n\t" \
+	"pushl %edx\n\t" \
+	"pushl %ecx\n\t" \
 	"pushl %ebx\n\t" \
 	__LXRT_GET_DATASEG(ebx) \
-        "movl %ebx, %ds\n\t" \
-        "movl %ebx, %es\n\t" \
-        __LOAD_KERNEL_PDA \
-        "call "SYMBOL_NAME_STR(c_handler)"\n\t" \
-        "popl %ebx\n\t" \
-        "popl %ecx\n\t" \
-        "popl %edx\n\t" \
-        "popl %esi\n\t" \
+	"movl %ebx, %ds\n\t" \
+	"movl %ebx, %es\n\t" \
+	__LOAD_KERNEL_PDA \
+	"call "SYMBOL_NAME_STR(c_handler)"\n\t" \
+	"popl %ebx\n\t" \
+	"popl %ecx\n\t" \
+	"popl %edx\n\t" \
+	"popl %esi\n\t" \
 	"popl %edi\n\t" \
-        "popl %ebp\n\t" \
-        "popl %eax\n\t" \
-        "popl %ds\n\t" \
-        "popl %es\n\t" \
-        __POP_GS \
-        "iret");
+	"popl %ebp\n\t" \
+	"popl %eax\n\t" \
+	"popl %ds\n\t" \
+	"popl %es\n\t" \
+	__POP_GS \
+	"iret");
 }
 
 struct desc_struct rtai_set_gate_vector (unsigned vector, int type, int dpl, void *handler)
@@ -135,7 +135,7 @@ int _init_module(void)
 	mod_timer(&timer, jiffies + ECHO_PERIOD*HZ);
 	printk("TIMER IRQ/VECTOR %d/%d\n", IRQ, vector);
 	save_fpcr_and_enable_fpu(cr0);
-        save_fpenv(my_fpu_reg);
+	save_fpenv(my_fpu_reg);
 	restore_fpcr(cr0);
 	flags = hal_critical_enter(NULL);
 	desc = rtai_set_gate_vector(vector, 14, 0, asm_handler);

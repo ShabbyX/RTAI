@@ -106,4 +106,3 @@ rtai_archdep_exit(void)
 #define isdemuxirq(irq) (irq >= IRQ_GPIO(2))
 
 #endif
-

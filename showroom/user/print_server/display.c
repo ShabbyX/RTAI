@@ -40,9 +40,9 @@ int main(void)
 
 	sock = socket(AF_INET, SOCK_DGRAM, 0);
 	bzero(&SPRT_ADDR, sizeof(struct sockaddr_in));
-        SPRT_ADDR.sin_family = AF_INET;
+	SPRT_ADDR.sin_family = AF_INET;
 	SPRT_ADDR.sin_port = htons(5000);
-        SPRT_ADDR.sin_addr.s_addr = htonl(INADDR_ANY);
+	SPRT_ADDR.sin_addr.s_addr = htonl(INADDR_ANY);
 	bind(sock, (struct sockaddr *)&SPRT_ADDR, sizeof(struct sockaddr_in));
 	fd = fopen("echo", "r");
 	while (1) {

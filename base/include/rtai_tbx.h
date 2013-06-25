@@ -51,7 +51,7 @@ typedef struct rt_msgh {
 	int broadcast;
 	int size;
 	int priority;
-	void *next;	
+	void *next;
 } RT_MSGH;
 
 #define RT_MSGH_SIZE  (sizeof(RT_MSGH))

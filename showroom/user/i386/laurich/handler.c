@@ -12,9 +12,9 @@ static volatile int tmrcnt;
 static void tmrisr(int irq)
 {
 	int cnt;
-        outb(0x00, 0x43);
-        cnt = inb(0x40);
-        cnt |= (inb(0x40) << 8);
+	outb(0x00, 0x43);
+	cnt = inb(0x40);
+	cnt |= (inb(0x40) << 8);
 	if (cnt > tmrcnt) {
 		tmrcnt = cnt;
 	}

@@ -35,7 +35,7 @@ class ostream {
 public:
 	ostream();
 	virtual ~ostream();
-	
+
 	ostream& set_output_on( bool f );
 
 	ostream& put(char c);
@@ -60,7 +60,7 @@ public:
 
 	ostream& operator<<( const char* s );
 	ostream& operator<<( const void* p );
-	
+
 	ostream& operator<<( unsigned char n);
 	ostream& operator<<( unsigned short n);
 	ostream& operator<<( unsigned int n);

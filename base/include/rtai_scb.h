@@ -103,7 +103,7 @@ struct task_struct;
  */
 
 RTAI_SCB_PROTO(void *, rt_scb_init, (unsigned long name, int size, unsigned long suprt))
-{	
+{
 	void *scb;
 	if (suprt > 1000) {
 		size -=  HDRSIZ + 1;
@@ -116,7 +116,7 @@ RTAI_SCB_PROTO(void *, rt_scb_init, (unsigned long name, int size, unsigned long
 		((int *)scb)[0] = size + 1;
 	} else {
 		while (!((int *)scb)[0]);
-	}			
+	}
 	return scb ? scb + HDRSIZ : 0;
 }
 

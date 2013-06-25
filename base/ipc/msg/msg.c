@@ -424,7 +424,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpc(RT_TASK *task, unsigned long to_do, void *resu
 		rt_current->state |= RT_SCHED_RETURN;
 	} else {
 		rt_current->msg = to_do;
-                enqueue_blocked(rt_current, &task->msg_queue, 0);
+		enqueue_blocked(rt_current, &task->msg_queue, 0);
 		rt_current->state |= RT_SCHED_RPC;
 	}
 	enqueue_resqtsk(task);
@@ -840,7 +840,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive(RT_TASK *task, void *msg)
 				}
 			}
 		} else if (task->state & RT_SCHED_RPC) {
-                        enqueue_blocked(task, &rt_current->ret_queue, 0);
+			enqueue_blocked(task, &rt_current->ret_queue, 0);
 			task->state = (task->state & ~(RT_SCHED_RPC | RT_SCHED_DELAYED)) | RT_SCHED_RETURN;
 		}
 	} else {
@@ -1097,7 +1097,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive_timed(RT_TASK *task, void *msg, RTIME dela
 
 /* ++++++++++++++++++++++++++ EXTENDED MESSAGES +++++++++++++++++++++++++++++++
 COPYRIGHT (C) 2003  Pierre Cloutier  (pcloutier@poseidoncontrols.com)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		    Paolo Mantegazza (mantegazza@aero.polimi.it)
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 #define SET_RPC_MCB() \
@@ -1592,7 +1592,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_returnx(RT_TASK *task, void *msg, int size)
 
 	flags = rt_global_save_flags_and_cli();
 	ASSIGN_RT_CURRENT;
-        if ((task->state & RT_SCHED_RETURN) && task->msg_queue.task == rt_current) {
+	if ((task->state & RT_SCHED_RETURN) && task->msg_queue.task == rt_current) {
 		struct mcb_t *mcb;
 		if ((mcb = (struct mcb_t *)task->msg)->rbytes < size) {
 			size = mcb->rbytes;
@@ -1880,7 +1880,7 @@ static void proxy_task(RT_TASK *me)
 	struct proxy_t *my;
 	unsigned long ret;
 
-	my = (struct proxy_t *)me->stack_bottom;        	
+	my = (struct proxy_t *)me->stack_bottom;
 	while (1) {
 		while (my->nmsgs) {
 		 	atomic_dec((atomic_t *)&my->nmsgs);
@@ -1896,7 +1896,7 @@ RT_TASK *__rt_proxy_attach(void (*agent)(long), RT_TASK *task, void *msg, int nb
 	RT_TASK *proxy, *rt_current;
 	struct proxy_t *my;
 
-        rt_current = _rt_whoami();
+	rt_current = _rt_whoami();
 	if (!task) {
 		task = rt_current;
 	}
@@ -1926,7 +1926,7 @@ RT_TASK *__rt_proxy_attach(void (*agent)(long), RT_TASK *task, void *msg, int nb
 		memcpy(my->msg, msg, nbytes);
 	}
 
-        // agent is at *(proxy->stack + 2)
+	// agent is at *(proxy->stack + 2)
 	return proxy;
 }
 
@@ -1951,7 +1951,7 @@ RTAI_SYSCALL_MODE int rt_proxy_detach(RT_TASK *proxy)
 RTAI_SYSCALL_MODE RT_TASK *rt_trigger(RT_TASK *proxy)
 {
 	struct proxy_t *his;
-	
+
 	his = (struct proxy_t *)(proxy->stack_bottom);
 	if (his && proxy->magic == RT_TASK_MAGIC) {
 		atomic_inc((atomic_t *)&his->nmsgs);
@@ -1965,7 +1965,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_trigger(RT_TASK *proxy)
 
 /* ++++++++++++ ANOTHER API SET FOR EXTENDED INTERTASK MESSAGES +++++++++++++++
 COPYRIGHT (C) 2003  Pierre Cloutier  (pcloutier@poseidoncontrols.com)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		    Paolo Mantegazza (mantegazza@aero.polimi.it)
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 #include <asm/uaccess.h>
@@ -2060,22 +2060,22 @@ RTAI_SYSCALL_MODE int rt_Reply(pid_t pid, void *msg, size_t size)
 
 static void Proxy_Task(RT_TASK *me)
 {
-        struct proxy_t *my;
+	struct proxy_t *my;
 	MSGCB cb;
-        unsigned long replylen;
-        my = (struct proxy_t *)me->stack_bottom;
+	unsigned long replylen;
+	my = (struct proxy_t *)me->stack_bottom;
 	cb.cmd    = PROXY;
 	cb.sbuf   = my->msg;
 	cb.sbytes = my->nbytes;
 	cb.rbuf   = &replylen;
 	cb.rbytes = sizeof(replylen);
-        while(1) {
+	while(1) {
 		while (my->nmsgs) {
 			atomic_dec((atomic_t *)&my->nmsgs);
-                        rt_rpc(my->receiver, (unsigned long)(&cb), &replylen);
+			rt_rpc(my->receiver, (unsigned long)(&cb), &replylen);
 		}
 		rt_task_suspend(me);
-        }
+	}
 }
 
 RTAI_SYSCALL_MODE pid_t rt_Proxy_attach(pid_t pid, void *msg, int nbytes, int prio)
@@ -2099,11 +2099,11 @@ RTAI_SYSCALL_MODE pid_t rt_Trigger(pid_t pid)
 	RT_TASK *proxy;
        	struct proxy_t *his;
 	if ((proxy = pid2rttask(pid))) {
-	        his = (struct proxy_t *)(proxy->stack_bottom);
-        	if (his && proxy->magic == RT_TASK_MAGIC) {
-	                atomic_inc((atomic_t *)&his->nmsgs);
-        	        rt_task_resume(proxy);
-                	return rttask2pid(his->receiver);
+		his = (struct proxy_t *)(proxy->stack_bottom);
+		if (his && proxy->magic == RT_TASK_MAGIC) {
+			atomic_inc((atomic_t *)&his->nmsgs);
+			rt_task_resume(proxy);
+			return rttask2pid(his->receiver);
 		}
 		return -EINVAL;
 	}
@@ -2129,9 +2129,9 @@ RTAI_SYSCALL_MODE pid_t rt_Name_locate(const char *arghost, const char *argname)
 	extern RT_TASK rt_smp_linux_task[];
 	int cpuid;
 	RT_TASK *task;
-        for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
-                task = &rt_smp_linux_task[cpuid];
-                while ((task = task->next)) {
+	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
+		task = &rt_smp_linux_task[cpuid];
+		while ((task = task->next)) {
 			if (!strncmp(argname, task->task_name, RTAI_MAX_NAME_LENGTH - 1)) {
 				return (struct task_struct *)(task->lnxtsk) ?  ((struct task_struct *)(task->lnxtsk)->rtai_tskext(TSKEXT1))->pid : (long)task;
 

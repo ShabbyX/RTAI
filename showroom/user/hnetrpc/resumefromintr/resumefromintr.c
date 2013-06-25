@@ -48,19 +48,19 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-        hdlnode = 0;
-        if (argc == 2 && strstr(argv[1], "HdlNode=")) {
-                inet_aton(argv[1] + 8, &addr.sin_addr);
-                hdlnode = addr.sin_addr.s_addr;
-        }
-        if (!hdlnode) {
-                inet_aton("127.0.0.1", &addr.sin_addr);
-                hdlnode = addr.sin_addr.s_addr;
-        }
+	hdlnode = 0;
+	if (argc == 2 && strstr(argv[1], "HdlNode=")) {
+		inet_aton(argv[1] + 8, &addr.sin_addr);
+		hdlnode = addr.sin_addr.s_addr;
+	}
+	if (!hdlnode) {
+		inet_aton("127.0.0.1", &addr.sin_addr);
+		hdlnode = addr.sin_addr.s_addr;
+	}
 	while ((hdlport = rt_request_hard_port(hdlnode)) <= 0 && hdlport != -EINVAL);
 	rt_make_hard_real_time();
 	mbx = RT_get_adr(hdlnode, hdlport, "HDLMBX");
-        sem = rt_sem_init(nam2num("PRCSEM"), 0);
+	sem = rt_sem_init(nam2num("PRCSEM"), 0);
 
 	printf("USE: SEM SEND/WAIT (s), TASK RESM/SUSP (r), INTERTASK MSG (m): [s|r|m]? ");
 	scanf("%c", &run);
@@ -80,9 +80,9 @@ int main(int argc, char *argv[])
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	rt_make_hard_real_time();
 
-        RT_mbx_send(hdlnode, hdlport, mbx, &task, sizeof(task));
-        RT_mbx_send(hdlnode, hdlport, mbx, &sem, sizeof(sem));
-        RT_mbx_send(hdlnode, hdlport, mbx, &run, 1);
+	RT_mbx_send(hdlnode, hdlport, mbx, &task, sizeof(task));
+	RT_mbx_send(hdlnode, hdlport, mbx, &sem, sizeof(sem));
+	RT_mbx_send(hdlnode, hdlport, mbx, &run, 1);
 
 	count = maxj = 0;
 	t0 = rt_get_cpu_time_ns();
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 	}
 
 	run = 0;
-        RT_mbx_send(hdlnode, hdlport, mbx, &run, 1);
+	RT_mbx_send(hdlnode, hdlport, mbx, &run, 1);
 	rt_make_soft_real_time();
 	rt_release_port(hdlnode, hdlport);
 	rt_sem_delete(sem);

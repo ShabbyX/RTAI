@@ -34,7 +34,7 @@ static char rcsid[] = "$NetBSD: w_j0.c,v 1.6 1995/05/10 20:49:11 jtc Exp $";
 	double z = __ieee754_j0(x);
 	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
 	if(fabs(x)>X_TLOSS) {
-	        return __kernel_standard(x,x,34); /* j0(|x|>X_TLOSS) */
+		return __kernel_standard(x,x,34); /* j0(|x|>X_TLOSS) */
 	} else
 	    return z;
 #endif
@@ -53,16 +53,16 @@ static char rcsid[] = "$NetBSD: w_j0.c,v 1.6 1995/05/10 20:49:11 jtc Exp $";
 	double z;
 	z = __ieee754_y0(x);
 	if(_LIB_VERSION == _IEEE_ || isnan(x) ) return z;
-        if(x <= 0.0){
-                if(x==0.0)
-                    /* d= -one/(x-x); */
-                    return __kernel_standard(x,x,8);
-                else
-                    /* d = zero/(x-x); */
-                    return __kernel_standard(x,x,9);
-        }
+	if(x <= 0.0){
+		if(x==0.0)
+		    /* d= -one/(x-x); */
+		    return __kernel_standard(x,x,8);
+		else
+		    /* d = zero/(x-x); */
+		    return __kernel_standard(x,x,9);
+	}
 	if(x>X_TLOSS) {
-	        return __kernel_standard(x,x,35); /* y0(x>X_TLOSS) */
+		return __kernel_standard(x,x,35); /* y0(x>X_TLOSS) */
 	} else
 	    return z;
 #endif

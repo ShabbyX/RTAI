@@ -18,6 +18,10 @@
 
 #include <rtai_shm.h>
 
+#ifndef VM_RESERVED
+#define VM_RESERVED (VM_DONTEXPAND | VM_DONTDUMP)
+#endif
+
 static __inline__ int vm_remap_page_range(struct vm_area_struct *vma, unsigned long from, unsigned long to)
 {
 	vma->vm_flags |= VM_RESERVED;
@@ -41,7 +45,7 @@ void *rvmalloc(unsigned long size)
 	unsigned long adr;
 
 	if ((mem = vmalloc(size))) {
-	        adr = (unsigned long)mem;
+		adr = (unsigned long)mem;
 		while (size > 0) {
 //			mem_map_reserve(virt_to_page(UVIRT_TO_KVA(adr)));
 			SetPageReserved(vmalloc_to_page((void *)adr));
@@ -54,7 +58,7 @@ void *rvmalloc(unsigned long size)
 
 void rvfree(void *mem, unsigned long size)
 {
-        unsigned long adr;
+	unsigned long adr;
 
 	if ((adr = (unsigned long)mem)) {
 		while (size > 0) {
@@ -124,7 +128,7 @@ void *rkmalloc(int *msize, int suprt)
 
 void rkfree(void *mem, unsigned long size)
 {
-        unsigned long adr;
+	unsigned long adr;
 
 	if ((adr = (unsigned long)mem)) {
 		unsigned long sz = size;

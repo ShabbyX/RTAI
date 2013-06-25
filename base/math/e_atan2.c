@@ -88,7 +88,7 @@ pi_lo   = 1.2246467991473531772E-16; /* 0x3CA1A626, 0x33145C07 */
 	}
     /* when x = 0 */
 	if((ix|lx)==0) return (hy<0)?  -pi_o_2-tiny: pi_o_2+tiny;
-	
+
     /* when x is INF */
 	if(ix==0x7ff00000) {
 	    if(iy==0x7ff00000) {

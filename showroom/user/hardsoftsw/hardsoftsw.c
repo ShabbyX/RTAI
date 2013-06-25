@@ -59,8 +59,8 @@ int main(void)
 	rt_sleep(nano2count(SLEEPTIME));
 	printf("Got string, integer, long long, now we wait 1 s using select.\n");
 	rt_sleep(nano2count(SLEEPTIME));
-        timout.tv_sec = 1;
-        timout.tv_usec = 0;
+	timout.tv_sec = 1;
+	timout.tv_usec = 0;
 	select(1, NULL, NULL, NULL, &timout);
 	rt_sleep(nano2count(SLEEPTIME));
 	printf("Select expired and we print what we read: %s %i %lld %f %f\n", s, i, ll, f, d);

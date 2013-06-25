@@ -1,26 +1,20 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
+dnl Process this file with autoconf to create configure
+AC_PREREQ(2.68)
 
-AC_PREREQ([2.68])
 AC_INIT([RTAI], [3.9.1-unofficial], [rtai@rtai.org])
-AC_CONFIG_SRCDIR([base/sched/sched.c])
-AC_CONFIG_HEADERS([rtai_config.h])
 
 CONFIG_RTAI_VERSION_MAJOR=3
 CONFIG_RTAI_VERSION_MINOR=9
 CONFIG_RTAI_REVISION_LEVEL=1
 
+AC_CONFIG_HEADERS(rtai_config.h)
 AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_SRCDIR(base/sched/sched.c)
 AC_PREFIX_DEFAULT(/usr/realtime)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_PROG_INSTALL
-
-AM_INIT_AUTOMAKE([foreign no-exeext dist-bzip2])
-AM_MAINTAINER_MODE
-LT_INIT
-AM_PROG_AS
 
 AC_ARG_WITH(CC,
     [  --with-cc=compiler      use specific C compiler],
@@ -53,6 +47,10 @@ AC_DEFINE_UNQUOTED(CONFIG_RTAI_HOST_STRING,"$host",[Host system alias])
 RTAI_HOST_STRING="$host"
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_COMPILER,"`$CC -v 2>&1 | tail -n 1`",[Compiler])
 
+AM_INIT_AUTOMAKE([foreign no-exeext dist-bzip2])
+AM_MAINTAINER_MODE
+LT_INIT
+AM_PROG_AS
 dnl Find arch-specific requirements and supports. Features which
 dnl are not supported by all archs must be listed here, so that a
 dnl an Autoconf flag can later be defined/undefined in rtai_config.h.
@@ -72,24 +70,24 @@ case "$host" in
 	arch_supports_sim=y
 	arch_supports_rtailab=y
 	wanted_kernel_arch=CONFIG_X86_32
-        ;;
+	;;
  x86_64*-*)
-        RTAI_TARGET_ARCH=x86
+	RTAI_TARGET_ARCH=x86
 	RTAI_TARGET_SUBARCH=64
-        arch_supports_lxrt=y
-        arch_supports_rtailab=n
-        wanted_kernel_arch=CONFIG_X86_64
-        ;;
+	arch_supports_lxrt=y
+	arch_supports_rtailab=n
+	wanted_kernel_arch=CONFIG_X86_64
+	;;
  arm-*)
 	RTAI_TARGET_ARCH=arm
 	wanted_kernel_arch=CONFIG_ARM
-        ;;
+	;;
  powerpc-*|ppc-*)
 	RTAI_TARGET_ARCH=ppc
 	wanted_kernel_arch=CONFIG_PPC
-        ;;
+	;;
  m68knommu-*)
-	RTAI_TARGET_ARCH=m68k
+ 	RTAI_TARGET_ARCH=m68k
 	wanted_kernel_arch=CONFIG_M68K
 	arch_has_mmu=
 	;;
@@ -258,6 +256,13 @@ ppc|powerpc)
 	fi
 	RTAI_TARGET_ARCH_NAME=$ARCH_SUBDIR
 	;;
+m68k)
+	if test x$arch_has_mmu = x; then
+		RTAI_TARGET_ARCH_NAME=m68knommu
+	else
+		RTAI_TARGET_ARCH_NAME=$RTAI_TARGET_ARCH
+	fi
+	;;
 *)
 	RTAI_TARGET_ARCH_NAME=$RTAI_TARGET_ARCH
 	;;
@@ -288,6 +293,10 @@ else
 fi
 
 case "$RTAI_LINUX_VERSION" in
+  2.4.*)
+	dnl by design, only RTAI Adeos-oldgen HAL is available with 2.4
+	unset CONFIG_KBUILD
+    ;;
   2.6.*)
 	dnl by design, RTAI Adeos-oldgen HAL is supported up to 2.6.12 included,
 	dnl and RTAI Adeos-newgen HAL is supported since 2.6.13 included
@@ -318,26 +327,52 @@ if test x$arch_select = x; then
 fi
 AC_MSG_RESULT([$wanted_kernel_arch])
 
-AC_MSG_CHECKING([for MMU support])
-mmu_select=`eval echo \\$CONFIG_MMU`
-if test x$mmu_select != x$arch_has_mmu; then
-	echo
-	echo "************************************************************"
-	echo " The target RTAI architecture MMU check failed:"
-	if test x$mmu_select = x; then
-		echo " MMU is unsupported by Linux architecure, but it must."
+case "${RTAI_LINUX_VERSION}" in
+2.4.*)
+	dnl MMU not supported in 2.4
+	;;
+*)
+	AC_MSG_CHECKING([for MMU support])
+	mmu_select=`eval echo \\$CONFIG_MMU`
+	if test x$mmu_select != x$arch_has_mmu; then
+		echo
+		echo "************************************************************"
+		echo " The target RTAI architecture MMU check failed:"
+		if test x$mmu_select = x; then
+			echo " MMU is unsupported by Linux architecure, but it must."
+		else
+			echo " MMU is supported by Linux architecure, but it must not."
+		fi
+		echo "************************************************************"
+		exit 1
 	fi
-	echo "************************************************************"
-	exit 1
-fi
-if test x$mmu_select != x; then
-	AC_MSG_RESULT([yes])
-else
-	AC_MSG_RESULT([no])
-fi
+	if test x$mmu_select != x; then
+		AC_MSG_RESULT([yes])
+	else
+		AC_MSG_RESULT([no])
+	fi
+	;;
+esac
 
 if test x${CONFIG_MODULES} = x ; then
   AC_MSG_ERROR([Please set CONFIG_MODULES for $RTAI_LINUX_DIR and rebuild your kernel])
+fi
+
+dnl No longer used.
+dnl if test x${CONFIG_REGPARM} = xy ; then
+dnl   AC_MSG_ERROR([Please unset CONFIG_REGPARM for $RTAI_LINUX_DIR and
+dnl rebuild your kernel])
+dnl fi
+
+if test x${CONFIG_MODVERSIONS} = xy ; then
+	case "${RTAI_LINUX_VERSION}" in
+	2.4.*)
+  AC_MSG_ERROR([Please unset CONFIG_MODVERSIONS for $RTAI_LINUX_DIR and rebuild your kernel])
+		;;
+	*)
+		dnl reported to be harmless in 2.6
+		;;
+	esac
 fi
 
 if test x${CONFIG_RTAI_ADEOS} = xy -a x${CONFIG_ADEOS_CORE} = x; then
@@ -764,6 +799,15 @@ AC_ARG_ENABLE(align-priority,
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_ALIGN_LINUX_PRIORITY:-no})
 
+AC_MSG_CHECKING(for in-kernel C++ support)
+AC_ARG_ENABLE(cplusplus,
+	[ --enable-cplusplus	Build in-kernel C++ support],
+	[case "$enableval" in
+	y | yes) CONFIG_RTAI_CPLUSPLUS=y ;;
+	*) unset CONFIG_RTAI_CPLUSPLUS ;;
+	esac])
+AC_MSG_RESULT(${CONFIG_RTAI_CPLUSPLUS:-no})
+
 AC_MSG_CHECKING(for calibration frequency factor)
 AC_ARG_ENABLE(cal-freq-fact,
 	[ --enable-cal-freq-fact      	Set calibration frequency factor],
@@ -903,6 +947,7 @@ if [[ $ac_cv_mingcc = no ]]; then
 else
   AC_MSG_RESULT([ok])
 fi
+MDL_HAVE_OPENGL
 SC_PATH_EFLTK($CONFIG_RTAI_EFLTK_DIR)
 fi
 
@@ -1004,7 +1049,7 @@ AC_ARG_ENABLE(master-tsc-cpu,
 	[ --enable-master-tsc-cpu	Enable master TSC CPU],
 	[case "$enableval" in
  changequote(,)dnl
-        [0-7])
+	[0-7])
  changequote([,])dnl
 		if test x$CONFIG_RTAI_CPUS = x ; then
 			AC_MSG_ERROR([Option --enable-cpus must be defined before --enable-master-tsc-cpu])
@@ -1048,7 +1093,7 @@ AC_ARG_ENABLE(doc,
 if test \! -d $srcdir/doc; then
     if test x$CONFIG_RTAI_DOX_DOC = xy ;
     then
-        AC_MSG_ERROR([documentation tree is missing.])
+	AC_MSG_ERROR([documentation tree is missing.])
     fi
     AC_MSG_RESULT([not present])
 else
@@ -1070,12 +1115,12 @@ AC_MSG_RESULT(${dox_version:-not installed})
 if test x${CONFIG_RTAI_DOX_DOC} = xy
 then
    dox_version_number=`echo $dox_version | sed 'y,., ,' | {
-        read dox_major dox_minor dox_rev dox_patch
-        expr $dox_major \* 10000 + $dox_minor \* 100 + $dox_rev
+	read dox_major dox_minor dox_rev dox_patch
+	expr $dox_major \* 10000 + $dox_minor \* 100 + $dox_rev
    }`
    if test $dox_version_number -lt 10304
    then
-        AC_MSG_ERROR([Doxygen version 1.3.4 or higher is needed.])
+	AC_MSG_ERROR([Doxygen version 1.3.4 or higher is needed.])
    fi
 fi
 
@@ -1099,11 +1144,11 @@ DBX_DOC_INIT(doc/docbook, doc/generated, 4.2)
 
 AC_MSG_CHECKING(whether using LaTeX non-stop mode)
 AC_ARG_ENABLE(verbose-latex,
-        [ --enable-verbose-latex Uses LaTeX non-stop mode],
-        [case "$enableval" in
-        y | yes) CONFIG_RTAI_DOC_LATEX_NONSTOP=y ;;
-        *) unset CONFIG_RTAI_DOC_LATEX_NONSTOP ;;
-        esac])
+	[ --enable-verbose-latex Uses LaTeX non-stop mode],
+	[case "$enableval" in
+	y | yes) CONFIG_RTAI_DOC_LATEX_NONSTOP=y ;;
+	*) unset CONFIG_RTAI_DOC_LATEX_NONSTOP ;;
+	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_DOC_LATEX_NONSTOP:-no})
 
 if test x${CONFIG_RTAI_DOC_LATEX_NONSTOP} = xy; then
@@ -1160,11 +1205,41 @@ AC_ARG_ENABLE(user-debug,
 AC_MSG_RESULT(${CONFIG_RTAI_USER_DEBUG:-no})
 
 AC_ARG_ENABLE(quiet-build,
-        [ --enable-quiet-build   Less verbose build],
-        [case "$enableval" in
-        y | yes) CONFIG_RTAI_QUIET=quiet_ ;;
-        n | no) unset CONFIG_RTAI_QUIET ;;
-        esac])
+	[ --enable-quiet-build   Less verbose build],
+	[case "$enableval" in
+	y | yes) CONFIG_RTAI_QUIET=quiet_ ;;
+	n | no) unset CONFIG_RTAI_QUIET ;;
+	esac])
+
+dnl Catch sub-package flags
+
+AC_MSG_CHECKING(for RTAI simulator)
+AC_ARG_ENABLE(sim,
+	[ --enable-sim		Build RTAI simulator (MVM) ],
+	[case "$enableval" in
+	y | yes) CONFIG_RTAI_MVM=y ;;
+	*) unset CONFIG_RTAI_MVM ;;
+	esac])
+
+unset RTAI_MAYBE_SIMDIR
+if test \! -d $srcdir/rtai-sim; then
+    if test x$CONFIG_RTAI_MVM = xy; then
+	AC_MSG_ERROR([simulator is missing.])
+    fi
+    AC_MSG_RESULT([not present])
+else
+    if test x$CONFIG_RTAI_MVM = xy; then
+	export CONFIG_RTAI_MVM_DEBUG
+    	export CONFIG_RTAI_MVM_GCC_TARBALL
+    else
+	RTAI_MAYBE_SIMDIR=rtai-sim
+    fi
+    AC_MSG_RESULT(${CONFIG_RTAI_MVM:-no})
+fi
+if test x$arch_supports_sim = x -a x$CONFIG_RTAI_MVM = xy; then
+   AC_MSG_ERROR([simulator is not available on this architecture.])
+fi
+AC_SUBST(RTAI_MAYBE_SIMDIR)
 
 dnl We need to know this before building the APIC support
 dnl into the SMP scheduler for the x86 platform. Autoconf imposes
@@ -1250,6 +1325,16 @@ if test x$CONFIG_RTAI_RTDM_SHIRQ = xy ; then
    fi
 fi
 
+dnl Built-in math support is not currently available with Kbuild-built
+dnl kernels due to bad dependencies on user-space headers we really
+dnl need to fix first. So we leave in place all the config machinery
+dnl for having built-in/modular math support, but will complain here
+dnl until those dependencies are properly cleared.
+if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_MATH = xy ; then
+   AC_MSG_ERROR([Built-in math support is not currently available with Linux >= 2.6.x])
+fi
+
+dnl Kbuild is not quite C++ friendly these days.
 if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_CPLUSPLUS = xy ; then
    AC_MSG_ERROR([In-kernel C++ support is not available with Linux >= 2.6.x])
 fi
@@ -1485,8 +1570,10 @@ AM_CONDITIONAL(CONFIG_ARCH_AT91,[test "$CONFIG_ARCH_AT91" = y])
 AM_CONDITIONAL(CONFIG_ARCH_IMX,[test "$CONFIG_ARCH_IMX" = y])
 AM_CONDITIONAL(CONFIG_UCLINUX,[test "$CONFIG_UCLINUX" = y])
 AM_CONDITIONAL(CONFIG_SMP,[test "$CONFIG_SMP" = y])
+AM_CONDITIONAL(CONFIG_M68KNOMMU,[test "$CONFIG_M68K" = y -a "x$CONFIG_MMU" != xy])
 AM_CONDITIONAL(CONFIG_M68K,[test "$CONFIG_M68K" = y -a "$CONFIG_MMU" = y])
 AM_CONDITIONAL(CONFIG_M5407,[test "$CONFIG_M5407" = y])
+AM_CONDITIONAL(CONFIG_M5329,[test "$CONFIG_M5329" = y])
 AM_CONDITIONAL(CONFIG_M54455,[test "$CONFIG_M54455" = y])
 
 AM_CONDITIONAL(CONFIG_RTAI_TRACE,[test -n "$CONFIG_RTAI_TRACE"])
@@ -1587,7 +1674,7 @@ else
    RTAI_KBUILD_BOTTOM=
    RTAI_KBUILD_CMD="for src in \$^; do if test \\! -r \`basename \$\$src\`; then \$(LN_S) \$\$src; fi; done; \
 		    rm -f $RTAI_LINUX_DIR/.tmp_versions/rtai_*.mod $RTAI_LINUX_DIR/.tmp_versions/*_rt.mod; \
-                    \$(MAKE) -C $RTAI_LINUX_DIR CC=$CC ARCH=$RTAI_TARGET_ARCH_NAME \
+		    \$(MAKE) -C $RTAI_LINUX_DIR CC=$CC ARCH=$RTAI_TARGET_ARCH_NAME \
 		    SUBDIRS=\$\$PWD M=\$\$PWD rtai_srctree=\`cd \$(top_srcdir) && pwd\` rtai_srcdir=\`cd \$(srcdir) && pwd\` V=\$(V) modules \
 		    rtai_objs='\$(call src2obj,c,\$^) \$(call src2obj,S,\$^) \$(call src2obj,cc,\$^) \$(call src2obj,cpp,\$^)' rtai_target=\$(basename \$@)"
    RTAI_KBUILD_CLEAN='rm -f *.ko *.mod.c .*.cmd *.o Module.symvers Module.markers modules.order && rm -Rf .tmp_versions'
@@ -1655,14 +1742,12 @@ fi
 
 AC_MSG_CHECKING([for RTAI target architecture])
 
-dnl RTAI_USER_CFLAGS="-I$LINUX_KERNELSRC/include "
-RTAI_USER_CFLAGS="-D_GNU_SOURCE"
+RTAI_USER_CFLAGS="-I$LINUX_KERNELSRC/include "
 
 if test x"$LINUX_KERNELOUTPUT" != x"$LINUX_KERNELSRC"; then
   RTAI_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include2 $RTAI_USER_CFLAGS"
   RTAI_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include $RTAI_USER_CFLAGS"
 fi
-
 
 dnl extra arch-dependent opts to be passed to the compiler
 RTAI_TARGET_ARCH_OPTS=
@@ -1678,20 +1763,20 @@ case $RTAI_TARGET_ARCH in
 	else
 	   RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -msoft-float"
 	fi
-        ;;
+	;;
    64)
-        RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
-        RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
-        if test x$CONFIG_RTAI_FPU_SUPPORT = xy; then
-           RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -mhard-float"
-        else
-           RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -msoft-float"
-        fi
+	RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
+	RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
+	if test x$CONFIG_RTAI_FPU_SUPPORT = xy; then
+	   RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -mhard-float"
+	else
+	   RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -msoft-float"
+	fi
 	# 2009-03-23
 	# `-msse2' temporarily removed by Pierangelo Masarati
 	# as suggested by Paul <paul_c AT tuxcnc DOT org>
 	RTAI_TARGET_ARCH_OPTS="$RTAI_TARGET_ARCH_OPTS -msse"
-        ;;
+	;;
    esac
    ;;
  arm)
@@ -1714,7 +1799,7 @@ case $RTAI_TARGET_ARCH in
 	RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
 	RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -msoft-float"
 	AC_CONFIG_LINKS(base/include/asm-arm/arch:base/include/asm-arm/arch-$RTAI_TARGET_SUBARCH)
-        ;;
+	;;
  ppc)
 	RTAI_TARGET_SUBARCH=
 	dnl apparently, powerpc needs specific include/asm path to find errno.h
@@ -1731,6 +1816,11 @@ case $RTAI_TARGET_ARCH in
 	if test "$CONFIG_M5407" = y; then
 		RTAI_TARGET_SUBARCH=MCF5407
 		CFLAGS="-m5407 -Wa,-m5407"
+	elif test "$CONFIG_M532x" = y; then
+		RTAI_TARGET_SUBARCH=MCF5329
+		if test "$using_crosscompile" = y; then
+			CFLAGS="-m5307 -Wa,-m5307"
+		fi
 	elif test "$CONFIG_M54455" = y; then
 		RTAI_TARGET_SUBARCH=MCF54455
 	else
@@ -1774,7 +1864,7 @@ else
    if test x$CONFIG_RTAI_USER_DEBUG = xy; then
       RTAI_USER_CFLAGS="-g $RTAI_USER_CFLAGS"
       if test $CONFIG_RTAI_LXRT_INLINE = 2; then
-         RTAI_LXRT_LDADD="-llxrt"
+	 RTAI_LXRT_LDADD="-llxrt"
       fi
    else
       RTAI_USER_CFLAGS="-O2 $RTAI_USER_CFLAGS"
@@ -1881,7 +1971,6 @@ AC_SUBST(CONFIG_RTAI_LINUXDIR)
 AC_SUBST(CONFIG_RTAI_QUIET)
 
 AC_CONFIG_FILES([ \
-	Makefile \
 	GNUmakefile \
 	base/GNUmakefile \
 	base/arch/GNUmakefile \
@@ -1892,25 +1981,25 @@ AC_CONFIG_FILES([ \
 	base/scripts/GNUmakefile \
 	base/scripts/rtai-config \
 	base/scripts/rtai-load \
-        base/arch/i386/GNUmakefile \
+	base/arch/i386/GNUmakefile \
 	base/arch/i386/hal/GNUmakefile \
 	base/arch/i386/calibration/GNUmakefile \
 	base/arch/i386/calibration/setsmi \
 	base/include/asm-i386/GNUmakefile \
 	base/arch/x86_64/GNUmakefile \
-        base/arch/x86_64/hal/GNUmakefile \
-        base/arch/x86_64/calibration/GNUmakefile \
+	base/arch/x86_64/hal/GNUmakefile \
+	base/arch/x86_64/calibration/GNUmakefile \
 	base/arch/x86_64/calibration/setsmi \
-        base/include/asm-x86_64/GNUmakefile \
+	base/include/asm-x86_64/GNUmakefile \
 	base/arch/x86/GNUmakefile \
-        base/arch/x86/hal/GNUmakefile \
-        base/arch/x86/calibration/GNUmakefile \
+	base/arch/x86/hal/GNUmakefile \
+	base/arch/x86/calibration/GNUmakefile \
 	base/arch/x86/calibration/setsmi \
-        base/include/asm-x86/GNUmakefile \
-        base/arch/arm/GNUmakefile \
+	base/include/asm-x86/GNUmakefile \
+	base/arch/arm/GNUmakefile \
 	base/arch/arm/hal/GNUmakefile \
 	base/include/asm-arm/GNUmakefile \
-        base/arch/ppc/GNUmakefile \
+	base/arch/ppc/GNUmakefile \
 	base/arch/ppc/hal/GNUmakefile \
 	base/include/asm-ppc/GNUmakefile \
 	base/arch/m68k/GNUmakefile \
@@ -1957,12 +2046,12 @@ AM_CONDITIONAL(CONFIG_RTAI_ADDONS,[test \! x$build_addons = x])
 
 if test -d $srcdir/rtai-lab; then
    AC_CONFIG_FILES([ \
-        rtai-lab/GNUmakefile \
-        rtai-lab/matlab/GNUmakefile \
-        rtai-lab/matrixx/GNUmakefile \
-        rtai-lab/scilab/GNUmakefile \
-        rtai-lab/scicoslab/GNUmakefile \
-        rtai-lab/scilab/utility/GNUmakefile \
+	rtai-lab/GNUmakefile \
+	rtai-lab/matlab/GNUmakefile \
+	rtai-lab/matrixx/GNUmakefile \
+	rtai-lab/scilab/GNUmakefile \
+	rtai-lab/scicoslab/GNUmakefile \
+	rtai-lab/scilab/utility/GNUmakefile \
    ])
 elif test \! x$CONFIG_RTAI_LAB = x; then
      AC_MSG_ERROR([rtai-lab package is missing])
@@ -1970,7 +2059,7 @@ fi
 
 if test -d $srcdir/testsuite; then
    AC_CONFIG_FILES([ \
-        testsuite/GNUmakefile \
+	testsuite/GNUmakefile \
 	testsuite/kern/GNUmakefile \
 	testsuite/kern/latency/GNUmakefile \
 	testsuite/kern/preempt/GNUmakefile \
@@ -1979,7 +2068,7 @@ if test -d $srcdir/testsuite; then
 	testsuite/user/latency/GNUmakefile \
 	testsuite/user/preempt/GNUmakefile \
 	testsuite/user/switches/GNUmakefile \
-        ])
+	])
 elif test \! x$CONFIG_RTAI_TESTSUITE = x; then
      AC_MSG_ERROR([testsuite package is missing])
 fi
@@ -1988,8 +2077,8 @@ dnl FIXME: configurable?
 CONFIG_RTAI_PYTHON=y
 if test -d $srcdir/rtai-py; then
    AC_CONFIG_FILES([ \
-        rtai-py/GNUmakefile \
-        ])
+	rtai-py/GNUmakefile \
+	])
 elif test \! x$CONFIG_RTAI_PYTHON = x; then
      AC_MSG_ERROR([python package is missing])
 fi
@@ -2009,6 +2098,10 @@ if test \! x$RTAI_MAYBE_DOCDIR = x; then
 	   doc/docbook/custom-stylesheets/xsl/html/chunk.xsl \
 	   doc/docbook/docbook-test/GNUmakefile \
       ])
+fi
+
+if test x$CONFIG_RTAI_MVM = xy; then
+   AC_CONFIG_SUBDIRS(rtai-sim)
 fi
 
 AC_OUTPUT()

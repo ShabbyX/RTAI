@@ -37,7 +37,7 @@ static char rcsid[] = "$NetBSD: e_jn.c,v 1.9 1995/05/10 20:45:34 jtc Exp $";
  *	yn(n,x) is similar in all respects, except
  *	that forward recursion is used for all
  *	values of n>1.
- *	
+ *
  */
 
 #include "math.h"
@@ -76,7 +76,7 @@ static double zero  =  0.00000000000000000000e+00;
 	ix = 0x7fffffff&hx;
     /* if J(n,NaN) is NaN */
 	if((ix|((u_int32_t)(lx|-lx))>>31)>0x7ff00000) return x+x;
-	if(n<0){		
+	if(n<0){
 		n = -n;
 		x = -x;
 		hx ^= 0x80000000;
@@ -111,14 +111,14 @@ static double zero  =  0.00000000000000000000e+00;
 		    default: temp = 0.0;
 		}
 		b = invsqrtpi*temp/sqrt(x);
-	    } else {	
-	        a = __ieee754_j0(x);
-	        b = __ieee754_j1(x);
-	        for(i=1;i<n;i++){
+	    } else {
+		a = __ieee754_j0(x);
+		b = __ieee754_j1(x);
+		for(i=1;i<n;i++){
 		    temp = b;
 		    b = b*((double)(i+i)/x) - a; /* avoid underflow */
 		    a = temp;
-	        }
+		}
 	    }
 	} else {
 	    if(ix<0x3e100000) {	/* x < 2**-29 */
@@ -192,18 +192,18 @@ static double zero  =  0.00000000000000000000e+00;
 		tmp = tmp*__ieee754_log(fabs(v*tmp));
 		if(tmp<7.09782712893383973096e+02) {
 	    	    for(i=n-1,di=(double)(i+i);i>0;i--){
-		        temp = b;
+			temp = b;
 			b *= di;
 			b  = b/x - a;
-		        a = temp;
+			a = temp;
 			di -= two;
 	     	    }
 		} else {
 	    	    for(i=n-1,di=(double)(i+i);i>0;i--){
-		        temp = b;
+			temp = b;
 			b *= di;
 			b  = b/x - a;
-		        a = temp;
+			a = temp;
 			di -= two;
 		    /* scale b to avoid spurious overflow */
 			if(b>1e100) {

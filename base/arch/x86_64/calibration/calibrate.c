@@ -190,8 +190,8 @@ int main(int argc, char *argv[])
 				rtai_srq(srq, (unsigned long)args);
 				rv = read(fifo, &average, sizeof(average));
 				average /= (int)args[2];
-			        if (params.mp) {
-			        	printf("\n*** '#define LATENCY_APIC %d' (IN USE %lu)\n\n", (int)params.latency_apic + average, params.latency_apic);
+				if (params.mp) {
+					printf("\n*** '#define LATENCY_APIC %d' (IN USE %lu)\n\n", (int)params.latency_apic + average, params.latency_apic);
 				} else {
 					printf("\n*** '#define LATENCY_8254 %d' (IN USE %lu)\n\n", (int)params.latency_8254 + average, params.latency_8254);
 				}
@@ -222,8 +222,8 @@ int main(int argc, char *argv[])
 //				    exit(1);
 				    }
 				average /= (int)args[2];
-			        if (params.mp) {
-			        	printf("\n*** '#define LATENCY_APIC %d' (IN USE %lu)\n\n", (int)params.latency_apic + average, params.latency_apic);
+				if (params.mp) {
+					printf("\n*** '#define LATENCY_APIC %d' (IN USE %lu)\n\n", (int)params.latency_apic + average, params.latency_apic);
 				} else {
 					printf("\n*** '#define LATENCY_8254 %d' (IN USE %lu)\n\n", (int)params.latency_8254 + average, params.latency_8254);
 				}
@@ -232,8 +232,8 @@ int main(int argc, char *argv[])
 
 			case 'a':
 				if (!params.mp) {
-					printf("*** APIC FREQUENCY CALIBRATION NOT AVAILABLE UNDER UP ***\n");	
-					break;	
+					printf("*** APIC FREQUENCY CALIBRATION NOT AVAILABLE UNDER UP ***\n");
+					break;
 				}
 			case 'b':
 			case 'c': {

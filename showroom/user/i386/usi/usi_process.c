@@ -63,7 +63,7 @@ static void *timer_handler(void *args)
 		do {
 			ovr = rt_irq_wait_timed(TIMER_IRQ, nano2count(TIMEOUT));
 			if (ovr == RT_IRQ_TASK_ERR) break;
-			if (ovr > 0) {	
+			if (ovr > 0) {
 				/* overrun processing, if any, goes here */
 				rt_sem_signal(dspsem);
 			}
@@ -83,7 +83,7 @@ static void *timer_handler(void *args)
 
 int main(void)
 {
-        RT_TASK *maint;
+	RT_TASK *maint;
 	pthread_t thread;
 	int maxcnt;
 
@@ -91,10 +91,10 @@ int main(void)
 	scanf("%d", &maxcnt);
 
 	start_rt_timer(0);
-        if (!(maint = rt_task_init(nam2num("MAIN"), 1, 0, 0))) {
-                printf("CANNOT INIT MAIN TASK > MAIN <\n");
-                exit(1);
-        }
+	if (!(maint = rt_task_init(nam2num("MAIN"), 1, 0, 0))) {
+		printf("CANNOT INIT MAIN TASK > MAIN <\n");
+		exit(1);
+	}
 
 	if (!(dspsem = rt_sem_init(nam2num("DSPSEM"), 0))) {
 		printf("CANNOT INIT SEMAPHORE > DSPSEM <\n");

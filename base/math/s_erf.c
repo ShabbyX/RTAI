@@ -36,7 +36,7 @@ static char rcsid[] = "$NetBSD: s_erf.c,v 1.8 1995/05/10 20:47:05 jtc Exp $";
  *	   Q is an odd poly of degree 10.
  *						 -57.90
  *			| R - (erf(x)-x)/x | <= 2
- *	
+ *
  *
  *	   Remark. The formula is derived by noting
  *          erf(x) = (2/sqrt(pi))*(x - x^3/3 + x^5/10 - x^7/42 + ....)
@@ -209,7 +209,7 @@ sb7  = -2.24409524465858183362e+01; /* 0xC03670E2, 0x42712D62 */
 
 	if(ix < 0x3feb0000) {		/* |x|<0.84375 */
 	    if(ix < 0x3e300000) { 	/* |x|<2**-28 */
-	        if (ix < 0x00800000)
+		if (ix < 0x00800000)
 		    return 0.125*(8.0*x+efx8*x);  /*avoid underflow */
 		return x + efx*x;
 	    }
@@ -275,7 +275,7 @@ sb7  = -2.24409524465858183362e+01; /* 0xC03670E2, 0x42712D62 */
 	    } else {
 		r = x*y;
 		r += (x-half);
-	        return half - r ;
+		return half - r ;
 	    }
 	}
 	if(ix < 0x3ff40000) {		/* 0.84375 <= |x| < 1.25 */
@@ -283,7 +283,7 @@ sb7  = -2.24409524465858183362e+01; /* 0xC03670E2, 0x42712D62 */
 	    P = pa0+s*(pa1+s*(pa2+s*(pa3+s*(pa4+s*(pa5+s*pa6)))));
 	    Q = one+s*(qa1+s*(qa2+s*(qa3+s*(qa4+s*(qa5+s*qa6)))));
 	    if(hx>=0) {
-	        z  = one-erx; return z - P/Q;
+		z  = one-erx; return z - P/Q;
 	    } else {
 		z = erx+P/Q; return one+z;
 	    }
@@ -292,15 +292,15 @@ sb7  = -2.24409524465858183362e+01; /* 0xC03670E2, 0x42712D62 */
 	    x = fabs(x);
  	    s = one/(x*x);
 	    if(ix< 0x4006DB6D) {	/* |x| < 1/.35 ~ 2.857143*/
-	        R=ra0+s*(ra1+s*(ra2+s*(ra3+s*(ra4+s*(
+		R=ra0+s*(ra1+s*(ra2+s*(ra3+s*(ra4+s*(
 				ra5+s*(ra6+s*ra7))))));
-	        S=one+s*(sa1+s*(sa2+s*(sa3+s*(sa4+s*(
+		S=one+s*(sa1+s*(sa2+s*(sa3+s*(sa4+s*(
 				sa5+s*(sa6+s*(sa7+s*sa8)))))));
 	    } else {			/* |x| >= 1/.35 ~ 2.857143 */
 		if(hx<0&&ix>=0x40180000) return two-tiny;/* x < -6 */
-	        R=rb0+s*(rb1+s*(rb2+s*(rb3+s*(rb4+s*(
+		R=rb0+s*(rb1+s*(rb2+s*(rb3+s*(rb4+s*(
 				rb5+s*rb6)))));
-	        S=one+s*(sb1+s*(sb2+s*(sb3+s*(sb4+s*(
+		S=one+s*(sb1+s*(sb2+s*(sb3+s*(sb4+s*(
 				sb5+s*(sb6+s*sb7))))));
 	    }
 	    z  = x;

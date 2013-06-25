@@ -26,7 +26,7 @@
 #define      dExpMask           0x7FF00000
 #define      sExpMask           0xFF000000
 
-                                          /* according to rounding BIG & SMALL are:  */
+					  /* according to rounding BIG & SMALL are:  */
 #define      BIG               1.1e+300   /* used to deliver ±° or largest number,   */
 #define      SMALL             1.1e-300   /* used to deliver ±0 or smallest number.  */
 #define      InfExp            0x7FF
@@ -109,4 +109,3 @@ enum {
   FP_SUBNORMAL                  = 5     /*      denormal numbers
       */
 };
-

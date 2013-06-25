@@ -27,11 +27,11 @@ The dynamics of the system is as follows:
 
   $ make menuconfig,xconfig,gconfig
 
-         |
-         | 1. Produces .rtai_config
+	 |
+	 | 1. Produces .rtai_config
 	      (Kconfig format: CONFIG_RTAI_FEATURE=<value> or unset)
-         | 2. Runs ./configure --with-kconfig-file=.rtai_config
-         v
+	 | 2. Runs ./configure --with-kconfig-file=.rtai_config
+	 v
 
 => Script level configuration (automatic or manual). The configure
 script can either be controlled by individual options passed to it, or
@@ -43,11 +43,11 @@ fed with a configuration file in Kconfig format.
   Manual mode (from the user CLI):
 	./configure --enable-feature-x --with-param-y=n
 
-         |
-         | 1. Applies a set of reasonable defaults for unset parameters.
+	 |
+	 | 1. Applies a set of reasonable defaults for unset parameters.
 	 | 2. Auto-detects host features as required.
 	 | 3. Produces config.h and Makefiles.
-         v
+	 v
 
 => Compilation
 

@@ -78,7 +78,7 @@ static void *encoder_irq(void *args)
 		mycount++;
 		if (mycount >= MaxCount) {
 			if (mycount >= maxcnt) {
-				maxcnt = mycount;		
+				maxcnt = mycount;
 			}
 			mycount = 0;
 		}
@@ -97,30 +97,30 @@ static WINDOW *screen, *title, *mywin1, *mywin2, *foot;
 void screen_init(void)
 {
 	const int x = 0, y = 0, width = 80, len = 25;
-        initscr();
-        noecho();
-        crmode();
+	initscr();
+	noecho();
+	crmode();
 
-        screen = newwin(len, width, y, x);
-        box(screen, ACS_VLINE, ACS_HLINE);
+	screen = newwin(len, width, y, x);
+	box(screen, ACS_VLINE, ACS_HLINE);
 
-        title = newwin(len - 22, width - 4, y + 1, x + 2);
-        box(title, ACS_VLINE, ACS_HLINE);
+	title = newwin(len - 22, width - 4, y + 1, x + 2);
+	box(title, ACS_VLINE, ACS_HLINE);
 
-        mywin1 = newwin(len - 8, width - 43, y + 4, x + 2);
-        box(mywin1, ACS_VLINE, ACS_HLINE);
+	mywin1 = newwin(len - 8, width - 43, y + 4, x + 2);
+	box(mywin1, ACS_VLINE, ACS_HLINE);
 
-        mywin2 = newwin(len - 8, width - 43, y + 4, x + 41);
-        box(mywin2, ACS_VLINE, ACS_HLINE);
+	mywin2 = newwin(len - 8, width - 43, y + 4, x + 41);
+	box(mywin2, ACS_VLINE, ACS_HLINE);
 
-        foot = newwin(len - 22, width - 4, y + 21, x + 2);
-        box(foot, ACS_VLINE, ACS_HLINE);
+	foot = newwin(len - 22, width - 4, y + 21, x + 2);
+	box(foot, ACS_VLINE, ACS_HLINE);
 
-        wrefresh(screen);
-        wrefresh(title);
-        wrefresh(mywin1);
-        wrefresh(mywin2);
-        wrefresh(foot);
+	wrefresh(screen);
+	wrefresh(title);
+	wrefresh(mywin1);
+	wrefresh(mywin2);
+	wrefresh(foot);
 }
 
 static void get_data(void)
@@ -128,17 +128,17 @@ static void get_data(void)
 	printf("Please enter encoder's data.\n");
 	printf("Pulses/Round : ");
 	scanf("%f",&Encoder_Res);
-	printf("Encoder Diameter : ");	
+	printf("Encoder Diameter : ");
 	scanf("%f",&Encoder_Dia);
 
 	printf("\nPlease enter job details\n");
-	printf("Steel Width : ");	
+	printf("Steel Width : ");
 	scanf("%f",&Steel_Width);
-	printf("Steel Thickness : ");	
+	printf("Steel Thickness : ");
 	scanf("%f",&Steel_Thick);
-	printf("Item Length : ");	
+	printf("Item Length : ");
 	scanf("%f",&Item_Length);
-	printf("Quantity to press : ");	
+	printf("Quantity to press : ");
 	scanf("%i",&Item_Qty);
 	Encoder = PI*Encoder_Dia/Encoder_Res;
 }
@@ -169,19 +169,19 @@ static void paint_screen(void)
 
 	wrefresh(title);
 	wrefresh(mywin1);
-	wrefresh(mywin2);	
-	wrefresh(foot);	
+	wrefresh(mywin2);
+	wrefresh(foot);
 }
 
 static void update_display(void)
 {
-	old_enc_cnt = encoder_count;		
+	old_enc_cnt = encoder_count;
 	mvwprintw(mywin2,6,18,"         ");
 	mvwprintw(mywin2,6,18,"%i", old_enc_cnt);
 	mvwprintw(mywin2,7,18,"%f", Item_Length*Encoder);
 	mvwprintw(mywin2,8,18,"%i", Pressed_Items);
 	mvwprintw(mywin2,10,25,"%i)", maxcnt);
-	wrefresh(mywin2);	
+	wrefresh(mywin2);
 }
 
 void screen_end(void)
@@ -200,20 +200,20 @@ static void endme(int dummy) { end = 1; }
 /* main routine */
 int main(void)
 {
-        MBX *mbx;
-        RT_TASK *mytask;
+	MBX *mbx;
+	RT_TASK *mytask;
 	char start;
 	pthread_t thread;
 
 	signal(SIGINT, endme);
-        if (!(mytask = rt_thread_init(nam2num("MAIN"), 1, 0, SCHED_FIFO, 0xF))) {
-                printf("CANNOT INIT PROCESS TASK\n");
-                exit(1);
-        }
-        if (!(mbx = rt_get_adr(nam2num("RESMBX")))) {
-                printf("CANNOT FIND MAILBOX\n");
-                exit(1);
-        }
+	if (!(mytask = rt_thread_init(nam2num("MAIN"), 1, 0, SCHED_FIFO, 0xF))) {
+		printf("CANNOT INIT PROCESS TASK\n");
+		exit(1);
+	}
+	if (!(mbx = rt_get_adr(nam2num("RESMBX")))) {
+		printf("CANNOT FIND MAILBOX\n");
+		exit(1);
+	}
 	if (!(sem = rt_get_adr(nam2num("RESEM")))) {
 		printf("CANNOT FIND SEMAPHORE\n");
 		exit(1);
@@ -223,8 +223,8 @@ int main(void)
 	screen_init();
 	paint_screen();
 	msleep(10);
-        start = 1;
-        rt_mbx_send(mbx, &start, 1);
+	start = 1;
+	rt_mbx_send(mbx, &start, 1);
 
 	MaxCount = Item_Length/Encoder;
 	while (Pressed_Items < Item_Qty && !end) {
@@ -238,11 +238,11 @@ int main(void)
 	while (rt_get_adr(nam2num("ENCTSK"))) {
 		msleep(10);
 	}
-        rt_mbx_send(mbx, &start, 1);
+	rt_mbx_send(mbx, &start, 1);
 	rt_task_delete(mytask);
 	screen_end();
 	printf("\n");
-        rt_thread_join(thread);
+	rt_thread_join(thread);
 
 	return 0;
 }

@@ -50,12 +50,12 @@ int main(int argc, char *argv[])
 {
 	unsigned long player, msg, spknode, spkport;
 	RT_TASK *plrtsk, *spktsk;
-        struct sockaddr_in addr;
+	struct sockaddr_in addr;
 	MBX *mbx;
 	char data[BUFSIZE];
 	struct rt_poll_s polld[1];
 
-        pthread_create(&thread, NULL, endme, NULL);
+	pthread_create(&thread, NULL, endme, NULL);
 	if ((player = open("../../../share/linux.au", O_RDONLY)) < 0) {
 		printf("ERROR OPENING SOUND FILE (linux.au)\n");
 		exit(1);
@@ -68,15 +68,15 @@ int main(int argc, char *argv[])
 	rt_linux_syscall_server_create(NULL);
 	rt_make_hard_real_time();
 
-        spknode = 0;
-        if (argc == 2 && strstr(argv[1], "SpkNode=")) {
-                inet_aton(argv[1] + 8, &addr.sin_addr);
-                spknode = addr.sin_addr.s_addr;
-        }
-        if (!spknode) {
-                inet_aton("127.0.0.1", &addr.sin_addr);
-                spknode = addr.sin_addr.s_addr;
-        }
+	spknode = 0;
+	if (argc == 2 && strstr(argv[1], "SpkNode=")) {
+		inet_aton(argv[1] + 8, &addr.sin_addr);
+		spknode = addr.sin_addr.s_addr;
+	}
+	if (!spknode) {
+		inet_aton("127.0.0.1", &addr.sin_addr);
+		spknode = addr.sin_addr.s_addr;
+	}
 
 	while ((spkport = rt_request_port(spknode)) <= 0 && spkport != -EINVAL);
 	spktsk = RT_get_adr(spknode, spkport, "SPKTSK");
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	printf("\nPLAYER TASK RUNNING\n\n(TYPE ENTER TO END EVERYTHING)\n");
 
-	while (!end) {	
+	while (!end) {
 		lseek(player, 0, SEEK_SET);
 		while(!end && (msg = read(player, data, BUFSIZE)) > 0) {
 			polld[0] = (struct rt_poll_s){ mbx, RT_POLL_MBX_SEND };

@@ -47,7 +47,7 @@ static char rcsid[] = "$NetBSD: s_log1p.c,v 1.8 1995/05/10 20:47:46 jtc Exp $";
  *	In order to guarantee error in log below 1ulp, we compute log
  *	by
  *		log1p(f) = f - (hfsq - s*(hfsq+R)).
- *	
+ *
  *	3. Finally, log1p(x) = k*ln2 + log1p(f).
  *		 	     = k*ln2_hi+(f-(hfsq-(s*(hfsq+R)+k*ln2_lo)))
  *	   Here ln2 is split into two floating point number:
@@ -71,7 +71,7 @@ static char rcsid[] = "$NetBSD: s_log1p.c,v 1.8 1995/05/10 20:47:46 jtc Exp $";
  *
  * Note: Assuming log() return accurate answer, the following
  * 	 algorithm can be used to compute log1p(x) to within a few ULP:
- *	
+ *
  *		u = 1+x;
  *		if(u==1.0) return x ; else
  *			   return log(u)*(x/(u-1.0));
@@ -125,7 +125,7 @@ static double zero = 0.0;
 	    }
 	    if(ax<0x3e200000) {			/* |x| < 2**-29 */
 		if(two54+x>zero			/* raise inexact */
-	            &&ax<0x3c900000) 		/* |x| < 2**-54 */
+		    &&ax<0x3c900000) 		/* |x| < 2**-54 */
 		    return x;
 		else
 		    return x - x*x*0.5;
@@ -138,22 +138,22 @@ static double zero = 0.0;
 	    if(hx<0x43400000) {
 		u  = 1.0+x;
 		GET_HIGH_WORD(hu,u);
-	        k  = (hu>>20)-1023;
-	        c  = (k>0)? 1.0-(u-x):x-(u-1.0);/* correction term */
+		k  = (hu>>20)-1023;
+		c  = (k>0)? 1.0-(u-x):x-(u-1.0);/* correction term */
 		c /= u;
 	    } else {
 		u  = x;
 		GET_HIGH_WORD(hu,u);
-	        k  = (hu>>20)-1023;
+		k  = (hu>>20)-1023;
 		c  = 0;
 	    }
 	    hu &= 0x000fffff;
 	    if(hu<0x6a09e) {
-	        SET_HIGH_WORD(u,hu|0x3ff00000);	/* normalize u */
+		SET_HIGH_WORD(u,hu|0x3ff00000);	/* normalize u */
 	    } else {
-	        k += 1;
+		k += 1;
 		SET_HIGH_WORD(u,hu|0x3fe00000);	/* normalize u/2 */
-	        hu = (0x00100000-hu)>>2;
+		hu = (0x00100000-hu)>>2;
 	    }
 	    f = u-1.0;
 	}

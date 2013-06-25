@@ -262,13 +262,13 @@ extern int s_cmp();
  *   GetInPortSize(blk,x,2) : get second dimension of input port number x
  */
 #define GetInPortSize(blk,x,y) ((((x)>0)&((x)<=(blk->nin))) ? \
-              ((((y)>0)&((y)<=2)) ? (blk->insz[(y-1)*blk->nin+(x-1)]) : 0) : 0)
+	      ((((y)>0)&((y)<=2)) ? (blk->insz[(y-1)*blk->nin+(x-1)]) : 0) : 0)
 
 /**
    \brief Get type of regular input port number x.
 */
 #define GetInType(blk,x) ((((x)>0)&((x)<=(blk->nin))) ? \
-              (blk->insz[2*(blk->nin)+(x-1)]) : 0)
+	      (blk->insz[2*(blk->nin)+(x-1)]) : 0)
 
 /**
    \brief Get number of rows (first dimension) of regular output port number x.
@@ -288,13 +288,13 @@ extern int s_cmp();
  *   GetOutPortSize(blk,x,2) : get second dimension of output port number x
  */
 #define GetOutPortSize(blk,x,y) ((((x)>0)&((x)<=(blk->nout))) ? \
-              ((((y)>0)&((y)<=2)) ? (blk->outsz[(y-1)*blk->nout+(x-1)]) : 0) : 0)
+	      ((((y)>0)&((y)<=2)) ? (blk->outsz[(y-1)*blk->nout+(x-1)]) : 0) : 0)
 
 /**
    \brief Get type of regular output port number x.
 */
 #define GetOutType(blk,x) ((((x)>0)&((x)<=(blk->nout))) ? \
-              (blk->outsz[2*(blk->nout)+(x-1)]) : 0)
+	      (blk->outsz[2*(blk->nout)+(x-1)]) : 0)
 
 /**
    \brief Get pointer of real part of regular input port number x.
@@ -305,8 +305,8 @@ extern int s_cmp();
    \brief Get pointer of imaginary part of regular input port number x.
 */
 #define GetImagInPortPtrs(blk,x) (((x)>0)&((x)<=(blk->nin)) ? \
-              (SCSREAL_COP *) ((SCSREAL_COP *)blk->inptr[x-1]+ \
-               ((blk->insz[(x-1)])*(blk->insz[blk->nin+(x-1)]))) : NULL)
+	      (SCSREAL_COP *) ((SCSREAL_COP *)blk->inptr[x-1]+ \
+	       ((blk->insz[(x-1)])*(blk->insz[blk->nin+(x-1)]))) : NULL)
 
 /**
    \brief Get pointer of real part of regular output port number x.
@@ -317,8 +317,8 @@ extern int s_cmp();
    \brief Get pointer of imaginary part of regular output port number x.
 */
 #define GetImagOutPortPtrs(blk,x) (((x)>0)&((x)<=(blk->nout)) ? \
-              (SCSREAL_COP *) ((SCSREAL_COP *)blk->outptr[x-1]+ \
-               ((blk->outsz[(x-1)])*(blk->outsz[blk->nout+(x-1)]))) : NULL)
+	      (SCSREAL_COP *) ((SCSREAL_COP *)blk->outptr[x-1]+ \
+	       ((blk->outsz[(x-1)])*(blk->outsz[blk->nout+(x-1)]))) : NULL)
 
 /**
    \brief Get pointer of int8 typed regular input port number x.
@@ -459,7 +459,7 @@ extern int s_cmp();
  *   GetOparSize(blk,x,2) : get second dimension of opar
  */
 #define GetOparSize(blk,x,y) (((x>0)&(x<=blk->nopar)) ? \
-                              ((((y)>0)&((y)<=2)) ? (blk->oparsz[(y-1)*blk->nopar+(x-1)]) : 0) : 0)
+			      ((((y)>0)&((y)<=2)) ? (blk->oparsz[(y-1)*blk->nopar+(x-1)]) : 0) : 0)
 
 /**
    \brief Get pointer of object parameters number x.
@@ -475,8 +475,8 @@ extern int s_cmp();
    \brief Get pointer of imaginary part of object parameters number x.
 */
 #define GetImagOparPtrs(blk,x) (((x)>0)&((x)<=(blk->nopar)) ? \
-                               (SCSREAL_COP *) ((SCSREAL_COP *)blk->oparptr[x-1]+ \
-                               ((blk->oparsz[x-1])*(blk->oparsz[blk->nopar+(x-1)]))) : NULL)
+			       (SCSREAL_COP *) ((SCSREAL_COP *)blk->oparptr[x-1]+ \
+			       ((blk->oparsz[x-1])*(blk->oparsz[blk->nopar+(x-1)]))) : NULL)
 
 /**
    \brief Get pointer of int8 typed object parameters number x.
@@ -527,7 +527,7 @@ extern int s_cmp();
  *   GetOzSize(blk,x,2) : get second dimension of oz
  */
 #define GetOzSize(blk,x,y) (((x>0)&(x<=blk->noz)) ? \
-                              ((((y)>0)&((y)<=2)) ? (blk->ozsz[(y-1)*blk->noz+(x-1)]) : 0) : 0)
+			      ((((y)>0)&((y)<=2)) ? (blk->ozsz[(y-1)*blk->noz+(x-1)]) : 0) : 0)
 
 /**
    \brief Get pointer of object state number x.
@@ -543,8 +543,8 @@ extern int s_cmp();
    \brief Get pointer of imaginary part of object state number x.
 */
 #define GetImagOzPtrs(blk,x) (((x)>0)&((x)<=(blk->noz)) ? \
-                               (SCSREAL_COP *) ((SCSREAL_COP *)blk->ozptr[x-1]+ \
-                               ((blk->ozsz[x-1])*(blk->ozsz[blk->noz+(x-1)]))) : NULL)
+			       (SCSREAL_COP *) ((SCSREAL_COP *)blk->ozptr[x-1]+ \
+			       ((blk->ozsz[x-1])*(blk->ozsz[blk->noz+(x-1)]))) : NULL)
 
 /**
    \brief Get pointer of int8 typed object state number x.
@@ -580,36 +580,36 @@ extern int s_cmp();
    \brief Get the sizeof of the object state number x.
 */
 #define GetSizeOfOz(blk,x)    ((GetOzType(blk,x)==SCSREAL_N) ? (sizeof(SCSREAL_COP)) : \
-                               (GetOzType(blk,x)==SCSCOMPLEX_N) ? (2*sizeof(SCSCOMPLEX_COP)) : \
+			       (GetOzType(blk,x)==SCSCOMPLEX_N) ? (2*sizeof(SCSCOMPLEX_COP)) : \
 			       ((GetOzType(blk,x)==SCSINT8_N)|(GetOzType(blk,x)==SCSUINT8_N)) ? (sizeof(SCSINT8_COP)) : \
-                               ((GetOzType(blk,x)==SCSINT16_N)|(GetOzType(blk,x)==SCSUINT16_N)) ? (sizeof(SCSINT16_COP)) : \
-                               ((GetOzType(blk,x)==SCSINT32_N)|(GetOzType(blk,x)==SCSUINT32_N)) ? (sizeof(SCSINT32_COP)) : 0)
+			       ((GetOzType(blk,x)==SCSINT16_N)|(GetOzType(blk,x)==SCSUINT16_N)) ? (sizeof(SCSINT16_COP)) : \
+			       ((GetOzType(blk,x)==SCSINT32_N)|(GetOzType(blk,x)==SCSUINT32_N)) ? (sizeof(SCSINT32_COP)) : 0)
 
 /**
    \brief Get the sizeof of the object parameters number x.
 */
 #define GetSizeOfOpar(blk,x)  ((GetOparType(blk,x)==SCSREAL_N) ? (sizeof(SCSREAL_COP)) : \
-                               (GetOparType(blk,x)==SCSCOMPLEX_N) ? (2*sizeof(SCSCOMPLEX_COP)) : \
+			       (GetOparType(blk,x)==SCSCOMPLEX_N) ? (2*sizeof(SCSCOMPLEX_COP)) : \
 			       ((GetOparType(blk,x)==SCSINT8_N)|(GetOparType(blk,x)==SCSUINT8_N)) ? (sizeof(SCSINT8_COP)) : \
-                               ((GetOparType(blk,x)==SCSINT16_N)|(GetOparType(blk,x)==SCSUINT16_N)) ? (sizeof(SCSINT16_COP)) : \
-                               ((GetOparType(blk,x)==SCSINT32_N)|(GetOparType(blk,x)==SCSUINT32_N)) ? (sizeof(SCSINT32_COP)) : 0)
+			       ((GetOparType(blk,x)==SCSINT16_N)|(GetOparType(blk,x)==SCSUINT16_N)) ? (sizeof(SCSINT16_COP)) : \
+			       ((GetOparType(blk,x)==SCSINT32_N)|(GetOparType(blk,x)==SCSUINT32_N)) ? (sizeof(SCSINT32_COP)) : 0)
 
 /**
    \brief Get the sizeof of the regular output port number x.
 */
 #define GetSizeOfOut(blk,x)  ((GetOutType(blk,x)==SCSREAL_N) ? (sizeof(SCSREAL_COP)) : \
-                              (GetOutType(blk,x)==SCSCOMPLEX_N) ? (2*sizeof(SCSCOMPLEX_COP)) : \
+			      (GetOutType(blk,x)==SCSCOMPLEX_N) ? (2*sizeof(SCSCOMPLEX_COP)) : \
 			      ((GetOutType(blk,x)==SCSINT8_N)|(GetOutType(blk,x)==SCSUINT8_N)) ? (sizeof(SCSINT8_COP)) : \
-                              ((GetOutType(blk,x)==SCSINT16_N)|(GetOutType(blk,x)==SCSUINT16_N)) ? (sizeof(SCSINT16_COP)) : \
-                              ((GetOutType(blk,x)==SCSINT32_N)|(GetOutType(blk,x)==SCSUINT32_N)) ? (sizeof(SCSINT32_COP)) : 0)
+			      ((GetOutType(blk,x)==SCSINT16_N)|(GetOutType(blk,x)==SCSUINT16_N)) ? (sizeof(SCSINT16_COP)) : \
+			      ((GetOutType(blk,x)==SCSINT32_N)|(GetOutType(blk,x)==SCSUINT32_N)) ? (sizeof(SCSINT32_COP)) : 0)
 /**
    \brief Get the sizeof of the regular input port number x.
 */
 #define GetSizeOfIn(blk,x)  ((GetInType(blk,x)==SCSREAL_N) ? (sizeof(SCSREAL_COP)) : \
-                             (GetInType(blk,x)==SCSCOMPLEX_N) ? (2*sizeof(SCSCOMPLEX_COP)) : \
-                             ((GetInType(blk,x)==SCSINT8_N)|(GetInType(blk,x)==SCSUINT8_N)) ? (sizeof(SCSINT8_COP)) : \
-                             ((GetInType(blk,x)==SCSINT16_N)|(GetInType(blk,x)==SCSUINT16_N)) ? (sizeof(SCSINT16_COP)) : \
-                             ((GetInType(blk,x)==SCSINT32_N)|(GetInType(blk,x)==SCSUINT32_N)) ? (sizeof(SCSINT32_COP)) : 0)
+			     (GetInType(blk,x)==SCSCOMPLEX_N) ? (2*sizeof(SCSCOMPLEX_COP)) : \
+			     ((GetInType(blk,x)==SCSINT8_N)|(GetInType(blk,x)==SCSUINT8_N)) ? (sizeof(SCSINT8_COP)) : \
+			     ((GetInType(blk,x)==SCSINT16_N)|(GetInType(blk,x)==SCSUINT16_N)) ? (sizeof(SCSINT16_COP)) : \
+			     ((GetInType(blk,x)==SCSINT32_N)|(GetInType(blk,x)==SCSUINT32_N)) ? (sizeof(SCSINT32_COP)) : 0)
 
 /**
    \brief Get number of zero crossing surface.

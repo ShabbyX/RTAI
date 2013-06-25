@@ -37,7 +37,7 @@ static char rcsid[] = "$NetBSD: w_jn.c,v 1.6 1995/05/10 20:49:19 jtc Exp $";
  *	yn(n,x) is similar in all respects, except
  *	that forward recursion is used for all
  *	values of n>1.
- *	
+ *
  */
 
 #include "math.h"
@@ -76,14 +76,14 @@ static char rcsid[] = "$NetBSD: w_jn.c,v 1.6 1995/05/10 20:49:19 jtc Exp $";
 	double z;
 	z = __ieee754_yn(n,x);
 	if(_LIB_VERSION == _IEEE_ || isnan(x) ) return z;
-        if(x <= 0.0){
-                if(x==0.0)
-                    /* d= -one/(x-x); */
-                    return __kernel_standard((double)n,x,12);
-                else
-                    /* d = zero/(x-x); */
-                    return __kernel_standard((double)n,x,13);
-        }
+	if(x <= 0.0){
+		if(x==0.0)
+		    /* d= -one/(x-x); */
+		    return __kernel_standard((double)n,x,12);
+		else
+		    /* d = zero/(x-x); */
+		    return __kernel_standard((double)n,x,13);
+	}
 	if(x>X_TLOSS) {
 	    return __kernel_standard((double)n,x,39); /* yn(x>X_TLOSS,n) */
 	} else

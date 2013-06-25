@@ -52,7 +52,7 @@
 #define PCI_DEVICE_ID_INTEL_ICH8_4  0x2815
 #endif
 #ifndef PCI_DEVICE_ID_INTEL_ICH10_1
-#define #define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16 
+#define #define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16
 #endif
 
 
@@ -86,7 +86,7 @@ pci.ids database, ICH5-M ?)
 */
 
 #define DEVFN        0xf8 /* device 31, function 0 */
-    
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 #define pci_get_device(a, b, c)  pci_find_device(a, b, c)
 #define pci_dev_put(a)           do { /*nothing*/ } while(0)
@@ -166,9 +166,9 @@ static int rtai_smi_notify_reboot(struct notifier_block *nb, unsigned long event
 }
 
 static struct notifier_block rtai_smi_reboot_notifier = {
-        .notifier_call  = &rtai_smi_notify_reboot,
-        .next           = NULL,
-        .priority       = 0
+	.notifier_call  = &rtai_smi_notify_reboot,
+	.next           = NULL,
+	.priority       = 0
 };
 
 static void hal_smi_restore(void)
@@ -189,7 +189,7 @@ static void hal_smi_disable(void)
 	}
 }
 
-static unsigned short __devinit get_smi_en_addr(struct pci_dev *dev)
+static unsigned short /*__devinit*/ get_smi_en_addr(struct pci_dev *dev)
 {
 	u_int8_t byte0, byte1;
 
@@ -198,7 +198,7 @@ static unsigned short __devinit get_smi_en_addr(struct pci_dev *dev)
 	return SMI_CTRL_ADDR + (((byte1 << 1) | (byte0 >> 7)) << 7); //bits 7-15
 }
 
-static int __devinit hal_smi_init(void)
+static int /*__devinit*/ hal_smi_init(void)
 {
 	struct pci_dev *dev = NULL;
 	struct pci_device_id *id;
@@ -208,14 +208,14 @@ static int __devinit hal_smi_init(void)
  * Just register the used ports.
  */
 	for (id = &hal_smi_pci_tbl[0]; dev == NULL && id->vendor != 0; id++) {
-	        dev = pci_get_device(id->vendor, id->device, NULL);
+		dev = pci_get_device(id->vendor, id->device, NULL);
 	}
 
 	if (dev == NULL || dev->bus->number || dev->devfn != DEVFN) {
 		pci_dev_put(dev);
 		printk("RTAI: Intel chipset not found.\n");
   		return -ENODEV;
-        }
+	}
 
 	printk("RTAI: Intel chipset found, enabling SMI workaround.\n");
 	hal_smi_en_addr = get_smi_en_addr(dev);
@@ -235,7 +235,7 @@ int init_module(void)
 	return retval;
 }
 
-void cleanup_module(void)         
+void cleanup_module(void)
 {
 	hal_smi_restore();
 	printk("SMI configuration has been reset, saved mask used = %lx.\n", hal_smi_saved_bits);
@@ -266,15 +266,15 @@ MODULE_LICENSE("GPL");
        SMI, depending on registers configuration :
        register DEVTRAP_EN, DEVTRAP_STS
        BIG FAT WARNING : globally disabling SMI on a box with SATA disks and
-           SATA controller in "legacy" mode, probably prevents disks from
-           working.
+	   SATA controller in "legacy" mode, probably prevents disks from
+	   working.
 
    pages 382, 383, 400; Monitors ?
        seem to be a generic legacy device emulation (like previous), registers
        MON[4-7]_FWD_EN, enables forwarding of I/O to LPC
        MON[4-7]_TRP_RNG, address of the emulated devices
        MON[4-7]_TRP_MSK and MON_SMI (registers MON[4-7]_TRAP_EN and
-                                     MON[4-7]_TRAP_STS)
+				     MON[4-7]_TRAP_STS)
 
    page 407: TCO
        register TCO1_CNT, bit NMI2SMI_EN, enables TCO to use SMI instead of NMI,
@@ -284,7 +284,7 @@ MODULE_LICENSE("GPL");
 
    page 492, 493: USB EHCI legacy support and SPECIAL SMI, i.e Intel Specific
        USB 2.0 SMI register.
-       
+
    page 520, SMBus
        may be disabled by clearing register HOSTC, bit SMB_SMI_EN
        register used by Linux driver drivers/i2c/busses/i2c-i801.c

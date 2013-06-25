@@ -1,6 +1,6 @@
 /*
   COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
-                2009 Guillaume Millet (millet@isir.fr)
+		2009 Guillaume Millet (millet@isir.fr)
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -139,7 +139,7 @@ static void mdlStart(SimStruct *S)
   comedi_krange krange;
   double range_min, range_max;
   double s;
-	
+
   if (!ComediDev[index]) {
     dev = comedi_open(devname[index]);
     if (!dev) {
@@ -221,7 +221,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
   double range_max = ssGetRWork(S)[1];
   lsampl_t data, maxdata = comedi_get_maxdata(dev, subdev, COMEDI_CHANNEL);
   double s;
-	
+
   u = *uPtrs[0];
   s = (u - range_min)/(range_max - range_min)*maxdata;
   if (s < 0) {

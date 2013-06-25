@@ -108,7 +108,7 @@ static inline unsigned long long llimd(unsigned long long ull, unsigned long mul
 	unsigned long long low;
 	unsigned long q, r;
 
-	low  = ullmul(((unsigned long *)&ull)[1], mult);	
+	low  = ullmul(((unsigned long *)&ull)[1], mult);
 	q = ulldiv( ullmul(((unsigned long *)&ull)[0], mult) + ((unsigned long *)&low)[0], div, (unsigned long *)&low);
 	low = ulldiv(low, div, &r);
 	((unsigned long *)&low)[0] += q;
@@ -225,7 +225,7 @@ static inline void hard_restore_flags(unsigned long flags)
 	: : "r" (flags) : "r0"
 	);
 }
-	
+
 static inline void hard_sti(void)
 {
 	debug_flags_set(__builtin_return_address(0),MSR_EE);
@@ -373,7 +373,7 @@ static inline void rt_global_restore_flags(unsigned long flags)
 {
 	switch (flags) {
 		case (1 << IFLAG) | 1:	rt_release_global_lock();
-		        	  	hard_sti();
+				  	hard_sti();
 					break;
 		case (1 << IFLAG) | 0:	rt_get_global_lock();
 				 	hard_sti();
@@ -405,7 +405,7 @@ extern struct calibration_data tuned;
 #if 0
 static inline unsigned int get_dec(void)
 {
-        return (mfspr(SPRN_DEC));
+	return (mfspr(SPRN_DEC));
 }
 
 static inline void set_dec(unsigned int val)
@@ -454,7 +454,7 @@ static inline void rt_set_decrementer_count(int delay)
 #ifdef CONFIG_4xx
 	set_dec_4xx(delay);
 #else
-        set_dec(delay);
+	set_dec(delay);
 #endif
 }
 

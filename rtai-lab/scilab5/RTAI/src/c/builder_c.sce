@@ -21,4 +21,3 @@ end
 tbx_build_src(names, files, 'c',src_c_path,"","",cflags);
 //tbx_build_src(names, files, 'c', src_c_path ,libs,ldflags,cflags,fflags,cc,libname);
 clear tbx_build_src, files, names, cflags, src_c_path;
-

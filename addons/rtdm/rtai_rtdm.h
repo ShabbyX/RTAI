@@ -57,10 +57,10 @@ static inline ssize_t rt_dev_read(int fd, void *buf, size_t nbyte)
 ssize_t rt_dev_write(int fd, const void *buf, size_t nbyte)
 {
   return XENOMAI_SKINCALL3( __rtdm_muxid,
-                            __rtdm_write,
-                            fd,
-                            buf,
-                            nbyte);
+			    __rtdm_write,
+			    fd,
+			    buf,
+			    nbyte);
 }
 
 static inline ssize_t rt_dev_recvmsg(int fd, struct msghdr *msg, int flags)
@@ -77,12 +77,12 @@ static inline ssize_t rt_dev_recvfrom(int fd, void *buf, size_t len, int flags, 
 {
 	struct iovec    iov = {buf, len};
 	struct msghdr   msg =
-        { from, (from != NULL) ? *fromlen : 0, &iov, 1, NULL, 0 };
+	{ from, (from != NULL) ? *fromlen : 0, &iov, 1, NULL, 0 };
 	int             ret;
 
 	ret = XENOMAI_SKINCALL3( __rtdm_muxid, __rtdm_recvmsg, fd, &msg, flags);
 	if ((ret >= 0) && (from != NULL)) {
-	        *fromlen = msg.msg_namelen;
+		*fromlen = msg.msg_namelen;
 	}
 	return ret;
 }

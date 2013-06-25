@@ -48,11 +48,11 @@ static MBX *mbx_in, *mbx_out;
 
 static inline void RT_SEM_SIGNAL(unsigned long node, int port, SEM *sem)
 {
-        if (rt_waiting_return(node, port)) {
-                RT_sem_signal(node, port > 0 ? port : -port, sem);
-        } else {
+	if (rt_waiting_return(node, port)) {
+		RT_sem_signal(node, port > 0 ? port : -port, sem);
+	} else {
 		RT_sem_signal(node, port, sem);
-        }
+	}
 }
 
 #define TAKE_PRINT  RT_sem_wait(comnode, srvport, print_sem);
@@ -62,17 +62,17 @@ static void *start_task_code(void *args)
 {
 	int i, srvport;
 	char buf[9];
-        RT_TASK *task;
+	RT_TASK *task;
 
 	buf[8] = 0;
 	if (!(task = rt_thread_init(getpid(), 10, 0, SCHED_FIFO, 0xF))) {
-                printf("CANNOT INIT START_TASK BUDDY\n");
-                exit(1);
-        }
+		printf("CANNOT INIT START_TASK BUDDY\n");
+		exit(1);
+	}
 
 	srvport = rt_request_hard_port(comnode);
 printf("START TASK GOT ITS EXEC COMNODE PORT %lx, %d\n", comnode, srvport);
-        mlockall(MCL_CURRENT | MCL_FUTURE);
+	mlockall(MCL_CURRENT | MCL_FUTURE);
 	rt_make_hard_real_time();
 
 	RT_SEM_SIGNAL(comnode, -srvport, sems[0]);
@@ -121,7 +121,7 @@ printf("START TASK GOT ITS EXEC COMNODE PORT %lx, %d\n", comnode, srvport);
 	rt_printk("\ninit task complete\n");
 	GIVE_PRINT;
 printf("START TASK REL ITS EXEC COMNODE PORT %lx, %d\n", comnode, srvport);
-        RT_sem_signal(comnode, srvport, end_sem);
+	RT_sem_signal(comnode, srvport, end_sem);
 	rt_make_soft_real_time();
 	rt_release_port(comnode, srvport);
 	rt_task_delete(task);
@@ -131,9 +131,9 @@ printf("START TASK REL ITS EXEC COMNODE PORT %lx, %d\n", comnode, srvport);
 void msleep(int ms)
 {
 #include <sys/poll.h>
-        struct timeval timout;
-        timout.tv_sec = 0;
-        timout.tv_usec = ms*1000;
+	struct timeval timout;
+	timout.tv_sec = 0;
+	timout.tv_usec = ms*1000;
 //      select(1, NULL, NULL, NULL, &timout);
 	poll(0, 0, ms);
 }
@@ -157,12 +157,12 @@ printf("START TASK REL SYNC TASKNODE PORT %lx, %d\n", tasknode, srvport);
 	srvport = rt_request_hard_port(comnode);
 printf("START TASK GOT INIT COMNODE PORT %lx, %d\n", comnode, srvport);
 	rt_make_hard_real_time();
-        print_sem = RT_get_adr(comnode, srvport, "PRTSEM");
-        sync_sem = RT_get_adr(comnode, srvport, "SYNCSM");
-        prio_sem = RT_get_adr(comnode, srvport, "PRIOSM");
-        end_sem = RT_get_adr(comnode, srvport, "ENDSEM");
-        mbx_in   = RT_get_adr(comnode, srvport, "MBXIN");
-        mbx_out  = RT_get_adr(comnode, srvport, "MBXOUT");
+	print_sem = RT_get_adr(comnode, srvport, "PRTSEM");
+	sync_sem = RT_get_adr(comnode, srvport, "SYNCSM");
+	prio_sem = RT_get_adr(comnode, srvport, "PRIOSM");
+	end_sem = RT_get_adr(comnode, srvport, "ENDSEM");
+	mbx_in   = RT_get_adr(comnode, srvport, "MBXIN");
+	mbx_out  = RT_get_adr(comnode, srvport, "MBXOUT");
 
 	for (i = 0; i < NUM_TASKS; ++i) {
 		sems[i] = RT_get_adr(comnode, srvport, sem[i]);
@@ -170,54 +170,54 @@ printf("START TASK GOT INIT COMNODE PORT %lx, %d\n", comnode, srvport);
 printf("START TASK REL INIT COMNODE PORT %lx, %d\n", comnode, srvport);
 	rt_make_soft_real_time();
 	rt_release_port(comnode, srvport);
-        thread = rt_thread_create(start_task_code, NULL, 10000);
+	thread = rt_thread_create(start_task_code, NULL, 10000);
 	return 0;
 }
 
 int main(int argc, char *argv[])
 {
-        RT_TASK *task;
-        struct sockaddr_in addr;
+	RT_TASK *task;
+	struct sockaddr_in addr;
 	int i, srvport;
 
-        if (!(task = rt_task_init(nam2num("STRTSK"), 0, 0, 0))) {
-                printf("CANNOT INIT START_TASK TASK\n");
-                exit(1);
-        }
+	if (!(task = rt_task_init(nam2num("STRTSK"), 0, 0, 0))) {
+		printf("CANNOT INIT START_TASK TASK\n");
+		exit(1);
+	}
 
-        comnode = tasknode = 0;
-        for (i = 0; i < argc; i++) {
-                if (strstr(argv[i], "ComNode=")) {
-                	inet_aton(argv[i] + 8, &addr.sin_addr);
-	                comnode = addr.sin_addr.s_addr;
-                        argv[i] = 0;
-                        continue;
-                }
-                if (strstr(argv[i], "TaskNode=")) {
-                	inet_aton(argv[i] + 9, &addr.sin_addr);
-	                tasknode = addr.sin_addr.s_addr;
-                        argv[i] = 0;
-                        continue;
-                }
-        }
-        if (!comnode) {
-                inet_aton("127.0.0.1", &addr.sin_addr);
-                comnode = addr.sin_addr.s_addr;
-        }
-        if (!tasknode) {
-                inet_aton("127.0.0.1", &addr.sin_addr);
-                tasknode = addr.sin_addr.s_addr;
-        }
+	comnode = tasknode = 0;
+	for (i = 0; i < argc; i++) {
+		if (strstr(argv[i], "ComNode=")) {
+			inet_aton(argv[i] + 8, &addr.sin_addr);
+			comnode = addr.sin_addr.s_addr;
+			argv[i] = 0;
+			continue;
+		}
+		if (strstr(argv[i], "TaskNode=")) {
+			inet_aton(argv[i] + 9, &addr.sin_addr);
+			tasknode = addr.sin_addr.s_addr;
+			argv[i] = 0;
+			continue;
+		}
+	}
+	if (!comnode) {
+		inet_aton("127.0.0.1", &addr.sin_addr);
+		comnode = addr.sin_addr.s_addr;
+	}
+	if (!tasknode) {
+		inet_aton("127.0.0.1", &addr.sin_addr);
+		tasknode = addr.sin_addr.s_addr;
+	}
 	rt_grow_and_lock_stack(100000);
 	init_module();
 	rt_thread_join(thread);
-        while ((srvport = rt_request_hard_port(comnode)) <= 0) {
-                msleep(100);
-        }
+	while ((srvport = rt_request_hard_port(comnode)) <= 0) {
+		msleep(100);
+	}
 	rt_make_hard_real_time();
-        RT_sem_signal(comnode, srvport, end_sem);
+	RT_sem_signal(comnode, srvport, end_sem);
 	rt_make_soft_real_time();
-        rt_release_port(comnode, srvport);
-        rt_task_delete(task);
+	rt_release_port(comnode, srvport);
+	rt_task_delete(task);
 	exit(0);
 }

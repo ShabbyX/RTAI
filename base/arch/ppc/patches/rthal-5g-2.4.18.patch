@@ -4,7 +4,7 @@
 @@ -109,6 +109,9 @@
    bool '  Distribute interrupts on all CPUs by default' CONFIG_IRQ_ALL_CPUS
  fi
- 
+
 +#bool 'Real-Time Hardware Abstraction Layer' CONFIG_RTHAL
 +define_bool CONFIG_RTHAL y
 +
@@ -19,7 +19,7 @@
  	.globl	do_signal_ret
  do_signal_ret:
 +	bl	do_soft_sti
- 	.globl ret_to_user_hook	
+ 	.globl ret_to_user_hook
  ret_to_user_hook:
  	nop
 + diff -u linux-2.4.18/arch/ppc/kernel/irq.c.PRE_RTAI linux-2.4.18/arch/ppc/kernel/irq.c
@@ -28,7 +28,7 @@
 @@ -534,12 +534,21 @@
  	spin_unlock(&desc->lock);
  }
- 
+
 -int do_IRQ(struct pt_regs *regs)
 +void (*rtai_soft_sti)(void);
 +
@@ -42,7 +42,7 @@
  	int cpu = smp_processor_id();
  	int irq, first = 1;
          hardirq_enter( cpu );
- 
+
 +	if (do_IRQ == (unsigned long)do_IRQ_intercept) {
 +
  	for (;;) {
@@ -58,7 +58,7 @@
 +	}
 +
          hardirq_exit( cpu );
- 
+
  	if (softirq_pending(cpu))
 + diff -u linux-2.4.18/arch/ppc/kernel/ppc_ksyms.c.PRE_RTAI linux-2.4.18/arch/ppc/kernel/ppc_ksyms.c
 --- linux-2.4.18/arch/ppc/kernel/ppc_ksyms.c.PRE_RTAI	Thu Mar 21 09:33:13 2002
@@ -66,7 +66,7 @@
 @@ -217,6 +217,12 @@
  EXPORT_SYMBOL(synchronize_irq);
  #endif
- 
+
 +extern int (*rtai_srq_bckdr)(struct pt_regs *);
 +EXPORT_SYMBOL(rtai_srq_bckdr);
 +
@@ -74,7 +74,7 @@
 +EXPORT_SYMBOL(rtai_soft_sti);
 +
  EXPORT_SYMBOL(ppc_md);
- 
+
  #ifdef CONFIG_ADB
 + diff -u linux-2.4.18/arch/ppc/kernel/traps.c.PRE_RTAI linux-2.4.18/arch/ppc/kernel/traps.c
 --- linux-2.4.18/arch/ppc/kernel/traps.c.PRE_RTAI	Thu Mar 21 09:33:13 2002
@@ -82,7 +82,7 @@
 @@ -269,9 +269,15 @@
  	return(retval);
  }
- 
+
 +int (*rtai_srq_bckdr)(struct pt_regs *regs) = NULL;
 +
  void
@@ -94,7 +94,7 @@
 +
  #if defined(CONFIG_4xx)
  	unsigned int esr = mfspr(SPRN_ESR);
- 
+
 + diff -u linux-2.4.18/arch/ppc/mm/pgtable.c.PRE_RTAI linux-2.4.18/arch/ppc/mm/pgtable.c
 --- linux-2.4.18/arch/ppc/mm/pgtable.c.PRE_RTAI	Thu Mar 21 09:33:14 2002
 +++ linux-2.4.18/arch/ppc/mm/pgtable.c	Thu Mar 21 11:12:04 2002
@@ -113,7 +113,7 @@
 @@ -241,6 +241,13 @@
    You will need a new lynxer.elf file to flash your firmware with - send
    email to Martin.Bligh@us.ibm.com
- 
+
 +Real-Time Harware Abstraction
 +CONFIG_RTHAL
 +  The Real-Time Hardware Abstraction Layer (RTHAL) is used by
@@ -128,7 +128,7 @@
 --- linux-2.4.18/include/asm-ppc/system.h.PRE_RTAI	Thu Mar 21 10:34:16 2002
 +++ linux-2.4.18/include/asm-ppc/system.h	Thu Mar 21 10:59:06 2002
 @@ -81,6 +81,7 @@
- 
+
  struct task_struct;
  #define prepare_to_switch()	do { } while(0)
 +#define end_switch()		do { } while(0)
@@ -139,13 +139,13 @@
 --- linux-2.4.18/include/linux/sched.h.PRE_RTAI	Thu Mar 21 10:34:17 2002
 +++ linux-2.4.18/include/linux/sched.h	Thu Mar 21 11:18:05 2002
 @@ -410,6 +410,8 @@
- 
+
  /* journalling filesystem info */
  	void *journal_info;
 +
 +	void *this_rt_task[2];
  };
- 
+
  /*
 @@ -501,6 +503,7 @@
      blocked:		{{0}},						\
@@ -153,15 +153,15 @@
      journal_info:	NULL,						\
 +    this_rt_task:	{0,0},						\
  }
- 
- 
+
+
 + diff -u linux-2.4.18/kernel/exit.c.PRE_RTAI linux-2.4.18/kernel/exit.c
 --- linux-2.4.18/kernel/exit.c.PRE_RTAI	Mon Feb 25 20:38:13 2002
 +++ linux-2.4.18/kernel/exit.c	Thu Mar 21 10:59:07 2002
 @@ -429,6 +429,71 @@
  	write_unlock_irq(&tasklist_lock);
  }
- 
+
 +//
 +// PGGC added these lines to callback rtai when a task dies.
 +// A list of functions allows different rt_modules to be informed.
@@ -211,7 +211,7 @@
 +			if (!ptoo) {
 +				rtai_callback_list = pto->next;
 +			} else {
-+				ptoo->next = pto->next; 
++				ptoo->next = pto->next;
 +			}
 + 			ptd = pto;
 +			pto = pto->next;
@@ -219,7 +219,7 @@
 +		} else {
 +			ptoo = pto;
 +			pto = pto->next;
-+		}	
++		}
 +	}
 +//printk("rtai_callback_list %X\n", rtai_callback_list);
 +}
@@ -247,7 +247,7 @@
 +	}
 +
  	__exit_mm(tsk);
- 
+
  	lock_kernel();
 + diff -u linux-2.4.18/kernel/fork.c.PRE_RTAI linux-2.4.18/kernel/fork.c
 --- linux-2.4.18/kernel/fork.c.PRE_RTAI	Mon Feb 25 20:38:13 2002
@@ -276,7 +276,7 @@
 --- linux-2.4.18/kernel/ksyms.c.PRE_RTAI	Mon Feb 25 20:38:13 2002
 +++ linux-2.4.18/kernel/ksyms.c	Thu Mar 21 10:59:07 2002
 @@ -559,3 +559,44 @@
- 
+
  EXPORT_SYMBOL(tasklist_lock);
  EXPORT_SYMBOL(pidhash);
 +
@@ -409,21 +409,21 @@
  		p = list_entry(tmp, struct task_struct, run_list);
  		if (can_schedule(p, this_cpu)) {
 @@ -686,7 +755,7 @@
- 
+
  		if (!prev->mm) {
  			prev->active_mm = NULL;
 -			mmdrop(oldmm);
 +			pend_mm(oldmm, this_cpu);
  		}
  	}
- 
+
 @@ -695,6 +764,7 @@
  	 * stack.
  	 */
  	switch_to(prev, next, prev);
 +	drop_mm();
  	__schedule_tail(prev);
- 
+
  same_process:
 + diff -u linux-2.4.18/kernel/signal.c.PRE_RTAI linux-2.4.18/kernel/signal.c
 --- linux-2.4.18/kernel/signal.c.PRE_RTAI	Thu Nov 22 01:26:27 2001
@@ -431,7 +431,7 @@
 @@ -974,9 +974,30 @@
  	return ret;
  }
- 
+
 +//
 +//  Add this pointer to the RTAI signal handler.
 +//
@@ -457,15 +457,15 @@
 +
 +	{
  	struct siginfo info;
- 
+
  	info.si_signo = sig;
 @@ -986,6 +1007,7 @@
  	info.si_uid = current->uid;
- 
+
  	return kill_something_info(sig, &info, pid);
 +	}
  }
- 
+
  asmlinkage long
 + diff -u linux-2.4.18/Makefile.PRE_RTAI linux-2.4.18/Makefile
 --- linux-2.4.18/Makefile.PRE_RTAI	Thu Mar 21 09:33:13 2002
@@ -476,9 +476,9 @@
  SUBLEVEL = 18
 -EXTRAVERSION =
 +EXTRAVERSION = -rthal5
- 
+
  KERNELRELEASE=$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)
- 
+
 + diff -u linux-2.4.18/mm/vmalloc.c.PRE_RTAI linux-2.4.18/mm/vmalloc.c
 --- linux-2.4.18/mm/vmalloc.c.PRE_RTAI	Mon Feb 25 20:38:14 2002
 +++ linux-2.4.18/mm/vmalloc.c	Thu Mar 21 10:59:07 2002
@@ -489,7 +489,7 @@
 +#ifdef CONFIG_X86
 +		pgd_t olddir = *dir;
 +#endif
- 		
+
  		pmd = pmd_alloc(&init_mm, dir, address);
  		ret = -ENOMEM;
 @@ -157,6 +160,10 @@
@@ -500,6 +500,6 @@
 +		if (pgd_val(olddir) != pgd_val(*dir))
 +			set_pgdir(address, *dir);
 +#endif
- 
+
  		address = (address + PGDIR_SIZE) & PGDIR_MASK;
  		dir++;

@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2002-2008  Thomas Leibner (leibner@t-online.de)
-                         Paolo Mantegazza (mantegazza@aero.polimi.it)
+			 Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -127,7 +127,7 @@ int main(void)
 	read(cntrfifo, &data, 1);
 	printf("\nINIT MASTER TASK\n\n(CTRL-C TO END EVERYTHING)\n");
 
-	while (!end) {	
+	while (!end) {
 		lseek(player, 0, SEEK_SET);
 		while(!end && read(player, &data, 1) > 0) {
 			write(playfifo, &data, 1);

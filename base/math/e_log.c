@@ -42,7 +42,7 @@ static char rcsid[] = "$NetBSD: e_log.c,v 1.8 1995/05/10 20:45:49 jtc Exp $";
  *	by
  *		log(1+f) = f - s*(f - R)	(if f is not too large)
  *		log(1+f) = f - (hfsq - s*(hfsq+R)).	(better accuracy)
- *	
+ *
  *	3. Finally,  log(x) = k*ln2 + log(1+f).
  *			    = k*ln2_hi+(f-(hfsq-(s*(hfsq+R)+k*ln2_lo)))
  *	   Here ln2 is split into two floating point number:

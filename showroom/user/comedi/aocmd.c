@@ -49,7 +49,7 @@ static lsampl_t maxdata;
 
 static int init_board(void)
 {
-	dev = comedi_open("/dev/comedi0");		
+	dev = comedi_open("/dev/comedi0");
 	printf("Comedi device (6071) handle: %p.\n", dev);
 	if (!dev){
 		printf("Unable to open (6071) %s.\n", "/dev/comedi0");
@@ -95,12 +95,12 @@ int do_cmd(void)
 
 	cmd.stop_src = TRIG_NONE;
 	cmd.stop_arg = 0;
-	
+
 	cmd.chanlist = chanlist;
 	cmd.chanlist_len = NCHAN;
 
 	ret = comedi_command_test(dev, &cmd);
-	ret = comedi_command_test(dev, &cmd);		
+	ret = comedi_command_test(dev, &cmd);
 
 	if (ret) {
 		return ret;

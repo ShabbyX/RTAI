@@ -47,7 +47,7 @@ static void *async_fun(void *args)
 		exit(1);
 	}
 	mlockall(MCL_CURRENT | MCL_FUTURE);
-	while (!end) {	
+	while (!end) {
 if (SERVER) {
 		unsigned long long retval;
 		long i1, i2;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 	unsigned long sndnode;
 	long sndport, i, r;
 	RT_TASK *rcvtsk, *sndtsk;
-        struct sockaddr_in addr;
+	struct sockaddr_in addr;
 	static MBX *sndmbx;
 
 	SERVER = atoi(argv[1]);
@@ -84,30 +84,30 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-        mbx = rt_mbx_init(nam2num("MBX"), 100);
-        athread = rt_thread_create(async_fun, NULL, 10000);
-        sndnode = 0;
-        if (argc == 3 && strstr(argv[2], "SndNode=")) {
-                inet_aton(argv[2] + 8, &addr.sin_addr);
+	mbx = rt_mbx_init(nam2num("MBX"), 100);
+	athread = rt_thread_create(async_fun, NULL, 10000);
+	sndnode = 0;
+	if (argc == 3 && strstr(argv[2], "SndNode=")) {
+		inet_aton(argv[2] + 8, &addr.sin_addr);
 		sndnode = addr.sin_addr.s_addr;
-        }
-        if (!sndnode) {
-                inet_aton("127.0.0.1", &addr.sin_addr);
-                sndnode = addr.sin_addr.s_addr;
-        }
+	}
+	if (!sndnode) {
+		inet_aton("127.0.0.1", &addr.sin_addr);
+		sndnode = addr.sin_addr.s_addr;
+	}
 
 	rt_set_oneshot_mode();
 	start_rt_timer(0);
 	while ((sndport = rt_request_port_mbx(sndnode, mbx)) <= 0 && sndport != -EINVAL);
-        while (!(sndmbx = RT_get_adr(sndnode, sndport, "SNDMBX"))) {
-                rt_sleep(nano2count(100000000));
-        }
+	while (!(sndmbx = RT_get_adr(sndnode, sndport, "SNDMBX"))) {
+		rt_sleep(nano2count(100000000));
+	}
 	sndtsk = RT_get_adr(sndnode, sndport, "SNDTSK");
 	printf("\nRECEIVER TASK RUNNING\n");
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	rt_make_hard_real_time();
 
-	while (!end) {	
+	while (!end) {
 		r = RT_mbx_receive(sndnode, -sndport, sndmbx, &i, sizeof(long));
 		rt_printk("RECEIVE %ld %ld\n", r, i);
 if (SERVER) {

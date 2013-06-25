@@ -42,19 +42,19 @@ int __hard_cpu_id( void ){
 /* task functions */
 
 RT_TASK * __rt_task_init(void (*rt_thread)(int), int data,
-                         int stack_size, int priority, int uses_fpu,
-                          void(*signal)(void))
+			 int stack_size, int priority, int uses_fpu,
+			  void(*signal)(void))
 {
-        RT_TASK * task;
+	RT_TASK * task;
 
-        task = rt_malloc( sizeof(RT_TASK) );
+	task = rt_malloc( sizeof(RT_TASK) );
 
-        if(task == 0)
-                return 0;
+	if(task == 0)
+		return 0;
 
-        memset(task,0,sizeof(RT_TASK));
+	memset(task,0,sizeof(RT_TASK));
 
-        rt_task_init(task,rt_thread,data,stack_size,priority,uses_fpu,signal);
+	rt_task_init(task,rt_thread,data,stack_size,priority,uses_fpu,signal);
 
        __rt_tld_set_data(task,cpp_key,(void*)data);
 
@@ -63,19 +63,19 @@ RT_TASK * __rt_task_init(void (*rt_thread)(int), int data,
 
 int __rt_task_delete(RT_TASK *task)
 {
-        int result;
-        rt_printk("__rt_task_delete(%p)\n",task);
+	int result;
+	rt_printk("__rt_task_delete(%p)\n",task);
 
-        if(task == 0)
-                return -1;
+	if(task == 0)
+		return -1;
 
-        rt_task_suspend(task);
+	rt_task_suspend(task);
 
-        result = rt_task_delete(task);
+	result = rt_task_delete(task);
 
-        rt_free(task);
+	rt_free(task);
 
-        return result;
+	return result;
 }
 
 #ifdef CONFIG_RTAI_TRACE

@@ -141,8 +141,8 @@ struct property {
 	struct expr_value visible;
 	struct expr *expr;         /* the optional conditional part of the property */
 	struct menu *menu;         /* the menu the property are associated with
-	                            * valid for: P_SELECT, P_RANGE, P_CHOICE,
-	                            * P_PROMPT, P_DEFAULT, P_MENU, P_COMMENT */
+				    * valid for: P_SELECT, P_RANGE, P_CHOICE,
+				    * P_PROMPT, P_DEFAULT, P_MENU, P_COMMENT */
 	struct file *file;         /* what file was this property defined */
 	int lineno;                /* what lineno was this property defined */
 };

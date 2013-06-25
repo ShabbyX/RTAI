@@ -79,7 +79,7 @@ int main(void)
 		execl("./screen", "./screen", NULL);
 	}
 	sleep(1);
-	
+
  	if (!(mytask = rt_task_init(nam2num("KBRTSK"), 10, 0, 0))) {
 		printf("CANNOT INIT KEYBOARD TASK\n");
 		exit(1);
@@ -97,14 +97,14 @@ int main(void)
 
 	do {
 		ch = get_key();
-	        if (ch == 'p' || ch == 'P') {
+		if (ch == 'p' || ch == 'P') {
 			menu();
 		}
 		if (ch != 'f' && mq_send(Keyboard, &ch, 1, 0) <= 0) {
 			fprintf(stderr, "Can't send command to RT-task\n");
 		}
 	} while (ch != 'f');
-        ch = 'r';
+	ch = 'r';
 	while (mq_send(Keyboard, &ch, 1, 0) < 0) {
 		rt_sleep(nano2count(1000000));
 	}
@@ -112,7 +112,7 @@ int main(void)
 	while (mq_send(Keyboard, &ch, 1, 0) < 0) {
 		rt_sleep(nano2count(1000000));
 	}
-        ch = 'f';
+	ch = 'f';
 	while (mq_send(Keyboard, &ch, 1, 0) < 0) {
 		rt_sleep(nano2count(1000000));
 	}

@@ -55,16 +55,16 @@
 //#define NR_syscalls __NR_syscall_max
 
 #define LXRT_DO_IMMEDIATE_LINUX_SYSCALL(regs) \
-        do { \
+	do { \
 		regs->LINUX_SYSCALL_RETREG = ((asmlinkage int (*)(long, ...))sys_call_table[regs->LINUX_SYSCALL_NR])(regs->LINUX_SYSCALL_REG1, regs->LINUX_SYSCALL_REG2, regs->LINUX_SYSCALL_REG3, regs->LINUX_SYSCALL_REG4, regs->LINUX_SYSCALL_REG5, regs->LINUX_SYSCALL_REG6); \
-        } while (0)
+	} while (0)
 
 #define SET_LXRT_RETVAL_IN_SYSCALL(regs, retval) \
-        do { \
+	do { \
 		if (regs->RTAI_SYSCALL_RETPNT) { \
 			rt_copy_to_user((void *)regs->RTAI_SYSCALL_RETPNT, &retval, sizeof(retval)); \
 		} \
-        } while (0)
+	} while (0)
 
 #define LOW   0
 #define HIGH  1
@@ -109,11 +109,11 @@ static inline void _lxrt_context_switch (struct task_struct *prev, struct task_s
 	}
 	context_switch(prev, next);
 #else /* >= 2.6.0 */
-        extern void *context_switch(void *, void *, void *);
+	extern void *context_switch(void *, void *, void *);
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,18)
-        prev->fpu_counter = 0;
+	prev->fpu_counter = 0;
 #endif
-        context_switch(NULL, prev, next);
+	context_switch(NULL, prev, next);
 #endif /* < 2.6.0 */
 }
 
@@ -123,14 +123,14 @@ static inline void _lxrt_context_switch (struct task_struct *prev, struct task_s
 static inline void kthread_fun_set_jump(struct task_struct *lnxtsk)
 {
 	lnxtsk->rtai_tskext(TSKEXT2) = kmalloc(sizeof(struct thread_struct) + (lnxtsk->thread.ksp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.ksp, GFP_KERNEL);
-        *((struct thread_struct *)lnxtsk->rtai_tskext(TSKEXT2)) = lnxtsk->thread;
+	*((struct thread_struct *)lnxtsk->rtai_tskext(TSKEXT2)) = lnxtsk->thread;
 	memcpy(lnxtsk->rtai_tskext(TSKEXT2) + sizeof(struct thread_struct), (void *)(lnxtsk->thread.ksp), (lnxtsk->thread.ksp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.ksp);
 }
 
 static inline void kthread_fun_long_jump(struct task_struct *lnxtsk)
 {
 	lnxtsk->thread = *((struct thread_struct *)lnxtsk->rtai_tskext(TSKEXT2));
-        memcpy((void *)lnxtsk->thread.ksp, lnxtsk->rtai_tskext(TSKEXT2) + sizeof(struct thread_struct)/* + sizeof(struct thread_info)*/, (lnxtsk->thread.ksp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.ksp);
+	memcpy((void *)lnxtsk->thread.ksp, lnxtsk->rtai_tskext(TSKEXT2) + sizeof(struct thread_struct)/* + sizeof(struct thread_info)*/, (lnxtsk->thread.ksp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.ksp);
 }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
@@ -173,7 +173,7 @@ static inline union rtai_lxrt_t __rtai_lxrt(unsigned long arg0, unsigned long ar
 		register unsigned long __sc_0  __asm__ ("r0");
 		register unsigned long __sc_3  __asm__ ("r3");
 		register unsigned long __sc_4  __asm__ ("r4");
-		
+
 		__sc_0 = arg0;
 		__sc_3 = arg1;
 		__sc_4 = arg2;

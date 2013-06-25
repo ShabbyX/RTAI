@@ -2,7 +2,7 @@
 # Automatically generated make config: don't edit
 #
 CONFIG_MODULES=y
-CONFIG_RTAI_VERSION="3.8 (vulcano)"
+CONFIG_RTAI_VERSION="3.9.1 (magma)"
 
 #
 # General

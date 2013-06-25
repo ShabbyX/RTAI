@@ -68,10 +68,10 @@ static int cpu_used[NR_RT_CPUS];
 static void rt_fractionated_sleep(RTIME OneUnit)
 {
 #define FRACT 100
-        int i = FRACT;
-        while (i--) {
-                rt_sleep(llimd(OneUnit, 1, FRACT));
-        }
+	int i = FRACT;
+	while (i--) {
+		rt_sleep(llimd(OneUnit, 1, FRACT));
+	}
 }
 
 
@@ -165,7 +165,7 @@ static void ClockChrono_Clock(long t)
 
 static void ClockChrono_Chrono(long t)
 {
-	MenageHmsh_tHour times;			
+	MenageHmsh_tHour times;
 	MenageHmsh_tChain11 timesChain;
 	BOOLEAN Intermediatetimes = FALSE;
 	MenageHmsh_tHour endIntermediateTimes;

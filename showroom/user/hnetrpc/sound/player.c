@@ -49,11 +49,11 @@ int main(int argc, char *argv[])
 {
 	unsigned int player, msg, spknode, spkport, i;
 	RT_TASK *plrtsk, *spktsk;
-        struct sockaddr_in addr;
+	struct sockaddr_in addr;
 	MBX *mbx;
 	char data[BUFSIZE];
 
-        thread = rt_thread_create(endme, NULL, 2000);
+	thread = rt_thread_create(endme, NULL, 2000);
 	if ((player = open("../../../share/linux.au", O_RDONLY)) < 0) {
 		printf("ERROR OPENING SOUND FILE (linux.au)\n");
 		exit(1);
@@ -64,28 +64,28 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-        spknode = 0;
-        if (argc == 2 && strstr(argv[1], "SpkNode=")) {
-                inet_aton(argv[1] + 8, &addr.sin_addr);
-                spknode = addr.sin_addr.s_addr;
-        }
-        if (!spknode) {
-                inet_aton("127.0.0.1", &addr.sin_addr);
-                spknode = addr.sin_addr.s_addr;
-        }
+	spknode = 0;
+	if (argc == 2 && strstr(argv[1], "SpkNode=")) {
+		inet_aton(argv[1] + 8, &addr.sin_addr);
+		spknode = addr.sin_addr.s_addr;
+	}
+	if (!spknode) {
+		inet_aton("127.0.0.1", &addr.sin_addr);
+		spknode = addr.sin_addr.s_addr;
+	}
 start_rt_timer(0);
 	while ((spkport = rt_request_hard_port(spknode)) <= 0 && spkport != -EINVAL);
 	rt_make_hard_real_time();
 	spktsk = RT_get_adr(spknode, spkport, "SPKTSK");
 	mbx = RT_get_adr(spknode, spkport, "SNDMBX");
 
-        for (i = 0; i < 100; i++) {
+	for (i = 0; i < 100; i++) {
 		RT_rpc(spknode, spkport, spktsk, msg, &msg);
-        }
+	}
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	printf("\nPLAYER TASK RUNNING\n\n(TYPE ENTER TO END EVERYTHING)\n");
 
-	while (!end) {	
+	while (!end) {
 		lseek(player, 0, SEEK_SET);
 		while(!end && (msg = read(player, data, BUFSIZE)) > 0) {
 			RT_mbx_send(spknode, spkport, mbx, data, msg);
@@ -93,7 +93,7 @@ start_rt_timer(0);
 	}
 
 	RT_rpc(spknode, spkport, spktsk, msg, &msg);
-	rt_make_soft_real_time();	
+	rt_make_soft_real_time();
 	rt_release_port(spknode, spkport);
 //stop_rt_timer();
 	rt_task_delete(plrtsk);

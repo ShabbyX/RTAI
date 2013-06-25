@@ -39,7 +39,7 @@ int main(int argc,char *argv[])
 	int fd0;
 	char nm[RTF_NAMELEN+1];
 	struct sample { long min, max, avrg, jitters[2]; } samp;
-	
+
 	if ((fd0 = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDONLY)) < 0) {
 		fprintf(stderr, "Error opening %s\n",nm);
 		exit(1);
@@ -51,6 +51,6 @@ int main(int argc,char *argv[])
 		read(fd0, &samp, sizeof(samp));
 		printf("* latency: min: %ld, max: %ld, average: %ld; fastjit: %ld, slowjit: %ld * (all us) *\n", samp.min/1000, samp.max/1000, samp.avrg/1000, samp.jitters[0]/1000, samp.jitters[1]/1000);
 		fflush(stdout);
-        }
+	}
 	return 0;
 }

@@ -65,7 +65,7 @@ unsigned int daqnode, daqport;
 
 static int init_board(void)
 {
-	dev = RT_comedi_open(daqnode, daqport, "/dev/comedi0");		
+	dev = RT_comedi_open(daqnode, daqport, "/dev/comedi0");
 	printf("Comedi device (6071) handle: %p.\n", dev);
 	if (!dev){
 		printf("Unable to open (6071) %s.\n", "/dev/comedi0");
@@ -100,8 +100,8 @@ int main(int argc, char *argv[])
 	RTIME until;
 	RT_TASK *task;
 	comedi_insn insn[NCHAN];
-        unsigned int read_chan[NICHAN]  = { 2, 3, 4, 5, 6 };
-        unsigned int write_chan[NOCHAN] = { 0, 1 };
+	unsigned int read_chan[NICHAN]  = { 2, 3, 4, 5, 6 };
+	unsigned int write_chan[NOCHAN] = { 0, 1 };
 #if !SINGLE_INSN
 	comedi_insnlist ilist = { NCHAN, insn };
 #endif
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 	long i, k, n, retval;
 	int toggle;
 	FILE *fp;
-        struct sockaddr_in addr;
+	struct sockaddr_in addr;
 
 	signal(SIGKILL, endme);
 	signal(SIGTERM, endme);
@@ -125,16 +125,16 @@ int main(int argc, char *argv[])
 	start_rt_timer(0);
 	task = rt_task_init_schmod(nam2num("MYTASK"), 1, 0, 0, SCHED_FIFO, 0xF);
 
-        daqnode = 0;
-        if (argc == 2 && strstr(argv[1], "RcvNode=")) {
-                inet_aton(argv[1] + 8, &addr.sin_addr);
-                daqnode = addr.sin_addr.s_addr;
-        }
-        if (!daqnode) {
-                inet_aton("127.0.0.1", &addr.sin_addr);
-                daqnode = addr.sin_addr.s_addr;
-        }
-        while ((daqport = rt_request_port(daqnode)) <= 0 && daqport != -EINVAL);
+	daqnode = 0;
+	if (argc == 2 && strstr(argv[1], "RcvNode=")) {
+		inet_aton(argv[1] + 8, &addr.sin_addr);
+		daqnode = addr.sin_addr.s_addr;
+	}
+	if (!daqnode) {
+		inet_aton("127.0.0.1", &addr.sin_addr);
+		daqnode = addr.sin_addr.s_addr;
+	}
+	while ((daqport = rt_request_port(daqnode)) <= 0 && daqport != -EINVAL);
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	printf("COMEDI INSN%s TEST BEGINS: SAMPLING FREQ: %d, RUN TIME: %d, NODE: %x, PORT: %d.\n", SINGLE_INSN ? "" : "LIST", SAMP_FREQ, RUN_TIME, daqnode, daqport);
@@ -145,12 +145,12 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-        for (i = 0; i < NICHAN; i++) {
+	for (i = 0; i < NICHAN; i++) {
 		BUILD_AREAD_INSN(insn[i], subdevai, data[i], 1, read_chan[i], AI_RANGE, AREF_GROUND);
-        }
-        for (i = 0; i < NOCHAN; i++) {
+	}
+	for (i = 0; i < NOCHAN; i++) {
 		BUILD_AWRITE_INSN(insn[NICHAN + i], subdevao, data[NICHAN + i], 1, write_chan[i], AO_RANGE, AREF_GROUND);
-        }
+	}
 
 	until = rt_get_time();
 	for (toggle = n = k = 0; k < SAMP_FREQ*RUN_TIME && !end /*SAMP_FREQ*RUN_TIME && !end*/; k++) {
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 		data[NICHAN + 1] = (1 - toggle)*maxdatao/2;
 		toggle = 1 - toggle;
 #endif
-		
+
 #if SINGLE_INSN
 		for (i = 0; i < NCHAN; i++) {
 			if ((retval = RT_comedi_do_insn(daqnode, daqport, dev, insn + i)) > 0) {

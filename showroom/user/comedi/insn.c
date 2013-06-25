@@ -60,7 +60,7 @@ static lsampl_t maxdatai, maxdatao;
 
 static int init_board(void)
 {
-	dev = comedi_open("/dev/comedi0");		
+	dev = comedi_open("/dev/comedi0");
 	printf("Comedi device (6071) handle: %p.\n", dev);
 	if (!dev){
 		printf("Unable to open (6071) %s.\n", "/dev/comedi0");
@@ -95,8 +95,8 @@ int main(void)
 	RTIME until;
 	RT_TASK *task;
 	comedi_insn insn[NCHAN];
-        unsigned int read_chan[NICHAN]  = { 2, 3, 4, 5, 6 };
-        unsigned int write_chan[NOCHAN] = { 0, 1 };
+	unsigned int read_chan[NICHAN]  = { 2, 3, 4, 5, 6 };
+	unsigned int write_chan[NOCHAN] = { 0, 1 };
 #if !SINGLE_INSN
 	comedi_insnlist ilist = { NCHAN, insn };
 #endif
@@ -127,12 +127,12 @@ int main(void)
 		return 1;
 	}
 
-        for (i = 0; i < NICHAN; i++) {
+	for (i = 0; i < NICHAN; i++) {
 		BUILD_AREAD_INSN(insn[i], subdevai, data[i], 1, read_chan[i], AI_RANGE, AREF_GROUND);
-        }
-        for (i = 0; i < NOCHAN; i++) {
+	}
+	for (i = 0; i < NOCHAN; i++) {
 		BUILD_AWRITE_INSN(insn[NICHAN + i], subdevao, data[NICHAN + i], 1, write_chan[i], AO_RANGE, AREF_GROUND);
-        }
+	}
 
 	until = rt_get_time();
 	for (toggle = n = k = 0; k < SAMP_FREQ*RUN_TIME && !end; k++) {
@@ -146,7 +146,7 @@ int main(void)
 		data[NICHAN + 1] = (1 - toggle)*maxdatao/2;
 		toggle = 1 - toggle;
 #endif
-		
+
 #if SINGLE_INSN
 		for (i = 0; i < NCHAN; i++) {
 			if ((retval = comedi_do_insn(dev, insn + i)) > 0) {

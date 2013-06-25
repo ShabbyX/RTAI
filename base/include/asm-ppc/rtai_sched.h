@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2000-2007  Paolo Mantegazza (mantegazza@aero.polimi.it)
-              2000       Stuart Hughes    (shughes@zentropix.com)
+	      2000       Stuart Hughes    (shughes@zentropix.com)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

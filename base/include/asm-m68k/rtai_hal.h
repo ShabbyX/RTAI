@@ -144,11 +144,11 @@ static inline unsigned long long rtai_llimd(unsigned long long ll, unsigned int 
 #include <rtai_trace.h>
 
 struct rtai_realtime_irq_s {
-        int (*handler)(unsigned irq, void *cookie);
-        void *cookie;
-        int retmode;
-        int cpumask;
-        int (*irq_ack)(unsigned int);
+	int (*handler)(unsigned irq, void *cookie);
+	void *cookie;
+	int retmode;
+	int cpumask;
+	int (*irq_ack)(unsigned int);
 };
 
 /*

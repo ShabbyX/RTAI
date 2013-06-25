@@ -59,15 +59,15 @@ static void Slow_Thread(long dummy)
 	int jit;
 	RTIME svt, t;
 	svt = rt_get_cpu_time_ns() - SLOWMUL*TICK_TIME;
-        while (1) {
+	while (1) {
 		jit = (int) ((t = rt_get_cpu_time_ns()) - svt - SLOWMUL*TICK_TIME);
 		svt = t;
 		if (jit) { jit = - jit; }
 		if (jit > slowjit) { slowjit = jit; }
 		cpu_used[hard_cpu_id()]++;
-                rt_busy_sleep(SLOWMUL/2*TICK_TIME);
-                rt_task_wait_period();
-        }
+		rt_busy_sleep(SLOWMUL/2*TICK_TIME);
+		rt_task_wait_period();
+	}
 }
 
 static void Fast_Thread(long dummy)
@@ -75,15 +75,15 @@ static void Fast_Thread(long dummy)
 	int jit;
 	RTIME svt, t;
 	svt = rt_get_cpu_time_ns() - FASTMUL*TICK_TIME;
-        while (1) {
+	while (1) {
 		jit = (int) ((t = rt_get_cpu_time_ns()) - svt - FASTMUL*TICK_TIME);
 		svt = t;
 		if (jit) { jit = - jit; }
 		if (jit > fastjit) { fastjit = jit; }
 		cpu_used[hard_cpu_id()]++;
-                rt_busy_sleep(FASTMUL/2*TICK_TIME);
-                rt_task_wait_period();
-        }
+		rt_busy_sleep(FASTMUL/2*TICK_TIME);
+		rt_task_wait_period();
+	}
 }
 
 static void fun(long thread) {
@@ -158,7 +158,7 @@ static void __preempt_exit(void)
 {
 	int cpuid;
 
-	stop_rt_timer();	
+	stop_rt_timer();
 	rt_task_delete(&thread);
 	rt_task_delete(&Slow_Task);
 	rt_task_delete(&Fast_Task);

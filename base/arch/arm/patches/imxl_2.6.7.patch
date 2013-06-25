@@ -993,7 +993,7 @@ index 0000000..2ca2b54
 +	       hazardous assumptions here. */
 +
 +	    if (_adp == adp_cpu_current[cpuid])
-+		
++
 +        	__adeos_sync_stage();
 +	    else
 +		{
@@ -2126,7 +2126,7 @@ index 8686a90..8e01814 100644
  	beq	no_work_pending
  	mov	r0, sp				@ 'regs'
  	mov	r2, why				@ 'syscall'
-+	
++
 +#ifdef CONFIG_ADEOS_CORE
 +	bl	__adeos_wrap_do_notify_resume
 +#else
@@ -2154,7 +2154,7 @@ index 8686a90..8e01814 100644
  	bl	syscall_trace
 +#endif
  	b	ret_slow_syscall
- 	
+
 
 @@ -130,9 +151,34 @@ ENTRY(vector_swi)
  	str	r4, [sp, #-S_OFF]!		@ push fifth arg
@@ -2192,7 +2192,7 @@ index 8686a90..8e01814 100644
  	tst	ip, #_TIF_SYSCALL_TRACE		@ are we tracing syscalls?
  	bne	__sys_trace
 @@ -148,6 +194,39 @@ ENTRY(vector_swi)
- 	bcs	arm_syscall	
+ 	bcs	arm_syscall
  	b	sys_ni_syscall			@ not private func
 
 +#if 0
@@ -4116,7 +4116,7 @@ index 0000000..f4184e6
 +    adp->priority = ADEOS_ROOT_PRI;
 +    adp->ptd_setfun = &__adeos_set_root_ptd;
 +    adp->ptd_getfun = &__adeos_get_root_ptd;
-+    adp->ptd_keymax = ADEOS_ROOT_NPTDKEYS;	
++    adp->ptd_keymax = ADEOS_ROOT_NPTDKEYS;
 +
 +    __adeos_init_stage(adp);
 +
@@ -4617,7 +4617,7 @@ index 0cbc27f..2b79bc2 100644
 
  	nr_threads++;
  	write_unlock_irq(&tasklist_lock);
-+	
++
 +#ifdef CONFIG_ADEOS_CORE
 +	{
 +	int k;
@@ -4844,7 +4844,7 @@ index 10c2581..56b782d 100644
 
  	if (current->set_child_tid)
  		put_user(current->pid, current->set_child_tid);
-+		
++
 +#ifdef CONFIG_ADEOS_CORE
 +	__adeos_enter_process();
 +#endif /* CONFIG_ADEOS_CORE */
@@ -4857,7 +4857,7 @@ index 10c2581..56b782d 100644
  	unsigned long long now;
  	unsigned long run_time;
  	int cpu, idx;
-+	
++
 +#ifdef CONFIG_ADEOS_CORE
 +	if (adp_current != adp_root) /* Let's be helpful and	conservative. */
 +	    return;
@@ -4871,7 +4871,7 @@ index 10c2581..56b782d 100644
  		++*switch_count;
 -
 -		prepare_arch_switch(rq, next);
-+		
++
 +#ifdef CONFIG_ADEOS_CORE
 +		prepare_arch_switch(rq, prev, next);
 +#else /* !CONFIG_ADEOS_CORE */
@@ -4934,7 +4934,7 @@ index 10c2581..56b782d 100644
  	retval = security_task_setscheduler(p, policy, &lp);
  	if (retval)
  		goto out_unlock;
-+		
++
 +#ifdef CONFIG_ADEOS_CORE
 +	{
 +	struct { struct task_struct *task; int policy; struct sched_param *param; } evdata = { p, policy, &lp };
@@ -4962,7 +4962,7 @@ index 10c2581..56b782d 100644
  	sched_group_init.cpu_power = SCHED_LOAD_SCALE;
  #endif
 -
-+	
++
  	for (i = 0; i < NR_CPUS; i++) {
  		prio_array_t *array;
 

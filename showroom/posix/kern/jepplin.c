@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2003  Trevor Woolven (trevw@zentropix.com)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		    Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -130,7 +130,7 @@ static void *start_task_code(void *arg)
 		sem_init(&sems[i], BIN_SEM, 0);
 		attr.priority = NUM_TASKS - i;
 		pthread_create(&thread[i], &attr, (void *)task_code, (void *)i);
-	}	
+	}
 	/* create the sync semaphore */
 	sem_init(&sync_sem, CNT_SEM, 0);
 	/* create the priority-test semaphore */

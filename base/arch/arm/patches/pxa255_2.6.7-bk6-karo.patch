@@ -2185,7 +2185,7 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-armv.S arm-linux-2.6.7-adeos/arch/arm
 
  #elif defined(CONFIG_ARCH_L7200)
  #include <asm/hardware.h>
--	
+-
 +
  		.equ	irq_base_addr,	IO_BASE_2
 
@@ -2359,7 +2359,7 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-common.S arm-linux-2.6.7-adeos/arch/a
  	bl	syscall_trace
 +#endif
  	b	ret_slow_syscall
--	
+-
 +
 
  #include "calls.S"
@@ -2401,7 +2401,7 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-common.S arm-linux-2.6.7-adeos/arch/a
  2:	mov	why, #0				@ no longer a real syscall
  	cmp	scno, #ARMSWI_OFFSET
  	eor	r0, scno, #OS_NUMBER << 20	@ put OS number back
--	bcs	arm_syscall	
+-	bcs	arm_syscall
 +	bcs	arm_syscall
  	b	sys_ni_syscall			@ not private func
 +#if 0
@@ -3166,7 +3166,7 @@ diff -uNrp arm-linux/include/asm-arm/bitops.h arm-linux-2.6.7-adeos/include/asm-
  	p += bit >> 5;
 
 -	local_irq_save(flags);
-+	adeos_hw_local_irq_save(flags);			
++	adeos_hw_local_irq_save(flags);
  	*p |= mask;
 -	local_irq_restore(flags);
 +	adeos_hw_local_irq_restore(flags);
@@ -3337,7 +3337,7 @@ diff -uNrp arm-linux/include/asm-arm/system.h arm-linux-2.6.7-adeos/include/asm-
  	:							\
  	: "memory", "cc");					\
  	})
--	
+-
 +
  /*
   * Enable IRQs
@@ -4239,7 +4239,7 @@ diff -uNrp arm-linux/kernel/adeos.c arm-linux-2.6.7-adeos/kernel/adeos.c
 +    adp->priority = ADEOS_ROOT_PRI;
 +    adp->ptd_setfun = &__adeos_set_root_ptd;
 +    adp->ptd_getfun = &__adeos_get_root_ptd;
-+    adp->ptd_keymax = ADEOS_ROOT_NPTDKEYS;	
++    adp->ptd_keymax = ADEOS_ROOT_NPTDKEYS;
 +
 +    __adeos_init_stage(adp);
 +
@@ -4974,7 +4974,7 @@ diff -uNrp arm-linux/kernel/printk.c arm-linux-2.6.7-adeos/kernel/printk.c
  	return res;
  }
  EXPORT_SYMBOL(unregister_console);
--	
+-
 +
  /**
   * tty_write_message - write a message to a certain tty, not just the console.

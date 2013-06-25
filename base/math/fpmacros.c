@@ -32,7 +32,7 @@
    argument x, as defined in <fp.h>.
 
    Exceptions:  INVALID signaled if x is a signaling NaN; in this case,
-                the FP_QNAN code is returned.
+		the FP_QNAN code is returned.
 
    Calls:  none
 ***********************************************************************/
@@ -51,11 +51,11 @@ long int __fpclassifyf ( float x )
 
    if (iexp == FEXP_MASK) {                   /* NaN or INF case */
       if ((z.lval & 0x007fffff) == 0)
-         return (long int) FP_INFINITE;
+	 return (long int) FP_INFINITE;
       else if ((z.lval & 0x00400000) != 0)
-         return (long int) FP_QNAN;
+	 return (long int) FP_QNAN;
       else
-         return (long int) FP_SNAN;
+	 return (long int) FP_SNAN;
    }
 
    if (iexp != 0)                             /* normal float */
@@ -73,7 +73,7 @@ long int __fpclassifyf ( float x )
       Implementation of classify of a double number for the PowerPC.
 
    Exceptions:  INVALID signaled if x is a signaling NaN; in this case,
-                the FP_QNAN code is returned.
+		the FP_QNAN code is returned.
 
    Calls:  none
 ***********************************************************************/
@@ -82,20 +82,20 @@ long int __fpclassify ( double arg )
 {
 	register unsigned long int exponent;
       union
-            {
-            dHexParts hex;
-            double dbl;
-            } x;
+	    {
+	    dHexParts hex;
+	    double dbl;
+	    } x;
 
 	x.dbl = arg;
-	
+
 	exponent = x.hex.high & dExpMask;
 	if ( exponent == dExpMask )
 		{
 		if ( ( ( x.hex.high & dHighMan ) | x.hex.low ) == 0 )
 			return (long int) FP_INFINITE;
 		else
-            	return ( x.hex.high & 0x00080000 ) ? FP_QNAN : FP_SNAN;
+	    	return ( x.hex.high & 0x00080000 ) ? FP_QNAN : FP_SNAN;
 		}
 	else if ( exponent != 0)
 		return (long int) FP_NORMAL;
@@ -113,7 +113,7 @@ long int __fpclassify ( double arg )
    normalized float number and zero otherwise.
 
    Exceptions:  INVALID is raised if x is a signaling NaN; in this case,
-                zero is returned.
+		zero is returned.
 
    Calls:  none
 ***********************************************************************/
@@ -143,7 +143,7 @@ long int __isnorma ( double x )
    finite (normal, subnormal, or zero) float number and zero otherwise.
 
    Exceptions:  INVALID is raised if x is a signaling NaN; in this case,
-                zero is returned.
+		zero is returned.
 
    Calls:  none
 ***********************************************************************/
@@ -171,7 +171,7 @@ long int __isfinite ( double x )
    NaN and zero otherwise.
 
    Exceptions:  INVALID is raised if x is a signaling NaN; in this case,
-                nonzero is returned.
+		nonzero is returned.
 
    Calls:  none
 ***********************************************************************/
@@ -225,15 +225,13 @@ long int __signbitf ( float x )
 long int __signbit ( double arg )
 {
       union
-            {
-            dHexParts hex;
-            double dbl;
-            } x;
+	    {
+	    dHexParts hex;
+	    double dbl;
+	    } x;
       long int sign;
 
       x.dbl = arg;
       sign = ( ( x.hex.high & dSgnMask ) == dSgnMask ) ? 1 : 0;
       return sign;
 }
-
-

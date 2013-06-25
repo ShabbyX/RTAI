@@ -75,8 +75,8 @@ static double one=1.0, two=2.0, tiny = 1.0e-300;
 		t = expm1(two*fabs(x));
 		z = one - two/(t+two);
 	    } else {
-	        t = expm1(-two*fabs(x));
-	        z= -t/(t+two);
+		t = expm1(-two*fabs(x));
+		z= -t/(t+two);
 	    }
     /* |x| > 22, return +-1 */
 	} else {

@@ -36,9 +36,9 @@ int main(void)
 	int timer_period, timer_freq, h_timer_freq;
 	int count, perns, pervar, maxpervar = 0;
 	RTIME tp, t;
-	
+
 	rt_allow_nonroot_hrt();
-        pthread_create(&thread, NULL, endt, NULL);
+	pthread_create(&thread, NULL, endt, NULL);
 	iopl(3);
 
 	if (!(rtask = rt_task_init_schmod(nam2num("RTASK"), 0, 0, 0, SCHED_FIFO, ALLOWED_CPUS))) {
@@ -50,7 +50,7 @@ int main(void)
 		rt_task_delete(rtask);
 		return 1;
 	}
-	
+
 	rt_make_hard_real_time();
 	timer_period = 1;
 	timer_freq = 2;
@@ -101,7 +101,7 @@ int main(void)
 		if (pervar > maxpervar) {
 			maxpervar = pervar;
 		}
-	        rt_mbx_send_if(mbx, &latency, sizeof(latency));
+		rt_mbx_send_if(mbx, &latency, sizeof(latency));
 //		rt_printk("MXI %d, MXS %d\n", maxisr, maxsched);
 	}
  	tmr_stop(timer);

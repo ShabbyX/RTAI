@@ -59,7 +59,7 @@ int main(void)
 			break;
 		}
 	}
-	
+
 	mysched.sched_priority = sched_get_priority_max(SCHED_FIFO) - 1;
 	if( sched_setscheduler( 0, SCHED_FIFO, &mysched ) == -1 ) {
 		printf("ERROR IN SETTING THE POSIX SCHEDULER\n");

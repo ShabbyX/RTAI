@@ -722,7 +722,7 @@ RTAI_SYSCALL_MODE int rt_task_make_periodic_relative_ns(RT_TASK *task, RTIME sta
 	task->periodic_resume_time = task->resume_time = rt_get_time_cpuid(task->runnable_on_cpus) + start_delay;
 	task->period = period;
 	task->suspdepth = 0;
-        if (!(task->state & RT_SCHED_DELAYED)) {
+	if (!(task->state & RT_SCHED_DELAYED)) {
 		rem_ready_task(task);
 		task->state = (task->state & ~RT_SCHED_SUSPENDED) | RT_SCHED_DELAYED;
 		enq_timed_task(task);
@@ -780,7 +780,7 @@ RTAI_SYSCALL_MODE int rt_task_make_periodic(RT_TASK *task, RTIME start_time, RTI
 	task->periodic_resume_time = task->resume_time = start_time;
 	task->period = period;
 	task->suspdepth = 0;
-        if (!(task->state & RT_SCHED_DELAYED)) {
+	if (!(task->state & RT_SCHED_DELAYED)) {
 		rem_ready_task(task);
 		task->state = (task->state & ~RT_SCHED_SUSPENDED) | RT_SCHED_DELAYED;
 		enq_timed_task(task);
@@ -890,8 +890,8 @@ RTAI_SYSCALL_MODE int rt_set_resume_time(RT_TASK *task, RTIME new_resume_time)
 			enq_timed_task(task);
 			rt_global_restore_flags(flags);
 			return 0;
-        	}
-        }
+		}
+	}
 	rt_global_restore_flags(flags);
 	return -ETIME;
 }
@@ -1127,7 +1127,7 @@ void rt_wake_up_timed_tasks(int cpuid)
 #ifdef CONFIG_SMP
 	wake_up_timed_tasks(cpuid);
 #else
-        wake_up_timed_tasks(0);
+	wake_up_timed_tasks(0);
 #endif
 }
 
@@ -1161,7 +1161,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_named_task_init(const char *task_name, void (*thre
 	if ((task = rt_get_adr(name = nam2num(task_name)))) {
 		return task;
 	}
-        if ((task = rt_malloc(sizeof(RT_TASK))) && !rt_task_init(task, thread, data, stack_size, prio, uses_fpu, signal)) {
+	if ((task = rt_malloc(sizeof(RT_TASK))) && !rt_task_init(task, thread, data, stack_size, prio, uses_fpu, signal)) {
 		if (rt_register(name, task, IS_TASK, 0)) {
 			return task;
 		}
@@ -1179,7 +1179,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_named_task_init_cpuid(const char *task_name, void 
 	if ((task = rt_get_adr(name = nam2num(task_name)))) {
 		return task;
 	}
-        if ((task = rt_malloc(sizeof(RT_TASK))) && !rt_task_init_cpuid(task, thread, data, stack_size, prio, uses_fpu, signal, run_on_cpu)) {
+	if ((task = rt_malloc(sizeof(RT_TASK))) && !rt_task_init_cpuid(task, thread, data, stack_size, prio, uses_fpu, signal, run_on_cpu)) {
 		if (rt_register(name, task, IS_TASK, 0)) {
 			return task;
 		}
@@ -1287,10 +1287,10 @@ COLLISION_COUNT();
 			list[k].count = 1;
 			list[k].alink = 0;
 			rt_spin_unlock_irqrestore(flags, &list_lock);
-	                if (hash_ins_adr(adr, list, lstlen, k) <= 0) {
+			if (hash_ins_adr(adr, list, lstlen, k) <= 0) {
 				rt_spin_unlock_irqrestore(flags, &list_lock);
-        	                return 0;
-                	}
+				return 0;
+			}
 			return k;
 		}
 	}
@@ -1500,7 +1500,7 @@ static inline int get_type(unsigned long name)
 	if (hash_find_name(name, lxrt_list, max_slots, 0, &slot)) {
 		return lxrt_list[slot].type;
 	}
-        return -EINVAL;
+	return -EINVAL;
 }
 
 unsigned long is_process_registered(struct task_struct *lnxtsk)
@@ -1519,20 +1519,20 @@ int rt_get_registry_slot(int slot, struct rt_registry_entry *entry)
 		rt_spin_unlock_irqrestore(flags, &list_lock);
 		return slot;
        	}
-        rt_spin_unlock_irqrestore(flags, &list_lock);
-        return 0;
+	rt_spin_unlock_irqrestore(flags, &list_lock);
+	return 0;
 }
 
 int rt_registry_alloc(void)
 {
 	if ((max_slots = (MAX_SLOTS + PRIMES_TAB_GRANULARITY - 1)/(PRIMES_TAB_GRANULARITY)) >= sizeof(primes)/sizeof(primes[0])) {
 		printk("REGISTRY TABLE TOO LARGE FOR AVAILABLE PRIMES\n");
-                return -ENOMEM;
-        }
+		return -ENOMEM;
+	}
 	max_slots = primes[max_slots];
 	if (!(lxrt_list = vmalloc((max_slots + 1)*sizeof(struct rt_registry_entry)))) {
 		printk("NO MEMORY FOR REGISTRY TABLE\n");
-                return -ENOMEM;
+		return -ENOMEM;
 	}
 	memset(lxrt_list, 0, (max_slots + 1)*sizeof(struct rt_registry_entry));
 	return 0;
@@ -1552,11 +1552,11 @@ static DEFINE_SPINLOCK(list_lock);
 int rt_registry_alloc(void)
 {
 	if (!(lxrt_list = vmalloc((MAX_SLOTS + 1)*sizeof(struct rt_registry_entry)))) {
-                printk("NO MEMORY FOR REGISTRY TABLE\n");
-                return -ENOMEM;
-        }
-        memset(lxrt_list, 0, (MAX_SLOTS + 1)*sizeof(struct rt_registry_entry));
-        return 0;
+		printk("NO MEMORY FOR REGISTRY TABLE\n");
+		return -ENOMEM;
+	}
+	memset(lxrt_list, 0, (MAX_SLOTS + 1)*sizeof(struct rt_registry_entry));
+	return 0;
 }
 
 void rt_registry_free(void)
@@ -1568,33 +1568,33 @@ void rt_registry_free(void)
 
 static inline int registr(unsigned long name, void *adr, int type, struct task_struct *tsk)
 {
-        unsigned long flags;
-        int i, slot;
+	unsigned long flags;
+	int i, slot;
 /*
  * Register a resource. This allows other programs (RTAI and/or user space)
  * to use the same resource because they can find the address from the name.
 */
-        // index 0 is reserved for the null slot.
+	// index 0 is reserved for the null slot.
 	while ((slot = max_slots) < MAX_SLOTS) {
-        	for (i = 1; i <= max_slots; i++) {
-                	if (lxrt_list[i].name == name) {
+		for (i = 1; i <= max_slots; i++) {
+			if (lxrt_list[i].name == name) {
 				return 0;
 			}
 		}
-        	flags = rt_spin_lock_irqsave(&list_lock);
-                if (slot == max_slots && max_slots < MAX_SLOTS) {
+		flags = rt_spin_lock_irqsave(&list_lock);
+		if (slot == max_slots && max_slots < MAX_SLOTS) {
 			slot = ++max_slots;
-                        lxrt_list[slot].name  = name;
-                        lxrt_list[slot].adr   = adr;
-                        lxrt_list[slot].tsk   = tsk;
-                        lxrt_list[slot].type  = type;
-                        lxrt_list[slot].count = 1;
-                        rt_spin_unlock_irqrestore(flags, &list_lock);
-                        return slot;
-                }
-        	rt_spin_unlock_irqrestore(flags, &list_lock);
-        }
-        return 0;
+			lxrt_list[slot].name  = name;
+			lxrt_list[slot].adr   = adr;
+			lxrt_list[slot].tsk   = tsk;
+			lxrt_list[slot].type  = type;
+			lxrt_list[slot].count = 1;
+			rt_spin_unlock_irqrestore(flags, &list_lock);
+			return slot;
+		}
+		rt_spin_unlock_irqrestore(flags, &list_lock);
+	}
+	return 0;
 }
 
 static inline int drg_on_name(unsigned long name)
@@ -1685,7 +1685,7 @@ static inline unsigned long get_name(void *adr)
 {
 	static unsigned long nameseed = 3518743764UL;
 	int slot;
-        if (!adr) {
+	if (!adr) {
 		unsigned long flags;
 		unsigned long name;
 		flags = rt_spin_lock_irqsave(&list_lock);
@@ -1694,7 +1694,7 @@ static inline unsigned long get_name(void *adr)
 		}
 		rt_spin_unlock_irqrestore(flags, &list_lock);
 		return name;
-        }
+	}
 	for (slot = 1; slot <= max_slots; slot++) {
 		if (lxrt_list[slot].adr == adr) {
 			return lxrt_list[slot].name;
@@ -1732,28 +1732,28 @@ static inline void *get_adr_cnt(unsigned long name)
 
 static inline int get_type(unsigned long name)
 {
-        int slot;
-        for (slot = 1; slot <= max_slots; slot++) {
-                if (lxrt_list[slot].name == name) {
-                        return lxrt_list[slot].type;
-                }
-        }
-        return -EINVAL;
+	int slot;
+	for (slot = 1; slot <= max_slots; slot++) {
+		if (lxrt_list[slot].name == name) {
+			return lxrt_list[slot].type;
+		}
+	}
+	return -EINVAL;
 }
 
 unsigned long is_process_registered(struct task_struct *tsk)
 {
-        void *adr;
+	void *adr;
 
-        if ((adr = tsk->rtai_tskext(TSKEXT0))) {
+	if ((adr = tsk->rtai_tskext(TSKEXT0))) {
 		int slot;
 		for (slot = 1; slot <= max_slots; slot++) {
 			if (lxrt_list[slot].adr == adr) {
 				return lxrt_list[slot].name;
 			}
-                }
-        }
-        return 0;
+		}
+	}
+	return 0;
 }
 
 int rt_get_registry_slot(int slot, struct rt_registry_entry *entry)
@@ -1858,13 +1858,13 @@ extern struct rt_fun_entry rt_fun_lxrt[];
 void krtai_objects_release(void)
 {
 	int slot;
-        struct rt_registry_entry entry;
+	struct rt_registry_entry entry;
 	char name[8], *type;
 
 	for (slot = 1; slot <= max_slots; slot++) {
-                if (rt_get_registry_slot(slot, &entry)) {
+		if (rt_get_registry_slot(slot, &entry)) {
 			switch (entry.type) {
-	                       	case IS_TASK:
+			       	case IS_TASK:
 					type = "TASK";
 					rt_named_task_delete(entry.adr);
 					break;
@@ -1883,13 +1883,13 @@ void krtai_objects_release(void)
 				case IS_MBX:
 					type = "MBX ";
 					((void (*)(void *))rt_fun_lxrt[NAMED_MBX_DELETE].fun)(entry.adr);
-	                       		break;	
+			       		break;
 				case IS_PRX:
 					type = "PRX ";
 					((void (*)(void *))rt_fun_lxrt[PROXY_DETACH].fun)(entry.adr);
 					rt_drg_on_adr(entry.adr);
 					break;
-	                       	default:
+			       	default:
 					type = "ALIEN";
 					break;
 			}
@@ -1908,7 +1908,7 @@ void krtai_objects_release(void)
 extern struct rtai_realtime_irq_s rtai_realtime_irq[];
 
 RTAI_SYSCALL_MODE int rt_irq_wait(unsigned irq)
-{	
+{
 	int retval;
 	retval = rt_task_suspend(0);
 	return rtai_domain.irqs[irq].handler ? -retval : RT_IRQ_TASK_ERR;
@@ -2016,16 +2016,16 @@ void rt_exec_linux_syscall(RT_TASK *rt_current, struct linux_syscalls_list *sysc
 		syscall.args[2] = regs->LINUX_SYSCALL_REG2;
 		id = offsetof(struct linux_syscall, pacargs);
 	}
-        syscall.args[0] = regs->LINUX_SYSCALL_NR;
-        syscall.args[1] = regs->LINUX_SYSCALL_REG1;
-        syscall.args[3] = regs->LINUX_SYSCALL_REG3;
-        syscall.args[4] = regs->LINUX_SYSCALL_REG4;
-        syscall.args[5] = regs->LINUX_SYSCALL_REG5;
-        syscall.args[6] = regs->LINUX_SYSCALL_REG6;
-        syscall.id      = from.id;
-        syscall.mode    = from.mode;
-        syscall.cbfun   = from.cbfun;
-        rt_copy_to_user(&syscalls->syscall[in].args, &syscall, id);
+	syscall.args[0] = regs->LINUX_SYSCALL_NR;
+	syscall.args[1] = regs->LINUX_SYSCALL_REG1;
+	syscall.args[3] = regs->LINUX_SYSCALL_REG3;
+	syscall.args[4] = regs->LINUX_SYSCALL_REG4;
+	syscall.args[5] = regs->LINUX_SYSCALL_REG5;
+	syscall.args[6] = regs->LINUX_SYSCALL_REG6;
+	syscall.id      = from.id;
+	syscall.mode    = from.mode;
+	syscall.cbfun   = from.cbfun;
+	rt_copy_to_user(&syscalls->syscall[in].args, &syscall, id);
 	id = from.id;
 	if (++from.id < 0) {
 		from.id = 0;
@@ -2089,7 +2089,7 @@ static int rtai_read_lxrt(char *page, char **start, off_t off, int count, int *e
 			entry.type == IS_TASK && ((RT_TASK *)entry.adr)->lnxtsk ? (((RT_TASK *)entry.adr)->lnxtsk)->pid : entry.type >= PAGE_SIZE ? entry.type : 0, entry.count);
 		 }
 	}
-        PROC_PRINT_DONE;
+	PROC_PRINT_DONE;
 }  /* End function - rtai_read_lxrt */
 
 int rtai_proc_lxrt_register(void)

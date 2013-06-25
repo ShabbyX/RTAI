@@ -149,7 +149,7 @@ do_test (void)
 	} else if (r != EPERM) {
 	  puts ("child: 1st spin_unlock failed but did not EPERMed");
 	  return 1;
-        }
+	}
 #endif /* ORIGINAL */
 
       puts ("child done");
@@ -186,10 +186,10 @@ do_test (void)
 int main(void)
 {
 #ifdef ORIGINAL_TEST
-        printf("ORIGINAL_TEST\n");
+	printf("ORIGINAL_TEST\n");
 #endif
 	pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_HARD_REAL_TIME_NP);
 	pthread_barrier_init (&b, NULL, 2);
-        do_test();
-        return 0;
+	do_test();
+	return 0;
 }

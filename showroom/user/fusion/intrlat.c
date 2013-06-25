@@ -41,10 +41,10 @@ int irq_handler(int irq, xnintr_t *intr)
 {
 	int r = ((int (*)(void *))intr->isr)(intr);
 	if (r & ENABLE_IRQ) {
-	        rt_enable_irq((intr)->irq);
+		rt_enable_irq((intr)->irq);
 	}
 	if (r & PEND_IRQ) {
-	        rt_pend_linux_irq(intr->irq);
+		rt_pend_linux_irq(intr->irq);
 	}
 	++intr->cnt;
 	return 0;

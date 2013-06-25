@@ -316,7 +316,7 @@ inline void Fl_Meters_Manager::enter_meter_style_i(Fl_Choice *b, void *v)
 	long n = (long)v;
 	int val = b->value();
 	Meter_Windows[n]->Meter->meter_style(styles[val]);
-	
+
 }
 
 void Fl_Meters_Manager::enter_meter_style(Fl_Choice *b, void *v)
@@ -329,10 +329,10 @@ inline void Fl_Meters_Manager::enter_options_i(Fl_Menu_Button *b, void *v)
 	long n = (long)v;
 	int val = 0;
         int i;
- 	
+
         for(i=0;i<b->children();i++) { // loop through all menu items, and add checked items to the value
       if( b->child(i)->value() ) val |= (int)(long)b->child(i)->user_data();		}
-	
+
 	Meter_Windows[n]->Meter->meter_style(
 	Meter_Windows[n]->Meter->meter_style() | val);
 }

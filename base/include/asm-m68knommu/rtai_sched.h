@@ -22,20 +22,20 @@
 
 #define rt_exchange_tasks(oldtask, newtask) \
        __asm__ __volatile__( \
-           "lea %%sp@(-60),%%sp\n\t" \
-           "movem.l %%d0-%%d7/%%a0-%%a6,%%sp@\n\t" \
-           "pea %%pc@(1f)\n\t" \
-           "move.l (%0),%%a1\n\t" \
-           "move.l %%sp,(%%a1)\n\t" \
-           "move.l %1,(%0)\n\t" \
-           "move.l %1,%%a1\n\t" \
-           "move.l (%%a1),%%sp\n\t" \
-           "rts\n\t" \
-           "1:  movem.l %%sp@,%%d0-%%d7/%%a0-%%a6\n\t" \
-           "lea %%sp@(60),%%sp\n\t" \
-           : /* no output */ \
-           : "a" (&oldtask) , "d" (newtask) \
-           : "%a1", "memory");
+	   "lea %%sp@(-60),%%sp\n\t" \
+	   "movem.l %%d0-%%d7/%%a0-%%a6,%%sp@\n\t" \
+	   "pea %%pc@(1f)\n\t" \
+	   "move.l (%0),%%a1\n\t" \
+	   "move.l %%sp,(%%a1)\n\t" \
+	   "move.l %1,(%0)\n\t" \
+	   "move.l %1,%%a1\n\t" \
+	   "move.l (%%a1),%%sp\n\t" \
+	   "rts\n\t" \
+	   "1:  movem.l %%sp@,%%d0-%%d7/%%a0-%%a6\n\t" \
+	   "lea %%sp@(60),%%sp\n\t" \
+	   : /* no output */ \
+	   : "a" (&oldtask) , "d" (newtask) \
+	   : "%a1", "memory");
 
 #define init_arch_stack() \
 do { \

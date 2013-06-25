@@ -4,7 +4,7 @@
 @@ -136,6 +136,9 @@
    bool '  Distribute interrupts on all CPUs by default' CONFIG_IRQ_ALL_CPUS
  fi
- 
+
 +#bool 'Real-Time Hardware Abstraction Layer' CONFIG_RTHAL
 +define_bool CONFIG_RTHAL y
 +
@@ -27,7 +27,7 @@
 +++ yd-linux-2.4.22-2f/arch/ppc/kernel/head.S	2004-03-12 12:21:25.000000000 +0100
 @@ -479,7 +479,20 @@
  	.long	ret_from_except
- 
+
  /* Single step - not used on 601 */
 +#ifdef CONFIG_RTHAL
 +	. = 0xd00
@@ -44,7 +44,7 @@
  	STD_EXCEPTION(0xd00, SingleStep, SingleStepException)
 +#endif
  	STD_EXCEPTION(0xe00, Trap_0e, UnknownException)
- 
+
  /*
 + diff -u yd-linux-2.4.22-2f/arch/ppc/kernel/irq.c.PRE_RTAI yd-linux-2.4.22-2f/arch/ppc/kernel/irq.c
 --- yd-linux-2.4.22-2f/arch/ppc/kernel/irq.c.PRE_RTAI	2003-11-09 21:57:52.000000000 +0100
@@ -52,7 +52,7 @@
 @@ -514,6 +514,13 @@
  	spin_unlock(&desc->lock);
  }
- 
+
 +void (*rtai_soft_sti)(void);
 +
 +void do_soft_sti(void)
@@ -67,7 +67,7 @@
 --- yd-linux-2.4.22-2f/arch/ppc/kernel/open_pic.c.PRE_RTAI	2004-03-12 14:20:08.000000000 +0100
 +++ yd-linux-2.4.22-2f/arch/ppc/kernel/open_pic.c	2004-03-12 14:16:47.000000000 +0100
 @@ -940,4 +940,7 @@
- 
+
  	spin_unlock_irqrestore(&openpic_setup_lock, flags);
  }
 +#else
@@ -80,7 +80,7 @@
 @@ -222,6 +222,12 @@
  EXPORT_SYMBOL(synchronize_irq);
  #endif
- 
+
 +extern int (*rtai_srq_bckdr)(struct pt_regs *);
 +EXPORT_SYMBOL(rtai_srq_bckdr);
 +
@@ -88,7 +88,7 @@
 +EXPORT_SYMBOL(rtai_soft_sti);
 +
  EXPORT_SYMBOL(ppc_md);
- 
+
  #ifdef CONFIG_ADB
 + diff -u yd-linux-2.4.22-2f/arch/ppc/kernel/traps.c.PRE_RTAI yd-linux-2.4.22-2f/arch/ppc/kernel/traps.c
 --- yd-linux-2.4.22-2f/arch/ppc/kernel/traps.c.PRE_RTAI	2003-11-09 21:57:52.000000000 +0100
@@ -96,7 +96,7 @@
 @@ -333,12 +333,18 @@
  	return retval;
  }
- 
+
 +int (*rtai_srq_bckdr)(struct pt_regs *regs) = NULL;
 +
  void
@@ -104,7 +104,7 @@
  {
  	unsigned int reason = get_reason(regs);
  	extern int do_mathemu(struct pt_regs *regs);
- 
+
 +	if (rtai_srq_bckdr && !rtai_srq_bckdr(regs)) {
 +		return;
 +	}
@@ -137,9 +137,9 @@
 --- yd-linux-2.4.22-2f/Documentation/Configure.help.PRE_RTAI	2003-11-09 21:57:53.000000000 +0100
 +++ yd-linux-2.4.22-2f/Documentation/Configure.help	2004-03-12 12:21:25.000000000 +0100
 @@ -262,6 +262,13 @@
- 
+
    If you don't have this computer, you may safely say N.
- 
+
 +Real-Time Harware Abstraction
 +CONFIG_RTHAL
 +  The Real-Time Hardware Abstraction Layer (RTHAL) is used by
@@ -156,7 +156,7 @@
 @@ -2630,8 +2630,10 @@
  	struct fb_info_aty128 *info = (struct fb_info_aty128 *)data;
  	unsigned int reg = aty_ld_le32(LVDS_GEN_CNTL);
- 
+
 +#ifdef CONFIG_PMAC_PBOOK
  	if (!info->lcd_on)
  		on = 0;
@@ -168,7 +168,7 @@
 --- yd-linux-2.4.22-2f/include/asm-ppc/system.h.PRE_RTAI	2003-11-09 22:49:53.000000000 +0100
 +++ yd-linux-2.4.22-2f/include/asm-ppc/system.h	2004-03-12 12:36:55.000000000 +0100
 @@ -82,6 +82,7 @@
- 
+
  struct task_struct;
  #define prepare_to_switch()	do { } while(0)
 +#define end_switch()		do { } while(0)
@@ -179,13 +179,13 @@
 --- yd-linux-2.4.22-2f/include/linux/sched.h.PRE_RTAI	2003-11-09 22:49:54.000000000 +0100
 +++ yd-linux-2.4.22-2f/include/linux/sched.h	2004-03-12 12:36:55.000000000 +0100
 @@ -415,6 +415,8 @@
- 
+
  /* journalling filesystem info */
  	void *journal_info;
 +
 +	void *this_rt_task[2];
  };
- 
+
  /*
 @@ -509,6 +511,7 @@
      blocked:		{{0}},						\
@@ -193,15 +193,15 @@
      journal_info:	NULL,						\
 +    this_rt_task:	{0,0},						\
  }
- 
- 
+
+
 + diff -u yd-linux-2.4.22-2f/kernel/exit.c.PRE_RTAI yd-linux-2.4.22-2f/kernel/exit.c
 --- yd-linux-2.4.22-2f/kernel/exit.c.PRE_RTAI	2002-11-29 00:53:15.000000000 +0100
 +++ yd-linux-2.4.22-2f/kernel/exit.c	2004-03-12 12:21:25.000000000 +0100
 @@ -422,6 +422,71 @@
  	write_unlock_irq(&tasklist_lock);
  }
- 
+
 +//
 +// PGGC added these lines to callback rtai when a task dies.
 +// A list of functions allows different rt_modules to be informed.
@@ -251,7 +251,7 @@
 +			if (!ptoo) {
 +				rtai_callback_list = pto->next;
 +			} else {
-+				ptoo->next = pto->next; 
++				ptoo->next = pto->next;
 +			}
 + 			ptd = pto;
 +			pto = pto->next;
@@ -259,7 +259,7 @@
 +		} else {
 +			ptoo = pto;
 +			pto = pto->next;
-+		}	
++		}
 +	}
 +//printk("rtai_callback_list %X\n", rtai_callback_list);
 +}
@@ -287,7 +287,7 @@
 +	}
 +
  	__exit_mm(tsk);
- 
+
  	lock_kernel();
 + diff -u yd-linux-2.4.22-2f/kernel/fork.c.PRE_RTAI yd-linux-2.4.22-2f/kernel/fork.c
 --- yd-linux-2.4.22-2f/kernel/fork.c.PRE_RTAI	2003-08-25 13:44:44.000000000 +0200
@@ -450,21 +450,21 @@
  		p = list_entry(tmp, struct task_struct, run_list);
  		if (can_schedule(p, this_cpu)) {
 @@ -684,7 +753,7 @@
- 
+
  		if (!prev->mm) {
  			prev->active_mm = NULL;
 -			mmdrop(oldmm);
 +			pend_mm(oldmm, this_cpu);
  		}
  	}
- 
+
 @@ -693,6 +762,7 @@
  	 * stack.
  	 */
  	switch_to(prev, next, prev);
 +	drop_mm();
  	__schedule_tail(prev);
- 
+
  same_process:
 + diff -u yd-linux-2.4.22-2f/kernel/signal.c.PRE_RTAI yd-linux-2.4.22-2f/kernel/signal.c
 --- yd-linux-2.4.22-2f/kernel/signal.c.PRE_RTAI	2003-06-13 16:51:39.000000000 +0200
@@ -472,7 +472,7 @@
 @@ -1010,9 +1010,30 @@
  	return ret;
  }
- 
+
 +//
 +//  Add this pointer to the RTAI signal handler.
 +//
@@ -498,15 +498,15 @@
 +
 +	{
  	struct siginfo info;
- 
+
  	info.si_signo = sig;
 @@ -1022,6 +1043,7 @@
  	info.si_uid = current->uid;
- 
+
  	return kill_something_info(sig, &info, pid);
 +	}
  }
- 
+
  /*
 + diff -u yd-linux-2.4.22-2f/Makefile.PRE_RTAI yd-linux-2.4.22-2f/Makefile
 --- yd-linux-2.4.22-2f/Makefile.PRE_RTAI	2003-11-09 23:16:24.000000000 +0100
@@ -517,6 +517,5 @@
  SUBLEVEL = 22
 -EXTRAVERSION = -2fcustom
 +EXTRAVERSION = -2fcustom-rthal5
- 
+
  KERNELRELEASE=$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)
- 

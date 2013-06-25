@@ -1442,7 +1442,7 @@ int rt_dev_getpeername(int fd, struct sockaddr *name, socklen_t *namelen);
  At the moment selector kept and stack, initialised/destroyed at each call.
  Usage is as for:
  int rt_dev_select(int nfds, fd_set *rfds, fd_set *wfds, fd_set *efds,
-                   nanosecs_rel_t timeout);.
+		   nanosecs_rel_t timeout);.
  As it can be seen args are as for the standard select call execpt for the
  timout which is in nanos, in place of timespec.
 */

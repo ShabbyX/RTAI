@@ -30,9 +30,9 @@ static __attribute__((constructor)) void __init_rtdm_interface(void)
     muxid = XENOMAI_SYSCALL2(__xn_sys_bind, RTDM_SKIN_MAGIC, NULL);
 
     if (muxid < 0) {
-        fprintf(stderr,"RTAI/fusion: RTDM skin or user-space support unavailable.\n");
-        fprintf(stderr,"(Did you load the rtai_rtdm.ko module?)\n");
-        exit(1);
+	fprintf(stderr,"RTAI/fusion: RTDM skin or user-space support unavailable.\n");
+	fprintf(stderr,"(Did you load the rtai_rtdm.ko module?)\n");
+	exit(1);
     }
 
     __rtdm_muxid = muxid;

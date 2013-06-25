@@ -38,7 +38,7 @@
 static inline long long rtai_srq(long srq, unsigned long args)
 {
 	long long retval;
-        syscall(RTAI_SRQ_SYSCALL_NR, srq, args, &retval);
+	syscall(RTAI_SRQ_SYSCALL_NR, srq, args, &retval);
 	return retval;
 }
 

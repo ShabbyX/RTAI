@@ -53,25 +53,25 @@ int main(int argc, char *argv[])
 	RT_TASK *sndtsk, *rcvtsk;
 	MBX *mbx;
 	long rcvport, i;
-        struct sockaddr_in addr;
+	struct sockaddr_in addr;
 
-        thread = rt_thread_create(endme, NULL, 2000);
+	thread = rt_thread_create(endme, NULL, 2000);
 
-        if (!(sndtsk = rt_task_init_schmod(nam2num("SNDTSK"), 1, 0, 0, SCHED_FIFO, 0xF))) {
-                printf("CANNOT INIT SENDER TASK\n");
-                exit(1);
-        }
+	if (!(sndtsk = rt_task_init_schmod(nam2num("SNDTSK"), 1, 0, 0, SCHED_FIFO, 0xF))) {
+		printf("CANNOT INIT SENDER TASK\n");
+		exit(1);
+	}
 	rcvnode = 0;
-        if (argc == 2 && strstr(argv[1], "RcvNode=")) {
-                inet_aton(argv[1] + 8, &addr.sin_addr);
+	if (argc == 2 && strstr(argv[1], "RcvNode=")) {
+		inet_aton(argv[1] + 8, &addr.sin_addr);
 		rcvnode = addr.sin_addr.s_addr;
-        }
-        if (!rcvnode) {
-                inet_aton("127.0.0.1", &addr.sin_addr);
+	}
+	if (!rcvnode) {
+		inet_aton("127.0.0.1", &addr.sin_addr);
 		rcvnode = addr.sin_addr.s_addr;
-        }
-        mbx = rt_mbx_init(nam2num("SNDMBX"), 500);
-        while ((rcvport = rt_request_port(rcvnode)) <= 0 && rcvport != -EINVAL);
+	}
+	mbx = rt_mbx_init(nam2num("SNDMBX"), 500);
+	while ((rcvport = rt_request_port(rcvnode)) <= 0 && rcvport != -EINVAL);
 	printf("\nSENDER TASK RUNNING\n");
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	rt_make_hard_real_time();
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 	for (i = 0; i < MAXLOOPS && !end; i++) {
 		rt_mbx_send(mbx, &i, sizeof(long));
 		rt_printk("SENT %ld\n", i);
-                RT_sleep(rcvnode, rcvport, 200000000);
+		RT_sleep(rcvnode, rcvport, 200000000);
 	}
 	i = -1;
 	rt_mbx_send(mbx, &i, sizeof(long));

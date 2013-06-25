@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2000  Emanuele Bianchi (bianchi@aero.polimi.it)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		    Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -107,7 +107,7 @@ int main(void)
 
 	sem = rt_sem_init(nam2num("SEMAPH"), 1);
 	change =  0;
-	
+
 	for (i = 0; i < NR_RT_TASKS; i++) {
 		indx[i] = i;
 		if (!(thread[i] = rt_thread_create(thread_fun, indx + i, 0))) {
@@ -118,13 +118,13 @@ int main(void)
 
 	do {
 		msleep(50);
-		s = 0;	
+		s = 0;
 		for (i = 0; i < NR_RT_TASKS; i++) {
 			s += hrt[i];
 		}
 	} while (s != NR_RT_TASKS);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
-	
+
 	rt_make_hard_real_time();
 	tsr = rt_get_cpu_time_ns();
 	for (i = 0; i < LOOPS; i++) {
@@ -143,7 +143,7 @@ int main(void)
 	tss = rt_get_cpu_time_ns();
 	for (i = 0; i < LOOPS; i++) {
 		for (k = 0; k < NR_RT_TASKS; k++) {
-	        	rt_sem_signal(sem);
+			rt_sem_signal(sem);
 		}
 	}
 	tss = rt_get_cpu_time_ns() - tss;
@@ -202,7 +202,7 @@ int main(void)
 	}
 	do {
 		msleep(50);
-		s = 0;	
+		s = 0;
 		for (i = 0; i < NR_RT_TASKS; i++) {
 			s += hrt[i];
 		}
@@ -213,6 +213,6 @@ int main(void)
 	for (i = 0; i < NR_RT_TASKS; i++) {
 		rt_thread_join(thread[i]);
 	}
-	
+
 	return 0;
 }

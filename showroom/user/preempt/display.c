@@ -40,21 +40,21 @@ int main(int argc,char *argv[])
 	RT_TASK *task;
 	long msg;
 	struct sample { long min, max, avrg, jitters[2]; } samp;
-	
-        if (!(task = rt_task_init_schmod(nam2num("PRECHK"), 15, 0, 0, SCHED_FIFO, 0xF))) {
-                printf("CANNOT INIT MASTER TASK\n");
-                exit(1);
-        }
+
+	if (!(task = rt_task_init_schmod(nam2num("PRECHK"), 15, 0, 0, SCHED_FIFO, 0xF))) {
+		printf("CANNOT INIT MASTER TASK\n");
+		exit(1);
+	}
 
 	signal (SIGINT, endme);
 
 	while (!end) {
-                struct pollfd pfd = { fd: 0, events: POLLIN|POLLERR|POLLHUP, revents: 0 };
+		struct pollfd pfd = { fd: 0, events: POLLIN|POLLERR|POLLHUP, revents: 0 };
 		rt_receivex(0, &samp, sizeof(samp), (void *)&msg);
 		printf("* latency: min: %ld, max: %ld, average: %ld; fastjit: %ld, slowjit: %ld * (all us) *\n", samp.min/1000, samp.max/1000, samp.avrg/1000, samp.jitters[0]/1000, samp.jitters[1]/1000);
 		fflush(stdout);
-                if (poll(&pfd, 1, 20) > 0 && (pfd.revents & (POLLIN|POLLERR|POLLHUP)) != 0) break;
-        }
+		if (poll(&pfd, 1, 20) > 0 && (pfd.revents & (POLLIN|POLLERR|POLLHUP)) != 0) break;
+	}
 	rt_rpc(rt_get_adr(nam2num("MNTSK")), msg, &msg);
 	return 0;
 }

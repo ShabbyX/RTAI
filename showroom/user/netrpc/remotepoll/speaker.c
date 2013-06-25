@@ -57,11 +57,11 @@ int main(void)
 	unsigned long msg;
 	struct rt_poll_s polld[1];
 
-        if (!(spktsk = rt_task_init_schmod(nam2num("SPKTSK"), 1, 0, 0, SCHED_FIFO, 0x1))) {
-                printf("CANNOT INIT SPEAKER TASK\n");
-                exit(1);
-        }
-        mbx = rt_typed_named_mbx_init("SNDMBX", 1000, FIFO_Q);
+	if (!(spktsk = rt_task_init_schmod(nam2num("SPKTSK"), 1, 0, 0, SCHED_FIFO, 0x1))) {
+		printf("CANNOT INIT SPEAKER TASK\n");
+		exit(1);
+	}
+	mbx = rt_typed_named_mbx_init("SNDMBX", 1000, FIFO_Q);
 	printf("\nSPEAKER TASK RUNNING %p\n", mbx);
 
 	rt_set_oneshot_mode();

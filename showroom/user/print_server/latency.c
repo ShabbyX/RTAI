@@ -45,11 +45,11 @@ static double a[MAXDIM], b[MAXDIM];
 
 static double dot(double *a, double *b, int n)
 {
-        int k = n - 1;
-        double s = 0.0;
-        for(; k >= 0; k--) {
-                s = s + a[k]*b[k];
-        }
+	int k = n - 1;
+	double s = 0.0;
+	for(; k >= 0; k--) {
+		s = s + a[k]*b[k];
+	}
 	return s;
 }
 
@@ -62,7 +62,7 @@ static void async_callback(long syscall_nr, long retval)
 	struct pollfd ufds = { 0, POLLIN, };
 	printf("SYSCALL %ld, RETVAL %ld, ERRNO %d\n", syscall_nr, retval, retval < 0 ? errno : 0);
 	if (retval < 0) {
-		perror(NULL);	
+		perror(NULL);
 	}
 	if (poll(&ufds, 1, 1)) {
 		end = 1;
@@ -125,9 +125,9 @@ int main(int argc, char *argv[])
 		period = nano2count(PERIOD);
 	}
 
-        for(i = 0; i < MAXDIM; i++) {
-                a[i] = b[i] = 3.141592;
-        }
+	for(i = 0; i < MAXDIM; i++) {
+		a[i] = b[i] = 3.141592;
+	}
 	sref = dot(a, b, MAXDIM);
 	s = 0.0;
 
@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
 	close(fd);
 	rt_make_soft_real_time();
 	if (!hard_timer_running) {
-		stop_rt_timer();	
+		stop_rt_timer();
 	}
 	rt_get_exectime(task, exectime);
 	if (exectime[1] && exectime[2]) {

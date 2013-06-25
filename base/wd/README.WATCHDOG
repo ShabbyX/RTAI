@@ -5,14 +5,14 @@ RTAI WATCHDOG
 Introduction
 ------------
 
-In "base/wd" directory you can find an optional watchdog module. Its purpose 
-is to provide protection services to RTAI thereby protecting it (and the host 
-Linux OS) against programming errors in RTAI applications. It needs the RTAI 
+In "base/wd" directory you can find an optional watchdog module. Its purpose
+is to provide protection services to RTAI thereby protecting it (and the host
+Linux OS) against programming errors in RTAI applications. It needs the RTAI
 module and a scheduler to be mounted, and once mounted it will constantly
-monitor periodic RT tasks that already exist, or are created later. However it 
-is an optional extra, so assuming your RTAI applications are well behaved then 
-RTAI should behave the same whether or not you have the watchdog mounted. The 
-overhead imposed by the watchdog depends on the speed that you run it, but in 
+monitor periodic RT tasks that already exist, or are created later. However it
+is an optional extra, so assuming your RTAI applications are well behaved then
+RTAI should behave the same whether or not you have the watchdog mounted. The
+overhead imposed by the watchdog depends on the speed that you run it, but in
 most cases should be minimal.
 
 
@@ -20,28 +20,28 @@ Compatibility with other RT Modules
 -----------------------------------
 
 The important thing to remember is that in order to fully protect your system
-the watchdog needs to be running at a higher priority than any other RT task. 
-The RTAI schedulers have been modified to take care of the priority (while 
+the watchdog needs to be running at a higher priority than any other RT task.
+The RTAI schedulers have been modified to take care of the priority (while
 the watchdog is mounted the highest RT priority is reserved for the watchdog,
 and if the watchdog detects an existing RT task running at the highest priority
-when it tries to mount then it will fail), but you will need to worry about 
-what speed is used yourself. A module parameter (TickPeriod) is provided for 
-you to specify an appropriate setting when you mount the module. Or you can of 
+when it tries to mount then it will fail), but you will need to worry about
+what speed is used yourself. A module parameter (TickPeriod) is provided for
+you to specify an appropriate setting when you mount the module. Or you can of
 course edit the source.
 
-The issue of timers also needs a special mention. Firstly you need to ensure 
-that you configure the watchdog to use the same timer mode (ie. oneshot or 
-periodic) as the rest of your RT tasks. A module parameter (OneShot) is 
+The issue of timers also needs a special mention. Firstly you need to ensure
+that you configure the watchdog to use the same timer mode (ie. oneshot or
+periodic) as the rest of your RT tasks. A module parameter (OneShot) is
 provided for this purpose. Another thing to remember is that the watchdog needs
-to have complete control over the RT timer. Therefore you should ensure that 
-not only does your RT application use the same timer mode as the watchdog at a 
-compatible speed, but that it does not try to start and stop the RT timer. 
-Such actions could affect the watchdog timing and even freeze it so it cannot 
+to have complete control over the RT timer. Therefore you should ensure that
+not only does your RT application use the same timer mode as the watchdog at a
+compatible speed, but that it does not try to start and stop the RT timer.
+Such actions could affect the watchdog timing and even freeze it so it cannot
 protect your system. Nowadays it is suggested to use the oneshot mode, the
 default if you do not say anything. It is the more viable solution since it
 imposes no timing constraints onto any task. So the watchdog can run relatively
 slowly, to create the least overhead, while applications are using more higly
-stringent timings. Nonetheless the periodic mode might still be useful but 
+stringent timings. Nonetheless the periodic mode might still be useful but
 you should use it only at very high frequencies, say in the range of 10s of KHz.
 
 
@@ -57,12 +57,12 @@ provides some alternative policies which will be described below, but first we
 should consider the likely fault scenarios.
 
 In general task overruns fall into 2 categories, infinite loops or periods too
-short for the task to get its work done before it is due to be scheduled again. 
-The former locks out the entire system to everything except higher priority 
-tasks. As Linux is running at the lowest RT priority, Linux effectively dies 
-and you cannot issue any more commands. The second category is a bit more 
-subtle. If a task repeatedly overruns then the RTAI scheduler will be 
-constantly trying to catch up with its missed deadlines. The end result can be 
+short for the task to get its work done before it is due to be scheduled again.
+The former locks out the entire system to everything except higher priority
+tasks. As Linux is running at the lowest RT priority, Linux effectively dies
+and you cannot issue any more commands. The second category is a bit more
+subtle. If a task repeatedly overruns then the RTAI scheduler will be
+constantly trying to catch up with its missed deadlines. The end result can be
 either a locked system or a system crash when the stack overflows.
 
 Which watchdog policy to select largely depends on what type of task overrun you
@@ -72,26 +72,26 @@ task that cannot be dealt with by any other policy, more on this later.
 
 Available watchdog policies...
 
-o Do nothing, other than log some messages and keep a record of the bad task. 
-  In reality you will probably never get the chance to see these messages if 
+o Do nothing, other than log some messages and keep a record of the bad task.
+  In reality you will probably never get the chance to see these messages if
   the task is locking out Linux. This policy is not usually recommended.
 
-o Resynchronise the task's frame time and nothing more. This is good for tasks 
-  that occasionally overrun. Doing this should prevent the system from locking 
-  up and crashing as the scheduler tries to catch up with the missed deadlines. 
-  The maximum (if any) number of times to resynchronise a task before 
-  permanently suspending it is configurable. 
-  
+o Resynchronise the task's frame time and nothing more. This is good for tasks
+  that occasionally overrun. Doing this should prevent the system from locking
+  up and crashing as the scheduler tries to catch up with the missed deadlines.
+  The maximum (if any) number of times to resynchronise a task before
+  permanently suspending it is configurable.
+
 o Debug policy, this is a special case of the above resync policy. It is
   recommended when step and trace debugging RT tasks that use the oneshot timer
   mode.
 
-o Stretch the period of the offending task until it no longer overruns. The 
+o Stretch the period of the offending task until it no longer overruns. The
   percentage increment (of the original period) is configurable, as is the
   maximum (if any) number of times to increase the period before permanently
-  suspending the task. When a task's period is increased in this way the 
-  scheduler is asked to resynchronize the task's frame time in order to prevent 
-  the system locking up and crashing as it tries to catch up with the missed 
+  suspending the task. When a task's period is increased in this way the
+  scheduler is asked to resynchronize the task's frame time in order to prevent
+  the system locking up and crashing as it tries to catch up with the missed
   deadlines.
 
   This policy is the most useful for RT tasks that are overrunning their period
@@ -99,7 +99,7 @@ o Stretch the period of the offending task until it no longer overruns. The
   the timing of the problem task or tasks until no overruns exist. This could be
   a useful development aid if you are not sure what period to use for your RT
   tasks.
-  
+
 o Slip the offending task by forcibly suspending it for a percentage of its
   period. The percentage slip is configurable, as is the maximum (if any) number
   of times to slip the task before it is permanently suspended. By slipping the
@@ -107,11 +107,11 @@ o Slip the offending task by forcibly suspending it for a percentage of its
   system doesn't lock up.
 
   This policy is good for infinite loops as it allows Linux to breathe without
-  stopping the RT application and therefore possibly giving you the chance to 
-  debug it. However if RT tasks are overrunning their period by a small margin 
-  then your system may lock up before the watchdog detects what is happening 
-  (see discussion of grace period below). Even if the watchdog does detect the 
-  problem in time you may then have to try and find the correct task period by 
+  stopping the RT application and therefore possibly giving you the chance to
+  debug it. However if RT tasks are overrunning their period by a small margin
+  then your system may lock up before the watchdog detects what is happening
+  (see discussion of grace period below). Even if the watchdog does detect the
+  problem in time you may then have to try and find the correct task period by
   time consuming trial and error.
 
 o Suspend the offending task so that it no longer poses any threat to the
@@ -123,9 +123,9 @@ o Kill the offending task and remove all trace of it. There will be no record
 
 The above policies can be selected at module insertion by means of a module
 parameter (Policy). A value of 0 means do nothing, 1 means resynchronise the
-task, 2 means resync for debugging, 3 stretch the task's period, 4 slip the 
-task, 5 suspend the task, and 6 kill the task. The policy can also be changed 
-from another RT module after the watchdog has been started. Just use the 
+task, 2 means resync for debugging, 3 stretch the task's period, 4 slip the
+task, 5 suspend the task, and 6 kill the task. The policy can also be changed
+from another RT module after the watchdog has been started. Just use the
 following watchdog API call...
 
 enum watchdog_policy {
@@ -144,7 +144,7 @@ wd_policy rt_wdset_policy(wd_policy new_value);
 ...the previous policy setting is returned should you want to change it back
 again later.
 
-The policy descriptions above mentioned that the percentage task slip and 
+The policy descriptions above mentioned that the percentage task slip and
 percentage task period increment were configurable. These parameters can be
 adjusted by module parameters (Slip and Stretch) when the module is inserted
 or by other tasks via the watchdog API...
@@ -152,7 +152,7 @@ or by other tasks via the watchdog API...
 int rt_wdset_slip(int new_value);
 int rt_wdset_stretch(int new_value);
 
-...as with all watchdog API calls the old setting (or an error < 0) is returned. 
+...as with all watchdog API calls the old setting (or an error < 0) is returned.
 These particular settings can be set to any positive value, and correspond to
 percentages of any offending task's period. Values above 100% are legal.
 
@@ -161,8 +161,8 @@ Grace Period
 ------------
 You may want some degree of leniency before the watchdog starts enforcing its
 policy on misbehaving tasks. For this reason the watchdog has a configurable
-grace period parameter that defines how many of its periods a task can overrun 
-before the watchdog takes action. The default is 3, but this value can be 
+grace period parameter that defines how many of its periods a task can overrun
+before the watchdog takes action. The default is 3, but this value can be
 changed by either a module parameter (Grace) or via the API call...
 
   int rt_wdset_grace(int new_value);
@@ -171,15 +171,15 @@ If you need fractional grace periods (0 < grace < 1), then a configurable
 divisor can be used. The divisor is divided into the above grace factor to
 obtain the actual grace period. For example if the grace factor were 1, and the
 divisor were 2, then tasks would be able to slip only half a period before the
-watchdog starts enforcing its policy. The default divisor is 1 (no effect), but 
-this value can be changed by either a module parameter (GraceDiv) or via the 
+watchdog starts enforcing its policy. The default divisor is 1 (no effect), but
+this value can be changed by either a module parameter (GraceDiv) or via the
 API call...
 
   int rt_wdset_gracediv(int new_value);
 
-When the watchdog policy is set to stretch task periods or resync task frames 
-then the grace period is forced to 1 and cannot be changed to any other value. 
-This is because the watchdog needs to detect overrunning tasks almost instantly 
+When the watchdog policy is set to stretch task periods or resync task frames
+then the grace period is forced to 1 and cannot be changed to any other value.
+This is because the watchdog needs to detect overrunning tasks almost instantly
 if these policies are to succeed.
 
 
@@ -191,7 +191,7 @@ the watchdog applies its current policy to that task. In the case of slipping
 and stretching policies it is possible that the task continues to overrun even
 after being slipped or stretched several times. In this case it is probably
 advisable to give up on the task and suspend it forcibly. The number of times
-a task can offend before being suspended in this way is configurable. Either 
+a task can offend before being suspended in this way is configurable. Either
 by a module parameter (Limit) or via an API call...
 
 int rt_wdset_limit(int new_value);
@@ -226,7 +226,7 @@ A negative value is legal and in fact disables this feature of the watchdog.
 Step and Trace Debugging
 ------------------------
 
-Step and trace debugging is fully described in README.DEBUG, however it does 
+Step and trace debugging is fully described in README.DEBUG, however it does
 have some implications for the watchdog which need some explanation. When you
 hit a breakpoint in RT code, interrupts are completely disabled until you next
 resume execution (either with a single step or a continue command). This means
@@ -235,7 +235,7 @@ time and schedule RT tasks. In other words time is frozen.
 
 This is actually the correct behaviour because it means that when execution is
 resumed neither the RT scheduler or the watchdog will think that any task has
-overrun and no action will be taken. A possible system hang or crash will be 
+overrun and no action will be taken. A possible system hang or crash will be
 avoided.
 
 Unfortunately time is only frozen when the RT timer is running in periodic mode
@@ -243,27 +243,27 @@ rather tham oneshot mode. In oneshot mode although interrupts are disabled at a
 breakpoint, the TSC (which is used to track time in oneshot mode on Pentiums) is
 still running. This means that when execution is resumed the scheduler (and the
 watchdog) will see a sudden leap forward in time. Virtually every RT task will
-seem to have overrun and the watchdog will start enforcing its policy on those 
-tasks. However the scheduler will already be trying to catch up with the missed 
+seem to have overrun and the watchdog will start enforcing its policy on those
+tasks. However the scheduler will already be trying to catch up with the missed
 deadlines (including the watchdog's) and the system will probably hang or
 reboot.
 
 Fortunately the watchdog knows how to resynchronise itself in these
-circumstances. Once it's done this it is then able to check the other RT tasks 
-as normal and apply it's policy. Of course you need to make sure that this 
-policy is appropriate, otherwise all your RT tasks might end up being suspended. 
-The best policies to use are 'Resync' or 'Debug', in either case the scheduler 
+circumstances. Once it's done this it is then able to check the other RT tasks
+as normal and apply it's policy. Of course you need to make sure that this
+policy is appropriate, otherwise all your RT tasks might end up being suspended.
+The best policies to use are 'Resync' or 'Debug', in either case the scheduler
 will slip task frames and then allow execution to proceed as normal. In fact
-'Debug' policy is actually a special case of 'Resync' that automatically 
-disables the safety net and offense limit described in previous sections. If 
+'Debug' policy is actually a special case of 'Resync' that automatically
+disables the safety net and offense limit described in previous sections. If
 this wasn't done then tasks might be suspended by mistake if you spent a long
 time at a breakpoint, or if you hit a large number of breakpoints.
 
 So to summarise, if you are step and trace debugging periodic (not oneshot) RT
 tasks then you don't need to worry. However if you are debugging oneshot tasks
-then you need to use the watchdog (with policy set to 'Resync' or 'Debug') in 
+then you need to use the watchdog (with policy set to 'Resync' or 'Debug') in
 order to avoid possible system hangs and reboots when you resume execution after
-a breakpoint. 'Debug' policy is recommended since you won't have to remember to 
+a breakpoint. 'Debug' policy is recommended since you won't have to remember to
 disable the safety net and offense limit.
 
 
@@ -272,7 +272,7 @@ Proc Interface
 
 When the watchdog detects an overrunning task its details are added to a list of
 bad tasks that can be viewed through the /proc interface at /proc/rtai/watchdog.
-Tasks that are added to the bad task list will stay there until they are 
+Tasks that are added to the bad task list will stay there until they are
 deleted. Of course if the watchdog itself deleted the task then the task will
 never have a chance to show up in the bad task list. Some sample /proc output...
 (on a dual CPU machine running the MUP RTAI scheduler)
@@ -289,7 +289,7 @@ Safety limit   : 100 periods
 Slip factor    : 10%
 Stretch factor : 10%
 Offense limit  : 100
- 
+
 Bad tasks...
 
 RT Task    ID CPU Priority State Count Original period Adjusted period Action
@@ -307,9 +307,9 @@ RT Task    ID CPU Priority State Count Original period Adjusted period Action
 --------------------------------------------------------------------------------
 
 Here we can see that 10 tasks overran and all had their periods stretched from
-their original settings. However tasks 2 and 8 overran 100 times (which was the 
-offense limit at the time) so they were suspended even though the policy was 
-'Stretch' rather than 'Suspend'. The forcible nature of this is denoted by the 
+their original settings. However tasks 2 and 8 overran 100 times (which was the
+offense limit at the time) so they were suspended even though the policy was
+'Stretch' rather than 'Suspend'. The forcible nature of this is denoted by the
 * in the right hand column.
 
 
@@ -317,13 +317,13 @@ Memory Management
 -----------------
 
 One final note. The watchdog maintains a list of bad tasks. The memory used for
-this list can be allocated either dynamically or statically. Which is used 
+this list can be allocated either dynamically or statically. Which is used
 depends on how the watchdog module was built (see the comments near the top of
 rtai_watchdog.c). If dynamic allocation is to be used then support needs to be
-present in RTAI (either built into the scheduler or as a separate memory 
+present in RTAI (either built into the scheduler or as a separate memory
 management module). Dynamic memory allocation is not to everyone's taste and may
 not always be appropriate, in these cases you should edit rtai_watchdog.c to use
-static allocation. You also need to consider the maximum size of the bad task 
+static allocation. You also need to consider the maximum size of the bad task
 list that you are likely to need and edit the BAD_TASK_MAX #define as necessary.
 
 
@@ -335,10 +335,10 @@ Known Bugs and Issues
 Ian Soanes
 ians@lineo.com
 
-The updated version cleans up also old legacy part of the code, of no use 
-anymore. Moreover it monitors any looper holding the machine for more than 
-LooperTimeLimit ms by suspending it when such a limit is exceeded. 
-LooperTimeLimit is set to 100 ms by default, it is a parameter that can be 
+The updated version cleans up also old legacy part of the code, of no use
+anymore. Moreover it monitors any looper holding the machine for more than
+LooperTimeLimit ms by suspending it when such a limit is exceeded.
+LooperTimeLimit is set to 100 ms by default, it is a parameter that can be
 changed as needed at insmoding.
 
 Updated to the latest RTAI state, including loopers monitoring, March 2009

@@ -49,39 +49,39 @@
 
 #define DEFINE_VECTORED_ISR(name, fun) \
 	__asm__ ( \
-        "\n" __ALIGN_STR"\n\t" \
-        SYMBOL_NAME_STR(name) ":\n\t" \
+	"\n" __ALIGN_STR"\n\t" \
+	SYMBOL_NAME_STR(name) ":\n\t" \
 	"pushl $0\n\t" \
 	"cld\n\t" \
-        __PUSH_FGS \
-        "pushl %es\n\t" \
-        "pushl %ds\n\t" \
-        "pushl %eax\n\t" \
-        "pushl %ebp\n\t" \
+	__PUSH_FGS \
+	"pushl %es\n\t" \
+	"pushl %ds\n\t" \
+	"pushl %eax\n\t" \
+	"pushl %ebp\n\t" \
 	"pushl %edi\n\t" \
-        "pushl %esi\n\t" \
-        "pushl %edx\n\t" \
-        "pushl %ecx\n\t" \
+	"pushl %esi\n\t" \
+	"pushl %edx\n\t" \
+	"pushl %ecx\n\t" \
 	"pushl %ebx\n\t" \
 	__LXRT_GET_DATASEG(edx) \
-        "movl %edx, %ds\n\t" \
-        "movl %edx, %es\n\t" \
-        __LOAD_KERNEL_PDA \
-        "call "SYMBOL_NAME_STR(fun)"\n\t" \
-        "testl %eax,%eax\n\t" \
-        "jnz  ret_from_intr\n\t" \
-        "popl %ebx\n\t" \
-        "popl %ecx\n\t" \
-        "popl %edx\n\t" \
-        "popl %esi\n\t" \
+	"movl %edx, %ds\n\t" \
+	"movl %edx, %es\n\t" \
+	__LOAD_KERNEL_PDA \
+	"call "SYMBOL_NAME_STR(fun)"\n\t" \
+	"testl %eax,%eax\n\t" \
+	"jnz  ret_from_intr\n\t" \
+	"popl %ebx\n\t" \
+	"popl %ecx\n\t" \
+	"popl %edx\n\t" \
+	"popl %esi\n\t" \
 	"popl %edi\n\t" \
-        "popl %ebp\n\t" \
-        "popl %eax\n\t" \
-        "popl %ds\n\t" \
-        "popl %es\n\t" \
-        __POP_FGS \
+	"popl %ebp\n\t" \
+	"popl %eax\n\t" \
+	"popl %ds\n\t" \
+	"popl %es\n\t" \
+	__POP_FGS \
 	"addl $4, %esp\n\t" \
-        "iret")
+	"iret")
 
 struct desc_struct rtai_set_gate_vector (unsigned vector, int type, int dpl, void *handler)
 {
@@ -129,9 +129,9 @@ RTAI_MODULE_PARM(ECHO_PERIOD, int);
 
 static inline unsigned char CMOS_READ(unsigned char addr)
 {
-        outb((addr),RTC_PORT(0));
-        pause_io();
-        return inb(RTC_PORT(1));
+	outb((addr),RTC_PORT(0));
+	pause_io();
+	return inb(RTC_PORT(1));
 }
 
 #define CMOS_WRITE(val, addr) ({ \
@@ -146,11 +146,11 @@ static int tsc_period, maxj, maxj_echo, pasd;
 
 void rtc_handler (int irq, unsigned long rtc_freq)
 {
-        static int stp, cnt;
-        if (++cnt == rtc_freq) {
-                rt_printk("<> IRQ %d, %d: CNT %d <>\n", irq, ++stp, cnt);
-                cnt = 0;
-        }
+	static int stp, cnt;
+	if (++cnt == rtc_freq) {
+		rt_printk("<> IRQ %d, %d: CNT %d <>\n", irq, ++stp, cnt);
+		cnt = 0;
+	}
 
 	if (pasd) {
 		RTIME t;

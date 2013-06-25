@@ -58,7 +58,7 @@
 
 #include <rtai_hal_names.h>
 #include <asm/rtai_vectors.h>
-#include <rtai_types.h>	
+#include <rtai_types.h>
 #include <asm/div64.h>
 
 #define RTAI_NR_CPUS	1
@@ -140,7 +140,7 @@ ffnz(unsigned long word)
 #ifndef rtai_ullmul
 extern inline unsigned long long
 __rtai_generic_ullmul(const unsigned m0,
-                       const unsigned m1)
+		       const unsigned m1)
 {
     return (unsigned long long) m0 * m1;
 }
@@ -150,13 +150,13 @@ __rtai_generic_ullmul(const unsigned m0,
 #ifndef rtai_ulldiv
 static inline unsigned long long
 __rtai_generic_ulldiv (unsigned long long ull,
-                        const unsigned uld,
-                        unsigned long *const rp)
+			const unsigned uld,
+			unsigned long *const rp)
 {
     const unsigned r = do_div(ull, uld);
 
     if (rp)
-        *rp = r;
+	*rp = r;
 
     return ull;
 }
@@ -170,8 +170,8 @@ __rtai_generic_ulldiv (unsigned long long ull,
 #ifndef rtai_imuldiv
 extern inline int
 __rtai_generic_imuldiv (int i,
-                         int mult,
-                         int div)
+			 int mult,
+			 int div)
 {
     /* Returns (int)i = (unsigned long long)i*(unsigned)(mult)/(unsigned)div. */
     const unsigned long long ull = rtai_ullmul(i, mult);
@@ -186,9 +186,9 @@ __rtai_generic_imuldiv (int i,
    after each call to uldivrem. */
 static inline unsigned long long
 __rtai_generic_div96by32 (const unsigned long long h,
-                           const unsigned l,
-                           const unsigned d,
-                           unsigned long *const rp)
+			   const unsigned l,
+			   const unsigned d,
+			   unsigned long *const rp)
 {
     unsigned long rh;
     const unsigned qh = rtai_uldivrem(h, d, &rh);
@@ -200,8 +200,8 @@ __rtai_generic_div96by32 (const unsigned long long h,
 
 extern inline unsigned long long
 __rtai_generic_ullimd (const unsigned long long op,
-                        const unsigned m,
-                        const unsigned d)
+			const unsigned m,
+			const unsigned d)
 {
     unsigned oph, opl, tlh, tll;
     unsigned long long th, tl;
@@ -217,12 +217,12 @@ __rtai_generic_ullimd (const unsigned long long op,
 
 extern inline  long long
 __rtai_generic_llimd (long long op,
-                       unsigned m,
-                       unsigned d)
+		       unsigned m,
+		       unsigned d)
 {
 
     if(op < 0LL)
-        return -__rtai_generic_ullimd(-op, m, d);
+	return -__rtai_generic_ullimd(-op, m, d);
     return __rtai_generic_ullimd(op, m, d);
 }
 #define rtai_llimd(ll,m,d) __rtai_generic_llimd((ll),(m),(d))
@@ -240,11 +240,11 @@ __rtai_generic_llimd (long long op,
 #include <rtai_trace.h>
 
 struct rtai_realtime_irq_s {
-        int (*handler)(unsigned irq, void *cookie);
-        void *cookie;
-        int retmode;
-        int cpumask;
-        int (*irq_ack)(unsigned int);
+	int (*handler)(unsigned irq, void *cookie);
+	void *cookie;
+	int retmode;
+	int cpumask;
+	int (*irq_ack)(unsigned int);
 };
 
 #define RTAI_DOMAIN_ID  0x9ac15d93  // nam2num("rtai_d")
@@ -291,20 +291,20 @@ static inline struct hal_domain_struct *get_domain_pointer(int n)
 
 #define hal_pend_domain_uncond(irq, domain, cpuid) \
 do { \
-        hal_irq_hits_pp(irq, domain, cpuid); \
-        __set_bit((irq) & IPIPE_IRQ_IMASK, &domain->cpudata[cpuid].irq_pending_lo[(irq) >> IPIPE_IRQ_ISHIFT]); \
-        __set_bit((irq) >> IPIPE_IRQ_ISHIFT, &domain->cpudata[cpuid].irq_pending_hi); \
-        test_and_set_bit(cpuid, &hal_pended); /* cautious, cautious */ \
+	hal_irq_hits_pp(irq, domain, cpuid); \
+	__set_bit((irq) & IPIPE_IRQ_IMASK, &domain->cpudata[cpuid].irq_pending_lo[(irq) >> IPIPE_IRQ_ISHIFT]); \
+	__set_bit((irq) >> IPIPE_IRQ_ISHIFT, &domain->cpudata[cpuid].irq_pending_hi); \
+	test_and_set_bit(cpuid, &hal_pended); /* cautious, cautious */ \
 } while (0)
 
 #define hal_pend_uncond(irq, cpuid)  hal_pend_domain_uncond(irq, hal_root_domain, cpuid)
 
 #define hal_fast_flush_pipeline(cpuid) \
 do { \
-        if (hal_root_domain->cpudata[cpuid].irq_pending_hi != 0) { \
-                rtai_cli(); \
-                hal_sync_stage(IPIPE_IRQMASK_ANY); \
-        } \
+	if (hal_root_domain->cpudata[cpuid].irq_pending_hi != 0) { \
+		rtai_cli(); \
+		hal_sync_stage(IPIPE_IRQMASK_ANY); \
+	} \
 } while (0)
 
 extern volatile unsigned long *ipipe_root_status[];

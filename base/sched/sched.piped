@@ -436,7 +436,7 @@ void rt_set_runnable_on_cpuid(RT_TASK *task, unsigned int cpuid)
 	}
 	flags = rt_global_save_flags_and_cli();
 	switch (rt_smp_oneshot_timer[task->runnable_on_cpus] |
-		(rt_smp_oneshot_timer[cpuid] << 1)) {	
+		(rt_smp_oneshot_timer[cpuid] << 1)) {
                 case 1:
                         task->period = llimd(task->period, TIMER_FREQ, tuned.cpu_freq);
                         task->resume_time = llimd(task->resume_time, TIMER_FREQ, tuned.cpu_freq);
@@ -848,7 +848,7 @@ void rt_schedule(void)
 				}
 				if (rt_current->force_soft) {
 					make_current_soft(rt_current, cpuid);
-				}	
+				}
 			}
 		} else {
 sched_soft:
@@ -862,7 +862,7 @@ sched_soft:
 				} else {
 					local_irq_enable();
 					schedule();
-				}	
+				}
 				rt_global_cli();
 				rt_current->state = (rt_current->state & ~RT_SCHED_SFTRDY) | RT_SCHED_READY;
 				LOCK_LINUX(cpuid);
@@ -2244,7 +2244,7 @@ static int rtai_read_sched(char *page, char **start, off_t off, int count,
 				unsigned long den = (unsigned long)llimd(rdtsc() - task->exectime[1], 10, tuned.cpu_freq);
 				if (den) {
 					t = 1000UL*(unsigned long)llimd(task->exectime[0], 10, tuned.cpu_freq)/den;
-				}				
+				}
 			}
 			PROC_PRINT("%-10d %-11lu %-4s %-3s 0x%-3x  %1lu:%1lu   %-4d   %-4d %-4d  %p   %-lu\n",
                                task->priority,
@@ -2376,7 +2376,7 @@ static int lxrt_init(void)
     int cpuid;
 
     init_fun_ext();
-	
+
     /* 2865600023UL is nam2num("USPAPP") */
     if ((wake_up_srq.srq = rt_request_srq(2865600023UL, wake_up_srq_handler, 0)) < 0)
 	{
@@ -2416,7 +2416,7 @@ static int lxrt_init(void)
 	rt_fun_lxrt[cpuid].type = 1;
 	rt_fun_lxrt[cpuid].fun  = nihil;
 	}
-	
+
     set_rt_fun_entries(rt_sched_entries);
 
     lxrt_old_trap_handler = rt_set_rtai_trap_handler(lxrt_handle_trap);
@@ -2461,9 +2461,9 @@ static void lxrt_exit(void)
 	    klistp->task[klistp->in] = kthread;
 	    klistp->in = (klistp->in + 1) & (MAX_WAKEUP_SRQ - 1);
 	    }
-	
+
 	wake_up_process(kthreadm[cpuid]);
-	
+
 	while (kthreadm[cpuid]->state != TASK_UNINTERRUPTIBLE)
 	    {
 	    current->state = TASK_INTERRUPTIBLE;

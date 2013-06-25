@@ -37,12 +37,12 @@ static void endme (int dummy) { end = 1; }
 int main(int argc,char *argv[])
 {
 	MBX *mbx;
-        struct pollfd pollkb;
+	struct pollfd pollkb;
 	struct sample { long min, max, avrg, jitters[2]; } samp;
 	int n = 0;
 
 	setlinebuf(stdout);
-	
+
 	pollkb.fd = 0;
 	pollkb.events = POLLIN;
 
@@ -52,10 +52,10 @@ int main(int argc,char *argv[])
 	signal(SIGTERM, endme);
 	signal(SIGALRM, endme);
 
-        if (!rt_thread_init(nam2num("DSPLY"), 0, 0, SCHED_FIFO, 0xF)) {
-                printf("CANNOT INIT DISPLAY TASK\n");
-                exit(1);
-        }
+	if (!rt_thread_init(nam2num("DSPLY"), 0, 0, SCHED_FIFO, 0xF)) {
+		printf("CANNOT INIT DISPLAY TASK\n");
+		exit(1);
+	}
 
 	if (!(mbx = rt_get_adr(nam2num("MBX")))) {
 		fprintf(stderr, "Error opening mbx in display\n");
@@ -74,7 +74,7 @@ int main(int argc,char *argv[])
 		if (poll(&pollkb, 1, 1) > 0) {
 			getchar();
 			break;
-                }
-        }
+		}
+	}
 	return 0;
 }

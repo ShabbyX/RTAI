@@ -70,13 +70,13 @@ int main(void)
  	}
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
-        mem = rt_shm_alloc(0xabcd, 0, 0);
+	mem = rt_shm_alloc(0xabcd, 0, 0);
 	pt = rt_init_timer();
 	rt_insert_timer(pt, 1, rt_get_time(), nano2count(TICK_PERIOD), ph, 0, 1);
 	while(!end) sleep(1);
 	mem->flag = 1;
 	rt_remove_timer(pt);
 	rt_delete_timer(pt);
-        rt_shm_free(0xabcd);
+	rt_shm_free(0xabcd);
 	return 0;
 }

@@ -73,23 +73,23 @@ static __inline__ unsigned long ffnz (unsigned long word) {
 
 static inline unsigned long __ffs(unsigned long word)
 {
-        __asm__("bsfl %1,%0"
-                :"=r" (word)
-                :"rm" (word));
-        return word;
+	__asm__("bsfl %1,%0"
+		:"=r" (word)
+		:"rm" (word));
+	return word;
 }
 
 static inline unsigned __find_first_bit(const unsigned long *addr, unsigned size)
 {
-        unsigned x = 0;
+	unsigned x = 0;
 
-        while (x < size) {
-                unsigned long val = *addr++;
-                if (val)
-                        return __ffs(val) + x;
-                x += (sizeof(*addr)<<3);
-        }
-        return x;
+	while (x < size) {
+		unsigned long val = *addr++;
+		if (val)
+			return __ffs(val) + x;
+		x += (sizeof(*addr)<<3);
+	}
+	return x;
 }
 
 static inline int find_next_bit(const unsigned long *addr, int size, int offset)
@@ -158,17 +158,17 @@ static inline unsigned long long rtai_ulldiv (unsigned long long ull,
 /* do_div below taken from Linux-2.6.20 */
 #ifndef do_div
 #define do_div(n,base) ({ \
-        unsigned long __upper, __low, __high, __mod, __base; \
-        __base = (base); \
-        asm("":"=a" (__low), "=d" (__high):"A" (n)); \
-        __upper = __high; \
-        if (__high) { \
-                __upper = __high % (__base); \
-                __high = __high / (__base); \
-        } \
-        asm("divl %2":"=a" (__low), "=d" (__mod):"rm" (__base), "0" (__low), "1" (__upper)); \
-        asm("":"=A" (n):"a" (__low),"d" (__high)); \
-        __mod; \
+	unsigned long __upper, __low, __high, __mod, __base; \
+	__base = (base); \
+	asm("":"=a" (__low), "=d" (__high):"A" (n)); \
+	__upper = __high; \
+	if (__high) { \
+		__upper = __high % (__base); \
+		__high = __high / (__base); \
+	} \
+	asm("divl %2":"=a" (__low), "=d" (__mod):"rm" (__base), "0" (__low), "1" (__upper)); \
+	asm("":"=A" (n):"a" (__low),"d" (__high)); \
+	__mod; \
 })
 #endif
 
@@ -186,7 +186,7 @@ static inline unsigned long long rtai_ulldiv (unsigned long long ull, unsigned l
 static inline int rtai_imuldiv (int i, int mult, int div) {
 
     /* Returns (int)i = (int)i*(int)(mult)/(int)div. */
-    
+
     int dummy;
 
     __asm__ __volatile__ ( \
@@ -207,20 +207,20 @@ static inline long long rtai_llimd(long long ll, int mult, int div) {
 	"mull %%esi\t\n" \
 	"movl %%eax,%%ebx\n\t" \
 	"movl %%ecx,%%eax\t\n" \
-        "movl %%edx,%%ecx\t\n" \
-        "mull %%esi\n\t" \
+	"movl %%edx,%%ecx\t\n" \
+	"mull %%esi\n\t" \
 	"addl %%ecx,%%eax\t\n" \
 	"adcl $0,%%edx\t\n" \
-        "divl %%edi\n\t" \
-        "movl %%eax,%%ecx\t\n" \
-        "movl %%ebx,%%eax\t\n" \
+	"divl %%edi\n\t" \
+	"movl %%eax,%%ecx\t\n" \
+	"movl %%ebx,%%eax\t\n" \
 	"divl %%edi\n\t" \
 	"sal $1,%%edx\t\n" \
-        "cmpl %%edx,%%edi\t\n" \
-        "movl %%ecx,%%edx\n\t" \
+	"cmpl %%edx,%%edi\t\n" \
+	"movl %%ecx,%%edx\n\t" \
 	"jge 1f\t\n" \
-        "addl $1,%%eax\t\n" \
-        "adcl $0,%%edx\t\n" \
+	"addl $1,%%eax\t\n" \
+	"adcl $0,%%edx\t\n" \
 	"1:\t\n" \
 	: "=A" (ll) \
 	: "A" (ll), "S" (mult), "D" (div) \
@@ -293,7 +293,7 @@ struct rtai_realtime_irq_s {
 #define RTAI_APIC_ICOUNT	  ((RTAI_FREQ_APIC + HZ/2)/HZ)
 #define RTAI_COUNTER_2_LATCH      0xfffe
 #define RTAI_LATENCY_8254         CONFIG_RTAI_SCHED_8254_LATENCY
-#define RTAI_SETUP_TIME_8254      2011 
+#define RTAI_SETUP_TIME_8254      2011
 
 #define RTAI_CALIBRATED_APIC_FREQ 0
 #define RTAI_FREQ_APIC            (rtai_tunables.apic_freq)
@@ -633,7 +633,7 @@ static inline void rtai_spin_glock(volatile unsigned long *lock)
 static inline void rtai_spin_gunlock(volatile unsigned long *lock)
 {
 	test_and_clear_bit(31, lock);
-	cpu_relax(); 
+	cpu_relax();
 }
 
 #endif
@@ -828,7 +828,7 @@ static inline int rt_save_switch_to_real_time(int cpuid)
 	if (!rtai_linux_context[cpuid].sflags) {
 		_rt_switch_to_real_time(cpuid);
 		return 0;
-	} 
+	}
 	return 1;
 }
 
@@ -856,18 +856,18 @@ static inline unsigned long save_and_set_taskpri(unsigned long taskpri)
 	do { apic_write_around(APIC_TASKPRI, taskpri); } while (0)
 #endif
 
-static inline void rt_set_timer_delay (int delay) 
+static inline void rt_set_timer_delay (int delay)
 {
     if (delay) {
-        unsigned long flags;
-        rtai_hw_save_flags_and_cli(flags);
+	unsigned long flags;
+	rtai_hw_save_flags_and_cli(flags);
 #ifdef CONFIG_X86_LOCAL_APIC
 	apic_write_around(APIC_TMICT, delay);
 #else /* !CONFIG_X86_LOCAL_APIC */
 	outb(delay & 0xff,0x40);
 	outb(delay >> 8,0x40);
 #endif /* CONFIG_X86_LOCAL_APIC */
-        rtai_hw_restore_flags(flags);
+	rtai_hw_restore_flags(flags);
     }
 }
 

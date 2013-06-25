@@ -82,7 +82,7 @@ typedef int rt_jmp_buf[6];
 /* START by Peter Soetens */
 
 struct sched_param {
-        int sched_priority;
+	int sched_priority;
 };
 #define SCHED_OTHER     0
 #define SCHED_FIFO      1
@@ -154,7 +154,7 @@ struct _pthread_cleanup_buffer {
 // Create a RT task with attributes ATTR, or default attributes if ATTR is NULL
 // and call start function START_ROUTINE passing arguments ARG.
 extern int pthread_create(pthread_t *thread, pthread_attr_t *attr,
-                           void *(*start_routine) (void *), void *arg);
+			   void *(*start_routine) (void *), void *arg);
 
 
 // Terminate the calling thread,
@@ -174,30 +174,30 @@ extern int pthread_attr_setdetachstate(pthread_attr_t *attr, int detachstate);
 
 // Get the detach state for the thread.
 extern int pthread_attr_getdetachstate(const pthread_attr_t *attr,
-                                       int *detachstate);
+				       int *detachstate);
 
 // Set the thread scheduling parameters.
 extern int pthread_attr_setschedparam(pthread_attr_t *attr,
-                               const struct sched_param *param);
+			       const struct sched_param *param);
 
 // Get the thread scheduling parameters.
 extern int pthread_attr_getschedparam(const pthread_attr_t *attr,
-                                      struct sched_param *param);
+				      struct sched_param *param);
 
 // Set thread scheduling policy.
 extern int pthread_attr_setschedpolicy(pthread_attr_t *attr, int policy);
 
 // Get thread scheduling policy.
 extern int pthread_attr_getschedpolicy(const pthread_attr_t *attr,
-                                       int *policy);
+				       int *policy);
 
 // Set thread scheduling inheritance.
 extern int pthread_attr_setinheritsched(pthread_attr_t *attr,
-                                        int inherit);
+					int inherit);
 
 // Get thread scheduling inheritance.
 extern int pthread_attr_getinheritsched(const pthread_attr_t *attr,
-                                        int *inherit);
+					int *inherit);
 
 // Set thread scheduling scope.
 extern int pthread_attr_setscope(pthread_attr_t *attr, int scope);
@@ -218,7 +218,7 @@ extern int nanosleep(const struct timespec *req, struct timespec *rem);
 
 // Initialise mutex object.
 extern int pthread_mutex_init(pthread_mutex_t *mutex,
-                              const pthread_mutexattr_t *mutex_attr);
+			      const pthread_mutexattr_t *mutex_attr);
 
 
 // Destroy mutex object.
@@ -239,11 +239,11 @@ extern int pthread_mutexattr_setkind_np(pthread_mutexattr_t *attr, int kind);
 
 // Retrieve the current value of the mutex kind attribute.
 extern int pthread_mutexattr_getkind_np(const pthread_mutexattr_t *attr,
-                                        int *kind);
+					int *kind);
 
 // Set thread scheduling parameters.
 extern int pthread_setschedparam(pthread_t thread, int policy,
-                                 const struct sched_param *param);
+				 const struct sched_param *param);
 
 // Get thread scheduling parameters.
 extern int pthread_getschedparam(pthread_t thread, int *policy, struct sched_param *param);
@@ -263,7 +263,7 @@ extern int pthread_mutex_unlock(pthread_mutex_t *mutex);
 
 // Initialise conditional variable.
 extern int pthread_cond_init(pthread_cond_t *cond,
-                      const pthread_condattr_t *cond_attr);
+		      const pthread_condattr_t *cond_attr);
 
 
 // Destroy conditional variable.
@@ -284,7 +284,7 @@ extern int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex);
 
 // Wait for condition variable to be signaled or timeout expires.
 extern int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex,
-                                  const struct timespec *abstime);
+				  const struct timespec *abstime);
 
 
 // Restart one of the threads waiting on the conditional variable cond.

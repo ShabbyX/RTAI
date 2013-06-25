@@ -40,7 +40,7 @@ static inline long long rtai_srq(long srq, unsigned long args)
 {
 	long long retval;
 #if 1 //def USE_LINUX_SYSCALL
-        syscall(RTAI_SRQ_SYSCALL_NR, srq, args, &retval);
+	syscall(RTAI_SRQ_SYSCALL_NR, srq, args, &retval);
 #else
 	register unsigned long __sc_0 __asm__ ("r0");
 	register unsigned long __sc_3 __asm__ ("r3");
@@ -51,7 +51,7 @@ static inline long long rtai_srq(long srq, unsigned long args)
 		("trap         \n\t"
 		: "=&r" (__sc_3), "=&r" (__sc_4)
 		: "0"   (__sc_3), "1"   (__sc_4),
-	          "r"   (__sc_0)
+		  "r"   (__sc_0)
 		/*: "r0", "r3", "r4"*/ );
 	((unsigned long *)(void *)&retval)[0] = __sc_3;
 	((unsigned long *)(void *)&retval)[1] = __sc_4;

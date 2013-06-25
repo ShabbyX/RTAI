@@ -55,7 +55,7 @@ int __rt_tld_create_key(void){
 int __rt_tld_free_key(int key){
 #if 1
 	return 0;
-#else	
+#else
 	return rt_tld_free_key(key);
 #endif
 }
@@ -78,4 +78,3 @@ void* __rt_tld_get_data(RT_TASK *task,int key){
 	return rt_tld_get_data(task,key);
 #endif
 }
-

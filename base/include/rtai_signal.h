@@ -67,7 +67,7 @@ RTAI_SYSCALL_MODE int rt_wait_signal(RT_TASK *sigtask, RT_TASK *task);
 #define __SIGNAL_SUPPORT_FUN__
 
 static void signal_suprt_fun(struct sigsuprt_t *funarg)
-{		
+{
 	struct sigtsk_t { RT_TASK *sigtask; RT_TASK *task; };
 	struct sigreq_t { RT_TASK *sigtask; RT_TASK *task; long signal; void (*sighdl)(int, RT_TASK *); };
 	struct sigsuprt_t arg = *funarg;

@@ -68,7 +68,7 @@ for i in range(0, NR_RT_TASKS) :
 s = 0
 while s != NR_RT_TASKS :
 	msleep(50)
-	s = 0	
+	s = 0
 	for i in range (0, NR_RT_TASKS) :
 		s += hrt[i]
 

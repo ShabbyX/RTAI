@@ -123,7 +123,7 @@ int xnselect_bind(struct xnselect *select_block,
 	binding->bit_index = index;
 	inith(&binding->link);
 	inith(&binding->slink);
-	
+
 	appendq(&selector->bindings, &binding->slink);
 	appendq(&select_block->bindings, &binding->link);
 	__FD_SET(index, &selector->fds[type].expected);
@@ -203,7 +203,7 @@ void xnselect_destroy(struct xnselect *select_block)
 		xnlock_put_irqrestore(&nklock, s);
 
 		xnfree(binding);
-		
+
 		xnlock_get_irqsave(&nklock, s);
 	}
 	if (resched)
@@ -332,7 +332,7 @@ int xnselect(struct xnselector *selector,
 	if ((unsigned) nfds > __FD_SETSIZE)
 		return -EINVAL;
 
-	thread = xnpod_current_thread();	
+	thread = xnpod_current_thread();
 
 	xnlock_get_irqsave(&nklock, s);
 	for (i = 0; i < XNSELECT_MAX_TYPES; i++)
@@ -355,7 +355,7 @@ int xnselect(struct xnselector *selector,
 		    && fd_set_and(out_fds[i], in_fds[i],
 				  &selector->fds[i].pending, nfds))
 			not_empty = 1;
-	
+
 	while (!not_empty) {
 		xnsynch_sleep_on(&selector->synchbase, timeout, timeout_mode);
 

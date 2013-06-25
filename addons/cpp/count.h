@@ -99,7 +99,7 @@ public:
 
 	Count& operator-=(const Count& count);
 	Count& operator-=(ticks count);
-	
+
 	Count  operator+(const Count& count) const;
 	Count  operator+(ticks count) const;
 

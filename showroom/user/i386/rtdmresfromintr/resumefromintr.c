@@ -60,7 +60,7 @@ int main(void)
 			t = rt_get_cpu_time_ns();
 			if ((jit = t - t0 - PERIOD) < 0) {
 				jit = -jit;
-			}	
+			}
 			if (jit > maxj) {
 				maxj = jit;
 			}

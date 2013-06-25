@@ -61,21 +61,21 @@ int main(int argc, char *argv[])
 
 	printf("\n\nSPECIFIC RECEIVE DIRECTLY ON REMOTE TASK\n");
 	ioperm(PORT_ADR, 1, 1);
-        if (!(spktsk = rt_task_init_schmod(nam2num("SPKTSK"), 1, 0, 0, SCHED_FIFO, 0xF))) {
-                printf("CANNOT INIT SPEAKER TASK\n");
-                exit(1);
-        }
+	if (!(spktsk = rt_task_init_schmod(nam2num("SPKTSK"), 1, 0, 0, SCHED_FIFO, 0xF))) {
+		printf("CANNOT INIT SPEAKER TASK\n");
+		exit(1);
+	}
 
-        rt_returnx(rt_receivex(0, &msg, sizeof(int), &len), &msg, 1);
-        plrnode = 0;
-        if (argc == 2 && strstr(argv[1], "PlrNode=")) {
-                inet_aton(argv[1] + 8, &addr.sin_addr);
-                plrnode = addr.sin_addr.s_addr;
-        }
-        if (!plrnode) {
-                inet_aton("127.0.0.1", &addr.sin_addr);
-                plrnode = addr.sin_addr.s_addr;
-        }
+	rt_returnx(rt_receivex(0, &msg, sizeof(int), &len), &msg, 1);
+	plrnode = 0;
+	if (argc == 2 && strstr(argv[1], "PlrNode=")) {
+		inet_aton(argv[1] + 8, &addr.sin_addr);
+		plrnode = addr.sin_addr.s_addr;
+	}
+	if (!plrnode) {
+		inet_aton("127.0.0.1", &addr.sin_addr);
+		plrnode = addr.sin_addr.s_addr;
+	}
 
 	rt_set_oneshot_mode();
 	start_rt_timer(0);
@@ -92,9 +92,9 @@ int main(int argc, char *argv[])
 	period = nano2count(PERIOD);
 	rt_task_make_periodic(spktsk, rt_get_time() + 5*period, period);
 
-        for (i = 0; i < 100; i++) {
+	for (i = 0; i < 100; i++) {
 		RT_returnx(plrnode, plrport, RT_receivex(plrnode, plrport, plrtsk, &msg, sizeof(int), &len), &msg, sizeof(int));
-        }
+	}
 
 	len = 0;
 	while(1) {

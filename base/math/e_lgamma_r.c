@@ -60,7 +60,7 @@ static char rcsid[] = "$NetBSD: e_lgamma_r.c,v 1.7 1995/05/10 20:45:42 jtc Exp $
  *		w = w0 + w1*z + w2*z  + w3*z  + ... + w6*z
  *	where
  *		|w - f(z)| < 2**-58.74
- *		
+ *
  *   4. For negative x, since (G is gamma function)
  *		-x*G(-x)*G(x) = pi/sin(pi*x),
  * 	we have
@@ -71,14 +71,14 @@ static char rcsid[] = "$NetBSD: e_lgamma_r.c,v 1.7 1995/05/10 20:45:42 jtc Exp $
  *			  = log(pi/(|x*sin(pi*x)|)) - lgamma(-x);
  *	Note: one should avoid compute pi*(-x) directly in the
  *	      computation of sin(pi*(-x)).
- *		
+ *
  *   5. Special Cases
  *		lgamma(2+s) ~ s*(1-Euler) for tiny s
  *		lgamma(1)=lgamma(2)=0
  *		lgamma(x) ~ -log(x) for tiny x
  *		lgamma(0) = lgamma(inf) = inf
  *	 	lgamma(-integer) = +-inf
- *	
+ *
  */
 
 #include "math.h"
@@ -192,16 +192,16 @@ __inline__
 	    y   = 2.0*(y - floor(y));		/* y = |x| mod 2.0 */
 	    n   = (int) (y*4.0);
 	} else {
-            if(ix>=0x43400000) {
-                y = zero; n = 0;                 /* y must be even */
-            } else {
-                if(ix<0x43300000) z = y+two52;	/* exact */
+	    if(ix>=0x43400000) {
+		y = zero; n = 0;                 /* y must be even */
+	    } else {
+		if(ix<0x43300000) z = y+two52;	/* exact */
 		GET_LOW_WORD(n,z);
 		n &= 1;
-                y  = n;
-                n<<= 2;
-            }
-        }
+		y  = n;
+		n<<= 2;
+	    }
+	}
 	switch (n) {
 	    case 0:   y =  __kernel_sin(pi*y,zero,0); break;
 	    case 1:
@@ -235,8 +235,8 @@ __inline__
 	if((ix|lx)==0) return one/zero;
 	if(ix<0x3b900000) {	/* |x|<2**-70, return -log(|x|) */
 	    if(hx<0) {
-	        *signgamp = -1;
-	        return -__ieee754_log(-x);
+		*signgamp = -1;
+		return -__ieee754_log(-x);
 	    } else return -__ieee754_log(x);
 	}
 	if(hx<0) {
@@ -260,8 +260,8 @@ __inline__
 	  	else {y = x; i=2;}
 	    } else {
 	  	r = zero;
-	        if(ix>=0x3FFBB4C3) {y=2.0-x;i=0;} /* [1.7316,2] */
-	        else if(ix>=0x3FF3B4C4) {y=x-tc;i=1;} /* [1.23,1.73] */
+		if(ix>=0x3FFBB4C3) {y=2.0-x;i=0;} /* [1.7316,2] */
+		else if(ix>=0x3FF3B4C4) {y=x-tc;i=1;} /* [1.23,1.73] */
 		else {y=x-one;i=2;}
 	    }
 	    switch(i) {
@@ -279,7 +279,7 @@ __inline__
 		p3 = t2+w*(t5+w*(t8+w*(t11+w*t14)));
 		p  = z*p1-(tt-w*(p2+y*p3));
 		r += (tf + p); break;
-	      case 2:	
+	      case 2:
 		p1 = y*(u0+y*(u1+y*(u2+y*(u3+y*(u4+y*u5)))));
 		p2 = one+y*(v1+y*(v2+y*(v3+y*(v4+y*v5))));
 		r += (-0.5*y + p1/p2);

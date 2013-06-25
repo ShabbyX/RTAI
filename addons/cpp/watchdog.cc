@@ -27,7 +27,7 @@
 namespace RTAI {
 
 namespace Watchdog {
-	
+
 int set_grace(int new_value)
 {
 	return rt_wdset_grace( new_value );
@@ -50,12 +50,12 @@ int set_slip(int new_value)
 
 int set_stretch(int new_value)
 {
-	return rt_wdset_stretch( new_value );	
+	return rt_wdset_stretch( new_value );
 }
 
 int set_limit(int new_value)
 {
-	return rt_wdset_limit( new_value );	
+	return rt_wdset_limit( new_value );
 }
 
 int set_safety(int new_value)

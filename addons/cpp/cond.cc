@@ -40,12 +40,12 @@ int Condition::wait( Mutex& mtx )
 
 int Condition::wait_until( Mutex& mtx,const Count& time)
 {
-	return rt_cond_wait_until( m_Sem, mtx.m_Sem, time );	
+	return rt_cond_wait_until( m_Sem, mtx.m_Sem, time );
 }
 
 int Condition::wait_timed( Mutex& mtx, const Count& delay)
 {
-	return rt_cond_wait_timed( m_Sem, mtx.m_Sem, delay );	
+	return rt_cond_wait_timed( m_Sem, mtx.m_Sem, delay );
 }
 
 }; // namespace RTAI

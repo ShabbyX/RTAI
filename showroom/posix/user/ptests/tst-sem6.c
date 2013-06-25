@@ -82,7 +82,7 @@ int main(void)
 {
 	pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_HARD_REAL_TIME_NP);
 //        pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
-        start_rt_timer(0);
-        do_test();
-        return 0;
+	start_rt_timer(0);
+	do_test();
+	return 0;
 }

@@ -52,7 +52,7 @@ int main(void)
 		if (max < samp.max) max = samp.max;
 		if (min > samp.min) min = samp.min;
 		printf("* min: %lld/%lld, max: %lld/%lld average: %d (%d) <Hit [RETURN] to stop> *\n", samp.min, min, samp.max, max, samp.index, samp.ovrn);
-	        if (poll(&ufds, 1, 1)) {
+		if (poll(&ufds, 1, 1)) {
 			ch = getchar();
 			break;
 		}

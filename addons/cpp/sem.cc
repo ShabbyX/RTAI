@@ -56,7 +56,7 @@ Semaphore::~Semaphore(){
 				rt_named_sem_delete(m_Sem);
 			else
 				rt_sem_delete(m_Sem);
-		
+
 		}
 	}
 }

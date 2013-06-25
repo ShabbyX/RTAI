@@ -32,7 +32,7 @@ extern "C" {
 
 static inline int rt_mutex_create(RT_MUTEX *mutex, const char *name)
 {
-        struct { unsigned long name, icount, mode; } arg = { name ? nam2id(name): (unsigned long)name, 1, RES_SEM };
+	struct { unsigned long name, icount, mode; } arg = { name ? nam2id(name): (unsigned long)name, 1, RES_SEM };
 	if ((mutex->mutex = (void *)rtai_lxrt(BIDX, SIZARG, LXRT_SEM_INIT, &arg).v[LOW])) {
 		rt_release_waiters(arg.name);
 		return 0;
@@ -42,31 +42,31 @@ static inline int rt_mutex_create(RT_MUTEX *mutex, const char *name)
 
 static inline int rt_mutex_delete(RT_MUTEX *mutex)
 {
-        struct { void *mutex; } arg = { mutex->mutex };
+	struct { void *mutex; } arg = { mutex->mutex };
 	return rtai_lxrt(BIDX, SIZARG, LXRT_SEM_DELETE, &arg).i[LOW];
 }
 
 static inline int rt_mutex_lock(RT_MUTEX *mutex)
 {
-        struct { void *mutex; } arg = { mutex->mutex };
+	struct { void *mutex; } arg = { mutex->mutex };
 	return rtai_lxrt(BIDX, SIZARG, SEM_WAIT, &arg).i[LOW] == SEM_ERR ? -EINVAL : 0;
 }
 
 static inline int rt_mutex_unlock(RT_MUTEX *mutex)
 {
-        struct { void *mutex; } arg = { mutex->mutex };
-        return rtai_lxrt(BIDX, SIZARG, SEM_SIGNAL, &arg).i[LOW] == SEM_ERR ? -EINVAL : 0;
+	struct { void *mutex; } arg = { mutex->mutex };
+	return rtai_lxrt(BIDX, SIZARG, SEM_SIGNAL, &arg).i[LOW] == SEM_ERR ? -EINVAL : 0;
 }
 
 static inline int rt_mutex_acquire(RT_MUTEX *mutex, RTIME timeout)
 {
-        struct { void *mutex; RTIME timeout; } arg = { mutex->mutex, timeout };
+	struct { void *mutex; RTIME timeout; } arg = { mutex->mutex, timeout };
 	int retval;
 	if (timeout == TM_INFINITE) {
 		return rtai_lxrt(BIDX, SIZARG, SEM_WAIT, &arg).i[LOW] == SEM_ERR ? -EINVAL : 0;
 	} else if (timeout == TM_NONBLOCK) {
 		retval = rtai_lxrt(BIDX, SIZARG, SEM_WAIT_IF, &arg).i[LOW];
-	        return retval <= 0 ? -EWOULDBLOCK : retval == SEM_ERR ? -EINVAL : 0;
+		return retval <= 0 ? -EWOULDBLOCK : retval == SEM_ERR ? -EINVAL : 0;
 	}
 	retval = rtai_lxrt(BIDX, SIZARG, SEM_WAIT_TIMED, &arg).i[LOW];
 	return retval == SEM_TIMOUT ? -ETIMEDOUT : retval == SEM_ERR ? -EINVAL : 0;
@@ -75,17 +75,17 @@ static inline int rt_mutex_acquire(RT_MUTEX *mutex, RTIME timeout)
 
 static inline int rt_mutex_bind(RT_MUTEX *mutex, const char *name)
 {
-        return rt_obj_bind(mutex, name);
+	return rt_obj_bind(mutex, name);
 }
 
 static inline int rt_mutex_unbind (RT_MUTEX *mutex)
 {
-        return rt_obj_unbind(mutex);
+	return rt_obj_unbind(mutex);
 }
 
 static inline int rt_mutex_inquire(RT_MUTEX *mutex, void *info)
 {
-        return 0;
+	return 0;
 }
 
 #ifdef __cplusplus

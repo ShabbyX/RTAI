@@ -77,7 +77,7 @@ function [x,y,typ] = rtai4_scope(job,arg1,arg2)
 					in=1
 				end
 			end
-			
+
       [model,graphics,ok]=check_io(model,graphics,in,out,1,[])
       if ok then
         graphics.exprs=exprs

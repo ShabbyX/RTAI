@@ -90,4 +90,3 @@ void rtscope(scicos_block *block,int flag)
     init(block);
   }
 }
-

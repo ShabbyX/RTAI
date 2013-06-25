@@ -41,16 +41,16 @@ MODULE_DESCRIPTION("RTAI C++ support");
 int __init rtai_cpp_init(void){
 
 	cpp_key = __rt_tld_create_key();
-	
+
 	if(cpp_key == -1){
 		rt_printk("Could not get free TLD key\n");
 		return -1;
 	}
-	
+
 	rt_printk("Got %d TLD key\n",cpp_key);
 
 	init_iostream();
-		
+
 	return 0;
 }
 
@@ -62,4 +62,3 @@ void rtai_cpp_cleanup(void)
 
 module_init(rtai_cpp_init)
 module_exit(rtai_cpp_cleanup)
-

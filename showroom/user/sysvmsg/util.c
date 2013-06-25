@@ -93,7 +93,7 @@ void __init ipc_init_ids(struct ipc_ids* ids, int size)
 }
 
 /**
- *	ipc_findkey	-	find a key in an ipc identifier set	
+ *	ipc_findkey	-	find a key in an ipc identifier set
  *	@ids: Identifier set
  *	@key: The key to find
  *
@@ -330,7 +330,7 @@ int init_module(void)
 	if (set_rt_fun_ext_index(rtai_sysvmsg_fun, SYSV_MSG_IDX)) {
 		rt_printk("%d is a wrong index module for lxrt.\n", SYSV_MSG_IDX);
 		return -EACCES;
-	}			
+	}
 	msg_init();
 	printk("%s: loaded.\n", MODULE_NAME);
 	return(0);

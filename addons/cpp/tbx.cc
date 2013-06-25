@@ -50,7 +50,7 @@ TypedMailbox::TypedMailbox(const char* name)
 	m_TypedMailbox = 0;
 	m_Named = true;
 	m_Owner = false;
-	
+
 	init( name );
 }
 
@@ -76,7 +76,7 @@ TypedMailbox::~TypedMailbox()
 		}
 	}
 }
-	
+
 void TypedMailbox::init(int size, int flags )
 {
 	rt_printk("TypedMailbox::init(int size=%d, int flags=%d) %p\n",size,flags,this);

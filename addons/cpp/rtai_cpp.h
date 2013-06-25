@@ -31,8 +31,8 @@
 #include <rtai_sched.h>
 
 extern RT_TASK*  __rt_task_init(void (*rt_thread)(int), int data,
-                                int stack_size, int priority, int uses_fpu,
-                                void(*signal)(void));
+				int stack_size, int priority, int uses_fpu,
+				void(*signal)(void));
 
 extern int __rt_task_delete(RT_TASK *task);
 

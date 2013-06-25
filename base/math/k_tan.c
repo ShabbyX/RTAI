@@ -29,7 +29,7 @@ static char rcsid[] = "$NetBSD: k_tan.c,v 1.8 1995/05/10 20:46:37 jtc Exp $";
  *		  	         3             27
  *	   	tan(x) ~ x + T1*x + ... + T13*x
  *	   where
- *	
+ *
  * 	        |tan(x)         2     4            26   |     -59.2
  * 	        |----- - (1+T1*x +T2*x +.... +T13*x    )| <= 2
  * 	        |  x 					|
@@ -87,7 +87,7 @@ T[] =  {
 	ix = hx&0x7fffffff;	/* high word of |x| */
 	if(ix<0x3e300000)			/* x < 2**-28 */
 	    {if((int)x==0) {			/* generate inexact */
-	        u_int32_t low;
+		u_int32_t low;
 		GET_LOW_WORD(low,x);
 		if(((ix|low)|(iy+1))==0) return one/fabs(x);
 		else return (iy==1)? x: -one/x;

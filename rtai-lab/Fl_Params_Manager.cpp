@@ -194,7 +194,7 @@ Fl_Parameters_Manager::Fl_Parameters_Manager(int x, int y, int width, int height
 				unsigned int ncols = Tunable_Parameters[Tunable_Blocks[i].offset+j].n_cols;
 				unsigned int nrows = Tunable_Parameters[Tunable_Blocks[i].offset+j].n_rows;
 				Input_Blocks[Tunable_Blocks[i].offset+j].inputW = new Fl_Float_Input*[nrows*ncols];
-				
+
 				sprintf(param_label, "%s", Tunable_Parameters[Tunable_Blocks[i].offset+j].param_name);
 				for (unsigned int nr = 0; nr < nrows; nr++) {
 					for (unsigned int nc = 0; nc < ncols; nc++) {

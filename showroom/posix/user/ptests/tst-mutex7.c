@@ -140,6 +140,6 @@ int main(void)
 	pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_HARD_REAL_TIME_NP);
 	rt_grow_and_lock_stack(STACK_SIZE/2);
 	start_rt_timer(0);
-        do_test();
-        return 0;
+	do_test();
+	return 0;
 }

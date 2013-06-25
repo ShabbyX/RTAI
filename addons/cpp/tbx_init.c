@@ -35,12 +35,12 @@
 TBX* __rt_tbx_init(int size, int flags)
 {
 	TBX * tbx;
-	
+
 	tbx = rt_malloc(sizeof(TBX));
-	
+
 	if(tbx == 0)
 		return 0;
-		
+
 
 	memset(tbx,0,sizeof(TBX));
 
@@ -53,7 +53,7 @@ TBX* __rt_tbx_init(int size, int flags)
 int __rt_tbx_delete(TBX *tbx)
 {
 	int result;
-	
+
 	if(tbx == 0)
 		return -1;
 
@@ -80,4 +80,3 @@ void rtai_cpp_tbx_cleanup(void)
 
 module_init(rtai_cpp_tbx_init)
 module_exit(rtai_cpp_tbx_cleanup)
-

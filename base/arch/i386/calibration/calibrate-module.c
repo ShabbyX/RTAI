@@ -59,7 +59,7 @@ static void calibrate(void)
 	rt_pend_linux_irq(TIMER_8254_IRQ);
 #ifdef CONFIG_X86_LOCAL_APIC
 	if (params.mp) {
-	        unsigned temp = (apic_read(APIC_ICR) & (~0xCDFFF)) | (APIC_DM_FIXED | APIC_DEST_ALLINC | LOCAL_TIMER_VECTOR);
+		unsigned temp = (apic_read(APIC_ICR) & (~0xCDFFF)) | (APIC_DM_FIXED | APIC_DEST_ALLINC | LOCAL_TIMER_VECTOR);
 		apic_write(APIC_ICR, temp);
 	}
 #endif /* CONFIG_X86_LOCAL_APIC */
@@ -67,7 +67,7 @@ static void calibrate(void)
 
 static void just_ret(void)
 {
-        return;
+	return;
 }
 
 static RT_TASK rtask;
@@ -144,7 +144,7 @@ static long long user_srq(unsigned long whatever)
 			if (args[0] == KLATENCY) {
 				rt_task_init_cpuid(&rtask, spv, args[2], STACKSIZE, 0, 0, 0, hard_cpu_id());
 			} else {
-				rt_kthread_init_cpuid(&rtask, spv, args[2], STACKSIZE, 0, 0, 0, hard_cpu_id());	
+				rt_kthread_init_cpuid(&rtask, spv, args[2], STACKSIZE, 0, 0, 0, hard_cpu_id());
 			}
 			expected = rt_get_time() + 100*period;
 			rt_task_make_periodic(&rtask, expected, period);
@@ -168,9 +168,9 @@ static long long user_srq(unsigned long whatever)
 		}
 
 		case END_FREQ_CAL: {
-		        rt_free_timer();
-		        rt_reset_irq_to_sym_mode(TIMER_8254_IRQ);
-		        rt_free_global_irq(TIMER_8254_IRQ);
+			rt_free_timer();
+			rt_reset_irq_to_sym_mode(TIMER_8254_IRQ);
+			rt_free_global_irq(TIMER_8254_IRQ);
 			break;
 		}
 
@@ -186,8 +186,8 @@ static long long user_srq(unsigned long whatever)
 		}
 
 		case END_BUS_CHECK: {
-		        rt_free_timer();
-		        rt_reset_irq_to_sym_mode(TIMER_8254_IRQ);
+			rt_free_timer();
+			rt_reset_irq_to_sym_mode(TIMER_8254_IRQ);
 			break;
 		}
 		case GET_PARAMS: {
@@ -209,8 +209,8 @@ int init_module(void)
 	params.cpu_freq  = RTAI_CPU_FREQ;
 	rtf_create(0, FIFOBUFSIZE);
 	if ((srq = rt_request_srq(CALSRQ, (void *)user_srq, user_srq)) < 0) {
-                printk("No sysrq available for the calibration.\n");
-                return srq;
+		printk("No sysrq available for the calibration.\n");
+		return srq;
 	}
 	return 0;
 }

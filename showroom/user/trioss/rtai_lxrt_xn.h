@@ -81,7 +81,7 @@ static inline union rtai_lxrt_t rtai_lxrt(short int dynx, short int lsize, int s
 
 static inline unsigned long nam2num(const char *name)
 {
-        unsigned long retval = 0;
+	unsigned long retval = 0;
 	int c, i;
 
 	for (i = 0; i < 6; i++) {
@@ -106,8 +106,8 @@ static inline unsigned long nam2num(const char *name)
 
 static inline void *rtai_tskext(void)
 {
-        struct { unsigned long dummy; } arg;
-        return (void *)rtai_lxrt(BIDX, SIZARG, RT_BUDDY, &arg).v[LOW];
+	struct { unsigned long dummy; } arg;
+	return (void *)rtai_lxrt(BIDX, SIZARG, RT_BUDDY, &arg).v[LOW];
 }
 
 static inline RT_TASK *ftask_init(unsigned long name, int priority)
@@ -119,7 +119,7 @@ static inline RT_TASK *ftask_init(unsigned long name, int priority)
 static inline int rtai_task_delete(RT_TASK *task)
 {
 	struct { void *task; } arg = { task };
-        return rtai_lxrt(BIDX, SIZARG, LXRT_TASK_DELETE, &arg).i[LOW];
+	return rtai_lxrt(BIDX, SIZARG, LXRT_TASK_DELETE, &arg).i[LOW];
 }
 
 static inline int rtai_task_make_periodic_relative_ns(RT_TASK *task, RTIME start_delay, RTIME period)
@@ -136,14 +136,14 @@ static inline int rtai_task_wait_period(void)
 
 static inline RTIME nano2count(RTIME nanos)
 {
-        struct { RTIME nanos; } arg = { nanos };
-        return rtai_lxrt(BIDX, SIZARG, NANO2COUNT, &arg).rt;
+	struct { RTIME nanos; } arg = { nanos };
+	return rtai_lxrt(BIDX, SIZARG, NANO2COUNT, &arg).rt;
 }
 
 static inline RTIME count2nano(RTIME count)
 {
-        struct { RTIME count; } arg = { count };
-        return rtai_lxrt(BIDX, SIZARG, COUNT2NANO, &arg).rt;
+	struct { RTIME count; } arg = { count };
+	return rtai_lxrt(BIDX, SIZARG, COUNT2NANO, &arg).rt;
 }
 
 static inline RTIME rtai_get_cpu_time_ns(void)
@@ -160,7 +160,7 @@ static inline RTIME rtai_get_time(void)
 
 static inline int start_rtai_timer(void)
 {
-        struct { int dummy; } arg;
+	struct { int dummy; } arg;
 	rtai_lxrt(BIDX, SIZARG, SET_ONESHOT_MODE, &arg);
 	rtai_lxrt(BIDX, SIZARG, START_TIMER, &arg);
 	return 0;
@@ -190,18 +190,18 @@ static inline void rt_release_rtc(void)
 
 static inline int rtai_thread_create(void *fun, void *args, int stack_size)
 {
-        pthread_t thread;
-        pthread_attr_t attr;
+	pthread_t thread;
+	pthread_attr_t attr;
 
-        pthread_attr_init(&attr);
-        if (pthread_attr_setstacksize(&attr, stack_size > RT_THREAD_STACK_MIN ?
+	pthread_attr_init(&attr);
+	if (pthread_attr_setstacksize(&attr, stack_size > RT_THREAD_STACK_MIN ?
 stack_size : RT_THREAD_STACK_MIN)) {
-                return -1;
-        }
-        if (pthread_create(&thread, &attr, (void *(*)(void *))fun, args)) {
-                return -1;
-        }
-        return thread;
+		return -1;
+	}
+	if (pthread_create(&thread, &attr, (void *(*)(void *))fun, args)) {
+		return -1;
+	}
+	return thread;
 }
 
 #endif /* !_RTAI_LXRT_XN_H */

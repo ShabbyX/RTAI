@@ -74,12 +74,12 @@ do_test (void)
 
 int main(void)
 {
-        pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
-        start_rt_timer(0);
-        pthread_cond_init(&cond, NULL);
-        pthread_mutex_init(&mut, NULL);
-        do_test();
+	pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
+	start_rt_timer(0);
+	pthread_cond_init(&cond, NULL);
+	pthread_mutex_init(&mut, NULL);
+	do_test();
 	pthread_cond_destroy(&cond);
 	pthread_mutex_destroy(&mut);
-        return 0;
+	return 0;
 }

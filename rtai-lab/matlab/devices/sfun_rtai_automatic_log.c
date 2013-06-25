@@ -95,7 +95,7 @@ static void mdlStart(SimStruct *S)
 static void mdlOutputs(SimStruct *S, int_T tid)
 {
 	InputRealPtrsType uPtrs = ssGetInputPortRealSignalPtrs(S,0);
-	InputRealPtrsType fPtrs = ssGetInputPortRealSignalPtrs(S,1);	
+	InputRealPtrsType fPtrs = ssGetInputPortRealSignalPtrs(S,1);
 	int_T *dim = ssGetInputPortDimensions(S,0);
 #ifndef MATLAB_MEX_FILE
 	struct {

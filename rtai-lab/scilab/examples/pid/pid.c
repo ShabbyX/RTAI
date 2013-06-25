@@ -718,7 +718,7 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
   case 1:
   /*        Initialize tvec */
   ntvec=2;
-	
+
   flag = 3;
   nevprt = 1;
  C2F(ifthel)(&flag, &nevprt, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]),
@@ -1268,10 +1268,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
 
     if (ntvec >= 1) {
       if (funtyp[22] == -1) {
-        ++(*urg);
-        i2 = ntvec + clkptr[22] - 1;
-        C2F(putevs)(&tevts[1], &evtspt[1],  nevts, pointi, told, &i2, &ierr1);
-        if (ierr1 != 0) return 3;
+	++(*urg);
+	i2 = ntvec + clkptr[22] - 1;
+	C2F(putevs)(&tevts[1], &evtspt[1],  nevts, pointi, told, &i2, &ierr1);
+	if (ierr1 != 0) return 3;
     }
   }
     break;
@@ -2113,4 +2113,3 @@ pid_endi( z, zptr, told,
   if(flag < 0 ) return (5-flag);
   return 0;
 } /* ending */
-

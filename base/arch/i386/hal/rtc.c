@@ -189,4 +189,3 @@ EXPORT_SYMBOL(rt_request_rtc);
 EXPORT_SYMBOL(rt_release_rtc);
 
 #endif /* INCLUDED_BY_HAL_C */
-

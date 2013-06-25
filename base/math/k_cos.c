@@ -28,7 +28,7 @@ static char rcsid[] = "$NetBSD: k_cos.c,v 1.8 1995/05/10 20:46:22 jtc Exp $";
  *		  	                 4            14
  *	   	cos(x) ~ 1 - x*x/2 + C1*x + ... + C6*x
  *	   where the remez error is
- *	
+ *
  * 	|              2     4     6     8     10    12     14 |     -58
  * 	|cos(x)-(1-.5*x +C1*x +C2*x +C3*x +C4*x +C5*x  +C6*x  )| <= 2
  * 	|    					               |
@@ -87,7 +87,7 @@ C6  = -1.13596475577881948265e-11; /* 0xBDA8FAE9, 0xBE8838D4 */
 	    if(ix > 0x3fe90000) {		/* x > 0.78125 */
 		qx = 0.28125;
 	    } else {
-	        INSERT_WORDS(qx,ix-0x00200000,0);	/* x/4 */
+		INSERT_WORDS(qx,ix-0x00200000,0);	/* x/4 */
 	    }
 	    hz = 0.5*z-qx;
 	    a  = one-qx;

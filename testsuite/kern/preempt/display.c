@@ -42,7 +42,7 @@ int main(int argc,char *argv[])
 	int n = 0, rd;
 
 	setlinebuf(stdout);
-	
+
 	if ((fd0 = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDONLY)) < 0) {
 		fprintf(stderr, "Error opening %s\n",nm);
 		exit(1);
@@ -57,6 +57,6 @@ int main(int argc,char *argv[])
 		rd = read(fd0, &samp, sizeof(samp));
 		printf("RTD|%12ld|%12ld|%12ld|%12ld|%12ld\n", samp.min, samp.avrg, samp.max, samp.jitters[0], samp.jitters[1]);
 		fflush(stdout);
-        }
+	}
 	return 0;
 }

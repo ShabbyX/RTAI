@@ -39,11 +39,11 @@ public:
 	TraceEvent();
 	TraceEvent( const char* name, void*, void* );
 	~TraceEvent();
-	
+
 	void init( const char* name, void*, void* );
-	void trigger( int size, void* data );	
+	void trigger( int size, void* data );
 protected:
-	int m_ID;	
+	int m_ID;
 };
 
 }; // namespace RTAI
@@ -70,4 +70,3 @@ int __trace_raw_event(int id,
 #endif // CONFIG_RTAI_TRACE
 
 #endif // __TRACE_H__
-

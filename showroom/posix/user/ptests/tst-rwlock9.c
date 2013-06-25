@@ -214,10 +214,10 @@ sleep(5);
 
 int main(void)
 {
-        pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
+	pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);
 //  	rt_grow_and_lock_stack(10000);
 	start_rt_timer(0);
 	pthread_rwlock_init(&lock, NULL);
-        do_test();
-        return 0;
+	do_test();
+	return 0;
 }

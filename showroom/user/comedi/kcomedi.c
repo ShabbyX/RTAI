@@ -396,7 +396,7 @@ RTAI_SYSCALL_MODE int RT_comedi_do_insnlist(void *dev, long n_insns, struct insn
 	lsampl_t *data           = RT_INSN_ADR(data_ofst);
 	comedi_insn insn[2]; // 2 instances, a safe room for 64 getting into 32
 	for (i = 0; i < n_insns; i ++) {
-		memcpy(insn, insns, ofstlens->insn_len);	
+		memcpy(insn, insns, ofstlens->insn_len);
 		insn[0].data     = data + data_ofsts[i];
 		insn[0].subdev   = RT_INSN(subdev_ofst);
 		insn[0].chanspec = RT_INSN(chanspec_ofst);
@@ -410,19 +410,19 @@ RTAI_SYSCALL_MODE int RT_comedi_do_insnlist(void *dev, long n_insns, struct insn
 
 static inline int _rt_comedi_trigger(void *dev, unsigned int subdev)
 {
-        comedi_insn insn;
-        lsampl_t data = 0;
-        insn.insn   = INSN_INTTRIG;
-        insn.subdev = subdev;
-        insn.n      = 1;
-        insn.data   = &data;
-        return _comedi_do_insn(dev, &insn);
+	comedi_insn insn;
+	lsampl_t data = 0;
+	insn.insn   = INSN_INTTRIG;
+	insn.subdev = subdev;
+	insn.n      = 1;
+	insn.data   = &data;
+	return _comedi_do_insn(dev, &insn);
 }
 
 RTAI_SYSCALL_MODE int rt_comedi_trigger(void *dev, unsigned int subdev)
 {
 	rt_printk("COMEDI TRIGGER: dev = %p, subdev = %u.\n", dev, subdev);
-        return _rt_comedi_trigger(dev, subdev);
+	return _rt_comedi_trigger(dev, subdev);
 }
 
 static RTAI_SYSCALL_MODE int _comedi_poll(void *dev, unsigned int subdev)

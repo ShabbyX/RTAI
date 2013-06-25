@@ -106,7 +106,7 @@ static double dot(double *a, double *b, int n)
 
 #ifdef CONFIG_PROC_FS
 static int proc_read(char *page, char **start, off_t off,
-                     int count, int *eof, void *data)
+		     int count, int *eof, void *data)
 {
 	PROC_PRINT_VARS;
 	PROC_PRINT("\n## RTAI latency calibration tool ##\n");
@@ -179,13 +179,13 @@ fun(long thread)
 #ifdef CONFIG_RTAI_FPU_SUPPORT
 			if (use_fpu) {
 				dotres = dot(a, b, MAXDIM);
-                        	if ((tdif = dotres/refres - 1.0) < 0.0) {
-                        		tdif = -tdif;
+				if ((tdif = dotres/refres - 1.0) < 0.0) {
+					tdif = -tdif;
 				}
-	                        if (tdif > 1.0e-16) {
+				if (tdif > 1.0e-16) {
       	                          	rt_printk("\nDOT PRODUCT ERROR\n");
-                	                return;
-                        	}
+					return;
+				}
 			}
 #endif
 		}
@@ -212,8 +212,8 @@ __latency_init(void)
 	/* register a proc entry */
 #ifdef CONFIG_PROC_FS
 	create_proc_read_entry("rtai/latency_calibrate", /* name             */
-	                       0,			 /* default mode     */
-	                       NULL, 			 /* parent dir       */
+			       0,			 /* default mode     */
+			       NULL, 			 /* parent dir       */
 			       proc_read, 		 /* function         */
 			       NULL			 /* client data      */
 	);

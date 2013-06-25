@@ -43,7 +43,7 @@ public:
 	Mailbox(const char* name, int size);
 
 	virtual ~Mailbox();
-	
+
 	bool init(int size);
 	bool init(const char* name);
 	bool init(const char* name, int size);

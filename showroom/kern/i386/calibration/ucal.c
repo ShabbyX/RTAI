@@ -32,10 +32,10 @@ int main(int argc, char *argv[])
 	RT_TASK *task;
 	RTIME expected;
 
-        if ((fifo = open("/dev/rtf0", O_WRONLY)) < 0) {
-                printf("Error opening FIFO0 in UCAL\n");
-                exit(1);
-        }
+	if ((fifo = open("/dev/rtf0", O_WRONLY)) < 0) {
+		printf("Error opening FIFO0 in UCAL\n");
+		exit(1);
+	}
  	if (!(task = rt_task_init_schmod(nam2num("UCAL"), 0, 0, 0, SCHED_FIFO, 0xF))) {
 		printf("Cannot init UCAL\n");
 		exit(1);
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 		average += (int)count2nano(rt_get_time() - expected);
 	}
 	rt_make_soft_real_time();
-	stop_rt_timer();	
+	stop_rt_timer();
 	rt_task_delete(task);
 	write(fifo, &average, sizeof(average));
 	close(fifo);

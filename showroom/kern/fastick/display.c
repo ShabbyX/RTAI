@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	while(!end) {
-        	if (poll(&kbrd, 1, 0)) {
+		if (poll(&kbrd, 1, 0)) {
 			break;
 		}
 		read(cmd, &wakeup, sizeof(wakeup));

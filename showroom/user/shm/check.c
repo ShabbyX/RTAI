@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 int main(void)
 {
-	int *vm, *km, *ka, *kd, *gh, i;	
+	int *vm, *km, *ka, *kd, *gh, i;
 	unsigned long s;
 	rt_thread_init(nam2num("MAIN"), 0, 0, SCHED_FIFO, 0xF);
 	vm = rt_shm_alloc(nam2num("VM"), 0, USE_VMALLOC);

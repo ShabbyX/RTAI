@@ -57,7 +57,7 @@ extern "C" {
 static inline void *rtai_tskext(void)
 {
 	struct { unsigned long dummy; } arg;
-        return (void *)rtai_lxrt(BIDX, SIZARG, RT_BUDDY, &arg).v[LOW];
+	return (void *)rtai_lxrt(BIDX, SIZARG, RT_BUDDY, &arg).v[LOW];
 }
 
 static inline void rt_set_task_self(void *task, void *self)
@@ -74,8 +74,8 @@ static inline void rt_make_hard_real_time(void)
 
 static inline void rt_make_soft_real_time(void)
 {
-        struct { unsigned long dummy; } arg;
-        rtai_lxrt(BIDX, SIZARG, MAKE_SOFT_RT, &arg);
+	struct { unsigned long dummy; } arg;
+	rtai_lxrt(BIDX, SIZARG, MAKE_SOFT_RT, &arg);
 }
 
 static inline int rt_is_hard_real_time(RT_TASK *rt_task)
@@ -86,29 +86,29 @@ static inline int rt_is_hard_real_time(RT_TASK *rt_task)
 
 static inline void *rt_task_ext(long name, int prio, int cpus_allowed)
 {
-        struct sched_param mysched;
-        struct { long name, prio, stack_size, max_msg_size, cpus_allowed; } arg = { name, prio, 0, 0, cpus_allowed };
+	struct sched_param mysched;
+	struct { long name, prio, stack_size, max_msg_size, cpus_allowed; } arg = { name, prio, 0, 0, cpus_allowed };
 	volatile float f;
 
-        if (arg.prio < 0) {
-        	arg.prio = 0;
-        }
-        if ((mysched.sched_priority = sched_get_priority_max(SCHED_FIFO) - arg.prio) < 1) {
-                mysched.sched_priority = 1;
-        }
-        if (sched_setscheduler(0, SCHED_FIFO, &mysched) < 0) {
-                return 0;
-        }
-        rtai_iopl();
+	if (arg.prio < 0) {
+		arg.prio = 0;
+	}
+	if ((mysched.sched_priority = sched_get_priority_max(SCHED_FIFO) - arg.prio) < 1) {
+		mysched.sched_priority = 1;
+	}
+	if (sched_setscheduler(0, SCHED_FIFO, &mysched) < 0) {
+		return 0;
+	}
+	rtai_iopl();
 	f = (float)name + (float)prio;
 
-        return (void *)rtai_lxrt(BIDX, SIZARG, LXRT_TASK_INIT, &arg).v[LOW];
+	return (void *)rtai_lxrt(BIDX, SIZARG, LXRT_TASK_INIT, &arg).v[LOW];
 }
 
 static inline int rt_task_suspend(RT_TASK *task)
 {
-        struct { void *task; } arg = { task ? task->task : NULL };
-        return rtai_lxrt(BIDX, SIZARG, SUSPEND, &arg).i[LOW];
+	struct { void *task; } arg = { task ? task->task : NULL };
+	return rtai_lxrt(BIDX, SIZARG, SUSPEND, &arg).i[LOW];
 }
 
 static inline int rt_task_resume(RT_TASK *task)
@@ -121,7 +121,7 @@ static inline int rt_task_delete(RT_TASK *task)
 {
 	struct { void *task; } arg = { task ? task->task : NULL };
 	rt_make_soft_real_time();
-        return rtai_lxrt(BIDX, SIZARG, LXRT_TASK_DELETE, &arg).i[LOW];
+	return rtai_lxrt(BIDX, SIZARG, LXRT_TASK_DELETE, &arg).i[LOW];
 }
 
 static inline int rt_task_yield(void)
@@ -132,7 +132,7 @@ static inline int rt_task_yield(void)
 
 static inline int rt_task_set_periodic(RT_TASK *task, RTIME idate, RTIME period)
 {
-        struct { void *task; RTIME idate, period; } arg = { task ? task->task : rtai_tskext(), idate == TM_NOW ? rt_timer_tsc() : rt_timer_ns2tsc(idate), rt_timer_ns2tsc(period) };
+	struct { void *task; RTIME idate, period; } arg = { task ? task->task : rtai_tskext(), idate == TM_NOW ? rt_timer_tsc() : rt_timer_ns2tsc(idate), rt_timer_ns2tsc(period) };
        	return rtai_lxrt(BIDX, SIZARG, MAKE_PERIODIC, &arg).i[LOW];
 }
 
@@ -176,8 +176,8 @@ static inline int rt_task_sleep_until(RTIME date)
 
 static inline RT_TASK *rt_task_self(void)
 {
-        struct { void *task; } arg = { rtai_tskext() };
-        return (RT_TASK *)rtai_lxrt(BIDX, SIZARG, GET_USP_FLG_MSK, &arg).v[LOW];
+	struct { void *task; } arg = { rtai_tskext() };
+	return (RT_TASK *)rtai_lxrt(BIDX, SIZARG, GET_USP_FLG_MSK, &arg).v[LOW];
 }
 
 static inline int rt_task_slice(RT_TASK *task, RTIME quantum)
@@ -224,17 +224,17 @@ static inline int rt_task_shadow(RT_TASK *task, const char *name, int prio, int 
 
 static inline int rt_thread_create(void *fun, void *args, int stack_size)
 {
-        pthread_t thread;
-        pthread_attr_t attr;
-        pthread_attr_init(&attr);
-        if (pthread_attr_setstacksize(&attr, stack_size > RT_THREAD_STACK_MIN ?
+	pthread_t thread;
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	if (pthread_attr_setstacksize(&attr, stack_size > RT_THREAD_STACK_MIN ?
 stack_size : RT_THREAD_STACK_MIN)) {
-                return -1;
-        }
-        if (pthread_create(&thread, &attr, (void *(*)(void *))fun, args)) {
-                return -1;
-        }
-        return thread;
+		return -1;
+	}
+	if (pthread_create(&thread, &attr, (void *(*)(void *))fun, args)) {
+		return -1;
+	}
+	return thread;
 }
 
 static inline int rt_task_create(RT_TASK *task, const char *name, int stksize, int prio, int mode)
@@ -388,7 +388,7 @@ static inline int rt_task_spawn(RT_TASK *task, const char *name, int stksize, in
 	int retval;
 
 	if (!(retval = rt_task_create(task, name, stksize, prio, mode))) {
-	        retval = rt_task_start(task, entry, cookie);
+		retval = rt_task_start(task, entry, cookie);
 	}
 	return retval;
 }

@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2003  Trevor Woolven (trevw@zentropix.com)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		    Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

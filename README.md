@@ -16,7 +16,3 @@ its `showroom` module, much like `master`.  Similarly, the `magma`
 branch tracks changes to the `magma` module of RTAI.
 
 Please refer to the README.INSTALL file for building instructions.
-
-The `experimental` branch is where the bleeding edge code takes
-place. Kernel 3.x support and other large changes will be exclusive
-to that branch.

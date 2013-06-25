@@ -74,7 +74,7 @@ int main(void)
 		execl("./screen", "./screen", NULL);
 	}
 	sleep(1);
-	
+
 	if ((Keyboard = open("/dev/rtf0", O_WRONLY)) < 0) {
 		fprintf(stderr, "Error opening /dev/rtf0 in keybrd\n");
 		exit(1);
@@ -86,8 +86,8 @@ int main(void)
 	}
 
 	do {
-	        ch = get_key();
-	        if (ch == 'p' || ch == 'P') {
+		ch = get_key();
+		if (ch == 'p' || ch == 'P') {
 			menu();
 		}
 		if (write(Keyboard, &ch, 1) < 0 ) {

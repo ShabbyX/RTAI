@@ -1,6 +1,6 @@
 /*
   COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
-                2009 Guillaume Millet (millet@isir.fr)
+		2009 Guillaume Millet (millet@isir.fr)
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -124,7 +124,7 @@ static void mdlStart(SimStruct *S)
   char *devname[4] = {"/dev/comedi0","/dev/comedi1","/dev/comedi2","/dev/comedi3"};
   char board[50];
   static char_T errMsg[256];
-	
+
   if (!ComediDev[index]) {
     dev = comedi_open(devname[index]);
     if (!dev) {
@@ -204,7 +204,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
   void *dev        = (void *)ssGetPWork(S)[0];
   int subdev       = ssGetIWork(S)[0];
   unsigned int bit = 0;
-	
+
   u = *uPtrs[0];
   if (u >= THRESHOLD) {
     bit = 1;

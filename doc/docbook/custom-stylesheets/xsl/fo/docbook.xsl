@@ -31,4 +31,3 @@
     <xsl:attribute name="space-after.maximum">0.8em</xsl:attribute>
   </xsl:attribute-set>
 </xsl:stylesheet>
-

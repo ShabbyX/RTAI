@@ -22,7 +22,7 @@ OBJ = $(SRC:.c=.o)
 DBG = -g
 
 #CC_FLAGS = -c $(DBG) -I. -I$(RTAIDIR)/include -O2 -Wall -std=gnu99 -DSOFTCALIB
-CC_FLAGS = -c $(DBG) -D RTAI=1 -D _TTY_POSIX_=1 -I. -I$(RTAIDIR)/include -O2 -fno-stack-protector $(CC_PICFLAGS)  
+CC_FLAGS = -c $(DBG) -D RTAI=1 -D _TTY_POSIX_=1 -I. -I$(RTAIDIR)/include -O2 -fno-stack-protector $(CC_PICFLAGS)
 
 %.o: %.c
 	cc $(CC_FLAGS) $<

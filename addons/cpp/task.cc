@@ -115,7 +115,7 @@ Task::Task(){
 }
 
 Task::~Task(){
-	std::cerr << "Task::~Task() " << (void*)this << std::endl;	
+	std::cerr << "Task::~Task() " << (void*)this << std::endl;
 
 	if(m_Task != 0)
 	{
@@ -130,15 +130,15 @@ Task::~Task(){
 }
 
 Task::Task(int stack_size,
-           int priority,
-           bool uses_fpu,
-           bool use_signal,
-           unsigned int cpuid)
+	   int priority,
+	   bool uses_fpu,
+	   bool use_signal,
+	   unsigned int cpuid)
 {
 	std::cerr << "Task::Task(...) " << (void*)this << std::endl;
 
 	m_TaskOwner = true;
-	m_Named = false;	
+	m_Named = false;
 	m_Task = 0;
 	for(int n=0; n < CONFIG_RTAI_CPUS;n++)
 		m_CpuUse[n] = 0;
@@ -148,13 +148,13 @@ Task::Task(int stack_size,
 
 Task::Task(const char* name,
 	   int stack_size,
-           int priority,
-           bool uses_fpu,
-           bool use_signal,
-           unsigned int cpuid)
+	   int priority,
+	   bool uses_fpu,
+	   bool use_signal,
+	   unsigned int cpuid)
 {
 	std::cerr << "Task::Task(...) " << (void*)this << std::endl;
-	
+
 	m_Named = true;
 	m_TaskOwner = true;
 	m_Task = 0;
@@ -167,7 +167,7 @@ Task::Task(const char* name,
 Task::Task(const char* name )
 {
 	std::cerr << "Task::Task(...) " << (void*)this << std::endl;
-	
+
 	m_Named = true;
 	m_TaskOwner = false;
 	m_Task = 0;
@@ -178,10 +178,10 @@ Task::Task(const char* name )
 }
 
 bool Task::init(int stack_size,
-	        int priority,
-                bool uses_fpu,
-                bool use_signal,
-                unsigned int cpuid)
+		int priority,
+		bool uses_fpu,
+		bool use_signal,
+		unsigned int cpuid)
 {
 	rt_printk("Task::init(...) %p\n",this);
 
@@ -196,19 +196,19 @@ bool Task::init(int stack_size,
 
 	if(use_signal)
 	    rt_task_init(m_Task, ::entry_point,(int)this,
-        	               stack_size,priority,uses_fpu,::signal_handler);
+			       stack_size,priority,uses_fpu,::signal_handler);
 	else
 		rt_task_init(m_Task, ::entry_point,(int)this,
-        	               stack_size,priority,uses_fpu,0);
+			       stack_size,priority,uses_fpu,0);
 	return true;
 }
 
 bool Task::init(const char* name,
 		int stack_size,
-	        int priority,
-                bool uses_fpu,
-                bool use_signal,
-                unsigned int cpuid)
+		int priority,
+		bool uses_fpu,
+		bool use_signal,
+		unsigned int cpuid)
 {
 	rt_printk("Task::init(...) %p\n",this);
 
@@ -223,10 +223,10 @@ bool Task::init(const char* name,
 
 	if(use_signal)
 		m_Task = rt_named_task_init(name, ::entry_point,(int)this,
-        	               stack_size,priority,uses_fpu,::signal_handler);
+			       stack_size,priority,uses_fpu,::signal_handler);
 	else
 		m_Task = rt_named_task_init(name, ::entry_point,(int)this,
-        	               stack_size,priority,uses_fpu,0);
+			       stack_size,priority,uses_fpu,0);
 
 	if( m_Task == 0)
 		return false;
@@ -268,7 +268,7 @@ Task* Task::self(){
 void Task::suspend(){
 	rt_task_suspend(m_Task);
 }
-	
+
 void Task::resume(){
 	rt_task_resume(m_Task);
 }

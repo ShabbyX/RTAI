@@ -47,31 +47,31 @@ static void asm_handler (void)
     __asm__ __volatile__ ( \
 	"cld\n\t" \
 	__PUSH_GS \
-        "pushl %es\n\t" \
-        "pushl %ds\n\t" \
-        "pushl %eax\n\t" \
-        "pushl %ebp\n\t" \
+	"pushl %es\n\t" \
+	"pushl %ds\n\t" \
+	"pushl %eax\n\t" \
+	"pushl %ebp\n\t" \
 	"pushl %edi\n\t" \
-        "pushl %esi\n\t" \
-        "pushl %edx\n\t" \
-        "pushl %ecx\n\t" \
+	"pushl %esi\n\t" \
+	"pushl %edx\n\t" \
+	"pushl %ecx\n\t" \
 	"pushl %ebx\n\t" \
 	__LXRT_GET_DATASEG(ebx) \
-        "movl %ebx, %ds\n\t" \
-        "movl %ebx, %es\n\t" \
+	"movl %ebx, %ds\n\t" \
+	"movl %ebx, %es\n\t" \
 	__LOAD_KERNEL_PDA \
-        "call "SYMBOL_NAME_STR(c_handler)"\n\t" \
-        "popl %ebx\n\t" \
-        "popl %ecx\n\t" \
-        "popl %edx\n\t" \
-        "popl %esi\n\t" \
+	"call "SYMBOL_NAME_STR(c_handler)"\n\t" \
+	"popl %ebx\n\t" \
+	"popl %ecx\n\t" \
+	"popl %edx\n\t" \
+	"popl %esi\n\t" \
 	"popl %edi\n\t" \
-        "popl %ebp\n\t" \
-        "popl %eax\n\t" \
-        "popl %ds\n\t" \
-        "popl %es\n\t" \
+	"popl %ebp\n\t" \
+	"popl %eax\n\t" \
+	"popl %ds\n\t" \
+	"popl %es\n\t" \
 	__POP_GS \
-        "iret");
+	"iret");
 }
 
 struct desc_struct rtai_set_gate_vector (unsigned vector, int type, int dpl, void *handler)

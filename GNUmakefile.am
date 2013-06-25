@@ -124,21 +124,21 @@ dist-hook:
 dev devices:
 	@if test -r $(DESTDIR)/etc/udev/udev.rules ; then \
 	    for f in \
-	            $(srcdir)/base/ipc/shm/rtai_shm.udev \
-	            $(srcdir)/base/ipc/fifos/rtai_fifos.udev \
-	            ; do \
-	        b=`basename $$f` ; \
-	        grep -q RTAI:`basename $$b .udev` $(DESTDIR)/etc/udev/udev.rules || \
-	        $$sudo sh -c "( echo ; cat $$f ) >> $(DESTDIR)/etc/udev/udev.rules" ; \
+		    $(srcdir)/base/ipc/shm/rtai_shm.udev \
+		    $(srcdir)/base/ipc/fifos/rtai_fifos.udev \
+		    ; do \
+		b=`basename $$f` ; \
+		grep -q RTAI:`basename $$b .udev` $(DESTDIR)/etc/udev/udev.rules || \
+		$$sudo sh -c "( echo ; cat $$f ) >> $(DESTDIR)/etc/udev/udev.rules" ; \
 	    done ; \
 	elif test -d $(DESTDIR)/etc/udev/rules.d ; then \
 	    for f in \
-	            $(srcdir)/base/ipc/shm/rtai_shm.udev \
-	            $(srcdir)/base/ipc/fifos/rtai_fifos.udev \
-	            ; do \
-	        b=`basename $$f` ; \
-	        grep -q RTAI:`basename $$b .udev` $(DESTDIR)/etc/udev/rules.d/99-rtai.rules || \
-	        $$sudo sh -c "( echo ; cat $$f ) >> $(DESTDIR)/etc/udev/rules.d/99-rtai.rules" ; \
+		    $(srcdir)/base/ipc/shm/rtai_shm.udev \
+		    $(srcdir)/base/ipc/fifos/rtai_fifos.udev \
+		    ; do \
+		b=`basename $$f` ; \
+		grep -q RTAI:`basename $$b .udev` $(DESTDIR)/etc/udev/rules.d/99-rtai.rules || \
+		$$sudo sh -c "( echo ; cat $$f ) >> $(DESTDIR)/etc/udev/rules.d/99-rtai.rules" ; \
 	    done ; \
 	fi ; \
 	if test x$(DESTDIR) = x; then \
@@ -149,7 +149,7 @@ dev devices:
 	    for n in `seq 0 9`; do \
 	       f="$(DESTDIR)/dev/rtf$$n"; \
 	       if test \! -c $$f; then \
-	          $$sudo mknod -m 666 $$f c 150 $$n; \
+		  $$sudo mknod -m 666 $$f c 150 $$n; \
 	       fi; \
 	    done ; \
 	fi

@@ -170,7 +170,7 @@ void *ClockChrono_Chrono(void *args)
 {
 	RT_TASK *mytask /*, *keybrd */;
 	//unsigned int msg;
-	MenageHmsh_tHour times;			
+	MenageHmsh_tHour times;
 	MenageHmsh_tChain11 timesChain;
 	BOOLEAN Intermediatetimes = FALSE;
 	MenageHmsh_tHour endIntermediateTimes;

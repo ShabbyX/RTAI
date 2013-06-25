@@ -44,14 +44,14 @@ config RTAI_DOX_DOC
 	the Doxygen toolsuite for regenerating the documentation.
 
 config RTAI_DOC_LATEX_NONSTOP
-        bool "Enable LaTeX verbose output"
-        default n
-        help
-        By default, all documentation generated with LaTeX uses the
-        silent (batchmode) of LaTeX. If this option is enabled, the
-        verbose (nonstopmode) of LaTeX will be used instead. This
-        option is mainly intended for people writing RTAI
-        documentation.
+	bool "Enable LaTeX verbose output"
+	default n
+	help
+	By default, all documentation generated with LaTeX uses the
+	silent (batchmode) of LaTeX. If this option is enabled, the
+	verbose (nonstopmode) of LaTeX will be used instead. This
+	option is mainly intended for people writing RTAI
+	documentation.
 
 config RTAI_DBX_DOC
 	bool "Build DocBook XML documentation (HTML/PDF)"
@@ -63,30 +63,30 @@ config RTAI_DBX_DOC
 	regular users can just use the latter directly.
 
 config RTAI_DBX_NET
-        bool "Let the DocBook XML tools use network"
+	bool "Let the DocBook XML tools use network"
 	depends on RTAI_DBX_DOC
-        default n
-        help
-        Let the DocBook tools use internet to fetch the DTD and XSL stylesheets.
-        If disabled, the documentation generation will fail if the necessary
-        DTD(s) and XSL stylesheets can not be found on the local computer.
+	default n
+	help
+	Let the DocBook tools use internet to fetch the DTD and XSL stylesheets.
+	If disabled, the documentation generation will fail if the necessary
+	DTD(s) and XSL stylesheets can not be found on the local computer.
 
 config RTAI_DBX_ROOT
-        string "Docbook XML root"
+	string "Docbook XML root"
 	depends on RTAI_DBX_DOC
-        default ""
-        help
-        Specify the DocBook XML root (that is, the directory where docbook.dtd
-        should be taken). Leave blank to let configure try the "well-known"
-        locations.
+	default ""
+	help
+	Specify the DocBook XML root (that is, the directory where docbook.dtd
+	should be taken). Leave blank to let configure try the "well-known"
+	locations.
 
 config RTAI_DBX_XSL_ROOT
-        string "Docbook XML XSL stylesheet root"
+	string "Docbook XML XSL stylesheet root"
 	depends on RTAI_DBX_DOC
-        default ""
-        help
-        Specify the DocBook XML XSL root. Leave blank to let configure try the
-        "well-known" locations.
+	default ""
+	help
+	Specify the DocBook XML XSL root. Leave blank to let configure try the
+	"well-known" locations.
 
 endmenu
 
@@ -534,8 +534,8 @@ config RTAI_TASKLETS
 	services that could lead to a task block.
 
 	Such tasks are called tasklets and can be of two kinds:
-        - a simple tasklet;
-        - timed tasklets (timers).
+	- a simple tasklet;
+	- timed tasklets (timers).
 
 	The tasklets implementation of timed tasklets relies on a
 	server support task that executes the related timer functions,

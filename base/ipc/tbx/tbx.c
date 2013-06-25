@@ -46,7 +46,7 @@ static inline void enq_msg(RT_MSGQ *q, RT_MSGH *msg)
 RTAI_SYSCALL_MODE int rt_msgq_init(RT_MSGQ *mq, int nmsg, int msg_size)
 {
 	int i;
-        void *p;
+	void *p;
 
 	if (!(mq->slots = rt_malloc((msg_size + RT_MSGH_SIZE + sizeof(void *))*nmsg + RT_MSGH_SIZE))) {
 		return -ENOMEM;
@@ -56,11 +56,11 @@ RTAI_SYSCALL_MODE int rt_msgq_init(RT_MSGQ *mq, int nmsg, int msg_size)
 	mq->slot = 0;
 	p = mq->slots + nmsg;
 	for (i = 0; i < nmsg; i++) {
-                mq->slots[i] = p;
+		mq->slots[i] = p;
 		((RT_MSGH *)p)->priority = 0;
 		p += (msg_size + RT_MSGH_SIZE);
 	}
-        ((RT_MSGH *)(mq->firstmsg = p))->priority = (0xFFFFFFFF/2);
+	((RT_MSGH *)(mq->firstmsg = p))->priority = (0xFFFFFFFF/2);
 	rt_typed_sem_init(&mq->receivers, 1, RES_SEM);
 	rt_typed_sem_init(&mq->senders, 1, RES_SEM);
 	rt_typed_sem_init(&mq->received, 0, CNT_SEM);
@@ -146,7 +146,7 @@ static int _send(RT_MSGQ *mq, void *msg, int msg_size, int msgpri, int space)
 }
 
 #define TBX_RET(msg_size, retval) \
-        (CONFIG_RTAI_USE_NEWERR ? retval : msg_size)
+	(CONFIG_RTAI_USE_NEWERR ? retval : msg_size)
 
 RTAI_SYSCALL_MODE int _rt_msg_send(RT_MSGQ *mq, void *msg, int msg_size, int msgpri, int space)
 {
@@ -154,7 +154,7 @@ RTAI_SYSCALL_MODE int _rt_msg_send(RT_MSGQ *mq, void *msg, int msg_size, int msg
 
 	if ((retval = rt_sem_wait(&mq->senders)) >= RTE_LOWERR) {
 		return TBX_RET(msg_size, retval);
-        }
+	}
 	if (rt_sem_wait(&mq->freslots) >= RTE_LOWERR) {
 		rt_sem_signal(&mq->senders);
 		return TBX_RET(msg_size, retval);
@@ -165,8 +165,8 @@ RTAI_SYSCALL_MODE int _rt_msg_send(RT_MSGQ *mq, void *msg, int msg_size, int msg
 RTAI_SYSCALL_MODE int _rt_msg_send_if(RT_MSGQ *mq, void *msg, int msg_size, int msgpri, int space)
 {
 	if (rt_sem_wait_if(&mq->senders) <= 0) {
-                return msg_size;
-        }
+		return msg_size;
+	}
 	if (rt_sem_wait_if(&mq->freslots) <= 0) {
 		rt_sem_signal(&mq->senders);
 		return msg_size;
@@ -179,7 +179,7 @@ RTAI_SYSCALL_MODE int _rt_msg_send_until(RT_MSGQ *mq, void *msg, int msg_size, i
 	int retval;
 	if ((retval = rt_sem_wait_until(&mq->senders, until)) >= RTE_LOWERR) {
 		return TBX_RET(msg_size, retval);
-        }
+	}
 	if ((retval = rt_sem_wait_until(&mq->freslots, until)) >= RTE_LOWERR) {
 		rt_sem_signal(&mq->senders);
 		return TBX_RET(msg_size, retval);
@@ -342,7 +342,7 @@ RTAI_SYSCALL_MODE int _rt_msg_broadcast(RT_MSGQ *mq, void *msg, int msg_size, in
 
 	if ((retval = rt_sem_wait(&mq->senders)) >= RTE_LOWERR) {
 		return TBX_RET(0, retval);
-        }
+	}
 	if (mq->received.count >= 0) {
 		rt_sem_signal(&mq->senders);
 		return 0;
@@ -357,15 +357,15 @@ RTAI_SYSCALL_MODE int _rt_msg_broadcast(RT_MSGQ *mq, void *msg, int msg_size, in
 RTAI_SYSCALL_MODE int _rt_msg_broadcast_if(RT_MSGQ *mq, void *msg, int msg_size, int msgpri, int space)
 {
 	if (rt_sem_wait_if(&mq->senders) <= 0) {
-                return 0;
-        }
+		return 0;
+	}
 	if (mq->received.count >= 0) {
 		rt_sem_signal(&mq->senders);
 		return 0;
 	}
 	if (rt_sem_wait_if(&mq->freslots) <= 0) {
 		rt_sem_signal(&mq->senders);
-                return 0;
+		return 0;
 	}
 	return _broadcast(mq, msg, msg_size, msgpri, -(mq->received.count + mq->receivers.count), space);
 }
@@ -376,7 +376,7 @@ RTAI_SYSCALL_MODE int _rt_msg_broadcast_until(RT_MSGQ *mq, void *msg, int msg_si
 
 	if ((retval = rt_sem_wait_until(&mq->senders, until)) >= RTE_LOWERR) {
 		return TBX_RET(0, retval);
-        }
+	}
 	if (mq->received.count >= 0) {
 		rt_sem_signal(&mq->senders);
 		return 0;
@@ -395,22 +395,22 @@ RTAI_SYSCALL_MODE int _rt_msg_broadcast_timed(RT_MSGQ *mq, void *msg, int msg_si
 
 struct rt_native_fun_entry rt_msg_queue_entries[] = {
 	{ { 0, rt_msgq_init },  	       	MSGQ_INIT },
-        { { 1, rt_msgq_delete },		MSGQ_DELETE },
+	{ { 1, rt_msgq_delete },		MSGQ_DELETE },
 	{ { 0, _rt_named_msgq_init },  	       	NAMED_MSGQ_INIT },
-        { { 1, rt_named_msgq_delete },		NAMED_MSGQ_DELETE },
-        { { 1, _rt_msg_send },    	     	MSG_SEND },
-        { { 1, _rt_msg_send_if },  	     	MSG_SEND_IF },
-        { { 1, _rt_msg_send_until }, 		MSG_SEND_UNTIL },
-        { { 1, _rt_msg_send_timed }, 		MSG_SEND_TIMED },
-        { { 1, _rt_msg_receive },          	MSG_RECEIVE },
-        { { 1, _rt_msg_receive_if },       	MSG_RECEIVE_IF },
-        { { 1, _rt_msg_receive_until },		MSG_RECEIVE_UNTIL },
-        { { 1, _rt_msg_receive_timed },		MSG_RECEIVE_TIMED },
-        { { 1, _rt_msg_broadcast },          	MSG_BROADCAST },
-        { { 1, _rt_msg_broadcast_if },       	MSG_BROADCAST_IF },
-        { { 1, _rt_msg_broadcast_until },	MSG_BROADCAST_UNTIL },
-        { { 1, _rt_msg_broadcast_timed }, 	MSG_BROADCAST_TIMED },
-        { { 1, _rt_msg_evdrp }, 		MSG_EVDRP },
+	{ { 1, rt_named_msgq_delete },		NAMED_MSGQ_DELETE },
+	{ { 1, _rt_msg_send },    	     	MSG_SEND },
+	{ { 1, _rt_msg_send_if },  	     	MSG_SEND_IF },
+	{ { 1, _rt_msg_send_until }, 		MSG_SEND_UNTIL },
+	{ { 1, _rt_msg_send_timed }, 		MSG_SEND_TIMED },
+	{ { 1, _rt_msg_receive },          	MSG_RECEIVE },
+	{ { 1, _rt_msg_receive_if },       	MSG_RECEIVE_IF },
+	{ { 1, _rt_msg_receive_until },		MSG_RECEIVE_UNTIL },
+	{ { 1, _rt_msg_receive_timed },		MSG_RECEIVE_TIMED },
+	{ { 1, _rt_msg_broadcast },          	MSG_BROADCAST },
+	{ { 1, _rt_msg_broadcast_if },       	MSG_BROADCAST_IF },
+	{ { 1, _rt_msg_broadcast_until },	MSG_BROADCAST_UNTIL },
+	{ { 1, _rt_msg_broadcast_timed }, 	MSG_BROADCAST_TIMED },
+	{ { 1, _rt_msg_evdrp }, 		MSG_EVDRP },
 	{ { 0, 0 },  		      		000 }
 };
 

@@ -81,17 +81,17 @@ public:
 	virtual ~Task();
 
 	virtual bool init(int stack_size,
-	                  int priority,
-	                  bool uses_fpu,
-	                  bool use_signal,
-	                  unsigned int cpuid);
+			  int priority,
+			  bool uses_fpu,
+			  bool use_signal,
+			  unsigned int cpuid);
 
 	virtual bool init(const char* name,
 			  int stack_size,
-	                  int priority,
-	                  bool uses_fpu,
-	                  bool use_signal,
-	                  unsigned int cpuid);
+			  int priority,
+			  bool uses_fpu,
+			  bool use_signal,
+			  unsigned int cpuid);
 
 
 	virtual bool init(const char* name);
@@ -117,9 +117,9 @@ public:
 	virtual int run() = 0;
 
 	bool is_valid();
-	
+
 	void inc_cpu_use();
-	void dump_cpu_use();	
+	void dump_cpu_use();
 protected:
 	int m_CpuUse[ CONFIG_RTAI_CPUS ];
 

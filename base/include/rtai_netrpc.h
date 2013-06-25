@@ -80,7 +80,7 @@
 #define OWNER(node, task) \
 	( (((unsigned long long)(node)) << 32)   | \
 	  (((unsigned long)(task)) & ADR_CNV_MSK) )
-	
+
 #define TSK_FRM_WNR(i)	((i) & 0xFFFFFFFF);
 
 #define WDW     3
@@ -508,18 +508,18 @@ static inline RT_TASK *RT_rpc_timed(unsigned long node, int port, RT_TASK *task,
 
 static inline int RT_isrpc(unsigned long node, int port, RT_TASK *task)
 {
-        if (node) {
-                struct { RT_TASK *task; } arg = { task };
-                return rt_net_rpc(PACKPORT(port, NET_RPC_EXT, ISRPC, 0), 0, &arg, SIZARG, 1, PARTYPES1(VADR)).i[LOW];
-        }
-        return rt_isrpc(task);
+	if (node) {
+		struct { RT_TASK *task; } arg = { task };
+		return rt_net_rpc(PACKPORT(port, NET_RPC_EXT, ISRPC, 0), 0, &arg, SIZARG, 1, PARTYPES1(VADR)).i[LOW];
+	}
+	return rt_isrpc(task);
 }
 
 static inline RT_TASK *RT_return(unsigned long node, int port, RT_TASK *task, unsigned long result)
 {
 	if (!task || !node) {
 		return rt_return(task, result);
-        }
+	}
 	return rt_return(rt_find_asgn_stub(OWNER(node, task), 1), result) ? task : 0;
 }
 
@@ -840,7 +840,7 @@ static inline int rt_waiting_return(unsigned long node, int port)
 static inline int rt_sync_net_rpc(unsigned long node, int port)
 {
 	if (node) {
-                struct { long dummy; } arg = { 0 };
+		struct { long dummy; } arg = { 0 };
 		struct { unsigned long fun; long type; void *args; long argsize; long space; unsigned long partypes; } args = { PACKPORT(abs(port), NET_RPC_EXT, SYNC_NET_RPC, 0), 0, &arg, SIZARG, 0, PARTYPES1(UINT) };
 		return rtai_lxrt(NET_RPC_IDX, SIZARGS, NETRPC, &args).i[LOW];
 	}
@@ -1118,7 +1118,7 @@ static inline RT_TASK *RT_send_timed(unsigned long node, int port, RT_TASK *task
 
 static inline RT_TASK *RT_evdrp(unsigned long node, int port, RT_TASK *task, void *msg)
 {
-        if (!task || !node) {
+	if (!task || !node) {
 		return rt_evdrp(task, msg);
 	}
 	return rt_evdrp(rt_find_asgn_stub(OWNER(node, task), 1), msg) ? task : 0;
@@ -1126,7 +1126,7 @@ static inline RT_TASK *RT_evdrp(unsigned long node, int port, RT_TASK *task, voi
 
 static inline RT_TASK *RT_receive(unsigned long node, int port, RT_TASK *task, void *msg)
 {
-        if (!task || !node) {
+	if (!task || !node) {
 		return rt_receive(task, msg);
 	}
 	return rt_receive(rt_find_asgn_stub(OWNER(node, task), 1), msg) ? task : 0;
@@ -1134,7 +1134,7 @@ static inline RT_TASK *RT_receive(unsigned long node, int port, RT_TASK *task, v
 
 static inline RT_TASK *RT_receive_if(unsigned long node, int port, RT_TASK *task, void *msg)
 {
-        if (!task || !node) {
+	if (!task || !node) {
 		return rt_receive_if(task, msg);
 	}
 	return rt_receive_if(rt_find_asgn_stub(OWNER(node, task), 1), msg) ? task : 0;
@@ -1142,7 +1142,7 @@ static inline RT_TASK *RT_receive_if(unsigned long node, int port, RT_TASK *task
 
 static inline RT_TASK *RT_receive_until(unsigned long node, int port, RT_TASK *task, void *msg, RTIME time)
 {
-        if (!task || !node) {
+	if (!task || !node) {
 		return rt_receive_until(task, msg, nano2count(time));
 	}
 	return rt_receive_until(rt_find_asgn_stub(OWNER(node, task), 1), msg, nano2count(time)) ? task : 0;
@@ -1150,7 +1150,7 @@ static inline RT_TASK *RT_receive_until(unsigned long node, int port, RT_TASK *t
 
 static inline RT_TASK *RT_receive_timed(unsigned long node, int port, RT_TASK *task, void *msg, RTIME delay)
 {
-        if (!task || !node) {
+	if (!task || !node) {
 		return rt_receive_timed(task, msg, nano2count(delay));
 	}
 	return rt_receive_timed(rt_find_asgn_stub(OWNER(node, task), 1), msg, nano2count(delay)) ? task : 0;
@@ -1209,7 +1209,7 @@ static inline int RT_isrpc(unsigned long node, int port, RT_TASK *task)
 static inline RT_TASK *RT_return(unsigned long node, int port, RT_TASK *task, unsigned long result)
 {
 
-        if (!task || !node) {
+	if (!task || !node) {
 		return rt_return(task, result);
 	}
 	return rt_return(rt_find_asgn_stub(OWNER(node, task), 1), result) ? task : 0;
@@ -1299,7 +1299,7 @@ static inline RT_TASK *RT_sendx_timed(unsigned long node, int port, RT_TASK *tas
 static inline RT_TASK *RT_returnx(unsigned long node, int port, RT_TASK *task, void *msg, int size)
 {
 
-        if (!task || !node) {
+	if (!task || !node) {
 		return rt_returnx(task, msg, size);
 	}
 	return rt_returnx(rt_find_asgn_stub(OWNER(node, task), 1), msg, size) ? task : 0;
@@ -1307,7 +1307,7 @@ static inline RT_TASK *RT_returnx(unsigned long node, int port, RT_TASK *task, v
 
 static inline RT_TASK *RT_evdrpx(unsigned long node, int port, RT_TASK *task, void *msg, int size, long *len)
 {
-        if (!task || !node) {
+	if (!task || !node) {
 		return rt_evdrpx(task, msg, size, len);
 	}
 	return rt_evdrpx(rt_find_asgn_stub(OWNER(node, task), 1), msg, size, len) ? task : 0;
@@ -1315,7 +1315,7 @@ static inline RT_TASK *RT_evdrpx(unsigned long node, int port, RT_TASK *task, vo
 
 static inline RT_TASK *RT_receivex(unsigned long node, int port, RT_TASK *task, void *msg, int size, long *len)
 {
-        if (!task || !node) {
+	if (!task || !node) {
 		return rt_receivex(task, msg, size, len);
 	}
 	return rt_receivex(rt_find_asgn_stub(OWNER(node, task), 1), msg, size, len) ? task : 0;
@@ -1323,7 +1323,7 @@ static inline RT_TASK *RT_receivex(unsigned long node, int port, RT_TASK *task, 
 
 static inline RT_TASK *RT_receivex_if(unsigned long node, int port, RT_TASK *task, void *msg, int size, long *len)
 {
-        if (!task || !node) {
+	if (!task || !node) {
 		return rt_receivex_if(task, msg, size, len);
 	}
 	return rt_receivex_if(rt_find_asgn_stub(OWNER(node, task), 1), msg, size, len) ? task : 0;
@@ -1331,7 +1331,7 @@ static inline RT_TASK *RT_receivex_if(unsigned long node, int port, RT_TASK *tas
 
 static inline RT_TASK *RT_receivex_until(unsigned long node, int port, RT_TASK *task, void *msg, int size, long *len, RTIME time)
 {
-        if (!task || !node) {
+	if (!task || !node) {
 		return rt_receivex_until(task, msg, size, len, nano2count(time));
 	}
 	return rt_receivex_until(rt_find_asgn_stub(OWNER(node, task), 1), msg, size, len, nano2count(time)) ? task : 0;
@@ -1339,7 +1339,7 @@ static inline RT_TASK *RT_receivex_until(unsigned long node, int port, RT_TASK *
 
 static inline RT_TASK *RT_receivex_timed(unsigned long node, int port, RT_TASK *task, void *msg, int size, long *len, RTIME delay)
 {
-        if (!task || !node) {
+	if (!task || !node) {
 		return rt_receivex_timed(task, msg, size, len, nano2count(delay));
 	}
 	return rt_receivex_timed(rt_find_asgn_stub(OWNER(node, task), 1), msg, size, len, nano2count(delay)) ? task : 0;

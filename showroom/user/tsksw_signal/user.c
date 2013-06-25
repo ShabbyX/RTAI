@@ -45,7 +45,7 @@ static void switch_handler(long signal, RT_TASK *task)
 {
 	static unsigned long cnt = 0, rpt = 1000000000/PERIOD;
 	if (++cnt > rpt) {
-	        rt_printk("# sw: %lu, tsk: %p, sig: %lu.\n", rpt, task, signal);
+		rt_printk("# sw: %lu, tsk: %p, sig: %lu.\n", rpt, task, signal);
 		rpt += 1000000000/PERIOD;
 	}
 }
@@ -75,7 +75,7 @@ int main(void)
 	rt_release_signal(SWITCH_SIGNAL, task);
 
 	rt_make_soft_real_time();
-	stop_rt_timer();	
+	stop_rt_timer();
 	rt_task_delete(task);
 
 	return 0;

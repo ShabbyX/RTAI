@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		    Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -89,9 +89,9 @@ class Fl_Scope : public Fl_Gl_Window
 		float getdx();
 		void trace_length(int);
 		int trace_length();
-		
+
 		void add_to_trace(int n, float val);
-		
+
 		void pause(int);
 		int pause();
 		void oneshot(int);
@@ -155,12 +155,12 @@ class Fl_Scope : public Fl_Gl_Window
 		float *Trace_Offset;
 		float *Trace_Width;
 		float *Trace_Offset_Value;
-	
+
  		trStat *Stats;
 		int *Data_Ptr;
-                float Prev_Val;
+		float Prev_Val;
 		float *DC_Val;
-                int Trigger_Mode;
+		int Trigger_Mode;
 		int Trigger;
 		rtPoint cursors[2];
 

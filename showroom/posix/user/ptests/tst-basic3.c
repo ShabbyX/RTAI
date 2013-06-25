@@ -87,8 +87,8 @@ do_test (void)
 #define EXPECTED_SIGNAL THE_SIGNAL
 int main(void)
 {
-        pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_HARD_REAL_TIME);
-        start_rt_timer(0);
-        do_test();
-        return 0;
+	pthread_setschedparam_np(0, SCHED_FIFO, 0, 0xF, PTHREAD_HARD_REAL_TIME);
+	start_rt_timer(0);
+	do_test();
+	return 0;
 }
