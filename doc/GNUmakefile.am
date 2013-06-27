@@ -1,4 +1,4 @@
-SUBDIRS=docbook doxygen
+SUBDIRS=docbook doxygen guide
 
 EXTRA_DIST=maintainers \
 	User-Manual.txt \

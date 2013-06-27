@@ -1205,6 +1205,49 @@ DBX_ROOT="$CONFIG_RTAI_DBX_ROOT"
 DBX_XSL_ROOT="$CONFIG_RTAI_DBX_XSL_ROOT"
 DBX_DOC_INIT(doc/docbook, doc/generated, 4.2)
 
+AC_MSG_CHECKING(for Pandoc guide)
+AC_ARG_ENABLE(pandoc,
+	[ --enable-pandoc	Build Pandoc guide],
+	[case "$enableval" in
+	y | yes) CONFIG_RTAI_GUIDE=y ;;
+	*) unset CONFIG_RTAI_GUIDE ;;
+	esac])
+
+if test \! -d $srcdir/doc/guide; then
+    if test x$CONFIG_RTAI_GUIDE = xy ;
+    then
+	AC_MSG_ERROR([guide tree is missing.])
+    fi
+    AC_MSG_RESULT([not present])
+else
+    AC_MSG_RESULT(${CONFIG_RTAI_GUIDE:-no})
+fi
+
+AC_CHECK_PROG(PANDOC, pandoc, pandoc)
+
+if test x${CONFIG_RTAI_GUIDE} = xy -a x"$PANDOC" = x; then
+   AC_MSG_ERROR([Missing the Pandoc tool to generate the RTAI guide.])
+fi
+
+AC_MSG_CHECKING(pandoc version)
+if test x"$PANDOC" != x; then
+   pandoc_version=`"$PANDOC" --version | head -1 | cut -d ' ' -f 2`
+fi
+AC_MSG_RESULT(${pandoc_version:-not installed})
+
+if test x${CONFIG_RTAI_GUIDE} = xy
+then
+   pandoc_version_number=`echo $pandoc_version | sed 'y,., ,' | {
+	read pandoc_major pandoc_minor pandoc_rev pandoc_patch
+	expr $pandoc_major \* 10000 + $pandoc_minor \* 100 + $pandoc_rev
+   }`
+dnl must check later which minimum version is acceptable
+#   if test $pandoc_version_number -lt 10901
+#   then
+#	AC_MSG_ERROR([Pandoc version 1.9.1 or higher is needed.])
+#   fi
+fi
+
 AC_MSG_CHECKING(whether using LaTeX non-stop mode)
 AC_ARG_ENABLE(verbose-latex,
         [ --enable-verbose-latex Uses LaTeX non-stop mode],
@@ -1700,6 +1743,7 @@ AM_CONDITIONAL(CONFIG_RTAI_MATH_C99,[test "$CONFIG_RTAI_MATH_C99" = y])
 dnl Documentation
 AM_CONDITIONAL(CONFIG_RTAI_DOX_DOC,[test "$CONFIG_RTAI_DOX_DOC" = y])
 # Automake variables related to DocBook documentation are handled in docbook.m4.
+AM_CONDITIONAL(CONFIG_RTAI_GUIDE,[test "$CONFIG_RTAI_GUIDE" = y])
 
 dnl Maintenance symbols and profiles
 AM_CONDITIONAL(CONFIG_RTAI_MAINTAINER,[test "$CONFIG_RTAI_MAINTAINER" = y])
@@ -2138,6 +2182,7 @@ if test \! x$RTAI_MAYBE_DOCDIR = x; then
 	   doc/docbook/custom-stylesheets/xsl/html/GNUmakefile \
 	   doc/docbook/custom-stylesheets/xsl/html/chunk.xsl \
 	   doc/docbook/docbook-test/GNUmakefile \
+	   doc/guide/GNUmakefile \
       ])
 fi
 

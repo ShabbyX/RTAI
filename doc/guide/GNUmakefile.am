@@ -1,0 +1,6 @@
+all-local:
+if CONFIG_RTAI_GUIDE
+	@echo Making guide
+else
+	@echo Not making guide
+endif
