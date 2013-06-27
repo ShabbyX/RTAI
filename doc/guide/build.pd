@@ -1,0 +1,47 @@
+Building RTAI
+=============
+
+TODO:
+
+1. [Build the Kernel](#Building the Kernel)
+2. [Build RTAI](#Building RTAI)
+
+Building the Kernel
+-------------------
+
+TODO: supported kernels
+TODO: patching the kernel
+
+### Configuring the Kernel
+
+TODO: options that must exist or must not.  Make sure to include which kernel versions that option is relevant to.
+
+### Build and Installation of the Kernel
+
+TODO:
+
+1. `$ make`
+2. `$ sudo make modules_install install`
+
+Building RTAI
+-------------
+
+TODO: Prerequisites
+
+Restart to new kernel before continuing.
+
+### Configuring RTAI
+
+TODO: `make menuconfig` or other config modes (Note: other config modes are present only in the unofficial version at
+<https://github.com/ShabbyX/RTAI>)
+
+TODO: explain the most important configurations
+
+TODO: talk about less important configuration that still shouldn't be ignored and left to default
+
+### Build and Installation of RTAI
+
+TODO:
+
+1. `$ make`
+2. `$ sudo make install`

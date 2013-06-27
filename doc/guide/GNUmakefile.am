@@ -1,6 +1,4 @@
 all-local:
 if CONFIG_RTAI_GUIDE
-	@echo Making guide
-else
-	@echo Not making guide
+	pandoc -o guide.html introduction.pd requirements.pd build.pd testing.pd examples.pd
 endif
