@@ -56,3 +56,11 @@ config RTAI_DBX_XSL_ROOT
 	help
 	Specify the DocBook XML XSL root. Leave blank to let configure try the
 	"well-known" locations.
+
+config RTAI_GUIDE
+	bool "Build RTAI guide"
+	default n
+	help
+	This option causes the Pandoc-based RTAI guide to be built.
+	The guide is not completed yet and its output format not decided.
+	You will need the Pandoc toolsuite for regenerating the guide.
