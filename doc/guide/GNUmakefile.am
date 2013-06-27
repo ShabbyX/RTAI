@@ -1,4 +1,4 @@
 all-local:
 if CONFIG_RTAI_GUIDE
-	pandoc -o guide.html introduction.pd requirements.pd build.pd testing.pd examples.pd
+	pandoc -o guide.html introduction.pd requirements.pd build.pd testing.pd examples.pd troubleshooting.pd
 endif

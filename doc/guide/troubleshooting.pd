@@ -1,0 +1,26 @@
+Troubleshooting
+===============
+
+TODO
+
+Known Issues
+------------
+
+TODO
+
+- Calling `rt_thread_create` from multiple threads with the same name causes a crash
+
+FAQ
+---
+
+TODO
+
+### Creating too many objects causes a crash
+You need to increase the number of allowable objects.  During configuration, this is in
+
+    Base System --> Scheduling Options --> Number of registrable RTAI objects
+
+How to Debug
+------------
+
+TODO
