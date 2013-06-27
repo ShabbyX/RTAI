@@ -1,151 +1,10 @@
 mainmenu "RTAI/x86_64 configuration"
 
-config MODULES
-	bool
-	default y
-
-config RTAI_VERSION
-	string
-	default "magma"
+source "base/arch/Kconfig.hidden"
 
 menu "General"
 
-config RTAI_INSTALLDIR
-	string "Installation directory"
-	default "/usr/realtime"
-
-	help
-	This option defines the directory where the various RTAI
-	files will be installed on your target system.
-
-	This directory may be changed if you double-click in the area
-	named "Value". The default installation directory is
-	/usr/realtime.
-
-config RTAI_LINUXDIR
-	string "Linux source tree"
-	default "/usr/src/linux"
-	help
-	This variable contains the directory of your previously
-	patched Linux kernel. As explained before, you can changed the
-	value of the Linux source tree which is fixed by default to
-	/usr/src/linux.
-
-menu "RTAI Documentation"
-
-config RTAI_DOX_DOC
-	bool "Build RTAI Doxygen documentation (HTML)"
-	default n
-	help
-	This option causes the Doxygen-based RTAI documentation to be
-	built. This option is intended for people actually writing
-	documentation and who want to update the pre-built manuals,
-	regular users can just use the latter directly. You will need
-	the Doxygen toolsuite for regenerating the documentation.
-
-config RTAI_DOC_LATEX_NONSTOP
-	bool "Enable LaTeX verbose output"
-	default n
-	help
-	By default, all documentation generated with LaTeX uses the
-	silent (batchmode) of LaTeX. If this option is enabled, the
-	verbose (nonstopmode) of LaTeX will be used instead. This
-	option is mainly intended for people writing RTAI
-	documentation.
-
-config RTAI_DBX_DOC
-	bool "Build DocBook XML documentation (HTML/PDF)"
-	default n
-	help
-	This option causes the DocBook XML based RTAI documentation to be
-	built. This option is intended for people actually writing
-	documentation and who want to update the pre-built manuals,
-	regular users can just use the latter directly.
-
-config RTAI_DBX_NET
-	bool "Let the DocBook XML tools use network"
-	depends on RTAI_DBX_DOC
-	default n
-	help
-	Let the DocBook tools use internet to fetch the DTD and XSL stylesheets.
-	If disabled, the documentation generation will fail if the necessary
-	DTD(s) and XSL stylesheets can not be found on the local computer.
-
-config RTAI_DBX_ROOT
-	string "Docbook XML root"
-	depends on RTAI_DBX_DOC
-	default ""
-	help
-	Specify the DocBook XML root (that is, the directory where docbook.dtd
-	should be taken). Leave blank to let configure try the "well-known"
-	locations.
-
-config RTAI_DBX_XSL_ROOT
-	string "Docbook XML XSL stylesheet root"
-	depends on RTAI_DBX_DOC
-	default ""
-	help
-	Specify the DocBook XML XSL root. Leave blank to let configure try the
-	"well-known" locations.
-
-endmenu
-
-config RTAI_TESTSUITE
-	bool "Build RTAI testsuite"
-	default y
-	help
-	Once you are done with the building process of RTAI, it may be
-	safe to run the testsuite to make sure your RTAI system is
-	functional.
-
-config RTAI_COMPAT
-	bool "Enable source compatibility mode"
-	default y
-	help
-	This option allows to preserve the compatibility between
-	applications issued from the 24.1.x version of RTAI and the
-	3.x branch.  This way, no adaptation in the header files is
-	required.
-
-config RTAI_EXTENDED
-	bool "Enable extended configuration mode"
-	default n
-	help
-	Allows some configuration parameters in the Hardware
-	Abstraction Layer or the schedulers.
-
-config RTAI_KMOD_DEBUG
-	bool "Enable debug symbols in modules"
-	depends on RTAI_EXTENDED
-	default n
-	help
-	This options adds the -g flag when compiling
-	kernel modules.
-
-config RTAI_USER_DEBUG
-	bool "Enable debug symbols in user-space programs"
-	depends on RTAI_EXTENDED
-	default n
-	help
-
-	This options adds the -g flag when compiling user-space
-	programs. LXRT inlining is also implicitely disabled.
-
-config RTAI_MAINTAINER
-	bool "Enable maintainer mode"
-	depends on RTAI_EXTENDED
-	default n
-	help
-
-	This option will activate the '--enable-maintainer-mode'
-	option in the configure scripts. For more information, refer
-	to the autoconf documentation:
-	http://sources.redhat.com/autobook/autobook/autobook_26.html#SEC26
-
-config RTAI_MAINTAINER_AUTOTOOLS
-	bool "Enable Autoconf/Automake maintainer mode"
-	depends on RTAI_MAINTAINER
-	default n
+source "base/arch/Kconfig.general"
 
 choice
 	optional
@@ -159,7 +18,6 @@ config RTAI_MAINTAINER_PMA
 	bool "Use settings from mantegazza()aero!polimi!it"
 
 endchoice
-
 choice
 	prompt "Inlining mode of user-space services"
 	depends on RTAI_EXTENDED
@@ -300,9 +158,7 @@ menu "Scheduler options"
 
 	depends on RTAI_EXTENDED
 
-config RTAI_SCHED_ISR_LOCK
-	bool "Disable rescheduling from ISRs"
-	default n
+source "base/arch/Kconfig.sched"
 
 config RTAI_SCHED_8254_LATENCY
 	string "8254 tuning latency (ns)"
@@ -312,40 +168,11 @@ config RTAI_SCHED_APIC_LATENCY
 	string "APIC tuning latency (ns)"
 	default 3944
 
-config RTAI_SCHED_LXRT_NUMSLOTS
-	string "Number of LXRT slots"
-	default 100
-
 endmenu
 
 menu "IPC support"
 
-config RTAI_BITS
-	tristate "Event flags"
-	default m
-	help
-	Event flags are used to synchronize a task with the occurrence
-	of multiple events. This synchronization may be disjunctive
-	when any of the events have occurred or conjunctive when all
-	events have occured. The former corresponds to a logical OR
-	whereas the latter is associated to a logical AND.  Their use
-	is similar to semaphores' except that signal/waits are not
-	related to just a simple counter but depends on the
-	combination of set of bits.
-	The module will be called rtai_bits.o.
-
-config RTAI_FIFOS
-	tristate "Fifo"
-	default m
-	help
-	Originally fifos were used to allow communication between
-	kernel-space modules and user-space application. Even if
-	fifos are strictly no more required in RTAI, because of the
-	availability of LXRT, fifos are kept for both compatibility
-	reasons and because they are very useful tools to be used to
-	communicate with interrupt handlers, since they do not require
-	any scheduler to be installed.
-	The module will be called rtai_fifos.o.
+source "base/arch/Kconfig.services"
 
 config RTAI_NETRPC
 	tristate "Net RPC"
@@ -381,135 +208,11 @@ config RTAI_SHM
 	Linux processes.
 	The module will be called rtai_shm.o.
 
-config RTAI_SEM
-	tristate "Semaphores"
-	default m
-	help
-
-	A semaphore is a protocol mechanism offered to:
-	  - control access to a shared resource (mutual exclusion);
-	  - signal the occurrence of an event;
-	  - allow two tasks to synchronize their activities.
-
-	Resource semaphores can be recursively nested and support full
-	priority inheritance, both among semaphore resources and
-	intertask messages, for a singly owned resource.
-
-	Priority inheritance becomes an adaptive priority ceiling when
-	a task owns multiple resources, including messages sent to it.
-	Both binary and counting semaphores are able to queue tasks
-	either in FIFO or priority order and this can be chosen
-	dynamically at run time.
-
-	The module will be called rtai_sem.o.
-
-config RTAI_MSG
-	tristate "Message"
-	default m
-	help
-	The module will be called rtai_msg.o.
-
-config RTAI_MBX
-	tristate "Mailboxes"
-	depends on RTAI_SEM
-	default y if RTAI_SEM=y
-	default m if RTAI_SEM=m
-	help
-
-	A mailbox corresponds to a pointer-size variable which is
-	associated to a service provided by the kernel. It allows a
-	task or an ISR to deposit a message (the pointer) into this
-	mailbox.
-
-	The RTAI mailbox implementation is very flexible as it allows
-	to send any message size by using any mailbox buffer
-	size. They are based on the First In First Out (FIFO)
-	principle and on Last In First Out (LIFO) for urgent delivery.
-
-	Mailboxes depend on semaphores.
-
-	The module will be called rtai_mbx.o.
-
-
-config RTAI_TBX
-	tristate "Typed mailboxes"
-	depends on RTAI_SEM
-	default y if RTAI_SEM=y
-	default m if RTAI_SEM=m
-	help
-
-	Typed mailboxes (TBX) are an alternative to the default RTAI
-	mailboxes. They offer:
-
-	1- message broadcasting allowing to send a message to all the
-	   tasks that are pending on the same TBX;
-
-	2- urgent sending of messages: these messages are not
-	   enqueued, but inserted in the head of the queue, bypassing all
-	   the other messages already present in TBX;
-
-	3- a priority or fifo wakeup policy that may be set at runtime
-	when creating the typed mailbox.
-
-	Typed mailboxes depend on semaphores.
-
-	The module will be called rtai_tbx.o.
-
-
-config RTAI_MQ
-	tristate "POSIX-like message queues"
-	depends on RTAI_SEM
-	default y if RTAI_SEM=y
-	default m if RTAI_SEM=m
-
-	help
-	RTAI pqueues implements the message queues section
-	of the Posix 1003.1d API. They provide kernel-safe message
-	queues.	Message queues depend on semaphores.
-
-	The module will be called rtai_mq.o.
-
 endmenu
 
 menu "Other features"
 
-config RTAI_MATH
-	bool "Math support"
-	depends on RTAI_FPU_SUPPORT
-	default y
-
-config RTAI_MATH_C99
-	bool "C99 standard support"
-	depends on RTAI_MATH
-	default n
-
-config RTAI_MALLOC
-	tristate "Real-time malloc support"
-	default y
-	help
-	RTAI provides a real-time implementation of malloc().
-	This allows real-time tasks to allocate and to
-	free memory safely whilst executing in the real-time domain.
-	The module will be called rtai_malloc.o.
-
-config RTAI_MALLOC_VMALLOC
-	bool "Use vmalloc() support"
-	depends on RTAI_EXTENDED && RTAI_MALLOC
-	default n
-	help
-	RTAI's malloc support offers two different ways to allocate
-	memory chunks.
-
-	The reasons for using vmalloc:
-	- it is simpler to share allocated buffers with user space;
-	- it doesn't have the size restriction of kmalloc.
-
-	The reasons for using kmalloc:
-	- it is faster;
-	- it exhibits contiguous buffer addressing needed for DMA
-	  controllers which don't have scattering/gathering capability.
-
-	The default is using kmalloc()
+source "base/arch/Kconfig.other"
 
 config RTAI_MALLOC_HEAPSZ
 	string "Size of the global heap (Kbytes)"
@@ -519,36 +222,6 @@ config RTAI_MALLOC_HEAPSZ
 	RTAI pre-allocates a global heap as part of its initialization
 	chores. This parameter allows to define its size (in
 	kilobytes).
-
-config RTAI_TASKLETS
-	tristate "Tasklets"
-	default m
-	help
-
-	The tasklets module adds an interesting new feature along the
-	line, pioneered by RTAI, of a symmetric usage of all its
-	services inter-intra kernel and user space for both soft and
-	hard real-time. The new services provided can be useful when
-	you have many tasks, both in kernel and user space, that must
-	execute in hard real-time but do not need any RTAI scheduler
-	services that could lead to a task block.
-
-	Such tasks are called tasklets and can be of two kinds:
-	- a simple tasklet;
-	- timed tasklets (timers).
-
-	The tasklets implementation of timed tasklets relies on a
-	server support task that executes the related timer functions,
-	either in oneshot or periodic mode, on the base of their time
-	deadline and according to their user assigned priority.
-
-	As explained above, plain tasklets are just functions executed
-	from kernel space. Their execution needs no server and is
-	simply triggered by calling the user specified tasklet
-	function at due time, either from a kernel task or interrupt
-	handler in charge of their execution when they are needed.
-
-	The module will be called rtai_tasklets.o.
 
 config RTAI_TRACE
 	bool "LTT support"
@@ -586,40 +259,6 @@ config RTAI_USI
 
 	The module will be called rtai_usi.o.
 
-
-config RTAI_WD
-	bool "Watchdog support"
-	default y
-	help
-
-	The purpose of the watchdog is to provide protection services
-	to RTAI thereby protecting it (and the host Linux OS) against
-	programming errors in RTAI applications.
-
-	The RTAI module and a scheduler should be mounted to use the
-	watchdog and once mounted, it will constantly monitor periodic
-	real-time tasks that already exist, or that are created later.
-	However this feature is optional and it is assumed that your
-	RTAI applications are well behaved so that RTAI should behave
-	the same whether or not you have the watchdog mounted. The
-	overhead imposed by the watchdog depends on the speed that you
-	run it, but in most cases should be minimal.
-
-	The following watchdog policies are possible:
-	- do nothing other than log some messages and keep a record of
-	  the bad task;
-	- resynchronise the task's frame time and nothing more;
-	- debug policy which is a special case of the above
-	  resynchronisation policy;
-	- stretch the period of the offending task until it no longer
-	  overruns;
-	- slip the offending task by forcibly suspending it for a
-	  percentage of its period;
-	- suspend the offending task so that it no longer threaten the system;
-	- kill the offending task and remove all traces.
-
-	The module will be called rtai_wd.o.
-
 config RTAI_LEDS
 	tristate "LEDS-based debugging support"
 	default m
@@ -632,6 +271,8 @@ endmenu
 endmenu
 
 menu "Add-ons"
+
+source "base/arch/Kconfig.addons"
 
 config RTAI_COMEDI_LXRT
 	bool "Comedi support over LXRT"
@@ -657,16 +298,6 @@ config RTAI_COMEDI_DIR
 	directory here. More specifically, RTAI needs the file
 	linux/comedilib.h.
 
-config RTAI_CPLUSPLUS
-	bool "In-kernel C++ support"
-	default y
-	help
-
-	RTAI offers a C++ framework if you want to develop C++
-	real-time applications.
-
-	The module will be called rtai_cpp.o.
-
 config RTAI_SERIAL
 	bool "Serial line driver"
 	default y
@@ -680,30 +311,8 @@ endmenu
 
 menu "RTAI Lab"
 
-config RTAI_LAB
-	bool "RTAI Lab"
-	default n
-	help
-
-	RTAI-Lab is a tool that allows the execution of any suite of
-	real-time controllers/simulators automatically generated by
-	Matlab/Simulink/RTW, hereafter addressed as RTW, and/or
-	Scilab/Scicos/CodeGen, addressed as SCICOS:
-	- in a local/remote/distributed way,
-	- by monitoring their local/remote/distributed execution,
-	- by changing their parameters on the fly for performance supervision,
-	  monitoring, tuning and optimisation.
-
-config RTAI_EFLTK_DIR
-	depends on RTAI_LAB
-	string "EFLTK installation directory"
-	default "/usr/local"
-	help
-
-	You need the Extended Fast Light Toolkit (EFLTK) to build
-	RTAILab. You can set the path to this package's installation
-	directory here.
+source "base/arch/Kconfig.lab"
 
 endmenu
 
-source rtai-sim/Kconfig
+source "rtai-sim/Kconfig"

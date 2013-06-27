@@ -1,0 +1,74 @@
+#
+# Other features
+#
+
+config RTAI_MATH
+	bool "Mathfuns support in kernel"
+	depends on RTAI_FPU_SUPPORT
+	default y
+	help
+	This parameter allows buiding a module containing math support
+	functions for kernel space. It might be useful to avoid fighting
+	for the use of libc within the kernel.
+
+config RTAI_MATH_C99
+	bool "C99 standard support"
+	depends on RTAI_MATH
+	default n
+
+config RTAI_MALLOC
+	tristate "Real-time malloc support"
+	default y
+	help
+	RTAI provides a real-time implementation of malloc(). This allows
+	real-time tasks to allocate and free memory safely while executing
+	in the real-time domain. If it is not enabled kernel's kmalloc will
+	be used. So disabling this option is acceptable if you'll care
+	to do any allocation while in Linux context only, i.e. at modules
+	initialisation.
+	The module will be called rtai_malloc.o.
+
+config RTAI_MALLOC_VMALLOC
+	bool "Use vmalloc() support"
+	depends on RTAI_MALLOC
+	default y
+	help
+	RTAI's malloc support offers two different ways to allocate memory
+	chunks, i.e. kmalloc and vmalloc.
+	The reasons for using vmalloc:
+	- it is simpler to share allocated buffers with user space;
+	- it doesn't have the size restrictions of kmalloc.
+	The reasons for using kmalloc:
+	- it is faster (not important since it as to be used in soft real time);
+	- it exhibits contiguous buffer addressing needed for DMA controllers
+	  which don't have scattering/gathering capability.
+	The default is using kmalloc()
+
+config RTAI_WD
+	bool "Watchdog support"
+	default n
+	help
+	The purpose of the watchdog is to provide protection services
+	to RTAI thereby protecting it (and the host Linux OS) against
+	programming errors in RTAI applications.
+	The RTAI module and a scheduler should be mounted to use the
+	watchdog and once mounted, it will constantly monitor periodic
+	real-time tasks that already exist, or that are created later.
+	However this feature is optional and it is assumed that your
+	RTAI applications are well behaved so that RTAI should behave
+	the same whether or not you have the watchdog mounted. The
+	overhead imposed by the watchdog depends on the speed that you
+	run it, but in most cases should be minimal.
+	The following watchdog policies are possible:
+	- do nothing other than log some messages and keep a record of
+	  the bad task;
+	- resynchronise the task's frame time and nothing more;
+	- debug policy which is a special case of the above
+	  resynchronisation policy;
+	- stretch the period of the offending task until it no longer
+	  overruns;
+	- slip the offending task by forcibly suspending it for a
+	  percentage of its period;
+	- suspend the offending task so that it no longer threaten the system;
+	- kill the offending task and remove all traces.
+	The module will be called rtai_wd.o.
