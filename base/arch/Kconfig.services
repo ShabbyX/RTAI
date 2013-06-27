@@ -1,0 +1,152 @@
+#
+# IPC and other service configuration
+#
+
+config RTAI_BITS
+	tristate "Event flags"
+	default m
+	help
+	Event flags are used to synchronize a task to the occurrence of
+	multiple events. RTAI uses the term "bits" to stress the fact that
+	events are just logical objects, i.e. a kind of digital I/O,
+	nothing else being associated to them, e.g a count.
+	So any synchronization based on them may be disjunctive, when any
+	of the events have occurred, or conjunctive, when all events have
+	occured. The former corresponds to a logical OR whereas the latter
+	is associated to a logical AND. Their use is similar to semaphores
+	except that signal/waits are not related to just a simple counter
+	but depends on the combination of set of bits.
+	The module will be called rtai_bits.o.
+
+config RTAI_FIFOS
+	tristate "Fifo"
+	default m
+	help
+	Originally fifos were used to allow communication between
+	kernel-space modules and user-space application. Even if fifos are
+	strictly no more required in RTAI, because of the native availability
+	of symmetric inter/intra kernel RTAI services, fifos are kept both
+	for compatibility reasons and because they are very useful tools to be
+	used to communicate with interrupt handlers only based applications,
+	since they do not require any scheduler to be installed.
+	The module will be called rtai_fifos.o.
+
+config RTAI_SEM
+	tristate "Semaphores"
+	default m
+	help
+	A semaphore is a protocol mechanism offered to:
+	  - control access to a shared resource (mutual exclusion);
+	  - signal the occurrence of an event;
+	  - allow two tasks to synchronize their activities.
+	Resource semaphores can be recursively nested and support full
+	priority inheritance, both among semaphore resources and
+	intertask messages, for a singly owned resource.
+	Priority inheritance becomes an adaptive priority ceiling when
+	a task owns multiple resources, including messages sent to it.
+	Both binary and counting semaphores are able to queue tasks
+	either in FIFO or priority order and this can be chosen
+	dynamically at run time.
+	The module will be called rtai_sem.o.
+
+config RTAI_MSG
+	tristate "Message"
+	default m
+	help
+	Direct synchronization by direct interask messaging, either as fast
+	single unsigned long messages or as extended arbitrarely sized
+	messages. Both async and sync messages with replies can be used.
+	QNX styled APIs are also available. Blocking messages exploit priority
+	inheritance, which becomes a dynamic ceiling when inheritances are
+	mixed with resource sems.
+	The module will be called rtai_msg.o.
+
+config RTAI_MBX
+	tristate "Mailboxes"
+	depends on RTAI_SEM
+	default y if RTAI_SEM=y
+	default m if RTAI_SEM=m
+	help
+	A mailbox corresponds to a pointer-size variable which is
+	associated to a service provided by the kernel. It allows a
+	task or an ISR to deposit a message (the pointer) into this
+	mailbox.
+	The RTAI mailbox implementation is very flexible as it allows
+	to send any message size by using any mailbox buffer
+	size. They are based on the First In First Out (FIFO)
+	principle and on Last In First Out (LIFO) for urgent delivery.
+	Mailboxes depend on semaphores.
+	The module will be called rtai_mbx.o.
+
+config RTAI_TBX
+	tristate "RTAI message queues and typed mailboxes"
+	depends on RTAI_SEM
+	default y if RTAI_SEM=y
+	default m if RTAI_SEM=m
+	help
+	RTAI message queues (msgq) are intertask processor messages that allow
+	exchanging prioritised messages of anysize. Broadcasting of messages
+	to all the waiing tasks is also possible.
+	Legacy typed mailbox (TBX) services are recovered by using RTAI msgqs
+	and afford a precanned example of their use offering:
+	1 - message broadcasting allowing to send a message to all the tasks
+	   that are pending on the same TBX;
+	2 - urgent sending of messages: these messages are not enqueued, but
+	    inserted in the head of the queue, bypassing all the other
+	    messages already present in TBX;
+	3 - a priority or fifo wakeup policy that may be set at runtime when
+	    creating the typed mailbox.
+	Typed mailboxes depend on semaphores.
+	The module will be called rtai_tbx.o.
+
+config RTAI_MQ
+	tristate "POSIX-like message queues"
+	depends on RTAI_SEM
+	default y if RTAI_SEM=y
+	default m if RTAI_SEM=m
+	help
+	RTAI pqueues implements the message queues section of Posix 1003.1d.
+	They provide kernel-safe message queues. Message queues depend on
+	semaphores.
+	The module will be called rtai_mq.o.
+
+config RTAI_TASKLETS
+	tristate "Tasklets"
+	default m
+	help
+	The tasklets module adds an interesting new feature along the
+	line, pioneered by RTAI, of a symmetric usage of all its
+	services inter-intra kernel and user space for both soft and
+	hard real-time. The new services provided can be useful when
+	you have many tasks, both in kernel and user space, needing to
+	execute specific functions. Such functions are called tasklets
+	and can be of two kinds:
+	- a simple tasklet;
+	- timed tasklets (timers).
+	The tasklets implementation of timed tasklets relies on a
+	server support task that executes the related timer functions,
+	either in oneshot or periodic mode, on the base of their time
+	deadline and according to their user assigned priority.
+	As explained above, plain tasklets are just functions executed
+	depending on user defined events. Their execution needs no server
+	and is simply triggered by calling the user specified tasklet
+	function at due time, either from a kernel task or interrupt
+	handler in charge of their execution when they are needed.
+	The module will be called rtai_tasklets.o.
+
+	There are special signals tasklets also, natively built in always.
+	They are much the same as tasklets and execute their handler
+	function whenever they are triggered by any task, including their
+	parent task. The notable difference against tasklets is that the
+	task they serve is blocked till any of its signal handler is
+	executing. So they behave as standard signal handlers but without
+	the need to restart a blocked signalled task, since there is no
+	need to have it resumed to catch a signal. In fact signals can be
+	seen as much as software generated interrupts. See their APIs
+	documentation in the code.
+	The module will be called rtai_signal.o.
+
+	Notice that, if the module version is chosen, this option activates
+	the making of two different modules. At the moment the related
+	services from user space are seen as LXRT expansions using slots
+	1 and 2 respectively.
