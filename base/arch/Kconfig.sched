@@ -16,8 +16,146 @@ config RTAI_SCHED_ISR_LOCK
 	called within the handler, should disable immediate rescheduling
 	from ISRs by enabling this configuration option.
 
+config RTAI_LONG_TIMED_LIST
+	bool "Use a binary tree ordering for RTAI schedulers timed lists."
+	default n
+	help
+	RTAI schedulers use a simple ordered linear list for suspended timed
+	tasks by default. By enabling this option a binary sort type ordering
+	is used. Such a scheme requires far less, albeit far more complex,
+	operations to set up a time ordered list of wake up times. So when
+	one has not so many tasks on the timed lists this option might not
+	be worth having. The actual threshold value depends on many factors,
+	CPU power being the main one. So it is up to you to make a choice.
+	If you have many tens or even hundred(s) of timed tasks then it is
+	likely that it might be worth enabling this option.
+
+config RTAI_SCHED_APIC_LATENCY
+	string "APIC tuning latency (ns)"
+	default 3944
+	help
+	The anticipation time to be used to program the hard timer, in oneshot
+	mode, for the next scheduling shot in order to compensate for the
+	programming overhead needed to determine the right firing time.
+	This parameter has no effect when the periodic mode is used.
+
 config RTAI_SCHED_LXRT_NUMSLOTS
 	string "Number of registrable RTAI objects"
 	default 150
 	help
 	The maximum number of registrable objects in RTAI.
+
+config RTAI_MONITOR_EXECTIME
+	bool "Display RTAI task execution time (per thousand)"
+	default y
+	help
+	If this option is enabled, RTAI will keep track of time consumed by
+	hard real time tasks.
+
+	** Since this option uses the TSC it is better to avoid it in production
+	for x86_32 CPUs not having TSCs, i.e. 486s and some untrue 586s. **
+
+	This option also enables display of execution time of tasks, per thousand
+	of the total time available, in the output of the RTAI scheduler proc file,
+	e.g. "cat /proc/rtai/scheduler".
+
+config RTAI_ALLOW_RR
+	bool "Allow round-robin scheduling"
+	default y
+	help
+	By enabling this option it is possible to use round robin scheduling
+	in RTAI, after enabling such a mode on a task by task basis through a
+	call to a suitable scheduler function.
+
+config RTAI_FULL_PRINHER
+	bool "Enable full priority inheritance"
+	default n
+	help
+	In RTAI resource semaphores, aka mutexes, support two ways to
+	manage priority inheritance, both for resource semaphores and
+	intertask messages, blocked sent or rpced, to a task owning any
+	resource semaphore already. Notice in fact that the task itself
+	becomes a kind of "de facto" resource when any task blocks on it
+	to exchange messages.
+	Without enabling this option a task owning any resource will
+	recover its base priority only when it releases the very last
+	resource it owns. So full priority inheritance will work as
+	it is usually expected for a singly owned resource only because,
+	whenever a task achieves the ownership of more than one resource,
+	priority inheritance will become an adaptive dynamic priority
+	ceiling. In such a case in fact the task priority is increased
+	according to the highest priority task waiting on any resource
+	a task owns, itself included because of messages being exchanged
+	with it, but it will be returned to its base priority only when all
+	owned resources are released. This is a compromise design choice
+	aimed at avoiding searches for the new priority to be inheredited
+	across multiply owned resources and blocked tasks send/rpcing to
+	the task.
+	By enabling this configuration option instead you'll allow full
+	priority inheritance, so that when a task releases any resource
+	semaphore it owns it will acquire the priority of the most prioritary
+	task, either waiting on any resource semaphore that it is still
+	owned by the task or blocked send/rpcing to it.
+	The choice is dependent on your needs mostly. Just take into account
+	that the default dynamic priority ceiling is simpler, a bit more
+	effective and less deadlock prone than full priority inheritance.
+
+config RTAI_BUSY_TIME_ALIGN
+	bool "Busy wait to ensure resume time alignment"
+	default n
+	help
+	In oneshot mode there is a calibrated anticipation of the timer
+	firing to compensate for the time consumed in scheduling.
+	Sometimes, either because of a bad calibration or purposely, it is
+	possibile to anticipate the scheduling by setting a larger than needed
+	anticipation. In such cases with this option one can be sure to
+	achieve the desired scheduling time at the expense of waisting
+	processor time. Useful when there is enough computational power to
+	waist in favour of precise schedule deadlines.
+	Do not set it if a hard periodic timer is to be used.
+
+config RTAI_ALIGN_LINUX_PRIORITY
+	bool "Keep Linux task priority aligned to RTAI"
+	default n
+	help
+	By enabling this option the RTAI scheduler will keep Linux tasks
+	execution priority aligned to its. Naturally this makes sense
+	either for Linux soft real time tasks enabled to use RTAI APIs,
+	i.e. they issued rt_task_init/rt_task_init_schmod, or when RTAI
+	hard real time tasks are given back to Linux.
+
+config RTAI_ONE_SHOT
+	bool "One-shot timer mode"
+	default n
+	help
+	Set to enable one-shot timer mode as the default. If not set, the
+	hard timer will run in periodic mode according to the period used
+	in start_rt_timer().
+	Notice that whatever the default setting chosen it is possible to
+	override it by specifically calling either rt_set_oneshot_mode() or
+	rt_set_periodic_mode() at run time.
+
+config RTAI_CAL_FREQS_FACT
+	string "Cure loosely calibrated frequencies - see help"
+	default 0
+	help
+	This configuration parameter is meaningful for the oneshot mode only
+	where it has two effects:
+	1 - in oneshot mode using the APIC timer, i.e. always for SMP, a
+	precise scheduling time depends also on the ratio cpu_freq/apic_freq.
+	The best results can be achieved by using the RTAI calibration tool.
+	If no calibration is run one will rely on what Linux makes available
+	by default, which could be not precise enough, especially for not so
+	short timed intervals.
+	That leads to large and systematic latencies, especially in the case
+	of low frequency schedules. By setting this option to a suitable
+	value one can be sure that a certain firing frequency is granted
+	even when relatively large idle periods are enconuntered, thus
+	limiting the overall latency with which long sleeping tasks might
+	be awaken in case of unprecise calibrations of the above cited
+	frequencies;
+	2 - in the case of very long timed list it will limit the search
+	for the next firing time of widely scattered tasks with lowest
+	priorities, thus avoiding useless scheduling delays. The granted
+	firing interval will be roughly equal to:
+	1.0/(RTAI_CAL_FREQS_FACT + 2.0) (seconds).
