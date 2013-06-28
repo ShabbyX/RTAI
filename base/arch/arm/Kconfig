@@ -84,8 +84,8 @@ config RTAI_SCHED_LXRT
 	user-space. Since LXRT provides the faculty to switch an
 	application process to real-time, a real-time agent task is
 	created and executes the real-time services on behalf of the
-	LXRT process. 
-	
+	LXRT process.
+
 	The NEWLXRT scheduler unifies U/MP and kernel/user space by
 	scheduling Linux tasks/kernel threads natively, along with
 	RTAI kernel tasks, all in one. In fact, NEWLXRT brings
@@ -94,26 +94,15 @@ config RTAI_SCHED_LXRT
 	kernel threads only. The NEWLXRT implementation doesn't need
 	any RTAI proper task to be supported.
 
-menu "Scheduler options"
-
-	depends on RTAI_EXTENDED
+menu "Scheduling options"
 
 source "base/arch/Kconfig.sched"
 
 endmenu
 
-menu "IPC support"
+menu "Supported services"
 
 source "base/arch/Kconfig.services"
-
-config RTAI_NETRPC
-	tristate
-	default n
-
-config RTAI_NETRPC_RTNET
-	bool "Emulate RTNet"
-	depends on RTAI_NETRPC
-	default y
 
 config RTAI_SHM
 	tristate
@@ -148,25 +137,6 @@ config RTAI_TRACE
 	exploitation of those results.  The Linux Trace Toolkit has
 	been natively integrated into RTAI modules.
 	You may refer to http://www.opersys.com/LTT/ for more information.
-
-config RTAI_USI
-	tristate "User-space interrupts"
-	default m
-	depends on RTAI_SEM && RTAI_TASKLETS
-	default y if RTAI_SEM=y || RTAI_TASKLETS=y
-	default m if RTAI_SEM=m || RTAI_TASKLETS=m
-	help
-	RTAI already contains some examples hinting at managing
-	interrupts in user space, e.g: resumefromintr in lxrt-net_rpc,
-	pressa in lxrt, but all of them require installing a proper
-	handler in kernel space to wake up a hard real-time
-	LXRT/NEWLXRT task.
-
-	The user space interrupt support does the same but adds
-	something that permits you to avoid writing anything in kernel
-	space.
-
-	The module will be called rtai_usi.o.
 
 endmenu
 

@@ -2,6 +2,27 @@
 # Other features
 #
 
+config RTAI_USE_NEWERR
+	bool "New return values of blocking RTAI APIs"
+	default n
+	help
+	Return values for RTAI blocking APIs are a bit sketchy. That
+	is due to a long standing legacy dating back to DOS and 8 bits PCs,
+	when saving a few "if"s might have been important. Whatever one's
+	opinion such a legacy has now been likely inheredited by many well
+	working existing RTAI applications, that might break with a new
+	error return scheme. In any case a better set of error return values
+	might be useful nowadays, so it has been added. With it one will be
+	able to correctly infer more detailed reasons for error returns i.e.:
+	- invalid requests (RTE_OBJINV),
+	- async unblocking (RTE_UNBLKD),
+	- timeouts (RTE_TIMOUT),
+	- timer overruns (RTE_TMROVRN),
+	- deletion of blocking objects (RTE_OBJREM).
+	Thus the new scheme has been made configurable to allow RTAI users
+	to choose what to do, without forcing any adaption for already
+	existing working applications.
+
 config RTAI_MATH
 	bool "Mathfuns support in kernel"
 	depends on RTAI_FPU_SUPPORT
@@ -28,6 +49,26 @@ config RTAI_MALLOC
 	initialisation.
 	The module will be called rtai_malloc.o.
 
+config RTAI_USE_TLSF
+	bool "Allocate memory using TLSF in place of BSD one"
+	depends on RTAI_MALLOC
+	default n
+	help
+	RTAI dynamic memory allocation support offers two different methods
+	to allocate memory chunks. The default one is along the lines
+	illustrated in:
+	"Design of a General Purpose Memory Allocator for the 4.3BSD Unix
+	 Kernel" by Marshall K. McKusick.
+	By enabling this option the:
+	"Two Levels Segregated Lists (TLSF)" as found at:
+	http://rtportal.upv.es/rtmalloc/allocators/tlsf/
+	will be used instead.
+	Rough measures seems to indicate small differences between the two
+	in term of alloc/free times, likely with BSD being better for the
+	tested allocation sizes (up to a few KBs), but TLSF seems to have
+	better, i.e. lower, fragmentation properties. In any case you should
+	check it yourself within your own applications.
+
 config RTAI_MALLOC_VMALLOC
 	bool "Use vmalloc() support"
 	depends on RTAI_MALLOC
@@ -43,6 +84,41 @@ config RTAI_MALLOC_VMALLOC
 	- it exhibits contiguous buffer addressing needed for DMA controllers
 	  which don't have scattering/gathering capability.
 	The default is using kmalloc()
+
+config RTAI_KSTACK_HEAPSZ
+	string "Size of stacks heap for RTAI own kernel tasks (Kbytes)"
+	depends on RTAI_MALLOC
+	default 512
+	help
+	RTAI pre-allocates a heap for the stacks of its own kernel tasks.
+	This parameter allows to define its size (in kilobytes).
+
+config RTAI_TASK_SWITCH_SIGNAL
+	bool "task switches specific signal"
+	default n
+	help
+	RTAI can signal a task switch each time a task resumes execution.
+	The way it is done depends on the execution space:
+	- kernel: execute a function assigned at rt_task_init or by calling
+	  rt_task_signal_handler;
+	- user: install an RTAI own signal handler and have it called at any
+	  task switch through its number, assigned by calling
+	  rt_task_signal_handler.
+	The default is to not make available this feature, so you must enable
+	it explicitly if it is useful for your application.
+
+config RTAI_USI
+	bool "User-space interrupts"
+	default n
+	help
+	RTAI examples are available to show managing interrupts in user
+	space, e.g: resumefromintr in "showroom" CVS (kernel/user/netrpc),
+	"pressa" in "showroom" (user); but all of them require installing
+	a proper handler in kernel space, to wake up a hard real-time user
+	space task.
+	The user space interrupt support does much of the same, but adds
+	something that permits you to write nothing in kernel space.
+	The module will be called rtai_usi.o.
 
 config RTAI_WD
 	bool "Watchdog support"
