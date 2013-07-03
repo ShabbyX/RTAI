@@ -1,6 +1,6 @@
 *******************************************************************************
 
-Real-Time Application Interface (version 3.6.2) for MCF5329
+Real-Time Application Interface (version 3.8) for MCF5329
 
 Version 1.0
 readme.txt
@@ -10,11 +10,11 @@ COPYRIGHT 2008 FREESCALE SEMICONDUCTOR, INC., ALL RIGHTS RESERVED
 
   FREESCALE SEMICONDUCTOR, INC.
   ALL RIGHTS RESERVED
-  (c) Copyright 2008 Freescale Semiconductor, Inc.
+  (c) Copyright 2009 Freescale Semiconductor, Inc.
 
 *******************************************************************************
 
-  PURPOSE:   Provides hard real-time scheduling functionality under
+  PURPOSE:	Provides hard real-time scheduling functionality under
 		uClinux on the MCF5329 processor
 
   AUTHORS: 	Oleksandr Marchenko	(Group Leader)
@@ -46,8 +46,8 @@ operating system that adds support for hard real-time scheduling for processes.
 It is a real-time platform which allows for high predictability and low 
 latency.
 
-This project aims to implement support for RTAI (version 3.6.2) under uClinux 
-(kernel version 2.6.25) on the MCF5329 microcontroller. The work will consist 
+This project aims to implement support for RTAI (version 3.8) under uClinux
+(kernel version 2.6.25) on the MCF5329 microcontroller. The work will consist
 of adding the architecture support code to RTAI as well as making the 
 necessary changes to uClinux to enable RTAI support on the ColdFire 
 architecture. 
@@ -69,7 +69,7 @@ distributions. To use the product, the following packages need to be
 downloaded:
 
 - http://www.uclinux.org/ports/coldfire/uClinux-dist-20080808.tar.bz2
-- https://www.rtai.org/RTAI/rtai-3.6.2.tar.bz2
+- https://www.rtai.org/RTAI/rtai-3.8.tar.bz2
 - http://www.uclinux.org/pub/uClinux/m68k-elf-tools/tools-20061214/m68k-uclinux-tools-20061214.sh
 
 Run the m68k-uclinux-tools-20061214.sh script as root to install the cross
@@ -78,15 +78,13 @@ compilation tools.
 Unzip the RTAI and uClinux archives to the same directory:
 
 $ tar xjf uClinux-dist-20080808.tar.bz2
-$ tar xjf rtai-3.6.2.tar.bz2
+$ tar xjf rtai-3.8.tar.bz2
 
 Copy the patches included in this archive to the current directory.
 
 Apply the patches:
 
-$ cd rtai-3.6.2
-$ patch -p1 < ../rtai3.6.2-mcf5329.patch
-$ cd ../uClinux-dist
+$ cd uClinux-dist
 $ patch -p1 < ../uClinux-rtai-mcf5329_2.6.25.patch
 
 Build uClinux:
@@ -137,7 +135,7 @@ and execute it with the same starting address in order to run Linux.
 	
 Build RTAI:
 
-$ cd rtai-3.6.2
+$ cd rtai-3.8
 $ make ARCH=m68knommu CROSS_COMPILE=m68k-uclinux- menuconfig
 
 In the configuration window, set:
@@ -399,11 +397,11 @@ To run the kernel tests:
 	$ insmod preempt_rt.ko
 	$ ./display
 
-        Press Ctrl+C to stop the test when you have seen results.
+	Press Ctrl+C to stop the test when you have seen results.
 
-        Then don't forget to unload preempt_rt module:
+	Then don't forget to unload preempt_rt module:
 
-        $ rmmod preempt_rt
+	$ rmmod preempt_rt
 
 	Here is an example of results (taken according to this README):
 
@@ -447,12 +445,12 @@ To run the kernel tests:
 
 3) The "Switches" test:
 
-        $ cd kern/switches
-        $ insmod switches_rt.ko
+	$ cd kern/switches
+	$ insmod switches_rt.ko
 
 	Results will be shown.
 
-        $ rmmod switches_rt
+	$ rmmod switches_rt
 
 	Here is an example of results (taken according to this README):
 
@@ -478,9 +476,9 @@ To run the user-space tests:
 
 	a) To launch in oneshot mode:
 
-        	$ cd user/latency
-        	$ ./latency&
-        	$ ./display
+		$ cd user/latency
+		$ ./latency&
+		$ ./display
 
 		Press ENTER to stop the test when you have 
 		seen the results.
@@ -595,11 +593,11 @@ To run the user-space tests:
 
 2) The "Preempt" test:
 
-        $ cd user/preempt
-        $ ./preempt&
-        $ ./display
+	$ cd user/preempt
+	$ ./preempt&
+	$ ./display
 
-        Press Ctrl+C twice to stop the test when you have 
+	Press Ctrl+C twice to stop the test when you have 
 	seen the results.
 
 	Here is an example of results (taken according to this README):
@@ -640,8 +638,8 @@ To run the user-space tests:
 
 3) The "Switches" test:
 
-        $ cd user/switches
-        $ ./switches
+	$ cd user/switches
+	$ ./switches
 
 	Results will be shown. Don't mention about warning for 
 	rt_grow_and_lock_stack(). It's just our notice for RTAI users.
@@ -692,50 +690,6 @@ The port of RTAI itself to MCF5329 is complete.
 7. What's New
 *******************************************************************************
 version 1.0:
-
-Update to RTAI 3.6.2
-
-Fixed rt_set_timer_delay() cache issue that led to freeze of RTAI task for 51 
-second.
-Miscellaneous fixes in RTDM, RTAI build system, RTAI configuration system.
-
-version 0.5:
-
-Fixed timing constants.
-Fixed interrupts enabled checking.
-Changed rt_set_timer_delay to use TCN value.
-Increased ONESHOT_SPAN value.
-
-Known issues:
-1) System hangs for 51 seconds occur occasionally.
-
-version 0.4:
-
-Fixed long delay (up to 51 seconds) when starting periodic timer.
-
-Known issues:
-1) RTAI tasks preemption doesn't work properly, so preempt tests hang Linux 
-when launched.
-
-version 0.3:
-
-Removed delay when starting timer in periodic mode.
-Updated rtai_llimd() to prevent overflows.
-Fixed incorrect timer frequency.
-
-Known issues:
-1) RTAI tasks preemption doesn't work properly, so preempt tests hang Linux 
-when launched.
-
-version 0.2:
-
-A lot of bugs has been solved.
-Latency and switches tests are now working.
-
-Known issues:
-1) Preempt tests hang Linux when launched.
-
-version 0.1:
 
 This is the first version.
 

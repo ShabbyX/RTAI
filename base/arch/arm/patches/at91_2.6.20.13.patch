@@ -4,8 +4,8 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/arch/arm/kernel/ipipe.c linux-2.6
 @@ -192,6 +192,21 @@ void __ipipe_enable_irqdesc(unsigned irq
  	irq_desc[irq].status &= ~IRQ_DISABLED;
  }
-
-+/*
+ 
++/* 
 + * In Linux setup_irq, status is used to manage nested IRQ
 + */
 +void __ipipe_enable_depth(unsigned irq)
@@ -26,7 +26,7 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/arch/arm/kernel/ipipe.c linux-2.6
 @@ -353,9 +368,9 @@ asmlinkage int __ipipe_syscall_root(unsi
  	 * tail work has to be performed (for handling signals etc).
  	 */
-
+ 
 -	if (__ipipe_syscall_watched_p(current, regs->ARM_r7) &&
 +	if (__ipipe_dispatch_event(IPIPE_EVENT_SYSCALL,regs) > 0 &&
  	    __ipipe_event_monitored_p(IPIPE_EVENT_SYSCALL) &&
@@ -38,7 +38,7 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/arch/arm/kernel/ipipe.c linux-2.6
 @@ -469,6 +484,11 @@ finalize:
  	__ipipe_walk_pipeline(head, cpuid);
  }
-
+ 
 +int (*extern_timer_isr)(struct pt_regs *regs);
 +EXPORT_SYMBOL(extern_timer_isr);
 +
@@ -50,16 +50,16 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/arch/arm/kernel/ipipe.c linux-2.6
 @@ -478,6 +498,8 @@ asmlinkage int __ipipe_grab_irq(int irq,
  		__ipipe_tick_regs[cpuid].ARM_cpsr = regs->ARM_cpsr;
  		__ipipe_tick_regs[cpuid].ARM_pc = regs->ARM_pc;
-
+ 
 +		if (extern_timer_isr) return extern_timer_isr(regs);
 +
  		if (__ipipe_decr_ticks != __ipipe_mach_ticks_per_jiffy) {
  			unsigned long long next_date, now;
-
+ 
 @@ -517,6 +539,15 @@ asmlinkage int __ipipe_grab_irq(int irq,
  			  &ipipe_root_domain->cpudata[cpuid].status));
  }
-
+ 
 +void *ipipe_irq_handler = __ipipe_handle_irq;
 +EXPORT_SYMBOL(ipipe_irq_handler);
 +EXPORT_SYMBOL(__ipipe_tick_regs);
@@ -75,7 +75,7 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/arch/arm/kernel/ipipe.c linux-2.6
 @@ -525,6 +556,7 @@ EXPORT_SYMBOL(ipipe_trigger_irq);
  EXPORT_SYMBOL(ipipe_get_sysinfo);
  EXPORT_SYMBOL(ipipe_tune_timer);
-
+ 
 +EXPORT_SYMBOL_GPL(irq_desc);
  EXPORT_SYMBOL_GPL(show_stack);
  #ifndef MULTI_CPU
@@ -85,7 +85,7 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/arch/arm/mach-at91rm9200/at91rm92
 +++ linux-2.6.20.13/arch/arm/mach-at91rm9200/at91rm9200_time.c	2007-07-12 09:34:28.000000000 +0200
 @@ -338,6 +338,22 @@ notrace unsigned long long __ipipe_mach_
  EXPORT_SYMBOL(__ipipe_mach_get_tsc);
-
+ 
  /*
 + * getter/setter available for easy use of local_tsc
 + */
@@ -105,7 +105,7 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/arch/arm/mach-at91rm9200/at91rm92
 +/*
   * Reprogram the timer
   */
-
+ 
 diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/arch/arm/mach-at91rm9200/at91sam9261.c linux-2.6.20.13/arch/arm/mach-at91rm9200/at91sam9261.c
 --- linux-2.6.20.13-clean/arch/arm/mach-at91rm9200/at91sam9261.c	2007-07-12 11:44:04.000000000 +0200
 +++ linux-2.6.20.13/arch/arm/mach-at91rm9200/at91sam9261.c	2007-08-24 17:18:07.000000000 +0200
@@ -123,7 +123,7 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/arch/arm/mach-at91rm9200/at91sam9
 +++ linux-2.6.20.13/arch/arm/mach-at91rm9200/at91sam926x_time.c	2007-07-12 09:34:28.000000000 +0200
 @@ -325,6 +325,22 @@ notrace unsigned long long __ipipe_mach_
  EXPORT_SYMBOL(__ipipe_mach_get_tsc);
-
+ 
  /*
 + * getter/setter available for easy use of local_tsc
 + */
@@ -143,13 +143,13 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/arch/arm/mach-at91rm9200/at91sam9
 +/*
   * Reprogram the timer
   */
-
+ 
 diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/include/asm-arm/ipipe.h linux-2.6.20.13/include/asm-arm/ipipe.h
 --- linux-2.6.20.13-clean/include/asm-arm/ipipe.h	2007-07-12 11:44:04.000000000 +0200
 +++ linux-2.6.20.13/include/asm-arm/ipipe.h	2007-07-13 14:05:00.000000000 +0200
 @@ -70,7 +70,8 @@ do {								\
  #define IPIPE_NR_FAULTS		 8
-
+ 
  /* Pseudo-vectors used for kernel events */
 -#define IPIPE_FIRST_EVENT	IPIPE_NR_FAULTS
 +#define IPIPE_FIRST_EVENT	IPIPE_NR_FAULTS + 2	/* on x86, HAL_SCHEDULE_TAIL = IPIPE_FIRST_EVENT - 2 is not used
@@ -158,20 +158,20 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/include/asm-arm/ipipe.h linux-2.6
  #define IPIPE_EVENT_SCHEDULE	(IPIPE_FIRST_EVENT + 1)
  #define IPIPE_EVENT_SIGWAKE	(IPIPE_FIRST_EVENT + 2)
 @@ -166,6 +167,10 @@ void __ipipe_init_platform(void);
-
+ 
  void __ipipe_enable_irqdesc(unsigned irq);
-
+ 
 +void __ipipe_enable_depth(unsigned irq);
 +
 +void __ipipe_disable_depth(unsigned irq);
 +
  void __ipipe_enable_pipeline(void);
-
+ 
  void __ipipe_do_IRQ(int irq,
 diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/include/asm-arm/irqflags.h linux-2.6.20.13/include/asm-arm/irqflags.h
 --- linux-2.6.20.13-clean/include/asm-arm/irqflags.h	2007-07-12 11:44:04.000000000 +0200
 +++ linux-2.6.20.13/include/asm-arm/irqflags.h	2007-08-06 09:59:29.000000000 +0200
-@@ -170,13 +170,13 @@ void __ipipe_restore_root(unsigned long
+@@ -170,13 +170,13 @@ void __ipipe_restore_root(unsigned long 
  } while (0)
  #define local_irq_save_hw(x) do { \
  	local_save_flags_hw(x); \
@@ -193,7 +193,7 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/include/asm-arm/system.h linux-2.
 @@ -347,6 +347,46 @@ static inline unsigned long __xchg(unsig
  extern void disable_hlt(void);
  extern void enable_hlt(void);
-
+ 
 +/*
 + * We only implement cmpxchg in ASM on ARMv6 where we have LDREX/STREX
 + * available, and we only implement it for word-sized exchanges
@@ -235,7 +235,7 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/include/asm-arm/system.h linux-2.
 +#endif
 +
  #endif /* __ASSEMBLY__ */
-
+ 
  #define arch_align_stack(x) (x)
 diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/include/asm-arm/thread_info.h linux-2.6.20.13/include/asm-arm/thread_info.h
 --- linux-2.6.20.13-clean/include/asm-arm/thread_info.h	2007-07-12 11:44:04.000000000 +0200
@@ -310,7 +310,7 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/kernel/ipipe/core.c linux-2.6.20.
 --- linux-2.6.20.13-clean/kernel/ipipe/core.c	2007-07-12 11:44:04.000000000 +0200
 +++ linux-2.6.20.13/kernel/ipipe/core.c	2007-07-30 14:10:11.000000000 +0200
 @@ -531,10 +531,12 @@ int ipipe_virtualize_irq(struct ipipe_do
-
+ 
  		if ((modemask & IPIPE_STICKY_MASK) != 0)
  			modemask |= IPIPE_HANDLE_MASK;
 -	} else
@@ -320,19 +320,19 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/kernel/ipipe/core.c linux-2.6.20.
  		      IPIPE_EXCLUSIVE_MASK | IPIPE_WIRED_MASK);
 +		__ipipe_enable_depth(irq);
 +	}
-
+ 
  	if (acknowledge == NULL && !ipipe_virtual_irq_p(irq))
  		/* Acknowledge handler unspecified for a hw interrupt:
 @@ -548,6 +550,7 @@ int ipipe_virtualize_irq(struct ipipe_do
-
+ 
  	if (irq < NR_IRQS && handler != NULL && !ipipe_virtual_irq_p(irq)) {
  		__ipipe_enable_irqdesc(irq);
 +		__ipipe_disable_depth(irq);
-
+ 
  		if ((modemask & IPIPE_ENABLE_MASK) != 0) {
  			if (ipd != ipipe_current_domain) {
 @@ -617,6 +620,12 @@ int ipipe_control_irq(unsigned irq, unsi
-
+ 
  int fastcall __ipipe_dispatch_event (unsigned event, void *data)
  {
 +	extern void *ipipe_irq_handler;
@@ -346,11 +346,11 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/kernel/ipipe/core.c linux-2.6.20.
  	struct list_head *pos, *npos;
 @@ -677,7 +686,7 @@ int fastcall __ipipe_dispatch_event (uns
  	ipipe_unlock_cpu(flags);
-
+ 
  	return !propagate;
 -}
 +} }
-
+ 
  /*
   * __ipipe_dispatch_wired -- Wired interrupt dispatcher. Wired
 @@ -1443,3 +1452,4 @@ EXPORT_SYMBOL(ipipe_get_ptd);
@@ -364,7 +364,7 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/kernel/sched.c linux-2.6.20.13/ke
 @@ -1845,6 +1845,12 @@ context_switch(struct rq *rq, struct tas
  	struct mm_struct *mm = next->mm;
  	struct mm_struct *oldmm = prev->active_mm;
-
+ 
 +#ifdef CONFIG_IPIPE
 +if (!rq) {
 +	switch_mm(oldmm, next->active_mm, next);
@@ -393,17 +393,17 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/kernel/sched.c linux-2.6.20.13/ke
 +#endif /* CONFIG_IPIPE */
  	spin_release(&rq->lock.dep_map, 1, _THIS_IP_);
  #endif
-
+ 
  	/* Here we just switch the register state and the stack. */
  	switch_to(prev, next, prev);
-
+ 
 +#ifdef CONFIG_IPIPE
 +	current->ptd[IPIPE_ROOT_NPTDKEYS - 1] = prev;
 +#endif /* CONFIG_IPIPE */
 +
  	return prev;
  }
-
+ 
 @@ -3567,6 +3583,9 @@ switch_tasks:
  		barrier();
   		if (task_hijacked(prev))
@@ -417,8 +417,8 @@ diff -NaurdpbB -X nodiff linux-2.6.20.13-clean/kernel/sched.c linux-2.6.20.13/ke
 @@ -7115,6 +7134,7 @@ int ipipe_reenter_root (struct task_stru
  	return 0;
  }
-
+ 
 +EXPORT_SYMBOL(context_switch);
  EXPORT_SYMBOL(ipipe_reenter_root);
-
+ 
  #endif /* CONFIG_IPIPE */

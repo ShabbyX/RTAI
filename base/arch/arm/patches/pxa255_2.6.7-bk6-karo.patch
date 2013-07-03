@@ -185,34 +185,34 @@ diff -uNrp arm-linux/Makefile arm-linux-2.6.7-adeos/Makefile
 +EXTRAVERSION = -karo-adeos
  NAME=Zonked Quokka
 +KERNELRELEASE=$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)
-
+ 
  # *DOCUMENTATION*
  # To see a list of typical targets execute "make help"
 @@ -71,7 +72,7 @@ endif
  # In both cases the working directory must be the root of the kernel src.
  # 1) O=
  # Use "make O=dir/to/store/output/files/"
--#
+-# 
 +#
  # 2) Set KBUILD_OUTPUT
  # Set the environment variable KBUILD_OUTPUT to point to the directory
  # where the output files shall be placed.
 @@ -183,7 +184,7 @@ SUBARCH := $(shell uname -m | sed -e s/i
  # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
-
+ 
  ARCH		?= arm
 -CROSS_COMPILE	?= arm-linux-
 +CROSS_COMPILE	?= /usr/local/arm/i686-pc-linux-gnu/bin/arm-linux-
-
+ 
  # Architecture as present in compile.h
  UTS_MACHINE := $(ARCH)
 @@ -489,6 +490,8 @@ export MODLIB
-
+ 
  ifeq ($(KBUILD_EXTMOD),)
  core-y		+= kernel/ mm/ fs/ ipc/ security/ crypto/
 +
 +core-$(CONFIG_ADEOS) += adeos/
-
+ 
  vmlinux-dirs	:= $(patsubst %/,%,$(filter %/, $(init-y) $(init-m) \
  		     $(core-y) $(core-m) $(drivers-y) $(drivers-m) \
 diff -uNrp arm-linux/adeos/Kconfig arm-linux-2.6.7-adeos/adeos/Kconfig
@@ -789,7 +789,7 @@ diff -uNrp arm-linux/adeos/generic.c arm-linux-2.6.7-adeos/adeos/generic.c
 +    struct list_head *pos;
 +    unsigned long flags;
 +    int n;
-+    if (adp_current != adp_root)
++    if (adp_current != adp_root) 
 +	{
 +	printk(KERN_WARNING "Adeos: Only the root domain may register a new domain.\n");
 +	return -EPERM;
@@ -1332,7 +1332,7 @@ diff -uNrp arm-linux/adeos/generic.c arm-linux-2.6.7-adeos/adeos/generic.c
 +    if (!adeos_spin_trylock(&mutex->lock) &&
 +	adp_current != adp_root &&
 +	mutex->owner != adp_current)
-+	return -EBUSY;
++	return -EBUSY;  
 +
 +    return 0;
 +}
@@ -1537,9 +1537,9 @@ diff -uNrp arm-linux/arch/arm/Kconfig arm-linux-2.6.7-adeos/arch/arm/Kconfig
 --- arm-linux/arch/arm/Kconfig	Wed Jul 21 13:40:00 2004
 +++ arm-linux-2.6.7-adeos/arch/arm/Kconfig	Mon Oct 18 15:28:36 2004
 @@ -838,3 +838,7 @@ source "crypto/Kconfig"
-
+ 
  source "lib/Kconfig"
-
+ 
 +source "adeos/Kconfig"
 +
 +
@@ -1549,10 +1549,10 @@ diff -uNrp arm-linux/arch/arm/kernel/Makefile arm-linux-2.6.7-adeos/arch/arm/ker
 +++ arm-linux-2.6.7-adeos/arch/arm/kernel/Makefile	Mon Oct 18 15:39:35 2004
 @@ -11,6 +11,7 @@ obj-y		:= arch.o compat.o dma.o entry-ar
  		   time.o traps.o
-
+ 
  obj-$(CONFIG_APM)		+= apm.o
 +obj-$(CONFIG_ADEOS_CORE)	+= adeos.o
- obj-$(CONFIG_ARCH_ACORN)	+= ecard.o
+ obj-$(CONFIG_ARCH_ACORN)	+= ecard.o 
  obj-$(CONFIG_FOOTBRIDGE)	+= isa.o
  obj-$(CONFIG_FIQ)		+= fiq.o
 diff -uNrp arm-linux/arch/arm/kernel/adeos.c arm-linux-2.6.7-adeos/arch/arm/kernel/adeos.c
@@ -1930,7 +1930,7 @@ diff -uNrp arm-linux/arch/arm/kernel/adeos.c arm-linux-2.6.7-adeos/arch/arm/kern
 +    struct pt_regs regs;
 +
 +    if (irq >= IPIPE_NR_IRQS ||
-+	(adeos_virtual_irq_p(irq) && !test_bit(irq - IPIPE_VIRQ_BASE,&__adeos_virtual_irq_map)))
++	(adeos_virtual_irq_p(irq) && !test_bit(irq - IPIPE_VIRQ_BASE,&__adeos_virtual_irq_map)))     
 +	return -EINVAL;
 +
 +    adeos_hw_local_irq_flags(regs.ARM_cpsr);
@@ -2122,7 +2122,7 @@ diff -uNrp arm-linux/arch/arm/kernel/armksyms.c arm-linux-2.6.7-adeos/arch/arm/k
 @@ -49,6 +53,28 @@ extern void fp_enter(void);
    __attribute__((section("__ksymtab"))) =	\
      { (unsigned long)&orig, #sym };
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +#ifdef CONFIG_ADEOS_MODULE
 +EXPORT_SYMBOL(adp_pipelined);
@@ -2182,16 +2182,16 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-armv.S arm-linux-2.6.7-adeos/arch/arm
  		moveq	\irqstat, \irqstat, lsr #8
  		addeq	\irqnr, \irqnr, #8
 @@ -411,12 +419,12 @@ ENTRY(soft_irq_mask)
-
+ 
  #elif defined(CONFIG_ARCH_L7200)
  #include <asm/hardware.h>
--
+-	
 +
  		.equ	irq_base_addr,	IO_BASE_2
-
+ 
  		.macro  disable_fiq
  		.endm
--
+- 
 +
  		.macro  get_irqnr_and_base, irqnr, irqstat, base, tmp
  		mov     \irqstat, #irq_base_addr		@ Virt addr IRQ regs
@@ -2211,7 +2211,7 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-armv.S arm-linux-2.6.7-adeos/arch/arm
 @@ -1022,6 +1034,14 @@ __und_svc:	sub	sp, sp, #S_FRAME_SIZE
  		add	r2, sp, #S_SP
  		stmia	r2, {r3 - r7}			@ save sp_SVC, lr_SVC, pc, cpsr, old_ro
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +		mov	r0, #4				@ SIGILL
 +		mov	r1, sp				@ struct pt_regs *regs
@@ -2232,9 +2232,9 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-armv.S arm-linux-2.6.7-adeos/arch/arm
 +		.globl adeos_irq_entry
 +adeos_irq_entry:		.word	__adeos_handle_irq	@ Adeos default irq handler
 +#endif /* CONFIG_ADEOS_CORE */
-
+ 
  		irq_prio_table
-
+ 
 @@ -1116,7 +1141,14 @@ __irq_usr:	sub	sp, sp, #S_FRAME_SIZE
  		@
  		@ routine called with r0 = irq number, r1 = struct pt_regs *
@@ -2290,7 +2290,7 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-armv.S arm-linux-2.6.7-adeos/arch/arm
 +	ldmfd   sp!, {r0 - sl, fp, pc}^ @ pop previous registers, pc = previous lr
 +
 +#endif /* CONFIG_ADEOS_CORE */
-
+ 
  		__INIT
  /*
 diff -uNrp arm-linux/arch/arm/kernel/entry-common.S arm-linux-2.6.7-adeos/arch/arm/kernel/entry-common.S
@@ -2307,10 +2307,10 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-common.S arm-linux-2.6.7-adeos/arch/a
   * This program is free software; you can redistribute it and/or modify
   * it under the terms of the GNU General Public License version 2 as
 @@ -14,7 +17,7 @@
-
+ 
  #include "entry-header.S"
-
--/*
+ 
+-/* 
 +/*
   * We rely on the fact that R0 is at the bottom of the stack (due to
   * slow/fast restore user regs).
@@ -2339,7 +2339,7 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-common.S arm-linux-2.6.7-adeos/arch/a
 +#endif
  	disable_irq r1				@ disable interrupts
  	b	no_work_pending
-
+ 
  work_resched:
 +#ifdef CONFIG_ADEOS_CORE
 +	bl	__adeos_wrap_schedule
@@ -2359,14 +2359,14 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-common.S arm-linux-2.6.7-adeos/arch/a
  	bl	syscall_trace
 +#endif
  	b	ret_slow_syscall
--
+-	
 +
-
+ 
  #include "calls.S"
-
+ 
 @@ -130,9 +151,32 @@ ENTRY(vector_swi)
  	str	r4, [sp, #-S_OFF]!		@ push fifth arg
-
+ 
  	get_thread_info tsk
 +/*#ifdef CONFIG_ADEOS_CORE
 +	stmfd	sp!, {r0-r3, ip}
@@ -2401,7 +2401,7 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-common.S arm-linux-2.6.7-adeos/arch/a
  2:	mov	why, #0				@ no longer a real syscall
  	cmp	scno, #ARMSWI_OFFSET
  	eor	r0, scno, #OS_NUMBER << 20	@ put OS number back
--	bcs	arm_syscall
+-	bcs	arm_syscall	
 +	bcs	arm_syscall
  	b	sys_ni_syscall			@ not private func
 +#if 0
@@ -2437,7 +2437,7 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-common.S arm-linux-2.6.7-adeos/arch/a
 +.__adeos_usr2kern_mode:	.word	0x404404
 +#endif /* CONFIG_ADEOS_CORE */
 +
-
+ 
  	/*
  	 * This is the really slow path.  We're going to be doing
 @@ -155,7 +232,11 @@ ENTRY(vector_swi)
@@ -2449,7 +2449,7 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-common.S arm-linux-2.6.7-adeos/arch/a
 +#else
  	bl	syscall_trace
 +#endif
-
+ 
  	adrsvc	al, lr, __sys_trace_return	@ return address
  	add	r1, sp, #S_R0 + S_OFF		@ pointer to regs
 @@ -168,7 +249,11 @@ __sys_trace_return:
@@ -2462,7 +2462,7 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-common.S arm-linux-2.6.7-adeos/arch/a
  	bl	syscall_trace
 +#endif
  	b	ret_slow_syscall
-
+ 
  	.align	5
 @@ -177,6 +262,13 @@ __sys_trace_return:
  __cr_alignment:
@@ -2475,7 +2475,7 @@ diff -uNrp arm-linux/arch/arm/kernel/entry-common.S arm-linux-2.6.7-adeos/arch/a
 +adeos_syscall_entry:	.word	__adeos_handle_syscall	@ Adeos default syscall handler
 +#endif /* CONFIG_ADEOS_CORE */
 +
-
+ 
  	.type	sys_call_table, #object
  ENTRY(sys_call_table)
 diff -uNrp arm-linux/arch/arm/kernel/irq.c arm-linux-2.6.7-adeos/arch/arm/kernel/irq.c
@@ -2499,7 +2499,7 @@ diff -uNrp arm-linux/arch/arm/kernel/irq.c arm-linux-2.6.7-adeos/arch/arm/kernel
 +    if (!adp_pipelined)
 +#endif /* CONFIG_ADEOS_CORE */
  	desc->chip->ack(irq);
-
+ 
  	/*
 @@ -450,7 +456,6 @@ static void do_pending_irqs(struct pt_re
  asmlinkage void asm_do_IRQ(unsigned int irq, struct pt_regs *regs)
@@ -2509,12 +2509,12 @@ diff -uNrp arm-linux/arch/arm/kernel/irq.c arm-linux-2.6.7-adeos/arch/arm/kernel
  	/*
  	 * Some hardware gives randomly wrong interrupts.  Rather
  	 * than crashing, do something sensible.
-@@ -471,6 +476,7 @@ asmlinkage void asm_do_IRQ(unsigned int
+@@ -471,6 +476,7 @@ asmlinkage void asm_do_IRQ(unsigned int 
  	spin_unlock(&irq_controller_lock);
  	irq_exit();
  }
-+EXPORT_SYMBOL(asm_do_IRQ);
-
++EXPORT_SYMBOL(asm_do_IRQ);                      
+ 
  void __set_irq_handler(unsigned int irq, irq_handler_t handle, int is_chained)
  {
 @@ -861,3 +867,4 @@ void __init init_IRQ(void)
@@ -2552,17 +2552,17 @@ diff -uNrp arm-linux/arch/arm/kernel/time.c arm-linux-2.6.7-adeos/arch/arm/kerne
 @@ -323,10 +327,39 @@ void timer_tick(struct pt_regs *regs)
  	do_timer(regs);
  }
-
+ 
 +EXPORT_SYMBOL(timer_tick);
 +
  void (*init_arch_time)(void);
-
+ 
  void __init time_init(void)
  {
  	init_arch_time();
  }
 +
-+#ifdef CONFIG_ADEOS_CORE
++#ifdef CONFIG_ADEOS_CORE  
 +
 +static inline void __adeos_set_timer (unsigned long hz)
 +
@@ -2588,14 +2588,14 @@ diff -uNrp arm-linux/arch/arm/kernel/time.c arm-linux-2.6.7-adeos/arch/arm/kerne
 +#endif /* CONFIG_ADEOS_CORE */
 +
 +
-
+ 
 diff -uNrp arm-linux/arch/arm/lib/udivdi3.c arm-linux-2.6.7-adeos/arch/arm/lib/udivdi3.c
 --- arm-linux/arch/arm/lib/udivdi3.c	Tue Oct 21 11:22:18 2003
 +++ arm-linux-2.6.7-adeos/arch/arm/lib/udivdi3.c	Thu Feb 10 14:52:25 2005
 @@ -240,3 +240,44 @@ __umoddi3 (UDItype u, UDItype v)
    return w;
  }
-
+ 
 +/* added signed variant for RTAI */
 +
 +static inline DItype
@@ -2654,14 +2654,14 @@ diff -uNrp arm-linux/arch/arm/mach-pxa/time.c arm-linux-2.6.7-adeos/arch/arm/mac
 @@ -28,6 +32,7 @@
  #include <asm/mach/irq.h>
  #include <asm/mach/time.h>
-
+ 
 +extern volatile u32 soft_timer_match;
-
+ 
  static inline unsigned long pxa_get_rtc_time(void)
  {
 @@ -54,7 +59,12 @@ static unsigned long pxa_gettimeoffset (
  	long ticks_to_match, elapsed, usec;
-
+ 
  	/* Get ticks before next timer match */
 +
 +#ifndef CONFIG_ADEOS_CORE
@@ -2669,13 +2669,13 @@ diff -uNrp arm-linux/arch/arm/mach-pxa/time.c arm-linux-2.6.7-adeos/arch/arm/mac
 +#else
 +	ticks_to_match = soft_timer_match - OSCR;
 +#endif
-
+ 
  	/* We need elapsed ticks since last match */
  	elapsed = LATCH - ticks_to_match;
 @@ -69,7 +79,7 @@ static unsigned long pxa_gettimeoffset (
  	return usec;
  }
-
+ 
 -static irqreturn_t
 +irqreturn_t
  pxa_timer_interrupt(int irq, void *dev_id, struct pt_regs *regs)
@@ -2689,12 +2689,12 @@ diff -uNrp arm-linux/arch/arm/mach-pxa/time.c arm-linux-2.6.7-adeos/arch/arm/mac
 +		soft_timer_match = next_match;
 +#endif
  	} while( (signed long)(next_match - OSCR) <= 8 );
-
+ 
  	return IRQ_HANDLED;
 @@ -122,3 +135,4 @@ void __init pxa_init_time(void)
  	OSCR = 0;		/* initialize free-running timer, force first match */
  }
-
+ 
 +EXPORT_SYMBOL(pxa_timer_interrupt);
 diff -uNrp arm-linux/arch/arm/mach-sa1100/time.c arm-linux-2.6.7-adeos/arch/arm/mach-sa1100/time.c
 --- arm-linux/arch/arm/mach-sa1100/time.c	Fri Jul 16 09:47:00 2004
@@ -2702,7 +2702,7 @@ diff -uNrp arm-linux/arch/arm/mach-sa1100/time.c arm-linux-2.6.7-adeos/arch/arm/
 @@ -110,3 +110,15 @@ void __init sa1100_init_time(void)
  	OSCR = 0;		/* initialize free-running timer, force first match */
  }
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +
 +static inline void __adeos_set_timer (unsigned long hz)
@@ -2958,7 +2958,7 @@ diff -uNrp arm-linux/include/asm-arm/adeos.h arm-linux-2.6.7-adeos/include/asm-a
 +#define adeos_virtual_irq_p(irq) ((irq) >= IPIPE_VIRQ_BASE && \
 +				  (irq) < IPIPE_NR_IRQS)
 +
-+#define adeos_hw_test_iflag(x)        (((x) & PSR_I_BIT)) /* We don't use the FIRQs */
++#define adeos_hw_test_iflag(x)        (((x) & PSR_I_BIT)) /* We don't use the FIRQs */ 
 +
 +#define adeos_hw_irqs_disabled()	\
 +({					\
@@ -3056,7 +3056,7 @@ diff -uNrp arm-linux/include/asm-arm/arch-pxa/timex.h arm-linux-2.6.7-adeos/incl
   * it under the terms of the GNU General Public License version 2 as
   * published by the Free Software Foundation.
   */
-
+ 
  #include <linux/config.h>
 -
 +extern void timer_tick(struct pt_regs *regs);
@@ -3069,7 +3069,7 @@ diff -uNrp arm-linux/include/asm-arm/atomic.h arm-linux-2.6.7-adeos/include/asm-
 @@ -139,9 +139,17 @@ static inline void atomic_add(int i, ato
  {
  	unsigned long flags;
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +	adeos_hw_local_irq_save(flags);
 +#else /* !CONFIG_ADEOS_CORE */
@@ -3082,12 +3082,12 @@ diff -uNrp arm-linux/include/asm-arm/atomic.h arm-linux-2.6.7-adeos/include/asm-
  	local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
  }
-
+ 
  static inline int atomic_add_return(int i, atomic_t *v)
-@@ -149,10 +157,18 @@ static inline int atomic_add_return(int
+@@ -149,10 +157,18 @@ static inline int atomic_add_return(int 
  	unsigned long flags;
  	int val;
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +	adeos_hw_local_irq_save(flags);
 +#else /* !CONFIG_ADEOS_CORE */
@@ -3100,13 +3100,13 @@ diff -uNrp arm-linux/include/asm-arm/atomic.h arm-linux-2.6.7-adeos/include/asm-
 +#else /* !CONFIG_ADEOS_CORE */
  	local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
-
+ 
  	return val;
  }
 @@ -161,9 +177,17 @@ static inline void atomic_sub(int i, ato
  {
  	unsigned long flags;
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +	adeos_hw_local_irq_save(flags);
 +#else /* !CONFIG_ADEOS_CORE */
@@ -3119,12 +3119,12 @@ diff -uNrp arm-linux/include/asm-arm/atomic.h arm-linux-2.6.7-adeos/include/asm-
  	local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
  }
-
+ 
  static inline int atomic_sub_return(int i, atomic_t *v)
-@@ -171,10 +195,18 @@ static inline int atomic_sub_return(int
+@@ -171,10 +195,18 @@ static inline int atomic_sub_return(int 
  	unsigned long flags;
  	int val;
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +	adeos_hw_local_irq_save(flags);
 +#else /* !CONFIG_ADEOS_CORE */
@@ -3137,13 +3137,13 @@ diff -uNrp arm-linux/include/asm-arm/atomic.h arm-linux-2.6.7-adeos/include/asm-
 +#else /* !CONFIG_ADEOS_CORE */
  	local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
-
+ 
  	return val;
  }
 @@ -183,9 +215,17 @@ static inline void atomic_clear_mask(uns
  {
  	unsigned long flags;
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +	adeos_hw_local_irq_save(flags);
 +#else /* !CONFIG_ADEOS_CORE */
@@ -3156,26 +3156,26 @@ diff -uNrp arm-linux/include/asm-arm/atomic.h arm-linux-2.6.7-adeos/include/asm-
  	local_irq_restore(flags);
 +#endif /* CONFIG_ADEOS_CORE */
  }
-
+ 
  #endif /* __LINUX_ARM_ARCH__ */
 diff -uNrp arm-linux/include/asm-arm/bitops.h arm-linux-2.6.7-adeos/include/asm-arm/bitops.h
 --- arm-linux/include/asm-arm/bitops.h	Fri May 14 17:37:10 2004
 +++ arm-linux-2.6.7-adeos/include/asm-arm/bitops.h	Tue Feb 15 11:06:24 2005
 @@ -36,9 +36,9 @@ static inline void ____atomic_set_bit(un
-
+ 
  	p += bit >> 5;
-
+ 
 -	local_irq_save(flags);
-+	adeos_hw_local_irq_save(flags);
++	adeos_hw_local_irq_save(flags);			
  	*p |= mask;
 -	local_irq_restore(flags);
 +	adeos_hw_local_irq_restore(flags);
  }
-
+ 
  static inline void ____atomic_clear_bit(unsigned int bit, volatile unsigned long *p)
 @@ -47,10 +47,9 @@ static inline void ____atomic_clear_bit(
  	unsigned long mask = 1UL << (bit & 31);
-
+ 
  	p += bit >> 5;
 -
 -	local_irq_save(flags);
@@ -3184,57 +3184,57 @@ diff -uNrp arm-linux/include/asm-arm/bitops.h arm-linux-2.6.7-adeos/include/asm-
 -	local_irq_restore(flags);
 +	adeos_hw_local_irq_restore(flags);
  }
-
+ 
  static inline void ____atomic_change_bit(unsigned int bit, volatile unsigned long *p)
 @@ -60,9 +59,9 @@ static inline void ____atomic_change_bit
-
+ 
  	p += bit >> 5;
-
+ 
 -	local_irq_save(flags);
 +	adeos_hw_local_irq_save(flags);
  	*p ^= mask;
 -	local_irq_restore(flags);
 +	adeos_hw_local_irq_restore(flags);
  }
-
+ 
  static inline int
 @@ -74,10 +73,10 @@ ____atomic_test_and_set_bit(unsigned int
-
+ 
  	p += bit >> 5;
-
+ 
 -	local_irq_save(flags);
 +	adeos_hw_local_irq_save(flags);
  	res = *p;
  	*p = res | mask;
 -	local_irq_restore(flags);
 +	adeos_hw_local_irq_restore(flags);
-
+ 
  	return res & mask;
  }
 @@ -91,10 +90,10 @@ ____atomic_test_and_clear_bit(unsigned i
-
+ 
  	p += bit >> 5;
-
+ 
 -	local_irq_save(flags);
 +	adeos_hw_local_irq_save(flags);
  	res = *p;
  	*p = res & ~mask;
 -	local_irq_restore(flags);
 +	adeos_hw_local_irq_restore(flags);
-
+ 
  	return res & mask;
  }
-@@ -108,10 +107,10 @@ ____atomic_test_and_change_bit(unsigned
-
+@@ -108,10 +107,10 @@ ____atomic_test_and_change_bit(unsigned 
+ 
  	p += bit >> 5;
-
+ 
 -	local_irq_save(flags);
 +	adeos_hw_local_irq_save(flags);
  	res = *p;
  	*p = res ^ mask;
 -	local_irq_restore(flags);
 +	adeos_hw_local_irq_restore(flags);
-
+ 
  	return res & mask;
  }
 diff -uNrp arm-linux/include/asm-arm/mach/time.h arm-linux-2.6.7-adeos/include/asm-arm/mach/time.h
@@ -3243,10 +3243,10 @@ diff -uNrp arm-linux/include/asm-arm/mach/time.h arm-linux-2.6.7-adeos/include/a
 @@ -15,6 +15,6 @@ extern void (*init_arch_time)(void);
  extern int (*set_rtc)(void);
  extern unsigned long(*gettimeoffset)(void);
-
+ 
 -void timer_tick(struct pt_regs *);
 +void timer_tick(struct pt_regs *regs);
-
+ 
  #endif
 diff -uNrp arm-linux/include/asm-arm/smp.h arm-linux-2.6.7-adeos/include/asm-arm/smp.h
 --- arm-linux/include/asm-arm/smp.h	Tue Oct 21 11:25:31 2003
@@ -3259,15 +3259,15 @@ diff -uNrp arm-linux/include/asm-arm/smp.h arm-linux-2.6.7-adeos/include/asm-arm
 +*/
  #ifndef __ASM_SMP_H
  #define __ASM_SMP_H
-
+ 
 @@ -5,6 +10,8 @@
-
+ 
  #ifdef CONFIG_SMP
  #error SMP not supported
 +#else
 +#define smp_num_cpus			1
  #endif
-
+ 
  #endif
 diff -uNrp arm-linux/include/asm-arm/system.h arm-linux-2.6.7-adeos/include/asm-arm/system.h
 --- arm-linux/include/asm-arm/system.h	Thu Jun 24 20:25:52 2004
@@ -3281,7 +3281,7 @@ diff -uNrp arm-linux/include/asm-arm/system.h arm-linux-2.6.7-adeos/include/asm-
 +
  #ifndef __ASM_ARM_SYSTEM_H
  #define __ASM_ARM_SYSTEM_H
-
+ 
 @@ -161,8 +167,12 @@ do {									\
   * spin_unlock_irq() and friends are implemented.  This avoids
   * us needlessly decrementing and incrementing the preempt count.
@@ -3294,11 +3294,11 @@ diff -uNrp arm-linux/include/asm-arm/system.h arm-linux-2.6.7-adeos/include/asm-
 +#endif   /*CONFIG_ADEOS_CORE*/
  #define task_running(rq,p)		((rq)->curr == (p))
  #endif
-
+ 
 @@ -185,45 +195,45 @@ do {									\
   */
  #if __LINUX_ARM_ARCH__ >= 6
-
+ 
 -#define local_irq_save(x)					\
 +#define hard_local_irq_save(x)					\
  	({							\
@@ -3308,7 +3308,7 @@ diff -uNrp arm-linux/include/asm-arm/system.h arm-linux-2.6.7-adeos/include/asm-
  	"cpsid	i"						\
  	: "=r" (x) : : "memory", "cc");				\
  	})
-
+ 
 -#define local_irq_enable()  __asm__("cpsie i	@ __sti" : : : "memory", "cc")
 -#define local_irq_disable() __asm__("cpsid i	@ __cli" : : : "memory", "cc")
 -#define local_fiq_enable()  __asm__("cpsie f	@ __stf" : : : "memory", "cc")
@@ -3317,9 +3317,9 @@ diff -uNrp arm-linux/include/asm-arm/system.h arm-linux-2.6.7-adeos/include/asm-
 +#define hard_local_irq_disable() __asm__("cpsid i	@ __cli" : : : "memory", "cc")
 +#define hard_local_fiq_enable()  __asm__("cpsie f	@ __stf" : : : "memory", "cc")
 +#define hard_local_fiq_disable() __asm__("cpsid f	@ __clf" : : : "memory", "cc")
-
+ 
  #else
-
+ 
  /*
   * Save the current interrupt enable state & disable IRQs
   */
@@ -3337,7 +3337,7 @@ diff -uNrp arm-linux/include/asm-arm/system.h arm-linux-2.6.7-adeos/include/asm-
  	:							\
  	: "memory", "cc");					\
  	})
--
+-	
 +
  /*
   * Enable IRQs
@@ -3406,7 +3406,7 @@ diff -uNrp arm-linux/include/asm-arm/system.h arm-linux-2.6.7-adeos/include/asm-
 +	"mrs	%0, cpsr		@ hard_local_save_flags"	\
  	: "=r" (x) : : "memory", "cc");				\
  	})
-
+ 
  /*
   * restore saved IRQ & FIQ state
   */
@@ -3418,21 +3418,21 @@ diff -uNrp arm-linux/include/asm-arm/system.h arm-linux-2.6.7-adeos/include/asm-
  	:							\
  	: "r" (x)						\
  	: "memory", "cc")
-
+ 
 -#ifdef CONFIG_SMP
 +#ifdef CONFIG_SMP        /*SMP not available for ARM*/
  #error SMP not supported
-
+ 
  #define smp_mb()		mb()
 @@ -313,15 +323,68 @@ do {									\
  #define smp_wmb()		barrier()
  #define smp_read_barrier_depends()		do { } while(0)
-
+ 
 -#define clf()			__clf()
 -#define stf()			__stf()
 +#define clf()			hard__clf()
 +#define stf()			hard__stf()
-
+ 
 -#define irqs_disabled()			\
 +#define hard_irqs_disabled()			\
  ({					\
@@ -3494,7 +3494,7 @@ diff -uNrp arm-linux/include/asm-arm/system.h arm-linux-2.6.7-adeos/include/asm-
 +#define local_irq_restore(x)		hard_local_irq_restore(x)
 +#define irqs_disabled()			hard_irqs_disabled()
 +#endif /* CONFIG_ADEOS_CORE */
-
+ 
  #if defined(CONFIG_CPU_SA1100) || defined(CONFIG_CPU_SA110)
  /*
 diff -uNrp arm-linux/include/linux/adeos.h arm-linux-2.6.7-adeos/include/linux/adeos.h
@@ -3602,7 +3602,7 @@ diff -uNrp arm-linux/include/linux/adeos.h arm-linux-2.6.7-adeos/include/linux/a
 +} adattr_t;
 +
 +extern adomain_t *adp_cpu_current[],
-+                 *adp_root;
++                 *adp_root; 
 +
 +extern int __adeos_event_monitors[];
 +
@@ -3901,14 +3901,14 @@ diff -uNrp arm-linux/include/linux/adeos.h arm-linux-2.6.7-adeos/include/linux/a
 diff -uNrp arm-linux/include/linux/blkdev.h arm-linux-2.6.7-adeos/include/linux/blkdev.h
 --- arm-linux/include/linux/blkdev.h	Fri Jul 16 09:56:01 2004
 +++ arm-linux-2.6.7-adeos/include/linux/blkdev.h	Tue Oct 26 10:59:51 2004
-@@ -398,7 +398,7 @@ static inline int blk_queue_full(struct
+@@ -398,7 +398,7 @@ static inline int blk_queue_full(struct 
  {
  	if (rw == READ)
  		return test_bit(QUEUE_FLAG_READFULL, &q->queue_flags);
 -	return test_bit(QUEUE_FLAG_WRITEFULL, &q->queue_flags);
-+	return test_bit(QUEUE_FLAG_WRITEFULL, &q->queue_flags);
++	return test_bit(QUEUE_FLAG_WRITEFULL, &q->queue_flags);  
  }
-
+ 
  static inline void blk_set_queue_full(struct request_queue *q, int rw)
 diff -uNrp arm-linux/include/linux/irq.h arm-linux-2.6.7-adeos/include/linux/irq.h
 --- arm-linux/include/linux/irq.h	Fri May 14 17:38:54 2004
@@ -3921,19 +3921,19 @@ diff -uNrp arm-linux/include/linux/irq.h arm-linux-2.6.7-adeos/include/linux/irq
 + *   Copyright (c) 2005 Stefano Gafforelli (stefano.gafforelli@tiscali.it)
 + *   Copyright (c) 2005 Luca Pizzi (lucapizzi@hotmail.com)
   */
-
+ 
  #include <linux/config.h>
 @@ -67,9 +70,8 @@ typedef struct irq_desc {
  	spinlock_t lock;
  } ____cacheline_aligned irq_desc_t;
-
+ 
 -extern irq_desc_t irq_desc [NR_IRQS];
-
+ 
 -#include <asm/hw_irq.h> /* the arch dependent stuff */
 +#include <asm/hardirq.h> /* the arch dependent stuff */
-
+ 
  extern int setup_irq(unsigned int , struct irqaction * );
-
+ 
 diff -uNrp arm-linux/include/linux/page-flags.h arm-linux-2.6.7-adeos/include/linux/page-flags.h
 --- arm-linux/include/linux/page-flags.h	Fri Jul 16 09:56:11 2004
 +++ arm-linux-2.6.7-adeos/include/linux/page-flags.h	Tue Oct 26 11:02:26 2004
@@ -3942,55 +3942,55 @@ diff -uNrp arm-linux/include/linux/page-flags.h arm-linux-2.6.7-adeos/include/li
   */
  #define PageLocked(page)		\
 -		test_bit(PG_locked, &(page)->flags)
-+		test_bit(PG_locked, &(page)->flags)
++		test_bit(PG_locked, &(page)->flags)    
  #define SetPageLocked(page)		\
  		set_bit(PG_locked, &(page)->flags)
  #define TestSetPageLocked(page)		\
 @@ -194,7 +194,7 @@ extern unsigned long __read_page_state(u
  #define ClearPageReferenced(page)	clear_bit(PG_referenced, &(page)->flags)
  #define TestClearPageReferenced(page) test_and_clear_bit(PG_referenced, &(page)->flags)
-
+ 
 -#define PageUptodate(page)	test_bit(PG_uptodate, &(page)->flags)
-+#define PageUptodate(page)		test_bit(PG_uptodate, &(page)->flags)
++#define PageUptodate(page)		test_bit(PG_uptodate, &(page)->flags)   
  #ifndef SetPageUptodate
  #define SetPageUptodate(page)	set_bit(PG_uptodate, &(page)->flags)
  #endif
 @@ -217,7 +217,7 @@ extern unsigned long __read_page_state(u
  #define TestClearPageActive(page) test_and_clear_bit(PG_active, &(page)->flags)
  #define TestSetPageActive(page) test_and_set_bit(PG_active, &(page)->flags)
-
+ 
 -#define PageSlab(page)		test_bit(PG_slab, &(page)->flags)
-+#define PageSlab(page)		test_bit(PG_slab, &(page)->flags)
++#define PageSlab(page)		test_bit(PG_slab, &(page)->flags)  
  #define SetPageSlab(page)	set_bit(PG_slab, &(page)->flags)
  #define ClearPageSlab(page)	clear_bit(PG_slab, &(page)->flags)
  #define TestClearPageSlab(page)	test_and_clear_bit(PG_slab, &(page)->flags)
 @@ -229,11 +229,11 @@ extern unsigned long __read_page_state(u
  #define PageHighMem(page)	0 /* needed to optimize away at compile time */
  #endif
-
+ 
 -#define PageChecked(page)	test_bit(PG_checked, &(page)->flags)
 +#define PageChecked(page)		test_bit(PG_checked, &(page)->flags)
  #define SetPageChecked(page)	set_bit(PG_checked, &(page)->flags)
  #define ClearPageChecked(page)	clear_bit(PG_checked, &(page)->flags)
-
+ 
 -#define PageReserved(page)	test_bit(PG_reserved, &(page)->flags)
 +#define PageReserved(page)		test_bit(PG_reserved, &(page)->flags)
  #define SetPageReserved(page)	set_bit(PG_reserved, &(page)->flags)
  #define ClearPageReserved(page)	clear_bit(PG_reserved, &(page)->flags)
-
+ 
 @@ -241,7 +241,7 @@ extern unsigned long __read_page_state(u
  #define ClearPagePrivate(page)	clear_bit(PG_private, &(page)->flags)
  #define PagePrivate(page)	test_bit(PG_private, &(page)->flags)
-
+ 
 -#define PageWriteback(page)	test_bit(PG_writeback, &(page)->flags)
-+#define PageWriteback(page)	test_bit(PG_writeback, &(page)->flags)
++#define PageWriteback(page)	test_bit(PG_writeback, &(page)->flags)   
  #define SetPageWriteback(page)						\
  	do {								\
  		if (!test_and_set_bit(PG_writeback,			\
 @@ -283,7 +283,7 @@ extern unsigned long __read_page_state(u
  #define SetPageMappedToDisk(page) set_bit(PG_mappedtodisk, &(page)->flags)
  #define ClearPageMappedToDisk(page) clear_bit(PG_mappedtodisk, &(page)->flags)
-
+ 
 -#define PageReclaim(page)	test_bit(PG_reclaim, &(page)->flags)
 +#define PageReclaim(page)		test_bit(PG_reclaim, &(page)->flags)
  #define SetPageReclaim(page)	set_bit(PG_reclaim, &(page)->flags)
@@ -3999,15 +3999,15 @@ diff -uNrp arm-linux/include/linux/page-flags.h arm-linux-2.6.7-adeos/include/li
 @@ -292,12 +292,12 @@ extern unsigned long __read_page_state(u
  #define SetPageCompound(page)	set_bit(PG_compound, &(page)->flags)
  #define ClearPageCompound(page)	clear_bit(PG_compound, &(page)->flags)
-
+ 
 -#define PageAnon(page)		test_bit(PG_anon, &(page)->flags)
-+#define PageAnon(page)		test_bit(PG_anon, &(page)->flags)
++#define PageAnon(page)		test_bit(PG_anon, &(page)->flags)    
  #define SetPageAnon(page)	set_bit(PG_anon, &(page)->flags)
  #define ClearPageAnon(page)	clear_bit(PG_anon, &(page)->flags)
-
+ 
  #ifdef CONFIG_SWAP
 -#define PageSwapCache(page)	test_bit(PG_swapcache, &(page)->flags)
-+#define PageSwapCache(page)		test_bit(PG_swapcache, &(page)->flags)
++#define PageSwapCache(page)		test_bit(PG_swapcache, &(page)->flags)    
  #define SetPageSwapCache(page)	set_bit(PG_swapcache, &(page)->flags)
  #define ClearPageSwapCache(page) clear_bit(PG_swapcache, &(page)->flags)
  #else
@@ -4015,15 +4015,15 @@ diff -uNrp arm-linux/include/linux/preempt.h arm-linux-2.6.7-adeos/include/linux
 --- arm-linux/include/linux/preempt.h	Fri May 14 17:01:40 2004
 +++ arm-linux-2.6.7-adeos/include/linux/preempt.h	Fri Dec 10 11:56:28 2004
 @@ -25,6 +25,47 @@ do { \
-
+ 
  asmlinkage void preempt_schedule(void);
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +
 +#include <asm/adeos.h>
 +
 +extern adomain_t *adp_cpu_current[],
-+                 *adp_root;
++                 *adp_root; 
 +
 +#define preempt_disable() \
 +do { \
@@ -4068,16 +4068,16 @@ diff -uNrp arm-linux/include/linux/preempt.h arm-linux-2.6.7-adeos/include/linux
  } while (0)
 +
 +#endif /* CONFIG_ADEOS_CORE */
-
+ 
  #else
-
+ 
 diff -uNrp arm-linux/include/linux/sched.h arm-linux-2.6.7-adeos/include/linux/sched.h
 --- arm-linux/include/linux/sched.h	Fri Jul 16 09:56:11 2004
 +++ arm-linux-2.6.7-adeos/include/linux/sched.h	Fri Nov 26 13:43:19 2004
 @@ -135,6 +135,10 @@ struct sched_param {
-
+ 
  #include <linux/spinlock.h>
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +#include <linux/adeos.h>
 +#endif /* CONFIG_ADEOS_CORE */
@@ -4088,11 +4088,11 @@ diff -uNrp arm-linux/include/linux/sched.h arm-linux-2.6.7-adeos/include/linux/s
 @@ -505,6 +509,7 @@ struct task_struct {
  /* journalling filesystem info */
  	void *journal_info;
-
+ 
 +
  /* VM state */
  	struct reclaim_state *reclaim_state;
-
+ 
 @@ -520,6 +525,10 @@ struct task_struct {
    	struct mempolicy *mempolicy;
    	short il_next;		/* could be shared with used_math */
@@ -4102,7 +4102,7 @@ diff -uNrp arm-linux/include/linux/sched.h arm-linux-2.6.7-adeos/include/linux/s
 +        void *ptd[ADEOS_ROOT_NPTDKEYS];
 +#endif /* CONFIG_ADEOS_CORE */
  };
-
+ 
  static inline pid_t process_group(struct task_struct *tsk)
 diff -uNrp arm-linux/init/main.c arm-linux-2.6.7-adeos/init/main.c
 --- arm-linux/init/main.c	Fri Jul 16 09:56:36 2004
@@ -4119,13 +4119,13 @@ diff -uNrp arm-linux/init/main.c arm-linux-2.6.7-adeos/init/main.c
  	softirq_init();
 @@ -633,6 +636,10 @@ static int init(void * unused)
  	populate_rootfs();
-
+ 
  	do_basic_setup();
 +
 +#ifdef CONFIG_ADEOS
 +	__adeos_takeover();
 +#endif /* CONFIG_ADEOS */
-
+ 
  	/*
  	 * check if there is an early userspace init.  If yes, let it do all
 diff -uNrp arm-linux/kernel/Makefile arm-linux-2.6.7-adeos/kernel/Makefile
@@ -4134,7 +4134,7 @@ diff -uNrp arm-linux/kernel/Makefile arm-linux-2.6.7-adeos/kernel/Makefile
 @@ -9,6 +9,7 @@ obj-y     = sched.o fork.o exec_domain.o
  	    rcupdate.o intermodule.o extable.o params.o posix-timers.o \
  	    kthread.o
-
+ 
 +obj-$(CONFIG_ADEOS_CORE) += adeos.o
  obj-$(CONFIG_FUTEX) += futex.o
  obj-$(CONFIG_GENERIC_ISA_DMA) += dma.o
@@ -4221,7 +4221,7 @@ diff -uNrp arm-linux/kernel/adeos.c arm-linux-2.6.7-adeos/kernel/adeos.c
 +void __adeos_init (void)
 +
 +{
-+	adomain_t *adp = &adeos_root_domain;
++	adomain_t *adp = &adeos_root_domain;   
 +    __adeos_check_machine();	/* Do platform dependent checks first. */
 +
 +    /*
@@ -4239,7 +4239,7 @@ diff -uNrp arm-linux/kernel/adeos.c arm-linux-2.6.7-adeos/kernel/adeos.c
 +    adp->priority = ADEOS_ROOT_PRI;
 +    adp->ptd_setfun = &__adeos_set_root_ptd;
 +    adp->ptd_getfun = &__adeos_get_root_ptd;
-+    adp->ptd_keymax = ADEOS_ROOT_NPTDKEYS;
++    adp->ptd_keymax = ADEOS_ROOT_NPTDKEYS;	
 +
 +    __adeos_init_stage(adp);
 +
@@ -4249,7 +4249,7 @@ diff -uNrp arm-linux/kernel/adeos.c arm-linux-2.6.7-adeos/kernel/adeos.c
 +    __adeos_printk_virq = adeos_alloc_irq(); /* Cannot fail here. */
 +    adp->irqs[__adeos_printk_virq].handler = &__adeos_sync_console;
 +    adp->irqs[__adeos_printk_virq].acknowledge = NULL;
-+    adp->irqs[__adeos_printk_virq].control = IPIPE_HANDLE_MASK;
++    adp->irqs[__adeos_printk_virq].control = IPIPE_HANDLE_MASK;   
 +
 +    printk(KERN_WARNING "Adeos %s: Root domain %s registered.\n",
 +	   ADEOS_VERSION_STRING,
@@ -4472,7 +4472,7 @@ diff -uNrp arm-linux/kernel/adeos.c arm-linux-2.6.7-adeos/kernel/adeos.c
 +	     nadp->cpudata[cpuid].irq_pending_hi != 0) ||
 +	    test_bit(IPIPE_XPEND_FLAG,&nadp->cpudata[cpuid].status))
 +	    break;
-+	}
++	}     
 +
 +    /* Mark the outgoing domain as aslept (i.e. not preempted). */
 +    set_bit(IPIPE_SLEEP_FLAG,&cpudata->status);
@@ -4577,7 +4577,7 @@ diff -uNrp arm-linux/kernel/adeos.c arm-linux-2.6.7-adeos/kernel/adeos.c
 +	    {
 +	    ctlbits = (adp->irqs[irq].control & (IPIPE_HANDLE_MASK|IPIPE_PASS_MASK|IPIPE_STICKY_MASK));
 +
-+	    if (adeos_virtual_irq_p(irq) && !test_bit(irq - IPIPE_VIRQ_BASE,&__adeos_virtual_irq_map))
++	    if (adeos_virtual_irq_p(irq) && !test_bit(irq - IPIPE_VIRQ_BASE,&__adeos_virtual_irq_map))    
 +		{
 +		irq++;
 +		continue;
@@ -4728,21 +4728,21 @@ diff -uNrp arm-linux/kernel/adeos.c arm-linux-2.6.7-adeos/kernel/adeos.c
 diff -uNrp arm-linux/kernel/exit.c arm-linux-2.6.7-adeos/kernel/exit.c
 --- arm-linux/kernel/exit.c	Fri Jul 16 09:56:39 2004
 +++ arm-linux-2.6.7-adeos/kernel/exit.c	Tue Oct 19 11:17:01 2004
-@@ -793,6 +793,9 @@ asmlinkage NORET_TYPE void do_exit(long
+@@ -793,6 +793,9 @@ asmlinkage NORET_TYPE void do_exit(long 
  	}
-
+ 
  	acct_process(code);
 +#ifdef CONFIG_ADEOS_CORE
 +	__adeos_exit_process(tsk);
 +#endif /* CONFIG_ADEOS_CORE */
  	__exit_mm(tsk);
-
+ 
  	exit_sem(tsk);
 diff -uNrp arm-linux/kernel/fork.c arm-linux-2.6.7-adeos/kernel/fork.c
 --- arm-linux/kernel/fork.c	Thu Jun 24 20:29:35 2004
 +++ arm-linux-2.6.7-adeos/kernel/fork.c	Wed Oct 20 11:07:25 2004
 @@ -1095,6 +1095,14 @@ struct task_struct *copy_process(unsigne
-
+ 
  	nr_threads++;
  	write_unlock_irq(&tasklist_lock);
 +#ifdef CONFIG_ADEOS_CORE
@@ -4754,12 +4754,12 @@ diff -uNrp arm-linux/kernel/fork.c arm-linux-2.6.7-adeos/kernel/fork.c
 +	}
 +#endif /* CONFIG_ADEOS_CORE */
  	retval = 0;
-
+ 
  fork_out:
 diff -uNrp arm-linux/kernel/panic.c arm-linux-2.6.7-adeos/kernel/panic.c
 --- arm-linux/kernel/panic.c	Fri May 14 17:01:57 2004
 +++ arm-linux-2.6.7-adeos/kernel/panic.c	Mon Oct 25 12:45:51 2004
-@@ -66,6 +66,9 @@ NORET_TYPE void panic(const char * fmt,
+@@ -66,6 +66,9 @@ NORET_TYPE void panic(const char * fmt, 
  		printk(KERN_EMERG "In idle task - not syncing\n");
  	else
  		sys_sync();
@@ -4767,7 +4767,7 @@ diff -uNrp arm-linux/kernel/panic.c arm-linux-2.6.7-adeos/kernel/panic.c
 +	__adeos_dump_state();
 +#endif /* CONFIG_ADEOS_CORE */
  	bust_spinlocks(0);
-
+ 
  #ifdef CONFIG_SMP
 diff -uNrp arm-linux/kernel/printk.c arm-linux-2.6.7-adeos/kernel/printk.c
 --- arm-linux/kernel/printk.c	Thu Jun 24 20:29:37 2004
@@ -4784,9 +4784,9 @@ diff -uNrp arm-linux/kernel/printk.c arm-linux-2.6.7-adeos/kernel/printk.c
   * return the last 4k of kernel messages, regardless of whether
   * they've been read or not.  Added option to suppress kernel printk's
 @@ -33,6 +37,17 @@
-
+ 
  #include <asm/uaccess.h>
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +#undef spin_lock_irq
 +#define	spin_lock_irq(lock)                 adeos_spin_lock_disable(lock)
@@ -4799,13 +4799,13 @@ diff -uNrp arm-linux/kernel/printk.c arm-linux-2.6.7-adeos/kernel/printk.c
 +#endif /* CONFIG_ADEOS_CORE */
 +
  #define __LOG_BUF_LEN	(1 << CONFIG_LOG_BUF_SHIFT)
-
+ 
  /* printk's without a loglevel use this.. */
 @@ -494,7 +509,7 @@ static void zap_locks(void)
-
+ 
  /*
   * This is printk.  It can be called from any context.  We want it to work.
-- *
+- * 
 + *
   * We try to grab the console_sem.  If we succeed, it's easy - we log the output and
   * call the console drivers.  If we fail to get the semaphore we place the output
@@ -4825,14 +4825,14 @@ diff -uNrp arm-linux/kernel/printk.c arm-linux-2.6.7-adeos/kernel/printk.c
  	static char printk_buf[1024];
  	static int log_level_unknown = 1;
 +	swflag = __adeos_test_root();
-
+ 
  	if (unlikely(oops_in_progress))
  		zap_locks();
 -
  	/* This stops the holder of console_sem just where we want him */
 +
  	spin_lock_irqsave(&logbuf_lock, flags);
-
+ 
  	/* Emit the output into the temporary buffer */
  	va_start(args, fmt);
  	printed_len = vscnprintf(printk_buf, sizeof(printk_buf), fmt, args);
@@ -4844,7 +4844,7 @@ diff -uNrp arm-linux/kernel/printk.c arm-linux-2.6.7-adeos/kernel/printk.c
 @@ -543,6 +559,26 @@ asmlinkage int printk(const char *fmt, .
  			log_level_unknown = 1;
  	}
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +	if (adp_current != adp_root && !test_bit(ADEOS_SPRINTK_FLAG,&adp_current->flags)) {
 +
@@ -4941,7 +4941,7 @@ diff -uNrp arm-linux/kernel/printk.c arm-linux-2.6.7-adeos/kernel/printk.c
 +
 +
  EXPORT_SYMBOL(release_console_sem);
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +void __adeos_sync_console (unsigned virq) {
 +
@@ -4970,11 +4970,11 @@ diff -uNrp arm-linux/kernel/printk.c arm-linux-2.6.7-adeos/kernel/printk.c
  /** console_conditional_schedule - yield the CPU if required
   *
   * If the console code is currently allowed to sleep, and
-@@ -791,7 +884,7 @@ int unregister_console(struct console *
+@@ -791,7 +884,7 @@ int unregister_console(struct console * 
  	return res;
  }
  EXPORT_SYMBOL(unregister_console);
--
+-	
 +
  /**
   * tty_write_message - write a message to a certain tty, not just the console.
@@ -4991,7 +4991,7 @@ diff -uNrp arm-linux/kernel/sched.c arm-linux-2.6.7-adeos/kernel/sched.c
 + *   Copyright (c) 2005 Stefano Gafforelli (stefano.gafforelli@tiscali.it)
 + *   Copyright (c) 2005 Luca Pizzi (lucapizzi@hotmail.com)
   */
-
+ 
  #include <linux/mm.h>
 @@ -248,8 +252,16 @@ static DEFINE_PER_CPU(struct runqueue, r
   * Default context-switch locking:
@@ -5010,9 +5010,9 @@ diff -uNrp arm-linux/kernel/sched.c arm-linux-2.6.7-adeos/kernel/sched.c
 +#endif /* CONFIG_ADEOS_CORE */
  # define task_running(rq, p)		((rq)->curr == (p))
  #endif
-
+ 
 @@ -1043,6 +1055,10 @@ asmlinkage void schedule_tail(task_t *pr
-
+ 
  	if (current->set_child_tid)
  		put_user(current->pid, current->set_child_tid);
 +
@@ -5020,12 +5020,12 @@ diff -uNrp arm-linux/kernel/sched.c arm-linux-2.6.7-adeos/kernel/sched.c
 +	__adeos_enter_process();
 +#endif /* CONFIG_ADEOS_CORE */
  }
-
+ 
  /*
 @@ -2192,6 +2208,11 @@ asmlinkage void __sched schedule(void)
  	unsigned long run_time;
  	int cpu, idx;
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +	if (adp_current != adp_root) /* Let's be helpful and	conservative. */
 +	    return;
@@ -5037,7 +5037,7 @@ diff -uNrp arm-linux/kernel/sched.c arm-linux-2.6.7-adeos/kernel/sched.c
 @@ -2303,10 +2324,24 @@ switch_tasks:
  		rq->curr = next;
  		++*switch_count;
-
+ 
 -		prepare_arch_switch(rq, next);
 +#ifdef CONFIG_ADEOS_CORE
 +		prepare_arch_switch(rq, prev, next);
@@ -5046,7 +5046,7 @@ diff -uNrp arm-linux/kernel/sched.c arm-linux-2.6.7-adeos/kernel/sched.c
 +#endif /* CONFIG_ADEOS_CORE */
  		prev = context_switch(rq, prev, next);
  		barrier();
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +		if (likely(adp_pipelined))
 +		    adeos_hw_sti();
@@ -5061,9 +5061,9 @@ diff -uNrp arm-linux/kernel/sched.c arm-linux-2.6.7-adeos/kernel/sched.c
  	} else
  		spin_unlock_irq(&rq->lock);
 @@ -2319,6 +2354,20 @@ switch_tasks:
-
+ 
  EXPORT_SYMBOL(schedule);
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +
 +void __adeos_schedule_back_root (struct task_struct *prev)
@@ -5084,7 +5084,7 @@ diff -uNrp arm-linux/kernel/sched.c arm-linux-2.6.7-adeos/kernel/sched.c
 @@ -2329,6 +2378,14 @@ asmlinkage void __sched preempt_schedule
  {
  	struct thread_info *ti = current_thread_info();
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 + 	/* The in-kernel preemption routine might be indirectly called
 + 	   from code running in other domains, so we must ensure that
@@ -5121,25 +5121,25 @@ diff -uNrp arm-linux/kernel/sched.c arm-linux-2.6.7-adeos/kernel/sched.c
 +			}
  	}
  }
-
+ 
 @@ -2396,10 +2456,13 @@ void fastcall __wake_up(wait_queue_head_
  	unsigned long flags;
-
+ 
  	spin_lock_irqsave(&q->lock, flags);
 +
  	__wake_up_common(q, mode, nr_exclusive, 0, key);
 +
  	spin_unlock_irqrestore(&q->lock, flags);
  }
-
+ 
 +
  EXPORT_SYMBOL(__wake_up);
-
+ 
  /*
 @@ -2774,6 +2837,16 @@ static int setscheduler(pid_t pid, int p
  	if (retval)
  		goto out_unlock;
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +	{
 +	struct { struct task_struct *task; int policy; struct sched_param *param; } evdata = { p, policy, &lp };
@@ -5157,9 +5157,9 @@ diff -uNrp arm-linux/kernel/signal.c arm-linux-2.6.7-adeos/kernel/signal.c
 --- arm-linux/kernel/signal.c	Fri Jul 16 09:56:40 2004
 +++ arm-linux-2.6.7-adeos/kernel/signal.c	Thu Feb 10 16:30:47 2005
 @@ -557,6 +557,13 @@ void signal_wake_up(struct task_struct *
-
+ 
  	set_tsk_thread_flag(t, TIF_SIGPENDING);
-
+ 
 +#ifdef CONFIG_ADEOS_CORE
 +	{
 +	struct { struct task_struct *t; } evdata = { t };
@@ -5185,7 +5185,7 @@ diff -uNrp arm-linux/kernel/signal.c arm-linux-2.6.7-adeos/kernel/signal.c
 +	    goto out;
 +	}
 +#endif /* CONFIG_ADEOS_CORE */
-
+ 
  	if (((unsigned long)info > 2) && (info->si_code == SI_TIMER))
  		/*
 diff -uNrp arm-linux/kernel/softirq.c arm-linux-2.6.7-adeos/kernel/softirq.c
@@ -5196,16 +5196,16 @@ diff -uNrp arm-linux/kernel/softirq.c arm-linux-2.6.7-adeos/kernel/softirq.c
  {
  	__local_bh_enable();
 -	WARN_ON(irqs_disabled());
-+	WARN_ON(irqs_disabled());
++	WARN_ON(irqs_disabled());                  
  	if (unlikely(!in_interrupt() &&
  		     local_softirq_pending()))
  		invoke_softirq();
-@@ -306,7 +306,7 @@ void tasklet_kill(struct tasklet_struct
+@@ -306,7 +306,7 @@ void tasklet_kill(struct tasklet_struct 
  	while (test_and_set_bit(TASKLET_STATE_SCHED, &t->state)) {
  		do
  			yield();
 -		while (test_bit(TASKLET_STATE_SCHED, &t->state));
-+		while (test_bit(TASKLET_STATE_SCHED, &t->state));
++		while (test_bit(TASKLET_STATE_SCHED, &t->state));    
  	}
  	tasklet_unlock_wait(t);
  	clear_bit(TASKLET_STATE_SCHED, &t->state);
@@ -5221,17 +5221,17 @@ diff -uNrp arm-linux/kernel/sysctl.c arm-linux-2.6.7-adeos/kernel/sysctl.c
 +#endif /* CONFIG_ADEOS_CORE */
  #endif
  }
-
+ 
 diff -uNrp arm-linux/kernel/time.c arm-linux-2.6.7-adeos/kernel/time.c
 --- arm-linux/kernel/time.c	Thu Jun 24 20:29:39 2004
 +++ arm-linux-2.6.7-adeos/kernel/time.c	Mon Nov 22 12:01:09 2004
 @@ -31,6 +31,8 @@
  #include <asm/uaccess.h>
  #include <asm/unistd.h>
-
+ 
 +volatile u32 soft_timer_match;
 +EXPORT_SYMBOL(soft_timer_match);
- /*
+ /* 
   * The timezone where the local system is located.  Used as a default by some
   * programs who obtain this value by using gettimeofday.
 diff -uNrp arm-linux/kernel/timer.c arm-linux-2.6.7-adeos/kernel/timer.c
@@ -5239,7 +5239,7 @@ diff -uNrp arm-linux/kernel/timer.c arm-linux-2.6.7-adeos/kernel/timer.c
 +++ arm-linux-2.6.7-adeos/kernel/timer.c	Mon Nov 22 11:08:51 2004
 @@ -1502,4 +1502,4 @@ void msleep(unsigned int msecs)
  }
-
+ 
  EXPORT_SYMBOL(msleep);
 -
 +EXPORT_SYMBOL(do_timer);
@@ -5251,7 +5251,7 @@ diff -uNrp arm-linux/mm/bootmem.c arm-linux-2.6.7-adeos/mm/bootmem.c
  			if (j >= eidx)
  				goto fail_block;
 -			if (test_bit (j, bdata->node_bootmem_map))
-+			if (test_bit (j, bdata->node_bootmem_map))
++			if (test_bit (j, bdata->node_bootmem_map))  
  				goto fail_block;
  		}
  		start = i;
@@ -5261,32 +5261,32 @@ diff -uNrp arm-linux/mm/highmem.c arm-linux-2.6.7-adeos/mm/highmem.c
 @@ -310,7 +310,7 @@ static void bounce_end_io(struct bio *bi
  	struct bio_vec *bvec, *org_vec;
  	int i;
-
+ 
 -	if (!test_bit(BIO_UPTODATE, &bio->bi_flags))
-+	if (!test_bit(BIO_UPTODATE, &bio->bi_flags))
++	if (!test_bit(BIO_UPTODATE, &bio->bi_flags))     
  		goto out_eio;
-
+ 
  	set_bit(BIO_UPTODATE, &bio_orig->bi_flags);
-@@ -353,7 +353,7 @@ static void __bounce_end_io_read(struct
+@@ -353,7 +353,7 @@ static void __bounce_end_io_read(struct 
  {
  	struct bio *bio_orig = bio->bi_private;
-
+ 
 -	if (test_bit(BIO_UPTODATE, &bio->bi_flags))
-+	if (test_bit(BIO_UPTODATE, &bio->bi_flags))
++	if (test_bit(BIO_UPTODATE, &bio->bi_flags))    
  		copy_to_high_bio_irq(bio_orig, bio);
-
+ 
  	bounce_end_io(bio, pool);
 diff -uNrp arm-linux/mm/page_alloc.c arm-linux-2.6.7-adeos/mm/page_alloc.c
 --- arm-linux/mm/page_alloc.c	Fri Jul 16 09:56:44 2004
 +++ arm-linux-2.6.7-adeos/mm/page_alloc.c	Tue Oct 26 11:03:02 2004
 @@ -1191,7 +1191,7 @@ static int __init find_next_best_node(in
  		n = (node+i)%numnodes;
-
+ 
  		/* Don't want a node to appear more than once */
 -		if (test_bit(n, used_node_mask))
-+		if (test_bit(n, used_node_mask))
++		if (test_bit(n, used_node_mask))         
  			continue;
-
+ 
  		/* Use the distance array to find the distance */
 diff -uNrp arm-linux/net/list arm-linux-2.6.7-adeos/net/list
 --- arm-linux/net/list	Thu Jan  1 01:00:00 1970
@@ -5302,8 +5302,8 @@ diff -uNrp arm-linux/net/socket.c arm-linux-2.6.7-adeos/net/socket.c
  int sock_close(struct inode *inode, struct file *filp)
  {
  	/*
--	 *	It was possible the inode is NULL we were
--	 *	closing an unfinished socket.
+-	 *	It was possible the inode is NULL we were 
+-	 *	closing an unfinished socket. 
 +	 *	It was possible the inode is NULL we were
 +	 *	closing an unfinished socket.
  	 */

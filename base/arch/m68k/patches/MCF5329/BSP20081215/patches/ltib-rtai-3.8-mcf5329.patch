@@ -1,55 +1,32 @@
 diff --git a/bin/device_genromfs.txt b/bin/device_genromfs.txt
-index 94d4e1c..aff8ca3 100644
+index 0916254..d2c6857 100644
 --- a/bin/device_genromfs.txt
 +++ b/bin/device_genromfs.txt
-@@ -50,3 +50,4 @@ i2c0,c,89,0
- event0,c,13,64
- rtc,c,10,135
- psaux,c,10,1
+@@ -79,6 +79,7 @@ psaux,c,10,1
+ ts0,c,13,144
+ ts,c,10,16
+ mice,c,13,63
 +rtf0,c,150,0 rtf1,c,150,1 rtf2,c,150,2 rtf3,c,150,3
+ adc,c,10,63
+ 
+ spidev0.0,c,153,0	spidev0.1,c,153,1	spidev0.2,c,153,2
 diff --git a/bin/device_table.txt b/bin/device_table.txt
-index bd1a3c9..5f6911f 100644
+index 01d4c33..ffbf984 100644
 --- a/bin/device_table.txt
 +++ b/bin/device_table.txt
-@@ -192,3 +192,8 @@
- 
+@@ -198,3 +198,6 @@
  # I2C devices
- /dev/i2c-0	c	660	0	0	89	0	-	-	-
-+
+ /dev/i2c-      c       660     0       0       89      0       0       1       2
+ 
 +# RTAI
 +
-+#<name>		<type>	<mode>	<uid>	<gid>	<major>	<minor>	<start>	<inc>	<count>
-+/dev/rtf	c	640	0	0	150	0	0	1	4
-diff --git a/config/platform/mcf5445x/linux-2.6.x.config b/config/platform/mcf5445x/linux-2.6.x.config
-index 70d845c..2713386 100644
---- a/config/platform/mcf5445x/linux-2.6.x.config
-+++ b/config/platform/mcf5445x/linux-2.6.x.config
-@@ -138,6 +138,7 @@ CONFIG_SPLIT_PTLOCK_CPUS=4
- CONFIG_ZONE_DMA_FLAG=1
- CONFIG_BOUNCE=y
- CONFIG_VIRT_TO_BUS=y
-+# CONFIG_IPIPE is not set
- 
- #
- # General setup
-diff --git a/config/platform/mcf5445x/linux-2.6.x.config.dev b/config/platform/mcf5445x/linux-2.6.x.config.dev
-index 70d845c..2713386 100644
---- a/config/platform/mcf5445x/linux-2.6.x.config.dev
-+++ b/config/platform/mcf5445x/linux-2.6.x.config.dev
-@@ -138,6 +138,7 @@ CONFIG_SPLIT_PTLOCK_CPUS=4
- CONFIG_ZONE_DMA_FLAG=1
- CONFIG_BOUNCE=y
- CONFIG_VIRT_TO_BUS=y
-+# CONFIG_IPIPE is not set
- 
- #
- # General setup
-diff --git a/config/platform/mcf5445x/rtai.config b/config/platform/mcf5445x/rtai.config
++/dev/rtf    c       640     0       0       150       0       0       1       4
+diff --git a/config/platform/cf_nommu/rtai.config b/config/platform/cf_nommu/rtai.config
 new file mode 100644
-index 0000000..0c88d28
+index 0000000..759515a
 --- /dev/null
-+++ b/config/platform/mcf5445x/rtai.config
-@@ -0,0 +1,96 @@
++++ b/config/platform/cf_nommu/rtai.config
+@@ -0,0 +1,106 @@
 +#
 +# Automatically generated make config: don't edit
 +#
@@ -69,8 +46,18 @@ index 0000000..0c88d28
 +# CONFIG_RTAI_DOC_LATEX_NONSTOP is not set
 +# CONFIG_RTAI_DBX_DOC is not set
 +CONFIG_RTAI_TESTSUITE=y
-+CONFIG_RTAI_COMPAT=y
-+# CONFIG_RTAI_EXTENDED is not set
++# CONFIG_RTAI_COMPAT is not set
++CONFIG_RTAI_EXTENDED=y
++# CONFIG_RTAI_KMOD_DEBUG is not set
++# CONFIG_RTAI_USER_DEBUG is not set
++# CONFIG_RTAI_MAINTAINER is not set
++# CONFIG_RTAI_LXRT_STATIC_INLINE is not set
++CONFIG_RTAI_LXRT_EXTERN_INLINE=y
++# CONFIG_RTAI_LXRT_NO_INLINE is not set
++
++#
++# Machine (m68knommu)
++#
 +# CONFIG_RTAI_FPU_SUPPORT is not set
 +CONFIG_RTAI_CPUS="1"
 +
@@ -84,7 +71,7 @@ index 0000000..0c88d28
 +# CONFIG_RTAI_SCHED_ISR_LOCK is not set
 +CONFIG_RTAI_RTC_FREQ="0"
 +# CONFIG_RTAI_LONG_TIMED_LIST is not set
-+CONFIG_RTAI_SCHED_8254_LATENCY="45000"
++CONFIG_RTAI_SCHED_8254_LATENCY="90000"
 +CONFIG_RTAI_SCHED_APIC_LATENCY="3944"
 +CONFIG_RTAI_SCHED_LXRT_NUMSLOTS="150"
 +CONFIG_RTAI_MONITOR_EXECTIME=y
@@ -103,7 +90,7 @@ index 0000000..0c88d28
 +CONFIG_RTAI_FIFOS=m
 +CONFIG_RTAI_NETRPC=m
 +# CONFIG_RTAI_NETRPC_RTNET is not set
-+CONFIG_RTAI_SHM=m
++# CONFIG_RTAI_SHM is not set
 +CONFIG_RTAI_SEM=m
 +# CONFIG_RTAI_RT_POLL is not set
 +CONFIG_RTAI_MSG=m
@@ -147,68 +134,67 @@ index 0000000..0c88d28
 +#
 +# CONFIG_RTAI_LAB is not set
 diff --git a/config/userspace/packages.lkc b/config/userspace/packages.lkc
-index 39a9b16..909172d 100644
+index d280c32..7fd3e60 100644
 --- a/config/userspace/packages.lkc
 +++ b/config/userspace/packages.lkc
-@@ -1670,6 +1670,23 @@ config PKG_RSYNC
-       report which describes the rsync algorithm is included in this
-       package.
+@@ -2486,6 +2486,21 @@ config PKG_RT_TESTS
+       "realtime" kernel behavior, such as timer latency, signal latency and
+       the functioning of priority-inheritance mutexes.
  
 +config PKG_RTAI
-+    depends !KERNEL_NONE
++    depends !KERNEL_NONE && PLATFORM1
 +    select PKG_KERNEL_LEAVESRC
 +    bool "rtai"
 +    help
-+      RTAI is Real Time Application Interface. RTAI lets you write
-+      applications with strict timing constraints for your
-+      GNU/Linux operating system.
++      RTAI is Real Time Application Interface
 +
 +config PKG_RTAI_WANT_CF
 +    depends PKG_RTAI
 +    bool "Configure rtai at build time"
 +    help
-+      Select this if you want to interactively configure RTAI during
-+      the build. A copy of the configured value will be put back
++      Select this if you want to interactively configure rtai during
++      the build.  A copy of the configured value will be put back
 +      into the platforms configuration directory, with the suffix .dev
 +
- config PKG_SAMBA
-     bool "samba"
+ config PKG_RTCTEST
+     bool "rtc-test"
      help
-diff --git a/dist/lfs-5.1/common/pkg_map b/dist/lfs-5.1/common/pkg_map
-index e69e720..f2c51ff 100644
---- a/dist/lfs-5.1/common/pkg_map
-+++ b/dist/lfs-5.1/common/pkg_map
-@@ -251,6 +251,7 @@ PKG_MCF54455_DEMO                = mcf54455-demo
- PKG_WANGW                        = wangw
- PKG_SWANG_POC                    = swang-poc
- PKG_NFS_UTILS                    = nfs-utils
+diff --git a/config/userspace/pkg_map b/config/userspace/pkg_map
+index 970cbe7..c8fae0f 100644
+--- a/config/userspace/pkg_map
++++ b/config/userspace/pkg_map
+@@ -356,6 +356,7 @@ PKG_XTERM                        = xterm
+ PKG_XORG_X11_DRV_KEYBOARD        = xorg-x11-drv-keyboard
+ PKG_LIBXXF86DGA                  = libXxf86dga
+ PKG_XORG_X11_PROTO_DEVEL         = xorg-x11-proto-devel
 +PKG_RTAI                         = rtai
- 
- # leave these as the last 2 packages in the build order
+ # leave these as the last 3 packages in the build order
+ PKG_SYSCONFIG                    = sysconfig
  PKG_MERGE                        = merge
-diff --git a/dist/lfs-5.1/kernel/kernel-2.6.23-m5445x.spec.in b/dist/lfs-5.1/kernel/kernel-2.6.23-m5445x.spec.in
-index 883f32e..04c9abc 100644
---- a/dist/lfs-5.1/kernel/kernel-2.6.23-m5445x.spec.in
-+++ b/dist/lfs-5.1/kernel/kernel-2.6.23-m5445x.spec.in
-@@ -62,6 +62,7 @@ Patch45		: lin2-6-23-m5445x-0045-Clean-up-formatting.patch
- Patch46		: lin2-6-23-m5445x-0046-Coldfire-M5445x-PCI-Bits.patch
- Patch47		: lin2-6-23-m5445x-0047-EDMA-callback-arg-changes.patch
- Patch48		: lin2-6-23-m5445x-0048-Allow-playback-at-other-than-44.1.patch
-+Patch49		: lin2-6-23-m5445x-0049-I-Pipe.patch
+diff --git a/dist/lfs-5.1/kernel/kernel-2.6.26-uc0.spec.in b/dist/lfs-5.1/kernel/kernel-2.6.26-uc0.spec.in
+index c3aba66..6dcdcc6 100644
+--- a/dist/lfs-5.1/kernel/kernel-2.6.26-uc0.spec.in
++++ b/dist/lfs-5.1/kernel/kernel-2.6.26-uc0.spec.in
+@@ -83,7 +83,7 @@ Patch64         :0065-NAND-USB-Logic-reg-fix1.patch
+ Patch65         :0066-BDM-FEC-Phy-Max-Executable-fixes.patch
+ Patch66         :0067-Fix-CAN-ifconfig-bug-and-improve-performance.patch
+ Patch67         :0068-Detect-FEC-cable-status.patch
+-
++Patch68         :0069-ipipe-mcf5329_2.6.26.patch
+ 
  BuildRoot       : %{_tmppath}/%{name}
  Prefix          : %{pfx}
- 
-@@ -120,3 +121,4 @@ From kernel.org plus Freescale patches
- %patch46 -p1
- %patch47 -p1
- %patch48 -p1
-+%patch49 -p1
+@@ -163,3 +163,4 @@ From kernel.org plus Freescale patches
+ %patch65 -p1
+ %patch66 -p1
+ %patch67 -p1
++%patch68 -p1
 diff --git a/dist/lfs-5.1/rtai/rtai.spec b/dist/lfs-5.1/rtai/rtai.spec
 new file mode 100644
-index 0000000..a3e26b3
+index 0000000..7a26dbf
 --- /dev/null
 +++ b/dist/lfs-5.1/rtai/rtai.spec
-@@ -0,0 +1,50 @@
+@@ -0,0 +1,49 @@
 +%define pfx /opt/freescale/rootfs/%{_target_cpu}
 +
 +Summary         : Real Time Application Interface
@@ -238,16 +224,15 @@ index 0000000..a3e26b3
 +    CONF_FILE=$PLATFORM_PATH/rtai.config
 +fi
 +
++sed "s:@LINUX_SRC_ROOT@:%{_builddir}/linux:g" $CONF_FILE > %{_builddir}/%{buildsubdir}/.rtai_config
 +if [ -n "$PKG_RTAI_WANT_CF" ]
 +then
-+    sed "s:@LINUX_SRC_ROOT@:%{_builddir}/linux:g" $CONF_FILE > %{_builddir}/%{buildsubdir}/.rtai_config
-+    make ARCH=m68k HOSTCC="$BUILDCC" menuconfig
-+    cp %{_builddir}/%{buildsubdir}/.rtai_config $PLATFORM_PATH/rtai.config.dev
++    make ARCH=m68knommu menuconfig -j1 HOSTCC="$BUILDCC"
 +else
-+    sed "s:@LINUX_SRC_ROOT@:%{_builddir}/linux:g" $CONF_FILE > %{_builddir}/%{buildsubdir}/.rtai_config
-+    make ARCH=m68k HOSTCC="$BUILDCC" reconfig
++    make ARCH=m68knommu oldconfig -j1 HOSTCC="$BUILDCC"
 +fi
-+make
++cp %{_builddir}/%{buildsubdir}/.rtai_config $PLATFORM_PATH/rtai.config.dev
++make -j1
 +
 +%Install
 +rm -rf $RPM_BUILD_ROOT
