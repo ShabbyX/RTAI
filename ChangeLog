@@ -44,8 +44,7 @@
 	* base/arch/x86_64/hal/hal.immed: review and fix a few bugs of the
 	  reworked stuff related to enabling/disabling.
 	* base/arch/x86/hal/hal_32.h: use CPU_MASK_ALL to fix a quick and
-=======
->>>>>>> magma
+	  dirty, but very very bad hack, in selecting Linux timers for RTAI.
 
 2013-06-09 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
