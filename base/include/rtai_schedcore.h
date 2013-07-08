@@ -662,6 +662,7 @@ int rt_kthread_init_cpuid(RT_TASK *task,
 
 #else /* !__KERNEL__ */
 
+#if 0
 #include <rtai_version.h>
 #include <rtai_lxrt.h>
 #include <rtai_sched.h>
@@ -683,6 +684,7 @@ int rt_kthread_init_cpuid(RT_TASK *task,
 #include <rtai_netrpc.h>
 #include <rtai_shm.h>
 #include <rtai_usi.h>
+#endif
 
 #endif /* __KERNEL__ */
 

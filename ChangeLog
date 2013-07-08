@@ -1,3 +1,15 @@
+2013-07-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/liblxrt/init.c: used nomore, just an empty code.
+	* base/sched/liblxrt/services.c: include RTAI services to be libbed 
+	  from the LXRT user space part of header files directly and not 
+	  through the inclusion of rtai_schedcore.h.
+
+2013-07-02 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/rtai_lxrt.h: remove unused rt_clone and lower 
+	  RT_THREAD_STACK_MIN.
+
 2013-04-08 Pierangelo Masarati <masarati@aero.polimi.it>
 
 	* RTAI 3.9.1
@@ -32,6 +44,8 @@
 	* base/arch/x86_64/hal/hal.immed: review and fix a few bugs of the
 	  reworked stuff related to enabling/disabling.
 	* base/arch/x86/hal/hal_32.h: use CPU_MASK_ALL to fix a quick and
+=======
+>>>>>>> magma
 
 2013-06-09 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
