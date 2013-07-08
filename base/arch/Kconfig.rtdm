@@ -1,0 +1,43 @@
+#
+# RTDM configurations
+#
+
+config RTAI_RTDM
+	bool "Real-Time Driver Model over RTAI"
+	default n
+	help
+	Real Time Drive Model specific implementation for RTAI.
+
+config RTAI_RTDM_FD_MAX
+	depends on RTAI_RTDM
+	string "Number of RTDM file descriptors"
+	default 128
+	help
+	The maximum number of file descriptors in RTDM.
+
+config RTAI_RTDM_SELECT
+	depends on RTAI_RTDM
+	bool "Enable select multiplexing for RTDM services"
+	default n
+	help
+	By enabling this option, select(2) support can be used to monitor
+	access to multiple RTDM services all in one, as for the standard UNIX
+	support, with the exception of the timeout argument format. Being it
+	RTDM specific nanoseconds are used directly in place of
+	timeval/timespec.
+
+config RTAI_RTDM_SHIRQ
+	depends on RTAI_RTDM
+	bool "Shared interrupts"
+	default n
+	help
+	Make it possible for RTDM own interrupt handlers to manage shared
+	interrupts.
+
+config RTAI_DEBUG_RTDM
+	depends on RTAI_RTDM
+	bool "Enable some elementary RTDM debugging messages"
+	default n
+	help
+	Enable some elementary debugging of wrong requests to RTDM, in the
+	form of messages asserting what's improper and where it's happening.
