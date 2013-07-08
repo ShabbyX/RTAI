@@ -1,7 +1,6 @@
 lib_LTLIBRARIES = liblxrt.la
 
 liblxrt_la_SOURCES = \
-		init.c \
 		services.c
 if !CONFIG_M68KNOMMU
 liblxrt_la_SOURCES += touchall.c
