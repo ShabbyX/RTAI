@@ -1606,9 +1606,7 @@ dnl Whether Linux is using the Kbuild make system.
 AM_CONDITIONAL(CONFIG_KBUILD,[test "$CONFIG_KBUILD" = y])
 
 dnl CPU architecture
-dnl FIXME_X86
 AM_CONDITIONAL(CONFIG_X86_64,[test "$CONFIG_X86_64" = y])
-AM_CONDITIONAL(CONFIG_I386,[test "$CONFIG_X86_32" = y])
 AM_CONDITIONAL(CONFIG_X86,[test "$CONFIG_X86" = y])
 AM_CONDITIONAL(CONFIG_PPC,[test "$CONFIG_PPC" = y])
 AM_CONDITIONAL(CONFIG_ARM,[test "$CONFIG_ARM" = y])
@@ -2031,16 +2029,6 @@ AC_CONFIG_FILES([ \
 	base/scripts/GNUmakefile \
 	base/scripts/rtai-config \
 	base/scripts/rtai-load \
-	base/arch/i386/GNUmakefile \
-	base/arch/i386/hal/GNUmakefile \
-	base/arch/i386/calibration/GNUmakefile \
-	base/arch/i386/calibration/setsmi \
-	base/include/asm-i386/GNUmakefile \
-	base/arch/x86_64/GNUmakefile \
-	base/arch/x86_64/hal/GNUmakefile \
-	base/arch/x86_64/calibration/GNUmakefile \
-	base/arch/x86_64/calibration/setsmi \
-	base/include/asm-x86_64/GNUmakefile \
 	base/arch/x86/GNUmakefile \
 	base/arch/x86/hal/GNUmakefile \
 	base/arch/x86/calibration/GNUmakefile \
@@ -2055,7 +2043,7 @@ AC_CONFIG_FILES([ \
 	base/arch/m68k/GNUmakefile \
 	base/arch/m68k/hal/GNUmakefile \
 	base/include/asm-m68k/GNUmakefile \
-   	base/ipc/bits/GNUmakefile \
+	base/ipc/bits/GNUmakefile \
 	base/ipc/fifos/GNUmakefile \
 	base/ipc/netrpc/GNUmakefile \
 	base/ipc/shm/GNUmakefile \

@@ -205,5 +205,3 @@ menu "RTAI Lab"
 source "base/arch/Kconfig.lab"
 
 endmenu
-
-source rtai-sim/Kconfig
