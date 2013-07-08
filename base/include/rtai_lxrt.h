@@ -650,18 +650,7 @@ RTAI_PROTO(RT_TASK *, rt_task_init_schmod, (unsigned long name, int priority, in
 	return (RT_TASK *)rtai_lxrt(BIDX, SIZARG, LXRT_TASK_INIT, &arg).v[LOW];
 }
 
-static inline int rt_clone(void *fun, void *args, long stack_size, unsigned long flags)
-{
-	void *sp;
-	if (!flags) {
-		flags = CLONE_VM | CLONE_FS | CLONE_FILES;
-	}
-	memset(sp = malloc(stack_size), 0, stack_size);
-	sp = (void *)(((unsigned long)sp + stack_size - 16) & ~0xF);
-	return clone((int (*)(void *))fun, sp, flags, args);
-}
-
-#define RT_THREAD_STACK_MIN  64*1024
+#define RT_THREAD_STACK_MIN  16*1024
 
 #include <pthread.h>
 
