@@ -198,7 +198,6 @@ static inline void _lxrt_context_switch (struct task_struct *prev, struct task_s
 extern int FASTCALL(do_signal(struct pt_regs *regs, sigset_t *oldset));
 #define RT_DO_SIGNAL(regs)  do_signal(regs, NULL)
 #else
-__attribute__((regparm(3))) void do_notify_resume(struct pt_regs *regs, void *_unused, __u32 thread_info_flags);
 #define RT_DO_SIGNAL(regs)  do_notify_resume(regs, NULL, (_TIF_SIGPENDING | _TIF_RESTORE_SIGMASK));
 #endif
 
