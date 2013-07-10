@@ -1328,26 +1328,6 @@ AC_ARG_ENABLE(sim,
 	*) unset CONFIG_RTAI_MVM ;;
 	esac])
 
-unset RTAI_MAYBE_SIMDIR
-if test \! -d $srcdir/rtai-sim; then
-    if test x$CONFIG_RTAI_MVM = xy; then
-        AC_MSG_ERROR([simulator is missing.])
-    fi
-    AC_MSG_RESULT([not present])
-else
-    if test x$CONFIG_RTAI_MVM = xy; then
-	export CONFIG_RTAI_MVM_DEBUG
-    	export CONFIG_RTAI_MVM_GCC_TARBALL
-    else
-	RTAI_MAYBE_SIMDIR=rtai-sim
-    fi
-    AC_MSG_RESULT(${CONFIG_RTAI_MVM:-no})
-fi
-if test x$arch_supports_sim = x -a x$CONFIG_RTAI_MVM = xy; then
-   AC_MSG_ERROR([simulator is not available on this architecture.])
-fi
-AC_SUBST(RTAI_MAYBE_SIMDIR)
-
 dnl We need to know this before building the APIC support
 dnl into the SMP scheduler for the x86 platform. Autoconf imposes
 dnl us to define all Automake conditionals...unconditionally. e.g.
@@ -2189,10 +2169,6 @@ if test \! x$RTAI_MAYBE_DOCDIR = x; then
 	   doc/docbook/docbook-test/GNUmakefile \
 	   doc/guide/GNUmakefile \
       ])
-fi
-
-if test x$CONFIG_RTAI_MVM = xy; then
-   AC_CONFIG_SUBDIRS(rtai-sim)
 fi
 
 AC_OUTPUT()
