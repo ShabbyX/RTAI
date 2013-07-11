@@ -398,7 +398,7 @@
 #define LXRT_MBX_DELETE		1007
 #define MAKE_SOFT_RT		1008
 #define MAKE_HARD_RT		1009
-#define PRINT_TO_SCREEN		1010
+#define KTHREAD_INIT   		1010
 #define NONROOT_HRT		1011
 #define RT_BUDDY		1012
 #define HRT_USE_FPU     	1013
@@ -635,6 +635,12 @@ RTAI_PROTO(unsigned long, rt_get_name, (void *adr))
 {
 	struct { void *adr; } arg = { adr };
 	return rtai_lxrt(BIDX, SIZARG, LXRT_GET_NAME, &arg).i[LOW];
+}
+
+RTAI_PROTO(void, rt_kthread_init, (void))
+{
+	struct { unsigned long dummy; } arg;
+	rtai_lxrt(BIDX, SIZARG, KTHREAD_INIT, &arg);
 }
 
 RTAI_PROTO(RT_TASK *, rt_task_init_schmod, (unsigned long name, int priority, int stack_size, int max_msg_size, int policy, int cpus_allowed))
@@ -1315,19 +1321,6 @@ RTAI_PROTO(int,rt_set_linux_signal_handler,(RT_TASK *task, void (*handler)(int s
 }
 
 #define VSNPRINTF_BUF_SIZE 256
-RTAI_PROTO(int,rtai_print_to_screen,(const char *format, ...))
-{
-	char display[VSNPRINTF_BUF_SIZE];
-	struct { const char *display; long nch; } arg = { display, 0 };
-	va_list args;
-
-	va_start(args, format);
-	arg.nch = vsnprintf(display, VSNPRINTF_BUF_SIZE, format, args);
-	va_end(args);
-	rtai_lxrt(BIDX, SIZARG, PRINT_TO_SCREEN, &arg);
-	return arg.nch;
-}
-
 RTAI_PROTO(int,rt_printk,(const char *format, ...))
 {
 	char display[VSNPRINTF_BUF_SIZE];
@@ -1340,6 +1333,8 @@ RTAI_PROTO(int,rt_printk,(const char *format, ...))
 	rtai_lxrt(BIDX, SIZARG, PRINTK, &arg);
 	return arg.nch;
 }
+
+#define rtai_print_to_screen rt_printk
 
 RTAI_PROTO(int,rt_usp_signal_handler,(void (*handler)(void)))
 {

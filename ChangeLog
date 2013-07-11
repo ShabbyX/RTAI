@@ -1,3 +1,8 @@
+2013-07-10 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/include/rtai_lxrt.h: rtai_print_to_screen is rt_printk now, 
+	  added call rt_kthread_init.
+
 2013-07-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/sched/liblxrt/init.c: used nomore, just an empty code.
