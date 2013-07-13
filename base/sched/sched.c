@@ -38,7 +38,7 @@ ACKNOWLEDGMENTS:
 #include <linux/sys.h>
 
 #include <asm/param.h>
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0)
 #include <asm/system.h>
 #endif
 #include <asm/io.h>
