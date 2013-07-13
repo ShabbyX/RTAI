@@ -29,12 +29,12 @@ choice
 	- Eager inlining:       i.e. static inline, always inline regardless
 	  of compiler's optimization switch;
 
-config RTAI_LXRT_NO_INLINE
-	bool "No inlining"
-	help
-
 config RTAI_LXRT_STATIC_INLINE
 	bool "Eager inlining"
+	help
+
+config RTAI_LXRT_NO_INLINE
+	bool "No inlining"
 	help
 
 endchoice
