@@ -86,7 +86,7 @@ config-status: .rtai_config
 	--with-kconfig-file=./$< \
 	--with-linux-dir=$(RTAI_LINUX_DIR) \
 	--prefix=$$CONFIG_RTAI_INSTALLDIR \
-	--enable-quite-build=@CONFIG_RTAI_QUIET@ \
+	--enable-quiet-build=@CONFIG_RTAI_QUIET@ \
 	$$confopts ; \
 	if test $$? = 0; then \
 	   touch .cfok ; \
