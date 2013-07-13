@@ -5233,7 +5233,7 @@ index d537431..bf54642 100644
  	.probe		= serial8250_probe,
  	.remove		= __devexit_p(serial8250_remove),
 diff --git a/fs/exec.c b/fs/exec.c
-index 2b7f5ff..40f6e99 100644
+index 0ea0b4c..71b7a9f 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
 @@ -819,6 +819,7 @@ static int exec_mmap(struct mm_struct *mm)
@@ -13529,10 +13529,10 @@ index ead79bc..5c76876 100644
  }
  
 diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 6570548..c2048bc 100644
+index a1e0795..7c32281 100644
 --- a/kernel/time/tick-sched.c
 +++ b/kernel/time/tick-sched.c
-@@ -656,7 +656,7 @@ static void tick_nohz_handler(struct clock_event_device *dev)
+@@ -655,7 +655,7 @@ static void tick_nohz_handler(struct clock_event_device *dev)
  		ts->idle_jiffies++;
  	}
  
@@ -13541,7 +13541,7 @@ index 6570548..c2048bc 100644
  	profile_tick(CPU_PROFILING);
  
  	while (tick_nohz_reprogram(ts, now)) {
-@@ -813,7 +813,7 @@ static enum hrtimer_restart tick_sched_timer(struct hrtimer *timer)
+@@ -812,7 +812,7 @@ static enum hrtimer_restart tick_sched_timer(struct hrtimer *timer)
  			touch_softlockup_watchdog();
  			ts->idle_jiffies++;
  		}
