@@ -195,7 +195,7 @@ distclean: clean
 
 # Check that we have the required ncurses stuff installed for lxdialog (menuconfig)
 PHONY += dochecklxdialog
-$(lxdialog): dochecklxdialog
+$(lxdialog): | dochecklxdialog
 dochecklxdialog:
 	@$(SHELL) $(check-lxdialog) -check $(CC) $(EXTRACFLAGS) $(LOADLIBES_mconf)
 
