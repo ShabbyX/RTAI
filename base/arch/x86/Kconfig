@@ -41,7 +41,7 @@ endchoice
 
 endmenu
 
-menu "Machine (x86)"
+menu "Machine (x86 / x86_64)"
 
 config RTAI_FPU_SUPPORT
 	bool "Enable FPU support"
