@@ -124,17 +124,17 @@ int lock_all(int stk, int heap) {
 void dump_malloc_stats(void)
 {
 	struct mallinfo mi;
-	extern int rtai_print_to_screen(const char *fmt, ...);
+	extern int rt_printk(const char *fmt, ...);
 //	memset(&mi, 0, sizeof(mi));
 	mi = mallinfo();
 
-	rtai_print_to_screen("\ntotal space allocated from system %d\n", mi.arena);
-	rtai_print_to_screen("number of non-inuse chunks        %d\n", mi.ordblks);
-	rtai_print_to_screen("number of mmapped regions         %d\n", mi.hblks);
-	rtai_print_to_screen("total space in mmapped regions    %d\n", mi.hblkhd);
-	rtai_print_to_screen("total allocated space             %d\n", mi.uordblks);
-	rtai_print_to_screen("total non-inuse space             %d\n", mi.fordblks);
-	rtai_print_to_screen("top-most, releasable space        %d\n", mi.keepcost);
+	rt_printk("\ntotal space allocated from system %d\n", mi.arena);
+	rt_printk("number of non-inuse chunks        %d\n", mi.ordblks);
+	rt_printk("number of mmapped regions         %d\n", mi.hblks);
+	rt_printk("total space in mmapped regions    %d\n", mi.hblkhd);
+	rt_printk("total allocated space             %d\n", mi.uordblks);
+	rt_printk("total non-inuse space             %d\n", mi.fordblks);
+	rt_printk("top-most, releasable space        %d\n", mi.keepcost);
 }
 
 /*

@@ -530,11 +530,6 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 			}
 			return 0;
 		}
-		case PRINT_TO_SCREEN: {
-			struct arg { char *display; long nch; };
-			arg0.i = rtai_print_to_screen("%s", larg->display);
-			return arg0.ll;
-		}
 
 		case PRINTK: {
 			struct arg { char *display; long nch; };
