@@ -9,6 +9,7 @@ override CXX := g++
 else
 override CXX := $(CXX)
 endif
+override ARCH := $(shell echo $(ARCH) | sed -e 's/^m68knommu/m68k/' -e 's/i.*86.*/x86/' -e 's/x86_64/x86/')
 
 ifeq ($(MAKECMDGOALS),qbuild)
 -include .qtinst

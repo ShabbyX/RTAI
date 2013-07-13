@@ -1433,7 +1433,7 @@ dnl
 
 if test \! -r .rtai_config; then
    set | grep -e '^CONFIG_RTAI' -e '^CONFIG_MODULES' | \
-   sed -e 's,\(.*\)=\(.*\)$,\1=\"\2\",' > .rtai_config
+   sed -e 's,\(.*\)=\(.*\)$,\1=\2,' -e 's,quiet_,y,' > .rtai_config
 fi
 
 dnl
