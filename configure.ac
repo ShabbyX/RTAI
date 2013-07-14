@@ -800,15 +800,6 @@ AC_ARG_ENABLE(align-priority,
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_ALIGN_LINUX_PRIORITY:-no})
 
-AC_MSG_CHECKING(for in-kernel C++ support)
-AC_ARG_ENABLE(cplusplus,
-	[ --enable-cplusplus	Build in-kernel C++ support],
-	[case "$enableval" in
-	y | yes) CONFIG_RTAI_CPLUSPLUS=y ;;
-	*) unset CONFIG_RTAI_CPLUSPLUS ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_CPLUSPLUS:-no})
-
 AC_MSG_CHECKING(for calibration frequency factor)
 AC_ARG_ENABLE(cal-freq-fact,
 	[ --enable-cal-freq-fact      	Set calibration frequency factor],
@@ -1358,11 +1349,6 @@ if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_MATH = xy ; then
    AC_MSG_ERROR([Built-in math support is not currently available with Linux >= 2.6.x])
 fi
 
-dnl Kbuild is not quite C++ friendly these days.
-if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_CPLUSPLUS = xy ; then
-   AC_MSG_ERROR([In-kernel C++ support is not available with Linux >= 2.6.x])
-fi
-
 dnl
 dnl Build a Kconfig file corresponding to the current configuration
 dnl if none exists.
@@ -1641,7 +1627,6 @@ dnl Non-core packages.
 AM_CONDITIONAL(CONFIG_RTAI_COMEDI_LXRT,[test x$CONFIG_RTAI_COMEDI_LXRT = xy])
 AM_CONDITIONAL(CONFIG_RTAI_USE_LINUX_COMEDI,[test x$CONFIG_RTAI_USE_LINUX_COMEDI = xy])
 dnl AM_CONDITIONAL(CONFIG_RTAI_USE_COMEDI_LOCK,[test x$CONFIG_RTAI_USE_COMEDI_LOCK = xy])
-AM_CONDITIONAL(CONFIG_RTAI_CPLUSPLUS,[test x$CONFIG_RTAI_CPLUSPLUS = xy])
 dnl Supported skins
 AM_CONDITIONAL(CONFIG_RTAI_RTDM,[test x$CONFIG_RTAI_RTDM = xy])
 dnl Supported drivers
@@ -2043,12 +2028,11 @@ AC_CONFIG_FILES([ \
 	])
 
 build_drivers=$CONFIG_RTAI_DRIVERS_SERIAL$CONFIG_RTAI_DRIVERS_16550A
-build_addons=$CONFIG_RTAI_CPLUSPLUS$CONFIG_RTAI_COMEDI_LXRT$build_drivers$CONFIG_RTAI_RTDM
+build_addons=$CONFIG_RTAI_COMEDI_LXRT$build_drivers$CONFIG_RTAI_RTDM
 
 if test -d $srcdir/addons; then
   AC_CONFIG_FILES([ \
        addons/GNUmakefile \
-       addons/cpp/GNUmakefile \
        addons/comedi/GNUmakefile \
        addons/drivers/GNUmakefile \
        addons/drivers/serial/GNUmakefile \

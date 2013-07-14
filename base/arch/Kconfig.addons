@@ -36,11 +36,3 @@ config RTAI_USE_COMEDI_LOCK
 	lock/unlocked by default. It can be useful to save a couple of
 	calls to enforce locking from user space. Little is gained with it
 	in kernel space.
-
-config RTAI_CPLUSPLUS
-	bool "In-kernel C++ support"
-	default n
-	help
-	RTAI offers a C++ framework if you want to develop C++ real-time
-	applications.
-	The module will be called rtai_cpp.o.
