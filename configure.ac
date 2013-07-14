@@ -415,8 +415,9 @@ AC_ARG_ENABLE(trace,
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_TRACE:-no})
 
-if test x${CONFIG_RTAI_MATH} = xy; then
-   dnl Override Kconfig settings for now
+dnl Built-in math support has been broken since the 2.6 kernel releases.
+dnl If math support is set to yes (Y) then we override it here and make it a module.
+if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_MATH = xy ; then
    CONFIG_RTAI_MATH=m
 fi
 
@@ -1401,15 +1402,6 @@ if test x$CONFIG_RTAI_RTDM_SHIRQ = xy ; then
    if test x$CONFIG_RTAI_RTDM = x ; then
       AC_MSG_ERROR([--enable-rtdm-shirq=y requires --enable-rtdm=y])
    fi
-fi
-
-dnl Built-in math support is not currently available with Kbuild-built
-dnl kernels due to bad dependencies on user-space headers we really
-dnl need to fix first. So we leave in place all the config machinery
-dnl for having built-in/modular math support, but will complain here
-dnl until those dependencies are properly cleared.
-if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_MATH = xy ; then
-   AC_MSG_ERROR([Built-in math support is not currently available with Linux >= 2.6.x])
 fi
 
 dnl
