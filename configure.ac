@@ -87,11 +87,6 @@ case "$host" in
 	RTAI_TARGET_ARCH=ppc
 	wanted_kernel_arch=CONFIG_PPC
 	;;
- m68knommu-*)
- 	RTAI_TARGET_ARCH=m68k
-	wanted_kernel_arch=CONFIG_M68K
-	arch_has_mmu=
-	;;
  m68k-*)
 	RTAI_TARGET_ARCH=m68k
 	wanted_kernel_arch=CONFIG_M68K
@@ -256,13 +251,6 @@ ppc|powerpc)
 		ARCH_SUBDIR=ppc
 	fi
 	RTAI_TARGET_ARCH_NAME=$ARCH_SUBDIR
-	;;
-m68k)
-	if test x$arch_has_mmu = x; then
-		RTAI_TARGET_ARCH_NAME=m68knommu
-	else
-		RTAI_TARGET_ARCH_NAME=$RTAI_TARGET_ARCH
-	fi
 	;;
 *)
 	RTAI_TARGET_ARCH_NAME=$RTAI_TARGET_ARCH
@@ -1574,7 +1562,6 @@ AM_CONDITIONAL(CONFIG_ARCH_AT91,[test "$CONFIG_ARCH_AT91" = y])
 AM_CONDITIONAL(CONFIG_ARCH_IMX,[test "$CONFIG_ARCH_IMX" = y])
 AM_CONDITIONAL(CONFIG_UCLINUX,[test "$CONFIG_UCLINUX" = y])
 AM_CONDITIONAL(CONFIG_SMP,[test "$CONFIG_SMP" = y])
-AM_CONDITIONAL(CONFIG_M68KNOMMU,[test "$CONFIG_M68K" = y -a "x$CONFIG_MMU" != xy])
 AM_CONDITIONAL(CONFIG_M68K,[test "$CONFIG_M68K" = y -a "$CONFIG_MMU" = y])
 AM_CONDITIONAL(CONFIG_M5407,[test "$CONFIG_M5407" = y])
 AM_CONDITIONAL(CONFIG_M5329,[test "$CONFIG_M5329" = y])
