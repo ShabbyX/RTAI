@@ -69,10 +69,10 @@
 #include <rtai_sched.h>
 #include <rtai_nam2num.h>
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
-#include <uapi/linux/sched.h>
-#else
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
 #include <linux/sched.h>
+#else
+#include <uapi/linux/sched.h>
 #endif
 
 // scheduler
