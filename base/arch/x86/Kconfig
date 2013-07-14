@@ -97,6 +97,15 @@ menu "Scheduling options"
 
 source "base/arch/Kconfig.sched"
 
+config RTAI_SCHED_APIC_LATENCY
+	string "APIC tuning latency (ns)"
+	default 3944
+	help
+	The anticipation time to be used to program the hard timer, in oneshot
+	mode, for the next scheduling shot in order to compensate for the
+	programming overhead needed to determine the right firing time.
+	This parameter has no effect when the periodic mode is used.
+
 config RTAI_SCHED_8254_LATENCY
 	string "8254 tuning latency (ns)"
 	default 4700
