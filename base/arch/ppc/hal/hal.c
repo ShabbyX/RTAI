@@ -109,11 +109,7 @@ static void (*rtai_isr_hook)(int cpuid);
 	do {                       } while (0)
 #endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
 
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,4,31) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)) || LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,9)
 #define HAL_TICK_REGS hal_tick_regs[cpuid]
-#else
-#define HAL_TICK_REGS hal_tick_regs
-#endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,4,31) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)) || LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,9) */
 
 #ifdef LOCKED_LINUX_IN_IRQ_HANDLER
 #define HAL_LOCK_LINUX()  do { sflags = rt_save_switch_to_real_time(cpuid = rtai_cpuid()); } while (0)
@@ -123,31 +119,14 @@ static void (*rtai_isr_hook)(int cpuid);
 #define HAL_UNLOCK_LINUX()  do { rtai_cli(); ROOT_STATUS_VAL(cpuid) = sflags; } while (0)
 #endif /* LOCKED_LINUX_IN_IRQ_HANDLER */
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26)
-
 #define RTAI_IRQ_ACK(irq) \
 	do { \
 		rtai_realtime_irq[irq].irq_ack(irq, irq_desc + irq); \
 	} while (0)
 
-#else
-
-#define RTAI_IRQ_ACK(irq) \
-	do { \
-		((void (*)(unsigned int))rtai_realtime_irq[irq].irq_ack)(irq); \
-	} while (0)
-
-#endif
-
 #define CHECK_KERCTX()
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,11)
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18)
-#define rtai_irq_desc(irq) (irq_desc[irq].handler)
-#else
 #define rtai_irq_desc(irq) (irq_desc[irq].chip)
-#endif
 
 #define BEGIN_PIC()
 #define END_PIC()
@@ -156,37 +135,12 @@ static void (*rtai_isr_hook)(int cpuid);
 #define hal_lock_irq(x, y, z)
 #define hal_unlock_irq(x, y)
 
-#else /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11) */
-
-extern struct hw_interrupt_type hal_std_irq_dtype[];
-#define rtai_irq_desc(irq) (&hal_std_irq_dtype[irq])
-
-#define BEGIN_PIC() \
-do { \
-	unsigned long flags, pflags, cpuid; \
-	rtai_save_flags_and_cli(flags); \
-	cpuid = rtai_cpuid(); \
-	pflags = xchg((unsigned long *)ROOT_STATUS_ADR(cpuid), 1 << IPIPE_STALL_FLAG); \
-	rtai_save_and_lock_preempt_count()
-
-#define END_PIC() \
-	rtai_restore_preempt_count(); \
-	ROOT_STATUS_VAL(cpuid) = pflags; \
-	rtai_restore_flags(flags); \
-} while (0)
-
-#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11) */
-
 
 /* global var section */
 static atomic_t rtai_sync_count = ATOMIC_INIT(1);
 static volatile int rtai_sync_level;
 static unsigned rtai_sysreq_virq;
 struct rtai_realtime_irq_s rtai_realtime_irq[RTAI_NR_IRQS];  // declared in base/include/asm-ppc/rtai_hal.h
-
-#if LINUX_VERSION_CODE < RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU
-volatile unsigned long *ipipe_root_status[RTAI_NR_CPUS];
-#endif
 
 struct calibration_data rtai_tunables;
 
@@ -364,9 +318,6 @@ void rt_shutdown_irq (unsigned irq)
 {
 	BEGIN_PIC();
 	rtai_irq_desc(irq)->shutdown(irq);
-#if LINUX_VERSION_CODE < RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU
-	hal_clear_irq(hal_root_domain, irq);
-#endif
 	END_PIC();
 }
 
@@ -727,11 +678,7 @@ static int rtai_hirq_dispatcher(struct pt_regs *regs)
 	unsigned long cpuid;
 	int irq;
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,14)
 	if ((irq = ppc_md.get_irq()) >= RTAI_NR_IRQS) {
-#else
-	if ((irq = ppc_md.get_irq(regs)) >= RTAI_NR_IRQS) {
-#endif
 		spurious_interrupts++;
 		return 0;
 	}
@@ -1174,11 +1121,6 @@ int __rtai_hal_init (void)
 	for (trapnr = 0; trapnr < RTAI_NR_IRQS; trapnr++) {
 		rtai_realtime_irq[trapnr].irq_ack = (void *)hal_root_domain->irqs[trapnr].acknowledge;
 	}
-#if LINUX_VERSION_CODE < RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU
-	for (trapnr = 0; trapnr < RTAI_NR_CPUS; trapnr++) {
-		ipipe_root_status[trapnr] = &hal_root_domain->cpudata[trapnr].status;
-	}
-#endif
 
 	// assign the RTAI sysrqs handler
 	hal_virtualize_irq(hal_root_domain, rtai_sysreq_virq, &rtai_lsrq_dispatcher, NULL, IPIPE_HANDLE_MASK);
@@ -1408,9 +1350,6 @@ EXPORT_SYMBOL(rtai_catch_event);
 
 EXPORT_SYMBOL(rtai_lxrt_dispatcher);
 EXPORT_SYMBOL(rt_scheduling);
-#if LINUX_VERSION_CODE < RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU
-EXPORT_SYMBOL(ipipe_root_status);
-#endif
 
 void up_task_sw(void *, void *);
 EXPORT_SYMBOL(up_task_sw);

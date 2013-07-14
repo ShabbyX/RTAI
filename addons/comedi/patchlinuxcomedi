@@ -84,11 +84,7 @@ extern void (*rt_comedi_busy_sleep)(unsigned long);
 #define comedi_udelay(usec) \
 	rt_comedi_busy_sleep(usec)
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,33)
-#define COMEDI_SPIN_LOCKP(lock_ptr) lock_ptr
-#else
 #define COMEDI_SPIN_LOCKP(lock_ptr) ((raw_spinlock_t *)lock_ptr)
-#endif
 #define comedi_spin_lock_irqsave(lock_ptr, flags) \
 	({ local_irq_save_hw(flags); _raw_spin_lock(COMEDI_SPIN_LOCKP(lock_ptr)); flags; })
 

@@ -24,9 +24,7 @@
 #include <asm/rtai_vectors.h>
 #include <rtai_wrappers.h>
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
 #define VMALLOC_VMADDR(x) ((unsigned long)(x))
-#endif /* >= 2.6.0 */
 
 #ifndef __KERNEL__
 

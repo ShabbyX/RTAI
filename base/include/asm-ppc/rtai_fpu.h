@@ -78,19 +78,9 @@ extern void __restore_fpenv(void *fpenv);
 
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-
-#define clear_lnxtsk_uses_fpu(lnxtsk) \
-	do { (lnxtsk)->used_math = 0; } while(0)
-#define lnxtsk_uses_fpu(lnxtsk)  ((lnxtsk)->used_math)
-
-#else /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) */
-
 #define clear_lnxtsk_uses_fpu(lnxtsk) \
 	do { clear_stopped_child_used_math(lnxtsk); } while(0)
 #define lnxtsk_uses_fpu(lnxtsk)  (tsk_used_math(lnxtsk))
-
-#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0) */
 
 #define set_tsk_used_fpu(t)  do {  } while(0)
 

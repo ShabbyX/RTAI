@@ -33,7 +33,7 @@
 
 #define RTAI_SYSCALL_NR      0x70000000
 
-#if defined(__KERNEL__) && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,25)
+#if defined(__KERNEL__)
 
 #define RT_REG_ORIG_AX           orig_ax
 #define RT_REG_SP                sp
@@ -153,18 +153,12 @@ extern "C" {
 #include <asm/segment.h>
 #include <asm/mmu_context.h>
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#define __LXRT_GET_DATASEG(reg) "movl $" STR(__KERNEL_DS) ",%" #reg "\n\t"
-#else /* KERNEL_VERSION >= 2.6.0 */
 #define __LXRT_GET_DATASEG(reg) "movl $" STR(__USER_DS) ",%" #reg "\n\t"
-#endif  /* KERNEL_VERSION < 2.6.0 */
 
 static inline void _lxrt_context_switch (struct task_struct *prev, struct task_struct *next, int cpuid)
 {
 	extern void context_switch(void *, void *, void *);
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,19)
 	prev->fpu_counter = 0;
-#endif
 	context_switch(0, prev, next);
 }
 
@@ -178,28 +172,17 @@ static inline void _lxrt_context_switch (struct task_struct *prev, struct task_s
 
 #include <linux/slab.h>
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#define rt_copy_from_user     __copy_from_user
-#define rt_copy_to_user       __copy_to_user
-#define rt_strncpy_from_user  strncpy_from_user
-#else
 #define rt_copy_from_user(a, b, c)  \
 	( { int ret = __copy_from_user_inatomic(a, b, c); ret; } )
 #define rt_copy_to_user(a, b, c)  \
 	( { int ret = __copy_to_user_inatomic(a, b, c); ret; } )
 #define rt_strncpy_from_user(a, b, c)  \
 	( { int ret = strncpy_from_user(a, b, c); ret; } )
-#endif
 #define rt_put_user  __put_user
 #define rt_get_user  __get_user
 
 //#define RTAI_DO_LINUX_SIGNAL
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,16)
-extern int FASTCALL(do_signal(struct pt_regs *regs, sigset_t *oldset));
-#define RT_DO_SIGNAL(regs)  do_signal(regs, NULL)
-#else
 #define RT_DO_SIGNAL(regs)  do_notify_resume(regs, NULL, (_TIF_SIGPENDING | _TIF_RESTORE_SIGMASK));
-#endif
 
 #else /* !__KERNEL__ */
 

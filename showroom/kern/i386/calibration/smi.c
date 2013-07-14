@@ -33,11 +33,6 @@
 int smiReset = 0;
 RTAI_MODULE_PARM(smiReset, int);
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#define pci_get_device(a, b, c)  pci_find_device(a, b, c)
-#define pci_dev_put(a)           do { /*nothing*/ } while(0)
-#endif
-
 /* set these as you need */
 #define CONFIG_RTAI_HW_SMI_ALL		0
 #define CONFIG_RTAI_HW_SMI_INTEL_USB2	0

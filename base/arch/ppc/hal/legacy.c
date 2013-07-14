@@ -205,9 +205,6 @@ static struct sysrq_t {
 // The main items to be saved-restored to make Linux our humble slave
 
 extern void ppc_irq_dispatch_handler(struct pt_regs *regs, int irq);
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,4,3)
-struct int_control_struct ppc_int_control;
-#endif
 static int (*ppc_get_irq)(struct pt_regs *regs);
 unsigned long ppc_irq_dispatcher, ppc_timer_handler;
 extern int (*rtai_srq_bckdr)(struct pt_regs *regs);
@@ -401,11 +398,9 @@ static void run_pending_irqs(void)
 				hardirq_enter(cpuid);
 				ppc_irq_dispatch_handler(&rtai_regs, global_irq[irq].ppc_irq);
 				hardirq_exit(cpuid);
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,10) /* ? */
 				if (softirq_pending(cpuid)) {
 					do_softirq();
 				}
-#endif
 				clear_bit(irq, &global.activ_irqs);
 			} else {
 				rt_spin_unlock_irq(&(global.data_lock));
@@ -1029,7 +1024,6 @@ static int rtai_mounted;
 // everything from Linux.  To this aim first block all the other cpus by using
 // a dedicated HARD_LOCK_IPI and its vector without any protection.
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,2)
 /*
  * This is the binary patch we're applying to the Linux kernel.
  *
@@ -1100,7 +1094,6 @@ static void uninstall_patch(void)
 	unpatch_function(&__save_flags_ptr,saved_insns_save_flags);
 	unpatch_function(&__restore_flags,saved_insns_restore_flags);
 }
-#endif
 
 void __rt_mount_rtai(void)
 {
@@ -1114,17 +1107,7 @@ void __rt_mount_rtai(void)
 #endif
 	flags = hard_lock_all();
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,2) // approximate
 	install_patch();
-#else
-	int_control.int_cli           = linux_cli;
-	int_control.int_sti           = linux_sti;
-	int_control.int_save_flags    = linux_save_flags;
-	int_control.int_restore_flags = linux_restore_flags;
-#endif
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,4,3) // approximate
-	int_control.int_set_lost      = (void (*)(unsigned long))rt_pend_linux_irq;
-#endif
 	ppc_md.get_irq = trpd_get_irq;
 	do_IRQ_intercept = (unsigned long)dispatch_irq;
 	timer_interrupt_intercept = (unsigned long)dispatch_timer_irq;
@@ -1167,15 +1150,10 @@ void __rt_umount_rtai(void)
 	flags = hard_lock_all();
 	rtai_srq_bckdr			= 0;
 	rtai_soft_sti			= 0;
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,2)
 	uninstall_patch();
 	for(i=0;i<NR_CPUS;i++){
 		disarm_decr[i]=0;
 	}
-#endif
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,4,3)
-	int_control               = ppc_int_control;
-#endif
 	timer_interrupt_intercept = ppc_timer_handler;
 	do_IRQ_intercept          = ppc_irq_dispatcher;
 	ppc_md.get_irq            = ppc_get_irq;
@@ -1257,9 +1235,6 @@ int init_module(void)
 	tuned.cpu_freq = CpuFreq;
 	printk("rtai: decrementer frequency %d Hz\n",tuned.cpu_freq);
 
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,4,3)
-	ppc_int_control    = int_control;
-#endif
 	ppc_get_irq        = ppc_md.get_irq;
 	ppc_irq_dispatcher = do_IRQ_intercept;
 	ppc_timer_handler  = timer_interrupt_intercept;
@@ -1456,11 +1431,7 @@ void rt_request_timer(void (*handler)(void), unsigned int tick, int unused)
 	} while (get_dec() <= tb_ticks_per_jiffy);
 #endif
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,2)
 	disarm_decr[cpuid]=1;
-#else
-	rtai_regs.trap = 1;
-#endif
 	rt_times.linux_tick = tb_ticks_per_jiffy;
 	rt_times.periodic_tick = tick > 0 && tick < tb_ticks_per_jiffy ? tick : rt_times.linux_tick;
 	rt_times.tick_time  = t;
@@ -1487,11 +1458,7 @@ void rt_free_timer(void)
 	mtspr(SPRN_PIT, tb_ticks_per_jiffy);
 #endif
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,2)
 	disarm_decr[hard_cpu_id()]=0;
-#else
-	rtai_regs.trap = 0;
-#endif
 	processor[hard_cpu_id()].rt_timer_handler = 0;
 	hard_unlock_all(flags);
 }

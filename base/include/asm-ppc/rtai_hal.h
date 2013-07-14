@@ -184,32 +184,6 @@ static inline struct hal_domain_struct *get_domain_pointer(int n)
 	return (struct hal_domain_struct *)i;
 }
 
-#define RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU  KERNEL_VERSION(2,6,20)
-
-#if LINUX_VERSION_CODE < RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU
-
-#define ROOT_STATUS_ADR(cpuid)  (ipipe_root_status[cpuid])
-#define ROOT_STATUS_VAL(cpuid)  (*ipipe_root_status[cpuid])
-
-#define hal_pend_domain_uncond(irq, domain, cpuid) \
-do { \
-	hal_irq_hits_pp(irq, domain, cpuid); \
-	if (likely(!test_bit(IPIPE_LOCK_FLAG, &(domain)->irqs[irq].control))) { \
-		__set_bit((irq) & IPIPE_IRQ_IMASK, &(domain)->cpudata[cpuid].irq_pending_lo[(irq) >> IPIPE_IRQ_ISHIFT]); \
-		__set_bit((irq) >> IPIPE_IRQ_ISHIFT, &(domain)->cpudata[cpuid].irq_pending_hi); \
-	} \
-} while (0)
-
-#define hal_fast_flush_pipeline(cpuid) \
-do { \
-	if (hal_root_domain->cpudata[cpuid].irq_pending_hi != 0) { \
-		rtai_cli(); \
-		hal_sync_stage(IPIPE_IRQMASK_ANY); \
-	} \
-} while (0)
-
-#else
-
 #define ROOT_STATUS_ADR(cpuid)  (&ipipe_cpudom_var(hal_root_domain, status))
 #define ROOT_STATUS_VAL(cpuid)  (ipipe_cpudom_var(hal_root_domain, status))
 
@@ -231,8 +205,6 @@ do { \
 		hal_sync_stage(IPIPE_IRQMASK_ANY); \
 	} \
 } while (0)
-
-#endif
 
 #define hal_pend_uncond(irq, cpuid)  hal_pend_domain_uncond(irq, hal_root_domain, cpuid)
 
@@ -652,11 +624,7 @@ static inline void rt_set_timer_delay (int delay)
 
 static inline void rtai_disarm_decr(int cpuid, int mode)
 {
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,23)
 	per_cpu(disarm_decr, cpuid) = mode;
-#else
-	disarm_decr[cpuid] = mode;
-#endif
 }
 
 //---------------------------------------------------------------------------//
@@ -803,62 +771,3 @@ int rt_sync_printk(const char *format, ...);
 #define NON_RTAI_SCHEDULE(cpuid)  do { schedule(); } while (0)
 
 #endif /* !_RTAI_HAL_XN_H */
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-
-#ifndef _ASM_GENERIC_DIV64_H
-#define _ASM_GENERIC_DIV64_H
-/*
- * Copyright (C) 2003 Bernardo Innocenti <bernie@develer.com>
- * Based on former asm-ppc/div64.h and asm-m68knommu/div64.h
- *
- * The semantics of do_div() are:
- *
- * uint32_t do_div(uint64_t *n, uint32_t base)
- * {
- * 	uint32_t remainder = *n % base;
- * 	*n = *n / base;
- * 	return remainder;
- * }
- *
- * NOTE: macro parameter n is evaluated multiple times,
- *       beware of side effects!
- */
-
-//#include <linux/types.h>
-//#include <linux/compiler.h>
-
-#if BITS_PER_LONG == 64
-
-# define do_div(n,base) ({					\
-	uint32_t __base = (base);				\
-	uint32_t __rem;						\
-	__rem = ((uint64_t)(n)) % __base;			\
-	(n) = ((uint64_t)(n)) / __base;				\
-	__rem;							\
- })
-
-#elif BITS_PER_LONG == 32
-
-extern uint32_t __div64_32(uint64_t *dividend, uint32_t divisor);
-
-/* The unnecessary pointer compare is there
- * to check for type safety (n must be 64bit)
- */
-# define do_div(n,base) ({				\
-	uint32_t __base = (base);			\
-	uint32_t __rem;					\
-	(void)(((typeof((n)) *)0) == ((uint64_t *)0));	\
-	if (likely(((n) >> 32) == 0)) {			\
-		__rem = (uint32_t)(n) % __base;		\
-		(n) = (uint32_t)(n) / __base;		\
-	} else 						\
-		__rem = __div64_32(&(n), __base);	\
-	__rem;						\
- })
-
-#endif /* BITS_PER_LONG */
-
-#endif /* _ASM_GENERIC_DIV64_H */
-
-#endif

@@ -233,18 +233,10 @@ static void put_current_on_cpu(int cpuid)
 {
 #ifdef CONFIG_SMP
 	struct task_struct *task = current;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-	task->cpus_allowed = 1 << cpuid;
-	while (cpuid != rtai_cpuid()) {
-		task->state = TASK_INTERRUPTIBLE;
-		schedule_timeout(2);
-	}
-#else /* KERNEL_VERSION >= 2.6.0 */
 	if (set_cpus_allowed(task, cpumask_of_cpu(cpuid))) {
 		((RT_TASK *)(task->rtai_tskext(0)))->runnable_on_cpus = smp_processor_id();
 		set_cpus_allowed(current, cpumask_of_cpu(smp_processor_id()));
 	}
-#endif  /* KERNEL_VERSION < 2.6.0 */
 #endif /* CONFIG_SMP */
 }
 
@@ -1740,30 +1732,17 @@ static struct task_struct *__get_kthread(int cpuid)
 
 static inline void detach_kthread(void)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-	current->session = 1;
-	current->pgrp    = 1;
-	current->tty     = NULL;
-#else
 	(current->signal)->session = 1;
 	(current->signal)->pgrp    = 1;
 	(current->signal)->tty     = NULL;
-#endif
 }
 
 static inline void lxrt_sigfillset(void)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-	spin_lock_irq(&current->sigmask_lock);
-	sigfillset(&current->blocked);
-	recalc_sigpending(current);
-	spin_unlock_irq(&current->sigmask_lock);
-#else
 	spin_lock_irq(&(current->sighand)->siglock);
 	sigfillset(&current->blocked);
 	recalc_sigpending();
 	spin_unlock_irq(&(current->sighand)->siglock);
-#endif
 }
 
 static void kthread_fun(int cpuid)
@@ -2015,49 +1994,6 @@ static inline void rt_signal_wake_up(RT_TASK *task)
 }
 
 #ifdef UNWRAPPED_CATCH_EVENT
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-
-static struct mmreq {
-    int in, out, count;
-#define MAX_MM 32  /* Should be more than enough (must be a power of 2). */
-#define bump_mmreq(x) do { x = (x + 1) & (MAX_MM - 1); } while(0)
-    struct mm_struct *mm[MAX_MM];
-} lxrt_mmrqtab[NR_CPUS];
-
-struct prev_next_t { struct task_struct *prev, *next; };
-static int lxrt_intercept_schedule_head (unsigned long event, struct prev_next_t *evdata)
-
-{
-    IN_INTERCEPT_IRQ_ENABLE(); {
-
-    struct task_struct *prev = evdata->prev;
-
-    /* The SCHEDULE_HEAD event is sent by the (Adeosized) Linux kernel
-       each time it's about to switch a process out. This hook is
-       aimed at preventing the last active MM from being dropped
-       during the LXRT real-time operations since it's a lengthy
-       atomic operation. See kernel/sched.c (schedule()) for more. The
-       MM dropping is simply postponed until the SCHEDULE_TAIL event
-       is received, right after the incoming task has been switched
-       in. */
-
-    if (!prev->mm)
-	{
-	struct mmreq *p = lxrt_mmrqtab + task_cpu(prev);
-	struct mm_struct *oldmm = prev->active_mm;
-	BUG_ON(p->count >= MAX_MM);
-	/* Prevent the MM from being dropped in schedule(), then pend
-	   a request to drop it later in lxrt_intercept_schedule_tail(). */
-	atomic_inc(&oldmm->mm_count);
-	p->mm[p->in] = oldmm;
-	bump_mmreq(p->in);
-	p->count++;
-	}
-
-	return 0;
-} }
-
-#endif  /* KERNEL_VERSION < 2.6.0 */
 
 static int lxrt_intercept_schedule_tail (void)
 
@@ -2086,30 +2022,6 @@ static int lxrt_intercept_schedule_tail (void)
 #if defined(CONFIG_SMP) && defined(CONFIG_PREEMPT)
 //	current->cpus_allowed = cpumask_of_cpu(smp_processor_id());
 #endif
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-    {
-    struct mmreq *p;
-
-#ifdef CONFIG_PREEMPT
-    preempt_disable();
-#endif /* CONFIG_PREEMPT */
-
-    p = lxrt_mmrqtab + smp_processor_id();
-
-    while (p->out != p->in)
-	{
-	struct mm_struct *oldmm = p->mm[p->out];
-	mmdrop(oldmm);
-	bump_mmreq(p->out);
-	p->count--;
-	}
-
-#ifdef CONFIG_PREEMPT
-    preempt_enable();
-#endif /* CONFIG_PREEMPT */
-    }
-#endif  /* KERNEL_VERSION < 2.6.0 */
 
     return 0;
 } }
@@ -2211,49 +2123,6 @@ static int lxrt_intercept_syscall_epilogue(void)
 } }
 
 #else
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-
-static struct mmreq {
-    int in, out, count;
-#define MAX_MM 32  /* Should be more than enough (must be a power of 2). */
-#define bump_mmreq(x) do { x = (x + 1) & (MAX_MM - 1); } while(0)
-    struct mm_struct *mm[MAX_MM];
-} lxrt_mmrqtab[NR_CPUS];
-
-static void lxrt_intercept_schedule_head (adevinfo_t *evinfo)
-
-{
-    IN_INTERCEPT_IRQ_ENABLE(); {
-
-    struct { struct task_struct *prev, *next; } *evdata = (__typeof(evdata))evinfo->evdata;
-    struct task_struct *prev = evdata->prev;
-
-    /* The SCHEDULE_HEAD event is sent by the (Adeosized) Linux kernel
-       each time it's about to switch a process out. This hook is
-       aimed at preventing the last active MM from being dropped
-       during the LXRT real-time operations since it's a lengthy
-       atomic operation. See kernel/sched.c (schedule()) for more. The
-       MM dropping is simply postponed until the SCHEDULE_TAIL event
-       is received, right after the incoming task has been switched
-       in. */
-
-    if (!prev->mm)
-	{
-	struct mmreq *p = lxrt_mmrqtab + task_cpu(prev);
-	struct mm_struct *oldmm = prev->active_mm;
-	BUG_ON(p->count >= MAX_MM);
-	/* Prevent the MM from being dropped in schedule(), then pend
-	   a request to drop it later in lxrt_intercept_schedule_tail(). */
-	atomic_inc(&oldmm->mm_count);
-	p->mm[p->in] = oldmm;
-	bump_mmreq(p->in);
-	p->count++;
-	}
-
-    adeos_propagate_event(evinfo);
-} }
-
-#endif  /* KERNEL_VERSION < 2.6.0 */
 
 static void lxrt_intercept_schedule_tail (adevinfo_t *evinfo)
 
@@ -2282,30 +2151,6 @@ static void lxrt_intercept_schedule_tail (adevinfo_t *evinfo)
 #ifdef CONFIG_PREEMPT
 //	current->cpus_allowed = cpumask_of_cpu(smp_processor_id());
 #endif
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-    {
-    struct mmreq *p;
-
-#ifdef CONFIG_PREEMPT
-    preempt_disable();
-#endif /* CONFIG_PREEMPT */
-
-    p = lxrt_mmrqtab + smp_processor_id();
-
-    while (p->out != p->in)
-	{
-	struct mm_struct *oldmm = p->mm[p->out];
-	mmdrop(oldmm);
-	bump_mmreq(p->out);
-	p->count--;
-	}
-
-#ifdef CONFIG_PREEMPT
-    preempt_enable();
-#endif /* CONFIG_PREEMPT */
-    }
-#endif  /* KERNEL_VERSION < 2.6.0 */
 
     adeos_propagate_event(evinfo);
 } }
@@ -2611,9 +2456,6 @@ static int lxrt_init(void)
 #endif
 
     /* Must be called on behalf of the Linux domain. */
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-    adeos_catch_event(ADEOS_SCHEDULE_HEAD, (void *)lxrt_intercept_schedule_head);
-#endif  /* KERNEL_VERSION < 2.6.0 */
     adeos_catch_event(ADEOS_SCHEDULE_TAIL, (void *)lxrt_intercept_schedule_tail);
     adeos_catch_event(ADEOS_SYSCALL_PROLOGUE, (void *)lxrt_intercept_syscall_prologue);
     adeos_catch_event(ADEOS_SYSCALL_EPILOGUE, (void *)lxrt_intercept_syscall_epilogue);
@@ -2679,20 +2521,6 @@ static void lxrt_exit(void)
 	rtai_lxrt_dispatcher = NULL;
 
 	flags = rtai_critical_enter(NULL);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-	do {
-		struct mmreq *p;
-/* Flush the MM log for all processors */
-		for (p = lxrt_mmrqtab; p < lxrt_mmrqtab + NR_CPUS; p++) {
-			while (p->out != p->in) {
-				struct mm_struct *oldmm = p->mm[p->out];
-				mmdrop(oldmm);
-				bump_mmreq(p->out);
-				p->count--;
-			}
-		}
-	} while (0);
-#endif  /* KERNEL_VERSION < 2.6.0 */
 	rtai_critical_exit(flags);
 
 	reset_rt_fun_entries(rt_sched_entries);

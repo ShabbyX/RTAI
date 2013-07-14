@@ -221,17 +221,9 @@ void put_current_on_cpu(int cpuid)
 {
 #ifdef CONFIG_SMP
 	struct task_struct *task = current;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-	task->cpus_allowed = 1 << cpuid;
-	while (cpuid != rtai_cpuid()) {
-		task->state = TASK_INTERRUPTIBLE;
-		schedule_timeout(2);
-	}
-#else /* KERNEL_VERSION >= 2.6.0 */
 	if (set_cpus_allowed_ptr(task, cpumask_of(cpuid))) {
 		set_cpus_allowed_ptr(current, cpumask_of(((RT_TASK *)(task->rtai_tskext(TSKEXT0)))->runnable_on_cpus = rtai_cpuid()));
 	}
-#endif  /* KERNEL_VERSION < 2.6.0 */
 #endif /* CONFIG_SMP */
 }
 
@@ -1915,48 +1907,7 @@ static inline void fast_schedule(RT_TASK *new_task, struct task_struct *lnxtsk, 
 /* detach the kernel thread from user space; not fully, only:
    session, process-group, tty. */
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)
-
-void rt_daemonize(void)
-{
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-	current->session = 1;
-	current->pgrp    = 1;
-	current->tty     = NULL;
-	spin_lock_irq(&current->sigmask_lock);
-	sigfillset(&current->blocked);
-	recalc_sigpending(current);
-	spin_unlock_irq(&current->sigmask_lock);
-#else
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,19)
-	(current->signal)->__session = 1;
-#else
-	(current->signal)->session   = 1;
-#endif
-	(current->signal)->pgrp    = 1;
-	(current->signal)->tty     = NULL;
-#endif
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-	spin_lock_irq(&current->sigmask_lock);
-	sigfillset(&current->blocked);
-	recalc_sigpending(current);
-	spin_unlock_irq(&current->sigmask_lock);
-#else
-	spin_lock_irq(&(current->sighand)->siglock);
-	sigfillset(&current->blocked);
-	recalc_sigpending();
-	spin_unlock_irq(&(current->sighand)->siglock);
-#endif
-}
-
-EXPORT_SYMBOL(rt_daemonize);
-
-#else
-
 extern void rt_daemonize(void);
-
-#endif
-
 
 #define WAKE_UP_TASKs(klist) \
 do { \
@@ -2124,16 +2075,9 @@ static inline void rt_signal_wake_up(RT_TASK *task)
 static int lxrt_intercept_schedule_tail (unsigned event, void *nothing)
 {
 	int cpuid = rtai_cpuid();
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-	if (in_hrt_mode(cpuid)) {
-		return 1;
-	} else
-#endif
-	{
-		struct klist_t *klistp = &wake_up_sth[cpuid];
-		while (klistp->out != klistp->in) {
-			fast_schedule(klistp->task[klistp->out++ & (MAX_WAKEUP_SRQ - 1)], current, cpuid);
-		}
+	struct klist_t *klistp = &wake_up_sth[cpuid];
+	while (klistp->out != klistp->in) {
+		fast_schedule(klistp->task[klistp->out++ & (MAX_WAKEUP_SRQ - 1)], current, cpuid);
 	}
 	return 0;
 }

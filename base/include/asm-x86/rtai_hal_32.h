@@ -40,11 +40,7 @@
 
 #include <linux/version.h>
 
-#if defined(CONFIG_REGPARM) || LINUX_VERSION_CODE > KERNEL_VERSION(2,6,19)
 #define RTAI_SYSCALL_MODE __attribute__((regparm(0)))
-#else
-#define RTAI_SYSCALL_MODE
-#endif
 
 #define LOCKED_LINUX_IN_IRQ_HANDLER
 //#define DOMAIN_TO_STALL  (fusion_domain)
@@ -66,62 +62,6 @@ static __inline__ unsigned long ffnz (unsigned long word) {
 	    : "r"  (word));
     return word;
 }
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-
-/*** 2.4.xx missing bitops, lifted from Linux ***/
-
-static inline unsigned long __ffs(unsigned long word)
-{
-	__asm__("bsfl %1,%0"
-		:"=r" (word)
-		:"rm" (word));
-	return word;
-}
-
-static inline unsigned __find_first_bit(const unsigned long *addr, unsigned size)
-{
-	unsigned x = 0;
-
-	while (x < size) {
-		unsigned long val = *addr++;
-		if (val)
-			return __ffs(val) + x;
-		x += (sizeof(*addr)<<3);
-	}
-	return x;
-}
-
-static inline int find_next_bit(const unsigned long *addr, int size, int offset)
-{
-	const unsigned long *p = addr + (offset >> 5);
-	int set = 0, bit = offset & 31, res;
-
-	if (bit) {
-		/*
-		 * Look for nonzero in the first 32 bits:
-		 */
-		__asm__("bsfl %1,%0\n\t"
-			"jne 1f\n\t"
-			"movl $32, %0\n"
-			"1:"
-			: "=r" (set)
-			: "r" (*p >> bit));
-		if (set < (32 - bit))
-			return set + offset;
-		set = 32 - bit;
-		p++;
-	}
-	/*
-	 * No set bit yet, search remaining full words for a bit
-	 */
-	res = __find_first_bit (p, size - 32 * (p - addr));
-	return (offset + set + res);
-}
-
-#define find_first_bit(addr, size) __find_first_bit((addr), (size))
-
-#endif
 
 #if 0
 static inline unsigned long long rtai_ulldiv (unsigned long long ull,
@@ -321,32 +261,6 @@ struct rtai_realtime_irq_s {
 #define rtai_restore_flags(x)       hal_hw_local_irq_restore(x)
 #define rtai_save_flags(x)          hal_hw_local_irq_flags(x)
 
-#define RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU  KERNEL_VERSION(2,6,20)
-
-#if LINUX_VERSION_CODE < RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU
-
-#define ROOT_STATUS_ADR(cpuid)  (ipipe_root_status[cpuid])
-#define ROOT_STATUS_VAL(cpuid)  (*ipipe_root_status[cpuid])
-
-#define hal_pend_domain_uncond(irq, domain, cpuid) \
-do { \
-	hal_irq_hits_pp(irq, domain, cpuid); \
-	if (likely(!test_bit(IPIPE_LOCK_FLAG, &(domain)->irqs[irq].control))) { \
-		__set_bit((irq) & IPIPE_IRQ_IMASK, &(domain)->cpudata[cpuid].irq_pending_lo[(irq) >> IPIPE_IRQ_ISHIFT]); \
-		__set_bit((irq) >> IPIPE_IRQ_ISHIFT, &(domain)->cpudata[cpuid].irq_pending_hi); \
-	} \
-} while (0)
-
-#define hal_fast_flush_pipeline(cpuid) \
-do { \
-	if (hal_root_domain->cpudata[cpuid].irq_pending_hi != 0) { \
-		rtai_cli(); \
-		hal_sync_stage(IPIPE_IRQMASK_ANY); \
-	} \
-} while (0)
-
-#else
-
 //#define ROOT_STATUS_ADR(cpuid)  (&ipipe_cpudom_var(hal_root_domain, status))
 //#define ROOT_STATUS_VAL(cpuid)  (ipipe_cpudom_var(hal_root_domain, status))
 #define ROOT_STATUS_ADR(cpuid)  (&(__ipipe_root_status))
@@ -390,8 +304,6 @@ do { \
 		hal_sync_stage(IPIPE_IRQMASK_ANY); \
 	} \
 } while (0)
-#endif
-
 #endif
 
 #define hal_pend_uncond(irq, cpuid)  hal_pend_domain_uncond(irq, hal_root_domain, cpuid)
@@ -477,9 +389,7 @@ extern struct calibration_data rtai_tunables;
 
 extern volatile unsigned long rtai_cpu_lock[];
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26)
 #define apic_write_around apic_write
-#endif
 
 extern struct rtai_switch_data {
 	volatile unsigned long sflags;
@@ -519,18 +429,9 @@ do { \
 	apic_write_around(APIC_ICR, APIC_DEST_LOGICAL | SCHED_VECTOR); \
 } while (0)
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,33)
-#define RTAI_SPIN_LOCK_TYPE(lock) lock
-#else
 #define RTAI_SPIN_LOCK_TYPE(lock) ((raw_spinlock_t *)lock)
-#endif
 #define rt_spin_lock(lock)    do { barrier(); _raw_spin_lock(RTAI_SPIN_LOCK_TYPE(lock)); barrier(); } while (0)
 #define rt_spin_unlock(lock)  do { barrier(); _raw_spin_unlock(RTAI_SPIN_LOCK_TYPE(lock)); barrier(); } while (0)
-#else /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0) */
-#define rt_spin_lock(lock)    spin_lock(lock)
-#define rt_spin_unlock(lock)  spin_unlock(lock)
-#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) */
 
 static inline void rt_spin_lock_hw_irq(spinlock_t *lock)
 {

@@ -18,7 +18,7 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) && defined(CONFIG_PNP) && \
+#if defined(CONFIG_PNP) && \
     (defined(CONFIG_RTAI_16550A_PIO) || \
      defined(CONFIG_RTAI_16550A_ANY))
 

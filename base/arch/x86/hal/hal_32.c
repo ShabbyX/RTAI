@@ -113,10 +113,6 @@ static inline void rtai_setup_oneshot_apic (unsigned count, unsigned vector)
 	apic_write(APIC_TMICT, count);
 }
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,32) || (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,9))
-#define __ack_APIC_irq  ack_APIC_irq
-#endif
-
 #else /* !CONFIG_X86_LOCAL_APIC */
 
 #define rtai_setup_periodic_apic(count, vector)
@@ -170,10 +166,6 @@ struct rt_times rt_times;
 struct rt_times rt_smp_times[RTAI_NR_CPUS];
 
 struct rtai_switch_data rtai_linux_context[RTAI_NR_CPUS];
-
-#if LINUX_VERSION_CODE < RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU
-volatile unsigned long *ipipe_root_status[RTAI_NR_CPUS];
-#endif
 
 struct calibration_data rtai_tunables;
 
@@ -277,45 +269,20 @@ void rt_set_irq_retmode (unsigned irq, int retmode)
 }
 
 
-// A bunch of macros to support Linux developers moods in relation to
-// interrupt handling across various releases.
+// A bunch of macros to abstract from variations in
+// interrupt handling across various kernel releases.
 // Here we care about ProgrammableInterruptControllers (PIC) in particular.
 
 // 1 - IRQs descriptor and chip
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,18)
-#define rtai_irq_desc(irq) irq_desc[irq]
-#define rtai_irq_desc_chip(irq) (irq_desc[irq].handler)
-#endif
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19) && LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,27)
-#define rtai_irq_desc_chip(irq) (irq_desc[irq].chip)
-#define rtai_irq_desc(irq) irq_desc[irq]
-#endif
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)
 #define rtai_irq_desc(irq) (irq_to_desc(irq))[0]
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,35)
 #define rtai_irq_desc_chip(irq) (irq_to_desc(irq)->irq_data.chip)
-#else
-#define rtai_irq_desc_chip(irq) (irq_to_desc(irq)->chip)
-#endif
-#endif
 
 // 2 - IRQs atomic protections
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,32)
-#define rtai_irq_desc_lock(irq, flags) spin_lock_irqsave(&rtai_irq_desc(irq).lock, flags)
-#define rtai_irq_desc_unlock(irq, flags) spin_unlock_irqrestore(&rtai_irq_desc(irq)->lock, flags)
-#else
 #define rtai_irq_desc_lock(irq, flags) raw_spin_lock_irqsave(&rtai_irq_desc(irq).lock, flags)
 #define rtai_irq_desc_unlock(irq, flags) raw_spin_unlock_irqrestore(&rtai_irq_desc(irq).lock, flags)
-#endif
 
 // 3 - IRQs enabling/disabling naming and calling
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
-#define rtai_irq_endis_fun(fun, irq) fun(irq)
-#else
 #define rtai_irq_endis_fun(fun, irq) irq_##fun(&(rtai_irq_desc(irq).irq_data))
-#endif
 
 /**
  * start and initialize the PIC to accept interrupt request irq.
@@ -586,10 +553,9 @@ void rt_eoi_irq (unsigned irq)
 #endif /* CONFIG_X86_IO_APIC */
 	    !(rtai_irq_desc(irq).status_use_accessors & (IRQD_IRQ_DISABLED | IRQD_IRQ_INPROGRESS))) {
 	}
-#if defined(CONFIG_X86_IO_APIC) && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19)
+#if defined(CONFIG_X86_IO_APIC)
 	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(eoi, irq);
-#else /* !(CONFIG_X86_IO_APIC && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19))
-*/
+#else /* !(CONFIG_X86_IO_APIC) */
 	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(end, irq);
 #endif
 }
@@ -1456,11 +1422,7 @@ static void rtai_install_archdep (void)
 		struct hal_sysinfo_struct sysinfo;
 		hal_get_sysinfo(&sysinfo);
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,37)
 		rtai_cpufreq_arg = (unsigned long)sysinfo.sys_cpu_freq;
-#else
-		rtai_cpufreq_arg = (unsigned long)sysinfo.cpufreq;
-#endif
 	}
 	rtai_tunables.cpu_freq = rtai_cpufreq_arg;
 
@@ -1498,23 +1460,6 @@ int rtai_calibrate_8254 (void)
 	return rtai_imuldiv(dt, 100000, RTAI_CPU_FREQ);
 }
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-static int errno;
-
-static inline _syscall3(int, sched_setscheduler, pid_t,pid, int,policy, struct sched_param *,param)
-#endif
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,32)
-
-void rtai_set_linux_task_priority (struct task_struct *task, int policy, int prio)
-{
-	task->rt_priority = prio;
-	task->policy = policy;
-	set_tsk_need_resched(current);
-}
-
-#else /* KERNEL_VERSION >= 2.6.0 */
-
 #if 1
 void rtai_set_linux_task_priority (struct task_struct *task, int policy, int prio)
 {
@@ -1528,27 +1473,14 @@ void rtai_set_linux_task_priority (struct task_struct *task, int policy, int pri
 void rtai_set_linux_task_priority (struct task_struct *task, int policy, int prio)
 {
 	int rc;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-	struct sched_param __user param;
-	mm_segment_t old_fs;
-
-	param.sched_priority = prio;
-	old_fs = get_fs();
-	set_fs(KERNEL_DS);
-	rc = sched_setscheduler(task->pid, policy, &param);
-	set_fs(old_fs);
-#else
 	struct sched_param param = { prio };
 	rc = sched_setscheduler(task, policy, &param);
-#endif
 
 	if (rc) {
 //		printk("RTAI[hal]: sched_setscheduler(policy=%d,prio=%d) failed, code %d (%s -- pid=%d)\n", policy, prio, rc, task->comm, task->pid);
 	}
 }
 #endif
-
-#endif  /* KERNEL_VERSION < 2.6.0 */
 
 #ifdef CONFIG_PROC_FS
 
@@ -1618,9 +1550,6 @@ static int rtai_proc_register (void)
 		printk(KERN_ERR "Unable to initialize /proc/rtai.\n");
 		return -1;
 	}
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	rtai_proc_root->owner = THIS_MODULE;
-#endif
 	ent = create_proc_entry("hal",S_IFREG|S_IRUGO|S_IWUSR,rtai_proc_root);
 	if (!ent) {
 		printk(KERN_ERR "Unable to initialize /proc/rtai/hal.\n");
@@ -1716,11 +1645,6 @@ int __rtai_hal_init (void)
 	for (trapnr = 0; trapnr < RTAI_NR_IRQS; trapnr++) {
 		rtai_domain.irqs[trapnr].ackfn = (void *)hal_root_domain->irqs[trapnr].ackfn;
 	}
-#if LINUX_VERSION_CODE < RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU
-	for (trapnr = 0; trapnr < num_online_cpus(); trapnr++) {
-		ipipe_root_status[trapnr] = &hal_root_domain->cpudata[trapnr].status;
-	}
-#endif
 
 	ipipe_virtualize_irq(hal_root_domain, rtai_sysreq_virq, (void *)rtai_lsrq_dispatcher, NULL, NULL, IPIPE_HANDLE_MASK);
 	hal_irq_handler = rtai_hirq_dispatcher;
@@ -1801,7 +1725,6 @@ void __rtai_hal_exit (void)
 module_init(__rtai_hal_init);
 module_exit(__rtai_hal_exit);
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,60,0)
 asmlinkage int rt_printk(const char *fmt, ...)
 {
 	va_list args;
@@ -1828,35 +1751,6 @@ asmlinkage int rt_sync_printk(const char *fmt, ...)
 
 	return r;
 }
-#else
-#define VSNPRINTF_BUF 256
-asmlinkage int rt_printk(const char *fmt, ...)
-{
-	char buf[VSNPRINTF_BUF];
-	va_list args;
-
-	va_start(args, fmt);
-	vsnprintf(buf, VSNPRINTF_BUF, fmt, args);
-	va_end(args);
-	return printk("%s", buf);
-}
-
-asmlinkage int rt_sync_printk(const char *fmt, ...)
-{
-	char buf[VSNPRINTF_BUF];
-	va_list args;
-	int r;
-
-	va_start(args, fmt);
-	vsnprintf(buf, VSNPRINTF_BUF, fmt, args);
-	va_end(args);
-	hal_set_printk_sync(&rtai_domain);
-	r = printk("%s", buf);
-	hal_set_printk_async(&rtai_domain);
-
-	return r;
-}
-#endif
 
 /*
  *  support for decoding long long numbers in kernel space.
@@ -1949,9 +1843,6 @@ EXPORT_SYMBOL(ll2a);
 EXPORT_SYMBOL(rtai_catch_event);
 
 EXPORT_SYMBOL(rt_scheduling);
-#if LINUX_VERSION_CODE < RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU
-EXPORT_SYMBOL(ipipe_root_status);
-#endif
 
 EXPORT_SYMBOL(IsolCpusMask);
 

@@ -100,21 +100,9 @@ extern "C" {
 
 static inline void _lxrt_context_switch (struct task_struct *prev, struct task_struct *next, int cpuid)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-	extern void context_switch(void *, void *);
-	struct mm_struct *oldmm = prev->active_mm;
-	switch_mm(oldmm, next->active_mm, next, cpuid);
-	if (!next->mm) {
-		enter_lazy_tlb(oldmm, next, cpuid);
-	}
-	context_switch(prev, next);
-#else /* >= 2.6.0 */
 	extern void *context_switch(void *, void *, void *);
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,18)
 	prev->fpu_counter = 0;
-#endif
 	context_switch(NULL, prev, next);
-#endif /* < 2.6.0 */
 }
 
 #define IN_INTERCEPT_IRQ_ENABLE()   do { } while (0)
@@ -133,16 +121,6 @@ static inline void kthread_fun_long_jump(struct task_struct *lnxtsk)
 	memcpy((void *)lnxtsk->thread.ksp, lnxtsk->rtai_tskext(TSKEXT2) + sizeof(struct thread_struct)/* + sizeof(struct thread_info)*/, (lnxtsk->thread.ksp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.ksp);
 }
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-
-#define rt_copy_from_user     __copy_from_user
-
-#define rt_copy_to_user       __copy_to_user
-
-#define rt_strncpy_from_user  strncpy_from_user
-
-#else
-
 #define rt_copy_from_user(a, b, c)  \
 	( { int ret = __copy_from_user_inatomic(a, b, c); ret; } )
 
@@ -151,8 +129,6 @@ static inline void kthread_fun_long_jump(struct task_struct *lnxtsk)
 
 #define rt_strncpy_from_user(a, b, c)  \
 	( { int ret = strncpy_from_user(a, b, c); ret; } )
-
-#endif
 
 #define rt_put_user  __put_user
 #define rt_get_user  __get_user

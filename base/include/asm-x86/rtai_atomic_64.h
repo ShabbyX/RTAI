@@ -26,13 +26,6 @@
 #include <asm/atomic.h>
 //#include <asm/system.h>
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-
-#define atomic_xchg(ptr, v)        xchg(ptr, v)
-#define atomic_cmpxchg(ptr, o, n)  cmpxchg((unsigned long *)(ptr), o, n)
-
-#endif
-
 #else /* !__KERNEL__ */
 
 #ifdef CONFIG_SMP

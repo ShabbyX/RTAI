@@ -25,13 +25,6 @@
 #include <asm/atomic.h>
 //#include <asm/system.h>
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-
-#define atomic_cmpxchg(v, old, new)  ((int)cmpxchg(&((v)->counter), old, new))
-#define atomic_xchg(v, new)          (xchg(&((v)->counter), new))
-
-#endif
-
 #else /* !__KERNEL__ */
 
 #ifndef likely

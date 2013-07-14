@@ -51,36 +51,9 @@
 #include <linux/bitops.h>
 #include <asm/system.h>
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-
-#define atomic_xchg(ptr,v)      xchg(ptr,v)
-
-/* Poor man's cmpxchg(). */
-#define atomic_cmpxchg(p, o, n) ({	\
-	typeof(*(p)) __o = (o);		\
-	typeof(*(p)) __n = (n);		\
-	typeof(*(p)) __prev;		\
-	unsigned long flags;		\
-	rtai_hw_lock(flags);		\
-	__prev = *(p);			\
-	if (__prev == __o)		\
-		*(p) = __n;		\
-	rtai_hw_unlock(flags);		\
-	__prev; })
-
-#endif /* version < 2.6.11 */
-
 #else /* !__KERNEL__ */
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#include <asm/proc/system.h>
-#else
 #include <asm/system.h>
-#endif
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,20)
-typedef struct { volatile int counter; } atomic_t;
-#endif
 
 static inline unsigned long
 atomic_xchg(volatile void *ptr, unsigned long x)

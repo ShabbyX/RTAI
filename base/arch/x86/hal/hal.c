@@ -72,13 +72,8 @@ static inline long long readtsc(void)
 
 #define NUM_ITERS  10
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-static spinlock_t tsc_sync_lock = SPIN_LOCK_UNLOCKED;
-static spinlock_t tsclock = SPIN_LOCK_UNLOCKED;
-#else
 static DEFINE_SPINLOCK(tsc_sync_lock);
 static DEFINE_SPINLOCK(tsclock);
-#endif
 
 static volatile long long go[SLAVE + 1];
 
@@ -158,11 +153,7 @@ static void sync_tsc(unsigned int master, unsigned int slave)
 	long long delta, rt = 0, master_time_stamp = 0;
 
 	go[MASTER] = 1;
-	if (smp_call_function(sync_master, (void *)master,
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,27)
- 							   1,
-#endif
-							      0) < 0) {
+	if (smp_call_function(sync_master, (void *)master, 0) < 0) {
 //		printk(KERN_ERR "sync_tsc: slave CPU %u failed to get attention from master CPU %u!\n", slave, master);
 		return;
 	}

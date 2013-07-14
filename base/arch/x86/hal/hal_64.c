@@ -109,10 +109,6 @@ static inline void rtai_setup_oneshot_apic (unsigned count, unsigned vector)
 	apic_write(APIC_TMICT, count);
 }
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-#define __ack_APIC_irq  ack_APIC_irq
-#endif
-
 #else /* !CONFIG_X86_LOCAL_APIC */
 
 #define rtai_setup_periodic_apic(count, vector)
@@ -170,10 +166,6 @@ struct rt_times rt_times;
 struct rt_times rt_smp_times[RTAI_NR_CPUS];
 
 struct rtai_switch_data rtai_linux_context[RTAI_NR_CPUS];
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,22)
-volatile unsigned long *ipipe_root_status[RTAI_NR_CPUS];
-#endif
 
 struct calibration_data rtai_tunables;
 
@@ -254,62 +246,29 @@ void rt_set_irq_retmode (unsigned irq, int retmode)
 
 
 
-// A bunch of macros to support Linux developers moods in relation to
-// interrupt handling across various releases.
+// A bunch of macros to abstract from variations in
+// interrupt handling across various kernel releases.
 // Here we care about ProgrammableInterruptControllers (PIC) in particular.
 
 // 1 - IRQs descriptor and chip
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,18)
-#define rtai_irq_desc(irq) irq_desc[irq]
-#define rtai_irq_desc_chip(irq) (irq_desc[irq].handler)
-#endif
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19) && LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,27)
-#define rtai_irq_desc_chip(irq) (irq_desc[irq].chip)
-#define rtai_irq_desc(irq) irq_desc[irq]
-#endif
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)
 #define rtai_irq_desc(irq) (irq_to_desc(irq))[0]
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,35)
 #define rtai_irq_desc_chip(irq) (irq_to_desc(irq)->irq_data.chip)
-#else
-#define rtai_irq_desc_chip(irq) (irq_to_desc(irq)->chip)
-#endif
-#endif
 
 // 2 - IRQs atomic protections
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,32)
-#define rtai_irq_desc_lock(irq, flags) spin_lock_irqsave(&rtai_irq_desc(irq).lock, flags)
-#define rtai_irq_desc_unlock(irq, flags) spin_unlock_irqrestore(&rtai_irq_desc(irq)->lock, flags)
-#else
 #define rtai_irq_desc_lock(irq, flags) raw_spin_lock_irqsave(&rtai_irq_desc(irq).lock, flags)
 #define rtai_irq_desc_unlock(irq, flags) raw_spin_unlock_irqrestore(&rtai_irq_desc(irq).lock, flags)
-#endif
 
 // 3 - IRQs enabling/disabling naming and calling
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
-#define rtai_irq_endis_fun(fun, irq) fun(irq)
-#else
 #define rtai_irq_endis_fun(fun, irq) irq_##fun(&(rtai_irq_desc(irq).irq_data))
-#endif
-
-
 
 #if 0
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,11)
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18)
-#define rtai_irq_desc_chip(irq) (irq_desc[irq].handler)
-#define rtai_irq_desc(irq) irq_desc[irq]
-#else
 #if defined(__IPIPE_2LEVEL_IRQMAP) || defined(__IPIPE_3LEVEL_IRQMAP)
 #define rtai_irq_desc_chip(irq) (irq_to_desc(irq)->chip)
 #define rtai_irq_desc(irq) (irq_to_desc(irq))[0]
 #else
 #define rtai_irq_desc_chip(irq) (irq_desc[irq].chip)
 #define rtai_irq_desc(irq) irq_desc[irq]
-#endif
 #endif
 
 #define BEGIN_PIC()
@@ -319,27 +278,6 @@ void rt_set_irq_retmode (unsigned irq, int retmode)
 #define hal_lock_irq(x, y, z)
 #define hal_unlock_irq(x, y)
 
-#else /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11) */
-
-extern struct hw_interrupt_type hal_std_irq_dtype[];
-#define rtai_irq_desc_chip(irq) (&hal_std_irq_dtype[irq])
-#define rtai_irq_desc(irq) irq_desc[irq]
-
-#define BEGIN_PIC() \
-do { \
-	unsigned long flags, pflags, cpuid; \
-	rtai_save_flags_and_cli(flags); \
-	cpuid = rtai_cpuid(); \
-	pflags = xchg(ROOT_STATUS_ADR(cpuid), 1 << IPIPE_STALL_FLAG); \
-	rtai_save_and_lock_preempt_count()
-
-#define END_PIC() \
-	rtai_restore_preempt_count(); \
-	ROOT_STATUS_VAL(cpuid) = pflags; \
-	rtai_restore_flags(flags); \
-} while (0)
-
-#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11) */
 #endif
 
 /**
@@ -612,10 +550,9 @@ void rt_eoi_irq (unsigned irq)
 #endif /* CONFIG_X86_IO_APIC */
 	    !(rtai_irq_desc(irq).status_use_accessors & (IRQD_IRQ_DISABLED | IRQD_IRQ_INPROGRESS))) {
 	}
-#if defined(CONFIG_X86_IO_APIC) && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19)
+#if defined(CONFIG_X86_IO_APIC)
 	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(eoi, irq);
-#else /* !(CONFIG_X86_IO_APIC && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19))
-*/
+#else /* !(CONFIG_X86_IO_APIC) */
 //	rtai_irq_desc_chip(irq)->end(irq);
 	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(end, irq);
 #endif
@@ -847,21 +784,10 @@ irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_reg
 
 #endif
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26)
-
 #define RTAI_IRQ_ACK(irq) \
 	do { \
 		rtai_realtime_irq[irq].irq_ack(irq, &(rtai_irq_desc(irq))); \
 	} while (0)
-
-#else
-
-#define RTAI_IRQ_ACK(irq) \
-	do { \
-		((void (*)(unsigned int))rtai_realtime_irq[irq].irq_ack)(irq); \
-	} while (0)
-
-#endif
 
 #ifdef CONFIG_SMP
 
@@ -1442,12 +1368,7 @@ static void rtai_install_archdep (void)
 	if (rtai_cpufreq_arg == 0) {
 		struct hal_sysinfo_struct sysinfo;
 		hal_get_sysinfo(&sysinfo);
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,37)
 		rtai_cpufreq_arg = (unsigned long)sysinfo.sys_cpu_freq;
-#else
-		rtai_cpufreq_arg = (unsigned long)sysinfo.cpufreq;
-#endif
-
 	}
 	rtai_tunables.cpu_freq = rtai_cpufreq_arg;
 
@@ -1494,42 +1415,6 @@ void (*rt_set_ihook (void (*hookfn)(int)))(int)
 }
 
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-//static int errno;
-
-//static _syscall3(asmlinkage int, sched_setscheduler, pid_t, pid, int, policy, struct sched_param *, param)
-
-extern void *sys_call_table[];
-
-void rtai_set_linux_task_priority (struct task_struct *task, int policy, int prio)
-{
-	int rc;
-	struct sched_param __user param;
-	mm_segment_t old_fs;
-
-	param.sched_priority = prio;
-	old_fs = get_fs();
-	set_fs(KERNEL_DS);
-
-	rc = ((int (*)(int, int, struct sched_param *))sys_call_table[__NR_sched_setscheduler])(task->pid, policy, &param);
-
-//	rc = sched_setscheduler(task->pid, policy, &param);
-	set_fs(old_fs);
-
-//#else
-//        struct sched_param param = { prio };
-//        rc = sched_setscheduler(task, policy, &param);
-//#endif
-
-	if (rc) {
-		printk("RTAI[hal]: sched_setscheduler(policy=%d,prio=%d) failed, code %d (%s -- pid=%d)\n", policy, prio, rc, task->comm, task->pid);
-	}
-
-	return;
-}
-
-#else
-
 void rtai_set_linux_task_priority (struct task_struct *task, int policy, int prio)
 {
 	hal_set_linux_task_priority(task, policy, prio);
@@ -1538,8 +1423,6 @@ void rtai_set_linux_task_priority (struct task_struct *task, int policy, int pri
 	}
 
 }
-
-#endif
 
 #ifdef CONFIG_PROC_FS
 
@@ -1601,9 +1484,6 @@ static int rtai_proc_register (void)
 		printk(KERN_ERR "Unable to initialize /proc/rtai.\n");
 		return -1;
 	}
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	rtai_proc_root->owner = THIS_MODULE;
-#endif
 	ent = create_proc_entry("hal",S_IFREG|S_IRUGO|S_IWUSR,rtai_proc_root);
 	if (!ent) {
 		printk(KERN_ERR "Unable to initialize /proc/rtai/hal.\n");
@@ -1644,7 +1524,6 @@ long rtai_catch_event (struct hal_domain_struct *from, unsigned long event, int 
 static void *saved_hal_irq_handler;
 extern void *hal_irq_handler;
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,11)
 static inline void *hal_set_irq_handler(void *hirq_dispatcher)
 {
 	if (saved_hal_irq_handler != hirq_dispatcher) {
@@ -1666,7 +1545,6 @@ void ack_bad_irq(unsigned int irq)
 	}
 #endif
 }
-#endif
 
 void rt_set_sched_ipi_gate(void)   { }
 void rt_reset_sched_ipi_gate(void) { }
@@ -1715,11 +1593,6 @@ int __rtai_hal_init (void)
 		rtai_domain.irqs[trapnr].ackfn = (void *)hal_root_domain->irqs[trapnr].ackfn;
 //                rtai_realtime_irq[trapnr].irq_ack = (void *)hal_root_domain->irqs[trapnr].acknowledge;
 	}
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,22)
-	for (trapnr = 0; trapnr < num_online_cpus(); trapnr++) {
-		ipipe_root_status[trapnr] = &hal_root_domain->cpudata[trapnr].status;
-	}
-#endif
 
 	hal_virtualize_irq(hal_root_domain, rtai_sysreq_virq, &rtai_lsrq_dispatcher, NULL, IPIPE_HANDLE_MASK);
 
@@ -1923,9 +1796,6 @@ EXPORT_SYMBOL(rtai_catch_event);
 
 EXPORT_SYMBOL(rtai_lxrt_dispatcher);
 EXPORT_SYMBOL(rt_scheduling);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,22)
-EXPORT_SYMBOL(ipipe_root_status);
-#endif
 
 EXPORT_SYMBOL(IsolCpusMask);
 

@@ -275,9 +275,7 @@ extern void		rtai_set_linux_task_priority(struct task_struct *task,
 #ifdef __KERNEL__
 
 #include <linux/kernel.h>
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
 #include <linux/interrupt.h>
-#endif /* LINUX_VERSION_CODE >= 2.6.0 */
 
 #define rtai_print_to_screen  		rt_printk
 

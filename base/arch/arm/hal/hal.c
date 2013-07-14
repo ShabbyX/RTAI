@@ -53,14 +53,10 @@
 #include <linux/timer.h>
 #include <linux/interrupt.h>
 #include <asm/mach/irq.h>
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#	include <asm/proc/ptrace.h>
-#else /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) */
-#	include <asm/ptrace.h>
-#	include <asm/uaccess.h>
-#	include <asm/unistd.h>
-#	include <stdarg.h>
-#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0) */
+#include <asm/ptrace.h>
+#include <asm/uaccess.h>
+#include <asm/unistd.h>
+#include <stdarg.h>
 #define __RTAI_HAL__
 #include <asm/rtai_hal.h>
 #include <asm/rtai_lxrt.h>
@@ -82,13 +78,7 @@ RTAI_MODULE_PARM(rtai_cpufreq_arg, ulong);
 static unsigned long IsolCpusMask = 0;
 RTAI_MODULE_PARM(IsolCpusMask, ulong);
 
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,4,31) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)) || LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,9)
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18)
-#define rtai_irq_desc(irq) (irq_desc[irq].handler)
-#else
 #define rtai_irq_desc(irq) (irq_desc[irq].chip)
-#endif
 
 #define BEGIN_PIC()
 #define END_PIC()
@@ -96,27 +86,6 @@ RTAI_MODULE_PARM(IsolCpusMask, ulong);
 #undef hal_unlock_irq
 #define hal_lock_irq(x, y, z)
 #define hal_unlock_irq(x, y)
-
-#else
-
-extern struct hw_interrupt_type hal_std_irq_dtype[];
-#define rtai_irq_desc(irq) (&hal_std_irq_dtype[irq])
-
-#define BEGIN_PIC() \
-do { \
-	unsigned long flags, pflags, cpuid; \
-	rtai_save_flags_and_cli(flags); \
-	cpuid = rtai_cpuid(); \
-	pflags = xchg(ipipe_root_status[cpuid], 1 << IPIPE_STALL_FLAG); \
-	rtai_save_and_lock_preempt_count()
-
-#define END_PIC() \
-	rtai_restore_preempt_count(); \
-	*ipipe_root_status[cpuid] = pflags; \
-	rtai_restore_flags(flags); \
-} while (0)
-
-#endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,4,31) && LINUX_VERSION_ ... */
 
 /* global */
 
@@ -572,11 +541,7 @@ static void (*rtai_isr_hook)(int cpuid);
 	do {                       } while (0)
 #endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
 
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,4,31) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)) || LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,9)
 #define HAL_TICK_REGS hal_tick_regs[cpuid]
-#else
-#define HAL_TICK_REGS hal_tick_regs
-#endif /* (LINUX_VERSION_CODE > KERNEL_VERSION(2,4,31) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)) || LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,9) */
 
 #ifdef LOCKED_LINUX_IN_IRQ_HANDLER
 #define HAL_LOCK_LINUX()  do { sflags = rt_save_switch_to_real_time(cpuid); } while (0)
@@ -908,8 +873,6 @@ rtai_proc_unregister(void)
 
 #endif /* CONFIG_PROC_FS */
 
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,11)
 static inline void *hal_set_irq_handler(void *hirq_dispatcher)
 {
 	if (saved_hal_irq_handler != hirq_dispatcher) {
@@ -920,7 +883,6 @@ static inline void *hal_set_irq_handler(void *hirq_dispatcher)
 	hal_irq_handler = hirq_dispatcher;
 	return rtai_hirq_dispatcher;
 }
-#endif
 
 void (*rt_set_ihook (void (*hookfn)(int)))(int)
 {

@@ -267,30 +267,6 @@ static inline struct hal_domain_struct *get_domain_pointer(int n)
 }
 */
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,22)
-
-#define ROOT_STATUS_ADR(cpuid)  (ipipe_root_status[cpuid])
-#define ROOT_STATUS_VAL(cpuid)  (*ipipe_root_status[cpuid])
-
-#define hal_pend_domain_uncond(irq, domain, cpuid) \
-do { \
-	hal_irq_hits_pp(irq, domain, cpuid); \
-	if (likely(!test_bit(IPIPE_LOCK_FLAG, &(domain)->irqs[irq].control))) { \
-		__set_bit((irq) & IPIPE_IRQ_IMASK, &(domain)->cpudata[cpuid].irq_pending_lo[(irq) >> IPIPE_IRQ_ISHIFT]); \
-		__set_bit((irq) >> IPIPE_IRQ_ISHIFT, &(domain)->cpudata[cpuid].irq_pending_hi); \
-	} \
-} while (0)
-
-#define hal_fast_flush_pipeline(cpuid) \
-do { \
-	if (__ipipe_ipending_p(ipipe_this_cpu_root_context())) { \
-		rtai_cli(); \
-		__ipipe_sync_stage(); \
-	} \
-} while (0)
-
-#else
-
 //#define ROOT_STATUS_ADR(cpuid)  (&ipipe_cpudom_var(hal_root_domain, status))
 //#define ROOT_STATUS_VAL(cpuid)  (ipipe_cpudom_var(hal_root_domain, status))
 #define ROOT_STATUS_ADR(cpuid)  (&(__ipipe_root_status))
@@ -327,8 +303,6 @@ do { \
 		hal_sync_stage(IPIPE_IRQMASK_ANY); \
 	} \
 } while (0)
-#endif
-
 #endif
 
 #define hal_pend_uncond(irq, cpuid)  hal_pend_domain_uncond(irq, hal_root_domain, cpuid)
@@ -389,9 +363,7 @@ extern struct calibration_data rtai_tunables;
 
 extern volatile unsigned long rtai_cpu_lock[];
 
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,18) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,25)) || LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26)
 #define apic_write_around apic_write
-#endif
 
 //#define RTAI_TASKPRI 0xf0  // simplest usage without changing Linux code base
 #if defined(CONFIG_X86_LOCAL_APIC) && defined(RTAI_TASKPRI)
@@ -448,11 +420,7 @@ do { \
 	apic_write_around(APIC_ICR, APIC_DEST_LOGICAL | SCHED_VECTOR); \
 } while (0)
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,33)
-#define RTAI_SPIN_LOCK_TYPE(lock) lock
-#else
 #define RTAI_SPIN_LOCK_TYPE(lock) ((raw_spinlock_t *)lock)
-#endif
 #define rt_spin_lock(lock)    do { barrier(); _raw_spin_lock(RTAI_SPIN_LOCK_TYPE(lock)); barrier(); } while (0)
 #define rt_spin_unlock(lock)  do { barrier(); _raw_spin_unlock(RTAI_SPIN_LOCK_TYPE(lock)); barrier(); } while (0)
 
