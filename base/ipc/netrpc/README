@@ -330,7 +330,7 @@ e.g. simply rt_request_port. It defaults to a soft request.
 - unsigned long rt_set_this_node(const char *ddn, unsigned long node);
 
 #define OWNER(node, task) \
-        ((((unsigned long long)(node)) << 32) | (unsigned long)(task))
+	((((unsigned long long)(node)) << 32) | (unsigned long)(task))
 
 - RT_TASK *rt_find_asgn_stub(unsigned long long owner, int asgn);
 

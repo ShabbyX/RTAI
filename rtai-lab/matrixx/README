@@ -37,7 +37,7 @@ asked for.
 WHAT YOU FIND IN THIS DIRECTORY:
 
 -> rtai.tpl:          is the Template File you'll need to generate Real-Time
-                      code to be run under RTAI.
+		      code to be run under RTAI.
 
 -> rtmain.c:          is the Real-Time main program allowing a model to be
   (rtmain.h)          correctly executed under RTAI.
@@ -49,19 +49,19 @@ WHAT YOU FIND IN THIS DIRECTORY:
   (sa_utils.h)        (in "Matrixx style").
 
 -> /devices:          contains the functions required for the communication
-                      between the Real-Time simulation and RTAI-Lab (
-                      RTAI scopes, logs, meters and leds), and those for
-                      analogue/digital IO to/from the external environment,
-                      using RTAI real time COMEDI support from user space.
+		      between the Real-Time simulation and RTAI-Lab (
+		      RTAI scopes, logs, meters and leds), and those for
+		      analogue/digital IO to/from the external environment,
+		      using RTAI real time COMEDI support from user space.
 
 -> /examples:         contains 4 SystemBuild Block diagram examples, described
-                      at the end of this README.
+		      at the end of this README.
 
 -> /vxworks-wrappers: contains the files needed to make it easier adapting
-                      Matrixx AutoCode to RTAI-Lab.
+		      Matrixx AutoCode to RTAI-Lab.
 
 -> /rtaidevs:         contains the files needed to have RTAI customized blocks
-                      directly available in the SystemBuild palette browser.
+		      directly available in the SystemBuild palette browser.
 --------------------------------------------------------------------------------
 
 HOW TO INSTALL THE SUPPORT:
@@ -305,18 +305,18 @@ HOW TO USE THE SUPPORT:
    To generate the code from Xmath you can type the following command:
 
        autocode "BLOCK_NAME", { fmarker, arraymin=3, initmerge, loopmin = 3, \
-           ipath="MATRIXX_HOME\mx_71.1\case\ACC\templates", locvarlblkopt, \
-           noerr, noinfo, propconst, vectormode=2, nouy, language="c", \
-           smcallout, namelen=48, ialg=2, minsf=***, rtf="MODEL_NAME", \
-           tplsrc="RTAI_TPL_DIR\rtai.tpl"}
+	   ipath="MATRIXX_HOME\mx_71.1\case\ACC\templates", locvarlblkopt, \
+	   noerr, noinfo, propconst, vectormode=2, nouy, language="c", \
+	   smcallout, namelen=48, ialg=2, minsf=***, rtf="MODEL_NAME", \
+	   tplsrc="RTAI_TPL_DIR\rtai.tpl"}
 
    where:
    - MATRIXX_HOME is the path of the directory where you have installed
-                  Matrixx;
+		  Matrixx;
    - RTAI_TPL_DIR is the path of the directory where you have copied the
-                  Template File "rtai.tpl";
+		  Template File "rtai.tpl";
    - BLOCK_NAME   is the name of the SystemBuild SuperBlock name which you
-                  want to generate the code;
+		  want to generate the code;
    - MODEL_NAME   is the name of the generated files.
 
    The options "ialg" and "minsf" are intended to be used to generate code for
@@ -362,32 +362,32 @@ HOW TO USE THE SUPPORT:
        During the compilation you can select two options by editing the file
        "Makefile":
        - commenting (with a "#") the line "DOUBLE_FLAG = -DAC100FLAG" you
-         elect to use real numbers in singular precision (C type: float), the
-         default being double precision (C type: double) otherwise.
+	 elect to use real numbers in singular precision (C type: float), the
+	 default being double precision (C type: double) otherwise.
        - the flag "FILEIO_FLAG" is intended to be used when the model needs
-         external input, a la Matrixx. That external input is read from a
+	 external input, a la Matrixx. That external input is read from a
      file (input data file) in "Xmath {matrixx,ascii} format" (see Matrixx
-         documentation) and, with this flag active, the output is
-         automatically saved to a file (output data file) in Xmath format too.
-         You select the input/output data files at the beginning of the
-         execution of the Real-Time simulation. You can specify a directory
-         for the input/output data files using the options -P when you launch
-         the executable (see the usage options typing the command
-         "./MODEL_NAME -u"), with the default choice the files are searched in
+	 documentation) and, with this flag active, the output is
+	 automatically saved to a file (output data file) in Xmath format too.
+	 You select the input/output data files at the beginning of the
+	 execution of the Real-Time simulation. You can specify a directory
+	 for the input/output data files using the options -P when you launch
+	 the executable (see the usage options typing the command
+	 "./MODEL_NAME -u"), with the default choice the files are searched in
      the current working directory. When you use the "FILEIO_FLAG" option
      the simulation is terminated at to the last time instant specified in
      the input data file.
-         When the model has no external input you can comment the line
-         "FILEIO_FLAG = - DFILE_IO" in "Makefile". In this way the simulation
+	 When the model has no external input you can comment the line
+	 "FILEIO_FLAG = - DFILE_IO" in "Makefile". In this way the simulation
      can run forever and if you want save to a file the time history of
      some signals you have to use the RTAI_LAB options (by means of LOGS
      and SCOPES).
-         You can use the "FILEIO_FLAG" option also with model without external
-         input, in this way the model output is saved to an output file
-         in Xmath format (you must also specify an input file with the time
-         vector). The simulation cannot run forever and terminate when the
-         limit storage capability is reached (specified with MAXY in the
-         "sa_utils.c" file).
+	 You can use the "FILEIO_FLAG" option also with model without external
+	 input, in this way the model output is saved to an output file
+	 in Xmath format (you must also specify an input file with the time
+	 vector). The simulation cannot run forever and terminate when the
+	 limit storage capability is reached (specified with MAXY in the
+	 "sa_utils.c" file).
 
 4. Execute
 
@@ -409,64 +409,64 @@ examples the RTAI-blocks are implemented setting "UserCode" block as described
 above, while in the fourth example the customized RTAI-blocks are used.
 
 - multisingen.rtf:  is a simple test case where the model output is the sum of
-                    two sinewaves. The model is discrete and uses different
-                    time steps for each sine wave. In the model there are three
-                    rtai_scope blocks to monitor the signals, via RTAI-Lab and
-                    an rtai_log to save the signals to a file. You can verify
-                    the capability to modify parameters on the fly via
-                    RTAI-Lab (you have to initialize the parameters value in
-                    Xmath environment before code generation) by modifying
-                    frequencies ("freq1" and "freq2") and amplitudes ("amp1"
-                    and "amp2") of the two sine waves. This model has no
-                    external input, so you will not need the "FILEIO_FLAG"
-                    option during the compilation.
+		    two sinewaves. The model is discrete and uses different
+		    time steps for each sine wave. In the model there are three
+		    rtai_scope blocks to monitor the signals, via RTAI-Lab and
+		    an rtai_log to save the signals to a file. You can verify
+		    the capability to modify parameters on the fly via
+		    RTAI-Lab (you have to initialize the parameters value in
+		    Xmath environment before code generation) by modifying
+		    frequencies ("freq1" and "freq2") and amplitudes ("amp1"
+		    and "amp2") of the two sine waves. This model has no
+		    external input, so you will not need the "FILEIO_FLAG"
+		    option during the compilation.
 
 - super_cruise.rtf: is a more complex example taken from an existing Matrixx
-                    example, with a few rtai_scopes and rtai_logs added for
-                    verifying communications with RTAI-Lab. This example needs
-                    10 input, so you have to use the "FILEIO_FLAG" option during
-                    the compilation. You can take the input data file in Matrixx
-                    format ("super_cruise.data") from the directory:
-                    "MATRIXX_HOME\mx_71.1\case\ACC\templates\apps\vxworks".
-                    You can use this example to compare the results of a
-                    simulation within SystemBuild environment to the results
-                    of an RTAI-Lab real time simulation.
+		    example, with a few rtai_scopes and rtai_logs added for
+		    verifying communications with RTAI-Lab. This example needs
+		    10 input, so you have to use the "FILEIO_FLAG" option during
+		    the compilation. You can take the input data file in Matrixx
+		    format ("super_cruise.data") from the directory:
+		    "MATRIXX_HOME\mx_71.1\case\ACC\templates\apps\vxworks".
+		    You can use this example to compare the results of a
+		    simulation within SystemBuild environment to the results
+		    of an RTAI-Lab real time simulation.
 
 - IOtest.rtf:       is a simple example, i.e. with only one subsystem task,
-                    but adequate to test the communication with the external
-                    environment. In this example a random signal is summed to
-                    a sine wave, you can tune some parameters e.g.: frequency
-                    and the magnitude of the sinewave signal and the magnitude
-                    of the random signal. Remember to initialize tunable
-                    parameter values in the Xmath partition before the code
-                    generation to have them tunable on the fly. The resulting
-                    signal is written to the analogue output channel 0 of the
-                    IO card 0 (comedi0) and is then read from the analogue
-                    input channel number 0. A digital signal is written to the
-                    digital channel number 0 and read from the channel 1.
-                    This digital signal is 1 when the sine wave signal plus
-                    noise is greater than 5V.
-                    Some other signals are written and read to/from the
-                    acquisition card. You should have a look at the
-                    SystemBuild block diagram to better understand this example.
-                    In this way it is possible to test the data acquisition by
-                    simply connecting right channels on the acquisition card.
-                    In the model there are scopes and leds useful to monitor
-                    signals during execution. See the SystemBuild block diagram
-                    once more to understand which signal are scoped. Because
-                    of there is no file IO you do not have to use the related
-                    "FILEIO_FLAG" during code compilation in this model.
+		    but adequate to test the communication with the external
+		    environment. In this example a random signal is summed to
+		    a sine wave, you can tune some parameters e.g.: frequency
+		    and the magnitude of the sinewave signal and the magnitude
+		    of the random signal. Remember to initialize tunable
+		    parameter values in the Xmath partition before the code
+		    generation to have them tunable on the fly. The resulting
+		    signal is written to the analogue output channel 0 of the
+		    IO card 0 (comedi0) and is then read from the analogue
+		    input channel number 0. A digital signal is written to the
+		    digital channel number 0 and read from the channel 1.
+		    This digital signal is 1 when the sine wave signal plus
+		    noise is greater than 5V.
+		    Some other signals are written and read to/from the
+		    acquisition card. You should have a look at the
+		    SystemBuild block diagram to better understand this example.
+		    In this way it is possible to test the data acquisition by
+		    simply connecting right channels on the acquisition card.
+		    In the model there are scopes and leds useful to monitor
+		    signals during execution. See the SystemBuild block diagram
+		    once more to understand which signal are scoped. Because
+		    of there is no file IO you do not have to use the related
+		    "FILEIO_FLAG" during code compilation in this model.
 
 - DAQtest.rtf:      this is a more complex example using all RTAI blocks to
-                    communicate with the external environment using RTAI-LAB.
-                    The blocks are implemented in the RTAI customized version.
-                    This example is based on up to three subsystem tasks, with
-                    sampling frequency up to 5kHz. It contains the sum of two
-                    different sine waves.
-                    Looking at the SystemBuild block diagram it should be easy
-                    to understand the example details. Because of the absence
-                    of any file input/output there is no need to use the
-                    "FILEIO_FLAG" during code compilation of this model.
+		    communicate with the external environment using RTAI-LAB.
+		    The blocks are implemented in the RTAI customized version.
+		    This example is based on up to three subsystem tasks, with
+		    sampling frequency up to 5kHz. It contains the sum of two
+		    different sine waves.
+		    Looking at the SystemBuild block diagram it should be easy
+		    to understand the example details. Because of the absence
+		    of any file input/output there is no need to use the
+		    "FILEIO_FLAG" during code compilation of this model.
 
 
 Mattia Mattaboni (mattaboni@aero.polimi.it)
