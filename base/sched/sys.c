@@ -198,6 +198,7 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 }
 
 void put_current_on_cpu(int cpuid);
+void rt_set_task_pid(RT_TASK *);
 
 static inline RT_TASK* __task_init(unsigned long name, int prio, int stack_size, int max_msg_size, int cpus_allowed)
 {
@@ -255,6 +256,7 @@ static inline RT_TASK* __task_init(unsigned long name, int prio, int stack_size,
 #endif
 			RTAI_OOM_DISABLE();
 
+			rt_set_task_pid(rt_task);
 			return rt_task;
 		} else {
 			clr_rtext(rt_task);
@@ -793,9 +795,9 @@ void init_fun_ext (void)
 }
 
 
+#if 0
 void rt_daemonize(void);
 
-#if 0
 struct thread_args { void *fun; long data; int priority; int policy; int cpus_allowed; RT_TASK *task; struct semaphore *sem; };
 
 static void kthread_fun(struct thread_args *args) 
@@ -832,7 +834,6 @@ RT_TASK *rt_kthread_create(void *fun, long data, int priority, int linux_policy,
 	msleep(100);
 	return args.task;
 }
-#endif
 	
 #include <linux/kthread.h>
 long rt_thread_create(void *fun, void *args, int stack_size)
@@ -874,3 +875,4 @@ int rt_thread_delete(RT_TASK *rt_task)
 	return __task_delete(rt_task);
 }
 EXPORT_SYMBOL(rt_thread_delete);
+#endif
