@@ -5,7 +5,7 @@ It is an excerpt from "man ld" read it all there, even if all what of interest
 is copied below.
 
 .....
-       --wrap symbol
+	--wrap symbol
 	   Use a wrapper function for symbol.  Any undefined reference to
 	   symbol will be resolved to "__wrap_symbol". Any undefined reference
 	   to "__real_symbol" will be resolved to symbol.

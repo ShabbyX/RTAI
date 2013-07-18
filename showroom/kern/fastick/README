@@ -8,7 +8,7 @@ Since rtai does just a few things per tick you can run this at very high rates
 without killing your machine, for just a few tasks that need a tighter timing.
 (From a suggestion by Steve Papacharalambous)
 ->>>>> Note that the interrupt handler runs just
-       with rtai and rtai_fifos modules installed.
+	with rtai and rtai_fifos modules installed.
 The new ticking is determined by the macro TICK in rt_process?.c.
 If you use rt_process2.c recall to set the
 value of the macro APIC_TIMER in it to 1 if you can and want use the local APIC,

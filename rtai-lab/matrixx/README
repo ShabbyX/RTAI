@@ -142,149 +142,149 @@ HOW TO USE THE SUPPORT:
    adapt this block to perform a specific devices.
 
    1.1 rtai_scope block.
-       With the rtai_scope you can monitor a signal during the Real-Time
-       simulation through RTAI-Lab.
-       To include a rtai_scope in your SystemBuild model you can use the
-       "UserCode" block ( under Palette Browser -> User Programmed ). You can
-       monitor N signals together within a single rtai_scope selecting for
-       the block N inputs and connecting the block with N signals.
-       In the "UserCode" block paramenters you must set:
-       - "File Name" -> "rtai_log.c";
-       - "Function Name" -> "rtai_log";
-       - "Number od Integer Parameters" -> 1;
-       - "Integer Parameters" -> ID.
-       ID is the scope identification number and it must be unique for each
-       scope. In RTAI-Lab a label is associated to each scope: SCOPE-ID,
-       where ID is the integer parameter defined in the SystemBuild block.
-       Otherwise, using the customized block from palette browser (
-       Palette Browser -> rtai -> RTAI-Scope ), you have only to set the
-       identification number and the inputs' number.
+	With the rtai_scope you can monitor a signal during the Real-Time
+	simulation through RTAI-Lab.
+	To include a rtai_scope in your SystemBuild model you can use the
+	"UserCode" block ( under Palette Browser -> User Programmed ). You can
+	monitor N signals together within a single rtai_scope selecting for
+	the block N inputs and connecting the block with N signals.
+	In the "UserCode" block paramenters you must set:
+	- "File Name" -> "rtai_log.c";
+	- "Function Name" -> "rtai_log";
+	- "Number od Integer Parameters" -> 1;
+	- "Integer Parameters" -> ID.
+	ID is the scope identification number and it must be unique for each
+	scope. In RTAI-Lab a label is associated to each scope: SCOPE-ID,
+	where ID is the integer parameter defined in the SystemBuild block.
+	Otherwise, using the customized block from palette browser (
+	Palette Browser -> rtai -> RTAI-Scope ), you have only to set the
+	identification number and the inputs' number.
 
    1.2 rtai_log block.
-       With the rtai_log you can save to a file a signal during the Real-Time
-       simulation through RTAI-Lab.
-       To include a rtai_log in your SystemBuild model you can use the
-       "UserCode" block (under Palette Browser -> User Programmed). You can
-       save N signals files together to the same file with the same rtai_log
-       selecting for the block N inputs and connecting the block with N signals.
-       In the "UserCode" block parameters you must set:
-       - "File Name" -> "rtai_log.c";
-       - "Function Name" -> "rtai_log";
-       - "Number od Integer Parameters" -> 1;
-       - "Integer Parameters" -> ID.
-       ID is the log identification number and it must be unique for each log.
-       In RTAI-Lab a label is associated to each log: LOG-ID, where ID is the
-       integer parameter defined in the SystemBuild block.
-       Otherwise, using the customized block from palette browser (
-       Palette Browser -> rtai -> RTAI-Log ), you have only to set the
-       identification number and the inputs' number.
+	With the rtai_log you can save to a file a signal during the Real-Time
+	simulation through RTAI-Lab.
+	To include a rtai_log in your SystemBuild model you can use the
+	"UserCode" block (under Palette Browser -> User Programmed). You can
+	save N signals files together to the same file with the same rtai_log
+	selecting for the block N inputs and connecting the block with N signals.
+	In the "UserCode" block parameters you must set:
+	- "File Name" -> "rtai_log.c";
+	- "Function Name" -> "rtai_log";
+	- "Number od Integer Parameters" -> 1;
+	- "Integer Parameters" -> ID.
+	ID is the log identification number and it must be unique for each log.
+	In RTAI-Lab a label is associated to each log: LOG-ID, where ID is the
+	integer parameter defined in the SystemBuild block.
+	Otherwise, using the customized block from palette browser (
+	Palette Browser -> rtai -> RTAI-Log ), you have only to set the
+	identification number and the inputs' number.
 
    1.3 rtai_meter block.
-       To include a rtai_meter in your SystemBuild model you can use the
-       "UserCode" block (under Palette Browser -> User Programmed). You can
-       monitor only one signal with a rtai_meter, to monitor N signals
-       you have to use N rtai_meters.
-       In the "UserCode" block parameters you must set:
-       - "File Name" -> "rtai_meter.c";
-       - "Function Name" -> "rtai_meter";
-       - "Number od Integer Parameters" -> 1;
-       - "Integer Parameters" -> ID.
-       ID is the meter identification number and it must be unique for each meter.
-       In RTAI-Lab a label is associated to each meter: METER-ID,
-       where ID is the integer parameter defined in the SystemBuild block.
-       Otherwise, using the customized block from palette browser (
-       Palette Browser -> rtai -> RTAI-Meter ), you have only to set the
-       identification number.
+	To include a rtai_meter in your SystemBuild model you can use the
+	"UserCode" block (under Palette Browser -> User Programmed). You can
+	monitor only one signal with a rtai_meter, to monitor N signals
+	you have to use N rtai_meters.
+	In the "UserCode" block parameters you must set:
+	- "File Name" -> "rtai_meter.c";
+	- "Function Name" -> "rtai_meter";
+	- "Number od Integer Parameters" -> 1;
+	- "Integer Parameters" -> ID.
+	ID is the meter identification number and it must be unique for each meter.
+	In RTAI-Lab a label is associated to each meter: METER-ID,
+	where ID is the integer parameter defined in the SystemBuild block.
+	Otherwise, using the customized block from palette browser (
+	Palette Browser -> rtai -> RTAI-Meter ), you have only to set the
+	identification number.
 
    1.4 rtai_led block.
-       To include a rtai_led in your SystemBuild model you can use the
-       "UserCode" block (under Palette Browser -> User Programmed). You can
-       monitor N signals together iwhitin a single rtai_led selecting for the
-       block N inputs and connecting the block with N signals.
-       In the "UserCode" block parameters you must set:
-       - "File Name" -> "rtai_led.c;
-       - "Function Name" -> "rtai_led";
-       - "Number od Integer Parameters" -> 1;
-       - "Integer Parameters" -> ID.
-       ID is the led identification number and it must be unique for each led.
-       In RTAI-Lab a label is associated to each log: LED-ID, where ID is the
-       integer parameter defined in the SystemBuild block.
-       Otherwise, using the customized block from palette browser (
-       Palette Browser -> rtai -> RTAI-Led ), you have to set only the
-       identification number and the input number.
+	To include a rtai_led in your SystemBuild model you can use the
+	"UserCode" block (under Palette Browser -> User Programmed). You can
+	monitor N signals together iwhitin a single rtai_led selecting for the
+	block N inputs and connecting the block with N signals.
+	In the "UserCode" block parameters you must set:
+	- "File Name" -> "rtai_led.c;
+	- "Function Name" -> "rtai_led";
+	- "Number od Integer Parameters" -> 1;
+	- "Integer Parameters" -> ID.
+	ID is the led identification number and it must be unique for each led.
+	In RTAI-Lab a label is associated to each log: LED-ID, where ID is the
+	integer parameter defined in the SystemBuild block.
+	Otherwise, using the customized block from palette browser (
+	Palette Browser -> rtai -> RTAI-Led ), you have to set only the
+	identification number and the input number.
 
    1.5 rtai_analogIn block.
-       To include in your model a block to carry out the reading analogue
-       signals from the external environment you can use the "UserCode" block
-       (under Palette Browser -> User Programmed). You need a block for each
-       different analogue acquisition channel.
-       In the "UserCode" block parameters you must set:
-       - "File Name" -> "rtai_comedi_datain.c;
-       - "Function Name" -> "rtai_comedi_datain";
-       - "Number od Integer Parameters" -> 4;
-       - "Integer Parameters" -> [ channel , range , aref , comedi ].
-       Where "channel" is the channel number of the acquisition card from
-       which the signal is read, "range" and "aref" are setting parameters
-       of the channel and comedi is the identification number of the
-       device (acquisition card).
-       Otherwise, using the customized block from palette browser
-       (Palette Browser -> rtai -> RTAI-AnalogInput), you have to set just
-       just the four integer parameters described above.
+	To include in your model a block to carry out the reading analogue
+	signals from the external environment you can use the "UserCode" block
+	(under Palette Browser -> User Programmed). You need a block for each
+	different analogue acquisition channel.
+	In the "UserCode" block parameters you must set:
+	- "File Name" -> "rtai_comedi_datain.c;
+	- "Function Name" -> "rtai_comedi_datain";
+	- "Number od Integer Parameters" -> 4;
+	- "Integer Parameters" -> [ channel , range , aref , comedi ].
+	Where "channel" is the channel number of the acquisition card from
+	which the signal is read, "range" and "aref" are setting parameters
+	of the channel and comedi is the identification number of the
+	device (acquisition card).
+	Otherwise, using the customized block from palette browser
+	(Palette Browser -> rtai -> RTAI-AnalogInput), you have to set just
+	just the four integer parameters described above.
 
    1.6 rtai_analogOut block.
-       To include in your model a block to carry out the writing of analogue
-       signals to output channels of the acquisition card you can use the
-       "UserCode" block (under Palette Browser -> User Programmed). You need
-       a block for each different output signal.
-       In the "UserCode" block parameters you must set:
-       - "File Name" -> "rtai_comedi_dataout.c;
-       - "Function Name" -> "rtai_comedi_dataout";
-       - "Number od Integer Parameters" -> 4;
-       - "Integer Parameters" -> [ channel , range , aref , comedi ].
-       Where "channel" is the channel number of the acquisition card to
-       which the signal is written, "range" and "aref" are setting parameters
-       of the channel and comedi is the identification number of the
-       device (acquisition card).
-       Otherwise, using the customized block from palette browser
-       (Palette Browser -> rtai -> RTAI-AnalogOutput), you have to set just
-       the four integer parameters described above.
+	To include in your model a block to carry out the writing of analogue
+	signals to output channels of the acquisition card you can use the
+	"UserCode" block (under Palette Browser -> User Programmed). You need
+	a block for each different output signal.
+	In the "UserCode" block parameters you must set:
+	- "File Name" -> "rtai_comedi_dataout.c;
+	- "Function Name" -> "rtai_comedi_dataout";
+	- "Number od Integer Parameters" -> 4;
+	- "Integer Parameters" -> [ channel , range , aref , comedi ].
+	Where "channel" is the channel number of the acquisition card to
+	which the signal is written, "range" and "aref" are setting parameters
+	of the channel and comedi is the identification number of the
+	device (acquisition card).
+	Otherwise, using the customized block from palette browser
+	(Palette Browser -> rtai -> RTAI-AnalogOutput), you have to set just
+	the four integer parameters described above.
 
    1.7 rtai_digitalIn block.
-       To include in your model a block that performs the reading of digital
-       signals from the external environment you can use the "UserCode" block
-       (under Palette Browser -> User Programmed). You need a block for each
-       different digital acquisition channel.
-       In the "UserCode" block parameters you must set:
-       - "File Name" -> "rtai_comedi_dioin.c;
-       - "Function Name" -> "rtai_comedi_dioin";
-       - "Number od Integer Parameters" -> 2;
-       - "Integer Parameters" -> [ channel , comedi ].
-       Where "channel" is the channel number of the acquisition card from
-       which the signal is read and comedi is the identification number of the
-       device (acquisition card).
-       Otherwise, using the customized block from palette browser
-       (Palette Browser -> rtai -> RTAI-DigitalInput ), you have only to set
-       just the parameters (channel, comedi) described above.
+	To include in your model a block that performs the reading of digital
+	signals from the external environment you can use the "UserCode" block
+	(under Palette Browser -> User Programmed). You need a block for each
+	different digital acquisition channel.
+	In the "UserCode" block parameters you must set:
+	- "File Name" -> "rtai_comedi_dioin.c;
+	- "Function Name" -> "rtai_comedi_dioin";
+	- "Number od Integer Parameters" -> 2;
+	- "Integer Parameters" -> [ channel , comedi ].
+	Where "channel" is the channel number of the acquisition card from
+	which the signal is read and comedi is the identification number of the
+	device (acquisition card).
+	Otherwise, using the customized block from palette browser
+	(Palette Browser -> rtai -> RTAI-DigitalInput ), you have only to set
+	just the parameters (channel, comedi) described above.
 
    1.8 rtai_digitalOut block.
-       To include in your model a block that performs the writing of digital
-       signals to a digital channel of the acquisition card you can use
-       the "UserCode" block (under Palette Browser -> User Programmed). You
-       need a block for each different output signal.
-       In the "UserCode" block parameters you must set:
-       - "File Name" -> "rtai_comedi_dioout.c;
-       - "Function Name" -> "rtai_comedi_dioout";
-       - "Number od Integer Parameters" -> 2;
-       - "Integer Parameters" -> [ channel , comedi ];
-       - "Number od Real Parameters" -> 2;
-       - "Real Parameters" -> threshold.
-       Where "channel" is the channel number of the acquisition card to which
-       the signal is written and comedi is the identification number of the
-       device (acquisition card). The output signal is set to 1 if the
-       signal value is greater than the threshold value and set to 0 otherwise.
-       Otherwise, using the customized block from palette browser
-       (Palette Browser -> rtai -> RTAI-DigitalOutput), you have to set just
-       the parameters (channel, comedi and threshold) described above.
+	To include in your model a block that performs the writing of digital
+	signals to a digital channel of the acquisition card you can use
+	the "UserCode" block (under Palette Browser -> User Programmed). You
+	need a block for each different output signal.
+	In the "UserCode" block parameters you must set:
+	- "File Name" -> "rtai_comedi_dioout.c;
+	- "Function Name" -> "rtai_comedi_dioout";
+	- "Number od Integer Parameters" -> 2;
+	- "Integer Parameters" -> [ channel , comedi ];
+	- "Number od Real Parameters" -> 2;
+	- "Real Parameters" -> threshold.
+	Where "channel" is the channel number of the acquisition card to which
+	the signal is written and comedi is the identification number of the
+	device (acquisition card). The output signal is set to 1 if the
+	signal value is greater than the threshold value and set to 0 otherwise.
+	Otherwise, using the customized block from palette browser
+	(Palette Browser -> rtai -> RTAI-DigitalOutput), you have to set just
+	the parameters (channel, comedi and threshold) described above.
 
    Via RTAI-Lab you can modify on the fly the very same parameters that you
    can modify during an Interactive Simulation within SystemBuild environment,
@@ -304,7 +304,7 @@ HOW TO USE THE SUPPORT:
    Matrixx is installed.
    To generate the code from Xmath you can type the following command:
 
-       autocode "BLOCK_NAME", { fmarker, arraymin=3, initmerge, loopmin = 3, \
+	autocode "BLOCK_NAME", { fmarker, arraymin=3, initmerge, loopmin = 3, \
 	   ipath="MATRIXX_HOME\mx_71.1\case\ACC\templates", locvarlblkopt, \
 	   noerr, noinfo, propconst, vectormode=2, nouy, language="c", \
 	   smcallout, namelen=48, ialg=2, minsf=***, rtf="MODEL_NAME", \
@@ -359,12 +359,12 @@ HOW TO USE THE SUPPORT:
    command "make clean".
 
    3.1 Compilation options.
-       During the compilation you can select two options by editing the file
-       "Makefile":
-       - commenting (with a "#") the line "DOUBLE_FLAG = -DAC100FLAG" you
+	During the compilation you can select two options by editing the file
+	"Makefile":
+	- commenting (with a "#") the line "DOUBLE_FLAG = -DAC100FLAG" you
 	 elect to use real numbers in singular precision (C type: float), the
 	 default being double precision (C type: double) otherwise.
-       - the flag "FILEIO_FLAG" is intended to be used when the model needs
+	- the flag "FILEIO_FLAG" is intended to be used when the model needs
 	 external input, a la Matrixx. That external input is read from a
      file (input data file) in "Xmath {matrixx,ascii} format" (see Matrixx
 	 documentation) and, with this flag active, the output is
