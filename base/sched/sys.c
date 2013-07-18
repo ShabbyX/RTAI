@@ -198,6 +198,7 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 }
 
 void put_current_on_cpu(int cpuid);
+void rt_set_task_pid(RT_TASK *);
 
 static inline RT_TASK* __task_init(unsigned long name, int prio, int stack_size, int max_msg_size, int cpus_allowed)
 {
@@ -255,6 +256,7 @@ static inline RT_TASK* __task_init(unsigned long name, int prio, int stack_size,
 #endif
 			RTAI_OOM_DISABLE();
 
+			rt_set_task_pid(rt_task);
 			return rt_task;
 		} else {
 			clr_rtext(rt_task);
@@ -766,85 +768,3 @@ void init_fun_ext (void)
 	rt_fun_ext[0] = rt_fun_lxrt;
 }
 
-
-void rt_daemonize(void);
-
-#if 0
-struct thread_args { void *fun; long data; int priority; int policy; int cpus_allowed; RT_TASK *task; struct semaphore *sem; };
-
-static void kthread_fun(struct thread_args *args)
-{
-	int linux_rt_priority;
-
-	rt_daemonize();
-	if (args->policy == SCHED_NORMAL) {
-		linux_rt_priority = 0;
-	} else if ((linux_rt_priority = MAX_RT_PRIO - 1 - args->priority) < 1) {
-		linux_rt_priority = 1;
-	}
-	rtai_set_linux_task_priority(current, args->policy, linux_rt_priority);
-
-	if ((args->task = __task_init(rt_get_name(NULL), args->priority, 0, 0, args->cpus_allowed))) {
-		RT_TASK *task = args->task;
-		void (*fun)(long) = args->fun;
-		long data = args->data;
-		up(args->sem);
-		rt_make_hard_real_time(task);
-		fun(data);
-		rt_thread_delete(task);
-	}
-	return;
-}
-
-RT_TASK *rt_kthread_create(void *fun, long data, int priority, int linux_policy, int cpus_allowed)
-{
-	struct semaphore sem;
-	struct thread_args args = { fun, data, priority, linux_policy, cpus_allowed, NULL, &sem };
-	init_MUTEX_LOCKED(&sem);
-	kernel_thread((void *)kthread_fun, &args, 0);
-	down(&sem);
-	msleep(100);
-	return args.task;
-}
-#endif
-
-#include <linux/kthread.h>
-long rt_thread_create(void *fun, void *args, int stack_size)
-{
-	long retval;
-	RT_TASK *task;
-	if ((task = current->rtai_tskext(TSKEXT0)) && task->is_hard > 0) {
-		rt_make_soft_real_time(task);
-	}
-//	retval = kernel_thread(fun, args, 0);
-	retval = (long)kthread_run(fun, args, "RTAI");
-	if (task && !task->is_hard) {
-		rt_make_hard_real_time(task);
-	}
-	return retval;
-}
-EXPORT_SYMBOL(rt_thread_create);
-
-RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int policy, int cpus_allowed)
-{
-	int linux_rt_priority;
-	RT_TASK *task;
-	if (policy == SCHED_NORMAL) {
-		linux_rt_priority = 0;
-	} else if ((linux_rt_priority = MAX_RT_PRIO - 1 - priority) < 1) {
-		linux_rt_priority = 1;
-	}
-	rtai_set_linux_task_priority(current, policy, linux_rt_priority);
-//	rt_daemonize();
-	if ((task = __task_init(name ? name : rt_get_name(NULL), priority, 0, max_msg_size, cpus_allowed))) {
-		rt_make_hard_real_time(task);
-	}
-	return task;
-}
-EXPORT_SYMBOL(rt_thread_init);
-
-int rt_thread_delete(RT_TASK *rt_task)
-{
-	return __task_delete(rt_task);
-}
-EXPORT_SYMBOL(rt_thread_delete);

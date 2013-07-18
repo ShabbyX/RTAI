@@ -398,7 +398,7 @@
 #define LXRT_MBX_DELETE		1007
 #define MAKE_SOFT_RT		1008
 #define MAKE_HARD_RT		1009
-#define KTHREAD_INIT   		1010
+#define PRINT_TO_SCREEN		1010
 #define NONROOT_HRT		1011
 #define RT_BUDDY		1012
 #define HRT_USE_FPU     	1013
@@ -525,35 +525,22 @@ int set_rt_fun_entries(struct rt_native_fun_entry *entry);
 extern "C" {
 #endif /* __cplusplus */
 
-#if 1 // needs CONFIG_RTAI_INTERNAL_LXRT_SUPPORT no more
+/*+++++++++++ INLINES FOR PIERRE's PROXIES AND INTERTASK MESSAGES ++++++++++++*/
 
-static inline struct rt_task_struct *pid2rttask(long pid)
-{
-	struct task_struct *lnxtsk = find_task_by_pid(pid);
-	return lnxtsk ? lnxtsk->rtai_tskext(TSKEXT0) : NULL;
-	return ((unsigned long)pid) > PID_MAX_LIMIT ? (struct rt_task_struct *)pid : find_task_by_pid(pid)->rtai_tskext(TSKEXT0);
-}
-
-static inline long rttask2pid(struct rt_task_struct * task)
-{
-    return task->lnxtsk ? task->lnxtsk->pid : (long)task;
-}
-
-#else /* !CONFIG_RTAI_INTERNAL_LXRT_SUPPORT */
+#include <linux/types.h>
+RT_TASK *rt_find_task_by_pid(pid_t);
 
 static inline struct rt_task_struct *pid2rttask(pid_t pid)
 {
-    return 0;
+	return rt_find_task_by_pid(pid);
 }
 
-// The following might look strange but it must be so to work with
-// buddies also.
-static inline pid_t rttask2pid(struct rt_task_struct * task)
+static inline long rttask2pid(struct rt_task_struct *task)
 {
-    return (long) task;
+        return task->tid;
 }
 
-#endif /* CONFIG_RTAI_INTERNAL_LXRT_SUPPORT */
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 int set_rtai_callback(void (*fun)(void));
 
@@ -635,12 +622,6 @@ RTAI_PROTO(unsigned long, rt_get_name, (void *adr))
 {
 	struct { void *adr; } arg = { adr };
 	return rtai_lxrt(BIDX, SIZARG, LXRT_GET_NAME, &arg).i[LOW];
-}
-
-RTAI_PROTO(void, rt_kthread_init, (void))
-{
-	struct { unsigned long dummy; } arg;
-	rtai_lxrt(BIDX, SIZARG, KTHREAD_INIT, &arg);
 }
 
 RTAI_PROTO(RT_TASK *, rt_task_init_schmod, (unsigned long name, int priority, int stack_size, int max_msg_size, int policy, int cpus_allowed))
@@ -1334,7 +1315,18 @@ RTAI_PROTO(int,rt_printk,(const char *format, ...))
 	return arg.nch;
 }
 
-#define rtai_print_to_screen rt_printk
+RTAI_PROTO(int,rtai_print_to_screen,(const char *format, ...))
+{
+        char display[VSNPRINTF_BUF_SIZE];
+        struct { const char *display; long nch; } arg = { display, 0 };
+        va_list args;
+
+        va_start(args, format);
+        arg.nch = vsnprintf(display, VSNPRINTF_BUF_SIZE, format, args);
+        va_end(args);
+        rtai_lxrt(BIDX, SIZARG, PRINTK, &arg);
+        return arg.nch;
+}
 
 RTAI_PROTO(int,rt_usp_signal_handler,(void (*handler)(void)))
 {
