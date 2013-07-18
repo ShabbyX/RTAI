@@ -133,7 +133,7 @@ static inline int rt_task_yield(void)
 static inline int rt_task_set_periodic(RT_TASK *task, RTIME idate, RTIME period)
 {
 	struct { void *task; RTIME idate, period; } arg = { task ? task->task : rtai_tskext(), idate == TM_NOW ? rt_timer_tsc() : rt_timer_ns2tsc(idate), rt_timer_ns2tsc(period) };
-       	return rtai_lxrt(BIDX, SIZARG, MAKE_PERIODIC, &arg).i[LOW];
+		return rtai_lxrt(BIDX, SIZARG, MAKE_PERIODIC, &arg).i[LOW];
 }
 
 static inline int rt_task_wait_period(unsigned long *ovrun)

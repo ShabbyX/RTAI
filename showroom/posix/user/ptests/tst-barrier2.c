@@ -162,7 +162,7 @@ do_test (void)
 
   if (pid == 0)
     /* The child.  Pass the number of times we had the serializing
-       thread back to the parent.  */
+	thread back to the parent.  */
     exit (serials);
 
   if (waitpid (pid, &status, 0) != pid)

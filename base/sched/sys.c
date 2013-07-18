@@ -181,12 +181,12 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 			long *buf_arg = fun_args + USP_RBF2(type);
 			rt_copy_from_user(rt_task->msg_buf[1], (long *)buf_arg[0], r2size);
 			buf_arg[0] = (long)rt_task->msg_buf[1];
-       		}
+			}
 		if (w2size) {
 			long *buf_arg = fun_args + USP_WBF2(type);
 			w2msg_adr = (long *)buf_arg[0];
-       	        	buf_arg[0] = (long)rt_task->msg_buf[1];
-       		}
+		        	buf_arg[0] = (long)rt_task->msg_buf[1];
+			}
 	}
 	lxrt_fun_call(rt_task, fun, narg, arg);
 	if (wsize) {
@@ -284,7 +284,7 @@ static int __task_delete(RT_TASK *rt_task)
 	if ((server = rt_task->linux_syscall_server)) {
 		server->suspdepth = -RTE_HIGERR;
 		rt_task_masked_unblock(server, ~RT_SCHED_READY);
-       		lnxtsk->state = TASK_INTERRUPTIBLE;
+			lnxtsk->state = TASK_INTERRUPTIBLE;
 		schedule_timeout(HZ/10);
 	}
 	if (clr_rtext(rt_task)) {
@@ -720,7 +720,7 @@ void linux_process_termination(void)
 		}
 		num2nam(entry.name, name);
 		entry.tsk = 0;
-       		switch (entry.type) {
+			switch (entry.type) {
 			case IS_SEM:
 				rt_printk("LXRT releases SEM %s\n", name);
 				lxrt_sem_delete(entry.adr);

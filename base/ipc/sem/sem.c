@@ -1931,8 +1931,8 @@ static inline int rt_poll_signal(POLL_SEM *sem)
 
 void rt_wakeup_pollers(struct rt_poll_ql *ql, int reason)
 {
-       	QUEUE *q, *queue = &ql->pollq;
-       	spinlock_t *qlock = &ql->pollock;
+		QUEUE *q, *queue = &ql->pollq;
+		spinlock_t *qlock = &ql->pollock;
 
 	rt_spin_lock_irq(qlock);
 	if ((q = queue->next) != queue) {

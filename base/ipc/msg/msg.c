@@ -2112,7 +2112,7 @@ RTAI_SYSCALL_MODE int rt_Proxy_detach(pid_t pid)
 RTAI_SYSCALL_MODE pid_t rt_Trigger(pid_t pid)
 {
 	RT_TASK *proxy;
-       	struct proxy_t *his;
+		struct proxy_t *his;
 	if ((proxy = pid2rttask(pid))) {
 		his = (struct proxy_t *)(proxy->stack_bottom);
 		if (his && proxy->magic == RT_TASK_MAGIC) {

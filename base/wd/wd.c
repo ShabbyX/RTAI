@@ -438,7 +438,7 @@ static void handle_badtask(int wd, RT_TASK *t, BAD_RT_TASK *bt, RTIME overrun)
     switch (Policy) {
 
 	case WD_NOTHING: 	// Hope for the best
-       	    break;
+		    break;
 
 	case WD_RESYNC:	// Resynchronise frame time
 	case WD_DEBUG:	// Same thing for debugging

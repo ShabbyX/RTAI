@@ -689,7 +689,7 @@ void *malloc_ex(size_t size, void *mem_pool)
     MAPPING_SEARCH(&size, &fl, &sl);
 
     /* Searching a free block, recall that this function changes the values of fl and sl,
-       so they are not longer valid when the function fails */
+	so they are not longer valid when the function fails */
     b = FIND_SUITABLE_BLOCK(tlsf, &fl, &sl);
 #if USE_MMAP || USE_SBRK
     if (!b) {
@@ -1079,16 +1079,16 @@ static caddr_t get_free_range (rtheap_t *heap,
     }
 
     /* No available free range in the existing extents so far. If we
-       cannot extend the heap, we have failed and we are done with
-       this request. */
+	cannot extend the heap, we have failed and we are done with
+	this request. */
 
     return NULL;
 
 splitpage:
 
     /* At this point, headpage is valid and points to the first page
-       of a range of contiguous free pages larger or equal than
-       'bsize'. */
+	of a range of contiguous free pages larger or equal than
+	'bsize'. */
 
     if (bsize < heap->pagesize)
 	{
@@ -1108,13 +1108,13 @@ splitpage:
     pagenum = (headpage - extent->membase) >> heap->pageshift;
 
     /* Update the extent's page map.  If log2size is non-zero
-       (i.e. bsize <= 2 * pagesize), store it in the first page's slot
-       to record the exact block size (which is a power of
-       two). Otherwise, store the special marker RTHEAP_PLIST,
-       indicating the start of a block whose size is a multiple of the
-       standard page size, but not necessarily a power of two.  In any
-       case, the following pages slots are marked as 'continued'
-       (PCONT). */
+	(i.e. bsize <= 2 * pagesize), store it in the first page's slot
+	to record the exact block size (which is a power of
+	two). Otherwise, store the special marker RTHEAP_PLIST,
+	indicating the start of a block whose size is a multiple of the
+	standard page size, but not necessarily a power of two.  In any
+	case, the following pages slots are marked as 'continued'
+	(PCONT). */
 
     extent->pagemap[pagenum] = log2size ? log2size : RTHEAP_PLIST;
 
@@ -1190,9 +1190,9 @@ void *rtheap_alloc (rtheap_t *heap, u_long size, int mode)
 	size = (size + heap->pagesize - 1) & ~(heap->pagesize - 1);
 
     /* It becomes more space efficient to directly allocate pages from
-       the free page list whenever the requested size is greater than
-       2 times the page size. Otherwise, use the bucketed memory
-       blocks. */
+	the free page list whenever the requested size is greater than
+	2 times the page size. Otherwise, use the bucketed memory
+	blocks. */
 
     if (size <= heap->pagesize * 2)
 	{
@@ -1273,8 +1273,8 @@ int rtheap_free (rtheap_t *heap, void *block)
     flags = rt_spin_lock_irqsave(&heap->lock);
 
     /* Find the extent from which the returned block is
-       originating. If the heap is non-extendable, then a single
-       extent is scanned at most. */
+	originating. If the heap is non-extendable, then a single
+	extent is scanned at most. */
 
     list_for_each(holder,&heap->extents) {
 

@@ -108,7 +108,7 @@ int main(void)
 	while (mq_send(Keyboard, &ch, 1, 0) < 0) {
 		rt_sleep(nano2count(1000000));
 	}
-       	ch = 'c';
+		ch = 'c';
 	while (mq_send(Keyboard, &ch, 1, 0) < 0) {
 		rt_sleep(nano2count(1000000));
 	}

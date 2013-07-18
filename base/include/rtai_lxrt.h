@@ -531,7 +531,7 @@ static inline struct rt_task_struct *pid2rttask(pid_t pid)
 
 static inline long rttask2pid(struct rt_task_struct *task)
 {
-        return task->tid;
+	 return task->tid;
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -1311,15 +1311,15 @@ RTAI_PROTO(int,rt_printk,(const char *format, ...))
 
 RTAI_PROTO(int,rtai_print_to_screen,(const char *format, ...))
 {
-        char display[VSNPRINTF_BUF_SIZE];
-        struct { const char *display; long nch; } arg = { display, 0 };
-        va_list args;
+	 char display[VSNPRINTF_BUF_SIZE];
+	 struct { const char *display; long nch; } arg = { display, 0 };
+	 va_list args;
 
-        va_start(args, format);
-        arg.nch = vsnprintf(display, VSNPRINTF_BUF_SIZE, format, args);
-        va_end(args);
-        rtai_lxrt(BIDX, SIZARG, PRINTK, &arg);
-        return arg.nch;
+	 va_start(args, format);
+	 arg.nch = vsnprintf(display, VSNPRINTF_BUF_SIZE, format, args);
+	 va_end(args);
+	 rtai_lxrt(BIDX, SIZARG, PRINTK, &arg);
+	 return arg.nch;
 }
 
 RTAI_PROTO(int,rt_usp_signal_handler,(void (*handler)(void)))

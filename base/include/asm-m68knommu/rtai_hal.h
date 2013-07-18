@@ -64,19 +64,19 @@ static __inline__ unsigned long ffnz (unsigned long word) {
     int r = 1;
     if (!(word & 0xff)) {
 	word >>= 8;
-       r += 8;
+	r += 8;
     }
     if (!(word & 0xf)) {
-       word >>= 4;
-       r += 4;
+	word >>= 4;
+	r += 4;
     }
     if (!(word & 3)) {
-       word >>= 2;
-       r += 2;
+	word >>= 2;
+	r += 2;
     }
     if (!(word & 1)) {
-       word >>= 1;
-       r += 1;
+	word >>= 1;
+	r += 1;
     }
     return r - 1;
 }

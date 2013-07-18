@@ -740,8 +740,8 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
   if (urg > 0) {
  L43:
     pidedoit1(&z[1], &zptr[1], told, &tevts[1], &evtspt[1], nevts, pointi,
-       &outptr[1], &clkptr[1], &ordptr[1],  &ordclk[ordclk_offset], nordcl,
-       &rpar[1], &ipar[1], &funptr[1], &funtyp[1], &(z[9]), &urg, (int *)(z+
+	&outptr[1], &clkptr[1], &ordptr[1],  &ordclk[ordclk_offset], nordcl,
+	&rpar[1], &ipar[1], &funptr[1], &funtyp[1], &(z[9]), &urg, (int *)(z+
       29));
     if (urg > 0) {
       goto L43;
@@ -1261,7 +1261,7 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
 
     flag = 3;
     C2F(ifthel)(&flag, &nevprt, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]),
-       &nrd_0, &(outtb[1]),  &nrd_1);
+	&nrd_0, &(outtb[1]),  &nrd_1);
 
 
 	   if(flag < 0 ) return(5 - flag);

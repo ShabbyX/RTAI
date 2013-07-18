@@ -98,9 +98,9 @@
 	  size of Fortran double precision = 2 * size of Fortran integer
 
    At the present time, we suppose:
-       size of Fortran integer = 4 bytes
-       size of Fortran double precision = 8 bytes
-       size of C int = 4 bytes
+	size of Fortran integer = 4 bytes
+	size of Fortran double precision = 8 bytes
+	size of C int = 4 bytes
 */
 
 typedef int integer;

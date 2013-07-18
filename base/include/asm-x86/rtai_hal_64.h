@@ -110,7 +110,7 @@ static inline long rtai_imuldiv (long i, long mult, long div) {
 	"mulq %%rdx\t\n" \
 	"divq %%rcx\t\n" \
 	: "=a" (i), "=d" (dummy)
-       	: "a" (i), "d" (mult), "c" (div));
+		: "a" (i), "d" (mult), "c" (div));
 
     return i;
 }

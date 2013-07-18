@@ -335,8 +335,8 @@ static void linux_cli(void)
 #if 0
 static void linux_soft_sti(void)
 {
-       	unsigned long cpuid;
-       	struct cpu_own_status *cpu;
+		unsigned long cpuid;
+		struct cpu_own_status *cpu;
 
 	cpu = processor + (cpuid = hard_cpu_id());
 	set_intr_flag(cpu->intr_flag,(1 << IFLAG) | (1 << cpuid));
@@ -345,8 +345,8 @@ static void linux_soft_sti(void)
 
 static void run_pending_irqs(void)
 {
-       	unsigned long irq, cpuid;
-       	struct cpu_own_status *cpu;
+		unsigned long irq, cpuid;
+		struct cpu_own_status *cpu;
 
 	cpuid = hard_cpu_id();
 	if (!test_and_set_bit(cpuid, &global.cpu_in_sti)) {
@@ -1239,11 +1239,11 @@ int init_module(void)
 	ppc_irq_dispatcher = do_IRQ_intercept;
 	ppc_timer_handler  = timer_interrupt_intercept;
 
-       	global.pending_irqs    = 0;
-       	global.activ_irqs      = 0;
-       	global.pending_srqs    = 0;
-       	global.activ_srqs      = 0;
-       	global.cpu_in_sti      = 0;
+		global.pending_irqs    = 0;
+		global.activ_irqs      = 0;
+		global.pending_srqs    = 0;
+		global.activ_srqs      = 0;
+		global.cpu_in_sti      = 0;
 	global.used_by_linux   = ~(0xFFFFFFFF << smp_num_cpus);
 #ifdef CONFIG_SMP
 	global.locked_cpus     = 0;

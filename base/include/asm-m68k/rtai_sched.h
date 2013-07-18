@@ -21,7 +21,7 @@
 #define _RTAI_ASM_M68K_SCHED_H
 
 #define rt_exchange_tasks(oldtask, newtask) \
-       __asm__ __volatile__( \
+	__asm__ __volatile__( \
 	   "lea %%sp@(-60),%%sp\n\t" \
 	   "movem.l %%d0-%%d7/%%a0-%%a6,%%sp@\n\t" \
 	   "pea %%pc@(1f)\n\t" \

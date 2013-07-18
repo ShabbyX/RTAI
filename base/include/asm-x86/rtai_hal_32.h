@@ -133,7 +133,7 @@ static inline int rtai_imuldiv (int i, int mult, int div) {
 	"mull %%edx\t\n" \
 	"div %%ecx\t\n" \
 	: "=a" (i), "=d" (dummy)
-       	: "a" (i), "d" (mult), "c" (div));
+		: "a" (i), "d" (mult), "c" (div));
 
     return i;
 }

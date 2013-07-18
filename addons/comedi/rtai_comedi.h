@@ -227,25 +227,25 @@ RTAI_PROTO(int, rt_comedi_register_callback, (void *dev, unsigned int subdevice,
 
 RTAI_PROTO(long, rt_comedi_wait, (unsigned int *cbmask))
 {
-       	struct { unsigned int *cbmask; } arg = { cbmask };
+		struct { unsigned int *cbmask; } arg = { cbmask };
 	return rtai_lxrt(FUN_COMEDI_LXRT_INDX, COMEDI_LXRT_SIZARG, _KCOMEDI_WAIT, &arg).i[LOW];
 }
 
 RTAI_PROTO(long, rt_comedi_wait_if, (unsigned int *cbmask))
 {
-       	struct { unsigned int *cbmask; } arg = { cbmask };
+		struct { unsigned int *cbmask; } arg = { cbmask };
 	return rtai_lxrt(FUN_COMEDI_LXRT_INDX, COMEDI_LXRT_SIZARG, _KCOMEDI_WAIT_IF, &arg).i[LOW];
 }
 
 RTAI_PROTO(long, rt_comedi_wait_until, (RTIME until, unsigned int *cbmask))
 {
-       	struct { unsigned int *cbmask; RTIME until; } arg = { cbmask, until };
+		struct { unsigned int *cbmask; RTIME until; } arg = { cbmask, until };
 	return rtai_lxrt(FUN_COMEDI_LXRT_INDX, COMEDI_LXRT_SIZARG, _KCOMEDI_WAIT_UNTIL, &arg).i[LOW];
 }
 
 RTAI_PROTO(long, rt_comedi_wait_timed, (RTIME delay, unsigned int *cbmask))
 {
-       	struct { unsigned int *cbmask; RTIME delay; } arg = { cbmask, delay };
+		struct { unsigned int *cbmask; RTIME delay; } arg = { cbmask, delay };
 	return rtai_lxrt(FUN_COMEDI_LXRT_INDX, COMEDI_LXRT_SIZARG, _KCOMEDI_WAIT_TIMED, &arg).i[LOW];
 }
 
@@ -919,7 +919,7 @@ static inline int _RT_comedi_do_insnlist(unsigned long node, int port, void *dev
 		}
 	       	return retval;
 	} }
-       	return -1;
+		return -1;
 }
 
 static inline int RT_comedi_do_insn(unsigned long node, int port, void *dev, comedi_insn *insn)

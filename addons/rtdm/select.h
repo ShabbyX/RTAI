@@ -151,28 +151,28 @@ struct xnselector;
 #ifndef __FD_SET
 static inline void __FD_SET(unsigned long __fd, __kernel_fd_set *__fdsetp)
 {
-       __set_bit(__fd, __fdsetp->fds_bits);
+	__set_bit(__fd, __fdsetp->fds_bits);
 }
 #endif
 
 #ifndef __FD_CLR
 static inline void __FD_CLR(unsigned long __fd, __kernel_fd_set *__fdsetp)
 {
-       __clear_bit(__fd, __fdsetp->fds_bits);
+	__clear_bit(__fd, __fdsetp->fds_bits);
 }
 #endif
 
 #ifndef __FD_ISSET
 static inline int __FD_ISSET(unsigned long __fd, const __kernel_fd_set *__fdsetp)
 {
-       return test_bit(__fd, __fdsetp->fds_bits);
+	return test_bit(__fd, __fdsetp->fds_bits);
 }
 #endif
 
 #ifndef __FD_ZERO
 static inline void __FD_ZERO(__kernel_fd_set *__fdsetp)
 {
-       memset(__fdsetp->fds_bits, 0, sizeof __fdsetp->fds_bits);
+	memset(__fdsetp->fds_bits, 0, sizeof __fdsetp->fds_bits);
 }
 #endif
 

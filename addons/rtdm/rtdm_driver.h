@@ -29,7 +29,7 @@
 
 #ifndef __KERNEL__
 #error This header is for kernel space usage only. \
-       You are likely looking for rtdm/rtdm.h...
+	You are likely looking for rtdm/rtdm.h...
 #endif /* !__KERNEL__ */
 
 #include <asm/atomic.h>
