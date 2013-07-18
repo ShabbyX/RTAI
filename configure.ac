@@ -1815,10 +1815,7 @@ case $RTAI_TARGET_ARCH in
         else
            RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -ffast-math -msoft-float"
         fi
-	# 2009-03-23
-	# `-msse2' temporarily removed by Pierangelo Masarati
-	# as suggested by Paul <paul_c AT tuxcnc DOT org>
-	RTAI_TARGET_ARCH_OPTS="$RTAI_TARGET_ARCH_OPTS -msse"
+	RTAI_TARGET_ARCH_OPTS="$RTAI_TARGET_ARCH_OPTS -msse -msse2"
         ;;
    esac
    ;;
