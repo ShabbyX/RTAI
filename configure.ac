@@ -2011,14 +2011,14 @@ build_addons=$CONFIG_RTAI_COMEDI_LXRT$build_drivers$CONFIG_RTAI_RTDM
 
 if test -d $srcdir/addons; then
   AC_CONFIG_FILES([ \
-       addons/GNUmakefile \
-       addons/comedi/GNUmakefile \
-       addons/drivers/GNUmakefile \
-       addons/drivers/serial/GNUmakefile \
-       addons/drivers/16550A/GNUmakefile \
-       addons/rtdm/GNUmakefile \
-       addons/rtdm/lib/GNUmakefile \
-       ])
+	addons/GNUmakefile \
+	addons/comedi/GNUmakefile \
+	addons/drivers/GNUmakefile \
+	addons/drivers/serial/GNUmakefile \
+	addons/drivers/16550A/GNUmakefile \
+	addons/rtdm/GNUmakefile \
+	addons/rtdm/lib/GNUmakefile \
+	])
 elif test \! x$build_addons = x; then
      AC_MSG_ERROR([addons package is missing])
 fi
