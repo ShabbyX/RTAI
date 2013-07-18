@@ -64,7 +64,7 @@ diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/arch/arm/mach-at91rm9200/at91
 +	0,	/* Advanced Interrupt Controller (IRQ1) */
 +#endif /*CONFIG_IPIPE */
  };
- 
+
  void __init at91sam9263_init_interrupts(unsigned int priority[NR_AIC_IRQS])
 diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/arch/arm/mach-at91rm9200/at91sam926x_time.c linux-2.6.20.13-9263/arch/arm/mach-at91rm9200/at91sam926x_time.c
 --- linux-2.6.20.13-9263-clean/arch/arm/mach-at91rm9200/at91sam926x_time.c	2007-06-18 14:17:18.000000000 +0200
@@ -90,21 +90,21 @@ diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/arch/arm/mach-at91rm9200/at91
  static unsigned long at91sam926x_gettimeoffset(void)
  {
 @@ -115,7 +121,7 @@ static unsigned long at91sam926x_gettime
- 
+
  	elapsed = (PIT_PICNT(t) * LATCH) + PIT_CPIV(t);		/* hardware clock cycles */
- 
+
 -	return (unsigned long)(elapsed * jiffies_to_usecs(1)) / LATCH;
 +	return (unsigned long)(elapsed * 1000000) / LATCH;
  }
- 
+
  /*
 @@ -357,14 +363,9 @@ static struct irqaction at91sam926x_time
  	.handler	= &at91sam926x_timer_interrupt
  };
- 
+
 -static char clk_name [] = "tc%";
 +static char clk_name [] = "tc%_clk";
- 
+
 -static struct clk tc = {
 -	.name		= (const char *) clk_name,
 -	.users          = 0,
@@ -112,13 +112,13 @@ diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/arch/arm/mach-at91rm9200/at91
 -	.pmc_mask       = 1 << (KERNEL_TIMER_IRQ_NUM),
 -};
 +static struct clk *tc;
- 
+
  void __init at91sam926x_timer_init(void)
  {
 @@ -373,9 +374,19 @@ void __init at91sam926x_timer_init(void)
  	if (clk_get_rate(clk_get(NULL, "mck")) != CONFIG_IPIPE_AT91_MCK)
  		at91sam926x_timer_irq.handler = &at91sam926x_bad_freq;
- 
+
 -	snprintf(clk_name, sizeof(clk_name), "tc%d", CONFIG_IPIPE_AT91_TC);
 -	clk_register(&tc);
 -	clk_enable(&tc);
@@ -135,7 +135,7 @@ diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/arch/arm/mach-at91rm9200/at91
 +		printk("> %s does not exist.",clk_name);
 +	else
 +		clk_enable(tc);
- 	
+
  	/* No Sync. */
  	at91_tc_write(AT91_TC_BCR, 0);
 diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/arch/arm/mach-at91rm9200/Kconfig linux-2.6.20.13-9263/arch/arm/mach-at91rm9200/Kconfig
@@ -162,7 +162,7 @@ diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/include/asm-arm/arch-at91rm92
 +#endif /* CONFIG_ARCH_AT91 */
  #define AT91_VA_BASE_TCB0    AT91_IO_P2V(AT91_BASE_TCB0)
  #endif /* CONFIG_IPIPE */
- 
+
 diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/include/asm-arm/arch-at91rm9200/irqs.h linux-2.6.20.13-9263/include/asm-arm/arch-at91rm9200/irqs.h
 --- linux-2.6.20.13-9263-clean/include/asm-arm/arch-at91rm9200/irqs.h	2007-06-18 14:17:18.000000000 +0200
 +++ linux-2.6.20.13-9263/include/asm-arm/arch-at91rm9200/irqs.h	2007-06-18 14:35:54.000000000 +0200
@@ -176,6 +176,6 @@ diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/include/asm-arm/arch-at91rm92
 +#define __ipipe_mach_irq_mux_p(irq)					\
 +	((unsigned) (irq - AT91SAM9263_ID_PIOA) < __ipipe_at91_gpio_banks)
 +#endif /* CONFIG_ARCH_AT91 */
- 
+
  #endif /* CONFIG_IPIPE && !__ASSEMBLY__ */
- 
+

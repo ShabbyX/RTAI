@@ -8,7 +8,7 @@ index 0916254..d2c6857 100644
  mice,c,13,63
 +rtf0,c,150,0 rtf1,c,150,1 rtf2,c,150,2 rtf3,c,150,3
  adc,c,10,63
- 
+
  spidev0.0,c,153,0	spidev0.1,c,153,1	spidev0.2,c,153,2
 diff --git a/bin/device_table.txt b/bin/device_table.txt
 index 01d4c33..ffbf984 100644
@@ -17,7 +17,7 @@ index 01d4c33..ffbf984 100644
 @@ -198,3 +198,6 @@
  # I2C devices
  /dev/i2c-      c       660     0       0       89      0       0       1       2
- 
+
 +# RTAI
 +
 +/dev/rtf    c       640     0       0       150       0       0       1       4
@@ -140,7 +140,7 @@ index d280c32..7fd3e60 100644
 @@ -2486,6 +2486,21 @@ config PKG_RT_TESTS
        "realtime" kernel behavior, such as timer latency, signal latency and
        the functioning of priority-inheritance mutexes.
- 
+
 +config PKG_RTAI
 +    depends !KERNEL_NONE && PLATFORM1
 +    select PKG_KERNEL_LEAVESRC
@@ -181,7 +181,7 @@ index c3aba66..6dcdcc6 100644
  Patch67         :0068-Detect-FEC-cable-status.patch
 -
 +Patch68         :0069-ipipe-mcf5329_2.6.26.patch
- 
+
  BuildRoot       : %{_tmppath}/%{name}
  Prefix          : %{pfx}
 @@ -163,3 +163,4 @@ From kernel.org plus Freescale patches

@@ -43,14 +43,14 @@ The following topics are covered:
 
 The Real-Time Application Interface (RTAI) is a set of extensions for the Linux
 operating system that adds support for hard real-time scheduling for processes.
-It is a real-time platform which allows for high predictability and low 
+It is a real-time platform which allows for high predictability and low
 latency.
 
 This project aims to implement support for RTAI (version 3.8) under uClinux
 (kernel version 2.6.25) on the MCF5329 microcontroller. The work will consist
-of adding the architecture support code to RTAI as well as making the 
-necessary changes to uClinux to enable RTAI support on the ColdFire 
-architecture. 
+of adding the architecture support code to RTAI as well as making the
+necessary changes to uClinux to enable RTAI support on the ColdFire
+architecture.
 
 *******************************************************************************
 2. Requirements
@@ -105,7 +105,7 @@ In the kernel configuration window, set:
 	Enable loadable module support/Module unloading = y
 	Processor type and features->Interrupt Pipeline = y
 
-Then in user configuration options select things that you want to compile 
+Then in user configuration options select things that you want to compile
 into romfs. You need to build insmod, rmmod, lsmod tools in order to use
 RTAI:
 	Busybox/Busybox = y
@@ -115,7 +115,7 @@ RTAI:
 	Busybox/Busybox/Linux Module Utilites/Support version 2.6.x Linux kernels = y
 Then exit from menuconfig with saving settings.
 
-You may also want to build POSIX threading support (it must be enabled to 
+You may also want to build POSIX threading support (it must be enabled to
 compile some RTAI user-space testsuite modules - "preempt" and "switches").
 To enable POSIX threading support configure uClibc:
 
@@ -129,10 +129,10 @@ $ cd ..
 
 $ make
 
-After this command completes, there will be a file named image.bin in the 
+After this command completes, there will be a file named image.bin in the
 images directory. You should download this file to the board at offset 0x40020000
 and execute it with the same starting address in order to run Linux.
-	
+
 Build RTAI:
 
 $ cd rtai-3.8
@@ -143,7 +143,7 @@ General->Linux Source Tree-><full-path-to-uclinux-dist>/linux-2.6.x
 
 $ make
 
-After this command completes, there will be following RTAI kernel modules 
+After this command completes, there will be following RTAI kernel modules
 (testsuite modules aren't shown):
 .
  `-- base
@@ -241,10 +241,10 @@ Testsuite has the following files:
             |-- switches
             `-- README
 
-These files (except READMEs) with directory structure should be copied 
+These files (except READMEs) with directory structure should be copied
 to to romfs (for example, to '<path-to-uclinux>/romfs/testsuite').
 
-RTAI FIFOs are used in some tests, so following files must be created in 
+RTAI FIFOs are used in some tests, so following files must be created in
 the '<path-to-uclinux>/romfs/dev directory:
 
 @rtf0,c,150,0
@@ -252,10 +252,10 @@ the '<path-to-uclinux>/romfs/dev directory:
 @rtf2,c,150,2
 @rtf3,c,150,3
 
-Appropriate character devices will be created in the romfs when building 
+Appropriate character devices will be created in the romfs when building
 uCLinux.
 
-Then recompile uClinux by typing 
+Then recompile uClinux by typing
 $ make
 
 To launch tests:
@@ -291,14 +291,14 @@ To run the kernel tests:
 
 			/modules> insmod latency_rt.ko
 			/modules> kern/latency/display
-			
+
 			## RTAI latency calibration tool ##
 			# period = 1000000 (ns)
 			# avrgtime = 1 (s)
 			# do not use the FPU
 			# start the timer
 			# timer_mode is oneshot
-			
+
 			RTAI Testsuite - KERNEL latency (all data in nanoseconds)
 			RTH|    lat min|    ovl min|    lat avg|    lat max|    ovl max|   overruns
 			RTD|     -29837|     -29837|       2644|      45325|      45325|          0
@@ -328,15 +328,15 @@ To run the kernel tests:
 			RTD|     -28200|     -30275|       2740|      61212|      61212|          0
 			^CRTD|     -28200|     -30275|       2740|      61212|      61212|          0
 			/modules> rmmod latency_rt
-			
-			
+
+
 			CPU USE SUMMARY
 			# 0 -> 30126
 			END OF CPU USE SUMMARY
 
 
 	b) To launch in periodic mode:
-		Use the following kernel module parameter when loading 
+		Use the following kernel module parameter when loading
 		latency_rt:
 
 		$ insmod latency_rt.ko timer_mode=1
@@ -347,14 +347,14 @@ To run the kernel tests:
 
 			/modules> insmod latency_rt.ko timer_mode=1
 			/modules> kern/latency/display
-			
+
 			## RTAI latency calibration tool ##
 			# period = 1000000 (ns)
 			# avrgtime = 1 (s)
 			# do not use the FPU
 			# start the timer
 			# timer_mode is periodic
-			
+
 			RTAI Testsuite - KERNEL latency (all data in nanoseconds)
 			RTH|    lat min|    ovl min|    lat avg|    lat max|    ovl max|   overruns
 			RTD|     -29425|     -29425|        -42|      43737|      43737|          0
@@ -384,8 +384,8 @@ To run the kernel tests:
 			RTD|     -35025|     -46400|         -4|      53587|      64987|          0
 			RTD|     -28925|     -46400|         14|      63163|      64987|     ^C     0
 			/modules> rmmod latency_rt
-			
-			
+
+
 			CPU USE SUMMARY
 			# 0 -> 35194
 			END OF CPU USE SUMMARY
@@ -436,8 +436,8 @@ To run the kernel tests:
 			RTD|      -31025|         -86|       69412|      257862|      389650
 			^CRTD|      -31025|         -86|       69412|      257862|      389650
 			/modules> rmmod preempt_rt.ko
-			
-			
+
+
 			CPU USE SUMMARY
 			# 0 -> 38439
 			END OF CPU USE SUMMARY
@@ -456,16 +456,16 @@ To run the kernel tests:
 
 		/modules> insmod switches_rt.ko
 		Wait for it ...
-		
-		
+
+
 		FOR 10 TASKS: TIME 772 (ms), SUSP/RES SWITCHES 40000, SWITCH TIME 19316 (ns)
-		
+
 		FOR 10 TASKS: TIME 814 (ms), SEM SIG/WAIT SWITCHES 40000, SWITCH TIME 20370 (ns)
-		
+
 		FOR 10 TASKS: TIME 993 (ms), RPC/RCV-RET SWITCHES 40000, SWITCH TIME 24849 (ns)
-		
+
 		/modules> rmmod switches_rt
-		
+
 		CPU USE SUMMARY
 		# 0 -> 60011
 		END OF CPU USE SUMMARY
@@ -480,7 +480,7 @@ To run the user-space tests:
 		$ ./latency&
 		$ ./display
 
-		Press ENTER to stop the test when you have 
+		Press ENTER to stop the test when you have
 		seen the results.
 
 		Here is an example of results (taken according to this README):
@@ -494,8 +494,8 @@ To run the user-space tests:
 			# use the FPU
 			# start the timer
 			# timer_mode is oneshot
-			
-			
+
+
 			/modules/user/latency> ./display
 			RTAI Testsuite - USER latency (all data in nanoseconds)
 			1999/11/30 00:03:40
@@ -525,9 +525,9 @@ To run the user-space tests:
 			RTH|    lat min|    ovl min|    lat avg|    lat max|    ovl max|   overruns
 			RTD|     -21187|     -24275|      14123|      89650|      94900|          0
 			RTD|     -22975|     -24275|      13746|      89775|      94900|          0
-			
+
 			RTD|     -23050|     -24275|      14089|      78925|      94900|          0
-			
+
 			>>> S = 98.696, EXECTIME = 0.330243
 
 
@@ -535,7 +535,7 @@ To run the user-space tests:
 
 		In RTAI in file <path-t-RTAI>/testsuite/user/latency/latency.c
 		change the line 38 from
-		
+
 		#define TIMER_MODE  0
 
 		to
@@ -555,8 +555,8 @@ To run the user-space tests:
 			# use the FPU
 			# start the timer
 			# timer_mode is periodic
-			
-			
+
+
 			/modules/user/latency> ./display
 			RTAI Testsuite - USER latency (all data in nanoseconds)
 			1999/11/30 00:01:11
@@ -586,9 +586,9 @@ To run the user-space tests:
 			RTH|    lat min|    ovl min|    lat avg|    lat max|    ovl max|   overruns
 			RTD|     -58738|    -107975|          0|      59450|      65013|          0
 			RTD|     -58450|    -107975|          8|      44850|      65013|          0
-			
+
 			RTD|     -41225|    -107975|         28|      42288|      84713|          0
-			
+
 			>>> S = 98.696, EXECTIME = 0.31106
 
 2) The "Preempt" test:
@@ -597,7 +597,7 @@ To run the user-space tests:
 	$ ./preempt&
 	$ ./display
 
-	Press Ctrl+C twice to stop the test when you have 
+	Press Ctrl+C twice to stop the test when you have
 	seen the results.
 
 	Here is an example of results (taken according to this README):
@@ -631,7 +631,7 @@ To run the user-space tests:
 		RTH|     lat min|     lat avg|     lat max|    jit fast|    jit slow
 		RTD|      -24712|       13842|      106450|      252050|      284012
 		RTD|      -24712|       13894|      106450|      252050|      284012
-		
+
 		RTD|      -24712|       13773|      106450|      252050|      284012
 		LXRT releases PID 61 (ID: display).
 
@@ -641,22 +641,22 @@ To run the user-space tests:
 	$ cd user/switches
 	$ ./switches
 
-	Results will be shown. Don't mention about warning for 
+	Results will be shown. Don't mention about warning for
 	rt_grow_and_lock_stack(). It's just our notice for RTAI users.
 
 	Here is an example of results (taken according to this README):
 
 		/modules/user/switches> ./switches
-		
-		
+
+
 		Wait for it ...
 		RTAI WARNING: rt_grow_and_lock_stack() does nothing for systems without MMU
-		
-		
+
+
 		FOR 10 TASKS: TIME 876 (ms), SUSP/RES SWITCHES 20000, SWITCH TIME 43814 (ns)
-		
+
 		FOR 10 TASKS: TIME 949 (ms), SEM SIG/WAIT SWITCHES 20000, SWITCH TIME 47476 (ns)
-		
+
 		FOR 10 TASKS: TIME 1263 (ms), RPC/RCV-RET SWITCHES 20000, SWITCH TIME 63158 (ns)
 
 
@@ -664,19 +664,19 @@ To run the user-space tests:
 5. Support Information
 *******************************************************************************
 
-To order any additional information or to resolve arising problems 
-contact 
+To order any additional information or to resolve arising problems
+contact
 
 Oleksandr Marchenko (Group Leader),
 
-Laboratory for Embedded Computer Systems (LECS) 
-of the Specialized Computer Systems Department 
+Laboratory for Embedded Computer Systems (LECS)
+of the Specialized Computer Systems Department
 of the National Technical University of Ukraine "KPI"
 and
 Innovation Business-Incubator "Polytechcenter" Ltd. - Freescale S3L Partner
 37 Peremogy avenue, Kiev-03056, Ukraine
 Tel:    +380 44 454-99-00
-Email:  Oleksandr.Marchenko@lecs.com.ua 
+Email:  Oleksandr.Marchenko@lecs.com.ua
         re085c@freescale.com
 
 

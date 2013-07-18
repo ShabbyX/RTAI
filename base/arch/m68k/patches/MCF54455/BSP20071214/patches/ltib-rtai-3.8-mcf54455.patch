@@ -12,7 +12,7 @@ index bd1a3c9..5f6911f 100644
 --- a/bin/device_table.txt
 +++ b/bin/device_table.txt
 @@ -192,3 +192,8 @@
- 
+
  # I2C devices
  /dev/i2c-0	c	660	0	0	89	0	-	-	-
 +
@@ -29,7 +29,7 @@ index 70d845c..2713386 100644
  CONFIG_BOUNCE=y
  CONFIG_VIRT_TO_BUS=y
 +# CONFIG_IPIPE is not set
- 
+
  #
  # General setup
 diff --git a/config/platform/mcf5445x/linux-2.6.x.config.dev b/config/platform/mcf5445x/linux-2.6.x.config.dev
@@ -41,7 +41,7 @@ index 70d845c..2713386 100644
  CONFIG_BOUNCE=y
  CONFIG_VIRT_TO_BUS=y
 +# CONFIG_IPIPE is not set
- 
+
  #
  # General setup
 diff --git a/config/platform/mcf5445x/rtai.config b/config/platform/mcf5445x/rtai.config
@@ -153,7 +153,7 @@ index 39a9b16..909172d 100644
 @@ -1670,6 +1670,23 @@ config PKG_RSYNC
        report which describes the rsync algorithm is included in this
        package.
- 
+
 +config PKG_RTAI
 +    depends !KERNEL_NONE
 +    select PKG_KERNEL_LEAVESRC
@@ -183,7 +183,7 @@ index e69e720..f2c51ff 100644
  PKG_SWANG_POC                    = swang-poc
  PKG_NFS_UTILS                    = nfs-utils
 +PKG_RTAI                         = rtai
- 
+
  # leave these as the last 2 packages in the build order
  PKG_MERGE                        = merge
 diff --git a/dist/lfs-5.1/kernel/kernel-2.6.23-m5445x.spec.in b/dist/lfs-5.1/kernel/kernel-2.6.23-m5445x.spec.in
@@ -197,7 +197,7 @@ index 883f32e..04c9abc 100644
 +Patch49		: lin2-6-23-m5445x-0049-I-Pipe.patch
  BuildRoot       : %{_tmppath}/%{name}
  Prefix          : %{pfx}
- 
+
 @@ -120,3 +121,4 @@ From kernel.org plus Freescale patches
  %patch46 -p1
  %patch47 -p1
