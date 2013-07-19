@@ -64,7 +64,9 @@ In this example, we use the 3.4.53 kernel:
    # make mrproper
 
 Please note: Replace <your user> with your actual NON-ROOT user account name. If unsure,
-running the following command may help, especially if you are on a single user machine.
+running the following command may help, especially if you are on a single user machine:
+
+$ ls /home
 
    # cp -prvL /home/<your user>/devel/RTAI/base/arch/x86/patches/hal-linux-3.4.53-x86-1.patch /usr/src/
    # patch -p1 < ../hal-linux-3.4.53-x86-1.patch
