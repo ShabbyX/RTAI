@@ -1,19 +1,16 @@
  /*
- *   @ingroup hal
- *   @file
- *
- *   ARTI -- RTAI-compatible Adeos-based Real-Time Interface. Based on
+ *   RTAI -- RTAI-compatible Adeos-based Real-Time Interface. Based on
  *   the original RTAI layer for x86.
  *
- *   Original RTAI/x86 layer implementation: \n
- *   Copyright &copy; 2000-2013 Paolo Mantegazza, \n
- *   Copyright &copy; 2000 Steve Papacharalambous, \n
- *   Copyright &copy; 2000 Stuart Hughes, \n
+ *   Original RTAI/x86 layer implementation:
+ *   Copyright 2000-2013 Paolo Mantegazza,
+ *   Copyright 2000 Steve Papacharalambous,
+ *   Copyright 2000 Stuart Hughes,
  *   and others.
  *
- *   RTAI/x86 rewrite over Adeos: \n
- *   Copyright &copy 2002 Philippe Gerum.
- *   Copyright &copy 2005 Paolo Mantegazza.
+ *   RTAI/x86 rewrite over Adeos:
+ *   Copyright 2002 Philippe Gerum.
+ *   Copyright 2005 Paolo Mantegazza.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,7 +34,7 @@
  * This module defines some functions that can be used by RTAI tasks, for
  * managing interrupts and communication services with Linux processes.
  *
- *@{*/
+ **/
 
 #include <linux/version.h>
 #include <linux/slab.h>
