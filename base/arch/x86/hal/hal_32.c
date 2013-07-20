@@ -9,8 +9,8 @@
  *   and others.
  *
  *   RTAI/x86 rewrite over Adeos:
- *   Copyright 2002 Philippe Gerum.
- *   Copyright 2005 Paolo Mantegazza.
+ *   Copyright 2002 Philippe Gerum
+ *   Copyright 2005 Paolo Mantegazza
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
