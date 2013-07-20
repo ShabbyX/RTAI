@@ -1,22 +1,20 @@
-/**
- *   @ingroup hal
- *   @file
- *
- *   ARTI -- RTAI-compatible Adeos-based Real-Time Interface. Based on
+ /*
+ *   RTAI -- RTAI-compatible Adeos-based Real-Time Interface. Based on
  *   the original RTAI layer for x86.
  *
- *   Original RTAI/x86 layer implementation: \n
- *   Copyright &copy; 2000-2013 Paolo Mantegazza, \n
- *   Copyright &copy; 2000      Steve Papacharalambous, \n
- *   Copyright &copy; 2000      Stuart Hughes, \n
+ *   Original RTAI/x86 layer implementation:
+ *   Copyright 2000-2013 Paolo Mantegazza,
+ *   Copyright 2000 Steve Papacharalambous,
+ *   Copyright 2000 Stuart Hughes,
  *   and others.
  *
- *   RTAI/x86 rewrite over Adeos: \n
- *   Copyright &copy 2002 Philippe Gerum.
+ *   RTAI/x86 rewrite over Adeos:
+ *   Copyright 2002 Philippe Gerum
+ *   Copyright 2005 Paolo Mantegazza
  *
  *   Porting to x86_64 architecture:
- *   Copyright &copy; 2005-2013 Paolo Mantegazza, \n
- *   Copyright &copy; 2005 Daniele Gasperini \n
+ *   Copyright 2005-2013 Paolo Mantegazza
+ *   Copyright 2005 Daniele Gasperini
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -40,8 +38,7 @@
  * This module defines some functions that can be used by RTAI tasks, for
  * managing interrupts and communication services with Linux processes.
  *
- *@{*/
-
+ **/
 
 #include <linux/version.h>
 #include <linux/slab.h>
@@ -50,7 +47,6 @@
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 #include <linux/console.h>
-//#include <asm/system.h>
 #include <asm/hw_irq.h>
 #include <asm/irq.h>
 #include <asm/desc.h>
@@ -148,7 +144,6 @@ static unsigned long rtai_sysreq_pending;
 
 static unsigned long rtai_sysreq_running;
 
-//static spinlock_t rtai_lsrq_lock = SPIN_LOCK_UNLOCKED;
 static DEFINE_SPINLOCK(rtai_lsrq_lock);
 
 static volatile int rtai_sync_level;
@@ -223,7 +218,6 @@ int rt_set_irq_ack(unsigned irq, int (*irq_ack)(unsigned int, void *))
 	if (irq >= RTAI_NR_IRQS) {
 		return -EINVAL;
 	}
-//      rtai_realtime_irq[irq].irq_ack = irq_ack ? irq_ack : (void *)hal_root_domain->irqs[irq].acknowledge;
 	rtai_domain.irqs[irq].ackfn = irq_ack ? (void *)irq_ack : hal_root_domain->irqs[irq].ackfn;
 	return 0;
 }
@@ -242,43 +236,21 @@ void rt_set_irq_retmode (unsigned irq, int retmode)
 	}
 }
 
-//extern unsigned long io_apic_irqs;
+/* A bunch of macros to abstract from variations in
+ * interrupt handling across various kernel releases.
+ * Here we care about ProgrammableInterruptControllers (PIC) in particular.
+**/
 
-
-
-// A bunch of macros to abstract from variations in
-// interrupt handling across various kernel releases.
-// Here we care about ProgrammableInterruptControllers (PIC) in particular.
-
-// 1 - IRQs descriptor and chip
+/* 1 - IRQs descriptor and chip */
 #define rtai_irq_desc(irq) (irq_to_desc(irq))[0]
 #define rtai_irq_desc_chip(irq) (irq_to_desc(irq)->irq_data.chip)
 
-// 2 - IRQs atomic protections
+/* 2 - IRQs atomic protections */
 #define rtai_irq_desc_lock(irq, flags) raw_spin_lock_irqsave(&rtai_irq_desc(irq).lock, flags)
 #define rtai_irq_desc_unlock(irq, flags) raw_spin_unlock_irqrestore(&rtai_irq_desc(irq).lock, flags)
 
-// 3 - IRQs enabling/disabling naming and calling
+/* 3 - IRQs enabling/disabling naming and calling */
 #define rtai_irq_endis_fun(fun, irq) irq_##fun(&(rtai_irq_desc(irq).irq_data))
-
-#if 0
-
-#if defined(__IPIPE_2LEVEL_IRQMAP) || defined(__IPIPE_3LEVEL_IRQMAP)
-#define rtai_irq_desc_chip(irq) (irq_to_desc(irq)->chip)
-#define rtai_irq_desc(irq) (irq_to_desc(irq))[0]
-#else
-#define rtai_irq_desc_chip(irq) (irq_desc[irq].chip)
-#define rtai_irq_desc(irq) irq_desc[irq]
-#endif
-
-#define BEGIN_PIC()
-#define END_PIC()
-#undef hal_lock_irq
-#undef hal_unlock_irq
-#define hal_lock_irq(x, y, z)
-#define hal_unlock_irq(x, y)
-
-#endif
 
 /**
  * start and initialize the PIC to accept interrupt request irq.
@@ -451,22 +423,6 @@ void rt_mask_and_ack_irq (unsigned irq)
 	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(ack, irq);
 }
 
-#if 0
-static inline void _rt_end_irq (unsigned irq)
-{
-	BEGIN_PIC();
-	if (
-#ifdef CONFIG_X86_IO_APIC
-	    !IO_APIC_IRQ(irq) ||
-#endif /* CONFIG_X86_IO_APIC */
-	    !(rtai_irq_desc(irq).status & (IRQ_DISABLED | IRQ_INPROGRESS))) {
-		hal_unlock_irq(hal_root_domain, irq);
-	}
-	rtai_irq_desc_chip(irq)->end(irq);
-	END_PIC();
-}
-#endif
-
 /**
  * Unmask and IRQ source.
  *
@@ -499,7 +455,7 @@ static inline void _rt_end_irq (unsigned irq)
  */
 void rt_unmask_irq (unsigned irq)
 {
-//	_rt_end_irq(irq);
+/*	_rt_end_irq(irq); */
 }
 
 /**
@@ -539,7 +495,7 @@ void rt_ack_irq (unsigned irq)
 
 void rt_end_irq (unsigned irq)
 {
-//	_rt_end_irq(irq);
+/*	_rt_end_irq(irq); */
 }
 
 void rt_eoi_irq (unsigned irq)
@@ -553,7 +509,6 @@ void rt_eoi_irq (unsigned irq)
 #if defined(CONFIG_X86_IO_APIC)
 	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(eoi, irq);
 #else /* !(CONFIG_X86_IO_APIC) */
-//	rtai_irq_desc_chip(irq)->end(irq);
 	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(end, irq);
 #endif
 }
@@ -745,7 +700,6 @@ irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_reg
 	rtai_hw_save_flags_and_cli(flags);
 #ifdef CONFIG_SMP
 	apic_wait_icr_idle();
-//	apic_write_around(APIC_ICR,APIC_DM_FIXED|APIC_DEST_ALLINC|LOCAL_TIMER_VECTOR);
 	apic_write_around(APIC_ICR,APIC_DM_FIXED|APIC_DEST_ALLBUT|LOCAL_TIMER_VECTOR);
 #endif
 	hal_pend_uncond(LOCAL_TIMER_IPI, rtai_cpuid());
@@ -794,7 +748,6 @@ irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_reg
 static unsigned long rtai_old_irq_affinity[IPIPE_NR_XIRQS];
 static int rtai_orig_irq_affinity[IPIPE_NR_XIRQS];
 
-//static spinlock_t rtai_iset_lock = SPIN_LOCK_UNLOCKED;
 static DEFINE_SPINLOCK(rtai_iset_lock);
 
 static long long rtai_timers_sync_time;
@@ -1199,7 +1152,6 @@ EXPORT_SYMBOL(rtai_isr_sched);
 #else  /* !CONFIG_RTAI_SCHED_ISR_LOCK */
 #define RTAI_SCHED_ISR_LOCK() \
 	do {                       } while (0)
-//      do { cpuid = rtai_cpuid(); } while (0)
 #define RTAI_SCHED_ISR_UNLOCK() \
 	do {                       } while (0)
 #endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
@@ -1218,14 +1170,9 @@ static int rtai_hirq_dispatcher (int irq)
 			return 0;
 		}
 	}
-//      rtai_sti();
 	hal_fast_flush_pipeline(cpuid);
 	return 0;
 }
-
-
-//#define HINT_DIAG_ECHO
-//#define HINT_DIAG_TRAPS
 
 #ifdef HINT_DIAG_ECHO
 #define HINT_DIAG_MSG(x) x
@@ -1253,26 +1200,26 @@ static int rtai_trap_fault (unsigned event, void *evdata)
 	} while (0);
 #endif
 	static const int trap2sig[] = {
-    		SIGFPE,         //  0 - Divide error
-		SIGTRAP,        //  1 - Debug
-		SIGSEGV,        //  2 - NMI (but we ignore these)
-		SIGTRAP,        //  3 - Software breakpoint
-		SIGSEGV,        //  4 - Overflow
-		SIGSEGV,        //  5 - Bounds
-		SIGILL,         //  6 - Invalid opcode
-		SIGSEGV,        //  7 - Device not available
-		SIGSEGV,        //  8 - Double fault
-		SIGFPE,         //  9 - Coprocessor segment overrun
-		SIGSEGV,        // 10 - Invalid TSS
-		SIGBUS,         // 11 - Segment not present
-		SIGBUS,         // 12 - Stack segment
-		SIGSEGV,        // 13 - General protection fault
-		SIGSEGV,        // 14 - Page fault
-		0,              // 15 - Spurious interrupt
-		SIGFPE,         // 16 - Coprocessor error
-		SIGBUS,         // 17 - Alignment check
-		SIGSEGV,        // 18 - Reserved
-		SIGFPE,         // 19 - XMM fault
+    		SIGFPE,         /*  0 - Divide error */
+		SIGTRAP,        /*  1 - Debug */
+		SIGSEGV,        /*  2 - NMI (but we ignore these) */
+		SIGTRAP,        /*  3 - Software breakpoint */
+		SIGSEGV,        /*  4 - Overflow */
+		SIGSEGV,        /*  5 - Bounds */
+		SIGILL,         /*  6 - Invalid opcode */
+		SIGSEGV,        /*  7 - Device not available */
+		SIGSEGV,        /*  8 - Double fault */
+		SIGFPE,         /*  9 - Coprocessor segment overrun */
+		SIGSEGV,        /* 10 - Invalid TSS */
+		SIGBUS,         /* 11 - Segment not present */
+		SIGBUS,         /* 12 - Stack segment */
+		SIGSEGV,        /* 13 - General protection fault */
+		SIGSEGV,        /* 14 - Page fault */
+		0,              /* 15 - Spurious interrupt */
+		SIGFPE,         /* 16 - Coprocessor error */
+		SIGBUS,         /* 17 - Alignment check */
+		SIGSEGV,        /* 18 - Reserved */
+		SIGFPE,         /* 19 - XMM fault */
 		0,0,0,0,0,0,0,0,0,0,0,0
 	};
 
@@ -1457,7 +1404,6 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	PROC_PRINT("\n\n");
 
 	PROC_PRINT("** RTAI extension traps: \n\n");
-//	PROC_PRINT("    SYSREQ=0x%x\n", RTAI_SYS_VECTOR);
 
 	none = 1;
 	PROC_PRINT("** RTAI SYSREQs in use: ");
@@ -1505,7 +1451,6 @@ static void rtai_proc_unregister (void)
 FIRST_LINE_OF_RTAI_DOMAIN_ENTRY
 {
 	{
-//		rt_printk(KERN_INFO "RTAI[hal]: <%s> mounted over %s %s.\n", PACKAGE_VERSION, HAL_TYPE, HAL_VERSION_STRING);
 		rt_printk(KERN_INFO "RTAI[hal]: compiled with %s.\n", CONFIG_RTAI_COMPILER);
 	}
 	for (;;) hal_suspend_domain();
@@ -1573,7 +1518,6 @@ int __rtai_hal_init (void)
 	}
 
 #ifdef CONFIG_X86_LOCAL_APIC
-//	if (!test_bit(X86_FEATURE_APIC, boot_cpu_data.x86_capability)) {
 	if (!boot_cpu_has(X86_FEATURE_APIC)) {
 		printk("RTAI[hal]: ERROR, LOCAL APIC CONFIGURED BUT NOT AVAILABLE/ENABLED.\n");
 		halinv = 1;
@@ -1591,7 +1535,6 @@ int __rtai_hal_init (void)
 
 	for (trapnr = 0; trapnr < RTAI_NR_IRQS; trapnr++) {
 		rtai_domain.irqs[trapnr].ackfn = (void *)hal_root_domain->irqs[trapnr].ackfn;
-//                rtai_realtime_irq[trapnr].irq_ack = (void *)hal_root_domain->irqs[trapnr].acknowledge;
 	}
 
 	hal_virtualize_irq(hal_root_domain, rtai_sysreq_virq, &rtai_lsrq_dispatcher, NULL, IPIPE_HANDLE_MASK);
@@ -1674,7 +1617,7 @@ module_exit(__rtai_hal_exit);
  *
  */
 
-#define PRINTK_BUF_SIZE  (10000) // Test programs may generate much output. PC
+#define PRINTK_BUF_SIZE  (10000) /* Test programs may generate much output. PC */
 #define TEMP_BUF_SIZE	 (500)
 
 static char rt_printk_buf[PRINTK_BUF_SIZE];
@@ -1685,7 +1628,6 @@ static char buf[TEMP_BUF_SIZE];
 int rt_printk (const char *fmt, ...)
 {
 	unsigned long flags;
-//        static spinlock_t display_lock = SPIN_LOCK_UNLOCKED;
 	static DEFINE_SPINLOCK(display_lock);
 	va_list args;
 	int len, i;
@@ -1773,7 +1715,6 @@ EXPORT_SYMBOL(rd_8254_ts);
 EXPORT_SYMBOL(rt_setup_8254_tsc);
 EXPORT_SYMBOL(rt_set_ihook);
 EXPORT_SYMBOL(rt_set_irq_ack);
-//EXPORT_SYMBOL(ack_8259A_irq);
 
 EXPORT_SYMBOL(rtai_calibrate_8254);
 EXPORT_SYMBOL(rtai_broadcast_to_local_timers);
@@ -1803,8 +1744,6 @@ EXPORT_SYMBOL(IsolCpusMask);
 EXPORT_SYMBOL(rt_set_sched_ipi_gate);
 EXPORT_SYMBOL(rt_reset_sched_ipi_gate);
 #endif
-
-/*@}*/
 
 #if defined(CONFIG_GENERIC_CLOCKEVENTS) && CONFIG_RTAI_RTC_FREQ == 0
 
@@ -1852,10 +1791,8 @@ static int rtai_request_tickdev(void *handler)
 	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
 		if ((void *)rt_linux_hrt_set_mode != (void *)rt_linux_hrt_next_shot) {
 			mode = ipipe_timer_start(handler, rt_linux_hrt_set_mode, rt_linux_hrt_next_shot, cpuid);
-//			mode = IPIPE_REQUEST_TICKDEV(HRT_LINUX_TIMER_NAME, rt_linux_hrt_set_mode, rt_linux_hrt_next_shot, cpuid, &timer_freq);
 		} else {
 			mode = ipipe_timer_start(handler, _rt_linux_hrt_set_mode, _rt_linux_hrt_next_shot, cpuid);
-//			mode = IPIPE_REQUEST_TICKDEV(HRT_LINUX_TIMER_NAME, _rt_linux_hrt_set_mode, _rt_linux_hrt_next_shot, cpuid, &timer_freq);
 		}
 		if (mode == CLOCK_EVT_MODE_UNUSED || mode == CLOCK_EVT_MODE_ONESHOT) {
 			rt_times.linux_tick = 0;
@@ -1870,7 +1807,6 @@ static void rtai_release_tickdev(void)
 {
 	int cpuid;
 	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
-//		ipipe_release_tickdev(cpuid);
 		ipipe_timer_stop(cpuid);
 	}
 }
@@ -1880,20 +1816,6 @@ static unsigned long hal_request_apic_freq(unsigned long *apic_freq)
 		struct hal_sysinfo_struct sysinfo;
 		hal_get_sysinfo(&sysinfo);
 		return sysinfo.sys_hrtimer_freq;
-#if 0
-	unsigned long cpuid, avrg_freq, freq;
-	for (avrg_freq = freq = cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
-		IPIPE_REQUEST_TICKDEV(HRT_LINUX_TIMER_NAME, _rt_linux_hrt_set_mode, _rt_linux_hrt_next_shot, cpuid, &freq);
-		ipipe_release_tickdev(cpuid);
-		avrg_freq += freq;
-	}
-	if (avrg_freq) {
-		if ((avrg_freq /= num_online_cpus()) != freq) {
-			printk("*** APICs FREQs DIFFER ***\n");
-		}
-		*apic_freq = avrg_freq;
-	}
-#endif
 }
 
 #else /* !CONFIG_GENERIC_CLOCKEVENTS */
