@@ -1,18 +1,24 @@
 % Guide to RTAI
+% Alec Ari
 % Shahbaz Youssefi
 <!-- Note: if you help, add your name to the second line, separated by ; -->
 
 Introduction
 ============
 
-TODO
+RTAI uses the world's fastest Real-time + Linux combination, featuring
+real-time interrupts that are dispatched immediately.
+An exclusive feature to the x86 32-bit architecture is that it has the
+potential of completely avoiding the dispatching of critical
+internal timers and interprocessor scheduling interrupts by vectoring them
+directly to their handlers. This option heavily increases
+real-time performances on a variety of machines and comes by default,
+however it can easily be disabled using the ncurses menuconfig interface.
 
-About This Guide
-----------------
+In order to use the above features, you must be already running an
+RTAI (Real-time Application Interface) patched Linux kernel with
+IPIPE (Interrupt Pileline) enabled.
 
-TODO
-
-Capabilities of RTAI
---------------------
-
-TODO
+Please note that only x86-based (32-bit and x86_64) architectures
+have been tested with this branch. x86_64 support is still a work in progress
+with the 3.x kernel series, but is a high priority.
