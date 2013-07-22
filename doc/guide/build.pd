@@ -7,8 +7,8 @@ Please note: If you are not using the 3.4.53 kernel, replace ALL references to t
 to the version of the kernel source you downloaded.
 
 If you are a highly experienced Linux poweruser, you can ignore 99% of this, but do not
-file a bug report if you have not built the kernel and RTAI userspace in correlation to this
-very README.INSTALL file.
+file a bug report if you have not built the kernel and RTAI userspace in correlation to
+the documentation provided.
 
    Tip:
    $ signs are commands that are meant to be run as your regular user,
