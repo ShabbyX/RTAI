@@ -4,13 +4,7 @@ modext = @RTAI_MODULE_EXT@
 
 CROSS_COMPILE = @CROSS_COMPILE@
 
-libhal_a_SOURCES = hal.c
-
-if CONFIG_X86_64
-libhal_a_SOURCES += hal_64.c
-else
-libhal_a_SOURCES += hal_32.c
-endif
+libhal_a_SOURCES = hal.c hal_x86.c
 
 if CONFIG_KBUILD
 rtai_hal.ko: @RTAI_KBUILD_ENV@

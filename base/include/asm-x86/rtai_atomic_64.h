@@ -24,9 +24,16 @@
 
 #include <linux/bitops.h>
 #include <asm/atomic.h>
-//#include <asm/system.h>
 
 #else /* !__KERNEL__ */
+
+#ifndef likely
+#if __GNUC__ == 2 && __GNUC_MINOR__ < 96
+#define __builtin_expect(x, expected_value) (x)
+#endif
+#define likely(x)	__builtin_expect(!!(x), 1)
+#define unlikely(x)	__builtin_expect(!!(x), 0)
+#endif /* !likely */
 
 #ifdef CONFIG_SMP
 #define LOCK_PREFIX "lock ; "
@@ -34,32 +41,32 @@
 #define LOCK_PREFIX ""
 #endif
 
-typedef struct { volatile int counter; } atomic_t;
-
-//#define atomic_t long
+#define atomic_t long
 
 struct __rtai_xchg_dummy { unsigned long a[100]; };
 #define __rtai_xg(x) ((struct __rtai_xchg_dummy *)(x))
 
 static inline unsigned long atomic_xchg (volatile void *ptr, unsigned long x)
 {
-    __asm__ __volatile__(LOCK_PREFIX "xchgq %0,%1"
-			 :"=r" (x)
-			 :"m" (*__rtai_xg(ptr)), "0" (x)
-			 :"memory");
-    return x;
+	__asm__ __volatile__(
+		LOCK_PREFIX "xchgq %0,%1"
+		:"=r" (x)
+		:"m" (*__rtai_xg(ptr)), "0" (x)
+		:"memory");
+	return x;
 }
 
 static inline unsigned long atomic_cmpxchg (volatile void *ptr, unsigned long o, unsigned long n)
 {
-    unsigned long prev;
+	unsigned long prev;
 
-    __asm__ __volatile__(LOCK_PREFIX "cmpxchgq %1,%2"
-			 : "=a"(prev)
-			 : "q"(n), "m" (*__rtai_xg(ptr)), "0" (o)
-			 : "memory");
+	__asm__ __volatile__(
+		LOCK_PREFIX "cmpxchgq %1,%2"
+		: "=a"(prev)
+		: "q"(n), "m" (*__rtai_xg(ptr)), "0" (o)
+		: "memory");
 
-    return prev;
+	return prev;
 }
 
 static __inline__ int atomic_dec_and_test(atomic_t *v)
@@ -68,8 +75,8 @@ static __inline__ int atomic_dec_and_test(atomic_t *v)
 
 	__asm__ __volatile__(
 		LOCK_PREFIX "decl %0; sete %1"
-		:"=m" (v->counter), "=qm" (c)
-		:"m" (v->counter) : "memory");
+		:"=m" (*__rtai_xg(v)), "=qm" (c)
+		:"m" (*__rtai_xg(v)) : "memory");
 	return c != 0;
 }
 
@@ -77,8 +84,8 @@ static __inline__ void atomic_inc(atomic_t *v)
 {
 	__asm__ __volatile__(
 		LOCK_PREFIX "incl %0"
-		:"=m" (v->counter)
-		:"m" (v->counter));
+		:"=m" (*__rtai_xg(v))
+		:"m" (*__rtai_xg(v)));
 }
 
 /* Depollute the namespace a bit. */
