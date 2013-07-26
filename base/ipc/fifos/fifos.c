@@ -1679,9 +1679,6 @@ static struct file_operations rtf_fops =
 
 #ifdef CONFIG_DEVFS_FS
 #include <linux/devfs_fs_kernel.h>
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-static devfs_handle_t devfs_handle;
-#endif
 #endif
 
 static int MaxFifos = MAX_FIFOS;

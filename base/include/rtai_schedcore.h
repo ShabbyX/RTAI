@@ -32,9 +32,7 @@
 #include <linux/sched.h>
 #include <asm/param.h>
 #include <asm/io.h>
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,18)
 #include <linux/oom.h>
-#endif
 
 #include <rtai_version.h>
 #include <rtai_lxrt.h>
@@ -60,17 +58,12 @@
 
 
 #ifdef OOM_DISABLE
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,32)
-#define RTAI_OOM_DISABLE() \
-	do { current->oomkilladj = OOM_DISABLE; } while (0)
-#else
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
 #define RTAI_OOM_DISABLE() \
 	do { current->signal->oom_adj = OOM_DISABLE; } while (0)
 #else
 #define RTAI_OOM_DISABLE() \
 	do { current->signal->oom_score_adj = OOM_DISABLE; } while (0)
-#endif
 #endif
 #else
 #define RTAI_OOM_DISABLE()
@@ -662,6 +655,7 @@ int rt_kthread_init_cpuid(RT_TASK *task,
 
 #else /* !__KERNEL__ */
 
+#if 0
 #include <rtai_version.h>
 #include <rtai_lxrt.h>
 #include <rtai_sched.h>
@@ -683,6 +677,7 @@ int rt_kthread_init_cpuid(RT_TASK *task,
 #include <rtai_netrpc.h>
 #include <rtai_shm.h>
 #include <rtai_usi.h>
+#endif
 
 #endif /* __KERNEL__ */
 

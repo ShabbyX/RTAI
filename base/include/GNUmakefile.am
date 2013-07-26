@@ -2,12 +2,8 @@ if CONFIG_X86
 ARCHDIR = asm-x86
 endif
 
-if CONFIG_I386
-ARCHDIR = asm-i386
-endif
-
 if CONFIG_X86_64
-ARCHDIR = asm-x86_64
+ARCHDIR = asm-x86
 endif
 
 if CONFIG_ARM

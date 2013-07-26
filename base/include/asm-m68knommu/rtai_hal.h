@@ -40,7 +40,7 @@
 
 #include <linux/version.h>
 
-/*#if defined(CONFIG_REGPARM) || LINUX_VERSION_CODE > KERNEL_VERSION(2,6,19)
+/*#if defined(CONFIG_REGPARM)
 #define RTAI_SYSCALL_MODE __attribute__((regparm(0)))
 #else*/
 #define RTAI_SYSCALL_MODE
@@ -64,19 +64,19 @@ static __inline__ unsigned long ffnz (unsigned long word) {
     int r = 1;
     if (!(word & 0xff)) {
 	word >>= 8;
-       r += 8;
+	r += 8;
     }
     if (!(word & 0xf)) {
-       word >>= 4;
-       r += 4;
+	word >>= 4;
+	r += 4;
     }
     if (!(word & 3)) {
-       word >>= 2;
-       r += 2;
+	word >>= 2;
+	r += 2;
     }
     if (!(word & 1)) {
-       word >>= 1;
-       r += 1;
+	word >>= 1;
+	r += 1;
     }
     return r - 1;
 }
@@ -208,34 +208,6 @@ static inline struct hal_domain_struct *get_domain_pointer(int n)
 	return (struct hal_domain_struct *)i;
 }
 
-#define RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU  KERNEL_VERSION(2,6,20)
-
-#define RTAI_LT_KERNEL_VERSION_FOR_IRQDESC KERNEL_VERSION(2,6,23)
-
-#if LINUX_VERSION_CODE < RTAI_LT_KERNEL_VERSION_FOR_NONPERCPU
-
-#define ROOT_STATUS_ADR(cpuid)  (ipipe_root_status[cpuid])
-#define ROOT_STATUS_VAL(cpuid)  (*ipipe_root_status[cpuid])
-
-#define hal_pend_domain_uncond(irq, domain, cpuid) \
-do { \
-	hal_irq_hits_pp(irq, domain, cpuid); \
-	if (likely(!test_bit(IPIPE_LOCK_FLAG, &(domain)->irqs[irq].control))) { \
-		__set_bit((irq) & IPIPE_IRQ_IMASK, &(domain)->cpudata[cpuid].irq_pending_lo[(irq) >> IPIPE_IRQ_ISHIFT]); \
-		__set_bit((irq) >> IPIPE_IRQ_ISHIFT, &(domain)->cpudata[cpuid].irq_pending_hi); \
-	} \
-} while (0)
-
-#define hal_fast_flush_pipeline(cpuid) \
-do { \
-	if (hal_root_domain->cpudata[cpuid].irq_pending_hi != 0) { \
-		rtai_cli(); \
-		hal_sync_stage(IPIPE_IRQMASK_ANY); \
-	} \
-} while (0)
-
-#else
-
 #define ROOT_STATUS_ADR(cpuid)  (&ipipe_cpudom_var(hal_root_domain, status))
 #define ROOT_STATUS_VAL(cpuid)  (ipipe_cpudom_var(hal_root_domain, status))
 
@@ -257,8 +229,6 @@ do { \
 		hal_sync_stage(IPIPE_IRQMASK_ANY); \
 	} \
 } while (0)
-
-#endif
 
 #define hal_pend_uncond(irq, cpuid)  hal_pend_domain_uncond(irq, hal_root_domain, cpuid)
 

@@ -45,12 +45,8 @@
 #ifndef _RTAI_ASM_ARM_RTAI_SCHED_H
 #define _RTAI_ASM_ARM_RTAI_SCHED_H
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#	include <asm/proc/ptrace.h>
-#else /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) */
-#	include <asm/ptrace.h>
-#	define	I_BIT PSR_I_BIT
-#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0) */
+#include <asm/ptrace.h>
+#define I_BIT PSR_I_BIT
 
 #include <rtai_schedcore.h>
 

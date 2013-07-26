@@ -52,14 +52,10 @@
 #include <linux/interrupt.h>
 #include <asm/mach/irq.h>
 #include <asm/arch/irq.h>	/* get fixup_irq() */
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#	include <asm/proc/ptrace.h>
-#else /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) */
-#	include <asm/ptrace.h>
-#	include <asm/uaccess.h>
-#	include <asm/unistd.h>
-#	include <stdarg.h>
-#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0) */
+#include <asm/ptrace.h>
+#include <asm/uaccess.h>
+#include <asm/unistd.h>
+#include <stdarg.h>
 #define __RTAI_HAL__
 #include <asm/rtai_hal.h>
 #include <asm/rtai_lxrt.h>
@@ -285,12 +281,7 @@ rt_ack_irq(unsigned irq)
 /* We use what follows in place of ADEOS ones to play safely with
  * Linux preemption and to quickly manage Linux interrupt state. */
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-/* original irq_desc[] data */
-extern struct irqdesc __adeos_std_irq_desc[];
-#else /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) */
 extern struct irqchip __adeos_std_irq_chip[];
-#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0) */
 
 #define BEGIN_PIC() \
     do { \
@@ -315,11 +306,7 @@ rt_startup_irq(unsigned irq)
     irq_desc[irq].triggered = 0;
     irq_desc[irq].disable_depth = 0;
     __adeos_unlock_irq(adp_root, irq);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-    __adeos_std_irq_desc[irq].unmask(irq);
-#else
     __adeos_std_irq_chip[irq].unmask(irq);
-#endif
     END_PIC();
     return 0;
 }
@@ -329,13 +316,8 @@ rt_shutdown_irq(unsigned irq)
 {
     BEGIN_PIC();
     irq_desc[irq].disable_depth = (unsigned int)-1;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-    __adeos_std_irq_desc[irq].mask(irq);
-    __adeos_clear_irq(adp_root, irq);
-#else
     __adeos_std_irq_chip[irq].mask(irq);
     __adeos_lock_irq(adp_root, cpuid, irq);
-#endif
     END_PIC();
 }
 
@@ -349,11 +331,7 @@ rt_enable_irq(unsigned irq)
     } else if (--irq_desc[irq].disable_depth == 0) {
 	irq_desc[irq].probing = 0;
 	__adeos_unlock_irq(adp_root, irq);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-    __adeos_std_irq_desc[irq].unmask(irq);
-#else
     __adeos_std_irq_chip[irq].unmask(irq);
-#endif
     }
     END_PIC();
 }
@@ -363,11 +341,7 @@ rt_disable_irq(unsigned irq)
 {
     BEGIN_PIC();
     if (irq_desc[irq].disable_depth++ == 0) {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-	__adeos_std_irq_desc[irq].mask(irq);
-#else
 	__adeos_std_irq_chip[irq].mask(irq);
-#endif
 	__adeos_lock_irq(adp_root, cpuid, irq);
     }
     END_PIC();
@@ -377,12 +351,7 @@ void
 rt_mask_and_ack_irq(unsigned irq)
 {
     BEGIN_PIC();
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-    __adeos_std_irq_desc[irq].mask_ack(irq);
-    __adeos_lock_irq(adp_root, cpuid, irq);
-#else
     irq_desc[irq].chip->mask(irq);
-#endif
     END_PIC();
 }
 
@@ -390,12 +359,7 @@ void
 rt_unmask_irq(unsigned irq)
 {
     BEGIN_PIC();
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-    __adeos_unlock_irq(adp_root, irq);	// *TODO* conditional? (if !(status & (disabled|inprogress))
-    __adeos_std_irq_desc[irq].unmask(irq);
-#else
     irq_desc[irq].chip->unmask(irq);
-#endif
     END_PIC();
 }
 
@@ -404,13 +368,7 @@ rt_ack_irq(unsigned irq)
 {
     BEGIN_PIC();
     /* ARM has no "ack" slot in irqdesc, do mask_ack and then unmask */
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-    __adeos_std_irq_desc[irq].mask_ack(irq);
-    __adeos_unlock_irq(adp_root, irq);
-    __adeos_std_irq_desc[irq].unmask(irq);
-#else
     irq_desc[irq].chip->ack(irq);
-#endif
     END_PIC();
 }
 
@@ -635,11 +593,7 @@ rt_set_trap_handler(RT_TRAP_HANDLER handler)
 #define RTAI_SCHED_ISR_UNLOCK() do { /* nop */ } while (0)
 #endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
 #define IN_ATOMIC()  (in_atomic())
-#else
-#define IN_ATOMIC()  (0)
-#endif
 
 static int
 rtai_irq_trampoline(int irq, struct pt_regs *regs)
@@ -807,18 +761,6 @@ rt_set_ihook(isr_hook_t hookfn)
 #endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
 }
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-
-void
-rtai_set_linux_task_priority(struct task_struct *task, int policy, int prio)
-{
-    task->policy = policy;
-    task->rt_priority = prio;
-    set_tsk_need_resched(current);
-}
-
-#else
-
 static int errno;
 
 static inline _syscall3(int, sched_setscheduler, pid_t,pid, int,policy, struct sched_param *,param)
@@ -838,8 +780,6 @@ rtai_set_linux_task_priority (struct task_struct *task, int policy, int prio)
     if (rc)
 	printk("RTAI[hal]: sched_setscheduler(policy=%d,prio=%d) failed, code %d (%s -- pid=%d)\n", policy, prio, rc, task->comm, task->pid);
 }
-
-#endif  /* KERNEL_VERSION < 2.6.0 */
 
 #ifdef CONFIG_PROC_FS
 

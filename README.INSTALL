@@ -1,292 +1,213 @@
-Installing RTAI-3.x
-===================
-
-0. RTAI 3.9.1
+Basic introduction to RTAI
 ================================
 
-RTAI uses only the leanest and fastest RTAI+Linux combination now, i.e. it
-dispatches real time interrupts immediately. Moreover within such a scheme
-i386 has the possibility of completely avoiding the dispatching of critical
+RTAI uses the world's fastest Real-time + Linux combination, featuring
+real-time interrupts that are dispatched immediately.
+An exclusive feature to the x86 32-bit architecture is that it has the
+potential of completely avoiding the dispatching of critical
 internal timers and interprocessor scheduling interrupts by vectoring them
-directly to their handlers. Such an option strongly enhances performances
-on low end machines and comes by default. You can disable it while configuring
-RTAI though. See the related configuration helper.
-What above requires you to patch Linux just with patches found within this
-distribution.
-Notice also that this release is for use with:
-- i386,
-- x86_64,
-- PPC.
+directly to their handlers. This option heavily increases
+real-time performances on a variety of machines and comes by default,
+however it can easily be disabled using the ncurses menuconfig interface.
 
-On recent distributions, managing udev/sysfs, devices created by following
-this installation procedure will disappear at each machine halting. Then they
-will be available no more at the next reboot. RTAI should manage udev/sysfs
-support but in case something weird will impede it you can solve your problem
-quickly by restoring RTAI devices before running your application. For that
-the following short script containing:
------------------------------- cut here -------------------------------------
-if test \! -c /dev/rtai_shm; then
-        mknod -m 666 /dev/rtai_shm c 10 254
-fi
-for n in `seq 0 9`; do
-        f=/dev/rtf$n
-        if test \! -c $f; then
-                mknod -m 666 $f c 150 $n
-        fi
-done
------------------------------- cut here -------------------------------------
-should suffice.
+In order to use the above features, you must be already running an
+RTAI (Real-time Application Interface) patched Linux kernel with
+IPIPE (Interrupt Pileline) enabled.
 
-1. How to build
-===============
+Please note that only x86-based (32-bit and x86_64) architectures
+have been tested with this branch. x86_64 support is still a work in progress
+with the 3.x kernel series, but is a high priority.
 
-1.1 Standard procedure
-----------------------
+This README.INSTALL file was written for x86-based architectures only.
+If you are using ARM or any other architecture, YMMV (Your mileage may vary.)
 
-The RTAI build system is a merge of Linux's Kconfig with
-autoconf/automake/libtool.
 
-You must first prepare your build system to generate a configure file:
 
-$ ./autogen.sh
+How to build RTAI (Written by Alec Ari / NTULINUX)
+================================
 
-This also configures RTAI with the default configuration and the
-non-interactive configuration flags may be passed.
+To build, compile, and install RTAI, follow the steps below carefully.
 
-See sections below for interactive and non-interactive configurations.
+Please note: If you are not using the 3.4.53 kernel, replace ALL references to that version,
+to the version of the kernel source you downloaded.
 
-1.1.1 Interactive configuration
--------------------------------
+If you are a highly experienced Linux poweruser, you can ignore 99% of this, but do not
+file a bug report if you have not built the kernel and RTAI userspace in correlation to this
+very README.INSTALL file.
 
-Preparing the build system, ./autogen.sh attemps a bogus configuration just
-to produce makefiles so the interactive configuration can execute.
+   Tip:
+   $ signs are commands that are meant to be run as your regular user,
+   i.e. without elevated root privileges.
 
-To launch the interactive configuration screen:
+   # signs are meant to be run as root or with root privileges,
+   using sudo, or su -c 'command here>
 
-$ make menuconfig
 
-Other targets similar to the Linux kernel's configuration are also available.
+1.) Download the RTAI source code using git:
 
-Save your configuration and wait for configuration to take place.
-Then run "make".
+   $ cd ~/ && mkdir -p devel && cd devel
+   $ git clone https://github.com/ShabbyX/RTAI.git
 
-1.1.2 Non-interactive configuration
------------------------------------
 
-You may directly call the configure script:
+2.) Download, patch, and install your RTAI-enabled kernel.
 
-$ ./configure
+Please note: For quite awhile, all the commands are run as root until you reach near the bottom
+so feel free to just run "su - root" (without quotes) now.
 
-The available configuration switches can be listed by running ./configure --help.
-The RTAI-specific switches are:
+In this example, we use the 3.4.53 kernel:
 
- --enable-trace		Enable trace support
- --enable-math		Enable math support
- --enable-bits		Enable bits IPC support
- --enable-fifos		Enable fifo IPC support
- --enable-netrpc	Enable netrpc support
- --enable-netrpc-rtnet	Enable use of RTNet
- --enable-sem		Enable semaphore support
- --enable-msg		Enable messaging support
- --enable-mbx		Enable mailbox support
- --enable-tbx		Enable typed mailbox support
- --enable-mq		Enable POSIX-like message queue support
- --enable-shm		Enable shared memory support
- --enable-malloc	Enable real-time malloc support
- --enable-tasklets	Enable tasklets support
- --enable-usi		Enable user-space interrupt support
- --enable-watchdog	Enable watchdog support
- --enable-leds		Enable leds-based debugging support
- --enable-sched-lxrt	Enable scheduler support without RTAI own ktasks
- --enable-ktasks-sched-lxrt     Enable scheduler support with RTAI own ktasks
- --enable-sched-lock-isr	Enable scheduler lock in ISRs
- --enable-sched-8254-latency=	Set 8254 tuning latency
- --enable-sched-apic-latency=	Set APIC tuning latency
- --enable-sched-lxrt-numslots=	Set number of LXRT slots
- --enable-cplusplus	Build in-kernel C++ support
- --enable-comedi-lxrt	Enable comedi/LXRT support
- --enable-serial	Build real-time serial driver
- --enable-testsuite	Build RTAI testsuite
- --enable-rtailab	Build RTAI-Lab
- --enable-fpu		Enable FPU support
- --enable-math-c99	Enable math C99 support
- --enable-malloc-vmalloc	Enable vmalloc support in malloc
- --enable-malloc-heap-size	Set size of real-time malloc heap
- --enable-cpus		Enable CPUs
- --enable-dox-doc       Build Doxygen documentation
- --enable-dbx           Build Docbook XML documentation.
- --enable-dbx-network   Try to access Docbook DTD and XSL stylesheets through
-                        network.
- --enable-latex-doc     Build LaTeX documentation
- --enable-verbose-latex Uses LaTeX non-stop mode
- --enable-compat	Enable compatibility mode
- --enable-module-debug	Enable debug information in kernel modules
- --enable-user-debug	Enable debug information in user-space programs
+   # cd /usr/src
+   # wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.4.53.tar.xz
+   # tar xf linux-3.4.53.tar.xz
+   # ln -sfv linux-3.4.53 linux
+   # cd linux
+   # make mrproper
 
-Some configuration targets in base/ can either produce a module,
-or be statically linked to the RTAI schedulers. Either pass "m" for
-the modular build to their respective --enable-xxx switch, or "y" for
-selecting the built-in mode.
+Please note: Replace <your user> with your actual NON-ROOT user account name. If unsure,
+running the following command may help, especially if you are on a single user machine:
 
-To build, run make:
+$ ls /home
 
-$ make
+   # cp -prvL /home/<your user>/devel/RTAI/base/arch/x86/patches/hal-linux-3.4.53-x86-1.patch /usr/src/
+   # patch -p1 < ../hal-linux-3.4.53-x86-1.patch
 
-1.2 Installing the software
----------------------------
+Please note: Is it necessary to know your CPU architecture before proceeding.
+Run the following command to determine if you are on a 64-bit or 32-bit Linux distribution:
 
-When the standard compilation has finished:
+   $ uname -m
 
-# make install
+Copy the kernel config corresponding to your architecture (32-bit or 64-bit)
+to the root of your kernel source directory:
 
-Everything needed to use the RTAI distribution will be copied there
-out of the build tree. From now on, you should be able to refer to the
-installation directory as the root of a complete standalone binary
-RTAI distribution.
+Please note: Replace <your user> with your NON-ROOT user account name.
+	 (2) Replace <insert_arch> with either "32" or "64" (without quotes)
 
-One may also choose to install the RTAI programs under a temporary
-staging tree by passing the standard DESTDIR variable to "make" while
-installing. e.g.
+   # cp -prvL /home/<your user>/devel/RTAI/base/arch/x86/configs/rtai_<insert_arch>_defconfig /usr/src/linux/
 
-# make install DESTDIR=/mnt/target
+   # make menuconfig
 
-will create a standard RTAI hierarchy under /mnt/target, keeping the
-original prefix information unmodified. If the installation directory
-selected at configuration time was "/usr/realtime", then the command
-above will put the RTAI binary distribution under
-/mnt/target/usr/realtime.
+Load the RTAI-optimized kernel config by selecting
+"Load an Alternate Configuration File" and type in either
+"rtai_32_defconfig" or "rtai_64_defconfig" (without quotes)
+depending on which config file you copied over that corresponded to your architecture.
 
-WARNING: running "make install" is required to run several standard
-RTAI programs correctly. RTAI 3.x enforces the actual split between
-the source distribution tree, the build tree where RTAI is going to be
-compiled, and the final installation directory where RTAI programs can
-be run eventually. In any case, you should only rely on the
-installation directory contents to run RTAI programs.
+3.) Configure the kernel for RTAI.
 
-NOTE: Do not pay attention to the "*** Warning" messages appearing on
-module compilation output. They are harmless and will be fixed later.
+Configuring the kernel here is mandatory, but should not take long at all, especially
+if you are familar with configuring custom kernels. If not, do not worry. The kernel
+you have previously copied is a great baseline for RTAI, but a few options need to be
+manually configured in order for it to boot.
 
-1.3 Compiling parts of the tree
--------------------------------
+*IMPORTANT: IT IS GUARANTEED THAT THE RTAI KERNEL CONFIG AS-IS WILL NOT WORK ON ANY SYSTEM!*
 
-RTAI developers may want to recompile parts of the tree from times to
-times. This automake-based build system allows it: just go to the
-proper directory level, then issue "make", as usual. This process will
-recurse as needed.
+*IMPORTANT: DO NOT MODIFY ANY OTHER SETTINGS MENTIONED HERE
+UNLESS YOU ARE SURE YOU KNOW EXACTLY WHAT YOU ARE DOING!*
 
-Please note that you must have already ran ./autogen.sh and have
-configured your RTAI tree using either ./configure or make menuconfig
+*IMPORTANT: DO NOT COMPILE ANY NEW OPTIONS AS MODULES (M) AS IT CAN
+BE VERY DANGEROUS, ESPECIALLY WHEN DEALING WITH SCSI CONTROLLER SUPPORT!
+IT IS HIGHLY RECOMMENDED, SUGGESTED, AND ENCOURAGED TO COMPILE ALL NEW OPTIONS
+INTO (Y) THE KERNEL! A "*" SIGN IS GOOD, AN "M" SIGN IS BAD!*
 
-1.4 Changing the configuration
-------------------------------
+To determining your basic hardware, open up a new tab in the terminal or a new
+terminal window and run the following command. Note that some systems require
+root access to execute "lspci" so to be safe, we suggest it here:
 
-Each time you want to change your configuration, just run "make
-menuconfig" in your build dir, then "make" (or "make
-all").
+   # lspci -k | grep "driver in use"
 
-If you only want to rerun the "configure" script, you may
-do so using ./configure or using the ./autogen.sh script
+Enabling netork support for your ethernet controller:
 
-When invoked for the first time in an empty build directory, the
-default "make" goal is "menuconfig" in a regular terminal.
+Device drivers ->
+   Network device support ->
+   Ethernet driver support
 
-1.5 Modifying the autotool template files
------------------------------------------
+For example, for the Realtek 8169 controller (r8169) commonly found on many modern
+AMD motherboards such as the 785/880/970-990, scroll down to "Realtek devices" using the
+arrow keys on your keyboard, and enabling "Realtek 8169 gigabit ethernet support" by
+pressing "Y" on the highlighted option to compile the driver into the kernel.
 
-If you have to change some template files used by any of the autotools
-(i.e. Makefile.am, configure.ac, acinclude.m4), then you will need the
-following pack to rebuild the derived files:
+Enabling I2C device support for your hardware:
 
-o autoconf 2.68 or 2.69
-o automake 1.12.6 or 1.13.2
-o aclocal 1.12.6 or 1.13.2
-o libtool 2.4 or 2.4.2
+Device drivers ->
+   I2C support ->
+   I2C Hardware Bus support
 
-1.6 Using the integrated calibration tool
------------------------------------------
+Enabling SATA / PATA / SCSI / Hard drive support for your hardware:
 
-RTAI 3.x comes with a brand new calibration tool which should help you
-determining if your hardware platform is up to the hard real-time
-duties. You can find this tool under $installdir/calibration. Here is
-the output of this tool's help message for x86-based platforms:
+Please note: If your hard drive controller module is not in the
+"Serial ATA and Parallel ATA drivers" section at all, look in
+"ATA/ATAPI/MFM/RLL support (DEPRECATED)"
 
-$ ./calibration --help
+Device drivers ->
+   Serial ATA and Parallel ATA drivers
 
-OPTIONS:
-  -h, --help
-      print usage
-  -r, --r8254
-      calibrate 8254 oneshot programming type
-  -k, --kernel
-      oneshot latency calibrated for scheduling kernel space tasks
-  -u, --user
-      oneshot latency calibrated for scheduling user space tasks
-  -p <period (us)>, --period <period (us)>
-      the period of the underlying hard real time task/intr, default 100 (us)
-  -t <duration (s)>, --time <duration (s)>
-      set the duration of the requested calibration, default 5 (s)
-  -c, --cpufreq
-      calibrate cpu frequency
-  -a, --apic
-      calibrate apic frequency
-  -b, --both
-      calibrate both apic and cpu frequency
-  -i, --interrupt
-      check worst case interrupt locking/contention on your PC
-  -s<y/n>, --scope<y/n>
-      toggle parport bit to monitor scheduling on a scope, default y(es)
+Please note: If you specifically use AHCI for your Solid State Drive (SSD)
+or Hard Disk Drive (HDD) then you do not need to enable ATA SFF support.
+ATA SFF support simply shows more possible drivers. It is recommended to
+turn on support for any and ALL drive controllers mentioned in the lspci -k command.
 
-2. Bootstrapping with vulcano in 7 steps
-========================================
+After you are done, press tab or use the right arrow key and toggle back to the
+main kernel configuration screen. At the bottom you should see an option that says
+"Save an Alternate Configuration File." Highlight the option and press enter,
+and make sure the contents in the field box says ".config" (without quotes.)
+Press enter again, and proceed with compiling the kernel.
 
->1. patch and build a vanilla Linux kernel tree with the RTAI support as
-    usual. Patches for x86 are available from
-    vulcano/base/arch/i386/patches/. Apply only one of them
-    that matches the Linux kernel version, like this:
-    $ cd $linux-src-dir
-    $ patch -p1 < base/arch/$arch/patches/patchfile
+4.) Compiling and installing the kernel:
 
->2. $ mkdir $builddir && cd $builddir
+   Tip: The following "make" command automatically detects the number of CPU cores
+   and compiles the kernel with however many jobs that number might be. This speeds up
+   compiling times on SMP systems.
 
->3. $ make -f ../vulcano/makefile srctree=../vulcano
+   # make -j$(cat /proc/cpuinfo | grep processor | wc -l)
+   # make modules_install
+   # cp -prvL arch/x86/boot/bzImage /boot/vmlinuz-3.4.53-RTAI
+   # cp -prvL System.map /boot/System.map-3.4.53-RTAI
+   # cp -prvL .config /boot/config-3.4.53-RTAI
 
->4. a GUI should pop up, allowing you to configure RTAI:
-    o default settings should be ok for most platforms
-    o in the "General" section, set your site values for the RTAI
-      installation directory (defaults to /usr/realtime) and
-      Linux kernel tree (defaults to /usr/src/linux).
-    o save and exit.
+5.) Update your boot loader. If you are an experienced GRUB user, it is recommended to
+modify the grub.cfg or menu.lst file by hand, to remove unncessary bloat from the file,
+as grub2-mkconfig -o /boot/grub2/grub.cfg (or whatever you use to automatically generate it)
+can cause serious pollution and in rare cases, impact RTAI performance.
 
---
+Depending on your Linux distribution, one of these commands would do it for you:
 
-At this point, you should see the typical output of a GNU configure
-script. Your RTAI settings are being used to setup the
-autoconf/automake-based build system.
+   # grub2-mkconfig -o /boot/grub2/grub.cfg
+   # grub2-mkconfig -o /boot/grub/grub.cfg
+   # update-grub
 
---
+If you're a minimalist like me, run something like this as root:
 
->5. $ make install
+--------------------cut here--------------------
+cat > /boot/grub2/grub.cfg << EOF
+set default=0
+set timeout=3
 
-RTAI will be compiled then installed under the directory you specified
-at configuration time (ensure that your shell can write to the
-destination directory).
+menuentry "Linux 3.4.53 RTAI" {
+  set root=(hd0,1)
+  linux /boot/vmlinuz-3.4.53-RTAI root=/dev/sda1 ro consoleblank=0
+}
+EOF
+--------------------cut here--------------------
 
-Remember to add $installdir/bin to your shell PATH variable, where
-$installdir is your site value for the RTAI installation directory.
+6.) Reboot into your new kernel and be sure you select it at boot time!
 
---
+7.) Compile RTAI userland / userspace:
 
->6. $ cd $installdir/testsuite/kern/latency
+   $ cd ~/devel/RTAI
+   $ ./autogen.sh
+   $ make menuconfig
 
->7. $ ./run
+*IMPORTANT: IF YOU ARE USING A MULTI-CORE SMP SYSTEM, IT IS REQUIRED
+TO ENTER IN THE EXACT NUMBER OF CPU CORES YOUR SYSTEM HAS! To do this,
+go to "Machine (x86 / x86_64)" and select "Number of CPUs (SMP-only)"
+then enter the number of CPU cores you have into the field box.*
 
-If "sudo" is installed on your box, the application loader script
-(rtai-load) will attempt to use it for running privileged commands
-(e.g. insmod, rmmod et al.) If sudo is not available, just "su"
-manually before running the run script. You should then see the
-typical output of the latency calibration program running in kernel
-space.  Hit ^C to stop it.
+   $ make
 
---
-<rpm@xenomai.org>
-12/5/2004
+8.) Install RTAI (default is /usr/realtime)
+
+   # make install
+
+
+RTAI is now fully installed! If you have any questions, comments, complaints, or issues,
+feel free to contact the author of this file directly at <neotheuser@ymail.com>
+or leave a comment somewhere on the github repository and I will assist you the best I can.

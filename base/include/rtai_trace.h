@@ -31,11 +31,11 @@
 
 /* The functions to the tracer management code */
 int rt_register_tracer
-       (tracer_call   /* The tracer function */);
+	(tracer_call   /* The tracer function */);
 int rt_unregister_tracer
-       (tracer_call   /* The tracer function */);
+	(tracer_call   /* The tracer function */);
 int rt_trace_event
-       (uint8_t       /* Event ID (as defined in this header file) */,
+	(uint8_t       /* Event ID (as defined in this header file) */,
 	void*         /* Structure describing the event */);
 
 /* Generic macros */

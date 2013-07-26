@@ -3287,7 +3287,7 @@ index 9a5c460..5d3c70b 100644
  handle_real_irq:
 diff --git a/arch/x86/kernel/ipipe.c b/arch/x86/kernel/ipipe.c
 new file mode 100644
-index 0000000..5a09653
+index 0000000..6b73eb9
 --- /dev/null
 +++ b/arch/x86/kernel/ipipe.c
 @@ -0,0 +1,654 @@
@@ -7571,7 +7571,7 @@ index 0000000..deb0a47
 +
 +#endif	/* !__LINUX_IPIPE_TRACE_H */
 diff --git a/include/linux/irq.h b/include/linux/irq.h
-index fdf2c4a..ce80a0b 100644
+index fdf2c4a..b893c0e 100644
 --- a/include/linux/irq.h
 +++ b/include/linux/irq.h
 @@ -317,6 +317,11 @@ struct irq_chip {
@@ -7804,7 +7804,7 @@ index 9c9f049..62c894150 100644
  static inline void __raw_read_lock(rwlock_t *lock)
  {
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f5ad26e..ae5b8f1 100644
+index f5ad26e..5a56499 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
 @@ -22,6 +22,7 @@ struct sched_param {
@@ -7815,7 +7815,7 @@ index f5ad26e..ae5b8f1 100644
 
  #include <asm/page.h>
  #include <asm/ptrace.h>
-@@ -164,9 +165,16 @@ print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+@@ -164,9 +165,17 @@ print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
  #define TASK_WAKEKILL		128
  #define TASK_WAKING		256
  #define TASK_PARKED		512
@@ -7823,16 +7823,18 @@ index f5ad26e..ae5b8f1 100644
 +#define TASK_HARDENING		1024
 +#define TASK_NOWAKEUP		2048
 +#define TASK_STATE_MAX		4096
-+#define TASK_STATE_TO_CHAR_STR	"RSDTtZXxKWPHN"
-+#else
++#define TASK_STATE_TO_CHAR_STR "RSDTtZXxKWPHN"
++#else  /* !CONFIG_IPIPE */
++#define TASK_HARDENING		0
++#define TASK_NOWAKEUP		0
  #define TASK_STATE_MAX		1024
-
+-
  #define TASK_STATE_TO_CHAR_STR "RSDTtZXxKWP"
-+#endif
++#endif /* CONFIG_IPIPE */
 
  extern char ___assert_task_state[1 - 2*!!(
  		sizeof(TASK_STATE_TO_CHAR_STR)-1 != ilog2(TASK_STATE_MAX)+1)];
-@@ -279,6 +287,15 @@ extern void trap_init(void);
+@@ -279,6 +288,15 @@ extern void trap_init(void);
  extern void update_process_times(int user);
  extern void scheduler_tick(void);
 
@@ -7848,7 +7850,7 @@ index f5ad26e..ae5b8f1 100644
  extern void sched_show_task(struct task_struct *p);
 
  #ifdef CONFIG_LOCKUP_DETECTOR
-@@ -416,6 +433,9 @@ extern int get_dumpable(struct mm_struct *mm);
+@@ -416,6 +434,9 @@ extern int get_dumpable(struct mm_struct *mm);
  #define MMF_VM_MERGEABLE	16	/* KSM may merge identical pages */
  #define MMF_VM_HUGEPAGE		17	/* set when VM_HUGEPAGE is set on vma */
  #define MMF_EXE_FILE_CHANGED	18	/* see prctl_set_mm_exe_file() */
@@ -7858,7 +7860,7 @@ index f5ad26e..ae5b8f1 100644
 
  #define MMF_HAS_UPROBES		19	/* has uprobes */
  #define MMF_RECALC_UPROBES	20	/* MMF_HAS_UPROBES can be wrong */
-@@ -1537,6 +1557,10 @@ struct task_struct {
+@@ -1537,6 +1558,10 @@ struct task_struct {
  #endif /* CONFIG_NUMA_BALANCING */
 
  	struct rcu_head rcu;
@@ -7869,7 +7871,7 @@ index f5ad26e..ae5b8f1 100644
 
  	/*
  	 * cache last used pipe for splice
-@@ -1828,6 +1852,10 @@ extern void thread_group_cputime_adjusted(struct task_struct *p, cputime_t *ut,
+@@ -1828,6 +1853,10 @@ extern void thread_group_cputime_adjusted(struct task_struct *p, cputime_t *ut,
  #define PF_MUTEX_TESTER	0x20000000	/* Thread belongs to the rt mutex tester */
  #define PF_FREEZER_SKIP	0x40000000	/* Freezer should not count it as freezable */
 
@@ -8395,7 +8397,7 @@ index ce615e0..ee5d262 100644
 
  #if DBG_MAX_REG_NUM > 0
 diff --git a/kernel/exit.c b/kernel/exit.c
-index b4df219..b383de1 100644
+index b4df219..c64fafb 100644
 --- a/kernel/exit.c
 +++ b/kernel/exit.c
 @@ -789,6 +789,7 @@ void do_exit(long code)
@@ -8934,7 +8936,7 @@ index 0000000..1147bf4
 +}
 diff --git a/kernel/ipipe/core.c b/kernel/ipipe/core.c
 new file mode 100644
-index 0000000..7630851
+index 0000000..0b83546
 --- /dev/null
 +++ b/kernel/ipipe/core.c
 @@ -0,0 +1,1812 @@
@@ -12709,7 +12711,7 @@ index 0000000..7dbbd1f
 +#endif /* CONFIG_IPIPE_TRACE_MCOUNT */
 +}
 diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index 3aca9f2..f380371 100644
+index 3aca9f2..f6ec956 100644
 --- a/kernel/irq/chip.c
 +++ b/kernel/irq/chip.c
 @@ -15,6 +15,7 @@
@@ -13282,7 +13284,7 @@ index b26f5f1..72c124e 100644
  	if (pm_wakeup_pending()) {
  		error = -EAGAIN;
 diff --git a/kernel/printk.c b/kernel/printk.c
-index 267ce78..08ec38b 100644
+index 267ce78..318f17a 100644
 --- a/kernel/printk.c
 +++ b/kernel/printk.c
 @@ -1646,6 +1646,43 @@ asmlinkage int printk_emit(int facility, int level,
@@ -14669,7 +14671,7 @@ index 94722a4..b3d03a0 100644
 
  	return pages;
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 5123a16..a3988c8 100644
+index 5123a16..270d545 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
 @@ -171,6 +171,8 @@ static int vmap_page_range_noflush(unsigned long start, unsigned long end,

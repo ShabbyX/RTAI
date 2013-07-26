@@ -1,3 +1,41 @@
+2013-07-17 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c and sys.c: use RTAI own task pid for Pierre's
+	  intertask messaging stuff.
+	* base/include/rtai_lxrt.h: return pid<->task stuff back here, it is
+	  used also elsewhere than in Pierre's intertask messaging stuff.
+	* base/ipc/msg/msg.c: use unified rtai own task pids in Pierre's
+	  intertask messaging stuff.
+
+2013-07-16 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/rtai_lxrt.h: removed call to rt_kthread_init and moved
+	  pid<->rttask stuff into msg.c
+
+2013-07-15 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: keep formal kthread_init for compatibility, with
+	  task_init behind it, used by msg.c.
+	* base/ipc/msg/msg.c: brounght here pid<->rttask inlines from rtai_lxrt
+	  and reworked proxy support.
+
+2013-07-10 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/rtai_lxrt.h: rtai_print_to_screen is rt_printk now,
+	  added call rt_kthread_init.
+
+2013-07-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/liblxrt/init.c: used nomore, just an empty code.
+	* base/sched/liblxrt/services.c: include RTAI services to be libbed
+	  from the LXRT user space part of header files directly and not
+	  through the inclusion of rtai_schedcore.h.
+
+2013-07-02 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/rtai_lxrt.h: remove unused rt_clone and lower
+	  RT_THREAD_STACK_MIN.
+
 2013-04-08 Pierangelo Masarati <masarati@aero.polimi.it>
 
 	* RTAI 3.9.1
@@ -32,6 +70,7 @@
 	* base/arch/x86_64/hal/hal.immed: review and fix a few bugs of the
 	  reworked stuff related to enabling/disabling.
 	* base/arch/x86/hal/hal_32.h: use CPU_MASK_ALL to fix a quick and
+	  dirty, but very very bad hack, in selecting Linux timers for RTAI.
 
 2013-06-09 Paolo Mantegazza <mantegazza@aero.polimi.it>
 

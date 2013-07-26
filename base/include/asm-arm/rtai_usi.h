@@ -80,7 +80,7 @@ static unsigned long (*usi_fun_entry[ ])(unsigned long, unsigned long *) = {
 		*(long long*)&regs->ARM_r0 \
 		    = usi_fun_entry[srq & ~USI_SRQ_MASK](arg, &regs->ARM_cpsr); \
 		return 1; \
-       	} \
+		} \
 
 #endif /* __KERNEL__ */
 

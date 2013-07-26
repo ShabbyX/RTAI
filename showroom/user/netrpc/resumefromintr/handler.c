@@ -148,7 +148,7 @@ static void sup_fun(long none)
 	rt_mbx_receive(&mbx, &run, sizeof(run));
 
 	rt_mbx_receive(&mbx, &run, sizeof(run));
-       	rt_release_port(tasknode, taskport);
+		rt_release_port(tasknode, taskport);
 	rt_printk("ALL INTERRUPT MODULE FUNCTIONS TERMINATED\n");
 }
 

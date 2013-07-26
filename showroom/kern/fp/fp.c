@@ -35,11 +35,7 @@ MODULE_LICENSE("GPL");
 
 #define TIMER_TO_CPU 3 // < 0 || > 1 to maintain a symmetric processed timer.
 #define RUNNABLE_ON_CPUS 3  // 1: on cpu 0 only, 2: on cpu 1 only, 3: on any.
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#define RUN_ON_CPUS (smp_num_cpus > 1 ? RUNNABLE_ON_CPUS : 1)
-#else
 #define RUN_ON_CPUS (num_online_cpus() > 1 ? RUNNABLE_ON_CPUS : 1)
-#endif
 
 #define TICK_PERIOD 100000 // nanoseconds
 #define STACK_SIZE 2000

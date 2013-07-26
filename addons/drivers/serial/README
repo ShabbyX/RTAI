@@ -33,7 +33,7 @@ Clear serial port rx and reset the related buffer and UART rx FIFO.
 
 params:
 	tty        Number corresponding to internal port numbering scheme,
-                   i.e. the index of the spct slot to use.
+		   i.e. the index of the spct slot to use.
 
 return:
 	0          if all right.
@@ -88,11 +88,11 @@ params:
 	fifotrig  this value must be choosen between one of these
 	          valued defined in rt_spdrv.h :
 	          RT_SP_FIFO_DISABLE
-              	  RT_SP_FIFO_SIZE_1
-                  RT_SP_FIFO_SIZE_4
-                  RT_SP_FIFO_SIZE_8
-                  RT_SP_FIFO_SIZE_14
-                  RT_SP_FIFO_SIZE_DEFAULT
+	      	  RT_SP_FIFO_SIZE_1
+		  RT_SP_FIFO_SIZE_4
+		  RT_SP_FIFO_SIZE_8
+		  RT_SP_FIFO_SIZE_14
+		  RT_SP_FIFO_SIZE_DEFAULT
 
 return:
 	0         if all right.
@@ -173,7 +173,7 @@ params:
 	msg        pointer to buffer of char to send.
 
 	msg_size   abs(msg_size) is the number of bytes to write.
-                   If > 0, write bytes that are possible to send.
+		   If > 0, write bytes that are possible to send.
 	           If < 0, write bytes only if possible to write them all
 		   together.
 
@@ -273,7 +273,7 @@ return:
 
 +------------------------------------------------------------------------------+
  int rt_spset_callback_fun(int tty, void (*callback_fun)(int, int),
-                           int rxthrs, int txthrs)
+			   int rxthrs, int txthrs)
 +------------------------------------------------------------------------------+
 
 Define the callback function to be called when the chars in the receive
@@ -317,8 +317,8 @@ return:
 
 +------------------------------------------------------------------------------+
  int rt_spopen(unsigned int tty, unsigned int baud, unsigned int numbits,
-               unsigned int stopbits, unsigned int parity, int mode,
-               int fifotrig)
+	       unsigned int stopbits, unsigned int parity, int mode,
+	       int fifotrig)
 +------------------------------------------------------------------------------+
 
 Setup and open a serial port.
@@ -340,11 +340,11 @@ params:
 
 	parity    Parity for transmission protocol.
 	          Is possible to choose between macros defined in rt_spdrv.h :
-                  RT_SP_PARITY_NONE
-                  RT_SP_PARITY_EVEN
-                  RT_SP_PARITY_ODD
-                  RT_SP_PARITY_HIGH
-                  RT_SP_PARITY_LOW
+		  RT_SP_PARITY_NONE
+		  RT_SP_PARITY_EVEN
+		  RT_SP_PARITY_ODD
+		  RT_SP_PARITY_HIGH
+		  RT_SP_PARITY_LOW
 
 	mode      working mode, i.e. handshaking and the likes, see
 	          available modes and related macros in rtai_spdrv :
@@ -357,11 +357,11 @@ params:
 	fifotrig  this value must be choosen between one of these
 	          valued defined in rt_spdrv.h :
 	          RT_SP_FIFO_DISABLE
-                  RT_SP_FIFO_SIZE_1
-                  RT_SP_FIFO_SIZE_4
-                  RT_SP_FIFO_SIZE_8
-                  RT_SP_FIFO_SIZE_14
-                  RT_SP_FIFO_SIZE_DEFAULT
+		  RT_SP_FIFO_SIZE_1
+		  RT_SP_FIFO_SIZE_4
+		  RT_SP_FIFO_SIZE_8
+		  RT_SP_FIFO_SIZE_14
+		  RT_SP_FIFO_SIZE_DEFAULT
 
 return:
 	0            if all right.

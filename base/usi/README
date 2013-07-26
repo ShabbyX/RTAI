@@ -1,4 +1,4 @@
-                     <*> USI (User Space Interrupts?) <*>
+		     <*> USI (User Space Interrupts?) <*>
 
 N.B. the ? in the header is explained at the end of this text.
 
@@ -97,11 +97,11 @@ In the tasklets case the irq handling loop is not available directly to
 the user, since it is embedded and hidden in the core tasklet service. To
 have a tasklet handler operate with interrupt disabled it is then enough to
 include something like:
-        static int first;
-        if (!first) {
-                first = 1;
-                rtai_cli();
-        }
+	static int first;
+	if (!first) {
+		first = 1;
+		rtai_cli();
+	}
 at the very beginning of the tasklet function, so that interrupts will be kept
 disabled till the function ends.
 There is no need to worry for enabling interrupts again, tasklets are aware that

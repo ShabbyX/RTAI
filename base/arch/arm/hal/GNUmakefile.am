@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = subdir-objects
+
 moduledir = @RTAI_MODULE_DIR@
 
 modext = @RTAI_MODULE_EXT@

@@ -38,7 +38,7 @@ ACKNOWLEDGMENTS:
 #include <linux/sys.h>
 
 #include <asm/param.h>
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0)
 #include <asm/system.h>
 #endif
 #include <asm/io.h>
@@ -221,17 +221,9 @@ void put_current_on_cpu(int cpuid)
 {
 #ifdef CONFIG_SMP
 	struct task_struct *task = current;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-	task->cpus_allowed = 1 << cpuid;
-	while (cpuid != rtai_cpuid()) {
-		task->state = TASK_INTERRUPTIBLE;
-		schedule_timeout(2);
-	}
-#else /* KERNEL_VERSION >= 2.6.0 */
 	if (set_cpus_allowed_ptr(task, cpumask_of(cpuid))) {
 		set_cpus_allowed_ptr(current, cpumask_of(((RT_TASK *)(task->rtai_tskext(TSKEXT0)))->runnable_on_cpus = rtai_cpuid()));
 	}
-#endif  /* KERNEL_VERSION < 2.6.0 */
 #endif /* CONFIG_SMP */
 }
 
@@ -312,24 +304,22 @@ int set_rtext(RT_TASK *task, int priority, int uses_fpu, void(*signal)(void), un
 }
 
 
-//static void start_stop_kthread(RT_TASK *, void (*)(long), long, int, int, void(*)(void), int);
-
 int rt_kthread_init_cpuid(RT_TASK *task, void (*rt_thread)(long), long data,
 			int stack_size, int priority, int uses_fpu,
 			void(*signal)(void), unsigned int cpuid)
 {
-//	start_stop_kthread(task, rt_thread, data, priority, uses_fpu, signal, cpuid);
-	return (int)task->retval;
+	return rt_task_init_cpuid(task, rt_thread, data, stack_size, priority, 0, signal, cpuid);
 }
+EXPORT_SYMBOL(rt_kthread_init_cpuid);
 
 
 int rt_kthread_init(RT_TASK *task, void (*rt_thread)(long), long data,
 			int stack_size, int priority, int uses_fpu,
 			void(*signal)(void))
 {
-	return rt_kthread_init_cpuid(task, rt_thread, data, stack_size, priority,
-				 uses_fpu, signal, get_min_tasks_cpuid());
+	return rt_task_init_cpuid(task, rt_thread, data, stack_size, priority, uses_fpu, signal, get_min_tasks_cpuid());
 }
+EXPORT_SYMBOL(rt_kthread_init);
 
 
 asmlinkage static void rt_startup(void(*rt_thread)(long), long data)
@@ -345,6 +335,32 @@ asmlinkage static void rt_startup(void(*rt_thread)(long), long data)
 	rt_task_delete(rt_smp_current[rtai_cpuid()]);
 	rt_printk("LXRT: task %p returned but could not be delated.\n", rt_current);
 }
+
+
+static int rt_pid = (INT_MAX & ~(0xF));
+static DEFINE_SPINLOCK(rt_pid_lock);
+
+void rt_set_task_pid(RT_TASK *task)
+{
+	unsigned long flags;
+	flags = rt_spin_lock_irqsave(&rt_pid_lock);
+	task->tid = rt_pid = rt_pid - 0x10;
+	rt_spin_unlock_irqrestore(flags, &rt_pid_lock);
+	task->tid += task->runnable_on_cpus;
+}
+EXPORT_SYMBOL(rt_set_task_pid);
+
+RT_TASK *rt_find_task_by_pid(pid_t pid)
+{
+	RT_TASK *task = &rt_smp_linux_task[pid & 0xF];
+	while ((task = task->next)) {
+		if (task->tid == pid) {
+			return task;
+		}
+	}
+	return NULL;
+}
+EXPORT_SYMBOL(rt_find_task_by_pid);
 
 
 int rt_task_init_cpuid(RT_TASK *task, void (*rt_thread)(long), long data, int stack_size, int priority, int uses_fpu, void(*signal)(void), unsigned int cpuid)
@@ -426,6 +442,7 @@ int rt_task_init_cpuid(RT_TASK *task, void (*rt_thread)(long), long data, int st
 
 	task->resq.prev = task->resq.next = &task->resq;
 	task->resq.task = NULL;
+	rt_set_task_pid(task);
 
 	return 0;
 }
@@ -1915,48 +1932,7 @@ static inline void fast_schedule(RT_TASK *new_task, struct task_struct *lnxtsk, 
 /* detach the kernel thread from user space; not fully, only:
    session, process-group, tty. */
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)
-
-void rt_daemonize(void)
-{
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-	current->session = 1;
-	current->pgrp    = 1;
-	current->tty     = NULL;
-	spin_lock_irq(&current->sigmask_lock);
-	sigfillset(&current->blocked);
-	recalc_sigpending(current);
-	spin_unlock_irq(&current->sigmask_lock);
-#else
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,19)
-	(current->signal)->__session = 1;
-#else
-	(current->signal)->session   = 1;
-#endif
-	(current->signal)->pgrp    = 1;
-	(current->signal)->tty     = NULL;
-#endif
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-	spin_lock_irq(&current->sigmask_lock);
-	sigfillset(&current->blocked);
-	recalc_sigpending(current);
-	spin_unlock_irq(&current->sigmask_lock);
-#else
-	spin_lock_irq(&(current->sighand)->siglock);
-	sigfillset(&current->blocked);
-	recalc_sigpending();
-	spin_unlock_irq(&(current->sighand)->siglock);
-#endif
-}
-
-EXPORT_SYMBOL(rt_daemonize);
-
-#else
-
 extern void rt_daemonize(void);
-
-#endif
-
 
 #define WAKE_UP_TASKs(klist) \
 do { \
@@ -1964,7 +1940,6 @@ do { \
 	struct task_struct *task; \
 	while (p->out != p->in) { \
 		task = p->task[p->out++ & (MAX_WAKEUP_SRQ - 1)]; \
-		set_task_state(task, TASK_UNINTERRUPTIBLE); \
 		wake_up_process(task); \
 	} \
 } while (0)
@@ -2106,15 +2081,12 @@ static int lxrt_handle_trap(int vec, int signo, struct pt_regs *regs, void *dumm
 
 static inline void rt_signal_wake_up(RT_TASK *task)
 {
-	if (task->state && task->state != RT_SCHED_READY) {
-#ifdef TASK_NOWAKEUP
-		struct task_struct *lnxtsk;
-		if ((lnxtsk = task->lnxtsk)->state & TASK_HARDREALTIME) {
-			set_task_state(lnxtsk, lnxtsk->state | TASK_NOWAKEUP);
+	struct task_struct *lnxtsk;
+	if ((lnxtsk = task->lnxtsk) && task->state && task->state != RT_SCHED_READY) {
+		if ((lnxtsk->state & TASK_HARDREALTIME) && sig_user_defined(lnxtsk, SIGTERM)) {
+			task->unblocked = 1;
+			rt_task_masked_unblock(task, ~RT_SCHED_READY);
 		}
-#endif
-		task->unblocked = 1;
-		rt_task_masked_unblock(task, ~RT_SCHED_READY);
 	} else {
 		task->unblocked = -1;
 	}
@@ -2124,16 +2096,9 @@ static inline void rt_signal_wake_up(RT_TASK *task)
 static int lxrt_intercept_schedule_tail (unsigned event, void *nothing)
 {
 	int cpuid = rtai_cpuid();
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-	if (in_hrt_mode(cpuid)) {
-		return 1;
-	} else
-#endif
-	{
-		struct klist_t *klistp = &wake_up_sth[cpuid];
-		while (klistp->out != klistp->in) {
-			fast_schedule(klistp->task[klistp->out++ & (MAX_WAKEUP_SRQ - 1)], current, cpuid);
-		}
+	struct klist_t *klistp = &wake_up_sth[cpuid];
+	while (klistp->out != klistp->in) {
+		fast_schedule(klistp->task[klistp->out++ & (MAX_WAKEUP_SRQ - 1)], current, cpuid);
 	}
 	return 0;
 }

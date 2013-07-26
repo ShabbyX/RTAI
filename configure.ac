@@ -87,11 +87,6 @@ case "$host" in
 	RTAI_TARGET_ARCH=ppc
 	wanted_kernel_arch=CONFIG_PPC
 	;;
- m68knommu-*)
- 	RTAI_TARGET_ARCH=m68k
-	wanted_kernel_arch=CONFIG_M68K
-	arch_has_mmu=
-	;;
  m68k-*)
 	RTAI_TARGET_ARCH=m68k
 	wanted_kernel_arch=CONFIG_M68K
@@ -257,13 +252,6 @@ ppc|powerpc)
 	fi
 	RTAI_TARGET_ARCH_NAME=$ARCH_SUBDIR
 	;;
-m68k)
-	if test x$arch_has_mmu = x; then
-		RTAI_TARGET_ARCH_NAME=m68knommu
-	else
-		RTAI_TARGET_ARCH_NAME=$RTAI_TARGET_ARCH
-	fi
-	;;
 *)
 	RTAI_TARGET_ARCH_NAME=$RTAI_TARGET_ARCH
 	;;
@@ -396,8 +384,9 @@ AC_ARG_ENABLE(trace,
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_TRACE:-no})
 
-if test x${CONFIG_RTAI_MATH} = xy; then
-   dnl Override Kconfig settings for now
+dnl Built-in math support has been broken since the 2.6 kernel releases.
+dnl If math support is set to yes (Y) then we override it here and make it a module.
+if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_MATH = xy ; then
    CONFIG_RTAI_MATH=m
 fi
 
@@ -799,15 +788,6 @@ AC_ARG_ENABLE(align-priority,
 	*) unset CONFIG_RTAI_ALIGN_LINUX_PRIORITY ;;
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_ALIGN_LINUX_PRIORITY:-no})
-
-AC_MSG_CHECKING(for in-kernel C++ support)
-AC_ARG_ENABLE(cplusplus,
-	[ --enable-cplusplus	Build in-kernel C++ support],
-	[case "$enableval" in
-	y | yes) CONFIG_RTAI_CPLUSPLUS=y ;;
-	*) unset CONFIG_RTAI_CPLUSPLUS ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_CPLUSPLUS:-no})
 
 AC_MSG_CHECKING(for calibration frequency factor)
 AC_ARG_ENABLE(cal-freq-fact,
@@ -1265,26 +1245,6 @@ AC_ARG_ENABLE(sim,
 	*) unset CONFIG_RTAI_MVM ;;
 	esac])
 
-unset RTAI_MAYBE_SIMDIR
-if test \! -d $srcdir/rtai-sim; then
-    if test x$CONFIG_RTAI_MVM = xy; then
-	AC_MSG_ERROR([simulator is missing.])
-    fi
-    AC_MSG_RESULT([not present])
-else
-    if test x$CONFIG_RTAI_MVM = xy; then
-	export CONFIG_RTAI_MVM_DEBUG
-    	export CONFIG_RTAI_MVM_GCC_TARBALL
-    else
-	RTAI_MAYBE_SIMDIR=rtai-sim
-    fi
-    AC_MSG_RESULT(${CONFIG_RTAI_MVM:-no})
-fi
-if test x$arch_supports_sim = x -a x$CONFIG_RTAI_MVM = xy; then
-   AC_MSG_ERROR([simulator is not available on this architecture.])
-fi
-AC_SUBST(RTAI_MAYBE_SIMDIR)
-
 dnl We need to know this before building the APIC support
 dnl into the SMP scheduler for the x86 platform. Autoconf imposes
 dnl us to define all Automake conditionals...unconditionally. e.g.
@@ -1369,20 +1329,6 @@ if test x$CONFIG_RTAI_RTDM_SHIRQ = xy ; then
    fi
 fi
 
-dnl Built-in math support is not currently available with Kbuild-built
-dnl kernels due to bad dependencies on user-space headers we really
-dnl need to fix first. So we leave in place all the config machinery
-dnl for having built-in/modular math support, but will complain here
-dnl until those dependencies are properly cleared.
-if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_MATH = xy ; then
-   AC_MSG_ERROR([Built-in math support is not currently available with Linux >= 2.6.x])
-fi
-
-dnl Kbuild is not quite C++ friendly these days.
-if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_CPLUSPLUS = xy ; then
-   AC_MSG_ERROR([In-kernel C++ support is not available with Linux >= 2.6.x])
-fi
-
 dnl
 dnl Build a Kconfig file corresponding to the current configuration
 dnl if none exists.
@@ -1390,7 +1336,7 @@ dnl
 
 if test \! -r .rtai_config; then
    set | grep -e '^CONFIG_RTAI' -e '^CONFIG_MODULES' | \
-   sed -e 's,\(.*\)=\(.*\)$,\1=\"\2\",' > .rtai_config
+   sed -e 's,\(.*\)=\(.*\)$,\1=\2,' -e 's,quiet_,y,' > .rtai_config
 fi
 
 dnl
@@ -1606,9 +1552,7 @@ dnl Whether Linux is using the Kbuild make system.
 AM_CONDITIONAL(CONFIG_KBUILD,[test "$CONFIG_KBUILD" = y])
 
 dnl CPU architecture
-dnl FIXME_X86
 AM_CONDITIONAL(CONFIG_X86_64,[test "$CONFIG_X86_64" = y])
-AM_CONDITIONAL(CONFIG_I386,[test "$CONFIG_X86_32" = y])
 AM_CONDITIONAL(CONFIG_X86,[test "$CONFIG_X86" = y])
 AM_CONDITIONAL(CONFIG_PPC,[test "$CONFIG_PPC" = y])
 AM_CONDITIONAL(CONFIG_ARM,[test "$CONFIG_ARM" = y])
@@ -1618,7 +1562,6 @@ AM_CONDITIONAL(CONFIG_ARCH_AT91,[test "$CONFIG_ARCH_AT91" = y])
 AM_CONDITIONAL(CONFIG_ARCH_IMX,[test "$CONFIG_ARCH_IMX" = y])
 AM_CONDITIONAL(CONFIG_UCLINUX,[test "$CONFIG_UCLINUX" = y])
 AM_CONDITIONAL(CONFIG_SMP,[test "$CONFIG_SMP" = y])
-AM_CONDITIONAL(CONFIG_M68KNOMMU,[test "$CONFIG_M68K" = y -a "x$CONFIG_MMU" != xy])
 AM_CONDITIONAL(CONFIG_M68K,[test "$CONFIG_M68K" = y -a "$CONFIG_MMU" = y])
 AM_CONDITIONAL(CONFIG_M5407,[test "$CONFIG_M5407" = y])
 AM_CONDITIONAL(CONFIG_M5329,[test "$CONFIG_M5329" = y])
@@ -1663,7 +1606,6 @@ dnl Non-core packages.
 AM_CONDITIONAL(CONFIG_RTAI_COMEDI_LXRT,[test x$CONFIG_RTAI_COMEDI_LXRT = xy])
 AM_CONDITIONAL(CONFIG_RTAI_USE_LINUX_COMEDI,[test x$CONFIG_RTAI_USE_LINUX_COMEDI = xy])
 dnl AM_CONDITIONAL(CONFIG_RTAI_USE_COMEDI_LOCK,[test x$CONFIG_RTAI_USE_COMEDI_LOCK = xy])
-AM_CONDITIONAL(CONFIG_RTAI_CPLUSPLUS,[test x$CONFIG_RTAI_CPLUSPLUS = xy])
 dnl Supported skins
 AM_CONDITIONAL(CONFIG_RTAI_RTDM,[test x$CONFIG_RTAI_RTDM = xy])
 dnl Supported drivers
@@ -1822,10 +1764,7 @@ case $RTAI_TARGET_ARCH in
 	else
 	   RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -msoft-float"
 	fi
-	# 2009-03-23
-	# `-msse2' temporarily removed by Pierangelo Masarati
-	# as suggested by Paul <paul_c AT tuxcnc DOT org>
-	RTAI_TARGET_ARCH_OPTS="$RTAI_TARGET_ARCH_OPTS -msse"
+	RTAI_TARGET_ARCH_OPTS="$RTAI_TARGET_ARCH_OPTS -msse -msse2"
 	;;
    esac
    ;;
@@ -2031,16 +1970,6 @@ AC_CONFIG_FILES([ \
 	base/scripts/GNUmakefile \
 	base/scripts/rtai-config \
 	base/scripts/rtai-load \
-	base/arch/i386/GNUmakefile \
-	base/arch/i386/hal/GNUmakefile \
-	base/arch/i386/calibration/GNUmakefile \
-	base/arch/i386/calibration/setsmi \
-	base/include/asm-i386/GNUmakefile \
-	base/arch/x86_64/GNUmakefile \
-	base/arch/x86_64/hal/GNUmakefile \
-	base/arch/x86_64/calibration/GNUmakefile \
-	base/arch/x86_64/calibration/setsmi \
-	base/include/asm-x86_64/GNUmakefile \
 	base/arch/x86/GNUmakefile \
 	base/arch/x86/hal/GNUmakefile \
 	base/arch/x86/calibration/GNUmakefile \
@@ -2055,7 +1984,7 @@ AC_CONFIG_FILES([ \
 	base/arch/m68k/GNUmakefile \
 	base/arch/m68k/hal/GNUmakefile \
 	base/include/asm-m68k/GNUmakefile \
-   	base/ipc/bits/GNUmakefile \
+	base/ipc/bits/GNUmakefile \
 	base/ipc/fifos/GNUmakefile \
 	base/ipc/netrpc/GNUmakefile \
 	base/ipc/shm/GNUmakefile \
@@ -2075,19 +2004,18 @@ AC_CONFIG_FILES([ \
 	])
 
 build_drivers=$CONFIG_RTAI_DRIVERS_SERIAL$CONFIG_RTAI_DRIVERS_16550A
-build_addons=$CONFIG_RTAI_CPLUSPLUS$CONFIG_RTAI_COMEDI_LXRT$build_drivers$CONFIG_RTAI_RTDM
+build_addons=$CONFIG_RTAI_COMEDI_LXRT$build_drivers$CONFIG_RTAI_RTDM
 
 if test -d $srcdir/addons; then
   AC_CONFIG_FILES([ \
-       addons/GNUmakefile \
-       addons/cpp/GNUmakefile \
-       addons/comedi/GNUmakefile \
-       addons/drivers/GNUmakefile \
-       addons/drivers/serial/GNUmakefile \
-       addons/drivers/16550A/GNUmakefile \
-       addons/rtdm/GNUmakefile \
-       addons/rtdm/lib/GNUmakefile \
-       ])
+	addons/GNUmakefile \
+	addons/comedi/GNUmakefile \
+	addons/drivers/GNUmakefile \
+	addons/drivers/serial/GNUmakefile \
+	addons/drivers/16550A/GNUmakefile \
+	addons/rtdm/GNUmakefile \
+	addons/rtdm/lib/GNUmakefile \
+	])
 elif test \! x$build_addons = x; then
      AC_MSG_ERROR([addons package is missing])
 fi
@@ -2149,10 +2077,6 @@ if test \! x$RTAI_MAYBE_DOCDIR = x; then
 	   doc/docbook/docbook-test/GNUmakefile \
 	   doc/guide/GNUmakefile \
       ])
-fi
-
-if test x$CONFIG_RTAI_MVM = xy; then
-   AC_CONFIG_SUBDIRS(rtai-sim)
 fi
 
 AC_OUTPUT()

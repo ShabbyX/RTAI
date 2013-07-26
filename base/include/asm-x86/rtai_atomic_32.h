@@ -23,14 +23,6 @@
 
 #include <linux/bitops.h>
 #include <asm/atomic.h>
-//#include <asm/system.h>
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-
-#define atomic_cmpxchg(v, old, new)  ((int)cmpxchg(&((v)->counter), old, new))
-#define atomic_xchg(v, new)          (xchg(&((v)->counter), new))
-
-#endif
 
 #else /* !__KERNEL__ */
 
@@ -65,10 +57,11 @@ static inline unsigned long atomic_xchg(volatile void *ptr, unsigned long x)
 static inline unsigned long atomic_cmpxchg(volatile void *ptr, unsigned long o, unsigned long n)
 {
 	unsigned long prev;
-	__asm__ __volatile__(LOCK_PREFIX "cmpxchgl %1,%2"
-			     : "=a"(prev)
-			     : "q"(n), "m" (*__rtai_xg(ptr)), "0" (o)
-			     : "memory");
+	__asm__ __volatile__(
+		LOCK_PREFIX "cmpxchgl %1,%2"
+		: "=a"(prev)
+		: "q"(n), "m" (*__rtai_xg(ptr)), "0" (o)
+		: "memory");
 	return prev;
 }
 

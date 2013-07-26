@@ -83,17 +83,17 @@ void dump_histogram(void)
 
 void event(void *cookie)
 {
-       int err;
+	int err;
 
-       err = rt_task_set_periodic(NULL,
+	err = rt_task_set_periodic(NULL,
 				  TM_NOW,
 				  rt_timer_ns2ticks(sampling_period));
-       if (err) {
+	if (err) {
 	       fprintf(stderr,"switch: failed to set periodic, code %d\n", err);
 	       return;
-       }
+	}
 
-       for (;;) {
+	for (;;) {
 	       err = rt_task_wait_period(NULL);
 	       if (err) {
 		       if (err != -ETIMEDOUT) {
@@ -106,23 +106,23 @@ void event(void *cookie)
 	       switch_tsc = rt_timer_tsc();
 
 	       rt_sem_v(&switch_sem);
-       }
+	}
 }
 
 void worker(void *cookie)
 {
-       long long minj = 10000000, maxj = -10000000, dt, sumj = 0;
-       unsigned long long count = 0;
-       int err, n;
+	long long minj = 10000000, maxj = -10000000, dt, sumj = 0;
+	unsigned long long count = 0;
+	int err, n;
 
-       err = rt_sem_create(&switch_sem, "dispsem", 0, S_FIFO);
-       if (err) {
+	err = rt_sem_create(&switch_sem, "dispsem", 0, S_FIFO);
+	if (err) {
 	       fprintf(stderr,"switch: cannot create semaphore: %s\n",
 		      strerror(-err));
 	       return;
-       }
+	}
 
-       for (n=0; n<nsamples; n++) {
+	for (n=0; n<nsamples; n++) {
 	       err = rt_sem_p(&switch_sem, TM_INFINITE);
 	       if (err) {
 		       if (err != -EIDRM)
@@ -151,33 +151,33 @@ void worker(void *cookie)
 
 	       if (do_histogram)
 		       add_histogram(dt);
-       }
+	}
 
-       rt_sem_delete(&switch_sem);
+	rt_sem_delete(&switch_sem);
 
-       minjitter = minj;
-       maxjitter = maxj;
-       avgjitter = sumj / n;
+	minjitter = minj;
+	maxjitter = maxj;
+	avgjitter = sumj / n;
 
-       printf("RTH|%12s|%12s|%12s|%12s\n",
+	printf("RTH|%12s|%12s|%12s|%12s\n",
 		      "lat min", "lat avg", "lat max", "lost");
 
-       printf("RTD|%12.3f|%12.3f|%12.3f|%12lld\n",
+	printf("RTD|%12.3f|%12.3f|%12.3f|%12lld\n",
 		      rt_timer_tsc2ns(minjitter) / 1000.0,
 		      rt_timer_tsc2ns(avgjitter) / 1000.0,
 		      rt_timer_tsc2ns(maxjitter) / 1000.0, lost);
 
-       if (do_histogram)
+	if (do_histogram)
 	       dump_histogram();
 
-       exit(0);
+	exit(0);
 }
 
 int main(int argc, char **argv)
 {
-       int err, c;
+	int err, c;
 
-       while ((c = getopt(argc, argv, "hp:n:i:")) != EOF)
+	while ((c = getopt(argc, argv, "hp:n:i:")) != EOF)
 	       switch (c) {
 	       case 'h':
 		       /* ./switch --h[istogram] */
@@ -206,52 +206,52 @@ int main(int argc, char **argv)
 		       exit(2);
 	       }
 
-       if (sampling_period == 0)
+	if (sampling_period == 0)
 	       sampling_period = 100000;	/* ns */
 
-       if (nsamples <= 0) {
+	if (nsamples <= 0) {
 	       fprintf(stderr, "disregarding -n <%lld>, using -n <100000> "
 		       "samples\n", nsamples);
 	       nsamples = 100000;
-       }
+	}
 
-       signal(SIGINT, SIG_IGN);
-       signal(SIGTERM, SIG_IGN);
+	signal(SIGINT, SIG_IGN);
+	signal(SIGTERM, SIG_IGN);
 
-       setlinebuf(stdout);
+	setlinebuf(stdout);
 
-       mlockall(MCL_CURRENT|MCL_FUTURE);
+	mlockall(MCL_CURRENT|MCL_FUTURE);
 
-       printf("== Sampling period: %llu us\n", sampling_period / 1000);
-       printf("== Do not interrupt this program\n");
+	printf("== Sampling period: %llu us\n", sampling_period / 1000);
+	printf("== Do not interrupt this program\n");
 
-       rt_timer_set_mode(TM_ONESHOT); /* Force aperiodic timing. */
+	rt_timer_set_mode(TM_ONESHOT); /* Force aperiodic timing. */
 
-       err = rt_task_create(&worker_task, "worker", 0, 98, T_FPU);
-       if (err) {
+	err = rt_task_create(&worker_task, "worker", 0, 98, T_FPU);
+	if (err) {
 	       fprintf(stderr,"switch: failed to create worker task, code %d\n", err);
 	       return 1;
-       }
+	}
 
-       err = rt_task_start(&worker_task, &worker, NULL);
-       if (err) {
+	err = rt_task_start(&worker_task, &worker, NULL);
+	if (err) {
 	       fprintf(stderr,"switch: failed to start worker task, code %d\n", err);
 	       return 1;
-       }
+	}
 
-       err = rt_task_create(&event_task, "event", 0, 99, 0);
-       if (err) {
+	err = rt_task_create(&event_task, "event", 0, 99, 0);
+	if (err) {
 	       fprintf(stderr,"switch: failed to create event task, code %d\n", err);
 	       return 1;
-       }
+	}
 
-       err = rt_task_start(&event_task, &event, NULL);
-       if (err) {
+	err = rt_task_start(&event_task, &event, NULL);
+	if (err) {
 	       fprintf(stderr,"switch: failed to start event task, code %d\n", err);
 	       return 1;
-       }
+	}
 
-       pause();
+	pause();
 
-       return 0;
+	return 0;
 }

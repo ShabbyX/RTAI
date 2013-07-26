@@ -24,7 +24,7 @@ config RTAI_USE_NEWERR
 	existing working applications.
 
 config RTAI_MATH
-	bool "Mathfuns support in kernel"
+	tristate "Mathfuns support in kernel"
 	depends on RTAI_FPU_SUPPORT
 	default y
 	help

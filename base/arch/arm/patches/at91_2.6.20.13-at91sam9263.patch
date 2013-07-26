@@ -178,3 +178,4 @@ diff -aurdpbB -X nodiff linux-2.6.20.13-9263-clean/include/asm-arm/arch-at91rm92
 +#endif /* CONFIG_ARCH_AT91 */
 
  #endif /* CONFIG_IPIPE && !__ASSEMBLY__ */
+

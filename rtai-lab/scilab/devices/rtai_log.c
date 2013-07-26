@@ -45,7 +45,7 @@ static void init(scicos_block *block)
 
   int i;
   if (ipar[0]>20)
-       ipar[0]=20;
+	ipar[0]=20;
 
   par_getstr(logName,ipar,1,ipar[0]);
   rtRegisterLogData(logName,nu,mu);

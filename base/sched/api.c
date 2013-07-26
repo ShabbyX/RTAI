@@ -1512,13 +1512,13 @@ unsigned long is_process_registered(struct task_struct *lnxtsk)
 int rt_get_registry_slot(int slot, struct rt_registry_entry *entry)
 {
 	unsigned long flags;
-       	flags = rt_spin_lock_irqsave(&list_lock);
+		flags = rt_spin_lock_irqsave(&list_lock);
 	if (lxrt_list[slot].name > NONAME) {
 		*entry = lxrt_list[slot];
 		entry->adr = lxrt_list[entry->alink].adr;
 		rt_spin_unlock_irqrestore(flags, &list_lock);
 		return slot;
-       	}
+		}
 	rt_spin_unlock_irqrestore(flags, &list_lock);
 	return 0;
 }

@@ -181,12 +181,12 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 			long *buf_arg = fun_args + USP_RBF2(type);
 			rt_copy_from_user(rt_task->msg_buf[1], (long *)buf_arg[0], r2size);
 			buf_arg[0] = (long)rt_task->msg_buf[1];
-       		}
+			}
 		if (w2size) {
 			long *buf_arg = fun_args + USP_WBF2(type);
 			w2msg_adr = (long *)buf_arg[0];
-       	        	buf_arg[0] = (long)rt_task->msg_buf[1];
-       		}
+		        	buf_arg[0] = (long)rt_task->msg_buf[1];
+			}
 	}
 	lxrt_fun_call(rt_task, fun, narg, arg);
 	if (wsize) {
@@ -198,6 +198,7 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 }
 
 void put_current_on_cpu(int cpuid);
+void rt_set_task_pid(RT_TASK *);
 
 static inline RT_TASK* __task_init(unsigned long name, int prio, int stack_size, int max_msg_size, int cpus_allowed)
 {
@@ -255,6 +256,7 @@ static inline RT_TASK* __task_init(unsigned long name, int prio, int stack_size,
 #endif
 			RTAI_OOM_DISABLE();
 
+			rt_set_task_pid(rt_task);
 			return rt_task;
 		} else {
 			clr_rtext(rt_task);
@@ -282,7 +284,7 @@ static int __task_delete(RT_TASK *rt_task)
 	if ((server = rt_task->linux_syscall_server)) {
 		server->suspdepth = -RTE_HIGERR;
 		rt_task_masked_unblock(server, ~RT_SCHED_READY);
-       		lnxtsk->state = TASK_INTERRUPTIBLE;
+			lnxtsk->state = TASK_INTERRUPTIBLE;
 		schedule_timeout(HZ/10);
 	}
 	if (clr_rtext(rt_task)) {
@@ -301,8 +303,6 @@ static int __task_delete(RT_TASK *rt_task)
 #define SYSW_DIAG_MSG(x)
 #endif
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,28)
-
 #include <linux/cred.h>
 static inline void set_lxrt_perm(int perm)
 {
@@ -312,19 +312,6 @@ static inline void set_lxrt_perm(int perm)
 		commit_creds(cred);
 	}
 }
-
-#else /* LINUX_VERSION_CODE <= 2.6.28 */
-
-static inline void set_lxrt_perm(int perm)
-{
-#ifdef current_cap
-	cap_raise(current_cap(), perm);
-#else
-	cap_raise(current->cap_effective, perm);
-#endif
-}
-
-#endif /* LINUX_VERSION_CODE > 2.6.28 */
 
 void rt_make_hard_real_time(RT_TASK *task)
 {
@@ -530,11 +517,6 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 			}
 			return 0;
 		}
-		case PRINT_TO_SCREEN: {
-			struct arg { char *display; long nch; };
-			arg0.i = rtai_print_to_screen("%s", larg->display);
-			return arg0.ll;
-		}
 
 		case PRINTK: {
 			struct arg { char *display; long nch; };
@@ -543,15 +525,9 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 		}
 
 		case NONROOT_HRT: {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)
-			current->cap_effective |= ((1 << CAP_IPC_LOCK)  |
-						   (1 << CAP_SYS_RAWIO) |
-						   (1 << CAP_SYS_NICE));
-#else
 			set_lxrt_perm(CAP_IPC_LOCK);
 			set_lxrt_perm(CAP_SYS_RAWIO);
 			set_lxrt_perm(CAP_SYS_NICE);
-#endif
 			return 0;
 		}
 
@@ -740,7 +716,7 @@ void linux_process_termination(void)
 		}
 		num2nam(entry.name, name);
 		entry.tsk = 0;
-       		switch (entry.type) {
+			switch (entry.type) {
 			case IS_SEM:
 				rt_printk("LXRT releases SEM %s\n", name);
 				lxrt_sem_delete(entry.adr);
@@ -788,85 +764,3 @@ void init_fun_ext (void)
 	rt_fun_ext[0] = rt_fun_lxrt;
 }
 
-
-void rt_daemonize(void);
-
-#if 0
-struct thread_args { void *fun; long data; int priority; int policy; int cpus_allowed; RT_TASK *task; struct semaphore *sem; };
-
-static void kthread_fun(struct thread_args *args)
-{
-	int linux_rt_priority;
-
-	rt_daemonize();
-	if (args->policy == SCHED_NORMAL) {
-		linux_rt_priority = 0;
-	} else if ((linux_rt_priority = MAX_RT_PRIO - 1 - args->priority) < 1) {
-		linux_rt_priority = 1;
-	}
-	rtai_set_linux_task_priority(current, args->policy, linux_rt_priority);
-
-	if ((args->task = __task_init(rt_get_name(NULL), args->priority, 0, 0, args->cpus_allowed))) {
-		RT_TASK *task = args->task;
-		void (*fun)(long) = args->fun;
-		long data = args->data;
-		up(args->sem);
-		rt_make_hard_real_time(task);
-		fun(data);
-		rt_thread_delete(task);
-	}
-	return;
-}
-
-RT_TASK *rt_kthread_create(void *fun, long data, int priority, int linux_policy, int cpus_allowed)
-{
-	struct semaphore sem;
-	struct thread_args args = { fun, data, priority, linux_policy, cpus_allowed, NULL, &sem };
-	init_MUTEX_LOCKED(&sem);
-	kernel_thread((void *)kthread_fun, &args, 0);
-	down(&sem);
-	msleep(100);
-	return args.task;
-}
-#endif
-
-#include <linux/kthread.h>
-long rt_thread_create(void *fun, void *args, int stack_size)
-{
-	long retval;
-	RT_TASK *task;
-	if ((task = current->rtai_tskext(TSKEXT0)) && task->is_hard > 0) {
-		rt_make_soft_real_time(task);
-	}
-//	retval = kernel_thread(fun, args, 0);
-	retval = (long)kthread_run(fun, args, "RTAI");
-	if (task && !task->is_hard) {
-		rt_make_hard_real_time(task);
-	}
-	return retval;
-}
-EXPORT_SYMBOL(rt_thread_create);
-
-RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int policy, int cpus_allowed)
-{
-	int linux_rt_priority;
-	RT_TASK *task;
-	if (policy == SCHED_NORMAL) {
-		linux_rt_priority = 0;
-	} else if ((linux_rt_priority = MAX_RT_PRIO - 1 - priority) < 1) {
-		linux_rt_priority = 1;
-	}
-	rtai_set_linux_task_priority(current, policy, linux_rt_priority);
-//	rt_daemonize();
-	if ((task = __task_init(name ? name : rt_get_name(NULL), priority, 0, max_msg_size, cpus_allowed))) {
-		rt_make_hard_real_time(task);
-	}
-	return task;
-}
-EXPORT_SYMBOL(rt_thread_init);
-
-int rt_thread_delete(RT_TASK *rt_task)
-{
-	return __task_delete(rt_task);
-}
-EXPORT_SYMBOL(rt_thread_delete);

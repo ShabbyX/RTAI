@@ -38,9 +38,7 @@
 
 #include <linux/version.h>
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,19)
 #include <asm/ipipe.h>
-#endif
 
 #include <rtai_hal_names.h>
 #include <rtai_config.h>

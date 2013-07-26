@@ -206,7 +206,7 @@ explicitly whenever (s)he has decided to not configure them by default.
 "The Comedi Players"
 
 
-         <*> USING RTAI_KCOMEDI FOR DISTRIBUTED DATA ACQUISITION <*>
+	 <*> USING RTAI_KCOMEDI FOR DISTRIBUTED DATA ACQUISITION <*>
 
 Distributed data acquisition is obtained by simply using the standard NETRPC
 specification, i.e.:

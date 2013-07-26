@@ -25,15 +25,6 @@
 #include <asm/system.h>
 #include <asm/atomic.h>
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,15)
-#define atomic_xchg(ptr, v)  xchg(ptr,v)
-static __inline__ unsigned long atomic_cmpxchg(void *ptr, unsigned long o, unsigned long n)
-{
-	unsigned long *p = ptr;
-	return cmpxchg(p, o, n);
-}
-#endif
-
 #else /* !__KERNEL__ */
 
 typedef struct { volatile int counter; } atomic_t;

@@ -23,5 +23,5 @@ To have it clearer:
 ./runl has a native counter part in "fusion/testsuite/latency"
 ./runs has a native counter part in "fusion/testsuite/switch"
 ./runi has no equivalent in fusion but you can use it in fusion, as it is, by
-       making within your fusion enabled environment, after commentig the
-       macro "IS_RTAI" off.
+	making within your fusion enabled environment, after commentig the
+	macro "IS_RTAI" off.

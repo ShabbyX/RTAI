@@ -337,7 +337,7 @@ int demo_write_rt(struct rtdm_dev_context *context,
 			     in_pos, BUFSIZE) != 0) {
 	ret = -EFAULT;
     } else {
-       ret = BUFSIZE;
+	ret = BUFSIZE;
     }
 
     // used when it is atomic

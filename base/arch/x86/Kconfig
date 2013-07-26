@@ -29,19 +29,31 @@ choice
 	- Eager inlining:       i.e. static inline, always inline regardless
 	  of compiler's optimization switch;
 
-config RTAI_LXRT_NO_INLINE
-	bool "No inlining"
-	help
-
 config RTAI_LXRT_STATIC_INLINE
 	bool "Eager inlining"
+	help
+
+config RTAI_LXRT_NO_INLINE
+	bool "No inlining"
 	help
 
 endchoice
 
 endmenu
 
-menu "Machine (x86)"
+menu "Machine (x86 / x86_64)"
+
+config RTAI_DONT_DISPATCH_CORE_IRQS
+	bool "Direct vectoring of RTAI native interrupts"
+	default y
+	help
+
+	RTAI dispatches real time interrupts immediately to achieve as
+	low a overhead as possible. Very important on low end CPUs. By
+	setting this option it is possible to achieve a further improvement
+	by allowing hard RTAI internal timers and SMP interprocessor 
+	scheduling interrupts to be vectored directly to their handlers, 
+	i.e without any dispatching overhead. A must on low end CPUs.
 
 config RTAI_FPU_SUPPORT
 	bool "Enable FPU support"
@@ -205,5 +217,3 @@ menu "RTAI Lab"
 source "base/arch/Kconfig.lab"
 
 endmenu
-
-source rtai-sim/Kconfig

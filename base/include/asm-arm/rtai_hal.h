@@ -311,7 +311,7 @@ extern volatile unsigned long *ipipe_root_status[];
 
 #define hal_test_and_fast_flush_pipeline(cpuid) \
 do { \
-       	if (!test_bit(IPIPE_STALL_FLAG, ipipe_root_status[cpuid])) { \
+		if (!test_bit(IPIPE_STALL_FLAG, ipipe_root_status[cpuid])) { \
 		hal_fast_flush_pipeline(cpuid); \
 		rtai_sti(); \
 	} \

@@ -33,19 +33,9 @@
 #define SYMBOL_NAME_STR(X) #X
 #endif
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,20)
 #define __PUSH_FGS          "pushl %fs\n\t"
 #define __POP_FGS           "popl  %fs\n\t"
 #define __LOAD_KERNEL_PDA  "movl  $"STR(__KERNEL_PERCPU)",%edx; movl %edx,%fs\n\t"
-#elif LINUX_VERSION_CODE > KERNEL_VERSION(2,6,19)
-#define __PUSH_FGS          "pushl %gs\n\t"
-#define __POP_FGS           "popl  %gs\n\t"
-#define __LOAD_KERNEL_PDA  "movl  $"STR(__KERNEL_PDA)",%edx; movl %edx,%gs\n\t"
-#else
-#define __PUSH_FGS
-#define __POP_FGS
-#define __LOAD_KERNEL_PDA
-#endif
 
 #define DEFINE_VECTORED_ISR(name, fun) \
 	__asm__ ( \

@@ -593,17 +593,7 @@ rt_set_ihook(isr_hook_t hookfn)
 #endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
 }
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-void
-rtai_set_linux_task_priority(struct task_struct *task, int policy, int prio)
-{
-    task->policy = policy;
-    task->rt_priority = prio;
-    set_tsk_need_resched(current);
-}
-#else
 #error "Sorry, Kernels >= 2.6.0 not supported (yet)"
-#endif  /* KERNEL_VERSION < 2.6.0 */
 
 #ifdef CONFIG_PROC_FS
 

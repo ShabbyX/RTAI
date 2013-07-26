@@ -171,7 +171,7 @@ RT_INTEGER SA_External_Input()
     TCOUNT++;
 
     if( NUMIN > 0 ){
-       for( i=ICNT; i<UCOUNT; i++ ){
+	for( i=ICNT; i<UCOUNT; i++ ){
 	  if( XT >= UTIME[i]  &&  XT <= UTIME[i+1] ){
 	     ALPHA = (XT - UTIME[i]) / (UTIME[i+1]-UTIME[i]);
 	     ICNT = i;
@@ -181,7 +181,7 @@ RT_INTEGER SA_External_Input()
 	     }
 	     break;
 	  }
-       }
+	}
     }
     return SCHEDULER_STATUS;
 }
@@ -205,19 +205,19 @@ RT_INTEGER SA_External_Output()
     /* Copy last outputs */
 
     for(  i=1; i<=NUMOUT; i++ ){
-       YTIME[YCOUNT] = XT;
-       if( YCOUNT>1 ){
+	YTIME[YCOUNT] = XT;
+	if( YCOUNT>1 ){
 	  Y[i+(YCOUNT-1)*COLY] = Y[i+(YCOUNT-2)*COLY];
-       }
+	}
     }
     YCOUNT++;
 
     /* Deposit new outputs */
 
     for(  i=1; i<=NUMOUT; i++ ){
-       /* Outputs from scheduler are zero-based */
-       YTIME[YCOUNT] = XT;
-       Y[i+(YCOUNT-1)*COLY] = XOUTPUT[i-1];
+	/* Outputs from scheduler are zero-based */
+	YTIME[YCOUNT] = XT;
+	Y[i+(YCOUNT-1)*COLY] = XOUTPUT[i-1];
     }
     YCOUNT++;
     return SCHEDULER_STATUS;
@@ -271,8 +271,8 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
     sprintf(inFile, "%s/%s", DATA_FILE_LOCATION, FILENAME);
     /*if( ( fp = fopen(FILENAME, "r") ) == NULL ){ */
     if( ( fp = fopen(inFile, "r") ) == NULL ){
-       E = 315;
-       fatalerr( E );
+	E = 315;
+	fatalerr( E );
     }
 
     /* Process FSAVE file header line and then skip directory */
@@ -280,26 +280,26 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
     fgets( line, 81, fp );
     /* check for bad file format */
     if(sscanf( line, "%8s %8s %d %d", str1, str2, &VERSION, &NUMVAR)  != 4 ||
-       strcmp(str1, "MATRIXx")  ||  strcmp(str2, "VERSION" ) ){
-       fclose ( fp );
-       E=301;
-       fatalerr( E );
+	strcmp(str1, "MATRIXx")  ||  strcmp(str2, "VERSION" ) ){
+	fclose ( fp );
+	E=301;
+	fatalerr( E );
     }
 
     /* check version number */
 
     if( VERSION < REQVER ){
-       fclose ( fp );
-       E=303;
-       fatalerr( E );
+	fclose ( fp );
+	E=303;
+	fatalerr( E );
     }
 
     /* check for no more than two input arrays */
 
     if( NUMVAR > reqvar ){
-       fclose ( fp );
-       E=305;
-       fatalerr( E );
+	fclose ( fp );
+	E=305;
+	fatalerr( E );
     }
 
     /* skip directory (a single line for two arrays or less)  */
@@ -314,17 +314,17 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
     /* check for single column and not imaginary */
 
     if( ICOL!=1  ||  IIMG ){
-       fclose ( fp );
-       E=307;
-       fatalerr( E );
+	fclose ( fp );
+	E=307;
+	fatalerr( E );
     }
 
     /* check size limit on input time vector */
 
     if( IROW > MAXUTIM ){
-       fclose ( fp );
-       E=309;
-       fatalerr( E );
+	fclose ( fp );
+	E=309;
+	fatalerr( E );
     }
 
     /* read in the input time vector */
@@ -340,56 +340,56 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
     }
 
     for( i=1; i<=IROW; i+=3 ){
-       fgets ( line, 81, fp );
-       for( j=0; line[j]; j++ ){
+	fgets ( line, 81, fp );
+	for( j=0; line[j]; j++ ){
 	  if( line[j]=='D' ){
 	     line[j]='E';
 	  }
-       }
-       x = sscanf( line, readformat, &UTIME[i], &UTIME[i+1], &UTIME[i+2] );
-       if ((i > 3  && (UTIME[i]   - UTIME[i-1] <= EPSILON_SA)) ||
+	}
+	x = sscanf( line, readformat, &UTIME[i], &UTIME[i+1], &UTIME[i+2] );
+	if ((i > 3  && (UTIME[i]   - UTIME[i-1] <= EPSILON_SA)) ||
 	   (x == 2 && (UTIME[i+1] - UTIME[i]   <= EPSILON_SA)) ||
 	   (x == 3 && (UTIME[i+2] - UTIME[i+1] <= EPSILON_SA))) {
 	    fclose(fp);
 	    E = 320;
 	    fatalerr(E);
 	    break;
-       }
+	}
     }
     UCOUNT = IROW;
 
     if(UTIME[1] != 0.0) {
-       fclose ( fp );
-       E=319;
-       fatalerr( E );
+	fclose ( fp );
+	E=319;
+	fatalerr( E );
     }
 
     /* Load input array if number of external inputs .GT. zero */
 
     if( NUMIN>0  &&  NUMVAR==reqvar ){
-       fgets ( line, 81, fp );
-       sscanf( line, "%11s %d %d %d %12s", str1, &ROWU, &COLU, &IIMG, LFORM );
+	fgets ( line, 81, fp );
+	sscanf( line, "%11s %d %d %d %12s", str1, &ROWU, &COLU, &IIMG, LFORM );
 
-       /* check for correct number of inputs and not imaginary */
+	/* check for correct number of inputs and not imaginary */
 
-       if( COLU != NUMIN  ||  IIMG ){
+	if( COLU != NUMIN  ||  IIMG ){
 	  fclose ( fp );
 	  E=311;
 	  fatalerr( E );
-       }
+	}
 
-       /* check size limit on input value array */
+	/* check size limit on input value array */
 
-       if( ROWU*COLU > MAXU ){
+	if( ROWU*COLU > MAXU ){
 	  fclose ( fp );
 	  E=313;
 	  fatalerr( E );
-       }
+	}
 
-       /* read in the input value array (row-wise)
+	/* read in the input value array (row-wise)
 	* MATRIXx stores vectors column-wise    */
 
-       for( col=1; col<=COLU; col++ ){
+	for( col=1; col<=COLU; col++ ){
 	  for( row=1; row<=ROWU; row++ ){
 	     arg_index = ((col-1) * ROWU + row - 1) % 3;
 	     if( arg_index  ==  0 ){
@@ -403,7 +403,7 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
 	     }
 	     U[ (row-1)*COLU + col ] = arg[ arg_index ];
 	  }
-       }
+	}
     } else if (NUMIN != 0) {
 	  fclose ( fp );
 	  E=321;
@@ -428,8 +428,8 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
     /* Check limits on output storage */
 
     if( 2*(YCOUNTT+1) > MAXYTIM  ||  2*(YCOUNTT+1)*COLY > MAXY ){
-       E=401;
-       fatalerr( E );
+	E=401;
+	fatalerr( E );
     }
 
     numInputData = YCOUNTT; /* ANITA */
@@ -442,8 +442,8 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
 
     /*if( (  fp=fopen(FILENAME,"w")  ) == NULL ){ */
     if( (  fp=fopen(outFile,"w")  ) == NULL ){
-       E=317;
-       fatalerr( E );
+	E=317;
+	fatalerr( E );
     }
     if (NUMIN > 0)
     printf( "\n Scheduler running for %6d cycles at %.7E seconds per cycle.\n",
@@ -709,22 +709,22 @@ static void fatalerr(RT_INTEGER errorCode)
 
     /* Exceptions */
     switch( errorCode ){
-       case 301:string="INPUT FILE IS NOT IN Xmath{matrixx, ascii} SAVE FORMAT";
+	case 301:string="INPUT FILE IS NOT IN Xmath{matrixx, ascii} SAVE FORMAT";
 		 break;
-       case 303: string="INPUT FILE VERSION IS NOT V7.0 OR LATER";        break;
-       case 305: string="INPUT FILE CONTAINS MORE THAN TWO ARRAYS";       break;
-       case 307: string="INPUT TIME VECTOR NOT ONE COLUMN";               break;
-       case 309: string="INPUT TIME VECTOR TOO LARGE";                    break;
-       case 311: string="INPUT U DIMENSION NOT (TIME x NUMBER OF INPUTS)";break;
-       case 313: string="INPUT U ARRAY TOO LARGE FOR AVAILABLE STORAGE";  break;
-       case 315: string="ERROR OPENING THE INPUT FILE";                   break;
-       case 317: string="ERROR OPENING THE OUTPUT FILE";                  break;
-       case 319: string="NON-ZERO FIRST TIME POINT IN INPUT TIME VECTOR"; break;
-       case 320: string="ERROR IN TIME POINT IN INPUT TIME VECTOR";       break;
-       case 321: string="INSUFFICIENT DATA: MISSING TIME/U VECTOR";       break;
-       case 401: string="OUTPUT STORAGE EXCEEDS THE AVAILABLE STORAGE";   break;
-       case 501: string="INCONSISTENT SIZE OF RT_FLOAT WHEN READING";   break;
-       default : string="UNKNOWN ERROR";
+	case 303: string="INPUT FILE VERSION IS NOT V7.0 OR LATER";        break;
+	case 305: string="INPUT FILE CONTAINS MORE THAN TWO ARRAYS";       break;
+	case 307: string="INPUT TIME VECTOR NOT ONE COLUMN";               break;
+	case 309: string="INPUT TIME VECTOR TOO LARGE";                    break;
+	case 311: string="INPUT U DIMENSION NOT (TIME x NUMBER OF INPUTS)";break;
+	case 313: string="INPUT U ARRAY TOO LARGE FOR AVAILABLE STORAGE";  break;
+	case 315: string="ERROR OPENING THE INPUT FILE";                   break;
+	case 317: string="ERROR OPENING THE OUTPUT FILE";                  break;
+	case 319: string="NON-ZERO FIRST TIME POINT IN INPUT TIME VECTOR"; break;
+	case 320: string="ERROR IN TIME POINT IN INPUT TIME VECTOR";       break;
+	case 321: string="INSUFFICIENT DATA: MISSING TIME/U VECTOR";       break;
+	case 401: string="OUTPUT STORAGE EXCEEDS THE AVAILABLE STORAGE";   break;
+	case 501: string="INCONSISTENT SIZE OF RT_FLOAT WHEN READING";   break;
+	default : string="UNKNOWN ERROR";
     }
 
     /* Write the error message */

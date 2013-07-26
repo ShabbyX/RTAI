@@ -643,7 +643,7 @@ RTAI_SYSCALL_MODE int _mq_send(mqd_t mq, const char *msg, size_t msglen, unsigne
 			mq_mutex_unlock(&q->mutex);
 			return -EAGAIN;
 		}
-       	}
+		}
 	if( (this_msg = getnode(&q->data)) == NULL) {
 		mq_mutex_unlock(&q->mutex);
 		return -ENOBUFS;

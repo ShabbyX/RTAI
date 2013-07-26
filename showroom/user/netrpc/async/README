@@ -13,7 +13,7 @@ To run it on a single machine do:
 
 make
 ./run [0|1], press ENTER to end it all, otherwise it will end accordingly to
-             the macro MAXLOOPS found in sender.c
+	     the macro MAXLOOPS found in sender.c
 ./rem
 
 To run it on different machines comment out the line executing the process to

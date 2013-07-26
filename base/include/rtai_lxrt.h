@@ -69,12 +69,6 @@
 #include <rtai_sched.h>
 #include <rtai_nam2num.h>
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
-#include <uapi/linux/sched.h>
-#else
-#include <linux/sched.h>
-#endif
-
 // scheduler
 #define YIELD				 0
 #define SUSPEND				 1
@@ -525,35 +519,22 @@ int set_rt_fun_entries(struct rt_native_fun_entry *entry);
 extern "C" {
 #endif /* __cplusplus */
 
-#if 1 // needs CONFIG_RTAI_INTERNAL_LXRT_SUPPORT no more
+/*+++++++++++ INLINES FOR PIERRE's PROXIES AND INTERTASK MESSAGES ++++++++++++*/
 
-static inline struct rt_task_struct *pid2rttask(long pid)
-{
-	struct task_struct *lnxtsk = find_task_by_pid(pid);
-	return lnxtsk ? lnxtsk->rtai_tskext(TSKEXT0) : NULL;
-	return ((unsigned long)pid) > PID_MAX_LIMIT ? (struct rt_task_struct *)pid : find_task_by_pid(pid)->rtai_tskext(TSKEXT0);
-}
-
-static inline long rttask2pid(struct rt_task_struct * task)
-{
-    return task->lnxtsk ? task->lnxtsk->pid : (long)task;
-}
-
-#else /* !CONFIG_RTAI_INTERNAL_LXRT_SUPPORT */
+#include <linux/types.h>
+RT_TASK *rt_find_task_by_pid(pid_t);
 
 static inline struct rt_task_struct *pid2rttask(pid_t pid)
 {
-    return 0;
+	return rt_find_task_by_pid(pid);
 }
 
-// The following might look strange but it must be so to work with
-// buddies also.
-static inline pid_t rttask2pid(struct rt_task_struct * task)
+static inline long rttask2pid(struct rt_task_struct *task)
 {
-    return (long) task;
+	 return task->tid;
 }
 
-#endif /* CONFIG_RTAI_INTERNAL_LXRT_SUPPORT */
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 int set_rtai_callback(void (*fun)(void));
 
@@ -656,18 +637,7 @@ RTAI_PROTO(RT_TASK *, rt_task_init_schmod, (unsigned long name, int priority, in
 	return (RT_TASK *)rtai_lxrt(BIDX, SIZARG, LXRT_TASK_INIT, &arg).v[LOW];
 }
 
-static inline int rt_clone(void *fun, void *args, long stack_size, unsigned long flags)
-{
-	void *sp;
-	if (!flags) {
-		flags = CLONE_VM | CLONE_FS | CLONE_FILES;
-	}
-	memset(sp = malloc(stack_size), 0, stack_size);
-	sp = (void *)(((unsigned long)sp + stack_size - 16) & ~0xF);
-	return clone((int (*)(void *))fun, sp, flags, args);
-}
-
-#define RT_THREAD_STACK_MIN  64*1024
+#define RT_THREAD_STACK_MIN  16*1024
 
 #include <pthread.h>
 
@@ -1326,19 +1296,6 @@ RTAI_PROTO(int,rt_set_linux_signal_handler,(RT_TASK *task, void (*handler)(int s
 }
 
 #define VSNPRINTF_BUF_SIZE 256
-RTAI_PROTO(int,rtai_print_to_screen,(const char *format, ...))
-{
-	char display[VSNPRINTF_BUF_SIZE];
-	struct { const char *display; long nch; } arg = { display, 0 };
-	va_list args;
-
-	va_start(args, format);
-	arg.nch = vsnprintf(display, VSNPRINTF_BUF_SIZE, format, args);
-	va_end(args);
-	rtai_lxrt(BIDX, SIZARG, PRINT_TO_SCREEN, &arg);
-	return arg.nch;
-}
-
 RTAI_PROTO(int,rt_printk,(const char *format, ...))
 {
 	char display[VSNPRINTF_BUF_SIZE];
@@ -1350,6 +1307,19 @@ RTAI_PROTO(int,rt_printk,(const char *format, ...))
 	va_end(args);
 	rtai_lxrt(BIDX, SIZARG, PRINTK, &arg);
 	return arg.nch;
+}
+
+RTAI_PROTO(int,rtai_print_to_screen,(const char *format, ...))
+{
+	 char display[VSNPRINTF_BUF_SIZE];
+	 struct { const char *display; long nch; } arg = { display, 0 };
+	 va_list args;
+
+	 va_start(args, format);
+	 arg.nch = vsnprintf(display, VSNPRINTF_BUF_SIZE, format, args);
+	 va_end(args);
+	 rtai_lxrt(BIDX, SIZARG, PRINTK, &arg);
+	 return arg.nch;
 }
 
 RTAI_PROTO(int,rt_usp_signal_handler,(void (*handler)(void)))

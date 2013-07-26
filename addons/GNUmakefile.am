@@ -1,9 +1,4 @@
-
 OPTDIRS =
-
-if CONFIG_RTAI_CPLUSPLUS
-OPTDIRS += cpp
-endif
 
 if CONFIG_RTAI_RTDM
 OPTDIRS += rtdm

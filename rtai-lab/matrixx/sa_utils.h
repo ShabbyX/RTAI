@@ -78,9 +78,9 @@ which is located at: http://www.ni.com/legal/license.
   **   specifies an abort exit.
   */
   EXTERN_FUNC( void  SA_Implementation_Terminate,
-       (
+	(
 	RT_INTEGER   errcode         /* specifies the type of exit */
-       ));
+	));
 
   /* Function: SA_Output_To_File +++++++++++++++++++++++++++++++++++++++++++++
   **
@@ -110,12 +110,12 @@ which is located at: http://www.ni.com/legal/license.
   **   services and signal that the application needs to stop.
   */
   EXTERN_FUNC( void  SA_Error,
-       (
+	(
 	RT_INTEGER   n_task,         /* Task_id of the reporting task  */
 	RT_INTEGER   error_num,      /* Error code                     */
 	RT_INTEGER   perror_code,    /* RTOS error code                */
 	RT_INTEGER   pnum            /* Processor_id of reporting task */
-       ));
+	));
 
 extern RT_BOOLEAN outOfInputData;
 extern RT_INTEGER numInputData;

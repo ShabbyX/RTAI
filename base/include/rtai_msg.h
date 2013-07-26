@@ -41,10 +41,8 @@ typedef struct t_msgcb { /* Message control block structure. */
 #define PROXY_MIN_STACK_SIZE 2048
 
 struct proxy_t {
-
     struct rt_task_struct *receiver;
-    int nmsgs,
-	nbytes;
+    int nmsgs, nbytes;
     char *msg;
 };
 

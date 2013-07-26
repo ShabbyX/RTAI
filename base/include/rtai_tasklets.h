@@ -372,7 +372,7 @@ RTAI_PROTO(struct rt_tasklet_struct *, rt_init_tasklet, (void))
 			for (i = 0; i < POLLS_PER_SEC/5 && !arg.done; i++) {
 				struct timespec delay = { 0, 1000000000/POLLS_PER_SEC };
 				nanosleep(&delay, NULL);
-       			}
+				}
 #undef POLLS_PER_SEC
 			if (!arg.done || rtai_lxrt(TASKLETS_IDX, SIZARG, WAIT_IS_HARD, &arg).i[LOW]) {
 				goto notdone;

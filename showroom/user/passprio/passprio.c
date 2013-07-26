@@ -64,7 +64,7 @@ int main(void)
 	rt_sem_signal(sem[0]);
 
 	rt_printk("FINAL > (TSKNR-PRI):\n");
-       	for (k = 0; k < (NTASKS - 1); k++) {
+		for (k = 0; k < (NTASKS - 1); k++) {
 		rt_get_priorities(task[k], &prio, &bprio);
 		rt_printk("%d-%d|", k, prio);
 	}

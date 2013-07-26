@@ -1,4 +1,4 @@
-                    *** RTAI UNIX SYSV IPC MESSAGES ***
+		    *** RTAI UNIX SYSV IPC MESSAGES ***
 
 This is an exercise showing how relatively simple it could be to adapt a piece
 of Linux code to RTAI.
