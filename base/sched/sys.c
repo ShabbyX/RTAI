@@ -612,11 +612,7 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 		}
 		case GET_EXECTIME: {
 			struct arg { RT_TASK *task; RTIME *exectime; };
-			if ((larg->task)->exectime[0] && (larg->task)->exectime[1]) {
-				larg->exectime[0] = (larg->task)->exectime[0];
-				larg->exectime[1] = (larg->task)->exectime[1];
-				larg->exectime[2] = rtai_rdtsc();
-			}
+			rt_get_exectime(larg->task, larg->exectime);
 			return 0;
 		}
 		case GET_TIMEORIG: {

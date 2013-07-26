@@ -319,7 +319,7 @@
 #define SCHED_UNLOCK		       210
 #define PEND_LINUX_IRQ		       211
 #define SET_LINUX_SYSCALL_MODE	       212
-#define GET_EXECTIME                   213
+/*#define RETURN_LINUX_SYSCALL         213 available */
 #define REQUEST_RTC                    214
 #define RELEASE_RTC                    215
 #define RT_GETTID                      216
@@ -413,7 +413,7 @@
 #define DELETE_DEREGISTER	1022
 #define FORCE_TASK_SOFT  	1023
 #define PRINTK			1024
-/* used to be GET_EXECTIME	1025 available */
+#define GET_EXECTIME            1025
 #define GET_TIMEORIG 		1026
 #define LXRT_RWL_INIT		1027
 #define LXRT_RWL_DELETE 	1028
