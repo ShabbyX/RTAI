@@ -57,31 +57,33 @@
 
 
 static struct pci_device_id hal_smi_pci_tbl[] = {
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AA_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AB_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801BA_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801BA_10) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801E_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801CA_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801CA_12) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801DB_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801DB_12) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801EB_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH6_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH6_1) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH6_2) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH7_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH7_1) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH8_4) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH10_1) },
-{ 0, },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AA_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AB_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801BA_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801BA_10) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801E_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801CA_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801CA_12) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801DB_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801DB_12) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801EB_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH6_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH6_1) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH6_2) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH7_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH7_1) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH8_4) },
+#ifdef PCI_DEVICE_ID_INTEL_ICH10_1
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH10_1) },
+#endif
+	{ 0, },
 };
 
 /* FIXME: Probably crippled too, need to be checked :
 
-0x24dc 82801EB (ICH5) LPC Interface Bridge (not a real ID, but exists in the
-pci.ids database, ICH5-M ?)
-{ PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801EB_12, PCI_ANY_ID, PCI_ANY_ID, },
+   0x24dc 82801EB (ICH5) LPC Interface Bridge (not a real ID, but exists in the
+   pci.ids database, ICH5-M ?)
+   { PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801EB_12, PCI_ANY_ID, PCI_ANY_ID, },
 
 */
 
@@ -109,31 +111,31 @@ pci.ids database, ICH5-M ?)
 
 unsigned long hal_smi_masked_bits = 0
 #if CONFIG_RTAI_HW_SMI_ALL
-    | GBL_SMI_EN_BIT
+| GBL_SMI_EN_BIT
 #else
 #if CONFIG_RTAI_HW_SMI_INTEL_USB2
-    | INTEL_USB2_EN_BIT
+| INTEL_USB2_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_LEGACY_USB2
-    | LEGACY_USB2_EN_BIT
+| LEGACY_USB2_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_PERIODIC
-    | PERIODIC_EN_BIT
+| PERIODIC_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_TCO
-    | TCO_EN_BIT
+| TCO_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_MC
-    | MCSMI_EN_BIT
+| MCSMI_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_APMC
-    | APMC_EN_BIT
+| APMC_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_LEGACY_USB
-    | LEGACY_USB_EN_BIT
+| LEGACY_USB_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_BIOS
-    | BIOS_EN_BIT
+| BIOS_EN_BIT
 #endif
 #endif
 ;
@@ -150,9 +152,9 @@ static struct pci_dev *smi_dev;
 static int rtai_smi_notify_reboot(struct notifier_block *nb, unsigned long event, void *p)
 {
 	switch (event) {
-		case SYS_DOWN:
-		case SYS_HALT:
-		case SYS_POWER_OFF:
+	case SYS_DOWN:
+	case SYS_HALT:
+	case SYS_POWER_OFF:
 		if (hal_smi_en_addr) {
 			set_bits(hal_smi_saved_bits, hal_smi_en_addr);
 		}
@@ -177,14 +179,14 @@ static void hal_smi_restore(void)
 
 static void hal_smi_disable(void)
 {
- 	if (hal_smi_en_addr) {
+	if (hal_smi_en_addr) {
 		hal_smi_saved_bits = inl(hal_smi_en_addr) & hal_smi_masked_bits;
 		mask_bits(hal_smi_masked_bits, hal_smi_en_addr);
 		register_reboot_notifier(&rtai_smi_reboot_notifier);
 	}
 }
 
-static unsigned short /*__devinit*/ get_smi_en_addr(struct pci_dev *dev)
+static unsigned short __devinit get_smi_en_addr(struct pci_dev *dev)
 {
 	u_int8_t byte0, byte1;
 
@@ -193,15 +195,15 @@ static unsigned short /*__devinit*/ get_smi_en_addr(struct pci_dev *dev)
 	return SMI_CTRL_ADDR + (((byte1 << 1) | (byte0 >> 7)) << 7); //bits 7-15
 }
 
-static int /*__devinit*/ hal_smi_init(void)
+static int __devinit hal_smi_init(void)
 {
 	struct pci_dev *dev = NULL;
 	struct pci_device_id *id;
 
-/*
- * Do not use pci_register_driver, pci_enable_device, ...
- * Just register the used ports.
- */
+	/*
+	 * Do not use pci_register_driver, pci_enable_device, ...
+	 * Just register the used ports.
+	 */
 	for (id = &hal_smi_pci_tbl[0]; dev == NULL && id->vendor != 0; id++) {
 		dev = pci_get_device(id->vendor, id->device, NULL);
 	}
@@ -209,14 +211,14 @@ static int /*__devinit*/ hal_smi_init(void)
 	if (dev == NULL || dev->bus->number || dev->devfn != DEVFN) {
 		pci_dev_put(dev);
 		printk("RTAI: Intel chipset not found.\n");
-  		return -ENODEV;
+		return -ENODEV;
 	}
 
 	printk("RTAI: Intel chipset found, enabling SMI workaround.\n");
 	hal_smi_en_addr = get_smi_en_addr(dev);
 	smi_dev = dev;
 	hal_smi_disable();
-  	return 0;
+	return 0;
 }
 
 /************************************************************************/
@@ -242,46 +244,46 @@ MODULE_LICENSE("GPL");
 /**************************************************************************/
 /*
 
-   FIXME: there are many more SMI sources than those of the SMI_EN
-   register. From http://www.intel.com/design/chipsets/datashts/252516.htm
-   there are at least the following other sources :
+FIXME: there are many more SMI sources than those of the SMI_EN
+register. From http://www.intel.com/design/chipsets/datashts/252516.htm
+there are at least the following other sources :
 
-   pages 377, 386, 388, 389; Power management
-	register GEN_PMCON1, bit SMI_LOCK, locks GLB_SMI_EN
-	bits PER_SMI_SEL, allow selection of the periodic SMI
-	registers PM1_STS, PM1_EN, PM1_CNT bit SCI_EN, if cleared generates SMI
-	for power management events.
+pages 377, 386, 388, 389; Power management
+register GEN_PMCON1, bit SMI_LOCK, locks GLB_SMI_EN
+bits PER_SMI_SEL, allow selection of the periodic SMI
+registers PM1_STS, PM1_EN, PM1_CNT bit SCI_EN, if cleared generates SMI
+for power management events.
 
-   pages 173, 381, 400; GPIOs
-	register GPI[0-15]_ROUT allow routing each GPIO to SMI or SCI
-	register ALT_GP_SMI_EN, ALT_GP_SMI_STS, allow masking SMIs for GPIOs
+pages 173, 381, 400; GPIOs
+register GPI[0-15]_ROUT allow routing each GPIO to SMI or SCI
+register ALT_GP_SMI_EN, ALT_GP_SMI_STS, allow masking SMIs for GPIOs
 
-   pages 184, 188, 402; legacy devices emulation (ATA, floppy, parallel, UARTs,
-	keyboard). I/O to specified ports may cause events, which can generate an
-	SMI, depending on registers configuration :
-	register DEVTRAP_EN, DEVTRAP_STS
-	BIG FAT WARNING : globally disabling SMI on a box with SATA disks and
-	   SATA controller in "legacy" mode, probably prevents disks from
-	   working.
+pages 184, 188, 402; legacy devices emulation (ATA, floppy, parallel, UARTs,
+keyboard). I/O to specified ports may cause events, which can generate an
+SMI, depending on registers configuration :
+register DEVTRAP_EN, DEVTRAP_STS
+BIG FAT WARNING : globally disabling SMI on a box with SATA disks and
+SATA controller in "legacy" mode, probably prevents disks from
+working.
 
-   pages 382, 383, 400; Monitors ?
-	seem to be a generic legacy device emulation (like previous), registers
-	MON[4-7]_FWD_EN, enables forwarding of I/O to LPC
-	MON[4-7]_TRP_RNG, address of the emulated devices
-	MON[4-7]_TRP_MSK and MON_SMI (registers MON[4-7]_TRAP_EN and
-				     MON[4-7]_TRAP_STS)
+pages 382, 383, 400; Monitors ?
+seem to be a generic legacy device emulation (like previous), registers
+MON[4-7]_FWD_EN, enables forwarding of I/O to LPC
+MON[4-7]_TRP_RNG, address of the emulated devices
+MON[4-7]_TRP_MSK and MON_SMI (registers MON[4-7]_TRAP_EN and
+MON[4-7]_TRAP_STS)
 
-   page 407: TCO
-	register TCO1_CNT, bit NMI2SMI_EN, enables TCO to use SMI instead of NMI,
-	bit TCO_TMR_HLT, should be cleared to avoid being rebooted when the TCO
-	timer expires. Dangerous bit: TCO_LOCK locks the TCO timer until reboot.
-	register used by Linux drivers/char/watchdog/i8xx_tco.c
+page 407: TCO
+register TCO1_CNT, bit NMI2SMI_EN, enables TCO to use SMI instead of NMI,
+bit TCO_TMR_HLT, should be cleared to avoid being rebooted when the TCO
+timer expires. Dangerous bit: TCO_LOCK locks the TCO timer until reboot.
+register used by Linux drivers/char/watchdog/i8xx_tco.c
 
-   page 492, 493: USB EHCI legacy support and SPECIAL SMI, i.e Intel Specific
-	USB 2.0 SMI register.
+page 492, 493: USB EHCI legacy support and SPECIAL SMI, i.e Intel Specific
+USB 2.0 SMI register.
 
-   page 520, SMBus
-	may be disabled by clearing register HOSTC, bit SMB_SMI_EN
-	register used by Linux driver drivers/i2c/busses/i2c-i801.c
+page 520, SMBus
+may be disabled by clearing register HOSTC, bit SMB_SMI_EN
+register used by Linux driver drivers/i2c/busses/i2c-i801.c
 
 */

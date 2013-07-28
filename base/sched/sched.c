@@ -363,6 +363,32 @@ RT_TASK *rt_find_task_by_pid(pid_t pid)
 EXPORT_SYMBOL(rt_find_task_by_pid);
 
 
+static int rt_pid = (INT_MAX & ~(0xF));
+static DEFINE_SPINLOCK(rt_pid_lock);
+
+void rt_set_task_pid(RT_TASK *task)
+{
+	unsigned long flags;
+	flags = rt_spin_lock_irqsave(&rt_pid_lock);
+	task->tid = rt_pid = rt_pid - 0x10;
+	rt_spin_unlock_irqrestore(flags, &rt_pid_lock);
+	task->tid += task->runnable_on_cpus;
+}
+EXPORT_SYMBOL(rt_set_task_pid);
+
+RT_TASK *rt_find_task_by_pid(pid_t pid)
+{
+	RT_TASK *task = &rt_smp_linux_task[pid & 0xF];
+	while ((task = task->next)) {
+		if (task->tid == pid) {
+			return task;
+		}
+	}
+	return NULL;
+}
+EXPORT_SYMBOL(rt_find_task_by_pid);
+
+
 int rt_task_init_cpuid(RT_TASK *task, void (*rt_thread)(long), long data, int stack_size, int priority, int uses_fpu, void(*signal)(void), unsigned int cpuid)
 {
 	long *st, i;
@@ -2082,11 +2108,9 @@ static int lxrt_handle_trap(int vec, int signo, struct pt_regs *regs, void *dumm
 static inline void rt_signal_wake_up(RT_TASK *task)
 {
 	struct task_struct *lnxtsk;
-	if ((lnxtsk = task->lnxtsk) && task->state && task->state != RT_SCHED_READY) {
-		if ((lnxtsk->state & TASK_HARDREALTIME) && sig_user_defined(lnxtsk, SIGTERM)) {
-			task->unblocked = 1;
-			rt_task_masked_unblock(task, ~RT_SCHED_READY);
-		}
+	if ((lnxtsk = task->lnxtsk) && task->state && task->state != RT_SCHED_READY && lnxtsk->state & TASK_HARDREALTIME) {
+		task->unblocked = 1;
+		rt_task_masked_unblock(task, ~RT_SCHED_READY);
 	} else {
 		task->unblocked = -1;
 	}
@@ -2392,11 +2416,12 @@ static void *saved_syscall_prologue;
 
 #ifdef CONFIG_RTAI_SCHED_ISR_LOCK
 extern void *rtai_isr_sched;
+#endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
 static void rtai_isr_sched_handle(int cpuid) /* Called with interrupts off */
 {
 	SCHED_UNLOCK_SCHEDULE(cpuid);
 }
-#endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
+EXPORT_SYMBOL(rtai_isr_sched_handle);
 
 static int lxrt_init(void)
 {

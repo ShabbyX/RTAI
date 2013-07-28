@@ -1436,6 +1436,12 @@ void rtai_set_linux_task_priority (struct task_struct *task, int policy, int pri
 
 struct proc_dir_entry *rtai_proc_root = NULL;
 
+#if defined(CONFIG_SMP) && defined(CONFIG_RTAI_DIAG_TSC_SYNC)
+extern void init_tsc_sync(void);
+extern void cleanup_tsc_sync(void);
+extern volatile long rtai_tsc_ofst[];
+#endif
+
 static int rtai_read_proc (char *page, char **start, off_t off, int count, int *eof, void *data)
 {
 	PROC_PRINT_VARS;
@@ -1482,8 +1488,16 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 #if defined(CONFIG_SMP) && defined(CONFIG_RTAI_DIAG_TSC_SYNC)
 	PROC_PRINT("** RTAI TSC OFFSETs (TSC units, 0 ref. CPU): ");
     	for (i = 0; i < num_online_cpus(); i++) {
+<<<<<<< HEAD:base/arch/x86/hal/hal_x86.c
 		PROC_PRINT("CPU#%d > %ld; ", i, rtai_tsc_ofst[i]);
 	}
+||||||| merged common ancestors
+		PROC_PRINT("CPU#%d > %ld; ", i, rtai_tsc_ofst[i]);
+        }
+=======
+		PROC_PRINT("CPU#%d: %ld; ", i, rtai_tsc_ofst[i]);
+        }
+>>>>>>> magma:base/arch/x86/hal/hal_32.c
     	PROC_PRINT("\n\n");
 #endif
 
@@ -1673,6 +1687,7 @@ void __rtai_hal_exit (void)
 module_init(__rtai_hal_init);
 module_exit(__rtai_hal_exit);
 
+<<<<<<< HEAD:base/arch/x86/hal/hal_x86.c
 asmlinkage int rt_printk(const char *fmt, ...)
 {
 	va_list args;
@@ -1698,6 +1713,88 @@ asmlinkage int rt_sync_printk(const char *fmt, ...)
 
 	return r;
 }
+||||||| merged common ancestors
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,60,0)
+asmlinkage int rt_printk(const char *fmt, ...)
+{
+	va_list args;
+	int r;
+
+	va_start(args, fmt);
+	r = vprintk(fmt, args);
+	va_end(args);
+
+	return r;
+}
+
+asmlinkage int rt_sync_printk(const char *fmt, ...)
+{
+	va_list args;
+	int r;
+
+	va_start(args, fmt);
+	hal_set_printk_sync(&rtai_domain);
+	r = vprintk(fmt, args);
+//	hal_set_printk_async(&rtai_domain);
+	ipipe_set_printk_sync(&rtai_domain);
+	va_end(args);
+
+	return r;
+}
+#else
+#define VSNPRINTF_BUF 256
+asmlinkage int rt_printk(const char *fmt, ...)
+{
+	char buf[VSNPRINTF_BUF];
+	va_list args;
+
+        va_start(args, fmt);
+        vsnprintf(buf, VSNPRINTF_BUF, fmt, args);
+        va_end(args);
+	return printk("%s", buf);
+}
+
+asmlinkage int rt_sync_printk(const char *fmt, ...)
+{
+	char buf[VSNPRINTF_BUF];
+	va_list args;
+	int r;
+
+        va_start(args, fmt);
+        vsnprintf(buf, VSNPRINTF_BUF, fmt, args);
+        va_end(args);
+	hal_set_printk_sync(&rtai_domain);
+	r = printk("%s", buf);
+	hal_set_printk_async(&rtai_domain);
+
+	return r;
+}
+#endif
+=======
+#define VSNPRINTF_BUF 256
+asmlinkage int rt_printk(const char *fmt, ...)
+{
+	char buf[VSNPRINTF_BUF];
+	va_list args;
+
+	va_start(args, fmt);
+	vsnprintf(buf, VSNPRINTF_BUF, fmt, args);
+	va_end(args);
+	return printk("%s", buf);
+}
+
+asmlinkage int rt_sync_printk(const char *fmt, ...)
+{
+	char buf[VSNPRINTF_BUF];
+	va_list args;
+
+        va_start(args, fmt);
+        vsnprintf(buf, VSNPRINTF_BUF, fmt, args);
+        va_end(args);
+	hal_set_printk_sync(&rtai_domain);
+	return printk("%s", buf);
+}
+>>>>>>> magma:base/arch/x86/hal/hal_32.c
 
 /*
  *  support for decoding long long numbers in kernel space.

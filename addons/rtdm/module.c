@@ -157,7 +157,7 @@ static struct rt_fun_entry rtdm[] = {
 
 #ifndef CONFIG_RTAI_SCHED_ISR_LOCK
 extern struct { volatile int locked, rqsted; } rt_scheduling[];
-extern void rtai_handle_isched_lock(int);
+extern void rtai_isr_sched_handle(int);
 
 #define RTAI_SCHED_ISR_LOCK() \
 	do { \
@@ -169,7 +169,7 @@ extern void rtai_handle_isched_lock(int);
 		rtai_cli(); \
 		if (rt_scheduling[cpuid].locked && !(--rt_scheduling[cpuid].locked)) { \
 			if (rt_scheduling[cpuid].rqsted > 0) { \
-				rtai_handle_isched_lock(cpuid); \
+				rtai_isr_sched_handle(cpuid); \
 			} \
 		} \
 	} while (0)

@@ -1733,12 +1733,11 @@ fi
 
 AC_MSG_CHECKING([for RTAI target architecture])
 
-dnl RTAI_USER_CFLAGS="-I$LINUX_KERNELSRC/include "
 RTAI_USER_CFLAGS="-D_GNU_SOURCE"
 
 if test x"$LINUX_KERNELOUTPUT" != x"$LINUX_KERNELSRC"; then
-  RTAI_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include2 $RTAI_USER_CFLAGS"
-  RTAI_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include $RTAI_USER_CFLAGS"
+  RTAI_REAL_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include2 $RTAI_REAL_USER_CFLAGS"
+  RTAI_REAL_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include $RTAI_REAL_USER_CFLAGS"
 fi
 
 dnl extra arch-dependent opts to be passed to the compiler
@@ -1749,7 +1748,7 @@ case $RTAI_TARGET_ARCH in
  case $RTAI_TARGET_SUBARCH in
    32)
 	RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
-	RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
+	RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
 	if test x$CONFIG_RTAI_FPU_SUPPORT = xy; then
 	   RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -mhard-float"
 	else
@@ -1758,7 +1757,7 @@ case $RTAI_TARGET_ARCH in
 	;;
    64)
 	RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
-	RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
+	RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
 	if test x$CONFIG_RTAI_FPU_SUPPORT = xy; then
 	   RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -mhard-float"
 	else
@@ -1785,7 +1784,7 @@ case $RTAI_TARGET_ARCH in
 	   exit 1
 	fi
 	RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
-	RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
+	RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
 	RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -fno-math-errno -funsafe-math-optimizations -fno-rounding-math -fno-signaling-nans -fcx-limited-range -msoft-float"
 	AC_CONFIG_LINKS(base/include/asm-arm/arch:base/include/asm-arm/arch-$RTAI_TARGET_SUBARCH)
 	;;
@@ -1794,7 +1793,7 @@ case $RTAI_TARGET_ARCH in
 	dnl apparently, powerpc needs specific include/asm path to find errno.h
 	RTAI_KMOD_CFLAGS="$RTAI_KMOD_CFLAGS -I${RTAI_LINUX_DIR}/arch/$RTAI_TARGET_ARCH_NAME -I${RTAI_LINUX_DIR}/arch/$RTAI_TARGET_ARCH_NAME/include/ -I${RTAI_LINUX_DIR}/arch/$RTAI_TARGET_ARCH_NAME/include/asm"
 	RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
-	RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -I${RTAI_LINUX_DIR}/arch/$RTAI_TARGET_ARCH_NAME/include/ -Wall -Wstrict-prototypes -pipe"
+	RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -I${RTAI_LINUX_DIR}/arch/$RTAI_TARGET_ARCH_NAME/include/ -Wall -Wstrict-prototypes -pipe"
 	if test x$CONFIG_RTAI_FPU_SUPPORT = xy; then
 	   RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -mhard-float"
 	else
@@ -1821,7 +1820,7 @@ case $RTAI_TARGET_ARCH in
 	fi
 	#RTAI_KMOD_CFLAGS="$RTAI_KMOD_CFLAGS -I${RTAI_LINUX_DIR}/arch/m68k"
 	RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
-	RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -Wall -Wstrict-prototypes -pipe -DCONFIG_COLDFIRE"
+	RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -Wall -Wstrict-prototypes -pipe -DCONFIG_COLDFIRE"
 	RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -msoft-float"
 	;;
 
@@ -1851,21 +1850,21 @@ if test $CONFIG_RTAI_LXRT_INLINE = 3; then
 else
    RTAI_LXRT_LDADD=
    if test x$CONFIG_RTAI_USER_DEBUG = xy; then
-      RTAI_USER_CFLAGS="-g $RTAI_USER_CFLAGS"
+      RTAI_REAL_USER_CFLAGS="-g $RTAI_REAL_USER_CFLAGS"
       if test $CONFIG_RTAI_LXRT_INLINE = 2; then
 	 RTAI_LXRT_LDADD="-llxrt"
       fi
    else
-      RTAI_USER_CFLAGS="-O2 $RTAI_USER_CFLAGS"
+      RTAI_REAL_USER_CFLAGS="-O2 $RTAI_REAL_USER_CFLAGS"
    fi
 fi
 
 RTAI_KMOD_APP_CFLAGS=$RTAI_KMOD_CFLAGS
 RTAI_KMOD_APP_CXXFLAGS=$RTAI_KMOD_CXXFLAGS
-RTAI_USER_APP_CFLAGS=$RTAI_USER_CFLAGS
+RTAI_USER_APP_CFLAGS=$RTAI_REAL_USER_CFLAGS
 RTAI_KMOD_CFLAGS="$RTAI_KMOD_CFLAGS -D__IN_RTAI__"
 RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CXXFLAGS -D__IN_RTAI__"
-RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -D__IN_RTAI__"
+RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -D__IN_RTAI__"
 
 AC_CONFIG_LINKS(base/include/asm:base/include/asm-$RTAI_TARGET_ARCH)
 
@@ -1915,6 +1914,8 @@ dnl POSIX wraps
 dnl
 RTAI_POSIX_WRAP=`for f in \`cat "${srcdir}/base/posix/POSIX_WRAPS"\`; do echo -n " -Wl,--wrap -Wl,$f" ; done`
 
+RTAI_USER_CFLAGS="-I$LINUX_KERNELSRC/include $RTAI_REAL_USER_CFLAGS"
+
 dnl
 dnl Build the Makefiles
 dnl
@@ -1937,6 +1938,7 @@ AC_SUBST(RTAI_KMOD_CFLAGS)
 AC_SUBST(RTAI_KMOD_CXXFLAGS)
 AC_SUBST(RTAI_COMPAT_CPPFLAGS)
 AC_SUBST(RTAI_USER_CFLAGS)
+AC_SUBST(RTAI_REAL_USER_CFLAGS)
 AC_SUBST(RTAI_KMOD_APP_CFLAGS)
 AC_SUBST(RTAI_KMOD_APP_CXXFLAGS)
 AC_SUBST(RTAI_USER_APP_CFLAGS)
