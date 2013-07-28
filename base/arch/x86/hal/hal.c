@@ -44,7 +44,7 @@
 
 MODULE_LICENSE("GPL");
 
-#include <asm/rtai_hal.h>
+#include <rtai.h>
 
 #if defined(CONFIG_SMP) && defined(CONFIG_RTAI_DIAG_TSC_SYNC)
 
@@ -59,6 +59,7 @@ static int sync_cnt[RTAI_NR_CPUS];
 #endif
 
 volatile long rtai_tsc_ofst[RTAI_NR_CPUS];
+EXPORT_SYMBOL(rtai_tsc_ofst);
 
 static inline long long readtsc(void)
 {
@@ -183,36 +184,6 @@ static void sync_tsc(unsigned int master, unsigned int slave)
 #define DSLEEP  500 // ms
 static volatile int end;
 
-// see: Computing Practices, ACM, vol. 31, n. 10, 1988, pgs 1192-1201.
-
-#define TWOPWR31M1 2147483647  // 2^31 - 1
-
-static inline long next_rand(long rand)
-{
-	const long a = 16807;
-	const long m = TWOPWR31M1;
-	const long q = 127773;
-	const long r = 2836;
-
-	long lo, hi;
-
-	hi = rand/q;
-	lo = rand - hi*q;
-	rand = a*lo - r*hi;
-	if (rand <= 0) {
-		rand += m;
-	}
-	return rand;
-}
-
-static inline long irandu(unsigned long range)
-{
-	static long seed = 783637;
-	const long m = TWOPWR31M1;
-
-	seed = next_rand(seed);
-	return rtai_imuldiv(seed, range, m);
-}
 static void kthread_fun(void *null)
 {
 	int i;
@@ -228,10 +199,12 @@ static void kthread_fun(void *null)
 	end = 0;
 }
 
+#include <linux/kthread.h>
+
 void init_tsc_sync(void)
 {
 	if (num_online_cpus() > 1) {
-		kernel_thread((void *)kthread_fun, NULL, 0);
+		kthread_run((void *)kthread_fun, NULL, "RTAI_TSC_SYNC");
 		while(!first_sync_loop_done) {
 			msleep(100);
 		}
@@ -247,7 +220,5 @@ void cleanup_tsc_sync(void)
 		}
 	}
 }
-
-EXPORT_SYMBOL(rtai_tsc_ofst);
 
 #endif /* defined(CONFIG_SMP) && defined(CONFIG_RTAI_DIAG_TSC_SYNC) */

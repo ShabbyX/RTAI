@@ -57,7 +57,7 @@ calibration_PROGRAMS += calibration_helper
 calibrate_SOURCES = calibrate.c calibrate.h
 
 calibrate_CPPFLAGS = \
-	@RTAI_USER_CFLAGS@ \
+	@RTAI_REAL_USER_CFLAGS@ \
 	-DKERNEL_HELPER_PATH="\"$(calibrationdir)/rtai_calibrate$(modext)\"" \
 	-DUSER_HELPER_PATH="\"$(calibrationdir)/calibration_helper\"" \
 	-I$(top_srcdir)/base/include \
@@ -66,7 +66,7 @@ calibrate_CPPFLAGS = \
 calibration_helper_SOURCES = calibration_helper.c
 
 calibration_helper_CPPFLAGS = \
-	@RTAI_USER_CFLAGS@ \
+	@RTAI_REAL_USER_CFLAGS@ \
 	-I$(top_srcdir)/base/include \
 	-I../../../include
 

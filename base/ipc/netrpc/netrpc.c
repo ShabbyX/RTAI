@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2009 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright (C) 1999-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -185,6 +185,8 @@ static inline void check_portslot(unsigned long node, int port, struct portslot_
 	
 }
 
+#define NETRPC_POLL_TMOUT 1000
+#define NETRPC_DELAY_FREQ 50
 #define NETRPC_TIMER_FREQ 50
 static struct timer_list timer;
 static SEM timer_sem;
@@ -351,13 +353,15 @@ static void thread_fun(RT_TASK *task)
 	}
 }
 
+#include <linux/kthread.h>
+
 static int soft_kthread_init(RT_TASK *task, long fun, long arg, int priority)
 {
 	task->magic = task->state = 0;
 	(task->fun_args = (long *)(task + 1))[1] = fun;
 	task->fun_args[2] = arg;
 	task->fun_args[3] = priority;
-	if (kernel_thread((void *)thread_fun, task, 0) > 0) {
+	if (!IS_ERR(kthread_run((void *)thread_fun, task, " "))) {
 		while (task->state != (RT_SCHED_READY | RT_SCHED_SUSPENDED)) {
 			current->state = TASK_INTERRUPTIBLE;
 			schedule_timeout(HZ/NETRPC_TIMER_FREQ);
@@ -475,7 +479,7 @@ static void soft_stub_fun(struct portslot_t *portslotp)
 	sem  = &portslotp->sem;
 	ain = (par = (void *)msg)->a;
 	task = (RT_TASK *)portslotp->task;
-	sprintf(current->comm, "SFTSTB-%ld", sock);
+	sprintf(current->comm, "SFTSTB:%ld", sock);
 	
 recvrys:
 
@@ -562,7 +566,6 @@ recvrys:
 		soft_rt_sendto(sock, &arg, encode ? encode(portslotp, &arg, sizeof(struct reply_t), RPC_RTR) : sizeof(struct reply_t), 0, addr, ADRSZ);
 		goto recvrys;
 	}
-//	soft_rt_fun_call(task, rt_task_suspend, task);
 }
 
 static void hard_stub_fun(struct portslot_t *portslotp)
@@ -744,7 +747,6 @@ ret:
 			soft_rt_sendto(portslot[0].socket[0], &msg, encode ? encode(&portslot[0], &msg, sizeof(msg), PRT_RTR) : sizeof(msg), 0, addr, ADRSZ);
 		}
 	}
-//soft_rt_fun_call(port_server, rt_task_suspend, port_server);
 }
 
 static int mod_timer_srq;
@@ -1336,6 +1338,13 @@ int errno;
 
 extern void *sys_call_table[];
 
+static inline int kclose(int fd)
+{
+	SYSCALL_BGN();
+	retval = ((asmlinkage int (*)(int))sys_call_table[__NR_close])(fd);
+	SYSCALL_END();
+}
+
 //static _syscall3(int, poll, struct pollfd *, ufds, unsigned int, nfds, int, timeout)
 static inline int kpoll(struct pollfd *ufds, unsigned int nfds, int timeout)
 {
@@ -1629,8 +1638,7 @@ static void send_thread(void)
 {
 	int i;
 
-	sprintf(current->comm, "SNDSRV");
-	rtai_set_linux_task_priority(current,SCHED_FIFO,MAX_LINUX_RTPRIO);
+	rtai_set_linux_task_priority(current, SCHED_FIFO, MAX_LINUX_RTPRIO);
 	sigfillset(&current->blocked);
 	while (!end_softrtnet) {
 		i = down_interruptible(&mtx);
@@ -1650,12 +1658,26 @@ static void recv_thread(void)
 {
 	int i, nevents;
 
+	for (i = 0; i < MaxSocks; i++) {
+		int k;
+		SPRT_ADDR.sin_port = htons(BASEPORT + i);
+		if ((socks[i].sock = ksocket(AF_INET, SOCK_DGRAM, 0)) < 0 || (k = kbind(socks[i].sock, (struct sockaddr *)&SPRT_ADDR, ADRSZ)) < 0) {
+			rt_free_srq(sysrq.srq);
+			kfree(socks);
+			kfree(pollv);
+			kfree(sysrq.sockindx);
+			printk("SOFT RTNet: unable to set up Linux support sockets.\n");
+			return;
+		}
+		socks[i].addrlen = ADRSZ;
+		pollv[i].fd      = socks[i].sock;
+		pollv[i].events  = POLLIN;
+	}
 	recv_handle = current;
-	sprintf(current->comm, "RCVSRV");
-	rtai_set_linux_task_priority(current,SCHED_RR,MAX_LINUX_RTPRIO);
+	rtai_set_linux_task_priority(current, SCHED_RR, MAX_LINUX_RTPRIO);
 	sigfillset(&current->blocked);
 	while (!end_softrtnet) {
-		if ((nevents = kpoll(pollv, MaxSocks, 1000)) > 0) {
+		if ((nevents = kpoll(pollv, MaxSocks, NETRPC_POLL_TMOUT)) > 0) {
 			i = -1;
 			do {
 				while (!pollv[++i].revents);
@@ -1664,6 +1686,9 @@ static void recv_thread(void)
 				}
 			} while (--nevents);
 		}
+	}
+	for (i = 0; i < MaxSocks; i++) {
+		kclose(socks[i].sock);
 	}
 	set_bit(2, &end_softrtnet);
 }
@@ -1698,21 +1723,7 @@ static int init_softrtnet(void)
 		return -ENOMEM;
 	}
 	memset(socks, 0, MaxSocks*sizeof(struct sock_t));
-	for (i = 0; i < MaxSocks; i++) {
-		SPRT_ADDR.sin_port = htons(BASEPORT + i);
-		if ((socks[i].sock = ksocket(AF_INET, SOCK_DGRAM, 0)) < 0 || kbind(socks[i].sock, (struct sockaddr *)&SPRT_ADDR, ADRSZ) < 0) {
-			rt_free_srq(sysrq.srq);
-			kfree(socks);
-			kfree(pollv);
-			kfree(sysrq.sockindx);
-			printk("SOFT RTNet: unable to set up Linux support sockets.\n");
-			return -ESOCKTNOSUPPORT;
-		}
-		socks[i].addrlen = ADRSZ;
-		pollv[i].fd     = socks[i].sock;
-		pollv[i].events = POLLIN;
-	}
-	if (kernel_thread((void *)send_thread, 0, 0) <= 0 || kernel_thread((void *)recv_thread, 0, 0) <= 0) {
+	if (IS_ERR(kthread_run((void *)send_thread, 0, "SNDSRV")) || IS_ERR(kthread_run((void *)recv_thread, 0, "RCVSRV"))) {
 			kfree(sysrq.sockindx);
 			kfree(socks);
 			kfree(pollv);
@@ -1721,14 +1732,13 @@ static int init_softrtnet(void)
 	}
 	while (!recv_handle) {
 		current->state = TASK_INTERRUPTIBLE;
-		schedule_timeout(HZ/2);
+		schedule_timeout(HZ/NETRPC_DELAY_FREQ);
 	}
 	return 0;
 }
 
 static void cleanup_softrtnet(void)
 {
-	int i;
 	rt_free_srq(sysrq.srq);
 	end_softrtnet = 1;
 /* watch out: dirty trick, but we are sure the thread will do nothing more. */
@@ -1738,10 +1748,7 @@ static void cleanup_softrtnet(void)
 	softrtnet_hdl();
 	while (end_softrtnet < 7) {
 		current->state = TASK_INTERRUPTIBLE;
-		schedule_timeout(HZ/2);
-	}
-	for (i = 0; i < MaxSocks; i++) {
-		kshutdown(socks[i].sock, 2);
+		schedule_timeout(HZ/NETRPC_DELAY_FREQ);
 	}
 	kfree(sysrq.sockindx);
 	kfree(socks);

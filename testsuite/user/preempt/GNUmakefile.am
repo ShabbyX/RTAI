@@ -5,7 +5,7 @@ test_PROGRAMS = preempt display
 preempt_SOURCES = preempt.c
 
 preempt_CPPFLAGS = \
-	@RTAI_USER_CFLAGS@ \
+	@RTAI_REAL_USER_CFLAGS@ \
 	-I$(top_srcdir)/base/include \
 	-I../../../base/include
 
@@ -16,7 +16,7 @@ preempt_LDADD = \
 display_SOURCES = display.c
 
 display_CPPFLAGS = \
-	@RTAI_USER_CFLAGS@ \
+	@RTAI_REAL_USER_CFLAGS@ \
 	-I$(top_srcdir)/base/include \
 	-I../../../base/include
 

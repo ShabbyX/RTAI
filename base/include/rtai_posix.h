@@ -132,6 +132,7 @@
 #define pthread_attr_getinheritsched(attr, inherit)
 
 #include <linux/fcntl.h>
+#include <linux/delay.h>
 
 #include <rtai_malloc.h>
 #include <rtai_rwl.h>

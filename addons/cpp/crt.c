@@ -1,7 +1,7 @@
 /*
  * Project: rtai_cpp - RTAI C++ Framework 
  *
- * File: $Id: crt.c,v 1.1 2004/12/09 09:19:54 rpm Exp $
+ * File: $Id: crt.c,v 1.2 2013/07/26 10:20:29 mante Exp $
  *
  * Specialized bits of code needed to support construction and
  * destruction of file-scope objects in C++ code.
@@ -131,9 +131,6 @@ static int main_thread(void *unused){
 	sigset_t tmpsig;
 	int res = -1;
 
-	sprintf(current->comm,"main");
-	daemonize();
-
 	/* Block all signals except SIGKILL and SIGSTOP */
 	spin_lock_irq(&current->sigmask_lock);
 	tmpsig = current->blocked;
@@ -173,12 +170,14 @@ void cleanup_cpp( void )
 
 #else /* NO_MOD_INIT */
 
+#include <linux/kthread.h>
+
 int __init startup_init(void)
 {
 	__init_atexit( 128 );
 
 #ifdef USE_MAIN
-	kernel_thread(main_thread, NULL , CLONE_FS | CLONE_FILES | CLONE_SIGHAND);
+	kthread_run(main_thread, NULL, "RTAI_KCPP_SUPRT");
 #else
 	__do_global_ctors();
 #endif

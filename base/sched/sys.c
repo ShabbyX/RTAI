@@ -162,8 +162,10 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 		}
 		if (rsize) {			
 			long *buf_arg = fun_args + USP_RBF1(type);
-			rt_copy_from_user(rt_task->msg_buf[0], (long *)buf_arg[0], rsize);
-			buf_arg[0] = (long)rt_task->msg_buf[0];
+			if (buf_arg[0]) {
+				rt_copy_from_user(rt_task->msg_buf[0], (long *)buf_arg[0], rsize);
+				buf_arg[0] = (long)rt_task->msg_buf[0];
+			}
 		}
 		if (wsize) {
 			long *buf_arg = fun_args + USP_WBF1(type);
@@ -179,8 +181,10 @@ static inline void lxrt_fun_call_wbuf(RT_TASK *rt_task, void *fun, int narg, lon
 		}
 		if (r2size) {
 			long *buf_arg = fun_args + USP_RBF2(type);
-			rt_copy_from_user(rt_task->msg_buf[1], (long *)buf_arg[0], r2size);
-			buf_arg[0] = (long)rt_task->msg_buf[1];
+			if (buf_arg[0]) {
+				rt_copy_from_user(rt_task->msg_buf[1], (long *)buf_arg[0], r2size);
+				buf_arg[0] = (long)rt_task->msg_buf[1];
+       			}
        		}
 		if (w2size) {
 			long *buf_arg = fun_args + USP_WBF2(type);

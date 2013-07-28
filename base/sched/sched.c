@@ -2106,11 +2106,9 @@ static int lxrt_handle_trap(int vec, int signo, struct pt_regs *regs, void *dumm
 static inline void rt_signal_wake_up(RT_TASK *task)
 {
 	struct task_struct *lnxtsk;
-	if ((lnxtsk = task->lnxtsk) && task->state && task->state != RT_SCHED_READY) {
-		if ((lnxtsk->state & TASK_HARDREALTIME) && sig_user_defined(lnxtsk, SIGTERM)) {
-			task->unblocked = 1;
-			rt_task_masked_unblock(task, ~RT_SCHED_READY);
-		}
+	if ((lnxtsk = task->lnxtsk) && task->state && task->state != RT_SCHED_READY && lnxtsk->state & TASK_HARDREALTIME) {
+		task->unblocked = 1;
+		rt_task_masked_unblock(task, ~RT_SCHED_READY);
 	} else {
 		task->unblocked = -1;
 	}
@@ -2422,11 +2420,12 @@ static void *saved_syscall_prologue;
 
 #ifdef CONFIG_RTAI_SCHED_ISR_LOCK
 extern void *rtai_isr_sched;
+#endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
 static void rtai_isr_sched_handle(int cpuid) /* Called with interrupts off */
 {
 	SCHED_UNLOCK_SCHEDULE(cpuid);
 }
-#endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
+EXPORT_SYMBOL(rtai_isr_sched_handle);
 
 static int lxrt_init(void)
 {
