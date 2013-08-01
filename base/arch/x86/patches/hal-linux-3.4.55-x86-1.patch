@@ -8181,7 +8181,7 @@ index 6cfd71d..3eb29a1 100644
  
  config LOCALVERSION
  	string "Local version - append to kernel release"
-+	default "-rtai"
++	default "-RTAI"
  	help
  	  Append an extra string to the end of your kernel version.
  	  This will show up when you type uname, for example.
