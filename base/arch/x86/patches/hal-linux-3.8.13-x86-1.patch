@@ -3834,7 +3834,7 @@ index 0000000..6b73eb9
 +	if (!__ipipe_syscall_watched_p(current, regs->orig_ax))
 +		return 0;
 +
-+	ret = __ipipe_notify_kevent(IPIPE_EVENT_SYSCALL - IPIPE_FIRST_EVENT, regs); // __ipipe_notify_syscall(regs);
++	ret = __ipipe_notify_kevent(IPIPE_EVENT_SYSCALL - IPIPE_FIRST_EVENT, regs);
 +
 +	hard_local_irq_disable();
 +
@@ -10246,7 +10246,7 @@ index 0000000..0b83546
 +		if (unlikely(flags & IPIPE_IRQF_NOSYNC))
 +			__ipipe_set_irq_pending(ipd, irq);
 +		else
-+			rtai_irq_handler(irq); // dispatch_irq_head(irq);
++			rtai_irq_handler(irq);
 +		return;
 +	}
 +
