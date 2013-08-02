@@ -1,3 +1,18 @@
+2013-08-01 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/include/asm-x86/rtai_sched_32.h, rtai_sched_64.h and 
+	  rtai_sched.h: removed and gathered code common to 64 and 32 into 
+	  rtai_sched.h.
+
+2013-07-30 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/ipc/msg/msg.c: tightened task and message copying pointer
+	  checks.
+
+2013-07-29 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/ipc/netrpc/netrpc.c added a missing kclose for x86_64.
+
 2013-07-26 Pierangelo Masarati <masarati@aero.polimi.it>
 
 	* change the making of the schedulers, finally we got rid of a useless
