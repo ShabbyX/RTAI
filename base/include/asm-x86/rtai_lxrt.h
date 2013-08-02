@@ -18,29 +18,21 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef _RTAI_ASM_I386_LXRT_H
-#define _RTAI_ASM_I386_LXRT_H
+#ifndef _RTAI_ASM_X86_LXRT_H
+#define _RTAI_ASM_X86_LXRT_H
 
 #include <linux/version.h>
 
-//#include <asm/rtai_vectors.h>
-
-#ifdef CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL
-#define USE_LINUX_SYSCALL
-#else
-#undef USE_LINUX_SYSCALL
-#endif
-
-#define RTAI_SYSCALL_NR      0x70000000
+#define RTAI_SYSCALL_NR  0x70000000
 
 #if defined(__KERNEL__) && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,25)
 
-#define RT_REG_ORIG_AX           orig_ax
-#define RT_REG_SP                sp
-#define RT_REG_FLAGS             flags
-#define RT_REG_IP                ip
-#define RT_REG_CS                cs
-#define RT_REG_BP                bp
+#define RT_REG_ORIG_AX        orig_ax
+#define RT_REG_SP             sp
+#define RT_REG_FLAGS          flags
+#define RT_REG_IP             ip
+#define RT_REG_CS             cs
+#define RT_REG_BP             bp
 
 #define RTAI_SYSCALL_CODE     bx
 #define RTAI_SYSCALL_ARGS     cx
@@ -81,31 +73,8 @@
 
 #endif
 
-#define LXRT_DO_IMMEDIATE_LINUX_SYSCALL(regs) \
-	do { \
-		regs->LINUX_SYSCALL_RETREG = sys_call_table[regs->LINUX_SYSCALL_NR](*regs); \
-	} while (0)
-
-#define SET_LXRT_RETVAL_IN_SYSCALL(regs, retval) \
-	do { \
-                if (regs->RTAI_SYSCALL_RETPNT) { \
-			rt_copy_to_user((void *)regs->RTAI_SYSCALL_RETPNT, &retval, sizeof(retval)); \
-		} \
-	} while (0)
-
 #define LOW  0
 #define HIGH 1
-
-#if defined(CONFIG_RTAI_RTC_FREQ) && CONFIG_RTAI_RTC_FREQ >= 2
-
-#define TIMER_NAME        "RTC"
-#define HRT_LINUX_TIMER_NAME  "rtc"
-#define TIMER_FREQ        CONFIG_RTAI_RTC_FREQ
-#define TIMER_LATENCY     0
-#define TIMER_SETUP_TIME  0
-#define ONESHOT_SPAN      0
-
-#else /* CONFIG_RTAI_RTC_FREQ == 0 */
 
 #ifdef CONFIG_X86_LOCAL_APIC
 
@@ -140,8 +109,6 @@
 
 #endif /* CONFIG_X86_LOCAL_APIC */
 
-#endif /* CONFIG_RTAI_RTC_FREQ != 0 */
-
 union rtai_lxrt_t { RTIME rt; int i[2]; void *v[2]; };
 
 #ifdef __cplusplus
@@ -149,15 +116,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 #ifdef __KERNEL__
-
-#include <asm/segment.h>
-#include <asm/mmu_context.h>
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#define __LXRT_GET_DATASEG(reg) "movl $" STR(__KERNEL_DS) ",%" #reg "\n\t"
-#else /* KERNEL_VERSION >= 2.6.0 */
-#define __LXRT_GET_DATASEG(reg) "movl $" STR(__USER_DS) ",%" #reg "\n\t"
-#endif  /* KERNEL_VERSION < 2.6.0 */
 
 static inline void _lxrt_context_switch (struct task_struct *prev, struct task_struct *next, int cpuid)
 {
@@ -167,14 +125,6 @@ static inline void _lxrt_context_switch (struct task_struct *prev, struct task_s
 #endif
 	context_switch(0, prev, next);
 }
-
-#if 0
-#define IN_INTERCEPT_IRQ_ENABLE()   do { rtai_hw_sti(); } while (0)
-#define IN_INTERCEPT_IRQ_DISABLE()  do { rtai_hw_cli(); } while (0)
-#else
-#define IN_INTERCEPT_IRQ_ENABLE()   do { } while (0)
-#define IN_INTERCEPT_IRQ_DISABLE()  do { } while (0)
-#endif
 
 #include <linux/slab.h>
 
@@ -193,36 +143,16 @@ static inline void _lxrt_context_switch (struct task_struct *prev, struct task_s
 #define rt_put_user  __put_user
 #define rt_get_user  __get_user
 
-//#define RTAI_DO_LINUX_SIGNAL
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,16)
-extern int FASTCALL(do_signal(struct pt_regs *regs, sigset_t *oldset));
-#define RT_DO_SIGNAL(regs)  do_signal(regs, NULL)
-#else
-__attribute__((regparm(3))) void do_notify_resume(struct pt_regs *regs, void *_unused, __u32 thread_info_flags);
-#define RT_DO_SIGNAL(regs)  do_notify_resume(regs, NULL, (_TIF_SIGPENDING | _TIF_RESTORE_SIGMASK));
-#endif
-
 #else /* !__KERNEL__ */
-
-/* NOTE: Keep the following routines unfold: this is a compiler
-   compatibility issue. */
 
 #include <sys/syscall.h>
 #include <unistd.h>
-
-static inline union rtai_lxrt_t _rtai_lxrt(int srq, void *arg)
-{
-	union rtai_lxrt_t retval;
-	syscall(RTAI_SYSCALL_NR, srq, arg, &retval);
-	return retval;
-}
 
 static inline union rtai_lxrt_t rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
 {
 	union rtai_lxrt_t ret;
 	syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret);
 	return ret;
-//	return _rtai_lxrt(ENCODE_LXRT_REQ(dynx, srq, lsize), arg);
 }
 
 #define rtai_iopl()  do { extern int iopl(int); iopl(3); } while (0)
@@ -233,4 +163,4 @@ static inline union rtai_lxrt_t rtai_lxrt(short int dynx, short int lsize, int s
 }
 #endif /* __cplusplus */
 
-#endif /* !_RTAI_ASM_I386_LXRT_H */
+#endif /* !_RTAI_ASM_X86_LXRT_H */

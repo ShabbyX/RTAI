@@ -16,10 +16,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#if 0  // B E G I N  U N U S E D
+
 #ifndef _RTAI_ASM_I386_SHM_H
 #define _RTAI_ASM_I386_SHM_H
-
-#if 0
 
 #ifndef __KERNEL__
 
@@ -88,6 +88,7 @@ static inline unsigned long kvirt_to_bus(unsigned long adr)
 	return virt_to_bus((void *)uvirt_to_kva(pgd_offset_k(va), va));
 }
 
-#endif
-
 #endif  /* !_RTAI_ASM_I386_SHM_H */
+
+#endif // E N D  O F  U N U S E D
+

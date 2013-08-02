@@ -1475,6 +1475,13 @@ static inline int krecvmsg(int fd, struct msghdr *msg, unsigned flags)
 
 extern void *sys_call_table[];
 
+static inline int kclose(int fd)
+{
+	SYSCALL_BGN();
+	retval = ((asmlinkage int (*)(int))sys_call_table[__NR_close])(fd);
+	SYSCALL_END();
+}
+
 //static _syscall3(int, poll, struct pollfd *, ufds, unsigned int, nfds, int, timeout)
 static inline int kpoll(struct pollfd *ufds, unsigned int nfds, int timeout)
 {

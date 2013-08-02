@@ -662,7 +662,7 @@ config RTAI_USE_NEWERR
 config RTAI_MATH
 	bool "Mathfuns support in kernel"
 	depends on RTAI_FPU_SUPPORT
-	default y
+	default n
 	help
 	This parameter allows buiding a module containing math support 
 	functions for kernel space. It might be useful to avoid fighting

@@ -29,4 +29,22 @@
 #include "rtai_sched_64.h"
 #endif
 
+#define init_arch_stack() \
+do { \
+	*--(task->stack) = data;			\
+	*--(task->stack) = (unsigned long) rt_thread;	\
+	*--(task->stack) = 0;				\
+	*--(task->stack) = (unsigned long) rt_startup;	\
+} while(0)
+
+#define DEFINE_LINUX_CR0      static unsigned long linux_cr0;
+
+#define DEFINE_LINUX_SMP_CR0  static unsigned long linux_smp_cr0[NR_RT_CPUS];
+
+#define init_task_fpenv(task)  do { init_fpenv((task)->fpu_reg); } while(0)
+
+#define RT_SET_RTAI_TRAP_HANDLER(x)  rt_set_rtai_trap_handler(x)
+
+#define DO_TIMER_PROPER_OP()
+
 #endif /* !_RTAI_ASM_X86_SCHED_H */

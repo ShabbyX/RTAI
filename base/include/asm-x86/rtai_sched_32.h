@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2003 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright (C) 1999-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
  * Copyright (C) 2000      Stuart Hughes    <shughes@zentropix.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -46,29 +46,11 @@
 	: "c" (&oldtask), "d" (newtask) \
 	);
 
-#define init_arch_stack() \
-do { \
-	*--(task->stack) = data;		\
-	*--(task->stack) = (int) rt_thread;	\
-	*--(task->stack) = 0;			\
-	*--(task->stack) = (int) rt_startup;	\
-} while(0)
-
-#define DEFINE_LINUX_CR0      static unsigned long linux_cr0;
-
-#define DEFINE_LINUX_SMP_CR0  static unsigned long linux_smp_cr0[NR_RT_CPUS];
-
-#define init_task_fpenv(task)  do { init_fpenv((task)->fpu_reg); } while(0)
-
 static inline void *get_stack_pointer(void)
 {
 	void *sp;
 	asm volatile ("movl %%esp, %0" : "=r" (sp));
 	return sp;
 }
-
-#define RT_SET_RTAI_TRAP_HANDLER(x)  rt_set_rtai_trap_handler(x)
-
-#define DO_TIMER_PROPER_OP()
 
 #endif /* !_RTAI_ASM_I386_SCHED_H */

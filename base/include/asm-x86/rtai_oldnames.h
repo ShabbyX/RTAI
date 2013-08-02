@@ -5,7 +5,7 @@
  *   be included from rtai_hal.h only.
  *
  *   Original RTAI/x86 layer implementation:
- *   Copyright (C) 2000 Paolo Mantegazza,
+ *   Copyright (C) 2000-2013 Paolo Mantegazza,
  *   Copyright (C) 2000 Steve Papacharalambous,
  *   Copyright (C) 2000 Stuart Hughes,
  *   and others.
@@ -93,71 +93,11 @@ static inline int rt_free_cpu_own_irq (unsigned irq) {
     return rt_release_irq(irq);
 }
 
-#ifdef __i386__
-
-#include <asm/desc.h>
-
-extern struct desc_struct idt_table[];
-
-static inline struct desc_struct rt_set_full_intr_vect (unsigned vector,
-							int type,
-							int dpl,
-							void (*handler)(void)) {
-    struct desc_struct e = idt_table[vector];
-    idt_table[vector].a = (__KERNEL_CS << 16) | ((unsigned)handler & 0x0000FFFF);
-    idt_table[vector].b = ((unsigned)handler & 0xFFFF0000) | (0x8000 + (dpl << 13) + (type << 8));
-    return e;
-}
-
-static inline void rt_reset_full_intr_vect(unsigned vector,
-					   struct desc_struct e) {
-    idt_table[vector] = e;
-}
-
-static inline void *get_intr_handler (unsigned vector) {
-
-    return (void *)((idt_table[vector].b & 0xFFFF0000) | 
-		    (idt_table[vector].a & 0x0000FFFF));
-}
-
-static inline void set_intr_vect (unsigned vector,
-				  void (*handler)(void)) {
-
-    idt_table[vector].a = (idt_table[vector].a & 0xFFFF0000) | 
-	((unsigned)handler & 0x0000FFFF);
-    idt_table[vector].b = ((unsigned)handler & 0xFFFF0000) | 
-	(idt_table[vector].b & 0x0000FFFF);
-}
-
-static inline void *rt_set_intr_handler (unsigned vector,
-					 void (*handler)(void)) {
-
-    void (*saved_handler)(void) = get_intr_handler(vector);
-    set_intr_vect(vector, handler);
-    return saved_handler;
-}
-
-static inline void rt_reset_intr_handler (unsigned vector,
-					  void (*handler)(void)) {
-    set_intr_vect(vector, handler);
-}
-
-static inline unsigned long get_cr2 (void) {
-
-    unsigned long address;
-    __asm__("movl %%cr2,%0":"=r" (address));
-    return address;
-}
-
-#else
-
 static inline unsigned long get_cr2 (void) {
         unsigned long address;
         __asm__("movq %%cr2,%0":"=r" (address));
         return address;
 }
-
-#endif
 
 #endif /* __KERNEL__ */
 

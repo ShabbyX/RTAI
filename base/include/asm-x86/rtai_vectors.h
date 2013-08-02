@@ -27,10 +27,8 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef _RTAI_ASM_I386_VECTORS_H
-#define _RTAI_ASM_I386_VECTORS_H
-
-#include <linux/version.h>
+#ifndef _RTAI_ASM_X86_VECTORS_H
+#define _RTAI_ASM_X86_VECTORS_H
 
 #ifdef __KERNEL__
 
@@ -65,4 +63,4 @@
 
 #define RTAI_DO_TRAP(v, r, a1, a2)  do { __asm__ __volatile__ ( __rtai_do_trap(v): : "a" (a1), "c" (a2), "d" (&r): "memory"); } while (0)
 
-#endif /* !_RTAI_ASM_I386_VECTORS_H */
+#endif /* !_RTAI_ASM_X86_VECTORS_H */
