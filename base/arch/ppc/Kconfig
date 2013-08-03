@@ -24,12 +24,12 @@ choice
 	depends on RTAI_EXTENDED
 	help
 	Allows choosing among:
-	- Eager inlining:       i.e. static inline, always inline regardless 
+	- Eager inlining:       i.e. static inline, always inline regardless
 	  of compiler's optimization switch;
-	- Never inline:         i.e. user-space services are linked to 
-	  programs against the appropriate support library (e.g. liblxrt.a 
+	- Never inline:         i.e. user-space services are linked to
+	  programs against the appropriate support library (e.g. liblxrt.a
 	  for user space RTAI syscall services).
-#	- Conditional inlining: i.e. extern inline, depends on compiler's 
+#	- Conditional inlining: i.e. extern inline, depends on compiler's
 #	  optimization switch;
 
 config RTAI_LXRT_EXTERN_INLINE
@@ -60,8 +60,8 @@ menu "Machine (PPC)"
 #	RTAI dispatches real time interrupts immediately to achieve as
 #	low a overhead as possible. Very important on low end CPUs. By
 #	setting this option it is possible to achieve a further improvement
-#	by allowing hard RTAI internal timers and SMP interprocessor 
-#	scheduling interrupts to be vectored directly to their handlers, 
+#	by allowing hard RTAI internal timers and SMP interprocessor
+#	scheduling interrupts to be vectored directly to their handlers,
 #	i.e without any dispatching overhead. A must on low end CPUs.
 
 config RTAI_FPU_SUPPORT
@@ -123,25 +123,25 @@ config RTAI_RTC_FREQ
 	default 0
 	help
 	1 - Are you happy of working in periodic mode?
-	2 - If so, is it accepable to resolve your timing needs with a 
+	2 - If so, is it accepable to resolve your timing needs with a
 	    tick within a frequency that can be varied just in powers of
 	    2, from 2 to 8192 Hz?
-	If both your answers are YES than it might be worth setting your 
-	tick frequency of choice here and let RTAI schedulers work with 
+	If both your answers are YES than it might be worth setting your
+	tick frequency of choice here and let RTAI schedulers work with
 	it using the Real Time Clock (RTC). Be careful though as:
 	- you must not have configured the RTC as available to Linux;
-	- RTC will be the only available timer and its tick frequency 
-	  can be modified only here, so you must reconfigure this param 
-	  to change it, setting it to zero to return using the other 
+	- RTC will be the only available timer and its tick frequency
+	  can be modified only here, so you must reconfigure this param
+	  to change it, setting it to zero to return using the other
 	  RTAI timers.
 	The main advantage of using the RTC, if constraints 1 and 2 can be
 	accepted, is that you will not touch any of the hard timing sources
-	used by Linux (8254 especially and APIC too). In fact if an APIC 
+	used by Linux (8254 especially and APIC too). In fact if an APIC
 	timer is available (SMP and recent machines) it is possible to avoid
-	the most important interference with Linux timing by not using the 
-	8254. However such a possibilty is not available on low end CPUs 
+	the most important interference with Linux timing by not using the
+	8254. However such a possibilty is not available on low end CPUs
 	and embedded systems for which the only way to avoid interfering with
-	the Linux timer might be this option. Thus in such cases, 1-2 above 
+	the Linux timer might be this option. Thus in such cases, 1-2 above
 	being acceptable once more, setting this config param might be a
 	good choice.
 
@@ -150,7 +150,7 @@ config RTAI_SCHED_8254_LATENCY
 	default 4700
 	help
 	The anticipation time to be used to program the hard timer, in oneshot
-	mode, for the next scheduling shot in order to compensate for the 
+	mode, for the next scheduling shot in order to compensate for the
 	programming overhead needed to determine the right firing time.
 	This parameter has no effect when the periodic mode is used.
 
@@ -161,28 +161,28 @@ config RTAI_SCHED_8254_LATENCY
 #	default y
 #	help
 #	With this option enabled, RTAI uses the Linux syscall mechanism
-#	for its service calls, including RTAI own srqs, as provided by libc 
-#	"syscall".  This may improve signal handling (and therefore debugging 
-#	of RTAI applications), but has the drawback of a slight overhead. 
+#	for its service calls, including RTAI own srqs, as provided by libc
+#	"syscall".  This may improve signal handling (and therefore debugging
+#	of RTAI applications), but has the drawback of a slight overhead.
 #
 #	When direct inlining of RTAI syscalls is enabled, see the related
-#	configuration options, it is still possible to force the use of 
-#	the Linux syscall mechanism, even if this configuration parameter 
+#	configuration options, it is still possible to force the use of
+#	the Linux syscall mechanism, even if this configuration parameter
 #	has not been set. Notice that RTAI own srqs are inlined always.
-#	So, since it all depends on the definition of the USE_LINUX_SYSCALL 
+#	So, since it all depends on the definition of the USE_LINUX_SYSCALL
 #	macro, the only thing to do is to add:
 #	#define USE_LINUX_SYSCALL
-#	after all of the RTAI headers inclusion in any source file in which 
+#	after all of the RTAI headers inclusion in any source file in which
 #	you want to use the Linux syscall mechanism, to be sure that the macro
-#	USE_LINUX_SYSCALL will not be redifined afterward. In the same way 
-#	when this parameter is set you can selectively revert to RTAI own 
+#	USE_LINUX_SYSCALL will not be redifined afterward. In the same way
+#	when this parameter is set you can selectively revert to RTAI own
 #	syscall mechanism by defining:
 #	#undef USE_LINUX_SYSCALL
-#	after all of the RTAI headers inclusion in any source file in which 
+#	after all of the RTAI headers inclusion in any source file in which
 #	you want to use the LXRT syscall mechanism.
-#	RTAI will then operate in mixed mode selectively by using both 
+#	RTAI will then operate in mixed mode selectively by using both
 #	its own and Linux syscall mechanisms.
-#	
+#
 #	If in doubt, say no.
 
 endmenu
@@ -214,20 +214,20 @@ config RTAI_IMMEDIATE_LINUX_SYSCALL
 	This parameter allows to control RTAI behaviour when a Linux syscall
 	is made while in hard real time, according to the following two ways:
 	- 1) 	- if it is set RTAI will put the task back into Linux hands,
-		  i.e pass it to soft mode; 
-		- call the related sys service immediately, i.e. without 
+		  i.e pass it to soft mode;
+		- call the related sys service immediately, i.e. without
 		  going through the Linux syscall path;
 		- put the task back to hard real time, so that it will return
 		  to user space in hard real time mode again.
 	- 2) 	- if it is not set RTAI will put the task back into Linux hands,
-		  i.e pass it to soft mode; 
+		  i.e pass it to soft mode;
 		- call the related sys service through the Linux syscall path;
 		- return to user space in soft real time mode;
 		- resume hard real time at the next call of an RTAI function.
 	The most efficient behaviour is 1 but 2 can be useful in relation to
 	specific RTAI users extensions.
-	It is remarked that nothing is changed if hard/soft transitions 
-	are called controlled by an application task through 
+	It is remarked that nothing is changed if hard/soft transitions
+	are called controlled by an application task through
 	rt_make_hard_real_time/rt_make_soft_real_time.
 
 source "base/arch/Kconfig.other"
@@ -276,7 +276,7 @@ menu "Drivers"
 
 config RTAI_DRIVERS_SERIAL
 	bool "RTAI serial line driver"
-	default y
+	default n
 	help
 	The RTAI real-time serial driver.
 	The module will be called rtai_serial.o.
@@ -296,8 +296,8 @@ choice
 	help
 	Allows choosing among:
 
-	- Port based:    driver uses I/O ports, as defined by module vector 
-                         parameters "io=port1,port2,...".
+	- Port based:    driver uses I/O ports, as defined by module vector
+			 parameters "io=port1,port2,...".
 
 	- Memory mapped: driver uses memory mapping, as defined by module
 			 vector parameters "mem=addr1,addr2,...".

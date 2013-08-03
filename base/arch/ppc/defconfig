@@ -61,7 +61,7 @@ CONFIG_RTAI_LEDS=n
 # Add-ons
 #
 # CONFIG_RTAI_CPLUSPLUS is not set
-# CONFIG_RTAI_SERIAL is not set
+# CONFIG_RTAI_DRIVERS_SERIAL is not set
 
 # RTAI Lab
 #

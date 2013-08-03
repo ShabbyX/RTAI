@@ -222,7 +222,7 @@ menu "Drivers"
 
 config RTAI_DRIVERS_SERIAL
 	bool "RTAI serial line driver"
-	default y
+	default n
 	help
 	The RTAI real-time serial driver.
 	The module will be called rtai_serial.o.
