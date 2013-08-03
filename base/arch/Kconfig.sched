@@ -41,7 +41,7 @@ config RTAI_SCHED_APIC_LATENCY
 
 config RTAI_SCHED_LXRT_NUMSLOTS
 	string "Number of registrable RTAI objects"
-	default 150
+	default 1024
 	help
 	The maximum number of registrable objects in RTAI.
 
@@ -126,7 +126,7 @@ config RTAI_ALIGN_LINUX_PRIORITY
 
 config RTAI_ONE_SHOT
 	bool "One-shot timer mode"
-	default n
+	default y
 	help
 	Set to enable one-shot timer mode as the default. If not set, the
 	hard timer will run in periodic mode according to the period used

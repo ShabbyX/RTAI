@@ -146,7 +146,7 @@ menu "Add-ons"
 
 source "base/arch/Kconfig.addons"
 
-config RTAI_SERIAL
+config RTAI_DRIVERS_SERIAL
 	bool "Serial line driver"
 	default n
 	help
