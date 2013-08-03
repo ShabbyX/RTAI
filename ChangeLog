@@ -1,3 +1,8 @@
+2013-08-02 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/include/rtai_lxrt.h: fixed wrong arg list struct setup in all 
+	  USI support functions.
+
 2013-08-01 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
         * base/include/asm-x86/rtai_sched_32.h, rtai_sched_64.h and 

@@ -954,50 +954,50 @@ RTAI_PROTO(void, rt_sched_unlock, (void))
 
 RTAI_PROTO(void, rt_pend_linux_irq, (unsigned irq))
 {
-	struct { unsigned irq; } arg = { irq };
+	struct { unsigned long irq; } arg = { irq };
 	rtai_lxrt(BIDX, SIZARG, PEND_LINUX_IRQ, &arg);
 }
 
 RTAI_PROTO(int, rt_irq_wait, (unsigned irq))
 {
-	struct { unsigned irq; } arg = { irq };
+	struct { unsigned long irq; } arg = { irq };
 	return rtai_lxrt(BIDX, SIZARG, IRQ_WAIT, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rt_irq_wait_if, (unsigned irq))
 {
-	struct { unsigned irq; } arg = { irq };
+	struct { unsigned long irq; } arg = { irq };
 	return rtai_lxrt(BIDX, SIZARG, IRQ_WAIT_IF, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rt_irq_wait_until, (unsigned irq, RTIME time))
 {
-	struct { unsigned irq; RTIME time; } arg = { irq, time };
+	struct { unsigned long irq; RTIME time; } arg = { irq, time };
 	return rtai_lxrt(BIDX, SIZARG, IRQ_WAIT_UNTIL, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rt_irq_wait_timed, (unsigned irq, RTIME delay))
 {
-	struct { unsigned irq; RTIME delay; } arg = { irq, delay };
+	struct { unsigned long irq; RTIME delay; } arg = { irq, delay };
 	return rtai_lxrt(BIDX, SIZARG, IRQ_WAIT_TIMED, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rt_irq_signal, (unsigned irq))
 {
-	struct { unsigned irq; } arg = { irq };
+	struct { unsigned long irq; } arg = { irq };
 	return rtai_lxrt(BIDX, SIZARG, IRQ_SIGNAL, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rt_request_irq_task, (unsigned irq, void *handler, int type, int affine2task))
 {
-	struct { unsigned irq; void *handler; long type, affine2task; } arg = { irq, handler, type, affine2task };
+	struct { unsigned long irq; void *handler; long type, affine2task; } arg = { irq, handler, type, affine2task };
 	return rtai_lxrt(BIDX, SIZARG, REQUEST_IRQ_TASK, &arg).i[LOW];
 }
 
 
 RTAI_PROTO(int, rt_release_irq_task, (unsigned irq))
 {
-	struct { unsigned irq; } arg = { irq };
+	struct { unsigned long irq; } arg = { irq };
 	return rtai_lxrt(BIDX, SIZARG, RELEASE_IRQ_TASK, &arg).i[LOW];
 }
 
