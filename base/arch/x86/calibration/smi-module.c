@@ -31,6 +31,11 @@
 
 #include <rtai_wrappers.h>
 
+/* __devinit was removed from kernel 3.8 */
+#ifndef __devinit
+# define __devinit
+#endif
+
 /* set these as you need */
 #define CONFIG_RTAI_HW_SMI_ALL		1
 #define CONFIG_RTAI_HW_SMI_INTEL_USB2	0
