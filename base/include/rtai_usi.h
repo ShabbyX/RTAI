@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2005 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright (C) 1999-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,17 +22,22 @@
 #ifndef __KERNEL__
 
 #include <asm/rtai_usi.h>
-//#include <asm/rtai_atomic.h>
 #include <asm/rtai_srq.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
+/*
+ * It does not serve anymore, see IF_IS_A_USI_SRQ_CALL_IT in "asm/rtai_hal.h" 
+ * and its use in rtai_hal.
+ */
+#if 0 
 static inline int rt_startup_irq(unsigned int irq)
 {
         return (int)rtai_srq(USI_SRQ_MASK | _STARTUP_IRQ, irq);
 }
+#endif
  
 #define rt_shutdown_irq(irq) \
 	do { rtai_srq(USI_SRQ_MASK | _SHUTDOWN_IRQ, irq); } while (0)

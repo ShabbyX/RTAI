@@ -385,7 +385,11 @@ void rt_shutdown_irq (unsigned irq)
 
 static inline void _rt_enable_irq (unsigned irq)
 {
-	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(enable, irq);
+	if (rtai_irq_desc_chip(irq)->irq_enable) {
+		rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(enable, irq);
+	} else {
+		rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(unmask, irq);
+	}
 }
 
 /**
@@ -449,7 +453,11 @@ void rt_enable_irq (unsigned irq)
  */
 void rt_disable_irq (unsigned irq)
 {
-	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(disable, irq);
+	if (rtai_irq_desc_chip(irq)->irq_disable) {
+		rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(disable, irq);
+	} else {
+		rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(mask, irq);
+	}
 }
 
 /**
@@ -485,8 +493,7 @@ void rt_disable_irq (unsigned irq)
  */
 void rt_mask_and_ack_irq (unsigned irq)
 {
-//	rtai_irq_desc_chip(irq)->ack(irq);
-	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(ack, irq);
+	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(mask_ack, irq);
 }
 #if 0
 static inline void _rt_end_irq (unsigned irq)
@@ -531,10 +538,14 @@ static inline void _rt_end_irq (unsigned irq)
  * have done it right, and interrupts do not show up, it is likely you have just
  * to rt_enable_irq() your irq.
  */
+void rt_mask_irq (unsigned irq)
+{
+	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(mask, irq);
+}
+
 void rt_unmask_irq (unsigned irq)
 {
-//	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(unmask, irq);
-	_rt_enable_irq(irq);
+	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(unmask, irq);
 }
 
 /**
@@ -1877,6 +1888,7 @@ EXPORT_SYMBOL(rt_shutdown_irq);
 EXPORT_SYMBOL(rt_enable_irq);
 EXPORT_SYMBOL(rt_disable_irq);
 EXPORT_SYMBOL(rt_mask_and_ack_irq);
+EXPORT_SYMBOL(rt_mask_irq);
 EXPORT_SYMBOL(rt_unmask_irq);
 EXPORT_SYMBOL(rt_ack_irq);
 EXPORT_SYMBOL(rt_end_irq);
