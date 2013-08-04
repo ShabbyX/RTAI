@@ -1,3 +1,10 @@
+2013-08-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal_32.c: check if irq disable-enable are NULL 
+	  and divert to mask_unmask if so, add rt_irq_mask.
+	* base/include/rtai_usi.h: #if 0 ...  #endif the request of an srq for 
+	  USI, see comment in the file.
+
 2013-08-02 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/include/rtai_lxrt.h: fixed wrong arg list struct setup in all 
