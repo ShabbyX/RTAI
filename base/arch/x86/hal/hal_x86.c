@@ -1,5 +1,5 @@
 /*
- *   RTAI -- RTAI-compatible Adeos-based Real-Time Interface.
+ *   ARTI -- RTAI-compatible Adeos-based Real-Time Interface.
  *   Based on the original RTAI layer for x86.
  *
  *   Original RTAI/x86 layer implementation:
