@@ -5,13 +5,13 @@
  *   with the legacy RTHAL. Must be included from rtai_hal.h only.
  *
  *   Original RTAI/PPC layer implementation: \n
- *   Copyright &copy; 2000 Paolo Mantegazza, \n
+ *   Copyright &copy; 2000 Paolo Mantegazza <mantegazza@aero.polimi.it> \n
  *   Copyright &copy; 2001 David Schleef, \n
  *   Copyright &copy; 2001 Lineo, Inc, \n
  *   Copyright &copy; 2002 Wolfgang Grandegger. \n
  *
  *   RTAI/x86 rewrite over Adeos: \n
- *   Copyright &copy 2002 Philippe Gerum.
+ *   Copyright &copy 2002 Philippe Gerum <rpm@xenomai.org>
  *
  *   RTAI/PPC rewrite over Adeos: \n
  *   Copyright &copy 2004 Wolfgang Grandegger.

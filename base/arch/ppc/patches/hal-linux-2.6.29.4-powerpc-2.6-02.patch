@@ -545,10 +545,10 @@ index 0000000..fc39c55
 +/*
 + *   include/asm-powerpc/ipipe.h
 + *
-+ *   I-pipe 32/64bit merge - Copyright (C) 2007 Philippe Gerum.
-+ *   I-pipe PA6T support - Copyright (C) 2007 Philippe Gerum.
++ *   I-pipe 32/64bit merge - Copyright (C) 2007 Philippe Gerum <rpm@xenomai.org>
++ *   I-pipe PA6T support - Copyright (C) 2007 Philippe Gerum <rpm@xenomai.org>
 + *   I-pipe 64-bit PowerPC port - Copyright (C) 2005 Heikki Lindholm.
-+ *   I-pipe PowerPC support - Copyright (C) 2002-2005 Philippe Gerum.
++ *   I-pipe PowerPC support - Copyright (C) 2002-2005 Philippe Gerum <rpm@xenomai.org>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -804,7 +804,7 @@ index 0000000..9ccfc23
 +/* -*- linux-c -*-
 + * include/asm-powerpc/ipipe_base.h
 + *
-+ * Copyright (C) 2007 Philippe Gerum.
++ * Copyright (C) 2007 Philippe Gerum <rpm@xenomai.org>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by
@@ -2215,7 +2215,7 @@ index 0000000..0c779a5
 + *
 + * Copyright (C) 2005 Heikki Lindholm (PPC64 port).
 + * Copyright (C) 2004 Wolfgang Grandegger (Adeos/ppc port over 2.4).
-+ * Copyright (C) 2002-2007 Philippe Gerum.
++ * Copyright (C) 2002-2007 Philippe Gerum <rpm@xenomai.org>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by
@@ -4956,7 +4956,7 @@ index 0000000..bee1953
 +/* -*- linux-c -*-
 + * include/linux/ipipe.h
 + *
-+ * Copyright (C) 2002-2007 Philippe Gerum.
++ * Copyright (C) 2002-2007 Philippe Gerum <rpm@xenomai.org>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by
@@ -5640,7 +5640,7 @@ index 0000000..c49fe14
 +/* -*- linux-c -*-
 + * include/linux/ipipe_base.h
 + *
-+ * Copyright (C) 2002-2007 Philippe Gerum.
++ * Copyright (C) 2002-2007 Philippe Gerum <rpm@xenomai.org>
 + *               2007 Jan Kiszka.
 + *
 + * This program is free software; you can redistribute it and/or modify
@@ -5736,7 +5736,7 @@ index 0000000..50a245c
 +/* -*- linux-c -*-
 + * include/linux/ipipe_compat.h
 + *
-+ * Copyright (C) 2007 Philippe Gerum.
++ * Copyright (C) 2007 Philippe Gerum <rpm@xenomai.org>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by
@@ -5796,7 +5796,7 @@ index 0000000..4d83119
 +/*   -*- linux-c -*-
 + *   include/linux/ipipe_percpu.h
 + *
-+ *   Copyright (C) 2007 Philippe Gerum.
++ *   Copyright (C) 2007 Philippe Gerum <rpm@xenomai.org>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -5888,7 +5888,7 @@ index 0000000..4a1cb1b
 +/* -*- linux-c -*-
 + * include/linux/ipipe_tickdev.h
 + *
-+ * Copyright (C) 2007 Philippe Gerum.
++ * Copyright (C) 2007 Philippe Gerum <rpm@xenomai.org>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by
@@ -6787,7 +6787,7 @@ index 0000000..dc79d03
 +/* -*- linux-c -*-
 + * linux/kernel/ipipe/core.c
 + *
-+ * Copyright (C) 2002-2005 Philippe Gerum.
++ * Copyright (C) 2002-2005 Philippe Gerum <rpm@xenomai.org>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001-2008  Paolo Mantegazza <mantegazza@aero.polimi.it>,
+ * Copyright (C) 2001-2008  Paolo Mantegazza <mantegazza@aero.polimi.it>
  *		            Pierre Cloutier <pcloutier@poseidoncontrols.com>,
  *		            Steve Papacharalambous <stevep@zentropix.com>.
  *
@@ -351,7 +351,7 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
  * The next two lines of code do a lot. It makes possible to extend the use of
  * USP to any other real time module service in user space, both for soft and
  * hard real time. Concept contributed and copyrighted by: Giuseppe Renoldi
- * (giuseppe@renoldi.org).
+ * <giuseppe@renoldi.org>.
  */
 		if (unlikely(!(funcm = rt_fun_ext[INDX(lxsrq)]))) {
 			rt_printk("BAD: null rt_fun_ext, no module for extension %d?\n", INDX(lxsrq));

@@ -65,10 +65,10 @@ index 0000000..0a0bad4
 +/*
 + *   linux/adeos/arm.c
 + *
-+ *   Copyright (C) 2003,2004 Philippe Gerum.
++ *   Copyright (C) 2003,2004 Philippe Gerum <rpm@xenomai.org>
 + *   RTAI/ARM over Adeos rewrite for PXA255_2.6.7:
-+ *   Copyright (c) 2005 Stefano Gafforelli (stefano.gafforelli@tiscali.it)
-+ *   Copyright (c) 2005 Luca Pizzi (lucapizzi@hotmail.com)
++ *   Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
++ *   Copyright (C) 2005 Luca Pizzi <lucapizzi@hotmail.com>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -548,10 +548,10 @@ index 0000000..2ca2b54
 +/*
 + *   linux/adeos/generic.c
 + *
-+ *   Copyright (C) 2002 Philippe Gerum.
++ *   Copyright (C) 2002 Philippe Gerum <rpm@xenomai.org>
 + *   RTAI/ARM over Adeos rewrite for PXA255_2.6.7:
-+ *   Copyright (c) 2005 Stefano Gafforelli (stefano.gafforelli@tiscali.it)
-+ *   Copyright (c) 2005 Luca Pizzi (lucapizzi@hotmail.com)
++ *   Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
++ *   Copyright (C) 2005 Luca Pizzi <lucapizzi@hotmail.com>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -580,7 +580,7 @@ index 0000000..2ca2b54
 +#include <linux/irq.h>
 +
 +MODULE_DESCRIPTION("Adeos nanokernel");
-+MODULE_AUTHOR("Philippe Gerum");
++MODULE_AUTHOR("Philippe Gerum <rpm@xenomai.org>);
 +MODULE_LICENSE("GPL");
 +
 +extern spinlock_t __adeos_pipelock;
@@ -1397,10 +1397,10 @@ index 0000000..191c82a
 +/*
 + *   linux/arch/armnommu/kernel/adeos.c
 + *
-+ *   Copyright (C) 2003,2004 Philippe Gerum.
++ *   Copyright (C) 2003,2004 Philippe Gerum <rpm@xenomai.org>
 + *   RTAI/ARM over Adeos rewrite for 255_2.6.7:
-+ *   Copyright (c) 2005 Stefano Gafforelli (stefano.gafforelli@tiscali.it)
-+ *   Copyright (c) 2005 Luca Pizzi (lucapizzi@hotmail.com)
++ *   Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
++ *   Copyright (C) 2005 Luca Pizzi <lucapizzi@hotmail.com>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -2463,10 +2463,10 @@ index 0000000..2a42a8f
 +/*
 + *   include/asm-arm/adeos.h
 + *
-+ *   Copyright (C) 2002,2003,2004 Philippe Gerum.
++ *   Copyright (C) 2002,2003,2004 Philippe Gerum <rpm@xenomai.org>
 + *   RTAI/ARM over Adeos rewrite for PXA255_2.6.7:
-+ *   Copyright (c) 2005 Stefano Gafforelli (stefano.gafforelli@tiscali.it)
-+ *   Copyright (c) 2005 Luca Pizzi (lucapizzi@hotmail.com)
++ *   Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
++ *   Copyright (C) 2005 Luca Pizzi <lucapizzi@hotmail.com>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -3438,10 +3438,10 @@ index 0000000..b3ce3a5
 +/*
 + *   include/linux/adeos.h
 + *
-+ *   Copyright (C) 2002,2003,2004 Philippe Gerum.
++ *   Copyright (C) 2002,2003,2004 Philippe Gerum <rpm@xenomai.org>
 + *   RTAI/ARM over Adeos rewrite for PXA255_2.6.7:
-+ *   Copyright (c) 2005 Stefano Gafforelli (stefano.gafforelli@tiscali.it)
-+ *   Copyright (c) 2005 Luca Pizzi (lucapizzi@hotmail.com)
++ *   Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
++ *   Copyright (C) 2005 Luca Pizzi <lucapizzi@hotmail.com>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -4019,10 +4019,10 @@ index 0000000..f4184e6
 +/*
 + *   linux/kernel/adeos.c
 + *
-+ *   Copyright (C) 2002,2003,2004 Philippe Gerum.
++ *   Copyright (C) 2002,2003,2004 Philippe Gerum <rpm@xenomai.org>
 + *   RTAI/ARM over Adeos rewrite for PXA255_2.6.7:
-+ *   Copyright (c) 2005 Stefano Gafforelli (stefano.gafforelli@tiscali.it)
-+ *   Copyright (c) 2005 Luca Pizzi (lucapizzi@hotmail.com)
++ *   Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
++ *   Copyright (C) 2005 Luca Pizzi <lucapizzi@hotmail.com>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by

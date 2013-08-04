@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
+COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
 	 Adapted by Alberto Sechi (albertosechi@libero.it)
 
 This library is free software; you can redistribute it and/or

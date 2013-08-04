@@ -30,7 +30,7 @@
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Latency measurement tool for RTAI");
-MODULE_AUTHOR("Paolo Mantegazza <mantegazza@aero.polimi.it>, Robert Schwebel <robert@schwebel.de>");
+MODULE_AUTHOR("Paolo Mantegazza <mantegazza@aero.polimi.it> Robert Schwebel <robert@schwebel.de>");
 
 
 /*

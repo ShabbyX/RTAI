@@ -1114,8 +1114,8 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive_timed(RT_TASK *task, void *msg, RTIME dela
 }
 
 /* ++++++++++++++++++++++++++ EXTENDED MESSAGES +++++++++++++++++++++++++++++++
-COPYRIGHT (C) 2003  Pierre Cloutier  (pcloutier@poseidoncontrols.com)
-		    Paolo Mantegazza (mantegazza@aero.polimi.it)
+COPYRIGHT (C) 2003  Pierre Cloutier  <pcloutier@poseidoncontrols.com>
+		    Paolo Mantegazza <mantegazza@aero.polimi.it>
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 #define SET_RPC_MCB() \
@@ -1988,8 +1988,8 @@ RTAI_SYSCALL_MODE RT_TASK *rt_trigger(RT_TASK *proxy)
 }
 
 /* ++++++++++++ ANOTHER API SET FOR EXTENDED INTERTASK MESSAGES +++++++++++++++
-COPYRIGHT (C) 2003  Pierre Cloutier  (pcloutier@poseidoncontrols.com)
-		    Paolo Mantegazza (mantegazza@aero.polimi.it)
+COPYRIGHT (C) 2003  Pierre Cloutier  <pcloutier@poseidoncontrols.com>
+		    Paolo Mantegazza <mantegazza@aero.polimi.it>
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 #include <asm/uaccess.h>

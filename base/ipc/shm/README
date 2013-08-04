@@ -192,4 +192,4 @@ the non "_new" name when shm.c will become the only real time memory management
 support, based on Xenomai memory management eventually (xnheap_alloc/free, in
 xenomai/heap.c).
 
-Paolo Mantegazza (mantegazza@aero.polimi.it)
+Paolo Mantegazza <mantegazza@aero.polimi.it>

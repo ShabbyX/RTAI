@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  *
  * ACKNOWLEDGMENTS:
- * Pierre Cloutier (pcloutier@poseidoncontrols.com) has suggested the 6
+ * Pierre Cloutier <pcloutier@poseidoncontrols.com> has suggested the 6
  * characters names and fixed many inconsistencies within this file.
  */
 
@@ -38,7 +38,7 @@
  * explanation of how it works see
  * @ref lxrt_faq "Pierre Cloutiers LXRT-INFORMED FAQs", and the explanation of
  * @ref whatis_lxrt "the implementation of hard real time in user space"
- * (contributed by: Pierre Cloutier, Paolo Mantegazza, Steve Papacharalambous).
+ * (contributed by: Pierre Cloutier, Paolo Mantegazza <mantegazza@aero.polimi.it> Steve Papacharalambous).
  *
  * LXRT-INFORMED should be the production version of LXRT, the latter being the
  * development version. So it can happen that LXRT-INFORMED could be lagging

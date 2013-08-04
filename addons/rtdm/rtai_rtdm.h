@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Joerg Langenberg <joerg.langenberg@gmx.net>.
+ * Copyright (C) 2005 Joerg Langenberg <joerg.langenberg@gmx.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

@@ -211,7 +211,7 @@ int rtheap_free(rtheap_t *heap, void *block)
  * Released under the terms of the GNU General Public License Version 2.0
  * Released under the terms of the GNU Lesser General Public License Version 2.1
  *
- * Adaption to RTAI by Paolo Mantegazza <mantegazza@aero.polimi.it>,
+ * Adaption to RTAI by Paolo Mantegazza <mantegazza@aero.polimi.it>
  * with TLSF downloaded from: http://rtportal.upv.es/rtmalloc/.
  *
  */
@@ -793,7 +793,7 @@ unsigned long tlsf_get_used_size(rtheap_t *heap) {
 /*!\file malloc.c
  * \brief Dynamic memory allocation services.
  *
- * Copyright (C) 2001,2002,2003,2004 Philippe Gerum <rpm@xenomai.org>.
+ * Copyright (C) 2001,2002,2003,2004 Philippe Gerum <rpm@xenomai.org>
  *
  * RTAI is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by

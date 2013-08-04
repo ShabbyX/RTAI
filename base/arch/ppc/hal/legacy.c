@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 2000  Paolo Mantegazza (mantegazza@aero.polimi.it)
+COPYRIGHT (C) 2000  Paolo Mantegazza <mantegazza@aero.polimi.it>
 	      2001  David Schleef <ds@schleef.org>
 	      2001  Lineo, Inc. <ds@lineo.com>
 	      2002  Wolfgang Grandegger (wg@denx.de)
@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 /*
 ACKNOWLEDGMENTS (LIKELY JUST A PRELIMINARY DRAFT):
-- Steve Papacharalambous (stevep@zentropix.com) has contributed an informative
+- Steve Papacharalambous <stevep@freescale.com> has contributed an informative
   proc filesystem procedure.
 */
 

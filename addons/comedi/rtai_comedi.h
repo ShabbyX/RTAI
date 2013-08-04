@@ -1,8 +1,8 @@
 /*
- * Copyright (C) 2002 Thomas Leibner (leibner@t-online.de) (first complete writeup)
- *               2002 David Schleef (ds@schleef.org) (COMEDI master)
- *               2002 Lorenzo Dozio (dozio@aero.polimi.it) (made it all work)
- *               2002-2010 Paolo Mantegazza (mantegazza@aero.polimi.it) (hints/support)
+ * Copyright (C) 2002 Thomas Leibner <leibner@t-online.de> (first complete writeup)
+ *               2002 David Schleef <ds@schleef.org> (COMEDI master)
+ *               2002 Lorenzo Dozio <dozio@aero.polimi.it> (made it all work)
+ *               2002-2010 Paolo Mantegazza <mantegazza@aero.polimi.it> (hints/support)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

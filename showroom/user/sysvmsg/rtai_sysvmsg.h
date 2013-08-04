@@ -1,8 +1,8 @@
 /*
 2.16.2004, rework of the uncopyrighted Linux msg.h files for RTAI
-hard real time by: Paolo Mantegazza (mantegazza@aero.polimi.it)
+hard real time by: Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-COPYRIGHT (C) 2004  Paolo Mantegazza (mantegazza@aero.polimi.it)
+COPYRIGHT (C) 2004  Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

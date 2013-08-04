@@ -1,8 +1,8 @@
 /* include/asm-arm/arch-at91/rtai_exports.h
 
-Copyright (c) 2002 Guennadi Liakhovetski, DSA GmbH (gl@dsa-ac.de)
-Copyright (c) 2005 Luca Pizzi, (lucapizzi@hotmail.com)
-Copyright (c) 2005 Stefano Gafforelli, (stefano.gafforelli@tiscali.it)
+Copyright (C) 2002 Guennadi Liakhovetski, DSA GmbH <gl@dsa-ac.de>
+Copyright (C) 2005 Luca Pizzi, <lucapizzi@hotmail.com>
+Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of version 2 of the GNU General Public License as

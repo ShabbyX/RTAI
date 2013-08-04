@@ -3,13 +3,13 @@
  *   the original RTAI layer for x86.
  *
  *   Original RTAI/x86 layer implementation:
- *   Copyright (C) 2000-2013 Paolo Mantegazza,
- *   Copyright (C) 2000 Steve Papacharalambous,
- *   Copyright (C) 2000 Stuart Hughes,
+ *   Copyright (C) 2000-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ *   Copyright (C) 2000 Steve Papacharalambous <stevep@freescale.com>
+ *   Copyright (C) 2000 Stuart Hughes <stuarth@lineo.com>
  *   and others.
  *
  *   RTAI/x86 rewrite over Adeos:
- *   Copyright (C) 2002 Philippe Gerum.
+ *   Copyright (C) 2002 Philippe Gerum <rpm@xenomai.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

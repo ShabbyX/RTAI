@@ -2,11 +2,11 @@
 -------------------------------------------------------------
 DON´T include directly - it's included through asm-arm/rtai.h
 -------------------------------------------------------------
-COPYRIGHT (C) 2002 Guennadi Liakhovetski, DSA GmbH (gl@dsa-ac.de)
-COPYRIGHT (C) 2002 Wolfgang Müller (wolfgang.mueller@dsa-ac.de)
-Copyright (c) 2001 Alex Züpke, SYSGO RTS GmbH (azu@sysgo.de)
-Copyright (c) 2005 Luca Pizzi, (lucapizzi@hotmail.com)
-Copyright (c) 2005 Stefano Gafforelli, (stefano.gafforelli@tiscali.it)
+COPYRIGHT (C) 2002 Guennadi Liakhovetski, DSA GmbH <gl@dsa-ac.de>
+COPYRIGHT (C) 2002 Wolfgang Müller <wolfgang.mueller@dsa-ac.de>
+Copyright (C) 2001 Alex Züpke, SYSGO RTS GmbH <azu@sysgo.de>
+Copyright (C) 2005 Luca Pizzi, <lucapizzi@hotmail.com>
+Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of version 2 of the GNU General Public License as

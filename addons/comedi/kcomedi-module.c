@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2006 Thomas Leibner (leibner@t-online.de) (first complete writeup)
- *               2002 David Schleef (ds@schleef.org) (COMEDI master)
- *               2002 Lorenzo Dozio (dozio@aero.polimi.it) (made it all work)
+ * Copyright (C) 2006 Thomas Leibner <leibner@t-online.de> (first complete writeup)
+ *               2002 David Schleef <ds@schleef.org> (COMEDI master)
+ *               2002 Lorenzo Dozio <dozio@aero.polimi.it> (made it all work)
  *               2006 Roberto Bucher <roberto.bucher@supsi.ch> (upgrade)
- *               2002-2010 Paolo Mantegazza (mantegazza@aero.polimi.it) (hints/support)
+ *               2002-2010 Paolo Mantegazza <mantegazza@aero.polimi.it> (hints/support)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as

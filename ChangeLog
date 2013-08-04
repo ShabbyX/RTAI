@@ -4211,7 +4211,7 @@
 	  Added New function "SetTarget_.sci" to handle template Makefile and
 	  continous code generation.
 
-2005-05-18  Philippe Gerum  <rpm@xenomai.org>
+2005-05-18  Philippe Gerum <rpm@xenomai.org>
 
 	* configure.in: stop configuring if Linux REGPARMS is set.
 

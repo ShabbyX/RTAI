@@ -8,7 +8,7 @@
  * functions are called reside in kernel space.
  *
  * This is an extensive rewrite for carrying out the same test on a generic
- * PC, by Paolo Mantegazza (mantegazza@aero.polimi.it).
+ * PC, by Paolo Mantegazza <mantegazza@aero.polimi.it>.
  *
  */
 

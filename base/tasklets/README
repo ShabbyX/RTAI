@@ -215,5 +215,5 @@ only when such processes are in soft real time state. It should not be a heavy
 constraint unless dynamic init/delete calls are required. In such a case a soft
 server thread should be used, a standard way of doing things within hard LXRT.
 
-From: Paolo Mantegazza (mantegazza@aero.polimi.it).
+From: Paolo Mantegazza <mantegazza@aero.polimi.it>.
 Organization: DIAPM.

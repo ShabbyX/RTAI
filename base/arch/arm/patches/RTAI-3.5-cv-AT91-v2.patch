@@ -17,19 +17,19 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/arch/arm/hal/hal.c rtai-3.5-cv/b
 @@ -12,10 +12,10 @@
   *
   * Original RTAI/ARM RTHAL implementation:
-  *   Copyright (c) 2000 Pierre Cloutier (pcloutier@poseidoncontrols.com)
-- *   Copyright (c) 2001 Alex Züpke, SYSGO RTS GmbH (azu@sysgo.de)
-+ *   Copyright (c) 2001 Alex Zpke, SYSGO RTS GmbH (azu@sysgo.de)
-  *   Copyright (c) 2002 Guennadi Liakhovetski DSA GmbH (gl@dsa-ac.de)
-  *   Copyright (c) 2002 Steve Papacharalambous (stevep@zentropix.com)
-- *   Copyright (c) 2002 Wolfgang Müller (wolfgang.mueller@dsa-ac.de)
-+ *   Copyright (c) 2002 Wolfgang Mller (wolfgang.mueller@dsa-ac.de)
-  *   Copyright (c) 2003 Bernard Haible, Marconi Communications
-  *   Copyright (c) 2003 Thomas Gleixner (tglx@linutronix.de)
-  *   Copyright (c) 2003 Philippe Gerum (rpm@xenomai.org)
+  *   Copyright (C) 2000 Pierre Cloutier <pcloutier@poseidoncontrols.com>
+- *   Copyright (C) 2001 Alex Züpke, SYSGO RTS GmbH <azu@sysgo.de>
++ *   Copyright (C) 2001 Alex Zpke, SYSGO RTS GmbH <azu@sysgo.de>
+  *   Copyright (C) 2002 Guennadi Liakhovetski DSA GmbH <gl@dsa-ac.de>
+  *   Copyright (C) 2002 Steve Papacharalambous <stevep@freescale.com>
+- *   Copyright (C) 2002 Wolfgang Müller <wolfgang.mueller@dsa-ac.de>
++ *   Copyright (C) 2002 Wolfgang Mller <wolfgang.mueller@dsa-ac.de>
+  *   Copyright (C) 2003 Bernard Haible, Marconi Communications
+  *   Copyright (C) 2003 Thomas Gleixner <tglx@linutronix.de>
+  *   Copyright (C) 2003 Philippe Gerum <rpm@xenomai.org>
 @@ -23,6 +23,8 @@
   * RTAI/ARM over Adeos rewrite:
-  *   Copyright (c) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
+  *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
   *
 + * RTAI/ARM over Adeos :
 + *   Copyright (C) 2007 Adeneo
@@ -976,11 +976,11 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/arch/arm/hal/mach-at91/at91-time
 +++ rtai-3.5-cv/base/arch/arm/hal/mach-at91/at91-timer.c	2007-08-30 17:28:22.000000000 +0200
 @@ -0,0 +1,127 @@
 +/* rtai/arch/arm/mach-at91/at91-timer.c
-+COPYRIGHT (C) 2002 Guennadi Liakhovetski, DSA GmbH (gl@dsa-ac.de)
-+COPYRIGHT (C) 2002 Wolfgang MÃ¼ller (wolfgang.mueller@dsa-ac.de)
-+Copyright (c) 2001 Alex ZÃ¼pke, SYSGO RTS GmbH (azu@sysgo.de)
-+Copyright (c) 2005 Luca Pizzi, (lucapizzi@hotmail.com)
-+Copyright (c) 2005 Stefano Gafforelli, (stefano.gafforelli@tiscali.it)
++COPYRIGHT (C) 2002 Guennadi Liakhovetski, DSA GmbH <gl@dsa-ac.de>
++COPYRIGHT (C) 2002 Wolfgang MÃ¼ller <wolfgang.mueller@dsa-ac.de>
++Copyright (C) 2001 Alex ZÃ¼pke, SYSGO RTS GmbH <azu@sysgo.de>
++Copyright (C) 2005 Luca Pizzi, <lucapizzi@hotmail.com>
++Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
 +Copyright (C) 2007 Adeneo
 +
 +This program is free software; you can redistribute it and/or modify
@@ -1110,11 +1110,11 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/include/asm-arm/arch-at91/rtai_a
 +-------------------------------------------------------------
 +DONT include directly - it's included through asm-arm/rtai.h
 +-------------------------------------------------------------
-+COPYRIGHT (C) 2002 Guennadi Liakhovetski, DSA GmbH (gl@dsa-ac.de)
-+COPYRIGHT (C) 2002 Wolfgang MÃ¼ller (wolfgang.mueller@dsa-ac.de)
-+Copyright (c) 2001 Alex ZÃ¼pke, SYSGO RTS GmbH (azu@sysgo.de)
-+Copyright (c) 2005 Luca Pizzi, (lucapizzi@hotmail.com)
-+Copyright (c) 2005 Stefano Gafforelli, (stefano.gafforelli@tiscali.it)
++COPYRIGHT (C) 2002 Guennadi Liakhovetski, DSA GmbH <gl@dsa-ac.de>
++COPYRIGHT (C) 2002 Wolfgang MÃ¼ller <wolfgang.mueller@dsa-ac.de>
++Copyright (C) 2001 Alex ZÃ¼pke, SYSGO RTS GmbH <azu@sysgo.de>
++Copyright (C) 2005 Luca Pizzi, <lucapizzi@hotmail.com>
++Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
 +Copyright (C) 2007 Adeneo
 +
 +This program is free software; you can redistribute it and/or modify
@@ -1185,9 +1185,9 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/include/asm-arm/arch-at91/rtai_e
 @@ -0,0 +1,33 @@
 +/* include/asm-arm/arch-at91/rtai_exports.h
 +
-+Copyright (c) 2002 Guennadi Liakhovetski, DSA GmbH (gl@dsa-ac.de)
-+Copyright (c) 2005 Luca Pizzi, (lucapizzi@hotmail.com)
-+Copyright (c) 2005 Stefano Gafforelli, (stefano.gafforelli@tiscali.it)
++Copyright (C) 2002 Guennadi Liakhovetski, DSA GmbH <gl@dsa-ac.de>
++Copyright (C) 2005 Luca Pizzi, <lucapizzi@hotmail.com>
++Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
 +
 +This program is free software; you can redistribute it and/or modify
 +it under the terms of version 2 of the GNU General Public License as
@@ -1223,11 +1223,11 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/include/asm-arm/arch-at91/rtai_t
 +/* 020222 asm-arm/arch-at91/timer.h - ARM/AT91 specific timer
 +Don't include directly - it's included through asm-arm/rtai.h
 +
-+Copyright (c) 2005 Luca Pizzi, (lucapizzi@hotmail.com)
-+Copyright (c) 2005 Stefano Gafforelli, (stefano.gafforelli@tiscali.it)
-+COPYRIGHT (C) 2002 Guennadi Liakhovetski, DSA GmbH (gl@dsa-ac.de)
-+COPYRIGHT (C) 2002 Wolfgang MÃ¼ller (wolfgang.mueller@dsa-ac.de)
-+Copyright (c) 2001 Alex ZÃ¼pke, SYSGO RTS GmbH (azu@sysgo.de)
++Copyright (C) 2005 Luca Pizzi, <lucapizzi@hotmail.com>
++Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
++COPYRIGHT (C) 2002 Guennadi Liakhovetski, DSA GmbH <gl@dsa-ac.de>
++COPYRIGHT (C) 2002 Wolfgang MÃ¼ller <wolfgang.mueller@dsa-ac.de>
++Copyright (C) 2001 Alex ZÃ¼pke, SYSGO RTS GmbH <azu@sysgo.de>
 +Copyright (C) 2007 Adeneo
 +
 +This program is free software; you can redistribute it and/or modify
@@ -1341,16 +1341,16 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/include/asm-arm/rtai_atomic.h rt
 @@ -12,10 +12,10 @@
   *
   * Original RTAI/ARM RTHAL implementation:
-  *   Copyright (c) 2000 Pierre Cloutier (pcloutier@poseidoncontrols.com)
-- *   Copyright (c) 2001 Alex Züpke, SYSGO RTS GmbH (azu@sysgo.de)
-+ *   Copyright (c) 2001 Alex Zpke, SYSGO RTS GmbH (azu@sysgo.de)
-  *   Copyright (c) 2002 Guennadi Liakhovetski DSA GmbH (gl@dsa-ac.de)
-  *   Copyright (c) 2002 Steve Papacharalambous (stevep@zentropix.com)
-- *   Copyright (c) 2002 Wolfgang Müller (wolfgang.mueller@dsa-ac.de)
-+ *   Copyright (c) 2002 Wolfgang Mller (wolfgang.mueller@dsa-ac.de)
-  *   Copyright (c) 2003 Bernard Haible, Marconi Communications
-  *   Copyright (c) 2003 Thomas Gleixner (tglx@linutronix.de)
-  *   Copyright (c) 2003 Philippe Gerum (rpm@xenomai.org)
+  *   Copyright (C) 2000 Pierre Cloutier <pcloutier@poseidoncontrols.com>
+- *   Copyright (C) 2001 Alex Züpke, SYSGO RTS GmbH <azu@sysgo.de>
++ *   Copyright (C) 2001 Alex Zpke, SYSGO RTS GmbH <azu@sysgo.de>
+  *   Copyright (C) 2002 Guennadi Liakhovetski DSA GmbH <gl@dsa-ac.de>
+  *   Copyright (C) 2002 Steve Papacharalambous <stevep@freescale.com>
+- *   Copyright (C) 2002 Wolfgang Müller <wolfgang.mueller@dsa-ac.de>
++ *   Copyright (C) 2002 Wolfgang Mller <wolfgang.mueller@dsa-ac.de>
+  *   Copyright (C) 2003 Bernard Haible, Marconi Communications
+  *   Copyright (C) 2003 Thomas Gleixner <tglx@linutronix.de>
+  *   Copyright (C) 2003 Philippe Gerum <rpm@xenomai.org>
 @@ -44,16 +44,15 @@
  #ifndef _RTAI_ASM_ARM_ATOMIC_H
  #define _RTAI_ASM_ARM_ATOMIC_H
@@ -1543,16 +1543,16 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/include/asm-arm/rtai_hal.h rtai-
 @@ -13,10 +13,10 @@
   *
   * Original RTAI/ARM RTHAL implementation:
-  *   Copyright (c) 2000 Pierre Cloutier (pcloutier@poseidoncontrols.com)
-- *   Copyright (c) 2001 Alex Züpke, SYSGO RTS GmbH (azu@sysgo.de)
-+ *   Copyright (c) 2001 Alex Zpke, SYSGO RTS GmbH (azu@sysgo.de)
-  *   Copyright (c) 2002 Guennadi Liakhovetski DSA GmbH (gl@dsa-ac.de)
-  *   Copyright (c) 2002 Steve Papacharalambous (stevep@zentropix.com)
-- *   Copyright (c) 2002 Wolfgang Müller (wolfgang.mueller@dsa-ac.de)
-+ *   Copyright (c) 2002 Wolfgang Mller (wolfgang.mueller@dsa-ac.de)
-  *   Copyright (c) 2003 Bernard Haible, Marconi Communications
-  *   Copyright (c) 2003 Thomas Gleixner (tglx@linutronix.de)
-  *   Copyright (c) 2003 Philippe Gerum (rpm@xenomai.org)
+  *   Copyright (C) 2000 Pierre Cloutier <pcloutier@poseidoncontrols.com>
+- *   Copyright (C) 2001 Alex Züpke, SYSGO RTS GmbH <azu@sysgo.de>
++ *   Copyright (C) 2001 Alex Zpke, SYSGO RTS GmbH <azu@sysgo.de>
+  *   Copyright (C) 2002 Guennadi Liakhovetski DSA GmbH <gl@dsa-ac.de>
+  *   Copyright (C) 2002 Steve Papacharalambous <stevep@freescale.com>
+- *   Copyright (C) 2002 Wolfgang Müller <wolfgang.mueller@dsa-ac.de>
++ *   Copyright (C) 2002 Wolfgang Mller <wolfgang.mueller@dsa-ac.de>
+  *   Copyright (C) 2003 Bernard Haible, Marconi Communications
+  *   Copyright (C) 2003 Thomas Gleixner <tglx@linutronix.de>
+  *   Copyright (C) 2003 Philippe Gerum <rpm@xenomai.org>
 @@ -42,15 +42,27 @@
  #ifndef _RTAI_ASM_ARM_HAL_H
  #define _RTAI_ASM_ARM_HAL_H
@@ -2083,16 +2083,16 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/include/asm-arm/rtai_lxrt.h rtai
 @@ -12,10 +12,10 @@
   *
   * Original RTAI/ARM RTHAL implementation:
-  *   Copyright (c) 2000 Pierre Cloutier (pcloutier@poseidoncontrols.com)
-- *   Copyright (c) 2001 Alex Züpke, SYSGO RTS GmbH (azu@sysgo.de)
-+ *   Copyright (c) 2001 Alex Zpke, SYSGO RTS GmbH (azu@sysgo.de)
-  *   Copyright (c) 2002 Guennadi Liakhovetski DSA GmbH (gl@dsa-ac.de)
-  *   Copyright (c) 2002 Steve Papacharalambous (stevep@zentropix.com)
-- *   Copyright (c) 2002 Wolfgang Müller (wolfgang.mueller@dsa-ac.de)
-+ *   Copyright (c) 2002 Wolfgang Mller (wolfgang.mueller@dsa-ac.de)
-  *   Copyright (c) 2003 Bernard Haible, Marconi Communications
-  *   Copyright (c) 2003 Thomas Gleixner (tglx@linutronix.de)
-  *   Copyright (c) 2003 Philippe Gerum (rpm@xenomai.org)
+  *   Copyright (C) 2000 Pierre Cloutier <pcloutier@poseidoncontrols.com>
+- *   Copyright (C) 2001 Alex Züpke, SYSGO RTS GmbH <azu@sysgo.de>
++ *   Copyright (C) 2001 Alex Zpke, SYSGO RTS GmbH <azu@sysgo.de>
+  *   Copyright (C) 2002 Guennadi Liakhovetski DSA GmbH <gl@dsa-ac.de>
+  *   Copyright (C) 2002 Steve Papacharalambous <stevep@freescale.com>
+- *   Copyright (C) 2002 Wolfgang Müller <wolfgang.mueller@dsa-ac.de>
++ *   Copyright (C) 2002 Wolfgang Mller <wolfgang.mueller@dsa-ac.de>
+  *   Copyright (C) 2003 Bernard Haible, Marconi Communications
+  *   Copyright (C) 2003 Thomas Gleixner <tglx@linutronix.de>
+  *   Copyright (C) 2003 Philippe Gerum <rpm@xenomai.org>
 @@ -39,15 +39,21 @@
  #ifndef _RTAI_ASM_ARM_LXRT_H
  #define _RTAI_ASM_ARM_LXRT_H
@@ -2200,16 +2200,16 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/include/asm-arm/rtai_oldnames.h 
 @@ -15,10 +15,10 @@
   *
   * Original RTAI/ARM RTHAL implementation:
-  *   Copyright (c) 2000 Pierre Cloutier (pcloutier@poseidoncontrols.com)
-- *   Copyright (c) 2001 Alex Züpke, SYSGO RTS GmbH (azu@sysgo.de)
-+ *   Copyright (c) 2001 Alex Zpke, SYSGO RTS GmbH (azu@sysgo.de)
-  *   Copyright (c) 2002 Guennadi Liakhovetski DSA GmbH (gl@dsa-ac.de)
-  *   Copyright (c) 2002 Steve Papacharalambous (stevep@zentropix.com)
-- *   Copyright (c) 2002 Wolfgang Müller (wolfgang.mueller@dsa-ac.de)
-+ *   Copyright (c) 2002 Wolfgang Mller (wolfgang.mueller@dsa-ac.de)
-  *   Copyright (c) 2003 Bernard Haible, Marconi Communications
-  *   Copyright (c) 2003 Thomas Gleixner (tglx@linutronix.de)
-  *   Copyright (c) 2003 Philippe Gerum (rpm@xenomai.org)
+  *   Copyright (C) 2000 Pierre Cloutier <pcloutier@poseidoncontrols.com>
+- *   Copyright (C) 2001 Alex Züpke, SYSGO RTS GmbH <azu@sysgo.de>
++ *   Copyright (C) 2001 Alex Zpke, SYSGO RTS GmbH <azu@sysgo.de>
+  *   Copyright (C) 2002 Guennadi Liakhovetski DSA GmbH <gl@dsa-ac.de>
+  *   Copyright (C) 2002 Steve Papacharalambous <stevep@freescale.com>
+- *   Copyright (C) 2002 Wolfgang Müller <wolfgang.mueller@dsa-ac.de>
++ *   Copyright (C) 2002 Wolfgang Mller <wolfgang.mueller@dsa-ac.de>
+  *   Copyright (C) 2003 Bernard Haible, Marconi Communications
+  *   Copyright (C) 2003 Thomas Gleixner <tglx@linutronix.de>
+  *   Copyright (C) 2003 Philippe Gerum <rpm@xenomai.org>
 @@ -52,7 +52,7 @@
  #define hard_save_flags_cli(x)		rtai_save_flags_and_cli(x)
  #define hard_restore_flags(x)        	rtai_restore_flags(x)

@@ -5,9 +5,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +/*
 + *   linux/adeos/armv.c
 + *
-+ *   Copyright (C) 2002-2005 Philippe Gerum.
++ *   Copyright (C) 2002-2005 Philippe Gerum <rpm@xenomai.org>
 + *
-+ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
++ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
 + *   	various tweaks, fixes (e.g. call asm_do_IRQ() instead of do_IRQ() and
 + *   	optimizations (e.g. backport of unthreaded support from Adeos/x86 for 2.6)
 + *
@@ -499,9 +499,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +/*
 + *   linux/adeos/generic.c
 + *
-+ *   Copyright (C) 2002 Philippe Gerum.
++ *   Copyright (C) 2002 Philippe Gerum <rpm@xenomai.org>
 + *
-+ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
++ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
 + *   	backport from Adeos for 2.6 to 2.4
 + *
 + *   This program is free software; you can redistribute it and/or modify
@@ -530,7 +530,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +#include <linux/sched.h>
 +
 +MODULE_DESCRIPTION("Adeos nanokernel");
-+MODULE_AUTHOR("Philippe Gerum");
++MODULE_AUTHOR("Philippe Gerum <rpm@xenomai.org>);
 +MODULE_LICENSE("GPL");
 +
 +/* adeos_register_domain() -- Add a new domain to the system. All
@@ -1240,9 +1240,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +/*
 + *   linux/arch/arm/kernel/adeos.c
 + *
-+ *   Copyright (C) 2002-2005 Philippe Gerum.
++ *   Copyright (C) 2002-2005 Philippe Gerum <rpm@xenomai.org>
 + *
-+ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
++ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
 + *   	various tweaks, fixes (e.g. call asm_do_IRQ() instead of do_IRQ() and
 + *   	optimizations, backport of unthreaded support from Adeos/x86 for 2.6
 + *
@@ -1845,7 +1845,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   *  Copyright (C) 1996,1997,1998 Russell King.
   *  ARM700 fix by Matthew Godbolt (linux-user@willothewisp.demon.co.uk)
   *
-+ *  Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
++ *  Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
 + *  	Adeos support for EP93xx
 + *
   * This program is free software; you can redistribute it and/or modify
@@ -2441,7 +2441,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   *
   *  Copyright (C) 2000 Russell King
   *
-+ *  Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
++ *  Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
 + *  	Adeos support for EP93xx
 + *
   * This program is free software; you can redistribute it and/or modify
@@ -3241,7 +3241,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   * (c) Copyright 2001 LynuxWorks, Inc., San Jose, CA.  All rights reserved.
   *  Copyright (C) 2002-2003 Cirrus Logic, Inc.
   *
-+ * Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
++ * Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
 + * 	tie wall-clock to TSC (i.e. timer4)
 + *
   * This program is free software; you can redistribute it and/or modify
@@ -3556,7 +3556,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +mechanism for the implementation of systems that can provide guaranteed
 +realtime response.
 +
-+Philippe Gerum <rpm@xenomai.org>
++Philippe Gerum <rpm@xenomai.org><rpm@xenomai.org>
 +Karim Yaghmour <karim@opersys.com>
 +
 +----------------------------------------------------------------------
@@ -3975,9 +3975,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +/*
 + *   include/asm-arm/adeos.h
 + *
-+ *   Copyright (C) 2002,2003,2004 Philippe Gerum.
++ *   Copyright (C) 2002,2003,2004 Philippe Gerum <rpm@xenomai.org>
 + *
-+ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
++ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
 + *	support for EP9301, backport of unthreaded support from Adeos/x86 for 2.6
 + *
 + *   This program is free software; you can redistribute it and/or modify
@@ -4472,7 +4472,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   *
   * Copyright (C) 2002-2003 Cirrus Logic, Inc.
   *
-+ * Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
++ * Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
 + * 	more Adeos/RTAI friendly
 + *
   * This program is free software; you can redistribute it and/or modify
@@ -4560,7 +4560,7 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
   *
   *  Copyright (C) 1999 ARM Limited
   *
-+ * Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
++ * Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
 + * 	corrected CLOCK_TICK_RATE, added defines for exact frequency
 + *
   * This program is free software; you can redistribute it and/or modify
@@ -5106,9 +5106,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +/*
 + *   include/linux/adeos.h
 + *
-+ *   Copyright (C) 2002,2003,2004 Philippe Gerum.
++ *   Copyright (C) 2002,2003,2004 Philippe Gerum <rpm@xenomai.org>
 + *
-+ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
++ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
 + *   	various tweaks, fixes and optimizations, backport of unthreaded
 + *   	support from Adeos/x86 for 2.6
 + *
@@ -5732,9 +5732,9 @@ diff -rdpNU 5 -x .cvsignore -x CVS -x '.*.sw[a-z]' linux-2.4.21_rmk-1_crus-1.4.2
 +/*
 + *   linux/kernel/adeos.c
 + *
-+ *   Copyright (C) 2002,2003,2004 Philippe Gerum.
++ *   Copyright (C) 2002,2003,2004 Philippe Gerum <rpm@xenomai.org>
 + *
-+ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
++ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
 + *   	various tweaks, fixes and optimizations (e.g. no adp_root variable, no
 + *   	adp_pipelined unless module) backport of unthreaded support from
 + *   	Adeos/x86 for 2.6, general sync Adeos/x86 for 2.6

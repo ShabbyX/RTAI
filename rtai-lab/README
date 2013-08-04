@@ -158,7 +158,7 @@ nonetheless be fully configured to work from within RTAI, as it is in the CVS,
 and thus is expected that it can be used also by copying this directory into
 any of the most recent RTAI official releases.
 
-Lorenzo Dozio    (dozio@aero.polimi.it)
-Paolo Mantegazza (mantegazza@aero.polimi.it)
+Lorenzo Dozio    <dozio@aero.polimi.it>
+Paolo Mantegazza <mantegazza@aero.polimi.it>
 Roberto Bucher   (roberto.bucher@supsi.ch)
 Dec. 22th, 2002.

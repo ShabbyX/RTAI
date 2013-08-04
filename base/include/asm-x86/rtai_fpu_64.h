@@ -8,7 +8,7 @@
  *   and others.
  *
  *   Porting to x86_64 architecture:
- *   Copyright &copy; 2005-2008 Paolo Mantegazza, \n
+ *   Copyright &copy; 2005-2008 Paolo Mantegazza <mantegazza@aero.polimi.it> \n
  *   Copyright &copy; 2005 Daniele Gasperini \n
  *
  *   This program is free software; you can redistribute it and/or modify

@@ -8,7 +8,7 @@
 #  http://git.yoctoproject.org/cgit/cgit.cgi/yocto-kernel-tools/tree/tools/kconf_check
 #  http://git.yoctoproject.org/cgit/cgit.cgi/yocto-kernel-tools/tree/tools/generate_cfg
 #
-#  Copyright (c) 2009-2010 Wind River Systems, Inc.
+#  Copyright (C) 2009-2010 Wind River Systems, Inc.
 #  Copyright 2011 Linaro
 #
 #  This program is free software; you can redistribute it and/or modify

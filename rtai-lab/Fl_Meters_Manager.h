@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
+COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
 		    Roberto Bucher (roberto.bucher@supsi.ch)
 		    Peter Brier (pbrier@dds.nl)
 
