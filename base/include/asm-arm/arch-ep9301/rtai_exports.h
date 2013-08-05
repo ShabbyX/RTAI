@@ -1,10 +1,10 @@
 /*
  * ARM/EP9301 specific exports
  *
- * Copyright (c) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
+ * Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
  *
  * Acknowledgements:
- *	Paolo Mantegazza <mantegazza@aero.polimi.it>, creator of RTAI
+ *	Paolo Mantegazza <mantegazza@aero.polimi.it> creator of RTAI
  *
  *
  * This program is free software; you can redistribute it and/or modify it under

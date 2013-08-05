@@ -4,7 +4,7 @@
  *
  * @author Paolo Mantegazza
  *
- * @note Copyright &copy; 1999  Paolo Mantegazza <mantegazza@aero.polimi.it>,
+ * @note Copyright &copy; 1999  Paolo Mantegazza <mantegazza@aero.polimi.it>
  * extensions for user space modules are jointly copyrighted (2000) with:
  *            Pierre Cloutier <pcloutier@poseidoncontrols.com>,
  *     	Steve Papacharalambous <stevep@zentropix.com>.

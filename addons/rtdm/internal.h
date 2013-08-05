@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2005-2007 Jan Kiszka <jan.kiszka@web.de>.
- * Copyright (C) 2005 Joerg Langenberg <joerg.langenberg@gmx.net>.
+ * Copyright (C) 2005-2007 Jan Kiszka <jan.kiszka@web.de>
+ * Copyright (C) 2005 Joerg Langenberg <joerg.langenberg@gmx.net>
  *
  * with adaptions for RTAI by Paolo Mantegazza <mantegazza@aero.polimi.it>
  *

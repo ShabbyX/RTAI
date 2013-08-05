@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2008  Paolo Mantegazza (mantegazza@aero.polimi.it)
+ * COPYRIGHT (C) 2008  Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * RTAI serial driver test
  *

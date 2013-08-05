@@ -6,7 +6,7 @@
  *   the original RTAI layer for PPC and the RTAI/x86 rewrite over ADEOS.
  *
  *   Original RTAI/PPC layer implementation: \n
- *   Copyright &copy; 2000 Paolo Mantegazza, \n
+ *   Copyright &copy; 2000 Paolo Mantegazza <mantegazza@aero.polimi.it> \n
  *   Copyright &copy; 2001 David Schleef, \n
  *   Copyright &copy; 2001 Lineo, Inc, \n
  *   Copyright &copy; 2002 Wolfgang Grandegger. \n

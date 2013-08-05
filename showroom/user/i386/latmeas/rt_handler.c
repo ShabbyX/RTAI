@@ -44,7 +44,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ===============================================================================
  *
  * This is an extensive rewrite for carrying out the same test on a generic
- * PC, by Paolo Mantegazza (mantegazza@aero.polimi.it).
+ * PC, by Paolo Mantegazza <mantegazza@aero.polimi.it>.
  *
  */
 

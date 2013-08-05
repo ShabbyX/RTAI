@@ -1,5 +1,5 @@
 function RTAICodeGen_()
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 // Last update : 28/08/09
 //
@@ -84,7 +84,7 @@ endfunction
 // *******************************************************
 
 function [txt]=call_block42(bk,pt,flag)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //** call_block42 : generate C calling sequence
 //                  of a scicos block
@@ -866,7 +866,7 @@ endfunction
 // *******************************************************
 
 function [CCode,FCode]=gen_blocks()
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //@@ gen_blocks : generates code for dynamically
 //                linked Fortran and C blocks
@@ -1043,7 +1043,7 @@ endfunction
 // *******************************************************
 
 function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compile_superblock42(all_scs_m,numk,atomicflag)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //@@ do_compile_superblock42 : transforms a given Scicos discrete and continuous
 //                             SuperBlock into a C defined Block
@@ -1735,7 +1735,7 @@ endfunction
 // *******************************************************
 
 function [txt]=BlockProto(bk)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //BlockProto : generate prototype for a calling C sequence
 //             of a scicos computational function
@@ -1760,7 +1760,7 @@ endfunction
 // *******************************************************
 
 function [txt]=make_BlockProto(nin,nout,funs_bk,funtyp_bk,ztyp_bk,bk)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //make_BlockProto : generate prototype for a calling C sequence
 //                  of a scicos computational function
@@ -2089,7 +2089,7 @@ endfunction
 // *******************************************************
 
 function [Code, Code_common]=make_standalonert()
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 // Modified for RTAI by Roberto Bucher roberto.bucher@supsi.ch
 
@@ -2188,7 +2188,7 @@ Code_common= []
         get_scicos_version()+' */'
         '/*     date : '+date()+' */'
         ''
-        '/* Copyright (c) 1989-2010 Metalau project INRIA */'
+        '/* Copyright (C) 1989-2010 Metalau project INRIA */'
 	'/* Code generation modified by Roberto Bucher */'
         ''
         '/* ---- Headers ---- */'
@@ -4005,7 +4005,7 @@ endfunction
 // *******************************************************
 
 function [ccmat]=adj_clkconnect_dep(blklst,ccmat)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //this part was taken from c_pass2 and put in c_pass1;!!
 nbl=size(blklst)
@@ -4038,7 +4038,7 @@ endfunction
 // *******************************************************
 
 function [new_agenda]=adjust_agenda(evts,clkptr,funtyp)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ adjust_agenda : remove secondary activation sources
 //                   from the scicos cpr agenda
@@ -4075,7 +4075,7 @@ endfunction
 // *******************************************************
 
 function [clkptr]=adjust_clkptr(clkptr,funtyp)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ adjust_clkptr : remove secondary activation sources
 //                   from the compiled clkptr
@@ -4107,7 +4107,7 @@ endfunction
 // *******************************************************
 
 function [bllst,ok]=adjust_id_scopes(list_of_scopes,bllst)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ adjust_adjust_id_scopes : function to adjust negative
 //                             and positive id of scicos scopes
@@ -4184,7 +4184,7 @@ endfunction
 // *******************************************************
 
 function [t1]=cformatline(t ,l)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ cformatline : utilitary fonction used to format long C instruction
 //
@@ -4247,7 +4247,7 @@ endfunction
 // *******************************************************
 
 function [txt]=code_to_read_params(varname,var,fpp,typ_str)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ code_to_read_params :  function that write binary data in a scilab file
 //                          descriptor fpp and returns the C code to read
@@ -4322,7 +4322,7 @@ endfunction
 // *******************************************************
 
 function [t]=filetype(m)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ filetype : return type of file using fileinfo
 //              output 2
@@ -4349,7 +4349,7 @@ endfunction
 // *******************************************************
 
 function [txt]=get_blank(str)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ get_blank : return blanks with a length
 //               of the given input string
@@ -4371,7 +4371,7 @@ endfunction
 // *******************************************************
 
 function [txt]=get_code_to_read_params(varname,var,fpp,typ_str)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ get_code_to_read_params : function that write binary data in a scilab file
 //                             descriptor fpp and returns the C code to read
@@ -4409,7 +4409,7 @@ endfunction
 // *******************************************************
 
 function [txt]=get_comment(typ,param)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ get_comment : return a C comment
 //                 for generated code
@@ -4501,7 +4501,7 @@ endfunction
 // *******************************************************
 
 function [ind]=get_ind_clkptr(bk,clkptr,funtyp)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ get_ind_clkptr : get event index of adjusted
 //                    compiled clkptr vector
@@ -4526,7 +4526,7 @@ endfunction
 // *******************************************************
 
 function [scs_m]=goto_target_scs_m(scs_m)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ goto_target_scs_m : look if we want generate a sblock
 //                       contained in a sblock
@@ -4554,7 +4554,7 @@ endfunction
 // *******************************************************
 
 function [depu_mat,ok]=incidence_mat(bllst,connectmat,clkconnect,cor,corinv)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ incidence_mat : compute the incidence matrix
 //
@@ -4614,7 +4614,7 @@ endfunction
 // *******************************************************
 
 function [dep]=is_dep(i,j,bllst,connectmat,clkconnect,cor,corinv)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ is_dep : return the dep_u dependance concerning block i and j
 //
@@ -4650,7 +4650,7 @@ endfunction
 // *******************************************************
 
 function [txt]=mat2c_typ(outtb)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ mat2c_typ : returns the C type of a given ScicosLab
 //               variable
@@ -4694,7 +4694,7 @@ endfunction
 // *******************************************************
 
 function [c_nb]=mat2scs_c_nb(outtb)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ mat2scs_c_nb : returns the scicos C type of a
 //                  given ScicosLab variable
@@ -4738,7 +4738,7 @@ endfunction
 // *******************************************************
 
 function [txt]=mat2scs_c_ptr(outtb)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ mat2scs_c_ptr : returns the scicos C ptr of a
 //                  given ScicosLab variable
@@ -4783,7 +4783,7 @@ endfunction
 // *******************************************************
 
 function [txt]=mat2scs_c_typ(outtb)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ mat2scs_c_typ matrix to scicos C type
 //
@@ -4827,7 +4827,7 @@ endfunction
 // *******************************************************
 
 function [str]=string_to_c_string(a)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 //
 //@@ string_to_c_string : ScicosLab string to C string
 //
@@ -4855,7 +4855,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_cdoit(flag)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //@@ write_code_cdoit : generate body of the code for
 //                      for all time dependant blocks
@@ -4978,7 +4978,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_doit(ev,flag,vvvv)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //@@ write_code_doit : generate body of the code for
 //                     ordering calls of blocks during
@@ -5163,7 +5163,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_idoit()
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //@@ write_code_idoit : generate body of the code for
 //                   ordering calls of initial
@@ -5288,7 +5288,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_initdoit(ev,flag)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //@@ write_code_initdoit : generate body of the code for
 //                         ordering calls of blocks during
@@ -5413,7 +5413,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_odoit(flag)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //@@ write_code_odoit : generate body of the code for
 //                      ordering calls of blocks before
@@ -5571,7 +5571,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_ozdoit(ev,flag)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //@@ write_code_ozdoit : generate body of the code for both
 //                       flag 0 & flag 9
@@ -5721,7 +5721,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_reinitdoit(flag)
-//Copyright (c) 1989-2010 Metalau project INRIA
+//Copyright (C) 1989-2010 Metalau project INRIA
 
 //@@ write_code_reinitdoit : generate body of the code for
 //                           implicit solver reinitialization

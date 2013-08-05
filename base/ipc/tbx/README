@@ -51,7 +51,7 @@ RTAI-24.x.y (Linux 2.4.x) : http://www.rtai.org
 Acknowledgements
 ----------------
 
-Thanks to Paolo Mantegazza (mantegazza@aero.polimi.it) for his work in
+Thanks to Paolo Mantegazza <mantegazza@aero.polimi.it> for his work in
 changing this code from a simple upsched.c patch to an autonomous RTAI
 module.
 

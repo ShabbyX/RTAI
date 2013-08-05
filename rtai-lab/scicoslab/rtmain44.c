@@ -1,6 +1,6 @@
 /*
-  COPYRIGHT (C) 2002  Lorenzo Dozio (dozio@aero.polimi.it)
-  Paolo Mantegazza (mantegazza@aero.polimi.it)
+  COPYRIGHT (C) 2002  Lorenzo Dozio <dozio@aero.polimi.it>
+  Paolo Mantegazza <mantegazza@aero.polimi.it>
   Roberto Bucher (roberto.bucher@supsi.ch)
   Daniele Gasperini (daniele.gasperini@elet.polimi.it)
   Guillaume Millet <millet@isir.fr>

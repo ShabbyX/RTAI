@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	FILE *procfile;
 	long long max = -1000000000, min = 1000000000;
 	struct sample { long long min; long long max; int index, ovrn; } samp;
-	int n = 0, rd;
+	int n = 0;
 
 	setlinebuf(stdout);
 
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 #endif
 			printf("RTH|%11s|%11s|%11s|%11s|%11s|%11s\n", "lat min", "ovl min", "lat avg", "lat max", "ovl max", "overruns");
 		}
-		rd = read(fd0, &samp, sizeof(samp));
+		read(fd0, &samp, sizeof(samp));
 		if (min > samp.min) min = samp.min;
 		if (max < samp.max) max = samp.max;
 		printf("RTD|%11lld|%11lld|%11d|%11lld|%11lld|%11d\n", samp.min, min, samp.index, samp.max, max, samp.ovrn);

@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  *
  * This is an extensive rewrite for carrying out the same test on a generic
- * PC, by Paolo Mantegazza (mantegazza@aero.polimi.it).
+ * PC, by Paolo Mantegazza <mantegazza@aero.polimi.it>.
  *
  */
 

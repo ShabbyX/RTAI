@@ -18,7 +18,7 @@
 
 /*
 ACKNOWLEDGMENTS:
-- Steve Papacharalambous (stevep@zentropix.com) has contributed a very
+- Steve Papacharalambous <stevep@freescale.com> has contributed a very
   informative proc filesystem procedure.
 - Stefano Picerno (stefanopp@libero.it) for suggesting a simple fix to
   distinguish a timeout from an abnormal retrun in timed sem waits.

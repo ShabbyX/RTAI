@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Christoph Rohland
  *
  * 2.16.2004: adapted to RTAI hard real time by:
- * Paolo Mantegazza (mantegazza@aero.polimi.it)
+ * Paolo Mantegazza <mantegazza@aero.polimi.it>
  */
 
 

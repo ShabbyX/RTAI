@@ -27,7 +27,7 @@
 
 /*
 ACKNOWLEDGEMENTS:
-- nice proc file contributed by Steve Papacharalambous (stevep@zentropix.com);
+- nice proc file contributed by Steve Papacharalambous <stevep@freescale.com>;
 - added proc handler info contributed by Rich Walker (rw@shadow.org.uk)
 - 11-19-2001, Truxton Fulton (trux@truxton.com) fixed a race in mbx_get.
 - 10-23-2003 added atomic send contributed by Jan Kiszka

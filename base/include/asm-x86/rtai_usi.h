@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2005 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright (C) 1999-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,8 +16,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef _RTAI_ASM_USI_H
-#define _RTAI_ASM_USI_H
+#ifndef _RTAI_ASM_X86_USI_H
+#define _RTAI_ASM_X86_USI_H
 
 #define USI_SRQ_MASK  0xFFFFFFF0
 
@@ -90,4 +90,4 @@ static unsigned long (*usi_fun_entry[ ])(unsigned long, unsigned long *) = {
 
 #endif /* __KERNEL__ */
 
-#endif /* !_RTAI_ASM_USI_H */
+#endif /* !_RTAI_ASM_X86_USI_H */

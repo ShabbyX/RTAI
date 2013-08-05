@@ -330,7 +330,7 @@ index 0000000..09f250e
 +/*   -*- linux-c -*-
 + *   arch/x86/include/asm/ipipe.h
 + *
-+ *   Copyright (C) 2007 Philippe Gerum.
++ *   Copyright (C) 2007 Philippe Gerum <rpm@xenomai.org>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -440,7 +440,7 @@ index 0000000..0410da9
 +/*   -*- linux-c -*-
 + *   arch/x86/include/asm/ipipe_32.h
 + *
-+ *   Copyright (C) 2002-2012 Philippe Gerum.
++ *   Copyright (C) 2002-2012 Philippe Gerum <rpm@xenomai.org>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -542,7 +542,7 @@ index 0000000..d000d7e
 +/*   -*- linux-c -*-
 + *   arch/x86/include/asm/ipipe_64.h
 + *
-+ *   Copyright (C) 2007-2012 Philippe Gerum.
++ *   Copyright (C) 2007-2012 Philippe Gerum <rpm@xenomai.org>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -643,7 +643,7 @@ index 0000000..4af5264
 +/*   -*- linux-c -*-
 + *   arch/x86/include/asm/ipipe_base.h
 + *
-+ *   Copyright (C) 2007-2012 Philippe Gerum.
++ *   Copyright (C) 2007-2012 Philippe Gerum <rpm@xenomai.org>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -1238,7 +1238,7 @@ index 6902152..e5784d6 100644
 
  #ifdef CONFIG_X86_32
 diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
-index 7639dbf..a8bd9a3 100644
+index 7639dbf..e28697e 100644
 --- a/arch/x86/include/asm/page_64_types.h
 +++ b/arch/x86/include/asm/page_64_types.h
 @@ -1,7 +1,11 @@
@@ -3358,7 +3358,7 @@ index 0000000..22abc5c
 +/*   -*- linux-c -*-
 + *   linux/arch/x86/kernel/ipipe.c
 + *
-+ *   Copyright (C) 2002-2012 Philippe Gerum.
++ *   Copyright (C) 2002-2012 Philippe Gerum <rpm@xenomai.org>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -3922,7 +3922,7 @@ index 0000000..22abc5c
 +	if (!__ipipe_syscall_watched_p(current, regs->orig_ax))
 +		return 0;
 +
-+	ret = __ipipe_notify_kevent(IPIPE_EVENT_SYSCALL - IPIPE_FIRST_EVENT, regs); // __ipipe_notify_syscall(regs);
++	ret = __ipipe_notify_kevent(IPIPE_EVENT_SYSCALL - IPIPE_FIRST_EVENT, regs);
 +
 +	flags = hard_local_irq_save();
 +
@@ -4704,7 +4704,7 @@ index c9f2d9b..ccf6144 100644
 
  	p = to;
 diff --git a/arch/x86/lib/thunk_64.S b/arch/x86/lib/thunk_64.S
-index a63efd6..45f2129 100644
+index a63efd6..886d48a 100644
 --- a/arch/x86/lib/thunk_64.S
 +++ b/arch/x86/lib/thunk_64.S
 @@ -43,3 +43,24 @@ restore:
@@ -4768,7 +4768,7 @@ index 4a0a2e8..7d2a9b4 100644
 +
  #ifdef CONFIG_CPU_SUP_AMD
  static const char errata93_warning[] =
- KERN_ERR
+ KERN_ERR 
 @@ -1022,6 +1027,11 @@ do_page_fault(struct pt_regs *regs, unsigned long error_code)
  	/* Get the faulting address: */
  	address = read_cr2();
@@ -5569,7 +5569,7 @@ index 0000000..a04ec49
 +/* -*- linux-c -*-
 + * include/linux/ipipe.h
 + *
-+ * Copyright (C) 2002-2007 Philippe Gerum.
++ * Copyright (C) 2002-2007 Philippe Gerum <rpm@xenomai.org>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by
@@ -6006,7 +6006,7 @@ index 0000000..12dd998
 +/* -*- linux-c -*-
 + * include/linux/ipipe_base.h
 + *
-+ * Copyright (C) 2002-2012 Philippe Gerum.
++ * Copyright (C) 2002-2012 Philippe Gerum <rpm@xenomai.org>
 + *               2007 Jan Kiszka.
 + *
 + * This program is free software; you can redistribute it and/or modify
@@ -6371,7 +6371,7 @@ index 0000000..fab8f45
 +/* -*- linux-c -*-
 + * include/linux/ipipe_compat.h
 + *
-+ * Copyright (C) 2012 Philippe Gerum.
++ * Copyright (C) 2012 Philippe Gerum <rpm@xenomai.org>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by
@@ -6661,7 +6661,7 @@ index 0000000..9b5a4a3
 +/* -*- linux-c -*-
 + * include/linux/ipipe_debug.h
 + *
-+ * Copyright (C) 2012 Philippe Gerum <rpm@xenomai.org>.
++ * Copyright (C) 2012 Philippe Gerum <rpm@xenomai.org>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by
@@ -6765,7 +6765,7 @@ index 0000000..d0bde26
 +/*   -*- linux-c -*-
 + *   include/linux/ipipe_domain.h
 + *
-+ *   Copyright (C) 2007-2012 Philippe Gerum.
++ *   Copyright (C) 2007-2012 Philippe Gerum <rpm@xenomai.org>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -7082,7 +7082,7 @@ index 0000000..032c734
 +/*   -*- linux-c -*-
 + *   include/linux/ipipe_lock.h
 + *
-+ *   Copyright (C) 2009 Philippe Gerum.
++ *   Copyright (C) 2009 Philippe Gerum <rpm@xenomai.org>
 + *
 + *   This program is free software; you can redistribute it and/or modify
 + *   it under the terms of the GNU General Public License as published by
@@ -7337,14 +7337,14 @@ index 0000000..032c734
 +#endif /* !__LINUX_IPIPE_LOCK_H */
 diff --git a/include/linux/ipipe_tickdev.h b/include/linux/ipipe_tickdev.h
 new file mode 100644
-index 0000000..d76647c
+index 0000000..cfe04ba
 --- /dev/null
 +++ b/include/linux/ipipe_tickdev.h
 @@ -0,0 +1,146 @@
 +/* -*- linux-c -*-
 + * include/linux/ipipe_tickdev.h
 + *
-+ * Copyright (C) 2007 Philippe Gerum.
++ * Copyright (C) 2007 Philippe Gerum <rpm@xenomai.org>
 + * Copyright (C) 2012 Gilles Chanteperdrix
 + *
 + * This program is free software; you can redistribute it and/or modify
@@ -7571,7 +7571,7 @@ index 0000000..deb0a47
 +
 +#endif	/* !__LINUX_IPIPE_TRACE_H */
 diff --git a/include/linux/irq.h b/include/linux/irq.h
-index b27cfcf..7c76552 100644
+index b27cfcf..9c3c5b3 100644
 --- a/include/linux/irq.h
 +++ b/include/linux/irq.h
 @@ -324,6 +324,11 @@ struct irq_chip {
@@ -8181,7 +8181,7 @@ index 6cfd71d..3eb29a1 100644
 
  config LOCALVERSION
  	string "Local version - append to kernel release"
-+	default "-rtai"
++	default "-RTAI"
  	help
  	  Append an extra string to the end of your kernel version.
  	  This will show up when you type uname, for example.
@@ -8239,7 +8239,7 @@ index cb41b95..abd3ec3 100644
  obj-$(CONFIG_TASK_DELAY_ACCT) += delayacct.o
  obj-$(CONFIG_TASKSTATS) += taskstats.o tsacct.o
 diff --git a/kernel/exit.c b/kernel/exit.c
-index bfbd856..554158f 100644
+index bfbd856..724c0c4 100644
 --- a/kernel/exit.c
 +++ b/kernel/exit.c
 @@ -984,6 +984,7 @@ void do_exit(long code)
@@ -8505,7 +8505,7 @@ index 0000000..1147bf4
 +/* -*- linux-c -*-
 + * linux/kernel/ipipe/compat.c
 + *
-+ * Copyright (C) 2012 Philippe Gerum.
++ * Copyright (C) 2012 Philippe Gerum <rpm@xenomai.org>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by
@@ -8779,7 +8779,7 @@ index 0000000..fc01e41
 +/* -*- linux-c -*-
 + * linux/kernel/ipipe/core.c
 + *
-+ * Copyright (C) 2002-2012 Philippe Gerum.
++ * Copyright (C) 2002-2012 Philippe Gerum <rpm@xenomai.org>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by
@@ -10074,7 +10074,7 @@ index 0000000..fc01e41
 +		if (unlikely(flags & IPIPE_IRQF_NOSYNC))
 +			__ipipe_set_irq_pending(ipd, irq);
 +		else
-+			rtai_irq_handler(irq); // dispatch_irq_head(irq);
++			rtai_irq_handler(irq);
 +		return;
 +	}
 +
@@ -12986,7 +12986,7 @@ index 52a1817..25814b2 100644
  	if (pm_wakeup_pending()) {
  		error = -EAGAIN;
 diff --git a/kernel/printk.c b/kernel/printk.c
-index e95c662..314f2d0 100644
+index e95c662..2fd0cd3 100644
 --- a/kernel/printk.c
 +++ b/kernel/printk.c
 @@ -755,6 +755,100 @@ static int have_callable_console(void)
@@ -13565,10 +13565,10 @@ index eff0b1e..30f0b7d 100644
 +	return timekeeper.wall_to_monotonic;
 +}
 diff --git a/kernel/timer.c b/kernel/timer.c
-index dd93d90..3ef576f 100644
+index 7e0a770..7ad80ac 100644
 --- a/kernel/timer.c
 +++ b/kernel/timer.c
-@@ -1353,6 +1353,25 @@ void update_process_times(int user_tick)
+@@ -1355,6 +1355,25 @@ void update_process_times(int user_tick)
  	run_posix_cpu_timers(p);
  }
 
@@ -14026,7 +14026,7 @@ index a409926..057b1d8 100644
  	vm_stat_account(mm, oldflags, vma->vm_file, -nrpages);
  	vm_stat_account(mm, newflags, vma->vm_file, nrpages);
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 1196c77..2520103 100644
+index 1196c77..fbc5edd 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
 @@ -171,6 +171,8 @@ static int vmap_page_range_noflush(unsigned long start, unsigned long end,

@@ -1,6 +1,6 @@
 /*
-	COPYRIGHT (C) 2002-2006 Lorenzo Dozio (dozio@aero.polimi.it)
-				Paolo Mantegazza (mantegazza@aero.polimi.it)
+	COPYRIGHT (C) 2002-2006 Lorenzo Dozio <dozio@aero.polimi.it>
+				Paolo Mantegazza <mantegazza@aero.polimi.it>
 				Roberto Bucher (roberto.bucher@supsi.ch)
 				Mattia Mattaboni (mattaboni@aero.polimi.it)
 

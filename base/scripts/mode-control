@@ -2,7 +2,7 @@
 #
 # RTAI immed/piped interrupt dispatching mode control.
 #
-# Copyright (c) 2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
+# Copyright (C) 2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
 #
 # Usage:
 #	mode-control

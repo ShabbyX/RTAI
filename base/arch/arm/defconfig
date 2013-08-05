@@ -74,4 +74,4 @@ CONFIG_RTAI_USI=m
 # Add-ons
 #
 # CONFIG_RTAI_CPLUSPLUS is not set
-# CONFIG_RTAI_SERIAL is not set
+# CONFIG_RTAI_DRIVERS_SERIAL is not set

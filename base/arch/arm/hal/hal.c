@@ -2,30 +2,30 @@
  * ARM RTAI over Adeos -- based on ARTI for x86 and RTHAL for ARM.
  *
  * Original RTAI/x86 layer implementation:
- *   Copyright (c) 2000 Paolo Mantegazza (mantegazza@aero.polimi.it)
- *   Copyright (c) 2000 Steve Papacharalambous (stevep@zentropix.com)
- *   Copyright (c) 2000 Stuart Hughes
+ *   Copyright (C) 2000 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ *   Copyright (C) 2000 Steve Papacharalambous <stevep@freescale.com>
+ *   Copyright (C) 2000 Stuart Hughes <stuarth@lineo.com>
  *   and others.
  *
  * RTAI/x86 rewrite over Adeos:
- *   Copyright (c) 2002 Philippe Gerum (rpm@xenomai.org)
+ *   Copyright (C) 2002 Philippe Gerum <rpm@xenomai.org>
  *
  * Original RTAI/ARM RTHAL implementation:
- *   Copyright (c) 2000 Pierre Cloutier (pcloutier@poseidoncontrols.com)
- *   Copyright (c) 2001 Alex Züpke, SYSGO RTS GmbH (azu@sysgo.de)
- *   Copyright (c) 2002 Guennadi Liakhovetski DSA GmbH (gl@dsa-ac.de)
- *   Copyright (c) 2002 Steve Papacharalambous (stevep@zentropix.com)
- *   Copyright (c) 2002 Wolfgang Müller (wolfgang.mueller@dsa-ac.de)
- *   Copyright (c) 2003 Bernard Haible, Marconi Communications
- *   Copyright (c) 2003 Thomas Gleixner (tglx@linutronix.de)
- *   Copyright (c) 2003 Philippe Gerum (rpm@xenomai.org)
+ *   Copyright (C) 2000 Pierre Cloutier <pcloutier@poseidoncontrols.com>
+ *   Copyright (C) 2001 Alex Züpke, SYSGO RTS GmbH <azu@sysgo.de>
+ *   Copyright (C) 2002 Guennadi Liakhovetski DSA GmbH <gl@dsa-ac.de>
+ *   Copyright (C) 2002 Steve Papacharalambous <stevep@freescale.com>
+ *   Copyright (C) 2002 Wolfgang Müller <wolfgang.mueller@dsa-ac.de>
+ *   Copyright (C) 2003 Bernard Haible, Marconi Communications
+ *   Copyright (C) 2003 Thomas Gleixner <tglx@linutronix.de>
+ *   Copyright (C) 2003 Philippe Gerum <rpm@xenomai.org>
  *
  * RTAI/ARM over Adeos rewrite:
- *   Copyright (c) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
+ *   Copyright (C) 2004-2005 Michael Neuhauser, Firmix Software GmbH <mike@firmix.at>
  *
  * RTAI/ARM over Adeos rewrite for PXA255_2.6.7:
- *   Copyright (c) 2005 Stefano Gafforelli (stefano.gafforelli@tiscali.it)
- *   Copyright (c) 2005 Luca Pizzi (lucapizzi@hotmail.com)
+ *   Copyright (C) 2005 Stefano Gafforelli <stefano.gafforelli@tiscali.it>
+ *   Copyright (C) 2005 Luca Pizzi <lucapizzi@hotmail.com>
  *
  * RTAI/ARM over Adeos :
  *   Copyright (C) 2007 Adeneo

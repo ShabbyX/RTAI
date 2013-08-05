@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2005 Jan Kiszka <jan.kiszka@web.de>.
- * Copyright (C) 2005 Joerg Langenberg <joerg.langenberg@gmx.net>.
+ * Copyright (C) 2005 Jan Kiszka <jan.kiszka@web.de>
+ * Copyright (C) 2005 Joerg Langenberg <joerg.langenberg@gmx.net>
  *
  * RTAI is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by

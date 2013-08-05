@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 1999  Paolo Mantegazza (mantegazza@aero.polimi.it)
+COPYRIGHT (C) 1999  Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,7 @@ int main(int argc,char *argv[])
 	int fd0;
 	char nm[RTF_NAMELEN+1];
 	struct sample { long min, max, avrg, jitters[2]; } samp;
-	int n = 0, rd;
+	int n = 0;
 
 	setlinebuf(stdout);
 
@@ -54,7 +54,7 @@ int main(int argc,char *argv[])
 	while (!end) {
 		if ((n++ % 21)==0)
 			printf("RTH|%12s|%12s|%12s|%12s|%12s\n", "lat min","lat avg","lat max","jit fast","jit slow");
-		rd = read(fd0, &samp, sizeof(samp));
+		read(fd0, &samp, sizeof(samp));
 		printf("RTD|%12ld|%12ld|%12ld|%12ld|%12ld\n", samp.min, samp.avrg, samp.max, samp.jitters[0], samp.jitters[1]);
 		fflush(stdout);
 	}
