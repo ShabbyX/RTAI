@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 3.4.53 Kernel Configuration
+# Linux/x86 3.4.55 Kernel Configuration
 #
 # CONFIG_64BIT is not set
 CONFIG_X86_32=y
@@ -93,6 +93,7 @@ CONFIG_SPARSE_IRQ=y
 #
 # RCU Subsystem
 #
+# CONFIG_TREE_RCU is not set
 CONFIG_TREE_PREEMPT_RCU=y
 CONFIG_PREEMPT_RCU=y
 CONFIG_RCU_FANOUT=32
@@ -1644,7 +1645,7 @@ CONFIG_DEFAULT_MESSAGE_LOGLEVEL=4
 # CONFIG_ENABLE_MUST_CHECK is not set
 CONFIG_FRAME_WARN=2048
 # CONFIG_MAGIC_SYSRQ is not set
-# CONFIG_STRIP_ASM_SYMS is not set
+CONFIG_STRIP_ASM_SYMS=y
 # CONFIG_UNUSED_SYMBOLS is not set
 # CONFIG_DEBUG_FS is not set
 # CONFIG_HEADERS_CHECK is not set
