@@ -2375,7 +2375,6 @@ static struct rt_native_fun_entry rt_sched_entries[] = {
 	{ { 0, rt_gettid },                         RT_GETTID },
 	{ { 0, rt_get_real_time },		    GET_REAL_TIME },
 	{ { 0, rt_get_real_time_ns },		    GET_REAL_TIME_NS },
-	{ { 0, rt_get_exectime },		    GET_EXECTIME },
 	{ { 1, rt_signal_helper }, 		    RT_SIGNAL_HELPER },
 	{ { 1, rt_wait_signal }, 		    RT_SIGNAL_WAITSIG },
 	{ { 1, rt_request_signal_ },		    RT_SIGNAL_REQUEST },
