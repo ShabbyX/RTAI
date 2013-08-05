@@ -3,7 +3,7 @@ How to build RTAI (Written by Alec Ari / NTULINUX)
 
 To build, compile, and install RTAI, follow the steps below carefully.
 
-Please note: If you are not using the 3.4.53 kernel, replace ALL references to that version,
+Please note: If you are not using the 3.4.55 kernel, replace ALL references to that version,
 to the version of the kernel source you downloaded.
 
 If you are a highly experienced Linux poweruser, you can ignore 99% of this, but do not
@@ -29,12 +29,12 @@ the documentation provided.
 Please note: For quite awhile, all the commands are run as root until you reach near the bottom
 so feel free to just run "su - root" (without quotes) now.
 
-In this example, we use the 3.4.53 kernel:
+In this example, we use the 3.4.55 kernel:
 
    # cd /usr/src
-   # wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.4.53.tar.xz
-   # tar xf linux-3.4.53.tar.xz
-   # ln -sfv linux-3.4.53 linux
+   # wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.4.55.tar.xz
+   # tar xf linux-3.4.55.tar.xz
+   # ln -sfv linux-3.4.55 linux
    # cd linux
    # make mrproper
 
@@ -43,8 +43,8 @@ running the following command may help, especially if you are on a single user m
 
 $ ls /home
 
-   # cp -prvL /home/<your user>/devel/RTAI/base/arch/x86/patches/hal-linux-3.4.53-x86-1.patch /usr/src/
-   # patch -p1 < ../hal-linux-3.4.53-x86-1.patch
+   # cp -prvL /home/<your user>/devel/RTAI/base/arch/x86/patches/hal-linux-3.4.55-x86-1.patch /usr/src/
+   # patch -p1 < ../hal-linux-3.4.55-x86-1.patch
 
 Please note: Is it necessary to know your CPU architecture before proceeding.
 Run the following command to determine if you are on a 64-bit or 32-bit Linux distribution:
@@ -134,9 +134,9 @@ Press enter again, and proceed with compiling the kernel.
 
    # make -j$(cat /proc/cpuinfo | grep processor | wc -l)
    # make modules_install
-   # cp -prvL arch/x86/boot/bzImage /boot/vmlinuz-3.4.53-RTAI
-   # cp -prvL System.map /boot/System.map-3.4.53-RTAI
-   # cp -prvL .config /boot/config-3.4.53-RTAI
+   # cp -prvL arch/x86/boot/bzImage /boot/vmlinuz-3.4.55-RTAI
+   # cp -prvL System.map /boot/System.map-3.4.55-RTAI
+   # cp -prvL .config /boot/config-3.4.55-RTAI
 
 5.) Update your boot loader. If you are an experienced GRUB user, it is recommended to
 modify the grub.cfg or menu.lst file by hand, to remove unncessary bloat from the file,
@@ -156,9 +156,9 @@ cat > /boot/grub2/grub.cfg << EOF
 set default=0
 set timeout=3
 
-menuentry "Linux 3.4.53 RTAI" {
+menuentry "Linux 3.4.55 RTAI" {
   set root=(hd0,1)
-  linux /boot/vmlinuz-3.4.53-RTAI root=/dev/sda1 ro consoleblank=0
+  linux /boot/vmlinuz-3.4.55-RTAI root=/dev/sda1 ro consoleblank=0
 }
 EOF
 --------------------cut here--------------------
