@@ -2,7 +2,7 @@
    Task switch latency test.
    Max Krasnyansky <maxk@qualcomm.com
 
-   Based on latency.c by Philippe Gerum <rpm@xenomai.org><rpm@xenomai.org>
+   Based on latency.c by Philippe Gerum <rpm@xenomai.org>
  */
 
 #include <sys/mman.h>
