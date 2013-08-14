@@ -1432,6 +1432,7 @@ int __rtai_hal_init (void)
 {
 	int trapnr, halinv = 0;
 	struct hal_attr_struct attr;
+	struct hal_sysinfo_struct sysinfo;
 
 	ipipe_catch_event(hal_root_domain, 0, 0);
 	for (halinv = trapnr = 0; trapnr < HAL_NR_EVENTS; trapnr++) {
@@ -1482,6 +1483,18 @@ int __rtai_hal_init (void)
 
 	rtai_install_archdep();
 
+	/* test if timers are available */
+	hal_get_sysinfo(&sysinfo);
+	if (!sysinfo.sys_hrtimer_freq || !sysinfo.sys_hrclock_freq || !sysinfo.sys_cpu_freq) {
+		printk(KERN_ERR "RTAI[hal]: NO CLOCK AVAILABLE.\n");
+		/* undo what is partially done, in order found in __rtai_hal_exit */
+		hal_irq_handler = NULL;
+		hal_virtualize_irq(hal_root_domain, rtai_sysreq_virq, NULL, NULL, 0);
+		hal_free_irq(rtai_sysreq_virq);
+		rtai_uninstall_archdep();
+		return -1;
+	}
+
 #ifdef CONFIG_PROC_FS
 	rtai_proc_register();
 #endif
@@ -1514,13 +1527,9 @@ int __rtai_hal_init (void)
 #endif
 
 /* (very) dirty development checks */
-{
-struct hal_sysinfo_struct sysinfo;
-hal_get_sysinfo(&sysinfo);
 printk("SYSINFO: CPUs %d, LINUX APIC IRQ %d, TIM_FREQ %llu, CLK_FREQ %llu, CPU_FREQ %llu\n", sysinfo.sys_nr_cpus, sysinfo.sys_hrtimer_irq, sysinfo.sys_hrtimer_freq, sysinfo.sys_hrclock_freq, sysinfo.sys_cpu_freq);
 printk("RTAI_APIC_TIMER_IPI: RTAI DEFINED %d, VECTOR %d; LINUX_APIC_TIMER_IPI: RTAI DEFINED %d, VECTOR %d\n", RTAI_APIC_TIMER_IPI, ipipe_apic_vector_irq(0xf1), LOCAL_TIMER_IPI, ipipe_apic_vector_irq(0xef));
 printk("TIMER NAME: %s; VARIOUSLY FOUND APIC FREQs: %lu, %lu, %u\n", ipipe_timer_name(), hal_request_apic_freq(), hal_request_apic_freq(), apic_read(APIC_TMICT)*HZ);
-}
 
 	return 0;
 }
