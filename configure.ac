@@ -1,4 +1,5 @@
 dnl Process this file with autoconf to create configure
+
 AC_PREREQ(2.68)
 
 AC_INIT([RTAI], [3.9.1-unofficial], [rtai@rtai.org])
@@ -947,7 +948,7 @@ if test x$CONFIG_RTAI_KSTACK_HEAPSZ = x ; then
 fi
 AC_MSG_RESULT($CONFIG_RTAI_KSTACK_HEAPSZ)
 
-AC_MSG_CHECKING(for number of CPUs (SMP-only))
+AC_MSG_CHECKING(for number of CPUs)
 AC_ARG_ENABLE(cpus,
 	[ --enable-cpus		Enable CPUs],
 	[case "$enableval" in
