@@ -157,7 +157,6 @@ static int rtai_smi_notify_reboot(struct notifier_block *nb, unsigned long event
 	switch (event) {
 		case SYS_DOWN:
 		case SYS_HALT:
-		case SYS_RESTART:
 		case SYS_POWER_OFF:
 		if (hal_smi_en_addr) {
 			set_bits(hal_smi_saved_bits, hal_smi_en_addr);
