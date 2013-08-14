@@ -8,7 +8,7 @@ ARCH = $(shell rtai-config --arch)
 # If an arch-dependent dir is found, process it too.
 ARCHDIR = $(shell test -d $(ARCH) && echo $(ARCH) || echo)
 
-all %::
+all:
 	for dir in $(TARGETS) $(ARCHDIR); do $(MAKE) -C $$dir $@; done
 
 .PHONY: $(TARGETS)
