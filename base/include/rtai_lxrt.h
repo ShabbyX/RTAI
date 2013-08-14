@@ -69,6 +69,8 @@
 #include <rtai_sched.h>
 #include <rtai_nam2num.h>
 
+//#define CONFIG_RTAI_HARD_SOFT_TOGGLER
+
 // scheduler
 #define YIELD				 0
 #define SUSPEND				 1
@@ -405,7 +407,7 @@
 #define LINUX_SERVER		1020
 #define ALLOC_REGISTER 		1021
 #define DELETE_DEREGISTER	1022
-#define FORCE_TASK_SOFT  	1023
+#define HARD_SOFT_TOGGLER	1023
 #define PRINTK			1024
 #define GET_EXECTIME		1025
 #define GET_TIMEORIG 		1026
@@ -618,11 +620,36 @@ RTAI_PROTO(unsigned long, rt_get_name, (void *adr))
 	return rtai_lxrt(BIDX, SIZARG, LXRT_GET_NAME, &arg).i[LOW];
 }
 
+#include <signal.h>
+
+#ifdef CONFIG_RTAI_HARD_SOFT_TOGGLER
+#ifndef __SUPPORT_HARD_SOFT_TOGGLER__
+#define __SUPPORT_HARD_SOFT_TOGGLER__
+
+static void hard_soft_toggler(int sig) 
+{ 
+	if (sig == SIGUSR1) {
+		struct { RT_TASK *task; } arg = { NULL };
+		rtai_lxrt(BIDX, SIZARG, HARD_SOFT_TOGGLER, &arg);
+	}
+}
+
+#endif
+
+#define SET_SIGNAL_TOGGLER() do { signal(SIGUSR1, hard_soft_toggler); } while(0)
+
+#else
+
+#define SET_SIGNAL_TOGGLER() do { } while(0)
+
+#endif
+
 RTAI_PROTO(RT_TASK *, rt_task_init_schmod, (unsigned long name, int priority, int stack_size, int max_msg_size, int policy, int cpus_allowed))
 {
         struct sched_param mysched;
         struct { unsigned long name; long priority, stack_size, max_msg_size, cpus_allowed; } arg = { name ? name : rt_get_name(NULL), priority, stack_size, max_msg_size, cpus_allowed };
 
+	SET_SIGNAL_TOGGLER();
         if (policy == SCHED_OTHER) {
         	mysched.sched_priority = 0;
 	} else if ((mysched.sched_priority = sched_get_priority_max(policy) - priority) < 1) {
@@ -1352,10 +1379,10 @@ RTAI_PROTO(void,rt_set_usp_flags_mask,(unsigned long flags_mask))
 	rtai_lxrt(BIDX, SIZARG, SET_USP_FLG_MSK, &arg);
 }
 
-RTAI_PROTO(RT_TASK *,rt_force_task_soft,(int pid))
+RTAI_PROTO(pid_t, rt_get_linux_tid, (RT_TASK *task))
 {
-	struct { long pid; } arg = { pid };
-	return (RT_TASK *)rtai_lxrt(BIDX, SIZARG, FORCE_TASK_SOFT, &arg).v[LOW];
+	struct { RT_TASK *task; } arg = { task };
+	return rtai_lxrt(BIDX, SIZARG, HARD_SOFT_TOGGLER, &arg).i[LOW];
 }
 
 RTAI_PROTO(RT_TASK *,rt_agent,(void))

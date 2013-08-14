@@ -598,17 +598,21 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
                         return 0;
                 }
 
-                case FORCE_TASK_SOFT: {
-			extern void rt_do_force_soft(RT_TASK *rt_task);
-                        struct task_struct *ltsk;
-                        if ((ltsk = find_task_by_pid(arg0.name)))  {
-                                if ((arg0.rt_task = ltsk->rtai_tskext(TSKEXT0))) {
-					if ((arg0.rt_task->force_soft = (arg0.rt_task->is_hard != 0) && FORCE_SOFT)) {
-						rt_do_force_soft(arg0.rt_task);
-					}
-					return arg0.ll;
-                                }
-                        }
+                case HARD_SOFT_TOGGLER: {
+			if (arg0.rt_task && arg0.rt_task->lnxtsk) {
+				return (arg0.rt_task->lnxtsk)->pid;
+			} 
+#ifdef CONFIG_RTAI_HARD_SOFT_TOGGLER
+			  else if (task) {
+				rtai_cli();
+				if (task->is_hard > 0) {
+					rt_make_soft_real_time(task); 
+				} else {
+					rt_make_hard_real_time(task);
+				}
+				rtai_sti();
+			}
+#endif
                         return 0;
                 }
 

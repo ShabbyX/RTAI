@@ -1413,6 +1413,7 @@ static inline long long rtai_usrq_dispatcher (unsigned long srq, unsigned long l
 	TRACE_RTAI_SRQ_EXIT();
 	return 0LL;
 }
+EXPORT_SYMBOL(rtai_usrq_dispatcher);
 
 #include <asm/rtai_usi.h>
 long long (*rtai_lxrt_dispatcher)(unsigned long, unsigned long);

@@ -625,6 +625,9 @@ static inline void xnsynch_sleep_on(void *synch, xnticks_t timeout, xntmode_t ti
 #define rthal_apc_free(apc) \
 	rt_free_srq((apc))
 
+#define __rthal_apc_schedule(apc) \
+	hal_pend_uncond(apc, rtai_cpuid())
+
 #define rthal_apc_schedule(apc) \
 	rt_pend_linux_srq((apc))
 
