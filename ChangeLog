@@ -1,31 +1,31 @@
 2013-08-07 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-        * base/include/rtai_lxrt.h: modified the support and declarations for 
- 	  externally forcing a task to soft, so to make it possible toggling 
-	  hard_soft by enforcing a signal handler for SIGUSR1, at task init, 
-	  providing also a support function to get the pid of the RTAI task 
+	* base/include/rtai_lxrt.h: modified the support and declarations for
+	  externally forcing a task to soft, so to make it possible toggling
+	  hard_soft by enforcing a signal handler for SIGUSR1, at task init,
+	  providing also a support function to get the pid of the RTAI task
 	  to be toggled using Linux kill.
-        * base/sched/sys.c: provided the toggling support handler, adding 
+	* base/sched/sys.c: provided the toggling support handler, adding
 	  a function to return the pid of any RTAI task; notice that the new
-	  way wholly substitute the old forcing of a task to soft only. Yet 
+	  way wholly substitute the old forcing of a task to soft only. Yet
 	  to be made optionally configurable at RTAI making.
 
 2013-08-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/arch/x86/hal/hal_32.c: check if irq disable-enable are NULL 
+	* base/arch/x86/hal/hal_32.c: check if irq disable-enable are NULL
 	  and divert to mask_unmask if so, add rt_irq_mask.
-	* base/include/rtai_usi.h: #if 0 ...  #endif the request of an srq for 
+	* base/include/rtai_usi.h: #if 0 ...  #endif the request of an srq for
 	  USI, see comment in the file.
 
 2013-08-02 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/include/rtai_lxrt.h: fixed wrong arg list struct setup in all 
+	* base/include/rtai_lxrt.h: fixed wrong arg list struct setup in all
 	  USI support functions.
 
 2013-08-01 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/include/asm-x86/rtai_sched_32.h, rtai_sched_64.h and 
-	  rtai_sched.h: removed and gathered code common to 64 and 32 into 
+	* base/include/asm-x86/rtai_sched_32.h, rtai_sched_64.h and
+	  rtai_sched.h: removed and gathered code common to 64 and 32 into
 	  rtai_sched.h.
 
 2013-07-30 Paolo Mantegazza <mantegazza@aero.polimi.it>
@@ -47,35 +47,35 @@
 2013-07-26 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/arch/x86/hal/hal.c and hal_32.c: fixed TSC sync support, broken
-	  because of both the new x86 unified making and the need to avoid 
+	  because of both the new x86 unified making and the need to avoid
 	  using kernel_thread(...) directly.
 
 2013-07-25 Pierangelo Masarati <masarati@aero.polimi.it>
 
-	* change making configuration so to not include Linux headers for user 
-	  space code; it made GCC >= 4.7.2 yell for conflicting definitions 
+	* change making configuration so to not include Linux headers for user
+	  space code; it made GCC >= 4.7.2 yell for conflicting definitions
 	  within the same headers; it does not break under older GCCs, which
 	  did not yell.
 
 2013-07-25 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* addons/rtdm/module.c: fix the changed name of the isr scheduler lock.
-	* base/sched/api.c: opt for a randomization in generating names for 
+	* base/sched/api.c: opt for a randomization in generating names for
 	  NULL adr requests (pevious nameseed way kept under #if #else #endif).
 	* base/sched/sched.c: make rtai_isr_sched_handle available and
 	  exported always.
-	* base/arch/x86/hal/hal.c: moved random number generator to 
+	* base/arch/x86/hal/hal.c: moved random number generator to
 	  base/include/rtai.h, so to have it available anywhere.
-	* base/include/rtai.h: put the random number generator here, so to 
+	* base/include/rtai.h: put the random number generator here, so to
 	  have it available anywhere.
-	* base/include/rtai_nam2num.h: echo a "|null|" for names that are 
+	* base/include/rtai_nam2num.h: echo a "|null|" for names that are
 	  either 0 or generated through rt_get_name(NULL).
 
 2013-07-24 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/sched/api.c: make getting a unique name from registry safer
 	  against duplications.
-	* base/include/rtai_nam2num.h: embellished the coding and added a 
+	* base/include/rtai_nam2num.h: embellished the coding and added a
 	  couple of usable characters more.
 
 2013-07-21 Paolo Mantegazza <mantegazza@aero.polimi.it>
@@ -88,36 +88,36 @@
 
 2013-07-20 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/ipc/netrpc/netrpc.c: aligned to the latest kthreads Linux 
+	* base/ipc/netrpc/netrpc.c: aligned to the latest kthreads Linux
 	  support.
-	* base/sched/sched.c: rt_signal_wake_up reverted to wake up on 
+	* base/sched/sched.c: rt_signal_wake_up reverted to wake up on
 	  Linux signals hanyhow.
 
 2013-07-18 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/sched/sched.c: rt_signal_wake_up will allow hard real time 
-	  tasks to receive signals only if the user has indicated to be 
+	* base/sched/sched.c: rt_signal_wake_up will allow hard real time
+	  tasks to receive signals only if the user has indicated to be
 	  willing to accept them by installing a signal handler for SIGTERM.
 
 2013-07-17 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/sched/sched.c and sys.c: use RTAI own task pid for Pierre's 
+	* base/sched/sched.c and sys.c: use RTAI own task pid for Pierre's
 	  intertask messaging stuff.
-	* base/include/rtai_lxrt.h: return pid<->task stuff back here, it is 
+	* base/include/rtai_lxrt.h: return pid<->task stuff back here, it is
 	  used also elsewhere than in Pierre's intertask messaging stuff.
-	* base/ipc/msg/msg.c: use unified rtai own task pids in Pierre's 
+	* base/ipc/msg/msg.c: use unified rtai own task pids in Pierre's
 	  intertask messaging stuff.
 
 2013-07-16 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/include/rtai_lxrt.h: removed call to rt_kthread_init and moved 
+	* base/include/rtai_lxrt.h: removed call to rt_kthread_init and moved
 	  pid<->rttask stuff into msg.c
 
 2013-07-15 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/sched/sched.c: keep formal kthread_init for compatibility, with 
+	* base/sched/sched.c: keep formal kthread_init for compatibility, with
 	  task_init behind it, used by msg.c.
-	* base/ipc/msg/msg.c: brounght here pid<->rttask inlines from rtai_lxrt 
+	* base/ipc/msg/msg.c: brounght here pid<->rttask inlines from rtai_lxrt
 	  and reworked proxy support.
 
 2013-07-10 Paolo Mantegazza <mantegazza@aero.polimi.it>

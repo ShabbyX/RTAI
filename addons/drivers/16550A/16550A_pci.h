@@ -214,8 +214,7 @@ DEFINE_PCI_DEVICE_TABLE( rt_16550_pci_table ) = {
 	{ }
 };
 
-static int rt_16550_pci_probe(struct pci_dev *pdev,
-			      const struct pci_device_id *ent)
+static int rt_16550_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 {
 	struct rt_16550_pci_board *board;
 	int err;
@@ -280,9 +279,9 @@ static inline void rt_16550_pci_cleanup(void)
 		pci_unregister_driver(&rt_16550_pci_driver);
 }
 
-#else /* Linux < 2.6.0 || !CONFIG_PCI || !(..._16550A_PCI */
+#else /* !CONFIG_RTAI_DRIVERS_16550A_PCI */
 
 #define rt_16550_pci_init()	do { } while (0)
 #define rt_16550_pci_cleanup()	do { } while (0)
 
-#endif /* Linux < 2.6.0 || !CONFIG_PCI || !(..._16550A_PCI */
+#endif /* CONFIG_RTAI_DRIVERS_16550A_PCI */
