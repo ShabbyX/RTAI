@@ -42,6 +42,27 @@ AC_ARG_WITH(CXX,
 AC_PROG_CXX
 CXXFLAGS=""
 
+dnl If we're using GCC, make sure that it is at least version 3.3.0.  Older
+dnl versions are explictly not supported.
+AC_MSG_CHECKING([whether gcc version is sufficient])
+major=0
+minor=0
+
+GCC_VERSION=`$CC -dumpversion`
+if test $? -eq 0; then
+	GCC_VERSION_MAJOR=`echo $GCC_VERSION | cut -d. -f1`
+	GCC_VERSION_MINOR=`echo $GCC_VERSION | cut -d. -f2`
+fi
+
+if test $GCC_VERSION_MAJOR -lt 3 -o $GCC_VERSION_MAJOR -eq 3 -a $GCC_VERSION_MINOR -lt 3 ; then
+	AC_MSG_RESULT([no])
+	AC_MSG_ERROR([If using GCC, version 3.3.0 or later is required.])
+else
+	AC_MSG_RESULT([yes])
+fi
+
+RTAI_FP_CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0"
+
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_BUILD_STRING,"$build",[Build system alias])
 RTAI_BUILD_STRING="$build"
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_HOST_STRING,"$host",[Host system alias])
@@ -58,9 +79,10 @@ dnl an Autoconf flag can later be defined/undefined in rtai_config.h.
 
 arch_supports_lxrt=
 arch_supports_leds=
-arch_supports_sim=
 arch_supports_rtailab=
 arch_has_mmu=y
+
+AC_MSG_CHECKING([for RTAI target architecture])
 
 case "$host" in
  i*86*-*)
@@ -68,7 +90,6 @@ case "$host" in
 	RTAI_TARGET_SUBARCH=32
 	arch_supports_lxrt=y
 	arch_supports_leds=y
-	arch_supports_sim=y
 	arch_supports_rtailab=y
 	wanted_kernel_arch=CONFIG_X86_32
 	;;
@@ -76,6 +97,7 @@ case "$host" in
 	RTAI_TARGET_ARCH=x86
 	RTAI_TARGET_SUBARCH=64
 	arch_supports_lxrt=y
+	arch_supports_leds=n
 	arch_supports_rtailab=n
 	wanted_kernel_arch=CONFIG_X86_64
 	;;
@@ -180,14 +202,7 @@ AC_ARG_WITH(linux-dir,
     [  --with-linux-dir=<linux-dir>      RTAI-enabled Linux kernel tree],
     [
 	case "$withval" in
-	"" )
-	    if test x${CONFIG_RTAI_LINUXDIR} = x; then
-		AC_MSG_ERROR([You must supply an argument to --with-linux-dir.])
-	    else
-		withval=${CONFIG_RTAI_LINUXDIR}
-	    fi
-	  ;;
-	y | ye | yes | n | no)
+	"" | y | ye | yes | n | no)
 	    AC_MSG_ERROR([You must supply an argument to --with-linux-dir.])
 	  ;;
 	esac
@@ -281,22 +296,11 @@ else
     AC_MSG_ERROR([HAL patch not applied/enabled in $LINUX_KERNELSRC])
 fi
 
-case "$RTAI_LINUX_VERSION" in
-  2.4.*)
-	dnl by design, only RTAI Adeos-oldgen HAL is available with 2.4
-	unset CONFIG_KBUILD
-    ;;
-  2.6.*)
-	dnl by design, RTAI Adeos-oldgen HAL is supported up to 2.6.12 included,
-	dnl and RTAI Adeos-newgen HAL is supported since 2.6.13 included
-	CONFIG_KBUILD=y
-    ;;
-  3.*)
-	CONFIG_KBUILD=y
-    ;;
-  *)
-    AC_MSG_ERROR([Unsupported kernel version $RTAI_LINUX_VERSION])
-esac
+dnl
+dnl Only use Adeos-newgen since we only support 3.x
+dnl
+
+CONFIG_KBUILD=y
 
 dnl
 dnl Perform a few sanity checks.
@@ -316,52 +320,28 @@ if test x$arch_select = x; then
 fi
 AC_MSG_RESULT([$wanted_kernel_arch])
 
-case "${RTAI_LINUX_VERSION}" in
-2.4.*)
-	dnl MMU not supported in 2.4
-	;;
-*)
-	AC_MSG_CHECKING([for MMU support])
-	mmu_select=`eval echo \\$CONFIG_MMU`
-	if test x$mmu_select != x$arch_has_mmu; then
-		echo
-		echo "************************************************************"
-		echo " The target RTAI architecture MMU check failed:"
-		if test x$mmu_select = x; then
-			echo " MMU is unsupported by Linux architecure, but it must."
-		else
-			echo " MMU is supported by Linux architecure, but it must not."
-		fi
-		echo "************************************************************"
-		exit 1
-	fi
-	if test x$mmu_select != x; then
-		AC_MSG_RESULT([yes])
+AC_MSG_CHECKING([for MMU support])
+mmu_select=`eval echo \\$CONFIG_MMU`
+if test x$mmu_select != x$arch_has_mmu; then
+	echo
+	echo "************************************************************"
+	echo " The target RTAI architecture MMU check failed:"
+	if test x$mmu_select = x; then
+		echo " MMU is unsupported by Linux architecure, but it must."
 	else
-		AC_MSG_RESULT([no])
+		echo " MMU is supported by Linux architecure, but it must not."
 	fi
-	;;
-esac
+	echo "************************************************************"
+	exit 1
+fi
+if test x$mmu_select != x; then
+	AC_MSG_RESULT([yes])
+else
+	AC_MSG_RESULT([no])
+fi
 
 if test x${CONFIG_MODULES} = x ; then
   AC_MSG_ERROR([Please set CONFIG_MODULES for $RTAI_LINUX_DIR and rebuild your kernel])
-fi
-
-dnl No longer used.
-dnl if test x${CONFIG_REGPARM} = xy ; then
-dnl   AC_MSG_ERROR([Please unset CONFIG_REGPARM for $RTAI_LINUX_DIR and
-dnl rebuild your kernel])
-dnl fi
-
-if test x${CONFIG_MODVERSIONS} = xy ; then
-	case "${RTAI_LINUX_VERSION}" in
-	2.4.*)
-  AC_MSG_ERROR([Please unset CONFIG_MODVERSIONS for $RTAI_LINUX_DIR and rebuild your kernel])
-		;;
-	*)
-		dnl reported to be harmless in 2.6
-		;;
-	esac
 fi
 
 if test x${CONFIG_RTAI_ADEOS} = xy -a x${CONFIG_ADEOS_CORE} = x; then
@@ -386,7 +366,7 @@ AC_MSG_RESULT(${CONFIG_RTAI_TRACE:-no})
 
 dnl Built-in math support has been broken since the 2.6 kernel releases.
 dnl If math support is set to yes (Y) then we override it here and make it a module.
-if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_MATH = xy ; then
+if test x$CONFIG_RTAI_MATH = xy ; then
    CONFIG_RTAI_MATH=m
 fi
 
@@ -804,20 +784,6 @@ if test x$CONFIG_RTAI_CAL_FREQS_FACT = x ; then
 fi
 AC_MSG_RESULT($CONFIG_RTAI_CAL_FREQS_FACT)
 
-AC_MSG_CHECKING([if gcc accepts -fno-use-cxa-atexit])
-save_CXXFLAGS="$CXXFLAGS"
-CXXFLAGS="-fno-use-cxa-atexit -Werror"
-AC_CACHE_VAL(ac_cv_accepts_cxa_atexit,
-AC_LANG_SAVE
-AC_LANG_CPLUSPLUS
-[AC_TRY_COMPILE([],
-[int i = 0; return i; ],
-[ac_cv_accepts_cxa_atexit=yes],
-[ac_cv_accepts_cxa_atexit=no])]
-AC_LANG_RESTORE)
-AC_MSG_RESULT($ac_cv_accepts_cxa_atexit)
-CXXFLAGS="$save_CXXFLAGS"
-
 AC_MSG_CHECKING(for comedi support over LXRT)
 AC_ARG_ENABLE(comedi-lxrt,
 	[ --enable-comedi-lxrt	Enable comedi/LXRT support],
@@ -911,23 +877,6 @@ fi
 AC_MSG_RESULT(${CONFIG_RTAI_LAB:-no})
 
 if test x$CONFIG_RTAI_LAB = xy; then
-AC_MSG_CHECKING(for gcc version)
-AC_CACHE_VAL(ac_cv_mingcc,
-AC_LANG_SAVE
-AC_LANG_CPLUSPLUS
-[AC_TRY_COMPILE(
-[#if !( __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 0))
-#error GCC too old
-#endif],
-[return 0;],
-[ac_cv_mingcc=yes],
-[ac_cv_mingcc=no])]
-AC_LANG_RESTORE)
-if [[ $ac_cv_mingcc = no ]]; then
-  AC_MSG_ERROR([Building RTAI-Lab requires GCC version >= 3.1])
-else
-  AC_MSG_RESULT([ok])
-fi
 MDL_HAVE_OPENGL
 SC_PATH_EFLTK($CONFIG_RTAI_EFLTK_DIR)
 fi
@@ -1189,24 +1138,20 @@ dnl Kconfig. Defaults to conditional inlining.
 if test x$CONFIG_RTAI_LXRT_STATIC_INLINE = xy; then
    CONFIG_RTAI_LXRT_INLINE=1
 elif test x$CONFIG_RTAI_LXRT_NO_INLINE = xy; then
-   CONFIG_RTAI_LXRT_INLINE=3
-else
    CONFIG_RTAI_LXRT_INLINE=2
 fi
 
 AC_MSG_CHECKING(for LXRT inlining)
 AC_ARG_WITH(lxrt-inline,
-	[ --with-lxrt-inline	Set LXRT inlining mode (static|extern|none)],
+	[ --with-lxrt-inline	Set LXRT inlining mode (static|none)],
 	[case "$withval" in
 	static) CONFIG_RTAI_LXRT_INLINE=1 ;;
-	extern) CONFIG_RTAI_LXRT_INLINE=2 ;;
-	none) CONFIG_RTAI_LXRT_INLINE=3 ;;
-	*) AC_MSG_ERROR([Bad argument to option: --with-lxrt-inline=<static|extern|none>]) ;;
+	none) CONFIG_RTAI_LXRT_INLINE=2 ;;
+	*) AC_MSG_ERROR([Bad argument to option: --with-lxrt-inline=<static|none>]) ;;
 	esac])
 case "$CONFIG_RTAI_LXRT_INLINE" in
   1) inline_type=static ;;
-  2) inline_type=extern ;;
-  3) inline_type=none ;;
+  2) inline_type=none ;;
 esac
 AC_MSG_RESULT([$inline_type])
 
@@ -1236,14 +1181,6 @@ AC_ARG_ENABLE(quiet-build,
 	esac])
 
 dnl Catch sub-package flags
-
-AC_MSG_CHECKING(for RTAI simulator)
-AC_ARG_ENABLE(sim,
-	[ --enable-sim		Build RTAI simulator (MVM) ],
-	[case "$enableval" in
-	y | yes) CONFIG_RTAI_MVM=y ;;
-	*) unset CONFIG_RTAI_MVM ;;
-	esac])
 
 dnl We need to know this before building the APIC support
 dnl into the SMP scheduler for the x86 platform. Autoconf imposes
@@ -1675,64 +1612,6 @@ fi
 AC_MSG_CHECKING([for kernel module extension])
 AC_MSG_RESULT([$RTAI_MODULE_EXT])
 
-dnl gcc 3.3 and above needs -D_FORTIFY_SOURCE=0 in math
-dnl (suggested by Paul <paul_c AT tuxcnc DOT org>);
-dnl not sure about the implications, in general I'd prefer
-dnl that code causing warnings gets fixed...
-RTAI_FP_CFLAGS=
-AC_MSG_CHECKING(for gcc version >= 3.3)
-AC_CACHE_VAL(ac_cv_gcc33,
-AC_LANG_SAVE
-AC_LANG_CPLUSPLUS
-[AC_TRY_COMPILE(
-[#if !( __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3))
-#error GCC does not need _FORTIFY_SOURCE
-#endif],
-[return 0;],
-[ac_cv_gcc33=yes],
-[ac_cv_gcc33=no])]
-AC_LANG_RESTORE)
-if [[ $ac_cv_gcc33 = no ]]; then
-  AC_MSG_RESULT([no])
-else
-  RTAI_FP_CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0"
-  AC_MSG_RESULT([ok])
-fi
-
-dnl FIXME: used in rtai-config.in but never defined
-RTAI_COMPAT_CPPFLAGS=
-
-dnl In some versions of glibs, <features.h> includes <bits/predef.h>
-dnl which is in a folder such as /usr/include/i386-linux-gnu/bits/...
-dnl Since the math module includes this user-space header, this path
-dnl needs to be added to its search path.
-dnl We should check anyway to see if it is at all needed.
-
-AC_MSG_CHECKING([if extra includes are necessary for math module])
-save_CFLAGS="$CFLAGS"
-CFLAGS="-ffreestanding -nostdinc -I/usr/include"
-AC_CACHE_VAL(ac_cv_needs_include_for_math,
-AC_LANG_SAVE
-AC_LANG_C
-[AC_TRY_COMPILE([#include <features.h>],
-[int i = 0; return i; ],
-[ac_cv_needs_include_for_math=no],
-[ac_cv_needs_include_for_math=yes])]
-AC_LANG_RESTORE)
-AC_MSG_RESULT($ac_cv_needs_include_for_math)
-CFLAGS="$save_CFLAGS"
-
-RTAI_MATH_KMOD_CFLAGS=""
-if [[ $ac_cv_needs_include_for_math = yes ]]; then
-   RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CXXFLAGS -fno-use-cxa-atexit"
-   if ls /usr/include/*/bits > /dev/null 2>&1; then
-      BITS_INCLUDE_DIR=$(echo /usr/include/*/bits | cut -d ' ' -f 1)
-      RTAI_MATH_KMOD_CFLAGS="-I${BITS_INCLUDE_DIR%/bits}"
-   fi
-fi
-
-AC_MSG_CHECKING([for RTAI target architecture])
-
 RTAI_USER_CFLAGS="-D_GNU_SOURCE"
 
 if test x"$LINUX_KERNELOUTPUT" != x"$LINUX_KERNELSRC"; then
@@ -1832,31 +1711,21 @@ if test x$CONFIG_RTAI_KMOD_DEBUG = xy; then
    RTAI_KMOD_CXXFLAGS="-g $RTAI_KMOD_CXXFLAGS"
 fi
 
-if [[ $ac_cv_accepts_cxa_atexit = yes ]]; then
-   RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CXXFLAGS -fno-use-cxa-atexit"
+RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CXXFLAGS -fno-use-cxa-atexit"
+
+dnl - if inlining is set to "none" (2) then we will always need -llxrt
+dnl - if mode is set to "eager/static" then we will never need -llxrt
+
+if test $CONFIG_RTAI_LXRT_INLINE = 2; then
+	RTAI_LXRT_LDADD=-llxrt
+else
+	RTAI_LXRT_LDADD=
 fi
 
-dnl Ok, the following isn't pretty, but required to process the
-dnl various inlining modes correctly. This boils down to:
-dnl - if mode == "none", then we will always need -llxrt to be
-dnl   tackled on the library deps for user-space programs.
-dnl - if mode == "eager/static", then we will never need -llxrt
-dnl - if mode == "conditional/extern", then we will not need -llxrt
-dnl   unless the optimizer has been switched off, i.e. when the
-dnl   debugging mode has been switched on.
-
-if test $CONFIG_RTAI_LXRT_INLINE = 3; then
-   RTAI_LXRT_LDADD=-llxrt
+if test x$CONFIG_RTAI_USER_DEBUG = xy; then
+	RTAI_REAL_USER_CFLAGS="-g $RTAI_REAL_USER_CFLAGS"
 else
-   RTAI_LXRT_LDADD=
-   if test x$CONFIG_RTAI_USER_DEBUG = xy; then
-      RTAI_REAL_USER_CFLAGS="-g $RTAI_REAL_USER_CFLAGS"
-      if test $CONFIG_RTAI_LXRT_INLINE = 2; then
-	 RTAI_LXRT_LDADD="-llxrt"
-      fi
-   else
-      RTAI_REAL_USER_CFLAGS="-O2 $RTAI_REAL_USER_CFLAGS"
-   fi
+	RTAI_REAL_USER_CFLAGS="-O2 $RTAI_REAL_USER_CFLAGS"
 fi
 
 RTAI_KMOD_APP_CFLAGS=$RTAI_KMOD_CFLAGS
