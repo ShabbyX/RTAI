@@ -1,3 +1,15 @@
+2013-08-07 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/include/rtai_lxrt.h: modified the support and declarations for 
+ 	  externally forcing a task to soft, so to make it possible toggling 
+	  hard_soft by enforcing a signal handler for SIGUSR1, at task init, 
+	  providing also a support function to get the pid of the RTAI task 
+	  to be toggled using Linux kill.
+        * base/sched/sys.c: provided the toggling support handler, adding 
+	  a function to return the pid of any RTAI task; notice that the new
+	  way wholly substitute the old forcing of a task to soft only. Yet 
+	  to be made optionally configurable at RTAI making.
+
 2013-08-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/arch/x86/hal/hal_32.c: check if irq disable-enable are NULL 

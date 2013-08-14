@@ -126,13 +126,13 @@ int xnselect_bind(struct xnselect *select_block,
 
 	appendq(&selector->bindings, &binding->slink);
 	appendq(&select_block->bindings, &binding->link);
-	__FD_SET(index, &selector->fds[type].expected);
+	__FD_SET__(index, &selector->fds[type].expected);
 	if (state) {
-		__FD_SET(index, &selector->fds[type].pending);
+		__FD_SET__(index, &selector->fds[type].pending);
 		if (xnselect_wakeup(selector))
 			xnpod_schedule();
 	} else
-		__FD_CLR(index, &selector->fds[type].pending);
+		__FD_CLR__(index, &selector->fds[type].pending);
 
 	return 0;
 }
@@ -145,7 +145,7 @@ int __xnselect_signal(struct xnselect *select_block, unsigned state)
 	int resched;
 
 	for(resched = 0, holder = getheadq(&select_block->bindings);
-	    holder; holder = nextq(&select_block->bindings, holder)) {
+		holder; holder = nextq(&select_block->bindings, holder)) {
 		struct xnselect_binding *binding;
 		struct xnselector *selector;
 
@@ -153,16 +153,16 @@ int __xnselect_signal(struct xnselect *select_block, unsigned state)
 
 		selector = binding->selector;
 		if (state) {
-			if (!__FD_ISSET(binding->bit_index,
+			if (!__FD_ISSET__(binding->bit_index,
 					&selector->fds[binding->type].pending)) {
-				__FD_SET(binding->bit_index,
-					 &selector->fds[binding->type].pending);
+				__FD_SET__(binding->bit_index,
+					&selector->fds[binding->type].pending);
 				if (xnselect_wakeup(selector))
 					resched = 1;
 			}
 		} else
-			__FD_CLR(binding->bit_index,
-				 &selector->fds[binding->type].pending);
+			__FD_CLR__(binding->bit_index,
+			&selector->fds[binding->type].pending);
 	}
 
 	return resched;
@@ -179,7 +179,7 @@ EXPORT_SYMBOL_GPL(__xnselect_signal);
 void xnselect_destroy(struct xnselect *select_block)
 {
 	xnholder_t *holder;
-	int resched;
+	int resched = 0;
 	spl_t s;
 
 	xnlock_get_irqsave(&nklock, s);
@@ -190,11 +190,11 @@ void xnselect_destroy(struct xnselect *select_block)
 		binding = link2binding(holder, link);
 		selector = binding->selector;
 
-		__FD_CLR(binding->bit_index,
+		__FD_CLR__(binding->bit_index,
 			 &selector->fds[binding->type].expected);
-		if (!__FD_ISSET(binding->bit_index,
+		if (!__FD_ISSET__(binding->bit_index,
 				&selector->fds[binding->type].pending)) {
-			__FD_SET(binding->bit_index,
+			__FD_SET__(binding->bit_index,
 				 &selector->fds[binding->type].pending);
 			if (xnselect_wakeup(selector))
 				resched = 1;
@@ -217,14 +217,14 @@ fd_set_andnot(fd_set *result, fd_set *first, fd_set *second, unsigned n)
 {
 	unsigned i, not_empty = 0;
 
-	for (i = 0; i < __FDELT(n); i++)
+	for (i = 0; i < __FDELT__(n); i++)
 		if((result->fds_bits[i] =
-		    first->fds_bits[i] & ~(second->fds_bits[i])))
+			first->fds_bits[i] & ~(second->fds_bits[i])))
 			not_empty = 1;
 
-	if (i < __FDSET_LONGS
-	    && (result->fds_bits[i] =
-		first->fds_bits[i] & ~(second->fds_bits[i]) & (__FDMASK(n) - 1)))
+	if (i < __FDSET_LONGS__
+		&& (result->fds_bits[i] =
+		first->fds_bits[i] & ~(second->fds_bits[i]) & (__FDMASK__(n) - 1)))
 		not_empty = 1;
 
 	return not_empty;
@@ -235,29 +235,29 @@ fd_set_and(fd_set *result, fd_set *first, fd_set *second, unsigned n)
 {
 	unsigned i, not_empty = 0;
 
-	for (i = 0; i < __FDELT(n); i++)
+	for (i = 0; i < __FDELT__(n); i++)
 		if((result->fds_bits[i] =
 		    first->fds_bits[i] & second->fds_bits[i]))
 			not_empty = 1;
 
-	if (i < __FDSET_LONGS
-	    && (result->fds_bits[i] =
-		first->fds_bits[i] & second->fds_bits[i] & (__FDMASK(n) - 1)))
+	if (i < __FDSET_LONGS__
+		&& (result->fds_bits[i] =
+		first->fds_bits[i] & second->fds_bits[i] & (__FDMASK__(n) - 1)))
 		not_empty = 1;
 
 	return not_empty;
 }
 
-static void fd_set_zerofill(fd_set *set, unsigned n)
+static void fd_set_zeropad(fd_set *set, unsigned n)
 {
 	unsigned i;
 
-	i = __FDELT(n);
+	i = __FDELT__(n);
 
-	if (i < __FDSET_LONGS)
-		set->fds_bits[i] &= (__FDMASK(n) - 1);
+	if (i < __FDSET_LONGS__)
+		set->fds_bits[i] &= (__FDMASK__(n) - 1);
 
-	for(i++; i < __FDSET_LONGS; i++)
+	for(i++; i < __FDSET_LONGS__; i++)
 		set->fds_bits[i] = 0;
 }
 
@@ -265,12 +265,12 @@ static unsigned fd_set_popcount(fd_set *set, unsigned n)
 {
 	unsigned count = 0, i;
 
-	for (i = 0; i < __FDELT(n); i++)
+	for (i = 0; i < __FDELT__(n); i++)
 		if (set->fds_bits[i])
 			count += hweight_long(set->fds_bits[i]);
 
-	if (i < __FDSET_LONGS && (set->fds_bits[i] & (__FDMASK(n) - 1)))
-		count += hweight_long(set->fds_bits[i] & (__FDMASK(n) - 1));
+	if (i < __FDSET_LONGS__ && (set->fds_bits[i] & (__FDMASK__(n) - 1)))
+		count += hweight_long(set->fds_bits[i] & (__FDMASK__(n) - 1));
 
 	return count;
 }
@@ -288,8 +288,8 @@ int xnselector_init(struct xnselector *selector)
 
 	xnsynch_init(&selector->synchbase, XNSYNCH_FIFO, NULL);
 	for (i = 0; i < XNSELECT_MAX_TYPES; i++) {
-		__FD_ZERO(&selector->fds[i].expected);
-		__FD_ZERO(&selector->fds[i].pending);
+		__FD_ZERO__(&selector->fds[i].expected);
+		__FD_ZERO__(&selector->fds[i].pending);
 	}
 	initq(&selector->bindings);
 	return 0;
@@ -320,10 +320,10 @@ EXPORT_SYMBOL_GPL(xnselector_init);
  * @retval the number of file descriptors having received an event.
  */
 int xnselect(struct xnselector *selector,
-	     fd_set *out_fds[XNSELECT_MAX_TYPES],
-	     fd_set *in_fds[XNSELECT_MAX_TYPES],
-	     int nfds,
-	     xnticks_t timeout, xntmode_t timeout_mode)
+		fd_set *out_fds[XNSELECT_MAX_TYPES],
+		fd_set *in_fds[XNSELECT_MAX_TYPES],
+		int nfds,
+		xnticks_t timeout, xntmode_t timeout_mode)
 {
 	unsigned i, not_empty = 0;
 	xnthread_t *thread;
@@ -334,26 +334,26 @@ int xnselect(struct xnselector *selector,
 
 	thread = xnpod_current_thread();
 
+	for (i = 0; i < XNSELECT_MAX_TYPES; i++)
+		if (out_fds[i])
+			fd_set_zeropad(out_fds[i], nfds);
+
 	xnlock_get_irqsave(&nklock, s);
 	for (i = 0; i < XNSELECT_MAX_TYPES; i++)
 		if (out_fds[i]
-		    && fd_set_andnot(out_fds[i], in_fds[i],
-				     &selector->fds[i].expected, nfds))
+			&& fd_set_andnot(out_fds[i], in_fds[i],
+				&selector->fds[i].expected, nfds))
 			not_empty = 1;
 	xnlock_put_irqrestore(&nklock, s);
 
-	if (not_empty) {
-		for (i = 0; i < XNSELECT_MAX_TYPES; i++)
-			if (out_fds[i])
-				fd_set_zerofill(out_fds[i], nfds);
+	if (not_empty)
 		return -ECHRNG;
-	}
 
 	xnlock_get_irqsave(&nklock, s);
 	for (i = 0; i < XNSELECT_MAX_TYPES; i++)
 		if (out_fds[i]
 		    && fd_set_and(out_fds[i], in_fds[i],
-				  &selector->fds[i].pending, nfds))
+				&selector->fds[i].pending, nfds))
 			not_empty = 1;
 
 	while (!not_empty) {
@@ -362,7 +362,7 @@ int xnselect(struct xnselector *selector,
 		for (i = 0; i < XNSELECT_MAX_TYPES; i++)
 			if (out_fds[i]
 			    && fd_set_and(out_fds[i], in_fds[i],
-					  &selector->fds[i].pending, nfds))
+					&selector->fds[i].pending, nfds))
 				not_empty = 1;
 
 		if (xnthread_test_info(thread, XNBREAK | XNTIMEO))
@@ -372,10 +372,6 @@ int xnselect(struct xnselector *selector,
 
 	if (not_empty) {
 		unsigned count;
-
-		for (i = 0; i < XNSELECT_MAX_TYPES; i++)
-			if (out_fds[i])
-				fd_set_zerofill(out_fds[i], nfds);
 
 		for (count = 0, i = 0; i < XNSELECT_MAX_TYPES; i++)
 			if (out_fds[i])
@@ -405,9 +401,8 @@ void xnselector_destroy(struct xnselector *selector)
 	inith(&selector->destroy_link);
 	xnlock_get_irqsave(&nklock, s);
 	appendq(&xnselectors, &selector->destroy_link);
+	__rthal_apc_schedule(xnselect_apc);
 	xnlock_put_irqrestore(&nklock, s);
-
-	rthal_apc_schedule(xnselect_apc);
 }
 EXPORT_SYMBOL_GPL(xnselector_destroy);
 
@@ -460,7 +455,8 @@ int xnselect_mount(void)
 
 int xnselect_umount(void)
 {
-	return rthal_apc_free(xnselect_apc);
+	rthal_apc_free(xnselect_apc);
+	return 0;
 }
 
 #endif

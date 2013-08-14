@@ -8939,7 +8939,7 @@ new file mode 100644
 index 0000000..0b83546
 --- /dev/null
 +++ b/kernel/ipipe/core.c
-@@ -0,0 +1,1812 @@
+@@ -0,0 +1,1813 @@
 +/* -*- linux-c -*-
 + * linux/kernel/ipipe/core.c
 + *
@@ -9949,6 +9949,7 @@ index 0000000..0b83546
 +
 +int __ipipe_notify_trap(int exception, struct pt_regs *regs)
 +{
++{ if (current->ipipe.flags & PF_EVNOTIFY) return ((int (*)(unsigned long, void *))ipipe_root_domain->legacy.handlers[exception])(exception, regs); } {
 +	struct ipipe_percpu_domain_data *p;
 +	struct ipipe_trap_data data;
 +	unsigned long flags;
@@ -9977,7 +9978,7 @@ index 0000000..0b83546
 +	hard_local_irq_restore(flags);
 +
 +	return ret;
-+}
++} }
 +
 +int __weak ipipe_kevent_hook(int kevent, void *data)
 +{
