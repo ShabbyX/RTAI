@@ -1287,7 +1287,7 @@ AC_DEFINE_UNQUOTED(CONFIG_RTAI_REVISION_LEVEL,$CONFIG_RTAI_REVISION_LEVEL,[Kconf
 
 AC_DEFINE(CONFIG_RTAI,1,[Legacy])
 AC_DEFINE(CONFIG_RTAI_MOUNT_ON_LOAD,1,[Legacy])
-test \! x$CONFIG_KBUILD = x && AC_DEFINE(CONFIG_KBUILD,1,[Kconfig])
+AC_DEFINE(CONFIG_KBUILD,1,[Kconfig])
 test \! x$CONFIG_RTAI_ADEOS = x && AC_DEFINE(CONFIG_RTAI_ADEOS,1,[Kconfig])
 test \! x$CONFIG_RTAI_HAL_PREEMPT = x && AC_DEFINE(CONFIG_RTAI_HAL_PREEMPT,1,[Kconfig])
 test \! x$CONFIG_RTAI_CPUS = x && AC_DEFINE_UNQUOTED(CONFIG_RTAI_CPUS,$CONFIG_RTAI_CPUS,[Kconfig])
@@ -1572,43 +1572,17 @@ AM_CONDITIONAL(CONFIG_RTAI_OLD_FASHIONED_BUILD,[test "$CONFIG_RTAI_OLD_FASHIONED
 
 AM_CONDITIONAL(CONFIG_RTAI_QUIET,[test "$CONFIG_RTAI_QUIET" = quiet_])
 
-dnl
-dnl Define arch-specific CFLAGS and links
-dnl
-
-if test x$CONFIG_KBUILD = x; then
-   dnl The following sets RTAI_KMOD_CFLAGS to the value used by the
-   dnl specified Linux tree for building kernel modules. This hack is
-   dnl not needed for 2.6 and above since out-of-tree builds of modules
-   dnl are fully controlled by the kbuild system, so that we don't even
-   dnl need to know of the compilation flags which will be used.
-   AC_MSG_CHECKING([for module compilation flags])
-   kmod_cflags=`cd $srcdir/base/config/modules && make -s RTAI_LINUX_DIR=$RTAI_LINUX_DIR ARCH=$RTAI_TARGET_ARCH_NAME CC=$CC | grep '^RTAI_KMOD_CFLAGS='`
-   eval $kmod_cflags
-   if test "$RTAI_KMOD_CFLAGS" = ""; then
-      AC_MSG_ERROR([Unable to retrieve compilation flags for kernel modules out of $RTAI_LINUX_DIR/Makefile])
-   fi
-   AC_MSG_RESULT([ok])
-   RTAI_MODULE_EXT=.o
-   RTAI_KBUILD_ENV=
-   RTAI_KBUILD_CMD=
-   RTAI_KBUILD_TOP=
-   RTAI_KBUILD_BOTTOM=
-   RTAI_KBUILD_CLEAN=
-   RTAI_KBUILD_DISTCLEAN=
-else
-   RTAI_MODULE_EXT=.ko
-   RTAI_KBUILD_ENV='src2obj = $(patsubst %.$(1),%.o,$(filter %.$(1),$(call notdir,$(2))))'
-   RTAI_KBUILD_TOP="@if test \\! -r Module.symvers ; then \$(LN_S) -f \"\`cd \$(top_builddir) && pwd\`/Module.symvers\" . ; fi;"
-   RTAI_KBUILD_BOTTOM=
-   RTAI_KBUILD_CMD="for src in \$^; do if test \\! -r \`basename \$\$src\`; then \$(LN_S) \$\$src; fi; done; \
-		    rm -f $RTAI_LINUX_DIR/.tmp_versions/rtai_*.mod $RTAI_LINUX_DIR/.tmp_versions/*_rt.mod; \
-		    \$(MAKE) -C $RTAI_LINUX_DIR CC=$CC ARCH=$RTAI_TARGET_ARCH_NAME \
-		    SUBDIRS=\$\$PWD M=\$\$PWD rtai_srctree=\`cd \$(top_srcdir) && pwd\` rtai_srcdir=\`cd \$(srcdir) && pwd\` V=\$(V) modules \
-		    rtai_objs='\$(call src2obj,c,\$^) \$(call src2obj,S,\$^) \$(call src2obj,cc,\$^) \$(call src2obj,cpp,\$^)' rtai_target=\$(basename \$@)"
-   RTAI_KBUILD_CLEAN='rm -f *.ko *.mod.c .*.cmd *.o Module.symvers Module.markers modules.order && rm -Rf .tmp_versions'
-   RTAI_KBUILD_DISTCLEAN=""
-fi
+RTAI_MODULE_EXT=.ko
+RTAI_KBUILD_ENV='src2obj = $(patsubst %.$(1),%.o,$(filter %.$(1),$(call notdir,$(2))))'
+RTAI_KBUILD_TOP="@if test \\! -r Module.symvers ; then \$(LN_S) -f \"\`cd \$(top_builddir) && pwd\`/Module.symvers\" . ; fi;"
+RTAI_KBUILD_BOTTOM=
+RTAI_KBUILD_CMD="for src in \$^; do if test \\! -r \`basename \$\$src\`; then \$(LN_S) \$\$src; fi; done; \
+		rm -f $RTAI_LINUX_DIR/.tmp_versions/rtai_*.mod $RTAI_LINUX_DIR/.tmp_versions/*_rt.mod; \
+		\$(MAKE) -C $RTAI_LINUX_DIR CC=$CC ARCH=$RTAI_TARGET_ARCH_NAME \
+		SUBDIRS=\$\$PWD M=\$\$PWD rtai_srctree=\`cd \$(top_srcdir) && pwd\` rtai_srcdir=\`cd \$(srcdir) && pwd\` V=\$(V) modules \
+		rtai_objs='\$(call src2obj,c,\$^) \$(call src2obj,S,\$^) \$(call src2obj,cc,\$^) \$(call src2obj,cpp,\$^)' rtai_target=\$(basename \$@)"
+RTAI_KBUILD_CLEAN='rm -f *.ko *.mod.c .*.cmd *.o Module.symvers Module.markers modules.order && rm -Rf .tmp_versions'
+RTAI_KBUILD_DISTCLEAN=""
 
 AC_MSG_CHECKING([for kernel module extension])
 AC_MSG_RESULT([$RTAI_MODULE_EXT])
@@ -1622,6 +1596,10 @@ fi
 
 dnl extra arch-dependent opts to be passed to the compiler
 RTAI_TARGET_ARCH_OPTS=
+
+dnl
+dnl Define arch-specific CFLAGS and links
+dnl
 
 case $RTAI_TARGET_ARCH in
  x86)
@@ -1739,7 +1717,7 @@ RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -D__IN_RTAI__"
 AC_CONFIG_LINKS(base/include/asm:base/include/asm-$RTAI_TARGET_ARCH)
 
 if test x$CONFIG_RTAI_OLD_FASHIONED_BUILD = xy; then
-   AC_CONFIG_LINKS(base/include/rtai_config.h:rtai_config.h)
+AC_CONFIG_LINKS(base/include/rtai_config.h:rtai_config.h)
 fi
 
 if test x$RTAI_TARGET_SUBARCH = x; then
@@ -1748,36 +1726,34 @@ else
    AC_MSG_RESULT([$RTAI_TARGET_ARCH ($RTAI_TARGET_SUBARCH)])
 fi
 
-if test x$CONFIG_KBUILD = xy; then
-   AC_CONFIG_LINKS(base/arch/$RTAI_TARGET_ARCH/hal/Makefile:base/arch/$RTAI_TARGET_ARCH/hal/Makefile.kbuild)
-   if test -d $srcdir/base/arch/$RTAI_TARGET_ARCH/calibration; then
-      AC_CONFIG_LINKS(base/arch/$RTAI_TARGET_ARCH/calibration/Makefile:base/arch/$RTAI_TARGET_ARCH/calibration/Makefile.kbuild)
-   fi
-   AC_CONFIG_LINKS(base/ipc/bits/Makefile:base/ipc/bits/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/ipc/fifos/Makefile:base/ipc/fifos/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/ipc/mbx/Makefile:base/ipc/mbx/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/ipc/mq/Makefile:base/ipc/mq/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/ipc/msg/Makefile:base/ipc/msg/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/ipc/sem/Makefile:base/ipc/sem/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/ipc/tbx/Makefile:base/ipc/tbx/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/ipc/netrpc/Makefile:base/ipc/netrpc/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/ipc/shm/Makefile:base/ipc/shm/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/leds/Makefile:base/leds/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/posix/Makefile:base/posix/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/malloc/Makefile:base/malloc/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/tasklets/Makefile:base/tasklets/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/wd/Makefile:base/wd/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/usi/Makefile:base/usi/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/math/Makefile:base/math/Makefile.kbuild)
-   AC_CONFIG_LINKS(base/sched/Makefile:base/sched/Makefile.kbuild)
-   AC_CONFIG_LINKS(addons/drivers/serial/Makefile:addons/drivers/serial/Makefile.kbuild)
-   AC_CONFIG_LINKS(addons/comedi/Makefile:addons/comedi/Makefile.kbuild)
-   AC_CONFIG_LINKS(addons/drivers/16550A/Makefile:addons/drivers/16550A/Makefile.kbuild)
-   AC_CONFIG_LINKS(addons/rtdm/Makefile:addons/rtdm/Makefile.kbuild)
-   AC_CONFIG_LINKS(testsuite/kern/latency/Makefile:testsuite/kern/latency/Makefile.kbuild)
-   AC_CONFIG_LINKS(testsuite/kern/preempt/Makefile:testsuite/kern/preempt/Makefile.kbuild)
-   AC_CONFIG_LINKS(testsuite/kern/switches/Makefile:testsuite/kern/switches/Makefile.kbuild)
+AC_CONFIG_LINKS(base/arch/$RTAI_TARGET_ARCH/hal/Makefile:base/arch/$RTAI_TARGET_ARCH/hal/Makefile.kbuild)
+if test -d $srcdir/base/arch/$RTAI_TARGET_ARCH/calibration; then
+	AC_CONFIG_LINKS(base/arch/$RTAI_TARGET_ARCH/calibration/Makefile:base/arch/$RTAI_TARGET_ARCH/calibration/Makefile.kbuild)
 fi
+AC_CONFIG_LINKS(base/ipc/bits/Makefile:base/ipc/bits/Makefile.kbuild)
+AC_CONFIG_LINKS(base/ipc/fifos/Makefile:base/ipc/fifos/Makefile.kbuild)
+AC_CONFIG_LINKS(base/ipc/mbx/Makefile:base/ipc/mbx/Makefile.kbuild)
+AC_CONFIG_LINKS(base/ipc/mq/Makefile:base/ipc/mq/Makefile.kbuild)
+AC_CONFIG_LINKS(base/ipc/msg/Makefile:base/ipc/msg/Makefile.kbuild)
+AC_CONFIG_LINKS(base/ipc/sem/Makefile:base/ipc/sem/Makefile.kbuild)
+AC_CONFIG_LINKS(base/ipc/tbx/Makefile:base/ipc/tbx/Makefile.kbuild)
+AC_CONFIG_LINKS(base/ipc/netrpc/Makefile:base/ipc/netrpc/Makefile.kbuild)
+AC_CONFIG_LINKS(base/ipc/shm/Makefile:base/ipc/shm/Makefile.kbuild)
+AC_CONFIG_LINKS(base/leds/Makefile:base/leds/Makefile.kbuild)
+AC_CONFIG_LINKS(base/posix/Makefile:base/posix/Makefile.kbuild)
+AC_CONFIG_LINKS(base/malloc/Makefile:base/malloc/Makefile.kbuild)
+AC_CONFIG_LINKS(base/tasklets/Makefile:base/tasklets/Makefile.kbuild)
+AC_CONFIG_LINKS(base/wd/Makefile:base/wd/Makefile.kbuild)
+AC_CONFIG_LINKS(base/usi/Makefile:base/usi/Makefile.kbuild)
+AC_CONFIG_LINKS(base/math/Makefile:base/math/Makefile.kbuild)
+AC_CONFIG_LINKS(base/sched/Makefile:base/sched/Makefile.kbuild)
+AC_CONFIG_LINKS(addons/drivers/serial/Makefile:addons/drivers/serial/Makefile.kbuild)
+AC_CONFIG_LINKS(addons/comedi/Makefile:addons/comedi/Makefile.kbuild)
+AC_CONFIG_LINKS(addons/drivers/16550A/Makefile:addons/drivers/16550A/Makefile.kbuild)
+AC_CONFIG_LINKS(addons/rtdm/Makefile:addons/rtdm/Makefile.kbuild)
+AC_CONFIG_LINKS(testsuite/kern/latency/Makefile:testsuite/kern/latency/Makefile.kbuild)
+AC_CONFIG_LINKS(testsuite/kern/preempt/Makefile:testsuite/kern/preempt/Makefile.kbuild)
+AC_CONFIG_LINKS(testsuite/kern/switches/Makefile:testsuite/kern/switches/Makefile.kbuild)
 
 dnl
 dnl POSIX wraps
