@@ -4764,7 +4764,7 @@ index 4f7d793..3fda81a 100644
 +
  #ifdef CONFIG_CPU_SUP_AMD
  static const char errata93_warning[] =
- KERN_ERR
+ KERN_ERR 
 @@ -1027,6 +1032,11 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code)
  	/* Get the faulting address: */
  	address = read_cr2();
