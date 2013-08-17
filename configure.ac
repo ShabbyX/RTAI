@@ -1445,8 +1445,6 @@ AH_VERBATIM(CONFIG_RTAI_LXRT_INLINE,[
 #if CONFIG_RTAI_LXRT_INLINE == 1
 #define RTAI_PROTO(type,name,arglist) static inline type name arglist
 #elif CONFIG_RTAI_LXRT_INLINE == 2
-#define RTAI_PROTO(type,name,arglist) extern inline type name arglist
-#elif CONFIG_RTAI_LXRT_INLINE == 3
 #define RTAI_PROTO(type,name,arglist) type name arglist; static inline type __hidefun(name) arglist
 #else
 #define RTAI_PROTO(type,name,arglist) type name arglist
