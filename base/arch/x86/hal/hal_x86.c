@@ -1254,7 +1254,6 @@ static void rtai_install_archdep (void)
 
 #ifdef CONFIG_X86_LOCAL_APIC
 	if (rtai_apicfreq_arg == 0) {
-		rtai_apicfreq_arg = HZ*apic_read(APIC_TMICT);
 		rtai_apicfreq_arg = hal_request_apic_freq();
 	}
 	rtai_tunables.apic_freq = rtai_apicfreq_arg;
