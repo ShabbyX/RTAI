@@ -312,10 +312,9 @@ int rtdm_dev_register(struct rtdm_device *device)
 			}
 		}
 
-#ifdef CONFIG_PROC_FS
-		if ((ret = rtdm_proc_register_device(device)) < 0)
+		ret = rtdm_proc_register_device(device);
+		if (ret)
 			goto err;
-#endif /* CONFIG_PROC_FS */
 
 		xnlock_get_irqsave(&rt_dev_lock, s);
 		list_add_tail(&device->reserved.entry,
@@ -352,10 +351,9 @@ int rtdm_dev_register(struct rtdm_device *device)
 			}
 		}
 
-#ifdef CONFIG_PROC_FS
-		if ((ret = rtdm_proc_register_device(device)) < 0)
+		ret = rtdm_proc_register_device(device);
+		if (ret)
 			goto err;
-#endif /* CONFIG_PROC_FS */
 
 		xnlock_get_irqsave(&rt_dev_lock, s);
 		list_add_tail(&device->reserved.entry,
@@ -445,10 +443,7 @@ int rtdm_dev_unregister(struct rtdm_device *device, unsigned int poll_delay)
 
 	xnlock_put_irqrestore(&rt_dev_lock, s);
 
-#ifdef CONFIG_PROC_FS
-	remove_proc_entry("information", device->proc_entry);
-	remove_proc_entry(device->proc_name, rtdm_proc_root);
-#endif /* CONFIG_PROC_FS */
+	rtdm_proc_unregister_device(device);
 
 	up(&nrt_dev_lock);
 

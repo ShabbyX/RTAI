@@ -32,11 +32,11 @@
 #include <rtai_wrappers.h>
 
 /* set these as you need */
-#define CONFIG_RTAI_HW_SMI_ALL		1
+#define CONFIG_RTAI_HW_SMI_ALL		0
 #define CONFIG_RTAI_HW_SMI_INTEL_USB2	0
 #define CONFIG_RTAI_HW_SMI_LEGACY_USB2	0
 #define CONFIG_RTAI_HW_SMI_PERIODIC	0
-#define CONFIG_RTAI_HW_SMI_TCO		0
+#define CONFIG_RTAI_HW_SMI_TCO		1
 #define CONFIG_RTAI_HW_SMI_MC		0
 #define CONFIG_RTAI_HW_SMI_APMC		0
 #define CONFIG_RTAI_HW_SMI_LEGACY_USB	0

@@ -277,7 +277,7 @@ librtdm_la_LDFLAGS = -module -version-info 0:0:0
 librtdm_la_SOURCES = \
 	services.c
 
-INCLUDES = @RTAI_USER_CFLAGS@ -fno-inline -I../../../base/include \
+INCLUDES = @RTAI_REAL_USER_CFLAGS@ -fno-inline -I../../../base/include \
 	-I$(top_srcdir)/base/include -I$(top_srcdir)/addons \
 	-I$(srcdir)/../.. $(am__append_1)
 all: all-am

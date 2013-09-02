@@ -153,7 +153,7 @@ static inline long long get_delta(long long *rt, long long *master, unsigned int
 	return done ? rtai_tsc_ofst[slave] = (8*rtai_tsc_ofst[slave] + 2*((long)(tcenter - best_tm)))/10 : 0;
 }
 
-static void sync_tsc(unsigned int master, unsigned int slave)
+static void sync_tsc(unsigned long master, unsigned int slave)
 {
 	unsigned long flags;
 	long long delta, rt = 0, master_time_stamp = 0;

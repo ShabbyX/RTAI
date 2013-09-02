@@ -1,3 +1,88 @@
+2013-08-31 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* addons/rtdm/module.c: aligned the intr part to its latest sibling.
+
+2013-08-30 Pierangelo Masarati <masarati@aero.polimi.it>
+           Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* addons/comedi/GNUmakefile.am: no kernel headers in user space
+	* addons/comedi/rtai_comedi.h: do not include linux/compiler.h
+	  in user space
+
+2013-08-28 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal_64.c: aligned to work with Linux-3.x,
+	  it is much as its hal_32.c counterpart.
+
+2013-08-27 Pierangelo Masarati <masarati@aero.polimi.it>
+           Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* configure.in, base/arch/x86/Kconfig: enable hard-soft toggling,
+	  by automatically installing a SIGUSR1 Linux signal & handler,
+	  using standard Linux KILL support
+
+2013-08-26 Ian Abbott <abbotti@mev.co.uk>
+
+	* configure.in: Some AC_CONFIG_LINKS() go wrong when building
+	  outside the source tree.
+
+2013-08-25 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal_32.c: return to requesting the 8254-PIT 
+	  interrupt in rt_timer_request, we care of the related issue,
+	  alrady solved in the way of the explanation below, by modifying 
+	  the patch.
+	* base/arch/x86/hal/hal_64.c: same as above, but, once more, since 
+	  X86_64 has an APIC always, it is likely non an issue in this case.
+
+2013-08-22 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal_32.c: do not request the 8254-PIT interrupt 
+	  in rt_timer_request, it is done by the patch already; so if the 
+	  related timer handler is installed in advance the following 
+	  rtai_request_tickdev will get an error and the related 8254 stuff 
+	  will not be initialized.
+	* base/arch/x86/hal/hal_64.c: same as above, since X86_64 has an APIC
+	  always, it is likely non an issue in this case.
+
+2013-08-20 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal_32.c: use the irq desc eoi in rt_eoi_irq.
+	* base/arch/x86/hal/hal_64.c: same as above.
+
+2013-08-19 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/Kconfig: ask for RTNet installation directory if 
+	  NETRPC has to use it.
+
+2013-08-19 Roberto Bucher <roberto.bucher@supsi.ch>
+
+	* rtai-lab/xrtailab.cpp: few blank lines for better read code
+	* rtai-lab/scicoslab/devices/scicos_block4.h: new version from 
+	  scicoslab-4.4.1
+	* rtai-lab/scicoslab/macros/Makefile: fitted to scicoslab-4.4.1
+	* rtai-lab/scicoslab/macros/RTAICodeGen_.sci: new version for
+	  scicoslab-4.4.1
+	* rtai-lab/scicoslab/macros/SetTarget_.sci: new version for
+	  scicoslab-4.4.1
+	* rtai-lab/scicoslab/macros/RT_templates/rtai.mak: added blas, 
+	  lapack and gfortran libs for the linker
+	
+2013-08-18 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-x86/rtai_lxrt.h: set appropriate use of the 
+	  32-64 specific versions; GNUmakefile.am GNUmakefile.in also 
+	  modified accordingly.
+
+2012-08-17 Mark Fortescue <mark@mtfhpc.demon.co.uk>
+
+	* base/addons/rtdm/module.c: split the loop initializing the timers
+	  into two parts, fixes possible SMP preemption issues.
+	* base/addons/rtdm/xn.h: add missing list pointers at timers
+	  initialization.
+	  (N.B. a forgotten due recovery of a year old, 2012-08-03, fix 
+	  existing in VULCANO CVS already.) 
+
 2013-08-07 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
         * base/include/rtai_lxrt.h: modified the support and declarations for 

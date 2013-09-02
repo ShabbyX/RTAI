@@ -3129,7 +3129,6 @@ int main(int argc, char **argv)
 	RLG_Save_Profile_Dialog = rlg_save_profile_dialog(250, 100);
 	RLG_Delete_Profile_Dialog = rlg_delete_profile_dialog(250, 200);
 //	RLG_Text_Window = rlg_text_window(200, 200);
-
 	RLG_Main_Window->show();
 //	RLG_Main_Window->show(argc, argv);
 

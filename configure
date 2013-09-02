@@ -985,6 +985,7 @@ enable_rtdm_shirq
 enable_rtdm_select
 enable_debug_rtdm
 enable_task_switch_signal
+enable_hard_soft_toggler
 enable_align_priority
 enable_cplusplus
 enable_cal_freq_fact
@@ -1702,6 +1703,7 @@ Optional Features:
  --enable-rtdm-select	Enable select support in RTDM
  --enable-debug-rtdm		Enable RTDM debug
  --enable-task-switch-signal		Enable RTAI task switch signal
+ --enable-hard-soft-toggler		Enable RTAI hard-soft toggler
  --enable-align-priority		Keep Linux task priority aligned to RTAI
  --enable-cplusplus	Build in-kernel C++ support
  --enable-cal-freq-fact      	Set calibration frequency factor
@@ -16285,6 +16287,19 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: ${CONFIG_RTAI_TASK_SWITCH_SIGNAL:-no}" >&5
 $as_echo "${CONFIG_RTAI_TASK_SWITCH_SIGNAL:-no}" >&6; }
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for hard-soft toggler" >&5
+$as_echo_n "checking for hard-soft toggler... " >&6; }
+# Check whether --enable-hard-soft-toggler was given.
+if test "${enable_hard_soft_toggler+set}" = set; then :
+  enableval=$enable_hard_soft_toggler; case "$enableval" in
+	y | yes) CONFIG_RTAI_HARD_SOFT_TOGGLER=y ;;
+	*) unset CONFIG_RTAI_HARD_SOFT_TOGGLER ;;
+	esac
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${CONFIG_RTAI_HARD_SOFT_TOGGLER:-no}" >&5
+$as_echo "${CONFIG_RTAI_HARD_SOFT_TOGGLER:-no}" >&6; }
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Linux task priority alignment to RTAI" >&5
 $as_echo_n "checking for Linux task priority alignment to RTAI... " >&6; }
 # Check whether --enable-align-priority was given.
@@ -18633,6 +18648,9 @@ $as_echo "#define CONFIG_RTAI_ALIGN_LINUX_PRIORITY 1" >>confdefs.h
 test \! x$CONFIG_RTAI_TASK_SWITCH_SIGNAL = x &&
 $as_echo "#define CONFIG_RTAI_TASK_SWITCH_SIGNAL 1" >>confdefs.h
 
+test \! x$CONFIG_RTAI_HARD_SOFT_TOGGLER = x &&
+$as_echo "#define CONFIG_RTAI_HARD_SOFT_TOGGLER 1" >>confdefs.h
+
 
 test x$CONFIG_RTAI_MATH = xy &&
 $as_echo "#define CONFIG_RTAI_MATH_BUILTIN 1" >>confdefs.h
@@ -19498,7 +19516,6 @@ $as_echo_n "checking for RTAI target architecture... " >&6; }
 RTAI_REAL_USER_CFLAGS=""
 
 if test x"$LINUX_KERNELOUTPUT" != x"$LINUX_KERNELSRC"; then
-  RTAI_REAL_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include2 $RTAI_REAL_USER_CFLAGS"
   RTAI_REAL_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include $RTAI_REAL_USER_CFLAGS"
 fi
 
@@ -19550,7 +19567,7 @@ case $RTAI_TARGET_ARCH in
 	RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
 	RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
 	RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -ffast-math -msoft-float"
-	ac_config_links="$ac_config_links base/include/asm-arm/arch:base/include/asm-arm/arch-$RTAI_TARGET_SUBARCH"
+	ac_config_links="$ac_config_links base/include/asm-arm/arch:$srcdir/base/include/asm-arm/arch-$RTAI_TARGET_SUBARCH"
 
         ;;
  ppc)
@@ -19622,7 +19639,7 @@ RTAI_KMOD_CFLAGS="$RTAI_KMOD_CFLAGS -D__IN_RTAI__"
 RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CXXFLAGS -D__IN_RTAI__"
 RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -D__IN_RTAI__"
 
-ac_config_links="$ac_config_links base/include/asm:base/include/asm-$RTAI_TARGET_ARCH"
+ac_config_links="$ac_config_links base/include/asm:$srcdir/base/include/asm-$RTAI_TARGET_ARCH"
 
 
 if test x$CONFIG_RTAI_OLD_FASHIONED_BUILD = xy; then
@@ -21202,8 +21219,8 @@ do
     "rtai_config.h") CONFIG_HEADERS="$CONFIG_HEADERS rtai_config.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
-    "base/include/asm-arm/arch") CONFIG_LINKS="$CONFIG_LINKS base/include/asm-arm/arch:base/include/asm-arm/arch-$RTAI_TARGET_SUBARCH" ;;
-    "base/include/asm") CONFIG_LINKS="$CONFIG_LINKS base/include/asm:base/include/asm-$RTAI_TARGET_ARCH" ;;
+    "base/include/asm-arm/arch") CONFIG_LINKS="$CONFIG_LINKS base/include/asm-arm/arch:$srcdir/base/include/asm-arm/arch-$RTAI_TARGET_SUBARCH" ;;
+    "base/include/asm") CONFIG_LINKS="$CONFIG_LINKS base/include/asm:$srcdir/base/include/asm-$RTAI_TARGET_ARCH" ;;
     "base/include/rtai_config.h") CONFIG_LINKS="$CONFIG_LINKS base/include/rtai_config.h:rtai_config.h" ;;
     "base/arch/$RTAI_TARGET_ARCH/hal/Makefile") CONFIG_LINKS="$CONFIG_LINKS base/arch/$RTAI_TARGET_ARCH/hal/Makefile:base/arch/$RTAI_TARGET_ARCH/hal/Makefile.kbuild" ;;
     "base/arch/$RTAI_TARGET_ARCH/calibration/Makefile") CONFIG_LINKS="$CONFIG_LINKS base/arch/$RTAI_TARGET_ARCH/calibration/Makefile:base/arch/$RTAI_TARGET_ARCH/calibration/Makefile.kbuild" ;;

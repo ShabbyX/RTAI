@@ -4,6 +4,8 @@
  *
  * Copyright (C) 2008 Efixo <gilles.chanteperdrix@laposte.net>
  *
+ * with adaptions for RTAI by Paolo Mantegazza <mantegazza@aero.polimi.it>
+ *
  * RTAI is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
  * by the Free Software Foundation; either version 2 of the License,
@@ -401,8 +403,8 @@ void xnselector_destroy(struct xnselector *selector)
 	inith(&selector->destroy_link);
 	xnlock_get_irqsave(&nklock, s);
 	appendq(&xnselectors, &selector->destroy_link);
-	__rthal_apc_schedule(xnselect_apc);
 	xnlock_put_irqrestore(&nklock, s);
+	rthal_apc_schedule(xnselect_apc);
 }
 EXPORT_SYMBOL_GPL(xnselector_destroy);
 

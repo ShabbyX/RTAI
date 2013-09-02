@@ -3108,7 +3108,7 @@ new file mode 100644
 index 0000000..5be7005
 --- /dev/null
 +++ b/arch/x86/kernel/ipipe.c
-@@ -0,0 +1,881 @@
+@@ -0,0 +1,880 @@
 +/*   -*- linux-c -*-
 + *   linux/arch/x86/kernel/ipipe.c
 + *
@@ -3181,7 +3181,6 @@ index 0000000..5be7005
 +extern gate_desc idt_table[];
 +#endif
 +EXPORT_PER_CPU_SYMBOL(vector_irq);
-+EXPORT_SYMBOL(irq_desc);
 +EXPORT_SYMBOL(idt_table);
 +EXPORT_SYMBOL(i8259A_lock);
 +EXPORT_SYMBOL(__ipipe_sync_stage);

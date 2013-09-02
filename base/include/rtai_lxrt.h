@@ -69,8 +69,6 @@
 #include <rtai_sched.h>
 #include <rtai_nam2num.h>
 
-//#define CONFIG_RTAI_HARD_SOFT_TOGGLER
-
 // scheduler
 #define YIELD				 0
 #define SUSPEND				 1

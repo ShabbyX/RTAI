@@ -42,7 +42,7 @@ do {
 } while (0);
 
 It has been already said above but, if you are still asking yourself why there 
-is a forced staticalisation of LXRT extension slots assignement, while it 
+is a forced staticalization of LXRT extension slots assignment, while it 
 would be trivial to have functions to get/free slots dynamically, think about 
 efficiency first, especially if direct (eager in the related RTAI config 
 caption) inlining is used.
@@ -53,5 +53,5 @@ If you intend to use Linux i386 with REGPARM configured notice that all your
 functions callable from user space must be prefixed with "RTAI_SYSCALL_MODE".
 In such a way they will be usable both with and without REGPARM. If you do
 not do so then avoid configuring REGPARM for Linux, which is not possible from
-2.6.20 onward, where REGPARM is the only way to operate and so it is nomore
-an option.
+2.6.20 onward, where REGPARM is the only way to operate and so it is an option
+no more.

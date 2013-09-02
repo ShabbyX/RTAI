@@ -1,6 +1,6 @@
 all: install
 
-SCILAB_VERSION = 4.4b7
+SCILAB_VERSION = 4.4.1
 SCILAB_DIR = /usr/lib/scicoslab-gtk-$(SCILAB_VERSION)
 RTAIDIR = $(shell rtai-config --prefix)
 
@@ -29,5 +29,5 @@ install:
 	cd $(CONTRIBDIR)/routines; make install; rm *.o *.a
 
 user:
-	mkdir -p ~/.Scilab/$(SCILAB_VERSION)
-	cat scilab >> ~/.Scilab/$(SCILAB_VERSION)/.scilab
+	mkdir -p ~/.ScicosLab/$(SCILAB_VERSION)
+	cat scilab >> ~/.ScicosLab/$(SCILAB_VERSION)/.scilab

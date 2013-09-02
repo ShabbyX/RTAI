@@ -7,8 +7,8 @@
  *
  *   Original RTAI/x86 layer implementation: \n
  *   Copyright &copy; 2000-2013 Paolo Mantegazza, \n
- *   Copyright &copy; 2000 Steve Papacharalambous, \n
- *   Copyright &copy; 2000 Stuart Hughes, \n
+ *   Copyright &copy; 2000      Steve Papacharalambous, \n
+ *   Copyright &copy; 2000      Stuart Hughes, \n
  *   and others.
  *
  *   RTAI/x86 rewrite over Adeos: \n
@@ -591,18 +591,7 @@ void rt_end_irq (unsigned irq)
 
 void rt_eoi_irq (unsigned irq)
 {
-        if (
-#ifdef CONFIG_X86_IO_APIC
-            !IO_APIC_IRQ(irq) ||
-#endif /* CONFIG_X86_IO_APIC */
-            !(rtai_irq_desc(irq).status_use_accessors & (IRQD_IRQ_DISABLED | IRQD_IRQ_INPROGRESS))) {
-        }
-#if defined(CONFIG_X86_IO_APIC) && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19)
         rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(eoi, irq);
-#else /* !(CONFIG_X86_IO_APIC && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19))
-*/
-        rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(end, irq);
-#endif
 }
 
 /**
@@ -831,7 +820,6 @@ irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_reg
 
 #endif
 
-
 #ifdef CONFIG_SMP
 
 static unsigned long rtai_old_irq_affinity[IPIPE_NR_XIRQS];
@@ -950,8 +938,8 @@ void rt_request_apic_timers (void (*handler)(void), struct apic_timer_setup_data
 		}
 	}
 
-	rtai_request_tickdev(handler);
 	rtai_critical_exit(flags);
+	rtai_request_tickdev(handler);
 }
 
 /**
@@ -968,8 +956,8 @@ void rt_free_apic_timers(void)
 	rtai_release_tickdev();
 	rtai_sync_level = 3;
 	rtai_setup_periodic_apic(RTAI_APIC_ICOUNT,LOCAL_TIMER_VECTOR);
-	rt_release_irq(RTAI_APIC_TIMER_IPI);
 	rtai_critical_exit(flags);
+	rt_release_irq(RTAI_APIC_TIMER_IPI);
 }
 
 /**
@@ -1122,7 +1110,13 @@ int rt_request_timer (void (*handler)(void), unsigned tick, int use_apic)
 			outb(tick & 0xff, 0x40);
 			outb(tick >> 8, 0x40);
 			rt_release_irq(RTAI_TIMER_8254_IRQ);
-		    	retval = rt_request_irq(RTAI_TIMER_8254_IRQ, (rt_irq_handler_t)handler, NULL, 0);
+ 		    	retval = rt_request_irq(RTAI_TIMER_8254_IRQ, (rt_irq_handler_t)handler, NULL, 0);
+/* The above rt_request_irq should not be made, it is done by the patch already, * see ipipe_timer_start; so if you install the timer handler in advance the 
+ * following rtai_request_tickdev will get an error and the related 8254 stuff 
+ * will not be initialized.
+ * NOT TO BE MADE    	retval = rt_request_irq(RTAI_TIMER_8254_IRQ, (rt_irq_handler_t)handler, NULL, 0);
+ * ... unless we change the patch, as we did. SO LET'S KEEP:
+ */
 		}
 	} else {
 		rt_times.linux_tick = rtai_imuldiv(LATCH,rtai_tunables.cpu_freq,RTAI_FREQ_8254);
@@ -1140,7 +1134,13 @@ int rt_request_timer (void (*handler)(void), unsigned tick, int use_apic)
 			outb(LATCH & 0xff, 0x40);
 			outb(LATCH >> 8, 0x40);
 			rt_release_irq(RTAI_TIMER_8254_IRQ);
-			retval = rt_request_irq(RTAI_TIMER_8254_IRQ, (rt_irq_handler_t)handler, NULL, 0);
+ 		    	retval = rt_request_irq(RTAI_TIMER_8254_IRQ, (rt_irq_handler_t)handler, NULL, 0);
+/* The above rt_request_irq should not be made, it is done by the patch already, * see ipipe_timer_start; so if you install the timer handler in advance the 
+ * following rtai_request_tickdev will get an error and the related 8254 stuff 
+ * will not be initialized.
+ * NOT TO BE MADE    	retval = rt_request_irq(RTAI_TIMER_8254_IRQ, (rt_irq_handler_t)handler, NULL, 0);
+ * ... unless we change the patch, as we did. SO LET'S KEEP:
+ */
 		}
 	}
 	rtai_request_tickdev(handler);
@@ -1440,7 +1440,7 @@ EXPORT_SYMBOL(rtai_usrq_dispatcher);
 static int intercept_syscall_prologue(unsigned long event, struct pt_regs *regs)
 {
 	if (likely(regs->LINUX_SYSCALL_NR >= RTAI_SYSCALL_NR)) {
-		unsigned long srq  = regs->LINUX_SYSCALL_REG1;
+		unsigned long srq = regs->LINUX_SYSCALL_REG1;
 		IF_IS_A_USI_SRQ_CALL_IT(srq, regs->LINUX_SYSCALL_REG2, (long long *)regs->LINUX_SYSCALL_REG3, regs->LINUX_SYSCALL_FLAGS, 1);
 		*((long long *)regs->LINUX_SYSCALL_REG3) = rtai_usrq_dispatcher(srq, regs->LINUX_SYSCALL_REG2);
 		hal_test_and_fast_flush_pipeline(rtai_cpuid());
@@ -1643,7 +1643,7 @@ static int rtai_proc_register (void)
 		printk(KERN_ERR "Unable to initialize /proc/rtai/hal.\n");
 		return -1;
         }
-	ent->read_proc  = rtai_read_proc;
+	ent->read_proc = rtai_read_proc;
 
 	return 0;
 }
@@ -1780,8 +1780,10 @@ int __rtai_hal_init (void)
 struct hal_sysinfo_struct sysinfo;
 hal_get_sysinfo(&sysinfo);
 printk("SYSINFO: CPUs %d, LINUX APIC IRQ %d, TIM_FREQ %llu, CLK_FREQ %llu, CPU_FREQ %llu\n", sysinfo.sys_nr_cpus, sysinfo.sys_hrtimer_irq, sysinfo.sys_hrtimer_freq, sysinfo.sys_hrclock_freq, sysinfo.sys_cpu_freq); 
+#ifdef CONFIG_X86_LOCAL_APIC
 printk("RTAI_APIC_TIMER_IPI: RTAI DEFINED %d, VECTOR %d; LINUX_APIC_TIMER_IPI: RTAI DEFINED %d, VECTOR %d\n", RTAI_APIC_TIMER_IPI, ipipe_apic_vector_irq(0xf1), LOCAL_TIMER_IPI, ipipe_apic_vector_irq(0xef));
 printk("TIMER NAME: %s; VARIOUSLY FOUND APIC FREQs: %lu, %lu, %u\n", ipipe_timer_name(), hal_request_apic_freq(), hal_request_apic_freq(), apic_read(APIC_TMICT)*HZ);
+#endif
 }
 
 	return 0;
@@ -1976,7 +1978,7 @@ static int _rt_linux_hrt_next_shot(unsigned long delay, struct clock_event_devic
 #define  IPIPE_REQUEST_TICKDEV(a, b, c, d, e)  ipipe_request_tickdev(a, b, c, d)
 #endif
 
-static int rtai_request_tickdev(void* handler)
+static int rtai_request_tickdev(void *handler)
 {
 	int mode, cpuid;
 	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {

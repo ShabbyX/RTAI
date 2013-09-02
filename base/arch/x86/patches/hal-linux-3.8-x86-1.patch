@@ -11110,7 +11110,7 @@ index 0000000..82ac21d
 +
 +	flags = ipipe_critical_enter(NULL);
 +
-+	if (cpu == 0 || timer->irq != per_cpu(ipipe_percpu.hrtimer_irq, 0)) {
++	if (0 && (cpu == 0 || timer->irq != per_cpu(ipipe_percpu.hrtimer_irq, 0))) {
 +		ret = ipipe_request_irq(ipipe_head_domain, timer->irq,
 +				       (ipipe_irq_handler_t)tick_handler,
 +				       NULL, __ipipe_ack_hrtimer_irq);

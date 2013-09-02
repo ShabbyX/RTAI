@@ -461,6 +461,14 @@ config RTAI_NETRPC_RTNET
 	Notice that the initial linking and set up of remote port stubs is 
 	done in soft mode always.
 
+config RTAI_RTNET_DIR
+	depends on RTAI_NETRPC_RTNET
+	string "RTNET installation directory"
+	default "/usr/rtnet"
+	help
+	You Rhave chosen to use RTAI netrpc services with RTNet, so you have
+	to tell where it is located.
+
 config RTAI_SHM
 	tristate "Shared memory"
 	default m
@@ -492,7 +500,7 @@ config RTAI_SEM
 	The module will be called rtai_sem.o.
 
 config RTAI_RT_POLL
-	bool "Enable IPCs polling"
+	bool "  Enable IPCs polling"
 	depends on RTAI_SEM
 	default n
 	help
@@ -795,19 +803,19 @@ config RTAI_WD
 	- kill the offending task and remove all traces.
 	The module will be called rtai_wd.o.
 
-#config RTAI_HARD_SOFT_TOGGLER
-#	string "Install Linux signal handler to toggle hard-soft modes"
-#	default n
-#	help
-#	By setting this option RTAI will install a Linux signal (SIGUSR1) and 
-#	handler, when any of the available task-thread init functions is called
-#	to enable the usage of its own APIs. With it is possible to toggle the 
-#	hard-soft mode of any task, asynchronously and outside of it, by using 
-#	some form of KILL, i.e.: "kill -USR1 <pid>" from a shell, or 
-#	"kill(pid, SIGUSR1)" from a C function. For the latter case the helper 
-#	function "pid_t rt_get_linux_tid(RT_TASK *rt_task)" has been added to
-#	help in quickly getting the pid of the RTAI task extension "rt_task" 
-#	of a Linux task.
+config RTAI_HARD_SOFT_TOGGLER
+	bool "Install Linux signal handler to toggle hard-soft modes"
+	default n
+	help
+	By setting this option RTAI will install a Linux signal (SIGUSR1) and 
+	handler, when any of the available task-thread init functions is called
+	to enable the usage of its own APIs. With it is possible to toggle the 
+	hard-soft mode of any task, asynchronously and outside of it, by using 
+	some form of KILL, i.e.: "kill -USR1 <pid>" from a shell, or 
+	"kill(pid, SIGUSR1)" from a C function. For the latter case the helper 
+	function "pid_t rt_get_linux_tid(RT_TASK *rt_task)" has been added to
+	help in quickly getting the pid of the RTAI task extension "rt_task" 
+	of a Linux task.
 
 endmenu
 
