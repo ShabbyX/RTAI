@@ -39,7 +39,7 @@ typedef union thread_xstate FPU_ENV;
 
 #ifdef CONFIG_RTAI_FPU_SUPPORT
 
-// RAW FPU MANAGEMENT FOR USAGE FROM WHAT/WHEREVER RTAI DOES IN KERNEL
+/* RAW FPU MANAGEMENT FOR USAGE FROM WHAT/WHEREVER RTAI DOES IN KERNEL */
 
 #define enable_fpu()  do { \
 	__asm__ __volatile__ ("clts"); \
@@ -60,7 +60,7 @@ typedef union thread_xstate FPU_ENV;
 	} \
 } while (0)
 
-// initialise the hard fpu unit directly
+/* initialise the hard fpu unit directly */
 #define init_hard_fpenv() do { \
 	unsigned long __mxcsr; \
 	__asm__ __volatile__ ("clts; fninit"); \
@@ -68,7 +68,7 @@ typedef union thread_xstate FPU_ENV;
 	__asm__ __volatile__ ("ldmxcsr %0": : "m" (__mxcsr)); \
 } while (0)
 
-// initialise the given fpenv union, without touching the related hard fpu unit
+/* initialise the given fpenv union, without touching the related hard fpu unit */
 #define __init_fpenv(fpenv)  do { \
 	memset(fpenv, 0, sizeof(struct i387_fxsave_struct)); \
 	(fpenv)->cwd = 0x37f; \
@@ -121,7 +121,7 @@ static inline int __restore_fpenv(struct i387_fxsave_struct *fx)
 #define save_fpenv(fpenv)     do { __save_fpenv(&(fpenv).fxsave); } while (0)
 #define restore_fpenv(fpenv)  do { __restore_fpenv(&(fpenv).fxsave); } while (0)
 
-// FPU MANAGEMENT DRESSED FOR IN KTHREAD/THREAD/PROCESS FPU USAGE FROM RTAI
+/* FPU MANAGEMENT DRESSED FOR IN KTHREAD/THREAD/PROCESS FPU USAGE FROM RTAI */
 
 #define init_hard_fpu(lnxtsk)  do { \
 	init_hard_fpenv(); \
@@ -171,7 +171,6 @@ static inline int __restore_fpenv(struct i387_fxsave_struct *fx)
 #endif
 
 #define set_lnxtsk_using_fpu(lnxtsk) \
-	do { rtai_set_fpu_used(lnxtsk); } while(0) //do { task_thread_info(lnxtsk)->status |= TS_USEDFPU; } while(0)
-//	do { (lnxtsk)->thread_info->status |= TS_USEDFPU; } while(0)
+	do { rtai_set_fpu_used(lnxtsk); } while(0)
 
 #endif /* !_RTAI_ASM_X86_64_FPU_H */

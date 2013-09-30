@@ -1554,9 +1554,6 @@ EXPORT_SYMBOL(rt_sync_printk);
 EXPORT_SYMBOL(rtai_catch_event);
 
 EXPORT_SYMBOL(rt_scheduling);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,22)
-EXPORT_SYMBOL(ipipe_root_status);
-#endif
 
 EXPORT_SYMBOL(IsolCpusMask);
 

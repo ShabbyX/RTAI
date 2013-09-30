@@ -16,8 +16,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-// Wrappers and inlines to avoid too much an editing of RTDM code.
-// The core stuff is just RTAI in disguise.
+/* Wrappers and inlines to avoid too much an editing of RTDM code.
+ * The core stuff is just RTAI in disguise.
+ */
 
 #ifndef _RTAI_XNSTUFF_H
 #define _RTAI_XNSTUFF_H
@@ -73,8 +74,6 @@
 
 #define trace_mark(ev, fmt, args...)  do { } while (0)
 
-//recursive smp locks, as for RTAI global lock stuff but with an own name
-
 #define nklock (*((xnlock_t *)rtai_cpu_lock))
 
 #define XNARCH_LOCK_UNLOCKED  (xnlock_t) { { 0, 0 } }
@@ -103,6 +102,10 @@ typedef struct { volatile unsigned long lock[2]; } xnlock_t;
 #define DECLARE_EXTERN_XNLOCK(lock)       extern xnlock_t lock
 #define DEFINE_XNLOCK(lock)               xnlock_t lock = XNARCH_LOCK_UNLOCKED
 #define DEFINE_PRIVATE_XNLOCK(lock)       static DEFINE_XNLOCK(lock)
+
+#define DECLARE_WORK_NODATA(f, n)       DECLARE_WORK(f, n)
+#define DECLARE_WORK_FUNC(f)            void f(struct work_struct *work)
+#define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_DELAYED_WORK(n, f)
 
 static inline void xnlock_init(xnlock_t *lock)
 {
@@ -176,13 +179,13 @@ static inline void xnlock_put_irqrestore(xnlock_t *lock, spl_t flags)
 
 #endif /* CONFIG_SMP */
 
-// memory allocation
+/* memory allocation */
 
 #define xnmalloc  rt_malloc
 #define xnfree    rt_free
 #define xnarch_fault_range(vma)
 
-// in kernel printing (taken from RTDM pet system)
+/* in kernel printing (taken from RTDM pet system) */
 
 #define XNARCH_PROMPT "RTDM: "
 
@@ -190,7 +193,7 @@ static inline void xnlock_put_irqrestore(xnlock_t *lock, spl_t flags)
 #define xnlogerr(fmt, args...)  printk(KERN_ERR  XNARCH_PROMPT fmt, ##args)
 #define xnlogwarn               xnlogerr
 
-// user space access (taken from Linux)
+/* user space access (taken from Linux) */
 
 #define __xn_access_ok(task, type, addr, size) \
 	(access_ok(type, addr, size))
@@ -246,7 +249,7 @@ static inline int xnarch_remap_vm_page(struct vm_area_struct *vma, unsigned long
 
 #endif
 
-// interrupt setup/management (adopted_&|_adapted from RTDM pet system)
+/* interrupt setup/management (adopted_&|_adapted from RTDM pet system) */
 
 #define RTHAL_NR_IRQS  IPIPE_NR_XIRQS
 
@@ -342,15 +345,13 @@ int xnintr_disable (xnintr_t *intr);
 	rt_release_irq(irq);
 
 extern struct rtai_realtime_irq_s rtai_realtime_irq[];
-//#define xnarch_get_irq_cookie(irq)  (rtai_realtime_irq[irq].cookie)
 #define xnarch_get_irq_cookie(irq)  (rtai_domain.irqs[irq].cookie)
 
 extern unsigned long IsolCpusMask;
 #define xnarch_set_irq_affinity(irq, nkaffinity) \
 	rt_assign_irq_to_cpu(irq, IsolCpusMask)
 
-// support for RTDM timers
-
+/* support for RTDM timers */
 struct rtdm_timer_struct {
 	struct rtdm_timer_struct *next, *prev;
 	int priority, cpuid;
@@ -405,7 +406,7 @@ static inline void xntimer_stop(xntimer_t *timer)
 	rt_timer_remove(timer);
 }
 
-// support for use in RTDM usage testing found in RTAI SHOWROOM CVS
+/* support for use in RTDM usage testing found in RTAI SHOWROOM CVS */
 
 static inline unsigned long long xnarch_ulldiv(unsigned long long ull, unsigned
 long uld, unsigned long *r)
@@ -417,7 +418,7 @@ long uld, unsigned long *r)
 	return ull;
 }
 
-// support for RTDM select
+/* support for RTDM select */
 
 typedef struct xnholder {
 	struct xnholder *next;
@@ -527,42 +528,6 @@ do { \
 #else
 
 #define SELECT_SIGNAL(select_block, state)  do { } while (0)
-
-#endif
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-
-#define __WORK_INITIALIZER(n,f,d) {                             \
-	 .list   = { &(n).list, &(n).list },                     \
-	 .sync = 0,                                              \
-	 .routine = (f),                                         \
-	 .data = (d),                                            \
-}
-
-#define DECLARE_WORK(n,f,d)             struct tq_struct n = __WORK_INITIALIZER(n, f, d)
-#define DECLARE_WORK_NODATA(n, f)       DECLARE_WORK(n, f, NULL)
-#define DECLARE_WORK_FUNC(f)            void f(void *cookie)
-#define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_WORK(n, f, NULL)
-
-#define schedule_delayed_work(work, delay) do {                 \
-	if (delay) {                                            \
-		set_current_state(TASK_UNINTERRUPTIBLE);        \
-		schedule_timeout(delay);                        \
-	}                                                       \
-	schedule_task(work);                                    \
-} while (0)
-
-#else
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,20)
-#define DECLARE_WORK_NODATA(f, n)       DECLARE_WORK(f, n, NULL)
-#define DECLARE_WORK_FUNC(f)            void f(void *cookie)
-#define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_DELAYED_WORK(n, f, NULL)
-#else /* >= 2.6.20 */
-#define DECLARE_WORK_NODATA(f, n)       DECLARE_WORK(f, n)
-#define DECLARE_WORK_FUNC(f)            void f(struct work_struct *work)
-#define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_DELAYED_WORK(n, f)
-#endif /* >= 2.6.20 */
 
 #endif
 

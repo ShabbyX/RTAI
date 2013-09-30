@@ -37,7 +37,7 @@ typedef union thread_xstate FPU_ENV;
 
 #ifdef CONFIG_RTAI_FPU_SUPPORT
 
-// RAW FPU MANAGEMENT FOR USAGE FROM WHAT/WHEREVER RTAI DOES IN KERNEL
+/* RAW FPU MANAGEMENT FOR USAGE FROM WHAT/WHEREVER RTAI DOES IN KERNEL */
 
 #define enable_fpu()  do { \
 	__asm__ __volatile__ ("clts"); \
@@ -54,7 +54,7 @@ typedef union thread_xstate FPU_ENV;
 	} \
 } while (0)
 
-// initialise the hard fpu unit directly
+/* initialise the hard fpu unit directly */
 #define init_hard_fpenv() do { \
 	__asm__ __volatile__ ("clts; fninit"); \
 	if (cpu_has_xmm) { \
@@ -63,7 +63,7 @@ typedef union thread_xstate FPU_ENV;
 	} \
 } while (0)
 
-// initialise the given fpenv union, without touching the related hard fpu unit
+/* initialise the given fpenv union, without touching the related hard fpu unit */
 #define __init_fpenv(fpenv)  do { \
 	if (cpu_has_fxsr) { \
 		memset(&(fpenv)->fxsave, 0, sizeof(struct i387_fxsave_struct));\
@@ -96,14 +96,14 @@ typedef union thread_xstate FPU_ENV;
 	} \
 } while (0)
 
-// FPU MANAGEMENT DRESSED FOR IN KTHREAD/THREAD/PROCESS FPU USAGE FROM RTAI
+/* FPU MANAGEMENT DRESSED FOR IN KTHREAD/THREAD/PROCESS FPU USAGE FROM RTAI */
 
-// Macros used for RTAI own kernel space tasks, where it uses the FPU env union
+/* Macros used for RTAI own kernel space tasks, where it uses the FPU env union */
 #define init_fpenv(fpenv)  do { __init_fpenv(&(fpenv)); } while (0)
 #define save_fpenv(fpenv)  do { __save_fpenv(&(fpenv)); } while (0)
 #define restore_fpenv(fpenv)  do { __restore_fpenv(&(fpenv)); } while (0)
 
-// Macros used for user space, where Linux might use eother a pointer or the FPU env union
+/* Macros used for user space, where Linux might use eother a pointer or the FPU env union */
 #define init_hard_fpu(lnxtsk)  do { \
 	init_hard_fpenv(); \
 	set_lnxtsk_uses_fpu(lnxtsk); \
@@ -153,6 +153,5 @@ typedef union thread_xstate FPU_ENV;
 
 #define set_lnxtsk_using_fpu(lnxtsk) \
 	do { rtai_set_fpu_used(lnxtsk); } while(0)
-//	do { (lnxtsk)->thread_info->status |= TS_USEDFPU; } while(0)
 
 #endif /* !_RTAI_ASM_I386_FPU_H */
