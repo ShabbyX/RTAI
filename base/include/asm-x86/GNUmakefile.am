@@ -16,10 +16,12 @@ include_HEADERS = \
 		rtai_vectors.h \
 		rtai_fpu_32.h \
 		rtai_hal_32.h \
+		rtai_lxrt_32.h \
 		rtai_sched_32.h \
 		rtai_atomic_32.h \
 		rtai_fpu_64.h \
 		rtai_hal_64.h \
+		rtai_lxrt_64.h \
 		rtai_sched_64.h \
 		rtai_atomic_64.h
 
