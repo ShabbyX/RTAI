@@ -1,18 +1,16 @@
-/**
- *   @ingroup hal
- *   @file
- *
+/*
  *   ARTI -- RTAI-compatible Adeos-based Real-Time Interface. Based on
  *   the original RTAI layer for x86.
  *
- *   Original RTAI/x86 layer implementation: \n
- *   Copyright &copy; 2000-2013 Paolo Mantegazza <mantegazza@aero.polimi.it> \n
- *   Copyright &copy; 2000      Steve Papacharalambous <stevep@freescale.com> \n
- *   Copyright &copy; 2000      Stuart Hughes <stuarth@lineo.com> \n
+ *   Original RTAI/x86 layer implementation:
+ *   Copyright (C) 2000-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ *   Copyright (C) 2000 Steve Papacharalambous <stevep@freescale.com>
+ *   Copyright (C) 2000 Stuart Hughes <stuarth@lineo.com>
  *   and others.
  *
- *   RTAI/x86 rewrite over Adeos: \n
- *   Copyright &copy 2002 Philippe Gerum <rpm@xenomai.org>
+ *   RTAI/x86 rewrite over Adeos:
+ *   Copyright (C) 2002 Philippe Gerum <rpm@xenomai.org>
+ *   Copyright (C) 2005 Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,13 +28,13 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**
- * @defgroup hal RTAI services functions.
+/*
+ * RTAI services functions.
  *
  * This module defines some functions that can be used by RTAI tasks, for
  * managing interrupts and communication services with Linux processes.
  *
- *@{*/
+ */
 
 #include <linux/module.h>
 #include <linux/delay.h>
@@ -50,8 +48,6 @@ MODULE_LICENSE("GPL");
 /*
 	Hacked from arch/ia64/kernel/smpboot.c.
 */
-
-//#define DIAG_OUT_OF_SYNC_TSC
 
 #ifdef DIAG_OUT_OF_SYNC_TSC
 static int sync_cnt[RTAI_NR_CPUS];
@@ -154,7 +150,6 @@ static void sync_tsc(unsigned long master, unsigned int slave)
 
 	go[MASTER] = 1;
 	if (smp_call_function(sync_master, (void *)master, 0) < 0) {
-//		printk(KERN_ERR "sync_tsc: slave CPU %u failed to get attention from master CPU %u!\n", slave, master);
 		return;
 	}
 	while (go[MASTER]) {
@@ -169,7 +164,6 @@ static void sync_tsc(unsigned long master, unsigned int slave)
 #endif
 }
 
-//#define CONFIG_RTAI_MASTER_TSC_CPU  0
 #define SLEEP0  500 // ms
 #define DSLEEP  500 // ms
 static volatile int end;

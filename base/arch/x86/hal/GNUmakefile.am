@@ -48,6 +48,6 @@ install-exec-local: rtai_hal$(modext)
 	$(mkinstalldirs) $(DESTDIR)$(moduledir)
 	$(INSTALL_DATA) $< $(DESTDIR)$(moduledir)
 
-EXTRA_DIST = Makefile.kbuild hal_x86.c
+EXTRA_DIST = Makefile.kbuild hal_32.c hal_64.c
 
 DISTCLEANFILES = Makefile

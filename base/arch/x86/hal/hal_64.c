@@ -1,22 +1,22 @@
-/**
- *   @ingroup hal
- *   @file
+/*
+ *   ARTI -- RTAI-compatible Adeos-based Real-Time Interface.
+ *   Based on the original RTAI layer for x86.
  *
- *   ARTI -- RTAI-compatible Adeos-based Real-Time Interface. Based on
- *   the original RTAI layer for x86.
- *
- *   Original RTAI/x86 layer implementation: \n
- *   Copyright &copy; 2000-2013 Paolo Mantegazza, \n
- *   Copyright &copy; 2000      Steve Papacharalambous, \n
- *   Copyright &copy; 2000      Stuart Hughes, \n
+ *   Original RTAI/x86 layer implementation:
+ *   Copyright (C) 2000-2013 Paolo Mantegazza
+ *   Copyright (C) 2000 Steve Papacharalambous
+ *   Copyright (C) 2000 Stuart Hughes
  *   and others.
  *
- *   RTAI/x86 rewrite over Adeos: \n
- *   Copyright &copy 2002 Philippe Gerum.
+ *   RTAI/x86 rewrite over Adeos:
+ *   Copyright (C) 2002 Philippe Gerum
+ *   Copyright (C) 2005 Paolo Mantegazza
  *
  *   Porting to x86_64 architecture:
- *   Copyright &copy; 2005-2013 Paolo Mantegazza, \n
- *   Copyright &copy; 2005 Daniele Gasperini \n
+ *   Copyright (C) 2013 Alec Ari
+ *   Copyright (C) 2005-2013 Paolo Mantegazza
+ *   Copyright (C) 2005 Daniele Gasperini
+ *   Copyright (C) 2002 Philippe Gerum
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**
- * @defgroup hal RTAI services functions.
+/*
+ * RTAI services functions.
  *
  * This module defines some functions that can be used by RTAI tasks, for
  * managing interrupts and communication services with Linux processes.
  *
- *@{*/
+ */
 
 #include <linux/version.h>
 #include <linux/slab.h>
@@ -49,7 +49,6 @@
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 #include <linux/console.h>
-//#include <asm/system.h>
 #include <asm/hw_irq.h>
 #include <asm/irq.h>
 #include <asm/desc.h>
@@ -108,10 +107,6 @@ static inline void rtai_setup_oneshot_apic (unsigned count, unsigned vector)
 	apic_write(APIC_TMICT, count);
 }
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-#define __ack_APIC_irq  ack_APIC_irq
-#endif
-
 #else /* !CONFIG_X86_LOCAL_APIC */
 
 #define rtai_setup_periodic_apic(count, vector)
@@ -147,7 +142,6 @@ static unsigned long rtai_sysreq_pending;
 
 static unsigned long rtai_sysreq_running;
 
-//static spinlock_t rtai_lsrq_lock = SPIN_LOCK_UNLOCKED;
 static DEFINE_SPINLOCK(rtai_lsrq_lock);
 
 static volatile int rtai_sync_level;
@@ -165,10 +159,6 @@ struct rt_times rt_times;
 struct rt_times rt_smp_times[RTAI_NR_CPUS];
 
 struct rtai_switch_data rtai_linux_context[RTAI_NR_CPUS];
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,22)
-volatile unsigned long *ipipe_root_status[RTAI_NR_CPUS];
-#endif
 
 struct calibration_data rtai_tunables;
 
@@ -226,7 +216,6 @@ int rt_set_irq_ack(unsigned irq, int (*irq_ack)(unsigned int, void *))
 	 if (irq >= RTAI_NR_IRQS) {
 		  return -EINVAL;
 	 }
-//      rtai_realtime_irq[irq].irq_ack = irq_ack ? irq_ack : (void *)hal_root_domain->irqs[irq].acknowledge;
 	rtai_domain.irqs[irq].ackfn = irq_ack ? (void *)irq_ack : hal_root_domain->irqs[irq].ackfn;
 	 return 0;
 }
@@ -245,50 +234,27 @@ void rt_set_irq_retmode (unsigned irq, int retmode)
 	}
 }
 
-// A bunch of macros to support Linux developers moods in relation to
-// interrupt handling across various releases.
-// Here we care about ProgrammableInterruptControllers (PIC) in particular.
+/*
+ * A bunch of macros to support Linux developers moods in relation to 
+ * interrupt handling across various releases.
+ * Here we care about Programmable Interrupt Controllers (PIC) in particular.
+ */
 
-// 1 - IRQs descriptor and chip
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,18)
-#define rtai_irq_desc(irq) irq_desc[irq]
-#define rtai_irq_desc_chip(irq) (irq_desc[irq].handler)
-#endif
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,19) && LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,27)
-#define rtai_irq_desc_chip(irq) (irq_desc[irq].chip)
-#define rtai_irq_desc(irq) irq_desc[irq]
-#endif
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28)
+/* 1 - IRQs descriptor and chip */
 #define rtai_irq_desc(irq) (irq_to_desc(irq))[0]
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,35)
 #define rtai_irq_desc_chip(irq) (irq_to_desc(irq)->irq_data.chip)
-#else
-#define rtai_irq_desc_chip(irq) (irq_to_desc(irq)->chip)
-#endif
-#endif
 
-// 2 - IRQs atomic protections
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,32)
-#define rtai_irq_desc_lock(irq, flags) spin_lock_irqsave(&rtai_irq_desc(irq).lock, flags)
-#define rtai_irq_desc_unlock(irq, flags) spin_unlock_irqrestore(&rtai_irq_desc(irq)->lock, flags)
-#else
+/* 2 - IRQs atomic protections */
 #define rtai_irq_desc_lock(irq, flags) raw_spin_lock_irqsave(&rtai_irq_desc(irq).lock, flags)
 #define rtai_irq_desc_unlock(irq, flags) raw_spin_unlock_irqrestore(&rtai_irq_desc(irq).lock, flags)
-#endif
 
-// 3 - IRQs enabling/disabling naming and calling
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
-#define rtai_irq_endis_fun(fun, irq) fun(irq)
-#else
+/* 3 - IRQs enabling/disabling naming and calling */
 #define rtai_irq_endis_fun(fun, irq) irq_##fun(&(rtai_irq_desc(irq).irq_data))
-#endif
 
 /**
  * start and initialize the PIC to accept interrupt request irq.
  *
- * The above function allow you to manipulate the PIC at hand, but you must
+ * The above function allows you to manipulate the PIC at hand, but you must
  * know what you are doing. Such a duty does not pertain to this manual and
  * you should refer to your PIC datasheet.
  *
@@ -317,40 +283,19 @@ unsigned rt_startup_irq (unsigned irq)
 	return rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(startup, irq);
 }
 
-/**
+/*
  * Shut down an IRQ source.
  *
  * No further interrupt request irq can be accepted.
- *
- * The above function allow you to manipulate the PIC at hand, but you must
- * know what you are doing. Such a duty does not pertain to this manual and
- * you should refer to your PIC datasheet.
- *
- * Note that Linux has the same functions, but they must be used only for its
- * interrupts. Only the above ones can be safely used in real time handlers.
- *
- * It must also be remarked that when you install a real time interrupt handler,
- * RTAI already calls either rt_mask_and_ack_irq(), for level triggered
- * interrupts, or rt_ack_irq(), for edge triggered interrupts, before passing
- * control to you interrupt handler. hus generally you should just call
- * rt_unmask_irq() at due time, for level triggered interrupts, while nothing
- * should be done for edge triggered ones. Recall that in the latter case you
- * allow also any new interrupts on the same request as soon as you enable
- * interrupts at the CPU level.
- *
- * Often some of the above functions do equivalent things. Once more there is no
- * way of doing it right except by knowing the hardware you are manipulating.
- * Furthermore you must also remember that when you install a hard real time
- * handler the related interrupt is usually disabled, unless you are overtaking
- * one already owned by Linux which has been enabled by it.   Recall that if
- * have done it right, and interrupts do not show up, it is likely you have just
- * to rt_enable_irq() your irq.
  */
 void rt_shutdown_irq (unsigned irq)
 {
 	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(shutdown, irq);
 }
 
+/*
+ * Enable an IRQ source.
+ */
 static inline void _rt_enable_irq (unsigned irq)
 {
 	if (rtai_irq_desc_chip(irq)->irq_enable) {
@@ -360,64 +305,13 @@ static inline void _rt_enable_irq (unsigned irq)
 	}
 }
 
-/**
- * Enable an IRQ source.
- *
- * The above function allow you to manipulate the PIC at hand, but you must
- * know what you are doing. Such a duty does not pertain to this manual and
- * you should refer to your PIC datasheet.
- *
- * Note that Linux has the same functions, but they must be used only for its
- * interrupts. Only the above ones can be safely used in real time handlers.
- *
- * It must also be remarked that when you install a real time interrupt handler,
- * RTAI already calls either rt_mask_and_ack_irq(), for level triggered
- * interrupts, or rt_ack_irq(), for edge triggered interrupts, before passing
- * control to you interrupt handler. hus generally you should just call
- * rt_unmask_irq() at due time, for level triggered interrupts, while nothing
- * should be done for edge triggered ones. Recall that in the latter case you
- * allow also any new interrupts on the same request as soon as you enable
- * interrupts at the CPU level.
- *
- * Often some of the above functions do equivalent things. Once more there is no
- * way of doing it right except by knowing the hardware you are manipulating.
- * Furthermore you must also remember that when you install a hard real time
- * handler the related interrupt is usually disabled, unless you are overtaking
- * one already owned by Linux which has been enabled by it.   Recall that if
- * have done it right, and interrupts do not show up, it is likely you have just
- * to rt_enable_irq() your irq.
- */
 void rt_enable_irq (unsigned irq)
 {
 	_rt_enable_irq(irq);
 }
 
-/**
+/*
  * Disable an IRQ source.
- *
- * The above function allow you to manipulate the PIC at hand, but you must
- * know what you are doing. Such a duty does not pertain to this manual and
- * you should refer to your PIC datasheet.
- *
- * Note that Linux has the same functions, but they must be used only for its
- * interrupts. Only the above ones can be safely used in real time handlers.
- *
- * It must also be remarked that when you install a real time interrupt handler,
- * RTAI already calls either rt_mask_and_ack_irq(), for level triggered
- * interrupts, or rt_ack_irq(), for edge triggered interrupts, before passing
- * control to you interrupt handler. hus generally you should just call
- * rt_unmask_irq() at due time, for level triggered interrupts, while nothing
- * should be done for edge triggered ones. Recall that in the latter case you
- * allow also any new interrupts on the same request as soon as you enable
- * interrupts at the CPU level.
- *
- * Often some of the above functions do equivalent things. Once more there is no
- * way of doing it right except by knowing the hardware you are manipulating.
- * Furthermore you must also remember that when you install a hard real time
- * handler the related interrupt is usually disabled, unless you are overtaking
- * one already owned by Linux which has been enabled by it.   Recall that if
- * have done it right, and interrupts do not show up, it is likely you have just
- * to rt_enable_irq() your irq.
  */
 void rt_disable_irq (unsigned irq)
 {
@@ -428,123 +322,42 @@ void rt_disable_irq (unsigned irq)
 	}
 }
 
-/**
- * Mask and acknowledge and IRQ source.
+/*
+ * Mask and acknowledge an IRQ source.
  *
- * No  * other interrupts can be accepted, once also the CPU will enable
+ * No other interrupts can be accepted, once also the CPU will enable
  * interrupts, which ones depends on the PIC at hand and on how it is
  * programmed.
- *
- * The above function allow you to manipulate the PIC at hand, but you must
- * know what you are doing. Such a duty does not pertain to this manual and
- * you should refer to your PIC datasheet.
- *
- * Note that Linux has the same functions, but they must be used only for its
- * interrupts. Only the above ones can be safely used in real time handlers.
- *
- * It must also be remarked that when you install a real time interrupt handler,
- * RTAI already calls either rt_mask_and_ack_irq(), for level triggered
- * interrupts, or rt_ack_irq(), for edge triggered interrupts, before passing
- * control to you interrupt handler. hus generally you should just call
- * rt_unmask_irq() at due time, for level triggered interrupts, while nothing
- * should be done for edge triggered ones. Recall that in the latter case you
- * allow also any new interrupts on the same request as soon as you enable
- * interrupts at the CPU level.
- *
- * Often some of the above functions do equivalent things. Once more there is no
- * way of doing it right except by knowing the hardware you are manipulating.
- * Furthermore you must also remember that when you install a hard real time
- * handler the related interrupt is usually disabled, unless you are overtaking
- * one already owned by Linux which has been enabled by it.   Recall that if
- * have done it right, and interrupts do not show up, it is likely you have just
- * to rt_enable_irq() your irq.
  */
 void rt_mask_and_ack_irq (unsigned irq)
 {
 	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(mask_ack, irq);
 }
-#if 0
-static inline void _rt_end_irq (unsigned irq)
-{
-	if (
-#ifdef CONFIG_X86_IO_APIC
-	    !IO_APIC_IRQ(irq) ||
-#endif /* CONFIG_X86_IO_APIC */
-	    !(rtai_irq_desc(irq).status & (IRQ_DISABLED | IRQ_INPROGRESS))) {
-	}
-	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(end, irq);
-}
-#endif
 
-/**
- * Unmask and IRQ source.
- *
- * The related request can then interrupt the CPU again, provided it has also
- * been acknowledged.
- *
- * The above function allow you to manipulate the PIC at hand, but you must
- * know what you are doing. Such a duty does not pertain to this manual and
- * you should refer to your PIC datasheet.
- *
- * Note that Linux has the same functions, but they must be used only for its
- * interrupts. Only the above ones can be safely used in real time handlers.
- *
- * It must also be remarked that when you install a real time interrupt handler,
- * RTAI already calls either rt_mask_and_ack_irq(), for level triggered
- * interrupts, or rt_ack_irq(), for edge triggered interrupts, before passing
- * control to you interrupt handler. hus generally you should just call
- * rt_unmask_irq() at due time, for level triggered interrupts, while nothing
- * should be done for edge triggered ones. Recall that in the latter case you
- * allow also any new interrupts on the same request as soon as you enable
- * interrupts at the CPU level.
- *
- * Often some of the above functions do equivalent things. Once more there is no
- * way of doing it right except by knowing the hardware you are manipulating.
- * Furthermore you must also remember that when you install a hard real time
- * handler the related interrupt is usually disabled, unless you are overtaking
- * one already owned by Linux which has been enabled by it.   Recall that if
- * have done it right, and interrupts do not show up, it is likely you have just
- * to rt_enable_irq() your irq.
+/*
+ * Mask an IRQ source.
  */
 void rt_mask_irq (unsigned irq)
 {
 	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(mask, irq);
 }
 
+/*
+ * Unmask an IRQ source.
+ *
+ * The related request can then interrupt the CPU again, provided it has also
+ * been acknowledged.
+ */
 void rt_unmask_irq (unsigned irq)
 {
 	rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(unmask, irq);
 }
 
-/**
+/*
  * Acknowledge an IRQ source.
  *
  * The related request can then interrupt the CPU again, provided it has not
  * been masked.
- *
- * The above function allow you to manipulate the PIC at hand, but you must
- * know what you are doing. Such a duty does not pertain to this manual and
- * you should refer to your PIC datasheet.
- *
- * Note that Linux has the same functions, but they must be used only for its
- * interrupts. Only the above ones can be safely used in real time handlers.
- *
- * It must also be remarked that when you install a real time interrupt handler,
- * RTAI already calls either rt_mask_and_ack_irq(), for level triggered
- * interrupts, or rt_ack_irq(), for edge triggered interrupts, before passing
- * control to you interrupt handler. hus generally you should just call
- * rt_unmask_irq() at due time, for level triggered interrupts, while nothing
- * should be done for edge triggered ones. Recall that in the latter case you
- * allow also any new interrupts on the same request as soon as you enable
- * interrupts at the CPU level.
- *
- * Often some of the above functions do equivalent things. Once more there is no
- * way of doing it right except by knowing the hardware you are manipulating.
- * Furthermore you must also remember that when you install a hard real time
- * handler the related interrupt is usually disabled, unless you are overtaking
- * one already owned by Linux which has been enabled by it.   Recall that if
- * have done it right, and interrupts do not show up, it is likely you have just
- * to rt_enable_irq() your irq.
  */
 void rt_ack_irq (unsigned irq)
 {
@@ -553,7 +366,6 @@ void rt_ack_irq (unsigned irq)
 
 void rt_end_irq (unsigned irq)
 {
-//      rtai_irq_desc_chip(irq)->rtai_irq_endis_fun(unmask, irq);
 	_rt_enable_irq(irq);
 }
 
@@ -749,7 +561,6 @@ irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_reg
 	rtai_hw_save_flags_and_cli(flags);
 #ifdef CONFIG_SMP
 	apic_wait_icr_idle();
-//	apic_write_around(APIC_ICR,APIC_DM_FIXED|APIC_DEST_ALLINC|LOCAL_TIMER_VECTOR);
 	apic_write_around(APIC_ICR,APIC_DM_FIXED|APIC_DEST_ALLBUT|LOCAL_TIMER_VECTOR);
 #endif
 	hal_pend_uncond(LOCAL_TIMER_IPI, rtai_cpuid());
@@ -788,28 +599,16 @@ irqreturn_t rtai_broadcast_to_local_timers (int irq, void *dev_id, struct pt_reg
 
 #endif
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26)
-
 #define RTAI_IRQ_ACK(irq) \
 	do { \
 		rtai_realtime_irq[irq].irq_ack(irq, &(rtai_irq_desc(irq))); \
 	} while (0)
-
-#else
-
-#define RTAI_IRQ_ACK(irq) \
-	do { \
-		((void (*)(unsigned int))rtai_realtime_irq[irq].irq_ack)(irq); \
-	} while (0)
-
-#endif
 
 #ifdef CONFIG_SMP
 
 static unsigned long rtai_old_irq_affinity[IPIPE_NR_XIRQS];
 static unsigned long rtai_orig_irq_affinity[IPIPE_NR_XIRQS];
 
-//static spinlock_t rtai_iset_lock = SPIN_LOCK_UNLOCKED;
 static DEFINE_SPINLOCK(rtai_iset_lock);
 
 static long long rtai_timers_sync_time;
@@ -1225,7 +1024,6 @@ EXPORT_SYMBOL(rtai_isr_sched);
 #else  /* !CONFIG_RTAI_SCHED_ISR_LOCK */
 #define RTAI_SCHED_ISR_LOCK() \
 	 do {                       } while (0)
-//      do { cpuid = rtai_cpuid(); } while (0)
 #define RTAI_SCHED_ISR_UNLOCK() \
 	 do {                       } while (0)
 #endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
@@ -1248,9 +1046,6 @@ static int rtai_hirq_dispatcher (int irq)
 	hal_fast_flush_pipeline(cpuid);
 	return 0;
 }
-
-//#define HINT_DIAG_ECHO
-//#define HINT_DIAG_TRAPS
 
 #ifdef HINT_DIAG_ECHO
 #define HINT_DIAG_MSG(x) x
@@ -1279,26 +1074,26 @@ static int rtai_trap_fault (unsigned event, void *evdata)
 #endif
 
 	static const int trap2sig[] = {
-    		SIGFPE,         //  0 - Divide error
-		SIGTRAP,        //  1 - Debug
-		SIGSEGV,        //  2 - NMI (but we ignore these)
-		SIGTRAP,        //  3 - Software breakpoint
-		SIGSEGV,        //  4 - Overflow
-		SIGSEGV,        //  5 - Bounds
-		SIGILL,         //  6 - Invalid opcode
-		SIGSEGV,        //  7 - Device not available
-		SIGSEGV,        //  8 - Double fault
-		SIGFPE,         //  9 - Coprocessor segment overrun
-		SIGSEGV,        // 10 - Invalid TSS
-		SIGBUS,         // 11 - Segment not present
-		SIGBUS,         // 12 - Stack segment
-		SIGSEGV,        // 13 - General protection fault
-		SIGSEGV,        // 14 - Page fault
-		0,              // 15 - Spurious interrupt
-		SIGFPE,         // 16 - Coprocessor error
-		SIGBUS,         // 17 - Alignment check
-		SIGSEGV,        // 18 - Reserved
-		SIGFPE,         // 19 - XMM fault
+    		SIGFPE,		/* 0 - Divide error */
+		SIGTRAP,	/* 1 - Debug */
+		SIGSEGV,	/* 2 - NMI (but we ignore these) */
+		SIGTRAP,	/* 3 - Software breakpoint */
+		SIGSEGV,	/* 4 - Overflow */
+		SIGSEGV,	/* 5 - Bounds */
+		SIGILL,		/* 6 - Invalid opcode */
+		SIGSEGV,	/* 7 - Device not available */
+		SIGSEGV,	/* 8 - Double fault */
+		SIGFPE,		/* 9 - Coprocessor segment overrun */
+		SIGSEGV,	/* 10 - Invalid TSS */
+		SIGBUS,		/* 11 - Segment not present */
+		SIGBUS,         /* 12 - Stack segment */
+		SIGSEGV,        /* 13 - General protection fault */
+		SIGSEGV,        /* 14 - Page fault */
+		0,              /* 15 - Spurious interrupt */
+		SIGFPE,         /* 16 - Coprocessor error */
+		SIGBUS,         /* 17 - Alignment check */
+		SIGSEGV,        /* 18 - Reserved */
+		SIGFPE,         /* 19 - XMM fault */
 		0,0,0,0,0,0,0,0,0,0,0,0
 	};
 
@@ -1398,12 +1193,7 @@ static void rtai_install_archdep (void)
 	if (rtai_cpufreq_arg == 0) {
 		struct hal_sysinfo_struct sysinfo;
 		hal_get_sysinfo(&sysinfo);
-
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,37)
 		rtai_cpufreq_arg = (unsigned long)sysinfo.sys_cpu_freq;
-#else
-		rtai_cpufreq_arg = (unsigned long)sysinfo.cpufreq;
-#endif
 	}
 	rtai_tunables.cpu_freq = rtai_cpufreq_arg;
 
@@ -1440,12 +1230,6 @@ int rtai_calibrate_8254 (void)
 
 	return rtai_imuldiv(dt, 100000, RTAI_CPU_FREQ);
 }
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-static int errno;
-
-static inline _syscall3(int, sched_setscheduler, pid_t,pid, int,policy, struct sched_param *,param)
-#endif
 
 extern void *sys_call_table[];
 
@@ -1496,7 +1280,6 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	PROC_PRINT("\n\n");
 
 	PROC_PRINT("** RTAI extension traps: \n\n");
-//	PROC_PRINT("    SYSREQ=0x%x\n\n", RTAI_SYS_VECTOR);
 
 	none = 1;
 	PROC_PRINT("** RTAI SYSREQs in use: ");
@@ -1531,9 +1314,7 @@ static int rtai_proc_register (void)
 		printk(KERN_ERR "Unable to initialize /proc/rtai.\n");
 		return -1;
 	 }
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	rtai_proc_root->owner = THIS_MODULE;
-#endif
+
 	ent = create_proc_entry("hal",S_IFREG|S_IRUGO|S_IWUSR,rtai_proc_root);
 	if (!ent) {
 		printk(KERN_ERR "Unable to initialize /proc/rtai/hal.\n");
@@ -1555,7 +1336,6 @@ static void rtai_proc_unregister (void)
 FIRST_LINE_OF_RTAI_DOMAIN_ENTRY
 {
 	{
-//		rt_printk(KERN_INFO "RTAI[hal]: <%s> mounted over %s %s.\n", PACKAGE_VERSION, HAL_TYPE, HAL_VERSION_STRING);
 		rt_printk(KERN_INFO "RTAI[hal]: compiled with %s.\n", CONFIG_RTAI_COMPILER);
 	}
 	for (;;) hal_suspend_domain();
@@ -1615,11 +1395,6 @@ int __rtai_hal_init (void)
 	 for (trapnr = 0; trapnr < RTAI_NR_IRQS; trapnr++) {
 		rtai_domain.irqs[trapnr].ackfn = (void *)hal_root_domain->irqs[trapnr].ackfn;
 	 }
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,22)
-	 for (trapnr = 0; trapnr < num_online_cpus(); trapnr++) {
-		  ipipe_root_status[trapnr] = &hal_root_domain->cpudata[trapnr].status;
-	 }
-#endif
 
 	ipipe_virtualize_irq(hal_root_domain, rtai_sysreq_virq, (void *)rtai_lsrq_dispatcher, NULL, NULL, IPIPE_HANDLE_MASK);
 	hal_irq_handler = rtai_hirq_dispatcher;
@@ -1657,7 +1432,7 @@ int __rtai_hal_init (void)
 	init_tsc_sync();
 #endif
 
-// (very) dirty development checks
+/* (very) dirty development checks */
 {
 struct hal_sysinfo_struct sysinfo;
 hal_get_sysinfo(&sysinfo);
@@ -1758,7 +1533,6 @@ EXPORT_SYMBOL(rt_set_trap_handler);
 EXPORT_SYMBOL(rd_8254_ts);
 EXPORT_SYMBOL(rt_setup_8254_tsc);
 EXPORT_SYMBOL(rt_set_irq_ack);
-//EXPORT_SYMBOL(ack_8259A_irq);
 
 EXPORT_SYMBOL(rtai_calibrate_8254);
 EXPORT_SYMBOL(rtai_broadcast_to_local_timers);
@@ -1786,12 +1560,7 @@ EXPORT_SYMBOL(ipipe_root_status);
 
 EXPORT_SYMBOL(IsolCpusMask);
 
-/*@}*/
-
 #if defined(CONFIG_GENERIC_CLOCKEVENTS) && CONFIG_RTAI_RTC_FREQ == 0
-
-//#include <linux/clockchips.h>
-//#include <linux/ipipe_tickdev.h>
 
 void (*rt_linux_hrt_set_mode)(enum clock_event_mode, struct clock_event_device *);
 int (*rt_linux_hrt_next_shot)(unsigned long, struct clock_event_device *);
@@ -1834,10 +1603,8 @@ static int rtai_request_tickdev(void *handler)
 	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
 		if ((void *)rt_linux_hrt_set_mode != (void *)rt_linux_hrt_next_shot) {
 			mode = ipipe_timer_start(handler, rt_linux_hrt_set_mode, rt_linux_hrt_next_shot, cpuid);
-//			mode = IPIPE_REQUEST_TICKDEV(HRT_LINUX_TIMER_NAME, rt_linux_hrt_set_mode, rt_linux_hrt_next_shot, cpuid, &timer_freq);
 		} else {
 			mode = ipipe_timer_start(handler, _rt_linux_hrt_set_mode, _rt_linux_hrt_next_shot, cpuid);
-//			mode = IPIPE_REQUEST_TICKDEV(HRT_LINUX_TIMER_NAME, _rt_linux_hrt_set_mode, _rt_linux_hrt_next_shot, cpuid, &timer_freq);
 		}
 		if (mode == CLOCK_EVT_MODE_UNUSED || mode == CLOCK_EVT_MODE_ONESHOT) {
 			rt_times.linux_tick = 0;
@@ -1852,7 +1619,6 @@ static void rtai_release_tickdev(void)
 {
 	int cpuid;
 	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
-//		ipipe_release_tickdev(cpuid);
 		ipipe_timer_stop(cpuid);
 	}
 }
@@ -1864,20 +1630,6 @@ static unsigned long hal_request_apic_freq(void)
 		  struct hal_sysinfo_struct sysinfo;
 		  hal_get_sysinfo(&sysinfo);
 		  return sysinfo.sys_hrtimer_freq;
-#if 0
-	unsigned long cpuid, avrg_freq, freq;
-	for (avrg_freq = freq = cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
-		IPIPE_REQUEST_TICKDEV(HRT_LINUX_TIMER_NAME, _rt_linux_hrt_set_mode, _rt_linux_hrt_next_shot, cpuid, &freq);
-		ipipe_release_tickdev(cpuid);
-		avrg_freq += freq;
-	}
-	if (avrg_freq) {
-		if ((avrg_freq /= num_online_cpus()) != freq) {
-			printk("*** APICs FREQs DIFFER ***\n");
-		}
-		*apic_freq = avrg_freq;
-	}
-#endif
 }
 
 #endif
