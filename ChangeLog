@@ -1,3 +1,45 @@
+2013-09-30 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: take into account the newly settable return
+	  delay in busy wait alignment.
+	* base/sched/sys.c: added floating point operations to the kernel
+	  calibrator.
+	* base/include/asm-x86/rtai_hal.h, rtai_hal_32.h, rtai_hal_64.h: 
+	  remove struct calibration_data the 32/64 bits hal parts and define 
+	  a unique one in the common hal.
+	* base/include/rtai_lxrt.h: add the call to the kernel calibrator.
+	* base/arch/x86/Kconfig: fixed a few spelling errors and added a new 
+	  configuration option.
+	* base/arch/x86/calibration/calibration_helper.c: added floating point
+	  operations to the user calibrator.
+	* base/arch/x86/calibration/runinfo: added the command line to launch 
+	  the new calibration way.
+
+2013-09-29 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: calibrate the hard timers at the scheduler 
+	  insmoding, care of avoiding null timer delays programming.
+	* base/sched/sys.c: add the support for an easier determination of 
+	  the scheduling latencies of RTAI own kernel tasks.
+	* base/arch/x86/hal/hal.c: put the determination of the hardtimers 
+	  programming delay in the common hal part.
+	* base/arch/x86/calibration/calibration_helper.c: simplify the 
+	  calibration of user and kernel space scheduling latencies.
+
+2013-09-24 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/rtai_schedcore.h: use just one wake up srq handler, 
+	  keeping a per cpu list of tasks to be woken up.
+	* base/sched/sched.c: omit the CONFIG_SMP ifdef in wake up srq 
+          handler.
+	* base/arch/x86/hal/hal_32.c, hal_64.c: use cpu_active_mask in 
+	  selecting hard timers.
+
+2013-09-13 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: provide a do nothing rt_daemonize for 
+	  linux > 3.0.
+
 2013-08-31 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* addons/rtdm/module.c: aligned the intr part to its latest sibling.

@@ -128,7 +128,7 @@ config RTAI_USER_DEBUG
 	default n
 	help
 	This options adds the -g flag when compiling user-space programs. 
-	User space RTAI syscall by simple inlining is implicitely disabled.
+	User space RTAI syscall by simple inlining is implicitly disabled.
 
 config RTAI_MAINTAINER
 	bool "Enable maintainer mode"
@@ -211,7 +211,7 @@ config RTAI_DIAG_TSC_SYNC
 	bool "Diagnose out of sync MP-TSCs"
 	default n
 	help
-	Check alignement of MP-TSCs, against a master CPU, and show them in
+	Check alignment of MP-TSCs, against a master CPU, and show them in
 	the RTAI HAL proc file system (in TSC count units).
 
 config RTAI_MASTER_TSC_CPU
@@ -219,7 +219,7 @@ config RTAI_MASTER_TSC_CPU
 	string "Define the master CPU for aligning MP-TSCs"
 	default 0
 	help
-	Master CPU for diagnosis and correction of TSCs alignement.
+	Master CPU for diagnosis and correction of TSCs alignment.
 
 config RTAI_TUNE_TSC_SYNC
 	depends on RTAI_DIAG_TSC_SYNC
@@ -268,9 +268,18 @@ config RTAI_SCHED_8254_LATENCY
 	default 4700
 	help
 	The anticipation time to be used to program the hard timer, in oneshot
-	mode, for the next scheduling shot in order to compensate for the 
+	mode, for the next scheduling shot in order to compensate for the
 	programming overhead needed to determine the right firing time.
 	This parameter has no effect when the periodic mode is used.
+	It should be determined with the calibration support provided by RTAI, 
+	starting from a tentative configuration; better if set to zero
+	for the very first calibration. 
+	The same value is used as a compromise for both kernel and 
+	user space tasks. Which means that for an on time user space task there 
+	could be some anticipation, i.e. a negative latency, for a kernel space
+	task. The busy alignment option should be used in such a case to
+	provide a compromised on time scheduling for both, albeit at a 
+	negligible added cost.
 
 config RTAI_SCHED_APIC_LATENCY
 	string "APIC tuning latency (ns)"
@@ -280,6 +289,46 @@ config RTAI_SCHED_APIC_LATENCY
         mode, for the next scheduling shot in order to compensate for the
         programming overhead needed to determine the right firing time.
 	This parameter has no effect when the periodic mode is used.
+	It should be determined with the calibration support provided by RTAI, 
+	starting from a tentative configuration; better if set to zero
+	for the very first calibration. 
+	The same value is used as a compromise for both kernel and 
+	user space tasks. Which means that for an on time user space task there 
+	could be some anticipation, i.e. a negative latency, for a kernel space
+	task. The busy alignment option could be used in such a case to
+	provide a compromised on time scheduling for both, albeit at a 
+	negligible added cost.
+
+config RTAI_BUSY_TIME_ALIGN
+	bool "Busy wait to ensure resume time alignment"
+	default n
+	help
+	In oneshot mode there is a calibrated anticipation of the timer
+	firing to compensate for the time overhead consumed in scheduling. 
+	Sometimes, either because of a bad calibration or purposely, it is
+	possible to anticipate the scheduling by setting a slightly larger than 
+	needed anticipation. In such cases with this option one can be sure to
+	achieve the desired scheduling time at the expense of waisting some
+	processor time. Useful when there is enough computational power to 
+	waist in favour of more precise scheduled deadlines.
+	Do not set it if a hard periodic timer is to be used.
+	Since a user space task has a higher scheduling latency, it can be
+	usefully set to allow a better a kernel task to its deadline when the
+	set latency is calibrated for user space tasks.
+
+config RTAI_BUSY_ALIGN_RET_DELAY
+	string "Average time to return to the timing call function after a task switch (ns)"
+	default 0
+	depends on RTAI_BUSY_TIME_ALIGN
+	help
+	The average time to return to the timing call function after a task 
+	switch. It is subtracted from the resume time of a timed task to avoid 
+	a delayed return when a busy wait to align the resume time is requested.
+	As for the scheduling latency a single compromise value is used for
+	both kernel and user space.
+	To calibrate it enable this option and set the specific user and space 
+	kernel alignment value to zero, the run the calibration helper available
+	in RTAI.
 
 config RTAI_SCHED_LXRT_NUMSLOTS
 	string "Number of registrable RTAI objects"
@@ -326,7 +375,7 @@ config RTAI_FULL_PRINHER
 	a task owns, itself included because of messages being exchanged
 	with it, but it will be returned to its base priority only when all
 	owned resources are released. This is a compromise design choice
-	aimed at avoiding searches for the new priority to be inheredited
+	aimed at avoiding searches for the new priority to be inherited
 	across multiply owned resources and blocked tasks send/rpcing to
 	the task.
 	By enabling this configuration option instead you'll allow full
@@ -337,20 +386,6 @@ config RTAI_FULL_PRINHER
 	The choice is dependent on your needs mostly. Just take into account
 	that the default dynamic priority ceiling is simpler, a bit more 
 	effective and less deadlock prone than full priority inheritance.
-
-config RTAI_BUSY_TIME_ALIGN
-	bool "Busy wait to ensure resume time alignment"
-	default n
-	help
-	In oneshot mode there is a calibrated anticipation of the timer
-	firing to compensate for the time consumed in scheduling. 
-	Sometimes, either because of a bad calibration or purposely, it is
-	possibile to anticipate the scheduling by setting a larger than needed
-	anticipation. In such cases with this option one can be sure to
-	achieve the desired scheduling time at the expense of waisting
-	processor time. Useful when there is enough computational power to 
-	waist in favour of precise schedule deadlines.
-	Do not set it if a hard periodic timer is to be used.
 
 config RTAI_ALIGN_LINUX_PRIORITY
 	bool "Keep Linux task priority aligned to RTAI"
@@ -389,9 +424,9 @@ config RTAI_CAL_FREQS_FACT
  	That leads to large and systematic latencies, especially in the case
 	of low frequency schedules. By setting this option to a suitable
 	value one can be sure that a certain firing frequency is granted 
-	even when relatively large idle periods are enconuntered, thus
+	even when relatively large idle periods are encountered, thus
 	limiting the overall latency with which long sleeping tasks might
-	be awaken in case of unprecise calibrations of the above cited
+	be awaken in case of imprecise calibrations of the above cited
 	frequencies;
 	2 - in the case of very long timed list it will limit the search 
 	for the next firing time of widely scattered tasks with lowest 
@@ -413,7 +448,7 @@ config RTAI_BITS
 	nothing else being associated to them, e.g a count. 
 	So any synchronization based on them may be disjunctive, when any 
 	of the events have occurred, or conjunctive, when all events have 
-	occured. The former corresponds to a logical OR whereas the latter 
+	occurred. The former corresponds to a logical OR whereas the latter 
 	is associated to a logical AND. Their use is similar to semaphores 
 	except that signal/waits are not related to just a simple counter 
 	but depends on the combination of set of bits.
@@ -513,12 +548,12 @@ config RTAI_RT_POLL_ON_STACK
 	depends on RTAI_RT_POLL
 	default n
 	help
-	This let rt_poll alloc its dynamic data directly on the stack. It is
+	This let rt_poll allocate its dynamic data directly on the stack. It is
 	likely the most effective way but it can deplete the stack somewhat,
 	especially on 64 bits architectures, if polling requests are large,
 	say > 40. Notice that even with smaller polling sizes it might be
 	important to limit stack usage also when heavy preemptions, very high
-	task switching rates and interrupts floodings are expected.
+	task switching rates and interrupts flooding are expected.
 	By disabling this parameter RTAI will use its real time memory
 	allocation; with it the limits are just in the size you set for the
 	RTAI dynamic heap and in a slightly greater overhead. So for reasons
@@ -529,9 +564,9 @@ config RTAI_MSG
 	default m
 	help
 	Direct synchronization by direct interask messaging, either as fast
-	single unsigned long messages or as extended arbitrarely sized
+	single unsigned long messages or as extended arbitrarily sized
 	messages. Both async and sync messages with replies can be used.
-	QNX styled APIs are also avaible. Blocking messages exploit priority 
+	QNX styled APIs are also available. Blocking messages exploit priority 
 	inheritance, which becomes a dynamic ceiling when inheritances are 
 	mixed with resource sems.
 	The module will be called rtai_msg.o.
@@ -561,10 +596,10 @@ config RTAI_TBX
 	default m if RTAI_SEM=m
 	help
 	RTAI message queues (msgq) are intertask processor messages that allow 
-	exchanging prioritised messages of anysize. Broadcasting of messages
+	exchanging prioritised messages of any size. Broadcasting of messages
 	to all the waiing tasks is also possible.
 	Legacy typed mailbox (TBX) services are recovered by using RTAI msgqs
-	and afford a precanned example of their use offering:
+	and afford a pre canned example of their use offering:
 	1 - message broadcasting allowing to send a message to all the tasks 
 	   that are pending on the same TBX;
 	2 - urgent sending of messages: these messages are not enqueued, but 
@@ -653,7 +688,7 @@ config RTAI_USE_NEWERR
 	Return values for RTAI blocking APIs are a bit sketchy. That 
 	is due to a long standing legacy dating back to DOS and 8 bits PCs,
 	when saving a few "if"s might have been important. Whatever one's 
-	opinion such a legacy has now been likely inheredited by many well
+	opinion such a legacy has now been likely inherited by many well
 	working existing RTAI applications, that might break with a new 
 	error return scheme. In any case a better set of error return values 
 	might be useful nowadays, so it has been added. With it one will be
@@ -672,7 +707,7 @@ config RTAI_MATH
 	depends on RTAI_FPU_SUPPORT
 	default n
 	help
-	This parameter allows buiding a module containing math support 
+	This parameter allows building a module containing math support 
 	functions for kernel space. It might be useful to avoid fighting
 	for the use of libc within the kernel.
 

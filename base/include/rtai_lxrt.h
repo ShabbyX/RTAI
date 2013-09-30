@@ -413,6 +413,7 @@
 #define LXRT_RWL_DELETE 	1028
 #define LXRT_SPL_INIT		1029
 #define LXRT_SPL_DELETE 	1030
+#define KERNEL_CALIBRATOR	1031
 
 #define FORCE_SOFT 0x80000000
 
@@ -1516,6 +1517,12 @@ RTAI_PROTO(RTIME, stop_ftimer,(void))
 	struct { long dummy; } arg;
 	rtai_lxrt(BIDX, SIZARG, RELEASE_RTC, &arg);
 	return rtai_lxrt(BIDX, SIZARG, STOP_TIMER, &arg).rt;
+}
+
+RTAI_PROTO(int, kernel_calibrator, (int period, int loops))
+{
+	struct { long period, loops; } arg = { period, loops };
+	return rtai_lxrt(BIDX, SIZARG, KERNEL_CALIBRATOR, &arg).i[0];
 }
 
 #ifdef __cplusplus

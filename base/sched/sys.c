@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001-2008  Paolo Mantegazza <mantegazza@aero.polimi.it>,
+ * Copyright (C) 2001-2013  Paolo Mantegazza <mantegazza@aero.polimi.it>,
  *		            Pierre Cloutier <pcloutier@poseidoncontrols.com>,
  *		            Steve Papacharalambous <stevep@zentropix.com>.
  *
@@ -352,6 +352,8 @@ void rt_make_soft_real_time(RT_TASK *task)
 }
 EXPORT_SYMBOL(rt_make_soft_real_time);
 
+static long kernel_calibrator_spv(long period, long loops, RT_TASK *task);
+
 static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_TASK *task)
 {
 #define larg ((struct arg *)arg)
@@ -670,6 +672,11 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 			return 0;
 		}
 
+		case KERNEL_CALIBRATOR: {
+			struct arg { long period, loops; };
+			return kernel_calibrator_spv(larg->period, larg->loops, task);
+		}
+
 	        default: {
 		    rt_printk("RTAI/LXRT: Unknown srq #%d\n", srq);
 		    arg0.i = -ENOSYS;
@@ -802,6 +809,44 @@ void init_fun_ext (void)
 	rt_fun_ext[0] = rt_fun_lxrt;
 }
 
+/* SUPPORT FOR CALIBRATING SCHEDULING LATENCIES FOR KERNEL SPACE TASKS */
+
+struct kern_cal_arg { long period, loops; RT_TASK *task; };
+
+static void kernel_calibrator(struct kern_cal_arg *calpar)
+{
+	RTIME expected;
+	int average = 0;
+	double s = 0;
+
+	expected = rt_get_time() + 10*calpar->period;
+	rt_task_make_periodic(NULL, expected, calpar->period);
+	while (calpar->loops--) {
+		expected += calpar->period;
+		rt_task_wait_period();
+		average += rt_get_time() - expected;
+		s += 3.14;
+        }
+	calpar->period = average;
+	rt_task_resume(calpar->task);
+}
+
+struct calsup { struct kern_cal_arg calpar; RT_TASK rtask; };
+
+long kernel_calibrator_spv(long period, long loops, RT_TASK *task)
+{
+			struct calsup *calsup;
+			calsup = kmalloc(sizeof(struct calsup), GFP_KERNEL);
+			calsup->calpar = (struct kern_cal_arg) { period, loops, task };
+			rt_task_init_cpuid(&calsup->rtask, (void *)kernel_calibrator, (long)&calsup->calpar, 4096, 0, 1, 0, rtai_cpuid());
+			rt_task_resume(&calsup->rtask);
+			task->fun_args[0] = (long)task;
+			((struct fun_args *)task->fun_args)->fun = (void *)rt_task_suspend;
+			rt_schedule_soft(task);
+			period = calsup->calpar.period;
+			kfree(calsup);
+			return period;
+}
 
 #if 0
 void rt_daemonize(void);
