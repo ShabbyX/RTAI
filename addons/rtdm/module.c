@@ -218,24 +218,15 @@ static void xnintr_shirq_handler(unsigned irq, void *cookie)
 
 	xnintr_irq_t *shirq = &xnirqs[irq];
 
-
 	xnintr_t *intr;
 	int s = 0, ret;
 
-
-
-
-
 	RTAI_SCHED_ISR_LOCK();
-
 
 	xnlock_get(&shirq->lock);
 	intr = shirq->handlers;
 
 	while (intr) {
-
-
-
 
 		ret = intr->isr(intr);
 		s |= ret;
@@ -243,9 +234,6 @@ static void xnintr_shirq_handler(unsigned irq, void *cookie)
 		if (ret & XN_ISR_HANDLED) {
 			xnstat_counter_inc(
 				&intr->stat[xnsched_cpu(sched)].hits);
-
-
-
 
 		}
 
@@ -270,12 +258,6 @@ static void xnintr_shirq_handler(unsigned irq, void *cookie)
 
 	RTAI_SCHED_ISR_UNLOCK();
 
-
-
-
-
-
-
 }
 
 /*
@@ -290,24 +272,12 @@ static void xnintr_edge_shirq_handler(unsigned irq, void *cookie)
 	int s = 0, counter = 0, ret, code;
 	struct xnintr *intr, *end = NULL;
 
-
-
-
-
-
-
 	RTAI_SCHED_ISR_LOCK();
-
 
 	xnlock_get(&shirq->lock);
 	intr = shirq->handlers;
 
 	while (intr != end) {
-
-
-
-
-
 
 		ret = intr->isr(intr);
 		code = ret & ~XN_ISR_BITMASK;
@@ -317,9 +287,6 @@ static void xnintr_edge_shirq_handler(unsigned irq, void *cookie)
 			end = NULL;
 			xnstat_counter_inc(
 				&intr->stat[xnsched_cpu(sched)].hits);
-
-
-
 
 		} else if (end == NULL)
 			end = intr;
@@ -352,13 +319,7 @@ static void xnintr_edge_shirq_handler(unsigned irq, void *cookie)
 	else if (!(s & XN_ISR_NOENABLE))
 		xnarch_end_irq(irq);
 
-
-
-
 	RTAI_SCHED_ISR_UNLOCK();
-
-
-
 
 }
 
@@ -422,8 +383,6 @@ static inline int xnintr_irq_detach(xnintr_t *intr)
 			*p = e->next;
 			xnlock_put(&shirq->lock);
 
-
-
 			/* Release the IRQ line if this was the last user */
 			if (shirq->handlers == NULL)
 				err = xnarch_release_irq(intr->irq);
@@ -474,8 +433,6 @@ static inline int xnintr_irq_detach(xnintr_t *intr)
 	ret = xnarch_release_irq(irq);
 	xnlock_put(&xnirqs[irq].lock);
 
-
-
 	return ret;
 }
 
@@ -488,17 +445,11 @@ static inline int xnintr_irq_detach(xnintr_t *intr)
 static void xnintr_irq_handler(unsigned irq, void *cookie)
 {
 
-
 	struct xnintr *intr;
 
 	int s;
 
-
-
-
-
 	RTAI_SCHED_ISR_LOCK();
-
 
 	xnlock_get(&xnirqs[irq].lock);
 
@@ -529,8 +480,6 @@ static void xnintr_irq_handler(unsigned irq, void *cookie)
 	} else {
 		xnstat_counter_inc(&intr->stat[xnsched_cpu(sched)].hits);
 
-
-
 		intr->unhandled = 0;
 	}
 
@@ -544,13 +493,7 @@ static void xnintr_irq_handler(unsigned irq, void *cookie)
 	else if (!(s & XN_ISR_NOENABLE))
 		xnarch_end_irq(irq);
 
-
-
 	RTAI_SCHED_ISR_UNLOCK();
-
-
-
-
 
 }
 
@@ -596,9 +539,6 @@ int xnintr_attach(xnintr_t *intr, void *cookie)
 	int ret;
 	spl_t s;
 
-
-
-
 	intr->cookie = cookie;
 	memset(&intr->stat, 0, sizeof(intr->stat));
 
@@ -631,8 +571,6 @@ int xnintr_detach(xnintr_t *intr)
 	int ret;
 	spl_t s;
 
-
-
 	xnlock_get_irqsave(&intrlock, s);
 
 	if (!__testbits(intr->flags, XN_ISR_ATTACHED)) {
@@ -645,7 +583,6 @@ int xnintr_detach(xnintr_t *intr)
 	ret = xnintr_irq_detach(intr);
 	if (ret)
 		goto out;
-
 
  out:
 	xnlock_put_irqrestore(&intrlock, s);

@@ -49,7 +49,6 @@ __BEGIN_DECLS
 /* Get general and ISO C99 specific information.  */
 #include <bits/mathdef.h>
 
-
 /* The file <bits/mathcalls.h> contains the prototypes for all the
    actual math functions.  These macros are used for those prototypes,
    so we can easily declare each function as both `name' and `__name',
@@ -83,7 +82,6 @@ __BEGIN_DECLS
 #undef	__MATH_PRECNAME
 
 #if defined __USE_MISC || defined __USE_ISOC99
-
 
 /* Include the file of declarations again, this time using `float'
    instead of `double' and appending f to each function name.  */
@@ -141,12 +139,10 @@ __BEGIN_DECLS
 #undef	__MATHDECL
 #undef	__MATHCALL
 
-
 #if defined __USE_MISC || defined __USE_XOPEN
 /* This variable is used by `gamma' and `lgamma'.  */
 extern int signgam;
 #endif
-
 
 /* ISO C99 defines some generic macros which work on any data type.  */
 #if defined(__USE_ISOC99) && __USE_ISOC99
@@ -286,7 +282,6 @@ typedef enum
 extern _LIB_VERSION_TYPE _LIB_VERSION;
 #endif
 
-
 #ifdef __USE_SVID
 /* In SVID error handling, `matherr' is called with this description
    of the exceptional condition.
@@ -334,7 +329,6 @@ extern int matherr (struct exception *__exc);
 
 #endif	/* SVID */
 
-
 /* Some useful constants.  */
 #if defined __USE_BSD || defined __USE_XOPEN
 # define M_E		2.7182818284590452354	/* e */
@@ -371,7 +365,6 @@ extern int matherr (struct exception *__exc);
 # define M_SQRT1_2l	0.7071067811865475244008443621048490L  /* 1/sqrt(2) */
 #endif
 
-
 /* When compiling in strict ISO C compatible mode we must not use the
    inline functions since they, among other things, do not set the
    `errno' variable correctly.  */
@@ -383,7 +376,6 @@ extern int matherr (struct exception *__exc);
 #ifdef __USE_EXTERN_INLINES
 # include <bits/mathinline.h>
 #endif
-
 
 #if defined(__USE_ISOC99) && __USE_ISOC99
 /* ISO C99 defines some macros to compare number while taking care

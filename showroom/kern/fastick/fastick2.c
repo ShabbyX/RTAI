@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 #define TICK 100000 //ns (!!!!! CAREFULL NEVER GREATER THAN 1E7 !!!!!)
 
 #include <linux/kernel.h>
@@ -46,7 +45,6 @@ static void rt_timer_tick(void)
 		rt_pend_linux_irq(TIMER_8254_IRQ);
 	}
 }
-
 
 int init_module(void)
 {

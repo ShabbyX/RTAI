@@ -192,7 +192,6 @@ extern double __kernel_cos __P((double,double));
 extern double __kernel_tan __P((double,double,int));
 extern int    __kernel_rem_pio2 __P((double*,double*,int,int,int,const int*));
 
-
 /* ieee style elementary float functions */
 extern float __ieee754_sqrtf __P((float));
 extern float __ieee754_acosf __P((float));

@@ -1063,7 +1063,6 @@ static u32 saved_insns_sti[N_INSNS];
 static u32 saved_insns_save_flags[N_INSNS];
 static u32 saved_insns_restore_flags[N_INSNS];
 
-
 static void patch_function(void *dest,void *func,void *save)
 {
 	memcpy(save,dest,sizeof(patch_insns));
@@ -1385,7 +1384,6 @@ static int rtai_proc_register(void)
 	return(0);
 }       /* End function - rtai_proc_register */
 
-
 static void rtai_proc_unregister(void)
 {
 	remove_proc_entry("rtai", rtai_proc_root);
@@ -1394,7 +1392,6 @@ static void rtai_proc_unregister(void)
 
 #endif /* CONFIG_PROC_FS */
 /* ------------------< end of proc filesystem section >------------------*/
-
 
 /********** SOME TIMER FUNCTIONS TO BE LIKELY NEVER PUT ELSWHERE *************/
 

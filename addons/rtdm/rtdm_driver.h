@@ -42,7 +42,6 @@
 #include "select.h"
 #include <rtdm/rtdm.h>
 
-
 struct rtdm_dev_context;
 typedef struct xnselector rtdm_selector_t;
 enum rtdm_selecttype;
@@ -584,8 +583,6 @@ static inline void rtdm_context_put(struct rtdm_dev_context *context)
 
 /* --- clock services --- */
 
-
-
 static inline nanosecs_abs_t rtdm_clock_read(void)
 {
 	return rt_get_time_ns();
@@ -1077,7 +1074,6 @@ void rtdm_task_join_nrt(rtdm_task_t *task, unsigned int poll_delay);
 static inline void rtdm_task_set_priority(rtdm_task_t *task, int priority)
 {
 
-
 	rt_change_prio(task, priority);
 }
 
@@ -1088,13 +1084,11 @@ static inline int rtdm_task_set_period(rtdm_task_t *task,
 		period = 0;
 	return rt_task_make_periodic_relative_ns(task, 0, period);
 
-
 }
 
 static inline int rtdm_task_unblock(rtdm_task_t *task)
 {
 	int res = rt_task_masked_unblock(task, ~RT_SCHED_READY);
-
 
 	return res;
 }
@@ -1186,7 +1180,6 @@ void rtdm_event_clear(rtdm_event_t *event);
 
 #ifndef DOXYGEN_CPP /* Avoid static inline tags for RTDM in doxygen */
 
-
 static inline void rtdm_event_pulse(rtdm_event_t *event)
 {
 	trace_mark(xn_rtdm, event_pulse, "event %p", event);
@@ -1207,7 +1200,6 @@ typedef struct {
 	struct rt_semaphore sem;
 	DECLARE_XNSELECT(select_block);
 } rtdm_sem_t;
-
 
 void rtdm_sem_init(rtdm_sem_t *sem, unsigned long value);
 #ifdef CONFIG_RTAI_RTDM_SELECT
@@ -1234,8 +1226,6 @@ static inline void rtdm_sem_destroy(rtdm_sem_t *sem)
 
 typedef SEM rtdm_mutex_t;
 
-
-
 void rtdm_mutex_init(rtdm_mutex_t *mutex);
 int rtdm_mutex_lock(rtdm_mutex_t *mutex);
 int rtdm_mutex_timedlock(rtdm_mutex_t *mutex, nanosecs_rel_t timeout,
@@ -1245,9 +1235,7 @@ int rtdm_mutex_timedlock(rtdm_mutex_t *mutex, nanosecs_rel_t timeout,
 static inline void rtdm_mutex_unlock(rtdm_mutex_t *mutex)
 {
 
-
 	trace_mark(xn_rtdm, mutex_unlock, "mutex %p", mutex);
-
 
 	rt_sem_signal(mutex);
 }
@@ -1358,7 +1346,6 @@ static inline int rtdm_in_rt_context(void)
 
 static inline int rtdm_rt_capable(rtdm_user_info_t *user_info)
 {
-
 
 	return (user_info ? xnshadow_thread(user_info) != NULL
 			  : !xnpod_root_p());

@@ -34,7 +34,6 @@ void *tskfun(void *tasknr)
 	return NULL;
 }
 
-
 int main(void)
 {
 	int i, k, prio, bprio;

@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-
 /* dummy defines to avoid annoying warning about here unused stuff */
 #define read_cr4()  0
 #define write_cr4(x)

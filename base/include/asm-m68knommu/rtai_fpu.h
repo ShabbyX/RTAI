@@ -50,7 +50,6 @@
 
 /* All the work is done by the soft-float library or the kernel FPU emulator. */
 
-
 #define init_fpu(tsk)		do { /* nop */ } while (0)
 #define restore_fpu(tsk)	do { /* nop */ } while (0)
 #define save_cr0_and_clts(x)	do { /* nop */ } while (0)

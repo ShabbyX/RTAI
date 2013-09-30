@@ -17,7 +17,6 @@ COPYRIGHT (C) 2001-2006  Paolo Mantegazza  (mantegazza@aero.polimi.it)
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 #include <linux/module.h>
 #include <asm/io.h>
 #include <linux/mc146818rtc.h>

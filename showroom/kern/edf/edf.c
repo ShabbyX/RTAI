@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 /* Produce a rectangular wave on output 0 of a parallel port */
 
 #include <linux/module.h>
@@ -57,7 +56,6 @@ static void fun(long t)
 	}
 }
 
-
 int init_module(void)
 {
 	RTIME now;
@@ -76,7 +74,6 @@ int init_module(void)
 	}
 	return 0;
 }
-
 
 void cleanup_module(void)
 {

@@ -22,7 +22,6 @@
 Nov. 2001, Jan Kiszka (Jan.Kiszka@web.de) fix a tiny bug in __task_init.
 */
 
-
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/version.h>

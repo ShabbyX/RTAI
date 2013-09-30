@@ -36,7 +36,6 @@ Acknowledgements
 #include <asm/mach/irq.h>
 #include <linux/timex.h>
 
-
 static inline int rtai_timer_irq_ack( void )
 {
 	OSSR = OSSR_M0;
@@ -73,7 +72,6 @@ static inline RTIME rtai_rdtsc(void)
 }
 
 #define PROTECT_TIMER
-
 
 /* Current version */
 static inline void rt_set_timer_match_reg(int delay)

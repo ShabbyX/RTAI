@@ -53,7 +53,6 @@ tf (void *arg)
   exit (0);
 }
 
-
 static int
 do_test (void)
 {

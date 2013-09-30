@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 #include <linux/kernel.h>
 #include <linux/module.h>
 
@@ -73,7 +72,6 @@ int init_module(void)
 	rt_sem_broadcast(&sync);
 	return 0;
 }
-
 
 void cleanup_module(void)
 {

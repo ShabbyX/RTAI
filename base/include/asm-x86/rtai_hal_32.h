@@ -34,7 +34,6 @@
  * @addtogroup hal
  *@{*/
 
-
 #ifndef _RTAI_ASM_I386_HAL_H
 #define _RTAI_ASM_I386_HAL_H
 

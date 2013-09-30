@@ -30,7 +30,6 @@ static pthread_mutex_t m2; // = PTHREAD_MUTEX_INITIALIZER;
 
 static int cntr;
 
-
 static void
 cleanup (void *arg)
 {
@@ -39,7 +38,6 @@ cleanup (void *arg)
   else
     cntr = 1;
 }
-
 
 static void *
 tf (void *arg)
@@ -88,7 +86,6 @@ tf (void *arg)
 
   return NULL;
 }
-
 
 static int
 do_test (void)

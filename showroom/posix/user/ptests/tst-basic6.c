@@ -36,7 +36,6 @@ static pthread_barrier_t b;
       exit (1);								      \
     }
 
-
 static void *
 tf (void *a)
 {
@@ -76,7 +75,6 @@ tf (void *a)
 
   return a;
 }
-
 
 int
 do_test (void)

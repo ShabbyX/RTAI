@@ -53,8 +53,6 @@ static void end(scicos_block *block)
   printf("FIFO %d closed\n",block->ipar[0]);
 }
 
-
-
 void rt_fifoout(scicos_block *block,int flag)
 {
   if (flag==1){          /* set output */
@@ -67,5 +65,4 @@ void rt_fifoout(scicos_block *block,int flag)
     init(block);
   }
 }
-
 

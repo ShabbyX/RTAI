@@ -33,7 +33,6 @@ static pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
 static pthread_barrier_t bN1;
 static pthread_barrier_t b2;
 
-
 static void *
 tf (void *p)
 {
@@ -76,7 +75,6 @@ tf (void *p)
 
   return NULL;
 }
-
 
 static int
 do_test (void)

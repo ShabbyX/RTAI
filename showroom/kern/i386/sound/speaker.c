@@ -1,4 +1,3 @@
-
 #include <linux/kernel.h>
 #include <linux/module.h>
 
@@ -93,7 +92,6 @@ static void pcsp_calc_vol(int volume)
 	}
 }
 
-
 int init_module(void)
 {
 	RTIME now, tick_period;
@@ -119,7 +117,6 @@ int init_module(void)
 
 	return 0;
 }
-
 
 void cleanup_module(void)
 {

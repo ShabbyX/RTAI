@@ -54,7 +54,6 @@ do_test (void)
   return 0;
 }
 
-
 int main(void)
 {
 	pthread_init_real_time_np("TASKA", 0, SCHED_FIFO, 0xF, PTHREAD_HARD_REAL_TIME);

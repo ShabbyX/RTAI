@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 #ifndef _RTAI_ASM_M68K_SRQ_H
 #define _RTAI_ASM_M68K_SRQ_H
 
@@ -45,7 +44,6 @@ static inline long long rtai_srq(int srq, unsigned long args)
 #endif
 	return retval;
 }
-
 
 static inline int rtai_open_srq(unsigned long label)
 {

@@ -39,7 +39,6 @@
  *
  *@{*/
 
-
 #include <linux/module.h>
 #include <linux/delay.h>
 
@@ -916,7 +915,6 @@ int rt_request_timer (void (*handler)(void), unsigned tick, int unused)
 	timer_inuse = 1;
 
 	rtai_save_flags_and_cli(flags);
-
 
 	if (tick > 0)
 	{

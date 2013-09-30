@@ -70,7 +70,6 @@
 
 typedef int integer;
 
-
 /*  params.h */
 #ifdef __STDC__
 #ifndef  __PARAMS

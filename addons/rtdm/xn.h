@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 // Wrappers and inlines to avoid too much an editing of RTDM code.
 // The core stuff is just RTAI in disguise.
 

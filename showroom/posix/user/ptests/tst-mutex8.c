@@ -31,7 +31,6 @@ static pthread_barrier_t b;
 static pthread_cond_t c;
 static bool done;
 
-
 static void
 cl (void *arg)
 {
@@ -41,7 +40,6 @@ cl (void *arg)
       exit (1);
     }
 }
-
 
 static void *
 tf (void *arg)
@@ -92,7 +90,6 @@ tf (void *arg)
 
   return NULL;
 }
-
 
 static int
 check_type (const char *mas, pthread_mutexattr_t *ma)
@@ -303,7 +300,6 @@ mutex_destroy of condvar-used mutex did not return EBUSY for %s\n", mas);
 
   return 0;
 }
-
 
 static int
 do_test (void)

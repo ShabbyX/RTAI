@@ -30,7 +30,6 @@
 static pthread_barrier_t bar;
 static sem_t sem;
 
-
 static void
 cleanup (void *arg)
 {
@@ -44,7 +43,6 @@ cleanup (void *arg)
 
   printf ("cleanup call #%d\n", ncall);
 }
-
 
 static void *
 tf (void *arg)
@@ -68,7 +66,6 @@ tf (void *arg)
 
   return NULL;
 }
-
 
 static int
 do_test (void)

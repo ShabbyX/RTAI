@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-
 	while (!end) {
 		read(fd0, &samp, sizeof(samp));
 		time(&timestamp);

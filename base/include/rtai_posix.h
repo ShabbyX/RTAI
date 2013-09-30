@@ -141,12 +141,10 @@
 #include <rtai_sched.h>
 #include <rtai_schedcore.h>
 
-
 #define SET_ADR(s)     (((void **)s)[0])
 
 #define RTAI_PNAME_MAXSZ  6
 #define PTHREAD_BARRIER_SERIAL_THREAD -1
-
 
 #ifndef MAX_PRIO
 #define MAX_PRIO  99
@@ -273,7 +271,6 @@ static inline int sem_unlink(const char *namein)
 	}
 	return -ENOENT;
 }
-
 
 static inline int sem_init(sem_t *sem, int pshared, unsigned int value)
 {
@@ -839,7 +836,6 @@ static inline int pthread_attr_setschedpolicy(pthread_attr_t *attr, int policy)
 	return 0;
 }
 
-
 static inline int pthread_attr_getschedpolicy(const pthread_attr_t *attr, int *policy)
 {
 	*policy = attr->policy;
@@ -851,7 +847,6 @@ static inline int pthread_attr_setschedrr(pthread_attr_t *attr, int rr_quantum_n
 	attr->rr_quantum_ns = rr_quantum_ns;
 	return 0;
 }
-
 
 static inline int pthread_attr_getschedrr(const pthread_attr_t *attr, int *rr_quantum_ns)
 {
@@ -2035,7 +2030,6 @@ RTAI_PROTO(int, __wrap_pthread_kill,(pthread_t thread, int signo))
 	return ret;
 }
 
-
 int __real_sigwait(const sigset_t *set, int *sig);
 RTAI_PROTO(int, __wrap_sigwait,(const sigset_t *set, int *sig))
 {
@@ -2427,7 +2421,6 @@ RTAI_PROTO (int, __wrap_timer_delete, (timer_t timerid))
 
 	return 0;
 }
-
 
 /*
  * FUNCTIONS (LIKELY) SAFELY USABLE IN HARD REAL TIME "AS THEY ARE",

@@ -35,10 +35,8 @@ typedef struct
     pthread_t h;
   } T;
 
-
 static volatile bool done;
 static atomic_t cnt;
-
 
 static void *
 tf (void *arg)
@@ -88,7 +86,6 @@ tf (void *arg)
 
   return NULL;
 }
-
 
 static int
 do_test (void)

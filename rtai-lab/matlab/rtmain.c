@@ -194,7 +194,6 @@ static void DummySend(void) { }
 #define XSTR(x)    #x
 #define STR(x)     XSTR(x)
 
-
 static inline void strncpyz(char *dest, const char *src, size_t n)
 {
   if (src != NULL) {

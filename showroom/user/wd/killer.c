@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 #include <rtai_lxrt.h>
 #include <rtai_sem.h>
 #include <rtai_msg.h>

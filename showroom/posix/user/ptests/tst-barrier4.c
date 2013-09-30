@@ -27,7 +27,6 @@
 static pthread_barrier_t b1;
 static pthread_barrier_t b2;
 
-
 #define N 20
 #define N1 (N - 1)
 
@@ -67,7 +66,6 @@ tf (void *arg)
 
   return NULL;
 }
-
 
 static int
 do_test (void)

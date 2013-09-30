@@ -70,7 +70,6 @@ int main(int argc, char* argv[])
 	rt_make_hard_real_time();
 	rt_sleep(1000000);
 
-
 	printf("MASTER TASK MAKES ITSELF PERIODIC WITH A PERIOD OF 1 ms\n");
 	rt_task_make_periodic(mtsk, rt_get_time(), nano2count(PERIOD));
 	rt_sleep(nano2count(1000000000));

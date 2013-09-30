@@ -26,7 +26,6 @@
 
 static pthread_barrier_t bar;
 
-
 static void *
 tf (void *arg)
 {
@@ -39,7 +38,6 @@ tf (void *arg)
 
   return (void *) 1l;
 }
-
 
 static int
 do_test (void)

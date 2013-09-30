@@ -135,7 +135,6 @@ ACKNOWLEDGEMENTS:
  * kernel space.
  */
 
-
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
@@ -847,7 +846,6 @@ RTAI_SYSCALL_MODE int rtf_reset(unsigned int minor)
 	return 0;
 }
 
-
 /**
  * @ingroup fifos_ipc
  * Resize a real-time FIFO
@@ -928,7 +926,6 @@ RTAI_SYSCALL_MODE int rtf_resize(unsigned int minor, int size)
 	old_malloc_type == 'k' ? kfree(oldbuf) : vfree(oldbuf);
 	return size;
 }
-
 
 /**
  * @ingroup fifos_ipc

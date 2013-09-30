@@ -47,12 +47,10 @@ extern volatile u32 soft_timer_match;
 extern void timer_tick(struct pt_regs *);
 static int		(*saved_adeos_timer_handler)(int irq, void *dev_id, struct pt_regs *regs);
 
-
 void rtai_pxa_GPIO_2_80_demux( int irq, void *dev_id, struct pt_regs *regs )
 {
 	/* No pending to linux! */
 }
-
 
 volatile union rtai_tsc lx_timer;
 

@@ -42,7 +42,6 @@ volatile union rtai_tsc rtai_tsc;
 EXPORT_SYMBOL(rtai_tsc);
 static int (*saved_adeos_timer_handler)(int irq, void *dev_id, struct pt_regs *regs);
 
-
 volatile union rtai_tsc lx_timer;
 
 unsigned long split_timer (void) {

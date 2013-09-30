@@ -160,7 +160,6 @@ static inline tristate sym_get_tristate_value(struct symbol *sym)
 	return sym->curr.tri;
 }
 
-
 static inline struct symbol *sym_get_choice_value(struct symbol *sym)
 {
 	return (struct symbol *)sym->curr.val;

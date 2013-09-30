@@ -62,8 +62,6 @@ typedef struct {
    int *mode;
  } scicos_block;
 
-
-
 /* define scicos flag number */
 /**
    \brief DerivativeState is flag 0
@@ -457,7 +455,6 @@ extern int s_cmp();
 */
 #define GetWorkPtrs(blk) (*(blk->work))
 
-
 /**
    \brief Get number of continuous state.
 */
@@ -739,7 +736,6 @@ extern int s_cmp();
 #ifndef min
 #define min(a,b) ((a) <= (b) ? (a) : (b))
 #endif
-
 
 #endif /* __SCICOS_BLOCK_H__ */
 

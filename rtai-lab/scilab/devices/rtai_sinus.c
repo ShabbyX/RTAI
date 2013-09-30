@@ -46,8 +46,6 @@ static void end(scicos_block *block)
   y[0]=0.0;
 }
 
-
-
 void rtsinus(scicos_block *block,int flag)
 {
   if (flag==1){  /* set output */
@@ -60,5 +58,4 @@ void rtsinus(scicos_block *block,int flag)
     init(block);
   }
 }
-
 

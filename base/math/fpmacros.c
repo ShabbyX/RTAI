@@ -67,7 +67,6 @@ long int __fpclassifyf ( float x )
       return (long int) FP_SUBNORMAL;        /* must be subnormal */
 }
 
-
 /***********************************************************************
       Function __fpclassify,
       Implementation of classify of a double number for the PowerPC.
@@ -107,7 +106,6 @@ long int __fpclassify ( double arg )
 		}
 }
 
-
 /***********************************************************************
    long int __isnormalf(float x) returns nonzero if and only if x is a
    normalized float number and zero otherwise.
@@ -131,12 +129,10 @@ long int __isnormalf ( float x )
    return ((iexp != FEXP_MASK) && (iexp != 0));
 }
 
-
 long int __isnorma ( double x )
 {
 	return ( __fpclassify ( x ) == FP_NORMAL );
 }
-
 
 /***********************************************************************
    long int __isfinitef(float x) returns nonzero if and only if x is a
@@ -163,8 +159,6 @@ long int __isfinite ( double x )
 {
 	return ( __fpclassify ( x ) >= FP_ZERO );
 }
-
-
 
 /***********************************************************************
    long int __isnanf(float x) returns nonzero if and only if x is a
@@ -193,7 +187,6 @@ long int __isnan ( double x )
 	return ( ( class == FP_SNAN ) || ( class == FP_QNAN ) );
 }
 
-
 /***********************************************************************
    long int __signbitf(float x) returns nonzero if and only if the sign
    bit of x is set and zero otherwise.
@@ -213,7 +206,6 @@ long int __signbitf ( float x )
    z.fval = x;
    return ((z.lval & SIGN_MASK) != 0);
 }
-
 
 /***********************************************************************
       Function sign of a double.

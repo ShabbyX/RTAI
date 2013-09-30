@@ -29,7 +29,6 @@ MODULE_LICENSE("GPL");
 static rtdm_task_t heartbeat_task;
 static int end = 0;
 
-
 /* Architecture specific code follows... */
 #ifdef CONFIG_X86
 

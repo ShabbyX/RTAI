@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 #include <linux/module.h>
 
 #include <asm/io.h>
@@ -139,7 +138,6 @@ static void intr_handler(long t) {
 	}
 }
 
-
 #ifdef EMULATE_TSC
 DECLR_8254_TSC_EMULATION;
 #endif
@@ -164,7 +162,6 @@ int init_module(void)
 #endif
 	return 0;
 }
-
 
 void cleanup_module(void)
 {

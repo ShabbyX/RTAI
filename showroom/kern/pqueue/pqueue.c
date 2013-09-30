@@ -66,7 +66,6 @@ mode_t my_mode = 0;
 struct Msg myMsg[] = { {"Send parent message on queue!", 29, 4} };
 mqd_t rx_q = INVALID_PQUEUE, tx_q = INVALID_PQUEUE;
 
-
   rt_printk("Starting child task %d\n", arg);
   for(i = 0; i < 3; i++) {
 

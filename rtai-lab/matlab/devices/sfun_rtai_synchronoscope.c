@@ -16,7 +16,6 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-
 #define S_FUNCTION_NAME		sfun_rtai_synchronoscope
 #define S_FUNCTION_LEVEL	2
 

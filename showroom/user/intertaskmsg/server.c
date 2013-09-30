@@ -1,4 +1,3 @@
-
 /*
  *  * (C) Pierre Cloutier <pcloutier@PoseidonControls.com> LGPLv2
 */
@@ -30,7 +29,6 @@ int main(int argc, char* argv[])
 	RTIME period;
 	char *pt;
 
-
  	if (!(srv = rt_task_init_schmod(srv_name, 0, 0, 0, SCHED_FIFO, 0x1))) {
 		PRINTF("CANNOT INIT SRV TASK\n");
 		exit(-1);
@@ -56,7 +54,6 @@ int main(int argc, char* argv[])
 		PRINTF("Failed to attach proxy\n");
 		exit(-1);
 	}
-
 
 	msglen = 0;
 	pid = rt_Receive(0, 0, 0, &msglen);

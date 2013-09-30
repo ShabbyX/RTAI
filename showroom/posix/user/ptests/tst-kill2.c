@@ -82,7 +82,6 @@ tf (void *a)
   return NULL;
 }
 
-
 int
 do_test (void)
 {

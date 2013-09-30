@@ -350,7 +350,6 @@ static double pS2[5] = {
 	return one+ r/s;
 }
 
-
 /* For x >= 8, the asymptotic expansions of qzero is
  *	-1/8 s + 75/1024 s^3 - ..., where s = 1/x.
  * We approximate pzero by

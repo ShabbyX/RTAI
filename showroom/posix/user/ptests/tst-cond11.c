@@ -145,7 +145,6 @@ run_test (clockid_t cl)
   return 0;
 }
 
-
 static int
 do_test (void)
 {

@@ -73,8 +73,6 @@ static void end(scicos_block *block)
   printf("EXTDATA closed\n");
 }
 
-
-
 void rtextdata(scicos_block *block,int flag)
 {
   if (flag==1){          /* set output */
@@ -87,5 +85,4 @@ void rtextdata(scicos_block *block,int flag)
     init(block);
   }
 }
-
 

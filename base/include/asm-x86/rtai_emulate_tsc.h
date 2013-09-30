@@ -17,7 +17,6 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 //#define EMULATE_TSC  /* to force emulation even if CONFIG_X86_TSC */
 
 #ifndef _RTAI_ASM_EMULATE_TSC_H

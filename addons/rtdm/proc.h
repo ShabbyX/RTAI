@@ -22,7 +22,6 @@
 
 extern struct proc_dir_entry *rtdm_proc_root;
 
-
 int rtdm_proc_register_device(struct rtdm_device* device);
 
 int __init rtdm_proc_init(void);

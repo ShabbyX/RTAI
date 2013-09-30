@@ -42,7 +42,6 @@
  *
  *@{*/
 
-
 #include <linux/version.h>
 #include <linux/slab.h>
 #include <linux/errno.h>
@@ -245,7 +244,6 @@ void rt_set_irq_retmode (unsigned irq, int retmode)
 		rtai_realtime_irq[irq].retmode = retmode ? 1 : 0;
 	}
 }
-
 
 // A bunch of macros to support Linux developers moods in relation to
 // interrupt handling across various releases.

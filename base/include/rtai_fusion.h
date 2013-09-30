@@ -223,7 +223,6 @@ static inline FTASK *ftask_self(void)
 	return rt_task_self();
 }
 
-
 static inline void ftask_make_soft_real_time(void)
 {
 #include <sys/poll.h>

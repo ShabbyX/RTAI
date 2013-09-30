@@ -32,7 +32,6 @@ static const double zero = 0.0;
 static double zero = 0.0;
 #endif
 
-
 #ifdef __STDC__
 	double __ieee754_remainder(double x, double p)
 #else
@@ -56,7 +55,6 @@ static double zero = 0.0;
 	  ((hp>=0x7ff00000)&&			/* p is NaN */
 	  (((hp-0x7ff00000)|lp)!=0)))
 	    return (x*p)/(x*p);
-
 
 	if (hp<=0x7fdfffff) x = __ieee754_fmod(x,p+p);	/* now x < 2p */
 	if (((hx-hp)|(lx-lp))==0) return zero*x;

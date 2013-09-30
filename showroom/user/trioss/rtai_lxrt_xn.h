@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 #ifndef _RTAI_LXRT_XN_H
 #define _RTAI_LXRT_XN_H
 
@@ -31,7 +30,6 @@
 #define MAKE_PERIODIC_NS 		30
 #define REQUEST_RTC                    214
 #define RELEASE_RTC                    215
-
 
 #define LXRT_TASK_INIT          1002
 #define LXRT_TASK_DELETE        1003

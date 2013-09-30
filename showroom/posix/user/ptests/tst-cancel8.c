@@ -28,13 +28,11 @@ static pthread_barrier_t bar;
 
 static int global;
 
-
 static void
 cleanup (void *arg)
 {
   global = 1;
 }
-
 
 static void *
 tf (void *arg)
@@ -81,7 +79,6 @@ tf (void *arg)
   /* This call should never return.  */
   return NULL;
 }
-
 
 static int
 do_test (void)

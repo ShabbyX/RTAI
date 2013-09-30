@@ -695,7 +695,6 @@ static void rtai_lsrq_dispatcher (unsigned virq)
 	spin_unlock(&rtai_lsrq_lock);
 }
 
-
 /*
  * rtai_usrq_dispatcher
  */

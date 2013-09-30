@@ -32,7 +32,6 @@ MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Latency measurement tool for RTAI");
 MODULE_AUTHOR("Paolo Mantegazza <mantegazza@aero.polimi.it> Robert Schwebel <robert@schwebel.de>");
 
-
 /*
  *	command line parameters
  */
@@ -121,7 +120,6 @@ static int proc_read(char *page, char **start, off_t off,
 }
 #endif
 
-
 /*
  *	Periodic realtime thread
  */
@@ -197,7 +195,6 @@ fun(long thread)
 	}
 }
 
-
 /*
  *	Initialisation. We have to select the scheduling mode and start
  *      our periodical measurement task.
@@ -258,7 +255,6 @@ __latency_init(void)
 	rt_task_make_periodic(&thread, expected, period_counts);
 	return 0;
 }
-
 
 /*
  *	Cleanup

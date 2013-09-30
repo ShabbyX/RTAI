@@ -24,19 +24,15 @@
 
 #include <rtai_posix.h>
 
-
 #ifndef INIT
 # define INIT PTHREAD_MUTEX_INITIALIZER
 #endif
 
-
 static pthread_mutex_t lock;
-
 
 #define STACK_SIZE (1 * 1024 * 1024)
 #define ROUNDS 1000
 #define N 100
-
 
 static void *
 tf (void *arg)
@@ -72,7 +68,6 @@ tf (void *arg)
 
   return NULL;
 }
-
 
 static int
 do_test (void)

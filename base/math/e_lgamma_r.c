@@ -215,7 +215,6 @@ __inline__
 	return -y;
 }
 
-
 #ifdef __STDC__
 	double __ieee754_lgamma_r(double x, int *signgamp)
 #else

@@ -320,7 +320,6 @@ static inline ssize_t rt_dev_recvfrom(int fd, void *buf, size_t len, int flags,
 	return ret;
 }
 
-
 static inline int rt_dev_select(int nfds, fd_set *rfds, fd_set *wfds, fd_set *efds, nanosecs_rel_t timeout)
 {
 #ifdef CONFIG_RTAI_RTDM_SELECT

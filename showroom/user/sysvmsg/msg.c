@@ -7,7 +7,6 @@
  * Paolo Mantegazza <mantegazza@aero.polimi.it>
  */
 
-
 #include <linux/config.h>
 #include <linux/init.h>
 #include <linux/list.h>

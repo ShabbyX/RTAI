@@ -77,7 +77,6 @@ static double zero = 0.0;	/* used as const */
  *	42-- pow(NaN,0.0)
  */
 
-
 #ifdef __STDC__
 	double __kernel_standard(double x, double y, int type)
 #else

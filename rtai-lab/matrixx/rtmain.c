@@ -19,7 +19,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -57,7 +56,6 @@
 #include <asm/rtai_atomic.h>
 
 #include <rtmain.h>
-
 
 #define rt_HostInterfaceTaskPriority	96
 #define rt_MainTaskPriority	      97
@@ -216,7 +214,6 @@ char *get_a_name(const char *root, char *name)
 {
 	unsigned long i;
 
-
 	for (i = 0; i < MAX_ADR_SRCH; i++) {
 		sprintf(name, "%s%ld", root, i);
 		if (!rt_get_adr(nam2num(name))) {
@@ -226,7 +223,6 @@ char *get_a_name(const char *root, char *name)
 	return 0;
 }
 
-
 static void endme(int dummy)
 {
 	signal(SIGINT, endme);
@@ -234,18 +230,15 @@ static void endme(int dummy)
 	endex = 1;
 }
 
-
 void exit_on_error()
 {
 	endme(0);
 }
 
-
 int rtRegisterScope(const char *name, int n, int ID )
 {
 	int i;
 	int nscope;
-
 
 	rt_sched_lock();
 	nscope = NSCOPE++;
@@ -276,12 +269,10 @@ int rtRegisterScope(const char *name, int n, int ID )
 	return 0;
 }
 
-
 int rtRegisterLed(const char *name, int n, int ID )
 {
 	int i;
 	int nled;
-
 
 	rt_sched_lock();
 	nled = NLEDS++;
@@ -313,12 +304,10 @@ int rtRegisterLed(const char *name, int n, int ID )
 	return 0;
 }
 
-
 int rtRegisterMeter(const char *name, int n, int ID )
 {
 	int i;
 	int nmeter;
-
 
 	rt_sched_lock();
 	nmeter = NMETERS++;
@@ -350,12 +339,10 @@ int rtRegisterMeter(const char *name, int n, int ID )
 	return 0;
 }
 
-
 int rtRegisterLogData(const char *name, int nrow, int ncol, int ID)
 {
 	int i;
 	int nlogs;
-
 
 	rt_sched_lock();
 	nlogs = NLOGS++;
@@ -388,12 +375,10 @@ int rtRegisterLogData(const char *name, int nrow, int ncol, int ID)
 	return 0;
 }
 
-
 int rtRegisterComediDataIn( int ID , void *comdev )
 {
 	int i;
 	int n_datain;
-
 
 	rt_sched_lock();
 	n_datain = N_DATAIN++;
@@ -419,12 +404,10 @@ int rtRegisterComediDataIn( int ID , void *comdev )
 	return 0;
 }
 
-
 int rtRegisterComediDataOut( int ID , void *comdev )
 {
 	int i;
 	int n_dataout;
-
 
 	rt_sched_lock();
 	n_dataout = N_DATAOUT++;
@@ -450,12 +433,10 @@ int rtRegisterComediDataOut( int ID , void *comdev )
 	return 0;
 }
 
-
 int rtRegisterComediDioIn( int ID , void *comdev )
 {
 	int i;
 	int n_dioin;
-
 
 	rt_sched_lock();
 	n_dioin = N_DIOIN++;
@@ -481,12 +462,10 @@ int rtRegisterComediDioIn( int ID , void *comdev )
 	return 0;
 }
 
-
 int rtRegisterComediDioOut( int ID , void *comdev )
 {
 	int i;
 	int n_dioout;
-
 
 	rt_sched_lock();
 	n_dioout = N_DIOOUT++;
@@ -512,16 +491,13 @@ int rtRegisterComediDioOut( int ID , void *comdev )
 	return 0;
 }
 
-
 static void grow_and_lock_stack(int inc)
 {
 	char c[inc];
 
-
 	memset(c, 0, inc);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 }
-
 
 static void (*WaitTimingEvent)(unsigned long);
 static void (*SendTimingEvent)(unsigned long);
@@ -533,19 +509,16 @@ static unsigned long TimingEventArg;
 #define XSTR(x)    #x
 #define STR(x)     XSTR(x)
 
-
 double get_scicos_time()
 {
 	return(SIM_TIME);
 }
-
 
 static void *rt_BaseRate(void *args)
 {
 	char name[7];
 	int i;
 	static RTIME t0;
-
 
 	for (i = 0; i < MAX_NTARGETS; i++) {
 		sprintf(name,"BRT%d",i);
@@ -594,14 +567,12 @@ static void *rt_BaseRate(void *args)
 	return 0;
 }
 
-
 static void *rt_HostInterface(void *args)
 {
 	RT_TASK *task;
 	unsigned int Request;
 	int Reply, len;
 	char nome[8];
-
 
 	if (!(rt_HostInterfaceTask = rt_task_init_schmod(nam2num(HostInterfaceTaskName), rt_HostInterfaceTaskPriority, 0, 0, SCHED_RR, 0xFF))) {
 		fprintf(stderr,"Cannot init rt_HostInterfaceTask.\n");
@@ -622,7 +593,6 @@ static void *rt_HostInterface(void *args)
 						int NPAR,i1,i2;
 						mxp_t pardata;
 						double value;
-
 
 						strncpyz(rtParam.modelName, modelname, MAX_NAME_SIZE);
 						rtParam.dataType  = 0;
@@ -909,7 +879,6 @@ static void *rt_HostInterface(void *args)
 	return 0;
 }
 
-
 static int rt_Main(int priority)
 {
 	SEM *hard_timers_cnt;
@@ -917,7 +886,6 @@ static int rt_Main(int priority)
 	RTIME rt_BaseTaskPeriod;
 	struct timespec err_timeout;
 	int i;
-
 
 	rt_allow_nonroot_hrt();
 
@@ -996,7 +964,6 @@ static int rt_Main(int priority)
 		rt_task_suspend(rt_MainTask);
 	}
 
-
 	if (verbose) {
 		printf("Target is running.\n");
 	}
@@ -1061,7 +1028,6 @@ static int rt_Main(int priority)
 
 }
 
-
 struct option options[] = {
 	{ "usage",      0, 0, 'u' },
 	{ "verbose",    0, 0, 'v' },
@@ -1081,7 +1047,6 @@ struct option options[] = {
 	{ "oneshot",    0, 0, 'o' },
 	{ "stack",      1, 0, 'm' }
 };
-
 
 void print_usage(void)
 {
@@ -1134,12 +1099,10 @@ void print_usage(void)
 	exit(0);
 }
 
-
 int main(int argc, char *argv[])
 {
 	extern char *optarg;
 	int c, donotrun = 0, priority = 0;
-
 
 	signal(SIGINT, endme);
 	signal(SIGTERM, endme);

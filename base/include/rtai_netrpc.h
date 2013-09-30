@@ -154,7 +154,6 @@ RTAI_SYSCALL_MODE long long _rt_net_rpc(long fun_ext_timed,
 #define rt_net_rpc(fun_ext_timed, type, args, argsize, space, partypes) \
 	({ union rtai_lxrt_t retval; retval.rt = _rt_net_rpc(fun_ext_timed, type, args, argsize, space, partypes); retval; })
 
-
 RTAI_SYSCALL_MODE int rt_set_netrpc_timeout( int port, RTIME timeout);
 
 RTAI_SYSCALL_MODE int rt_send_req_rel_port(unsigned long node,

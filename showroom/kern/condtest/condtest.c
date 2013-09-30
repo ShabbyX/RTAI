@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 #include <linux/module.h>
 #include <asm/io.h>
 #include <rtai_sched.h>
@@ -64,7 +63,6 @@ static void task_func1(long dummy)
 	rt_printk("Ending task1.\n");
 	atomic_inc(&cleanup);
 }
-
 
 static void task_func2(long dummy)
 {
@@ -130,7 +128,6 @@ static void task_func4(long dummy)
 	rt_printk("Ending task4.\n");
 	atomic_inc(&cleanup);
 }
-
 
 int init_module(void)
 {

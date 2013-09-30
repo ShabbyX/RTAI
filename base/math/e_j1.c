@@ -348,7 +348,6 @@ static double ps2[5] = {
 	return one+ r/s;
 }
 
-
 /* For x >= 8, the asymptotic expansions of qone is
  *	3/8 s - 105/1024 s^3 - ..., where s = 1/x.
  * We approximate pone by

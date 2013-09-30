@@ -21,7 +21,6 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 #include <linux/version.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -59,7 +58,6 @@
 #ifndef PCI_DEVICE_ID_INTEL_ICH10_1
 #define #define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16
 #endif
-
 
 static struct pci_device_id hal_smi_pci_tbl[] = {
 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AA_0) },

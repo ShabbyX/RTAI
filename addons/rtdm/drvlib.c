@@ -155,16 +155,6 @@ int rtdm_task_init_cpuid(rtdm_task_t *task, const char *name,
 	return 0;
 }
 
-
-
-
-
-
-
-
-
-
-
 EXPORT_SYMBOL(rtdm_task_init_cpuid);
 
 #ifdef DOXYGEN_CPP /* Only used for doxygen doc generation */
@@ -364,21 +354,6 @@ int rtdm_task_sleep_abs(nanosecs_abs_t wakeup_time, enum rtdm_timer_mode mode);
 
 #endif /* DOXYGEN_CPP */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * @brief Wait on a real-time task to terminate
  *
@@ -408,7 +383,6 @@ void rtdm_task_join_nrt(rtdm_task_t *task, unsigned int poll_delay)
 #define JOIN_TIMEOUT 1000 // in millisecs
 	int t;
 
-
 	trace_mark(xn_rtdm, task_joinnrt, "thread %p poll_delay %u",
 		   task, poll_delay);
 
@@ -417,13 +391,6 @@ void rtdm_task_join_nrt(rtdm_task_t *task, unsigned int poll_delay)
 	}
 	rtdm_task_destroy(task);
 }
-
-
-
-
-
-
-
 
 EXPORT_SYMBOL(rtdm_task_join_nrt);
 
@@ -505,8 +472,6 @@ int rtdm_timer_init(rtdm_timer_t *timer, rtdm_timer_handler_t handler,
 void rtdm_timer_destroy(rtdm_timer_t *timer)
 {
 
-
-
 	xntimer_destroy(timer);
 
 }
@@ -546,11 +511,9 @@ int rtdm_timer_start(rtdm_timer_t *timer, nanosecs_abs_t expiry,
 
 	int err;
 
-
 	err = xntimer_start(timer, xntbase_ns2ticks(rtdm_tbase, expiry),
 			    xntbase_ns2ticks(rtdm_tbase, interval),
 			    (xntmode_t)mode);
-
 
 	return err;
 }
@@ -575,8 +538,6 @@ EXPORT_SYMBOL(rtdm_timer_start);
  */
 void rtdm_timer_stop(rtdm_timer_t *timer)
 {
-
-
 
 	xntimer_stop(timer);
 
@@ -749,10 +710,6 @@ int device_service_routine(...)
 void rtdm_toseq_init(rtdm_toseq_t *timeout_seq, nanosecs_rel_t timeout)
 {
 
-
-
-
-
 	*timeout_seq = rt_get_time() + nano2count(timeout);
 }
 
@@ -786,8 +743,6 @@ void rtdm_event_init(rtdm_event_t *event, unsigned long pending)
 
 	trace_mark(xn_rtdm, event_init,
 		   "event %p pending %lu", event, pending);
-
-
 
 	if (pending)
 		event->pending = pending;
@@ -865,7 +820,6 @@ void rtdm_event_signal(rtdm_event_t *event)
 {
 	unsigned long flags;
 
-
 	trace_mark(xn_rtdm, event_signal, "event %p", event);
 
 	flags = rt_global_save_flags_and_cli();
@@ -874,12 +828,6 @@ void rtdm_event_signal(rtdm_event_t *event)
 	rt_global_restore_flags(flags);
 	SELECT_SIGNAL(&event->select_block, 1);
 }
-
-
-
-
-
-
 
 EXPORT_SYMBOL(rtdm_event_signal);
 
@@ -974,9 +922,6 @@ int rtdm_event_timedwait(rtdm_event_t *event, nanosecs_rel_t timeout,
 	unsigned long flags;
 	int ret;
 
-
-
-
 	trace_mark(xn_rtdm, event_timedwait,
 		   "event %p timeout %Lu timeout_seq %p timeout_seq_value %Lu",
 		   event, (long long)timeout, timeout_seq, (long long)(timeout_seq ? *timeout_seq : 0));
@@ -999,36 +944,6 @@ int rtdm_event_timedwait(rtdm_event_t *event, nanosecs_rel_t timeout,
 	return ret;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 EXPORT_SYMBOL(rtdm_event_timedwait);
 
 /**
@@ -1050,16 +965,11 @@ EXPORT_SYMBOL(rtdm_event_timedwait);
 void rtdm_event_clear(rtdm_event_t *event)
 {
 
-
 	trace_mark(xn_rtdm, event_clear, "event %p", event);
-
 
 	event->pending = 0;
 	SELECT_SIGNAL(&event->select_block, 0);
 }
-
-
-
 
 EXPORT_SYMBOL(rtdm_event_clear);
 
@@ -1148,9 +1058,6 @@ void rtdm_sem_init(rtdm_sem_t *sem, unsigned long value)
 	spl_t s;
 
 	trace_mark(xn_rtdm, sem_init, "sem %p value %lu", sem, value);
-
-
-
 
 	rt_typed_sem_init(&sem->sem, value, CNT_SEM | PRIO_Q);
 
@@ -1258,45 +1165,9 @@ int rtdm_sem_timeddown(rtdm_sem_t *sem, nanosecs_rel_t timeout,
 
 	int retval;
 
-
-
-
 	trace_mark(xn_rtdm, sem_timedwait,
 		   "sem %p timeout %Lu timeout_seq %p timeout_seq_value %Lu",
 		   sem, (long long)timeout, timeout_seq, (long long)(timeout_seq ? *timeout_seq : 0));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	if ((retval = _sem_wait_timed(&sem->sem, timeout, timeout_seq)) == 1) {
 		SELECT_SIGNAL(&sem->select_block, 0);
@@ -1328,20 +1199,13 @@ EXPORT_SYMBOL(rtdm_sem_timeddown);
 void rtdm_sem_up(rtdm_sem_t *sem)
 {
 
-
 	trace_mark(xn_rtdm, sem_up, "sem %p", sem);
-
 
 	rt_sem_signal(&sem->sem);
 	if (sem->sem.count > 0) {
 		SELECT_SIGNAL(&sem->select_block, 1);
 	}
 }
-
-
-
-
-
 
 EXPORT_SYMBOL(rtdm_sem_up);
 
@@ -1430,13 +1294,6 @@ EXPORT_SYMBOL(rtdm_sem_select_bind);
  */
 void rtdm_mutex_init(rtdm_mutex_t *mutex)
 {
-
-
-
-
-
-
-
 
 	rt_typed_sem_init(mutex, 1, RES_SEM | PRIO_Q);
 }
@@ -1551,8 +1408,6 @@ int rtdm_mutex_timedlock(rtdm_mutex_t *mutex, nanosecs_rel_t timeout,
 {
 	int retval;
 
-
-
 	trace_mark(xn_rtdm, mutex_timedlock,
 		   "mutex %p timeout %Lu timeout_seq %p timeout_seq_value %Lu",
 		   mutex, (long long)timeout, timeout_seq, (long long)(timeout_seq ? *timeout_seq : 0));
@@ -1565,45 +1420,6 @@ int rtdm_mutex_timedlock(rtdm_mutex_t *mutex, nanosecs_rel_t timeout,
 	}
 	return retval;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 EXPORT_SYMBOL(rtdm_mutex_timedlock);
 /** @} */
@@ -1811,7 +1627,6 @@ void rtdm_nrtsig_pend(rtdm_nrtsig_t *nrt_sig);
  * @defgroup util Utility Services
  * @{
  */
-
 
 struct rtdm_mmap_data {
 	void *src_vaddr;
@@ -2086,7 +1901,6 @@ int rtdm_munmap(rtdm_user_info_t *user_info, void *ptr, size_t len)
 }
 
 EXPORT_SYMBOL(rtdm_munmap);
-
 
 #ifdef DOXYGEN_CPP /* Only used for doxygen doc generation */
 

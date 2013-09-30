@@ -16,12 +16,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 /*
  * illustrating the two modes available to use
  * a task switch signal from kernel space.
  */
-
 
 #include <linux/kernel.h>
 #include <linux/module.h>

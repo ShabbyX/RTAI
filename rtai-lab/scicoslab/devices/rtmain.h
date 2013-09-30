@@ -24,4 +24,3 @@ int rtRegisterLed(const char *name, int n);
 int rtRegisterMeter(const char *name, int n);
 void exit_on_error(void);
 
-

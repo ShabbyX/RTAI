@@ -25,10 +25,8 @@
 #include <rtdm/rtdm_driver.h>
 #include <linux/sem.h>
 
-
 #define DEF_DEVNAME_HASHTAB_SIZE    256 /* entries in name hash table */
 #define DEF_PROTO_HASHTAB_SIZE      256 /* entries in protocol hash table */
-
 
 extern struct semaphore nrt_dev_lock;
 extern xnlock_t         rt_dev_lock;
@@ -44,7 +42,6 @@ extern struct list_head *rtdm_protocol_devices;
 #else /* !MODULE */
 extern int              rtdm_initialised;
 #endif /* MODULE */
-
 
 int rtdm_no_support(void);
 

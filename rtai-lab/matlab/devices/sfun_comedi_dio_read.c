@@ -17,7 +17,6 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-
 #define S_FUNCTION_NAME		sfun_comedi_dio_read
 #define S_FUNCTION_LEVEL	2
 
@@ -35,7 +34,6 @@
 #define COMEDI_DEVICE		((uint_T) mxGetPr(COMEDI_DEVICE_PARAM)[0])
 #define COMEDI_CHANNEL		((uint_T) mxGetPr(COMEDI_CHANNEL_PARAM)[0])
 #define SAMPLE_TIME             ((real_T) mxGetPr(SAMPLE_TIME_PARAM)[0])
-
 
 #ifndef MATLAB_MEX_FILE
 

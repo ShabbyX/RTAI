@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 #include <linux/module.h>
 
 #include "rtai_taskq.h"
@@ -129,7 +128,6 @@ void rt_taskq_wait(TASKQ *taskq)
 	rt_global_restore_flags(flags);
 }
 EXPORT_SYMBOL(rt_taskq_wait);
-
 
 void rt_taskq_wait_until(TASKQ *taskq, RTIME time)
 {

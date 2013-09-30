@@ -28,7 +28,6 @@
 static pthread_cond_t cond; // = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t mut; // = PTHREAD_MUTEX_INITIALIZER;
 
-
 static int
 do_test (void)
 {

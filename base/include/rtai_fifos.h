@@ -120,7 +120,6 @@ typedef int (*rtf_handler_t)(unsigned int fifo, int rw);
 int rtf_create_handler(unsigned int fifo,	/* RT-FIFO */
 		       void *handler		/* function to be called */);
 
-
 /**
  * @ingroup fifos_ipc
  * Extended fifo handler.
@@ -188,7 +187,6 @@ RTAI_SYSCALL_MODE int rtf_reset(unsigned int fifo);
 
 RTAI_SYSCALL_MODE int rtf_destroy(unsigned int fifo);
 
-
 /* Resize an RT-FIFO.
  *
  * Return value: size is returned on success. On error, a negative value
@@ -196,7 +194,6 @@ RTAI_SYSCALL_MODE int rtf_destroy(unsigned int fifo);
  */
 
 RTAI_SYSCALL_MODE int rtf_resize(unsigned int minor, int size);
-
 
 /* Write to an RT-FIFO.
  *
@@ -207,8 +204,6 @@ RTAI_SYSCALL_MODE int rtf_put(unsigned int fifo,	/* RT-FIFO */
 	    void * buf,		/* buffer address */
 	    int count		/* number of bytes to write */);
 
-
-
 /* Write to an RT-FIFO, over writing if there is not enough space.
  *
  * Try to write count bytes to an FIFO. Returns 0.
@@ -217,8 +212,6 @@ RTAI_SYSCALL_MODE int rtf_put(unsigned int fifo,	/* RT-FIFO */
 RTAI_SYSCALL_MODE int rtf_ovrwr_put(unsigned int fifo,	/* RT-FIFO */
 		  void * buf,		/* buffer address */
 		  int count		/* number of bytes to write */);
-
-
 
 /* Write atomically to an RT-FIFO.
  *
@@ -239,7 +232,6 @@ RTAI_SYSCALL_MODE int rtf_get(unsigned int fifo,	/* RT-FIFO */
 	    void * buf, 		/* buffer address */
 	    int count		/* number of bytes to read */);
 
-
 /* Atomically read from an RT-FIFO.
  *
  * Try to read count bytes in a block from an FIFO. Returns the number of bytes read.
@@ -248,7 +240,6 @@ RTAI_SYSCALL_MODE int rtf_get(unsigned int fifo,	/* RT-FIFO */
 RTAI_SYSCALL_MODE int rtf_get_if(unsigned int fifo,	/* RT-FIFO */
 	    void * buf, 		/* buffer address */
 	    int count		/* number of bytes to read */);
-
 
 /*
  * Preview the an RT-FIFO content.
@@ -265,20 +256,17 @@ int rtf_evdrp(unsigned int fifo,	/* RT-FIFO */
 RTAI_SYSCALL_MODE int rtf_sem_init(unsigned int fifo,	/* RT-FIFO */
 		 int value			/* initial semaphore value */);
 
-
 /* Post to an RT-FIFO semaphore.
  *
  */
 
 RTAI_SYSCALL_MODE int rtf_sem_post(unsigned int fifo	/* RT-FIFO */);
 
-
 /* Try to acquire an RT-FIFO semaphore.
  *
  */
 
 RTAI_SYSCALL_MODE int rtf_sem_trywait(unsigned int fifo	/* RT-FIFO */);
-
 
 /* Destroy an RT-FIFO semaphore.
  *
@@ -287,7 +275,6 @@ RTAI_SYSCALL_MODE int rtf_sem_trywait(unsigned int fifo	/* RT-FIFO */);
 RTAI_SYSCALL_MODE int rtf_sem_destroy(unsigned int fifo	/* RT-FIFO */);
 
 #define rtf_sem_delete rtf_sem_destroy
-
 
 /* Get an RT-FIFO free bytes in buffer.
  *

@@ -167,7 +167,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_send(RT_TASK *task, unsigned long msg)
 	return task;
 }
 
-
 /**
  * @ingroup msg
  * @anchor rt_send_if
@@ -224,7 +223,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_send_if(RT_TASK *task, unsigned long msg)
 	rt_global_restore_flags(flags);
 	return task;
 }
-
 
 /**
  * @ingroup msg
@@ -305,7 +303,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_send_until(RT_TASK *task, unsigned long msg, RTIME
 	rt_global_restore_flags(flags);
 	return task;
 }
-
 
 /**
  * @ingroup msg
@@ -443,7 +440,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpc(RT_TASK *task, unsigned long to_do, void *resu
 	return task;
 }
 
-
 /**
  * @ingroup rpc
  * @anchor rt_rpc_if
@@ -521,7 +517,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpc_if(RT_TASK *task, unsigned long to_do, void *r
 	rt_global_restore_flags(flags);
 	return task;
 }
-
 
 /**
  * @ingroup rpc
@@ -607,7 +602,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpc_until(RT_TASK *task, unsigned long to_do, void
 	return task;
 }
 
-
 /**
  * @ingroup rpc
  * @anchor rt_rpc_timed
@@ -681,7 +675,6 @@ RTAI_SYSCALL_MODE int rt_isrpc(RT_TASK *task)
 {
 	return task->state & RT_SCHED_RETURN;
 }
-
 
 /**
  * @ingroup rpc
@@ -784,7 +777,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_evdrp(RT_TASK *task, void *msg)
 	return task;
 }
 
-
 /**
  * @ingroup msg
  * @anchor rt_receive
@@ -878,7 +870,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive(RT_TASK *task, void *msg)
 	return task;
 }
 
-
 /**
  * @ingroup msg
  * @anchor rt_receive_if
@@ -961,7 +952,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive_if(RT_TASK *task, void *msg)
 	}
 	return task;
 }
-
 
 /**
  * @ingroup msg
@@ -1064,7 +1054,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive_until(RT_TASK *task, void *msg, RTIME time
 	}
 	return task;
 }
-
 
 /**
  * @ingroup msg
@@ -1173,7 +1162,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpcx(RT_TASK *task, void *smsg, void *rmsg, int ss
 	return 0;
 }
 
-
 /**
  * @ingroup rpc
  * @anchor rt_rpcx_if
@@ -1222,7 +1210,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpcx_if(RT_TASK *task, void *smsg, void *rmsg, int
 	}
 	return 0;
 }
-
 
 /**
  * @ingroup rpc
@@ -1277,7 +1264,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpcx_until(RT_TASK *task, void *smsg, void *rmsg, 
 	}
 	return 0;
 }
-
 
 /**
  * @ingroup rpc
@@ -1386,7 +1372,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_sendx(RT_TASK *task, void *msg, int size)
 	return 0;
 }
 
-
 /**
  * @ingroup msg
  * @anchor rt_sendx_if
@@ -1450,7 +1435,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_sendx_if(RT_TASK *task, void *msg, int size)
 	return task;
 }
 
-
 /**
  * @ingroup msg
  * @anchor rt_sendx_until
@@ -1503,7 +1487,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_sendx_until(RT_TASK *task, void *msg, int size, RT
 	return 0;
 }
 
-
 /**
  * @ingroup msg
  * @anchor rt_sendx_timed
@@ -1555,7 +1538,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_sendx_timed(RT_TASK *task, void *msg, int size, RT
 	}
 	return 0;
 }
-
 
 /**
  * @ingroup rpc
@@ -1627,7 +1609,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_returnx(RT_TASK *task, void *msg, int size)
 		} \
 	} while (0)
 
-
 /**
  * @ingroup msg
  * @anchor rt_evdrpx
@@ -1668,7 +1649,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_evdrpx(RT_TASK *task, void *msg, int size, long *l
 	}
 	return task;
 }
-
 
 /**
  * @ingroup msg
@@ -1719,7 +1699,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receivex(RT_TASK *task, void *msg, int size, long 
 	return task;
 }
 
-
 /**
  * @ingroup msg
  * @anchor rt_receivex_if
@@ -1768,7 +1747,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receivex_if(RT_TASK *task, void *msg, int size, lo
 	}
 	return task;
 }
-
 
 /**
  * @ingroup msg
@@ -1824,7 +1802,6 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receivex_until(RT_TASK *task, void *msg, int size,
 	}
 	return task;
 }
-
 
 /**
  * @ingroup msg
@@ -2134,7 +2111,6 @@ RTAI_SYSCALL_MODE pid_t rt_Trigger(pid_t pid)
 	return -ESRCH;
 }
 
-
 RTAI_SYSCALL_MODE pid_t rt_Name_attach(const char *argname)
 {
 	RT_TASK *task;
@@ -2169,7 +2145,6 @@ RTAI_SYSCALL_MODE int rt_Name_detach(pid_t pid)
 	rt_find_task_by_pid(pid)->task_name[0] = 0;
 	return 0;
 }
-
 
 /* +++++++++++++++++++++ INTERTASK MESSAGES ENTRIES +++++++++++++++++++++++++ */
 

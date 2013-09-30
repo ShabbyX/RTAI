@@ -34,7 +34,6 @@
  * @addtogroup hal
  *@{*/
 
-
 #ifndef _RTAI_ASM_M68KNOMMU_HAL_H
 #define _RTAI_ASM_M68KNOMMU_HAL_H
 
@@ -117,8 +116,6 @@ static inline unsigned long long rtai_llimd(unsigned long long ll, unsigned int 
 	res += rtai_ulldiv(tmp, div, NULL);
 	return res;
 }
-
-
 
 #if defined(__KERNEL__) && !defined(__cplusplus)
 #include <linux/sched.h>
@@ -608,7 +605,6 @@ static inline int rt_free_global_irq(unsigned irq)
 /*@}*/
 
 #endif /* !_RTAI_ASM_M68KNOMMU_HAL_H */
-
 
 #ifndef _RTAI_HAL_XN_H
 #define _RTAI_HAL_XN_H

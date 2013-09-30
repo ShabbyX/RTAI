@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 /* MODULE CLOCK */
 
 #include <linux/kernel.h>
@@ -64,7 +63,6 @@ static RTIME OneUnit;
 
 static int cpu_used[NR_RT_CPUS];
 
-
 static void rt_fractionated_sleep(RTIME OneUnit)
 {
 #define FRACT 100
@@ -74,13 +72,11 @@ static void rt_fractionated_sleep(RTIME OneUnit)
 	}
 }
 
-
 static int keybrd_handler(unsigned int fifo)
 {
 	rt_sem_signal(&keybrd_sem);
 	return 0;
 }
-
 
 static void ClockChrono_Read(long t)
 {

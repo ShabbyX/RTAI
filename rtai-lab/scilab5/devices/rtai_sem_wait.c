@@ -102,4 +102,3 @@ void rtai_sem_wait(scicos_block *block,int flag)
   }
 }
 
-

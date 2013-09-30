@@ -43,7 +43,6 @@
 
 static pthread_rwlock_t lock; // = INIT;
 
-
 static void *
 writer_thread (void *nr)
 {
@@ -103,7 +102,6 @@ writer_thread (void *nr)
   return NULL;
 }
 
-
 static void *
 reader_thread (void *nr)
 {
@@ -162,7 +160,6 @@ reader_thread (void *nr)
 
   return NULL;
 }
-
 
 static int
 do_test (void)

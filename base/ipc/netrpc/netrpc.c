@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/version.h>
@@ -112,7 +111,6 @@ static volatile int portslotsp;
 
 static DEFINE_SPINLOCK(stub_lock);
 static volatile int stubssp = 1;
-
 
 static struct portslot_t *portslot;
 static struct sockaddr_in SPRT_ADDR;
@@ -1878,7 +1876,6 @@ EXPORT_SYMBOL(_rt_net_rpc);
 EXPORT_SYMBOL(rt_get_net_rpc_ret);
 EXPORT_SYMBOL(rt_set_this_node);
 EXPORT_SYMBOL(rt_set_netrpc_timeout);
-
 
 #ifdef SOFT_RTNET
 EXPORT_SYMBOL(soft_rt_socket);

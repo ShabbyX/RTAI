@@ -197,7 +197,6 @@ RTAI_SYSCALL_MODE void rt_typed_sem_init(SEM *sem, int value, int type)
 #endif
 }
 
-
 /**
  * @anchor rt_sem_init
  * @brief Initialize a counting semaphore.
@@ -229,7 +228,6 @@ void rt_sem_init(SEM *sem, int value)
 {
 	rt_typed_sem_init(sem, value, CNT_SEM);
 }
-
 
 /**
  * @anchor rt_sem_delete
@@ -302,12 +300,10 @@ RTAI_SYSCALL_MODE int rt_sem_delete(SEM *sem)
 	return 0;
 }
 
-
 RTAI_SYSCALL_MODE int rt_sem_count(SEM *sem)
 {
 	return sem->count;
 }
-
 
 /**
  * @anchor rt_sem_signal
@@ -405,7 +401,6 @@ res:	if (sem->type > 0) {
 	return 0;
 }
 
-
 /**
  * @anchor rt_sem_broadcast
  * @brief Signaling a semaphore.
@@ -456,7 +451,6 @@ RTAI_SYSCALL_MODE int rt_sem_broadcast(SEM *sem)
 	WAKEUP_WAIT_ONE_POLLER(schedmap);
 	return 0;
 }
-
 
 /**
  * @anchor rt_sem_wait
@@ -562,7 +556,6 @@ RTAI_SYSCALL_MODE int rt_sem_wait(SEM *sem)
 	return count;
 }
 
-
 /**
  * @anchor rt_sem_wait_if
  * @brief Take a semaphore, only if the calling task is not blocked.
@@ -613,7 +606,6 @@ RTAI_SYSCALL_MODE int rt_sem_wait_if(SEM *sem)
 	rt_global_restore_flags(flags);
 	return count;
 }
-
 
 /**
  * @anchor rt_sem_wait_until
@@ -718,7 +710,6 @@ RTAI_SYSCALL_MODE int rt_sem_wait_until(SEM *sem, RTIME time)
 	return count;
 }
 
-
 /**
  * @anchor rt_sem_wait_timed
  * @brief Wait a semaphore with timeout.
@@ -757,7 +748,6 @@ RTAI_SYSCALL_MODE int rt_sem_wait_timed(SEM *sem, RTIME delay)
 {
 	return rt_sem_wait_until(sem, get_time() + delay);
 }
-
 
 /* ++++++++++++++++++++++++++ BARRIER SUPPORT +++++++++++++++++++++++++++++++ */
 

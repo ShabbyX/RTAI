@@ -89,7 +89,6 @@ tf (void *p)
   return NULL;
 }
 
-
 static int
 do_test (void)
 {

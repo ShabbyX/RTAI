@@ -136,7 +136,6 @@ typedef union thread_xstate FPU_ENV;
 
 #endif /* CONFIG_RTAI_FPU_SUPPORT */
 
-
 #define set_lnxtsk_uses_fpu(lnxtsk) \
 	do { set_stopped_child_used_math(lnxtsk); } while(0)
 #define clear_lnxtsk_uses_fpu(lnxtsk) \
@@ -155,6 +154,5 @@ typedef union thread_xstate FPU_ENV;
 #define set_lnxtsk_using_fpu(lnxtsk) \
 	do { rtai_set_fpu_used(lnxtsk); } while(0)
 //	do { (lnxtsk)->thread_info->status |= TS_USEDFPU; } while(0)
-
 
 #endif /* !_RTAI_ASM_I386_FPU_H */

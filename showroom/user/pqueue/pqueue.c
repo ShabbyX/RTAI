@@ -17,7 +17,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 // adaption to user space of Trevor's kernel space message queue test
 
 #include <stdlib.h>

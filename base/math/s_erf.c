@@ -108,7 +108,6 @@ static char rcsid[] = "$NetBSD: s_erf.c,v 1.8 1995/05/10 20:47:05 jtc Exp $";
  *	   	erfc/erf(NaN) is NaN
  */
 
-
 #include "math.h"
 #include "mathP.h"
 

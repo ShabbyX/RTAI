@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 #ifndef _RTAI_FUSION_LXRT_H
 #define _RTAI_FUSION_LXRT_H
 
@@ -160,7 +159,6 @@
 #define PROXY_ATTACH                   120
 #define PROXY_DETACH     	       121
 #define PROXY_TRIGGER                  122
-
 
 // synchronous user space specific intertask messages and related proxies
 #define RT_SEND                        123
@@ -410,7 +408,6 @@ static inline void rt_release_waiters(unsigned long id)
 		rtai_lxrt(BIDX, SIZARG, SEM_BROADCAST, &arg);
 	}
 }
-
 
 static inline int rt_obj_bind(void *p, const char *name)
 {

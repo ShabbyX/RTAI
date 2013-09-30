@@ -30,7 +30,6 @@
 static pthread_t th[N];
 static pthread_mutex_t lock[N];
 
-
 static void *tf (void *a)
 {
   uintptr_t idx = (uintptr_t) a;
@@ -40,7 +39,6 @@ static void *tf (void *a)
 
   return pthread_equal (pthread_self (), th[idx]) ? NULL : (void *) 1l;
 }
-
 
 int
 do_test (void)

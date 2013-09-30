@@ -69,7 +69,6 @@ static int max_opncnt;
 
 #define CHECK_SPINDX(indx)  do { if (indx >= spcnt) return -ENODEV; } while (0)
 
-
 static void mbx_init(struct rt_spmbx *mbx);
 
 /*
@@ -109,7 +108,6 @@ RTAI_SYSCALL_MODE int rt_spclear_rx(unsigned int tty)
     return -EACCES;
 }
 
-
 /*
  * rt_spclear_tx
  *
@@ -145,7 +143,6 @@ RTAI_SYSCALL_MODE int rt_spclear_tx(unsigned int tty)
 	return -EACCES;
 }
 
-
 /*
  * rt_spset_mode
  *
@@ -175,7 +172,6 @@ RTAI_SYSCALL_MODE int rt_spset_mode(unsigned int tty, int mode)
 	outb ((spct[tty].mode = mode) == RT_SP_NO_HAND_SHAKE ? (spct[tty].ier &= ~IER_EDSSI) : (spct[tty].ier |= IER_EDSSI), spct[tty].base_adr + RT_SP_IER);
 	return 0;
 }
-
 
 /*
  * rt_spset_fifotrig
@@ -208,7 +204,6 @@ RTAI_SYSCALL_MODE int rt_spset_fifotrig(unsigned int tty, int fifotrig)
 	return 0;
 }
 
-
 /*
  * rt_spset_mcr
  *
@@ -239,7 +234,6 @@ RTAI_SYSCALL_MODE int rt_spset_mcr(unsigned int tty, int mask, int setbits)
 	return 0;
 }
 
-
 /*
  * rt_spget_msr
  *
@@ -262,7 +256,6 @@ RTAI_SYSCALL_MODE int rt_spget_msr(unsigned int tty, int mask)
 	CHECK_SPINDX(tty);
 	return inb(spct[tty].base_adr + RT_SP_MSR) & 0xF0 & mask;
 }
-
 
 /*
  * rt_spget_err
@@ -294,7 +287,6 @@ RTAI_SYSCALL_MODE int rt_spget_err(unsigned int tty)
 	spct[tty].error = 0;
 	return tmp;
 }
-
 
 static void mbx_init(struct rt_spmbx *mbx)
 {
@@ -378,7 +370,6 @@ static inline int mbxevdrp(struct rt_spmbx *mbx, char **msg, int msg_size)
 	return msg_size;
 }
 
-
 /*
  * rt_spwrite
  *
@@ -413,7 +404,6 @@ RTAI_SYSCALL_MODE int rt_spwrite(unsigned int tty, char *msg, int msg_size)
 	}
 	return msg_size;
 }
-
 
 /*
  * rt_spread
@@ -454,7 +444,6 @@ RTAI_SYSCALL_MODE int rt_spread(unsigned int tty, char *msg, int msg_size)
 	return msg_size;
 }
 
-
 /*
  * rt_spevdrp
  *
@@ -489,7 +478,6 @@ RTAI_SYSCALL_MODE int rt_spevdrp(unsigned int tty, char *msg, int msg_size)
 	}
 	return msg_size;
 }
-
 
 /*
  * rt_spwrite_timed
@@ -538,7 +526,6 @@ RTAI_SYSCALL_MODE int rt_spwrite_timed(unsigned int tty, char *msg, int msg_size
 	}
 	return msg_size;
 }
-
 
 /*
  * rt_spread_timed
@@ -590,7 +577,6 @@ RTAI_SYSCALL_MODE int rt_spread_timed(unsigned int tty, char *msg, int msg_size,
 	return msg_size;
 }
 
-
 /*
  * rt_spget_rxavbs
  *
@@ -610,7 +596,6 @@ RTAI_SYSCALL_MODE int rt_spget_rxavbs(unsigned int tty)
 	CHECK_SPINDX(tty);
 	return spct[tty].ibuf.avbs;
 }
-
 
 /*
  * rt_spget_txfrbs
@@ -937,7 +922,6 @@ RTAI_SYSCALL_MODE int rt_spopen(unsigned int tty, unsigned int baud, unsigned in
 	return 0;
 }
 
-
 /*
  * rt_spclose
  *
@@ -975,7 +959,6 @@ RTAI_SYSCALL_MODE int rt_spclose(unsigned int tty)
 	}
 	return 0;
 }
-
 
 /*
  * rt_spset_thrs
@@ -1044,7 +1027,6 @@ long rt_spset_callback_fun(unsigned int tty, void (*callback_fun)(int, int),
 	return prev_callback_fun;
 }
 
-
 /*
  * rt_spset_err_callback_fun
  *
@@ -1074,7 +1056,6 @@ long rt_spset_err_callback_fun(unsigned int tty, void (*err_callback_fun)(int))
 	return prev_err_callback_fun;
 }
 
-
 /*
  * rt_spset_callback_fun_usr
  *
@@ -1103,7 +1084,6 @@ RTAI_SYSCALL_MODE int rt_spset_callback_fun_usr(unsigned int tty, unsigned long 
 	return prev_callback_fun_usr;
 }
 
-
 /*
  * rt_spset_err_callback_fun_usr
  *
@@ -1131,7 +1111,6 @@ RTAI_SYSCALL_MODE int rt_spset_err_callback_fun_usr(unsigned int tty, unsigned l
 	spct[tty].callback_fun_usr = err_callback_fun_usr;
 	return prev_err_callback_fun_usr;
 }
-
 
 /*
  * rt_spwait_usr_callback

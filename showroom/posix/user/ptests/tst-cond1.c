@@ -27,7 +27,6 @@
 static pthread_cond_t cond; // = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t mut; // = PTHREAD_MUTEX_INITIALIZER;
 
-
 static void *
 tf (void *p)
 {
@@ -52,7 +51,6 @@ tf (void *p)
 
   return NULL;
 }
-
 
 static int
 do_test (void)

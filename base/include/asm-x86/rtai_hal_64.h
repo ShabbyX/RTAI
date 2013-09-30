@@ -38,7 +38,6 @@
  * @addtogroup hal
  *@{*/
 
-
 #ifndef _RTAI_ASM_X86_64_HAL_H
 #define _RTAI_ASM_X86_64_HAL_H
 
@@ -271,7 +270,6 @@ static inline struct hal_domain_struct *get_domain_pointer(int n)
 //#define ROOT_STATUS_VAL(cpuid)  (ipipe_cpudom_var(hal_root_domain, status))
 #define ROOT_STATUS_ADR(cpuid)  (&(__ipipe_root_status))
 #define ROOT_STATUS_VAL(cpuid)  (*(&__ipipe_root_status))
-
 
 #if defined(__IPIPE_2LEVEL_IRQMAP) || defined(__IPIPE_3LEVEL_IRQMAP)
 #define hal_pend_domain_uncond(irq, domain, cpuid) \

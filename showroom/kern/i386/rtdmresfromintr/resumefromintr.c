@@ -166,7 +166,6 @@ static void thread_fun(long dummy)
 	}
 }
 
-
 int _init_module(void)
 {
 	rt_assign_irq_to_cpu(RTC_IRQ, (1 << IRQ_CPU));
@@ -176,7 +175,6 @@ int _init_module(void)
 	rtc_start(RTC_FREQ);
 	return 0;
 }
-
 
 void _cleanup_module(void)
 {

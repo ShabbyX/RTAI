@@ -32,7 +32,6 @@ lists a counter incremented by the RTAI kernel modue "shm.c".
 #include <rtai_shm.h>
 #include <rtai_nam2num.h>
 
-
 #define SHMNAM "MYSHM"
 #define SHMSIZ 0
 

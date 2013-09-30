@@ -108,7 +108,6 @@ DEFINE_LINUX_CR0
 #define LIST_CPUID         (0)
 #endif
 
-
 static struct rt_tasklet_struct timers_list[NUM_CPUS] =
 { { &timers_list[0], &timers_list[0], RT_SCHED_LOWEST_PRIORITY, 0, 0, RT_TIME_END, 0LL, NULL, 0UL, 0UL, 0, NULL, NULL, 0,
 #ifdef  CONFIG_RTAI_LONG_TIMED_LIST
@@ -819,7 +818,6 @@ RTAI_SYSCALL_MODE int rt_delete_tasklet(struct rt_tasklet_struct *tasklet)
 /*
  * Posix Timers support function
  */
-
 
 static int PosixTimers = POSIX_TIMERS;
 RTAI_MODULE_PARM(PosixTimers, int);

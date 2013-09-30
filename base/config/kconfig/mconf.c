@@ -311,7 +311,6 @@ static void set_config_filename(const char *config_filename)
 		filename[sizeof(filename)-1] = '\0';
 }
 
-
 struct search_data {
 	struct list_head *head;
 	struct menu **targets;

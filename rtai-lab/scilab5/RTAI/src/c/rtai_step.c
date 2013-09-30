@@ -40,8 +40,6 @@ static void end(scicos_block *block)
   y[0]=0.0;
 }
 
-
-
 void rt_step(scicos_block *block,int flag)
 {
   if (flag==1){          /* set output */
@@ -54,5 +52,4 @@ void rt_step(scicos_block *block,int flag)
     init(block);
   }
 }
-
 

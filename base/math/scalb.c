@@ -37,7 +37,6 @@ typedef union
 static const double twoTo1023  = 8.988465674311579539e307;   // 0x1p1023
 static const double twoToM1022 = 2.225073858507201383e-308;  // 0x1p-1022
 
-
 /***********************************************************************
       double  scalb( double  x, long int n ) returns its argument x scaled
       by the factor 2^m.  NaNs, signed zeros, and infinities are propagated

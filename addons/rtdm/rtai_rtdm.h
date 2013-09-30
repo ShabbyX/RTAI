@@ -22,7 +22,6 @@
 #include <rtdm/rtdm.h>
 #include <rtdm/syscall.h>
 
-
 extern int __rtdm_muxid;
 
 static inline int rt_dev_open(const char *path, int oflag, ...)

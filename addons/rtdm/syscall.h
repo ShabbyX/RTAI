@@ -42,9 +42,7 @@
 extern "C" {
 #endif
 
-
 extern int __rtdm_muxid;
-
 
 int rtdm_no_support(void);
 

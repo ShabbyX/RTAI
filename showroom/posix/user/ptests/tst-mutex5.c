@@ -30,7 +30,6 @@
 # define TYPE PTHREAD_MUTEX_NORMAL
 #endif
 
-
 static int
 do_test (void)
 {

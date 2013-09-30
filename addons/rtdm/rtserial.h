@@ -180,7 +180,6 @@
 #define RTSER_DEF_EVENT_MASK		0x00
 /** @} */
 
-
 /*!
  * @anchor RTSER_SET_xxx   @name RTSER_SET_xxx
  * Configuration mask bits
@@ -199,7 +198,6 @@
 #define RTSER_SET_RS485			0x2000
 /** @} */
 
-
 /*!
  * @anchor RTSER_LSR_xxx   @name RTSER_LSR_xxx
  * Line status bits
@@ -215,7 +213,6 @@
 #define RTSER_SOFT_OVERRUN_ERR		0x0100
 /** @} */
 
-
 /*!
  * @anchor RTSER_MSR_xxx   @name RTSER_MSR_xxx
  * Modem status bits
@@ -230,7 +227,6 @@
 #define RTSER_MSR_DCD			0x80
 /** @} */
 
-
 /*!
  * @anchor RTSER_MCR_xxx   @name RTSER_MCR_xxx
  * Modem control bits
@@ -242,14 +238,12 @@
 #define RTSER_MCR_LOOP			0x10
 /** @} */
 
-
 /*!
  * @anchor RTSER_BREAK_xxx   @name RTSER_BREAK_xxx
  * Break control
  * @{ */
 #define RTSER_BREAK_CLR			0x00
 #define RTSER_BREAK_SET			0x01
-
 
 /**
  * Serial device configuration
@@ -328,16 +322,13 @@ typedef struct rtser_event {
 	nanosecs_abs_t	rxpend_timestamp;
 } rtser_event_t;
 
-
 #define RTIOC_TYPE_SERIAL		RTDM_CLASS_SERIAL
-
 
 /*!
  * @name Sub-Classes of RTDM_CLASS_SERIAL
  * @{ */
 #define RTDM_SUBCLASS_16550A		0
 /** @} */
-
 
 /*!
  * @anchor SERIOCTLs @name IOCTLs

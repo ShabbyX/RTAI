@@ -29,7 +29,6 @@
 
 #include <rtai_posix.h>
 
-
 static int
 do_test (void)
 {

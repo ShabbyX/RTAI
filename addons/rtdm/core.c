@@ -155,13 +155,7 @@ static int create_instance(struct rtdm_device *device,
 	context->ops = &device->ops;
 	atomic_set(&context->close_lock_count, 0);
 
-
-
-
-
 	context->reserved.owner = NULL;
-
-
 
 	return 0;
 }
@@ -255,7 +249,6 @@ void rtdm_apc_handler(void *cookie)
 {
 	schedule_delayed_work(&close_work, 0);
 }
-
 
 int __rt_dev_open(rtdm_user_info_t *user_info, const char *path, int oflag)
 {

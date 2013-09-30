@@ -24,7 +24,6 @@
 
 #include <rtdm/rtdm_driver.h>
 
-
 #ifdef CONFIG_SMP
 extern xnlock_t             rt_fildes_lock;
 #endif /* CONFIG_SMP */

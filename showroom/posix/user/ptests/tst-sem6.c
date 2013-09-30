@@ -40,7 +40,6 @@ handler (int sig)
   alarm (1);
 }
 
-
 static int
 do_test (void)
 {

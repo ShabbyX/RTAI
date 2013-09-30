@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 #include <rtai_sem.h>
 #include <rtai_msg.h>
 #include <rtai_signal.h>
@@ -117,7 +116,6 @@ static void *master_fun(void *arg)
 	printf("MASTER TASK ENDs\n");
 	return 0;
 }
-
 
 int main (void)
 {

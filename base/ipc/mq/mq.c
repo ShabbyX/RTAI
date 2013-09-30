@@ -130,18 +130,15 @@ static int name_to_id(char *name)
 	return ERROR;
 }
 
-
 static inline mq_bool_t is_empty(struct queue_control *q)
 {
 	return !q->attrs.mq_curmsgs;
 }
 
-
 static inline mq_bool_t is_full(struct queue_control *q)
 {
 	return q->attrs.mq_curmsgs == q->attrs.mq_maxmsg;
 }
-
 
 static inline MSG_HDR* getnode(Q_CTRL *queue)
 {
@@ -156,7 +153,6 @@ static inline int freenode(void *node, Q_CTRL *queue)
 	}
 	return -EINVAL;
 }
-
 
 static void insert_message(Q_CTRL *q, MSG_HDR *this_msg)
 {
@@ -212,7 +208,6 @@ static mq_bool_t is_blocking(MSG_QUEUE *q)
 	return FALSE;
 }
 
-
 static mq_bool_t can_access(MSG_QUEUE *q, Q_ACCESS access)
 {
 	RT_TASK *caller = _rt_whoami();
@@ -246,7 +241,6 @@ set_mode:	if (access == FOR_WRITE) {
 	return FALSE;
 }
 
-
 static inline void initialise_queue(Q_CTRL *q)
 {
 	int msg_size, msg_ind;
@@ -263,7 +257,6 @@ static inline void initialise_queue(Q_CTRL *q)
 		msg_ptr += msg_size;
 	}
 }
-
 
 static void delete_queue(int q_index)
 {

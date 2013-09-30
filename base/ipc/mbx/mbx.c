@@ -247,7 +247,6 @@ static int mbxevdrp(MBX *mbx, char **msg, int msg_size, int space)
 	return msg_size;
 }
 
-
 /**
  * @brief Receives bytes as many as possible leaving the message
  * available for another receive.
@@ -270,7 +269,6 @@ RTAI_SYSCALL_MODE int _rt_mbx_evdrp(MBX *mbx, void *msg, int msg_size, int space
 {
 	return mbxevdrp(mbx, (char **)(&msg), msg_size, space);
 }
-
 
 #define CHK_MBX_MAGIC \
 do { if (!mbx || mbx->magic != RT_MBX_MAGIC) return (CONFIG_RTAI_USE_NEWERR ? RTE_OBJINV : -EINVAL); } while (0)
@@ -320,7 +318,6 @@ RTAI_SYSCALL_MODE int rt_typed_mbx_init(MBX *mbx, int size, int type)
 	return 0;
 }
 
-
 /**
  * @brief Initializes a mailbox.
  *
@@ -359,7 +356,6 @@ int rt_mbx_init(MBX *mbx, int size)
 	return rt_typed_mbx_init(mbx, size, PRIO_Q);
 }
 
-
 /**
  *
  * @brief Deletes a mailbox.
@@ -389,7 +385,6 @@ RTAI_SYSCALL_MODE int rt_mbx_delete(MBX *mbx)
 	rt_free(mbx->bufadr);
 	return 0;
 }
-
 
 /**
  * @brief Sends a message unconditionally.
@@ -437,7 +432,6 @@ RTAI_SYSCALL_MODE int _rt_mbx_send(MBX *mbx, void *msg, int msg_size, int space)
 	return 0;
 }
 
-
 /**
  * @brief Sends as many bytes as possible without blocking the calling task.
  *
@@ -481,7 +475,6 @@ RTAI_SYSCALL_MODE int _rt_mbx_send_wp(MBX *mbx, void *msg, int msg_size, int spa
 	return msg_size;
 }
 
-
 /**
  * @brief Sends a message, only if the whole message can be passed
  * without blocking the calling task.
@@ -518,7 +511,6 @@ RTAI_SYSCALL_MODE int _rt_mbx_send_if(MBX *mbx, void *msg, int msg_size, int spa
 	rt_global_restore_flags(flags);
 	return msg_size;
 }
-
 
 /**
  * @brief Sends a message with absolute timeout.
@@ -567,7 +559,6 @@ RTAI_SYSCALL_MODE int _rt_mbx_send_until(MBX *mbx, void *msg, int msg_size, RTIM
 	return 0;
 }
 
-
 /**
  * @brief Sends a message with relative timeout.
  *
@@ -595,7 +586,6 @@ RTAI_SYSCALL_MODE int _rt_mbx_send_timed(MBX *mbx, void *msg, int msg_size, RTIM
 {
 	return _rt_mbx_send_until(mbx, msg, msg_size, get_time() + delay, space);
 }
-
 
 /**
  * @brief Receives a message unconditionally.
@@ -641,7 +631,6 @@ RTAI_SYSCALL_MODE int _rt_mbx_receive(MBX *mbx, void *msg, int msg_size, int spa
 	return 0;
 }
 
-
 /**
  * @brief Receives bytes as many as possible, without blocking the
  * calling task.
@@ -686,7 +675,6 @@ RTAI_SYSCALL_MODE int _rt_mbx_receive_wp(MBX *mbx, void *msg, int msg_size, int 
 	return msg_size;
 }
 
-
 /**
  * @brief Receives a message only if the whole message can be passed
  * without blocking the calling task.
@@ -728,7 +716,6 @@ RTAI_SYSCALL_MODE int _rt_mbx_receive_if(MBX *mbx, void *msg, int msg_size, int 
 	rt_global_restore_flags(flags);
 	return msg_size;
 }
-
 
 /**
  * @brief Receives a message with absolute timeout.
@@ -777,7 +764,6 @@ RTAI_SYSCALL_MODE int _rt_mbx_receive_until(MBX *mbx, void *msg, int msg_size, R
 	return 0;
 }
 
-
 /**
  * @brief Receives a message with relative timeout.
  *
@@ -805,7 +791,6 @@ RTAI_SYSCALL_MODE int _rt_mbx_receive_timed(MBX *mbx, void *msg, int msg_size, R
 {
 	return _rt_mbx_receive_until(mbx, msg, msg_size, get_time() + delay, space);
 }
-
 
 /**
  * @brief Sends a message overwriting what already in the buffer
@@ -848,7 +833,6 @@ RTAI_SYSCALL_MODE int _rt_mbx_ovrwr_send(MBX *mbx, void *msg, int msg_size, int 
 
 #include <rtai_registry.h>
 
-
 /**
  * @brief Initializes a specifically typed (fifo queued, priority queued
  * or resource queued) mailbox identified by a name.
@@ -888,7 +872,6 @@ RTAI_SYSCALL_MODE MBX *_rt_typed_named_mbx_init(unsigned long mbx_name, int size
 	rt_free(mbx);
 	return (MBX *)0;
 }
-
 
 /**
  *

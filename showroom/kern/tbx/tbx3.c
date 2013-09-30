@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USAr.
  */
 
-
 #include <linux/module.h>
 
 #include <asm/io.h>
@@ -35,7 +34,6 @@ typedef struct {
 	unsigned progressive;
 	unsigned sending_task;
 } MSG;
-
 
 #define BASE_PRIO 100
 #define TBXSIZE (5*sizeof(MSG))  //big tbx stress!

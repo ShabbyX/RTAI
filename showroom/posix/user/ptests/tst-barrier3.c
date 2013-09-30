@@ -113,7 +113,6 @@ sprintf(name, "TSK%d", nr);
   return result;
 }
 
-
 #define TEST_FUNCTION do_test ()
 #define TIMEOUT 60
 static int

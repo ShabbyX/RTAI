@@ -26,8 +26,6 @@
 #include <linux/proc_fs.h>
 #include <linux/sem.h>
 
-
-
 #include <rtdm/rtdm_driver.h>
 
 #define RTDM_FD_MAX			CONFIG_RTAI_RTDM_FD_MAX
@@ -44,7 +42,6 @@ struct rtdm_process {
 	char name[32];
 	pid_t pid;
 #endif /* CONFIG_PROC_FS */
-
 
 };
 

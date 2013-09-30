@@ -20,7 +20,6 @@
 
 /* Manages the I/O access method of the driver. */
 
-
 typedef enum { MODE_PIO, MODE_MMIO } io_mode_t;
 
 #if defined(CONFIG_RTAI_16550A_PIO) || \

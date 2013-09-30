@@ -155,7 +155,6 @@ static inline int __restore_fpenv(struct i387_fxsave_struct *fx)
 
 #endif /* CONFIG_RTAI_FPU_SUPPORT */
 
-
 #define set_lnxtsk_uses_fpu(lnxtsk) \
 	do { set_stopped_child_used_math(lnxtsk); } while(0)
 #define clear_lnxtsk_uses_fpu(lnxtsk) \
@@ -174,6 +173,5 @@ static inline int __restore_fpenv(struct i387_fxsave_struct *fx)
 #define set_lnxtsk_using_fpu(lnxtsk) \
 	do { rtai_set_fpu_used(lnxtsk); } while(0) //do { task_thread_info(lnxtsk)->status |= TS_USEDFPU; } while(0)
 //	do { (lnxtsk)->thread_info->status |= TS_USEDFPU; } while(0)
-
 
 #endif /* !_RTAI_ASM_X86_64_FPU_H */

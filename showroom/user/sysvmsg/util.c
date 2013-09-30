@@ -7,7 +7,6 @@
  * Paolo Mantegazza <mantegazza@aero.polimi.it>
  */
 
-
 #include <linux/config.h>
 #include <linux/init.h>
 #include <linux/module.h>
@@ -257,7 +256,6 @@ int ipcperms (struct kern_ipc_perm *ipcp, short flag)
  *	Turn the kernel object 'in' into a set of permissions descriptions
  *	for returning to userspace (out).
  */
-
 
 void kernel_to_ipc64_perm (struct kern_ipc_perm *in, struct ipc64_perm *out)
 {

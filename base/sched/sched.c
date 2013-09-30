@@ -25,7 +25,6 @@ ACKNOWLEDGMENTS:
 - Geoffrey Martin (gmartin@altersys.com) for a fix to functions with timeouts.
 */
 
-
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/version.h>
@@ -303,7 +302,6 @@ int set_rtext(RT_TASK *task, int priority, int uses_fpu, void(*signal)(void), un
 	return 0;
 }
 
-
 int rt_kthread_init_cpuid(RT_TASK *task, void (*rt_thread)(long), long data,
 			int stack_size, int priority, int uses_fpu,
 			void(*signal)(void), unsigned int cpuid)
@@ -312,7 +310,6 @@ int rt_kthread_init_cpuid(RT_TASK *task, void (*rt_thread)(long), long data,
 }
 EXPORT_SYMBOL(rt_kthread_init_cpuid);
 
-
 int rt_kthread_init(RT_TASK *task, void (*rt_thread)(long), long data,
 			int stack_size, int priority, int uses_fpu,
 			void(*signal)(void))
@@ -320,7 +317,6 @@ int rt_kthread_init(RT_TASK *task, void (*rt_thread)(long), long data,
 	return rt_task_init_cpuid(task, rt_thread, data, stack_size, priority, uses_fpu, signal, get_min_tasks_cpuid());
 }
 EXPORT_SYMBOL(rt_kthread_init);
-
 
 asmlinkage static void rt_startup(void(*rt_thread)(long), long data)
 {
@@ -335,7 +331,6 @@ asmlinkage static void rt_startup(void(*rt_thread)(long), long data)
 	rt_task_delete(rt_smp_current[rtai_cpuid()]);
 	rt_printk("LXRT: task %p returned but could not be delated.\n", rt_current);
 }
-
 
 static int rt_pid = (INT_MAX & ~(0xF));
 static DEFINE_SPINLOCK(rt_pid_lock);
@@ -361,7 +356,6 @@ RT_TASK *rt_find_task_by_pid(pid_t pid)
 	return NULL;
 }
 EXPORT_SYMBOL(rt_find_task_by_pid);
-
 
 int rt_task_init_cpuid(RT_TASK *task, void (*rt_thread)(long), long data, int stack_size, int priority, int uses_fpu, void(*signal)(void), unsigned int cpuid)
 {
@@ -455,7 +449,6 @@ int rt_task_init(RT_TASK *task, void (*rt_thread)(long), long data,
 				 uses_fpu, signal, get_min_tasks_cpuid());
 }
 
-
 RTAI_SYSCALL_MODE void rt_set_runnable_on_cpuid(RT_TASK *task, unsigned int cpuid)
 {
 	unsigned long flags;
@@ -501,7 +494,6 @@ RTAI_SYSCALL_MODE void rt_set_runnable_on_cpuid(RT_TASK *task, unsigned int cpui
 	rt_global_restore_flags(flags);
 }
 
-
 RTAI_SYSCALL_MODE void rt_set_runnable_on_cpus(RT_TASK *task, unsigned long run_on_cpus)
 {
 	int cpuid;
@@ -522,7 +514,6 @@ RTAI_SYSCALL_MODE void rt_set_runnable_on_cpus(RT_TASK *task, unsigned long run_
 	rt_set_runnable_on_cpuid(task, cpuid);
 }
 
-
 int rt_check_current_stack(void)
 {
 	DECLARE_RT_CURRENT;
@@ -536,7 +527,6 @@ int rt_check_current_stack(void)
 		return RT_RESEM_SUSPDEL;
 	}
 }
-
 
 #define RR_YIELD() \
 if (CONFIG_RTAI_ALLOW_RR && rt_current->policy > 0) { \
@@ -665,13 +655,11 @@ do { \
 	ready_task->rnext = task; \
 } while (0)
 
-
 #define pend_wake_up_hts(lnxtsk, cpuid) \
 do { \
 	wake_up_hts[cpuid].task[wake_up_hts[cpuid].in++ & (MAX_WAKEUP_SRQ - 1)] = lnxtsk; \
 	hal_pend_uncond(wake_up_srq[cpuid].srq, cpuid); \
 } while (0)
-
 
 static inline void force_current_soft(RT_TASK *rt_current, int cpuid)
 {
@@ -762,7 +750,6 @@ static RT_TASK *switch_rtai_tasks(RT_TASK *rt_current, RT_TASK *new_task, int cp
 		RTAI_TASK_SWITCH_SIGNAL(); \
 	} while (0)
 
-
 #ifdef USE_LINUX_TIMER
 
 #define CHECK_LINUX_TIME() \
@@ -791,7 +778,6 @@ do { \
 #define SET_PEND_LINUX_TIMER_SHOT()
 
 #endif
-
 
 #define SET_NEXT_TIMER_SHOT(fire_shot) \
 do { \
@@ -1098,7 +1084,6 @@ ret:	task = &rt_linux_task;
 	return;
 }
 
-
 void rt_sched_lock(void)
 {
 	unsigned long flags;
@@ -1119,7 +1104,6 @@ void rt_sched_lock(void)
 		sched_release_global_lock(cpuid); \
 	} while (0)
 
-
 void rt_sched_unlock(void)
 {
 	unsigned long flags;
@@ -1135,9 +1119,6 @@ void rt_sched_unlock(void)
 	}
 	rtai_restore_flags(flags);
 }
-
-
-
 
 void *rt_get_lxrt_fun_entry(int index);
 static inline void sched_sem_signal(SEM *sem)
@@ -1218,19 +1199,16 @@ int clr_rtext(RT_TASK *task)
 	return 0;
 }
 
-
 int rt_task_delete(RT_TASK *task)
 {
 	clr_rtext(task);
 	return 0;
 }
 
-
 int rt_get_timer_cpu(void)
 {
 	return 1;
 }
-
 
 static void rt_timer_handler(void)
 {
@@ -1304,7 +1282,6 @@ sched_exit:
 	goto redo_timer_handler;
 }
 
-
 #if defined(USE_LINUX_TIMER) && !defined(CONFIG_GENERIC_CLOCKEVENTS)
 
 static irqreturn_t recover_jiffies(int irq, void *dev_id, struct pt_regs *regs)
@@ -1330,12 +1307,10 @@ static irqreturn_t recover_jiffies(int irq, void *dev_id, struct pt_regs *regs)
 
 #endif
 
-
 int rt_is_hard_timer_running(void)
 {
 	return rt_sched_timed;
 }
-
 
 void rt_set_periodic_mode(void)
 {
@@ -1346,7 +1321,6 @@ void rt_set_periodic_mode(void)
 	}
 }
 
-
 void rt_set_oneshot_mode(void)
 {
 	int cpuid;
@@ -1355,7 +1329,6 @@ void rt_set_oneshot_mode(void)
 		oneshot_timer = 1;
 	}
 }
-
 
 #ifdef CONFIG_GENERIC_CLOCKEVENTS
 
@@ -1429,7 +1402,6 @@ RTAI_SYSCALL_MODE void start_rt_apic_timers(struct apic_timer_setup_data *setup_
 	rt_global_restore_flags(flags);
 }
 
-
 RTAI_SYSCALL_MODE RTIME start_rt_timer(int period)
 {
 	int cpuid;
@@ -1446,7 +1418,6 @@ RTAI_SYSCALL_MODE RTIME start_rt_timer(int period)
 	rt_gettimeorig(NULL);
 	return setup_data[0].mode ? setup_data[0].count : period;
 }
-
 
 void stop_rt_timer(void)
 {
@@ -1503,7 +1474,6 @@ RTAI_SYSCALL_MODE RTIME start_rt_timer(int period)
 #define rt_times (rt_smp_times[cpuid])
 }
 
-
 RTAI_SYSCALL_MODE void start_rt_apic_timers(struct apic_timer_setup_data *setup_mode, unsigned int rcvr_jiffies_cpuid)
 {
 	int cpuid, period;
@@ -1526,7 +1496,6 @@ RTAI_SYSCALL_MODE void start_rt_apic_timers(struct apic_timer_setup_data *setup_
 	}
 }
 
-
 void stop_rt_timer(void)
 {
 	if (rt_sched_timed) {
@@ -1540,7 +1509,6 @@ void stop_rt_timer(void)
 
 #endif /* CONFIG_SMP */
 
-
 RTAI_SYSCALL_MODE int rt_hard_timer_tick_count(void)
 {
 	int cpuid = rtai_cpuid();
@@ -1550,7 +1518,6 @@ RTAI_SYSCALL_MODE int rt_hard_timer_tick_count(void)
 	return -1;
 }
 
-
 RTAI_SYSCALL_MODE int rt_hard_timer_tick_count_cpuid(int cpuid)
 {
 	if (rt_sched_timed) {
@@ -1558,7 +1525,6 @@ RTAI_SYSCALL_MODE int rt_hard_timer_tick_count_cpuid(int cpuid)
 	}
 	return -1;
 }
-
 
 RT_TRAP_HANDLER rt_set_task_trap_handler( RT_TASK *task, unsigned int vec, RT_TRAP_HANDLER handler)
 {
@@ -1674,7 +1640,6 @@ RTAI_SYSCALL_MODE RTIME count2nano(RTIME counts)
 	return sign ? counts : - counts;
 }
 
-
 RTAI_SYSCALL_MODE RTIME nano2count(RTIME ns)
 {
 	int sign;
@@ -1706,7 +1671,6 @@ RTAI_SYSCALL_MODE RTIME count2nano_cpuid(RTIME counts, unsigned int cpuid)
 		 llimd(counts, 1000000000, TIMER_FREQ);
 	return sign ? counts : - counts;
 }
-
 
 RTAI_SYSCALL_MODE RTIME nano2count_cpuid(RTIME ns, unsigned int cpuid)
 {
@@ -1923,7 +1887,6 @@ static inline void fast_schedule(RT_TASK *new_task, struct task_struct *lnxtsk, 
 	rtai_sti();
 }
 
-
 /* detach the kernel thread from user space; not fully, only:
    session, process-group, tty. */
 
@@ -1938,7 +1901,6 @@ do { \
 		wake_up_process(task); \
 	} \
 } while (0)
-
 
 void steal_from_linux(RT_TASK *rt_task)
 {
@@ -2033,7 +1995,6 @@ void give_back_to_linux(RT_TASK *rt_task, int keeprio)
 	return;
 }
 
-
 static void wake_up_srq_handler(unsigned srq)
 {
 	int cpuid = rtai_cpuid();
@@ -2081,7 +2042,6 @@ static inline void rt_signal_wake_up(RT_TASK *task)
 	}
 }
 
-
 static int lxrt_intercept_schedule_tail (unsigned event, void *nothing)
 {
 	int cpuid = rtai_cpuid();
@@ -2118,7 +2078,6 @@ static int lxrt_intercept_exit (unsigned long event, struct task_struct *lnx_tas
 
 extern long long rtai_lxrt_invoke (unsigned long, void *);
 extern int (*sys_call_table[])(struct pt_regs);
-
 
 static int lxrt_intercept_syscall_prologue(struct pt_regs *regs)
 {
@@ -2271,11 +2230,9 @@ static int rtai_read_sched(char *page, char **start, off_t off, int count,
 
 }  /* End function - rtai_read_sched */
 
-
 static int rtai_proc_sched_register(void)
 {
 	struct proc_dir_entry *proc_sched_ent;
-
 
 	proc_sched_ent = create_proc_entry("scheduler", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root);
 	if (!proc_sched_ent) {
@@ -2285,7 +2242,6 @@ static int rtai_proc_sched_register(void)
 	proc_sched_ent->read_proc = rtai_read_sched;
 	return(0);
 }  /* End function - rtai_proc_sched_register */
-
 
 static void rtai_proc_sched_unregister(void)
 {

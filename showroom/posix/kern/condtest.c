@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 #include <linux/module.h>
 
 #include <rtai_posix.h>
@@ -65,7 +64,6 @@ static void *task_func1(void *dummy)
 	pthread_exit(0);
 	return 0;
 }
-
 
 static void *task_func2(void *dummy)
 {

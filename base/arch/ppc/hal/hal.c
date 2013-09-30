@@ -30,7 +30,6 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 #include <linux/version.h>
 #include <linux/slab.h>
 #include <linux/errno.h>
@@ -53,7 +52,6 @@
 #define __RTAI_HAL__
 #include <asm/rtai_hal.h>
 #include <asm/rtai_lxrt.h>
-
 
 #ifdef CONFIG_PROC_FS
 #include <linux/stat.h>
@@ -135,7 +133,6 @@ static void (*rtai_isr_hook)(int cpuid);
 #define hal_lock_irq(x, y, z)
 #define hal_unlock_irq(x, y)
 
-
 /* global var section */
 static atomic_t rtai_sync_count = ATOMIC_INIT(1);
 static volatile int rtai_sync_level;
@@ -172,7 +169,6 @@ struct rt_times rt_times;
 struct rtai_switch_data rtai_linux_context[RTAI_NR_CPUS];
 struct rt_times rt_smp_times[RTAI_NR_CPUS];
 
-
 /*
  * rtai_critical_enter
  */
@@ -190,7 +186,6 @@ unsigned long rtai_critical_enter (void (*synch)(void))
 	return flags;
 }
 
-
 /*
  * rtai_critical_exit
  */
@@ -200,7 +195,6 @@ void rtai_critical_exit (unsigned long flags)
 	atomic_inc(&rtai_sync_count);
 	hal_critical_exit(flags);
 }
-
 
 /*
  * rt_request_irq
@@ -231,7 +225,6 @@ int rt_request_irq(unsigned irq, int (*handler)(unsigned irq, void *cookie), voi
 	return 0;
 }
 
-
 /*
  * rt_release_irq
  */
@@ -255,7 +248,6 @@ int rt_release_irq (unsigned irq)
 	return 0;
 }
 
-
 /*
  * rt_set_irq_ack
  */
@@ -269,7 +261,6 @@ int rt_set_irq_ack(unsigned irq, int (*irq_ack)(unsigned int))
 	return 0;
 }
 
-
 /*
  * rt_set_irq_cookie
  */
@@ -281,7 +272,6 @@ void rt_set_irq_cookie (unsigned irq, void *cookie)
 	}
 }
 
-
 /*
  * rt_set_irq_retmode
  */
@@ -292,7 +282,6 @@ void rt_set_irq_retmode (unsigned irq, int retmode)
 		rtai_realtime_irq[irq].retmode = retmode ? 1 : 0;
 	}
 }
-
 
 /*
  * rt_startup_irq
@@ -308,7 +297,6 @@ unsigned rt_startup_irq (unsigned irq)
 	END_PIC();
 	return retval;
 }
-
 
 /*
  * rt_shutdown_irq
@@ -333,7 +321,6 @@ static inline void _rt_enable_irq (unsigned irq)
 	END_PIC();
 }
 
-
 /*
  * rt_disable_irq
  */
@@ -345,7 +332,6 @@ void rt_disable_irq (unsigned irq)
 	hal_lock_irq(hal_root_domain, cpuid, irq);
 	END_PIC();
 }
-
 
 /*
  * _rt_end_irq
@@ -361,7 +347,6 @@ static inline void _rt_end_irq (unsigned irq)
 	END_PIC();
 }
 
-
 // rt_mask_and_ack_irq
 void rt_mask_and_ack_irq (unsigned irq) { rtai_irq_desc(irq)->ack(irq); }
 // rt_enable_irq
@@ -372,7 +357,6 @@ void rt_unmask_irq (unsigned irq) { _rt_end_irq(irq); }
 void rt_ack_irq (unsigned irq) { _rt_enable_irq(irq); }
 // rt_end_irq
 void rt_end_irq (unsigned irq) { _rt_end_irq(irq); }
-
 
 /*
  * rt_request_linux_irq
@@ -401,7 +385,6 @@ int rt_request_linux_irq (unsigned irq, void *handler, char *name, void *dev_id)
 	return 0;
 }
 
-
 /*
  * rt_free_linux_irq
  */
@@ -428,7 +411,6 @@ int rt_free_linux_irq (unsigned irq, void *dev_id)
 	return 0;
 }
 
-
 /*
  * rt_pend_linux_irq
  */
@@ -441,7 +423,6 @@ void rt_pend_linux_irq (unsigned irq)
 	rtai_restore_flags(flags);
 }
 
-
 /*
  * usr_rt_pend_linux_irq
  */
@@ -453,7 +434,6 @@ RTAI_SYSCALL_MODE void usr_rt_pend_linux_irq (unsigned irq)
 	hal_pend_uncond(irq, rtai_cpuid());
 	rtai_restore_flags(flags);
 }
-
 
 /*
  * rt_request_srq
@@ -483,7 +463,6 @@ int rt_request_srq (unsigned label, void (*k_handler)(void), long long (*u_handl
 	return srq;
 }
 
-
 /*
  * rt_free_srq
  */
@@ -492,7 +471,6 @@ int rt_free_srq (unsigned srq)
 {
 	return  (srq < 1 || srq >= RTAI_NR_SRQS || !test_and_clear_bit(srq, &rtai_sysreq_map)) ? -EINVAL : 0;
 }
-
 
 /*
  * rt_pend_linux_srq
@@ -566,7 +544,6 @@ int rtai_decr_timer_handler(struct pt_regs *regs)
 	return 0;
 }
 
-
 /*
  * Upgrade this function for SMP systems
  */
@@ -575,7 +552,6 @@ void rt_request_apic_timers (void (*handler)(void), struct apic_timer_setup_data
 void rt_free_apic_timers(void) { rt_free_timer(); }
 int rt_assign_irq_to_cpu (int irq, unsigned long cpus_mask) { return 0; }
 int rt_reset_irq_to_sym_mode (int irq) { return 0; }
-
 
 static int rtai_request_tickdev(void);
 
@@ -634,7 +610,6 @@ int rt_request_timer (void (*handler)(void), unsigned tick, int use_apic)
 	return 0;
 }
 
-
 /*
  * rt_free_timer
  */
@@ -665,7 +640,6 @@ void rt_release_rtc(void)
 {
 	rt_printk("*** RTC NOT IMPLEMENTED YET ON THIS ARCH ***\n");
 }
-
 
 /*
  * rtai_hirq_dispatcher
@@ -713,7 +687,6 @@ static int rtai_hirq_dispatcher(struct pt_regs *regs)
 	return 1;
 }
 
-
 /*
  * rt_set_trap_handler
  */
@@ -722,7 +695,6 @@ RT_TRAP_HANDLER rt_set_trap_handler (RT_TRAP_HANDLER handler)
 {
 	return (RT_TRAP_HANDLER)xchg(&rtai_trap_handler, handler);
 }
-
 
 /*
  * rtai_trap_fault
@@ -801,7 +773,6 @@ endtrap:
 	return 1;
 }
 
-
 /*
  * rtai_lsrq_dispatcher
  */
@@ -826,7 +797,6 @@ static void rtai_lsrq_dispatcher (unsigned virq)
 	spin_unlock(&rtai_lsrq_lock);
 }
 
-
 /*
  * rtai_usrq_dispatcher
  */
@@ -850,7 +820,6 @@ static inline long long rtai_usrq_dispatcher (unsigned long srq, unsigned long l
 	return 0LL;
 }
 
-
 /*
  * rtai_syscall_dispatcher
  * In PowerPC registers have the following meanings:
@@ -862,7 +831,6 @@ static inline long long rtai_usrq_dispatcher (unsigned long srq, unsigned long l
  * gpr[5] third syscall argument
  * gpr[6] ...
 */
-
 
 #include <asm/rtai_usi.h>
 long long (*rtai_lxrt_dispatcher)(unsigned long, unsigned long, void *);
@@ -882,7 +850,6 @@ static int intercept_syscall_prologue(unsigned long event, struct pt_regs *regs)
 	}
 	return likely(sched_intercept_syscall_prologue != NULL) ? sched_intercept_syscall_prologue(regs) : 0;
 }
-
 
 asmlinkage int rtai_syscall_dispatcher (struct pt_regs *regs)
 {
@@ -925,7 +892,6 @@ static void rtai_install_archdep (void)
 	rtai_tunables.cpu_freq = rtai_cpufreq_arg;
 }
 
-
 /*
  * rtai_uninstall_archdep
  */
@@ -935,7 +901,6 @@ static void rtai_uninstall_archdep (void)
 /* something to be added when a direct RTAI syscall way is decided */
 	hal_catch_event(hal_root_domain, HAL_SYSCALL_PROLOGUE, NULL);
 }
-
 
 /*
  * rt_set_ihook
@@ -949,7 +914,6 @@ void (*rt_set_ihook (void (*hookfn)(int)))(int)
 	return NULL;
 #endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
 }
-
 
 /*
  * rtai_set_linux_task_priority
@@ -966,7 +930,6 @@ void rtai_set_linux_task_priority (struct task_struct *task, int policy, int pri
 #ifdef CONFIG_PROC_FS
 
 struct proc_dir_entry *rtai_proc_root = NULL;
-
 
 /*
  * rtai_read_proc
@@ -1021,7 +984,6 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	PROC_PRINT_DONE;
 }
 
-
 /*
  * rtai_proc_register
  */
@@ -1047,7 +1009,6 @@ static int rtai_proc_register (void)
 	return 0;
 }
 
-
 /*
  * rtai_proc_unregister
  */
@@ -1059,7 +1020,6 @@ static void rtai_proc_unregister (void)
 }
 
 #endif /* CONFIG_PROC_FS */
-
 
 /*
  * rtai_domain_entry
@@ -1074,7 +1034,6 @@ static void rtai_domain_entry (int iflag)
 	for (;;) hal_suspend_domain();
 }
 
-
 /*
  * rtai_catch_event
  */
@@ -1086,7 +1045,6 @@ long rtai_catch_event (struct hal_domain_struct *from, unsigned long event, int 
 	}
 	return (long)hal_catch_event(from, event, (void *)handler);
 }
-
 
 /*
  * __rtai_hal_init, Execution Domain: Linux
@@ -1164,7 +1122,6 @@ int __rtai_hal_init (void)
 	return 0;
 }
 
-
 /*
  * __rtai_hal_exit, Execution Domain: Linux
  */
@@ -1206,7 +1163,6 @@ void __rtai_hal_exit (void)
 module_init(__rtai_hal_init);
 module_exit(__rtai_hal_exit);
 
-
 /*
  * rt_printk
  */
@@ -1226,7 +1182,6 @@ asmlinkage int rt_printk(const char *fmt, ...)
 
 	return r;
 }
-
 
 /*
  * rt_sync_printk
@@ -1283,7 +1238,6 @@ void *ll2a (long long ll, char *s)
 	while ((s[k++] = a[i--]));
 	return s;
 }
-
 
 /*
  * export section

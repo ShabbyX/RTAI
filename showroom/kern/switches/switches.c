@@ -174,7 +174,6 @@ static int __switches_init(void)
 	return 0;
 }
 
-
 static void __switches_exit(void)
 {
 	int i;

@@ -120,4 +120,3 @@ void rtai_mbx_rcv_if(scicos_block *block,int flag)
   }
 }
 
-

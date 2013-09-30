@@ -33,14 +33,12 @@ static pthread_cond_t c; // = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t m; // = PTHREAD_MUTEX_INITIALIZER;
 static pthread_barrier_t b;
 
-
 static void
 handler (int sig)
 {
   write (1, "handler called\n", 15);
   _exit (1);
 }
-
 
 static void *
 tf (void *a)
@@ -91,7 +89,6 @@ tf (void *a)
 
   return NULL;
 }
-
 
 int
 do_test (void)

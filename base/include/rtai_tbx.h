@@ -17,7 +17,6 @@
  *
  */
 
-
 #ifndef _RTAI_RT_MSGQ_H
 #define _RTAI_RT_MSGQ_H
 

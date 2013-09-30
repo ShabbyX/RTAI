@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 #include <rtdm/rtdm_driver.h>
 
 MODULE_LICENSE("GPL");
@@ -113,7 +112,6 @@ void task2(void *cookie)
 	}
 }
 
-
 int init_module(void)
 {
 	printk("TESTING RTDM SEMs [LOOPs %d, TIMEOUTs %d (ns)].\n", LOOPS, DELAY);
@@ -124,7 +122,6 @@ int init_module(void)
 	rtdm_task_init_cpuid(&stask2, "task2", task2, NULL, 1, 0, 0);
 	return 0;
 }
-
 
 void cleanup_module(void)
 {

@@ -39,7 +39,6 @@ tf (void *a)
   return a;
 }
 
-
 int
 do_test (void)
 {

@@ -25,7 +25,6 @@
  *
  */
 
-
 /* Things to try:
  *    Non-temporal stores
  *    Sequences of instructions instead of movups
@@ -35,13 +34,10 @@
  *
  */
 
-
-
 #define gen_vec_rr(op,reg1,reg2) \
 	__asm__ __volatile__ (#op " " #reg1 ", " #reg2 \
 			      :  /* nothing */ \
 			      : /* nothing */)
-
 
 #define w(p) p
 
@@ -50,7 +46,6 @@
 #define rep()             __asm__ __volatile__ ("rep")
 
 #define align()           __asm__ __volatile__ (".align 16")
-
 
 #ifdef x87double
 
@@ -63,7 +58,6 @@
 #define st6 %%st(6)
 #define st7 %%st(7)
 
-
 #define gen_stack_rt(op,reg) \
 	__asm__ __volatile__ (#op " " #reg \
 			      :  /* nothing */ \
@@ -73,7 +67,6 @@
 	__asm__ __volatile__ (#op " %%st(0)," #reg \
 			      :  \
 			      : )
-
 
 #define gen_stack_rr(op,reg1,reg2) \
 	__asm__ __volatile__ (#op " " #reg1 ", " #reg2 \
@@ -85,7 +78,6 @@
 			      :  /* nothing */ \
 			      : /* nothing */)
 
-
 #define gen_stack_tm(op,mem) \
 	__asm__ __volatile__ (#op " %0" \
 			      : "=m" (((mem)[0])) \
@@ -95,7 +87,6 @@
 	__asm__ __volatile__ (#op " %0" \
 			      :  \
 			      : "m" (((mem)[0])))
-
 
 #define stack_mov_mt_push(mem)  gen_stack_mt(fldl,mem)
 
@@ -120,21 +111,15 @@
  * No muladd.
  */
 
-
-
 #define gen_vec_mr(op,mem,reg) \
 	__asm__ __volatile__ (#op " %0, " #reg \
 			      :  /* nothing */ \
 			      : "m" (((mem)[0])), "m" (((mem)[1])), "m" (((mem)[2])), "m" (((mem)[3])))
 
-
 #define gen_vec_rm(op,reg,mem) \
 	__asm__ __volatile__ (#op " " #reg ", %0" \
 			      : "=m" (((mem)[0])), "=m" (((mem)[1])), "=m" (((mem)[2])), "=m" (((mem)[3])) \
 			      :  /* nothing */ )
-
-
-
 
 #define VECLEN 4
 
@@ -191,7 +176,6 @@
 			      : /* nothing */\
 			      : /* nothing */)
 
-
 #define vec_splat(mem,reg)      vec_splat_wrap(mem,reg)
 #define vec_splat_wrap(mem,reg) \
 	__asm__ __volatile__ ("movss %0, " #reg "\n"\
@@ -199,7 +183,6 @@
 			      "movlhps " #reg ", " #reg "\n"\
 			      : /* nothing */ \
 			      : "m" ((mem)[0]))
-
 
 /* This instruction sequence appears courtesy of Camm Maguire. */
 #define vec_sum_full(reg0,reg1,reg2,reg3,regout,empty0,empty1) vec_sum_full_wrap(reg0,reg1,reg2,reg3,regout,empty0,empty1)
@@ -219,15 +202,9 @@
 			    : /* nothing */  \
 			    : /* nothing */)
 
-
-
 typedef float vector[VECLEN];
 
 #endif
-
-
-
-
 
 #ifdef SSE2
 
@@ -237,21 +214,15 @@ typedef float vector[VECLEN];
  * No muladd.
  */
 
-
-
 #define gen_vec_mr(op,mem,reg) \
 	__asm__ __volatile__ (#op " %0, " #reg \
 			      :  /* nothing */ \
 			      : "m" (((mem)[0])), "m" (((mem)[1])))
 
-
 #define gen_vec_rm(op,reg,mem) \
 	__asm__ __volatile__ (#op " " #reg ", %0" \
 			      : "=m" (((mem)[0])), "=m" (((mem)[1])) \
 			      :  /* nothing */ )
-
-
-
 
 #define VECLEN 2
 
@@ -263,7 +234,6 @@ typedef float vector[VECLEN];
 #define reg5 %%xmm5
 #define reg6 %%xmm6
 #define reg7 %%xmm7
-
 
 #define vec_mov_mr(mem,reg)     gen_vec_mr(movupd,mem,reg)
 #define vec_mov_rm(reg,mem)     gen_vec_rm(movupd,reg,mem)
@@ -311,17 +281,9 @@ typedef float vector[VECLEN];
 			      : /* nothing */\
 			      : /* nothing */)
 
-
 typedef double vector[VECLEN];
 
 #endif
-
-
-
-
-
-
-
 
 #ifdef THREEDNOW
 
@@ -332,7 +294,6 @@ typedef double vector[VECLEN];
  * No muladd.
  */
 
-
 #define gen_vec_mr(op,mem,reg) \
 	__asm__ __volatile__ (#op " %0, " #reg \
 			      :  /* nothing */ \
@@ -342,9 +303,6 @@ typedef double vector[VECLEN];
 	__asm__ __volatile__ (#op " " #reg ", %0" \
 			      : "=m" (((mem)[0])), "=m" (((mem)[1])) \
 			      :  /* nothing */ )
-
-
-
 
 #define VECLEN 2
 
@@ -376,14 +334,12 @@ typedef double vector[VECLEN];
 #define vec_add_rr_1(reg1,reg2) gen_vec_rr(pfadd,reg1,reg2)
 #define vec_mul_rr_1(reg1,reg2) gen_vec_rr(pfmul,reg1,reg2)
 
-
 #define vec_splat(mem,reg)      vec_splat_wrap(mem,reg)
 #define vec_splat_wrap(mem,reg) \
 	__asm__ __volatile__ ("movd %0, " #reg "\n"\
 			      "punpckldq " #reg ", " #reg \
 			      : /* nothing */ \
 			      : "m" ((mem)[0]))
-
 
 #define vec_load_apart(mem1,mem2,reg) vec_load_apart_wrap(mem1,mem2,reg)
 #define vec_load_apart_wrap(mem1,mem2,reg) \
@@ -392,7 +348,6 @@ typedef double vector[VECLEN];
 			      : /* nothing */ \
 			      : "m" ((mem1)[0]), "m" (((mem2)[0])))
 
-
 #define vec_zero(reg)           gen_vec_rr(pxor,reg,reg)
 
 #define vec_enter()             __asm__ __volatile__ ("femms")
@@ -400,14 +355,9 @@ typedef double vector[VECLEN];
 
 #define align()                 __asm__ __volatile__ (".align 16")
 
-
 typedef float vector[VECLEN];
 
 #endif
-
-
-
-
 
 #ifdef ALTIVEC
 
@@ -451,12 +401,10 @@ typedef float vector[VECLEN];
 			      :  /* nothing */ \
 			      : "m" (((mem)[0])), "m" (((mem)[1])), "m" (((mem)[2])), "m" (((mem)[3])))
 
-
 #define gen_vec_rm(op,reg,mem) \
 	__asm__ __volatile__ (#op " " #reg ", %0" \
 			      : "=m" (((mem)[0])), "=m" (((mem)[1])), "=m" (((mem)[2])), "=m" (((mem)[3])) \
 			      :  /* nothing */ )
-
 
 #define gen_alti3(op,reg1,reg2,regout) \
 	__asm__ __volatile__ (#op " " #reg1 ", " #reg2 ", " #regout \
@@ -468,19 +416,15 @@ typedef float vector[VECLEN];
 			      :  /* nothing */ \
 			      : /* nothing */)
 
-
-
 #define vec_mov_mr_a(mem,reg) gen_vec_mr(lvx,mem,reg)
 #define vec_mov_rm_a(reg,mem) gen_vec_rm(svx,reg,mem)
 #define vec_muladd(reg1,reg2,regout) gen_alti3(vmaddfp,reg1,reg2,regout)
 
 #define vec_zero(reg) gen_alti3(vxor,reg,reg,reg)
 
-
 typedef float vector[VECLEN];
 
 #endif
-
 
 #ifdef ALTIVEC_C
 
@@ -528,6 +472,5 @@ transpose(reg0, reg1,reg2,reg3,regout,empty0,empty1); \
 empty0 = vec_add(reg0,reg1); \
 empty1 = vec_add(reg2,reg3); \
 regout = vec_add(empty0,empty1)
-
 
 #endif /* ALTIVEC_C */

@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  #include <math.h>
  #include "scicos_block.h"
 
-
 void par_getstr(char * str, int par[], int init, int len);
 
 static void init(scicos_block *block)
@@ -65,5 +64,4 @@ void rtsquare(scicos_block *block,int flag)
     init(block);
   }
 }
-
 

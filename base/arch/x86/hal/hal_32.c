@@ -39,7 +39,6 @@
  *
  *@{*/
 
-
 #if 0	/* defined & set in rtai_config.h */
 #define CONFIG_RTAI_DONT_DISPATCH_CORE_IRQS  1
 #endif
@@ -275,7 +274,6 @@ void rt_set_irq_retmode (unsigned irq, int retmode)
 		rtai_realtime_irq[irq].retmode = retmode ? 1 : 0;
 	}
 }
-
 
 // A bunch of macros to support Linux developers moods in relation to
 // interrupt handling across various releases.

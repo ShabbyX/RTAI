@@ -28,7 +28,6 @@
 static pthread_mutex_t m; // = PTHREAD_MUTEX_INITIALIZER;
 static pthread_rwlock_t r;
 
-
 static void *
 tf (void *arg)
 {
@@ -43,7 +42,6 @@ tf (void *arg)
 
   exit (1);
 }
-
 
 static int
 do_test (void)

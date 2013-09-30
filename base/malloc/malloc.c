@@ -268,7 +268,6 @@ int rtheap_free(rtheap_t *heap, void *block)
 #define	USE_SBRK 	(0)
 #endif
 
-
 #if TLSF_USE_LOCKS
 #include "target.h"
 #else
@@ -316,7 +315,6 @@ int rtheap_free(rtheap_t *heap, void *block)
 /*************************************************************************/
 /* Definition of the structures used by TLSF */
 
-
 /* Some IMPORTANT TLSF parameters */
 /* Unlike the preview TLSF versions, now they are statics */
 #define BLOCK_ALIGN (sizeof(void *) * 2)
@@ -353,7 +351,6 @@ int rtheap_free(rtheap_t *heap, void *block)
 /* bit 1 of the block size */
 #define PREV_FREE	(0x2)
 #define PREV_USED	(0x0)
-
 
 #define DEFAULT_AREA_SIZE (1024*10)
 
@@ -419,7 +416,6 @@ typedef struct TLSF_struct {
 
     bhdr_t *matrix[REAL_FLI][MAX_SLI];
 } tlsf_t;
-
 
 /******************************************************************/
 /**************     Helping functions    **************************/
@@ -523,7 +519,6 @@ static __inline__ void MAPPING_INSERT(size_t _r, int *_fl, int *_sl)
     }
 }
 
-
 static __inline__ bhdr_t *FIND_SUITABLE_BLOCK(tlsf_t * _tlsf, int *_fl, int *_sl)
 {
     u32_t _tmp = _tlsf->sl_bitmap[*_fl] & (~0 << *_sl);
@@ -542,7 +537,6 @@ static __inline__ bhdr_t *FIND_SUITABLE_BLOCK(tlsf_t * _tlsf, int *_fl, int *_sl
     return _b;
 }
 
-
 #define EXTRACT_BLOCK_HDR(_b, _tlsf, _fl, _sl) {					\
 		_tlsf -> matrix [_fl] [_sl] = _b -> ptr.free_ptr.next;		\
 		if (_tlsf -> matrix[_fl][_sl])								\
@@ -554,7 +548,6 @@ static __inline__ bhdr_t *FIND_SUITABLE_BLOCK(tlsf_t * _tlsf, int *_fl, int *_sl
 		}															\
 		_b -> ptr.free_ptr = (free_ptr_t) {NULL, NULL};				\
 	}
-
 
 #define EXTRACT_BLOCK(_b, _tlsf, _fl, _sl) {							\
 		if (_b -> ptr.free_ptr.next)									\

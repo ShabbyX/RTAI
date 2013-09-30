@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 #include <linux/module.h>
 
 #include <asm/io.h>
@@ -50,7 +49,6 @@ int init_module(void)
 	rt_request_timer(rt_timer_tick, imuldiv(TICK, FREQ_8254, 1000000000), 0);
 	return 0;
 }
-
 
 void cleanup_module(void)
 {

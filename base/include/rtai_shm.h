@@ -28,7 +28,6 @@ ACKNOWLEDGMENTS:
 - The suggestion and the code for mmapping at a user specified address is due to  Trevor Woolven (trevw@zentropix.com).
 */
 
-
 #ifndef _RTAI_SHM_H
 #define _RTAI_SHM_H
 

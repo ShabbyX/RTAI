@@ -29,7 +29,6 @@ static pthread_cond_t cond; // = PTHREAD_COND_INITIALIZER;
 
 static pthread_barrier_t bar;
 
-
 static void *
 tf (void *a)
 {
@@ -73,9 +72,7 @@ tf (void *a)
   return NULL;
 }
 
-
 #define N 10
-
 
 static int
 do_test (void)

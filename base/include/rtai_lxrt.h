@@ -204,7 +204,6 @@
 #define PROXY_DETACH     	       121
 #define PROXY_TRIGGER                  122
 
-
 // synchronous user space specific intertask messages and related proxies
 #define RT_SEND                        123
 #define RT_RECEIVE                     124
@@ -1019,7 +1018,6 @@ RTAI_PROTO(int, rt_request_irq_task, (unsigned irq, void *handler, int type, int
 	struct { unsigned long irq; void *handler; long type, affine2task; } arg = { irq, handler, type, affine2task };
 	return rtai_lxrt(BIDX, SIZARG, REQUEST_IRQ_TASK, &arg).i[LOW];
 }
-
 
 RTAI_PROTO(int, rt_release_irq_task, (unsigned irq))
 {

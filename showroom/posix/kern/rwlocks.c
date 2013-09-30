@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 /* RTAI rwlocks test */
 
 #include <linux/kernel.h>
@@ -129,7 +128,6 @@ static void *fun(int idx)
 	return 0;
 }
 
-
 int init_module(void)
 {
 	int i;
@@ -150,7 +148,6 @@ int init_module(void)
 	}
 	return 0;
 }
-
 
 void cleanup_module(void)
 {

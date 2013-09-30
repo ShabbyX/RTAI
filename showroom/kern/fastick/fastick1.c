@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 #include <linux/kernel.h>
 #include <linux/module.h>
 
@@ -48,7 +47,6 @@ static void intr_handler(long t)
 	}
 }
 
-
 int init_module(void)
 {
 	RTIME tick_period;
@@ -61,7 +59,6 @@ int init_module(void)
 	rt_task_make_periodic(&thread, rt_get_time() + 2*tick_period, tick_period);
 	return 0;
 }
-
 
 void cleanup_module(void)
 {

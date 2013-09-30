@@ -23,7 +23,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 #include <linux/module.h>
 #include <asm/uaccess.h>
 #include <asm/unistd.h>
@@ -55,7 +54,6 @@ RTAI_SYSCALL_MODE void rt_set_sched_policy(RT_TASK *task, int policy, int rr_qua
 	}
 }
 
-
 /**
  * @anchor rt_get_prio
  * @brief Check a task priority.
@@ -78,7 +76,6 @@ int rt_get_prio(RT_TASK *task)
 	}
 	return task->base_priority;
 }
-
 
 /**
  * @anchor rt_get_inher_prio
@@ -104,7 +101,6 @@ int rt_get_inher_prio(RT_TASK *task)
 	}
 	return task->priority;
 }
-
 
 /**
  * @anchor rt_get_priorities
@@ -258,7 +254,6 @@ RTAI_SYSCALL_MODE int rt_change_prio(RT_TASK *task, int priority)
 
 /* +++++++++++++++++++++ TASK RELATED SCHEDULER SERVICES ++++++++++++++++++++ */
 
-
 /**
  * @anchor rt_whoami
  * @brief Get the task pointer of the current task.
@@ -272,7 +267,6 @@ RT_TASK *rt_whoami(void)
 {
 	return _rt_whoami();
 }
-
 
 /**
  * @anchor rt_task_yield
@@ -317,7 +311,6 @@ void rt_task_yield(void)
 	}
 	rt_global_restore_flags(flags);
 }
-
 
 /**
  * @anchor rt_task_suspend
@@ -372,7 +365,6 @@ RTAI_SYSCALL_MODE int rt_task_suspend(RT_TASK *task)
 	return task->suspdepth;
 }
 
-
 RTAI_SYSCALL_MODE int rt_task_suspend_if(RT_TASK *task)
 {
 	unsigned long flags;
@@ -390,7 +382,6 @@ RTAI_SYSCALL_MODE int rt_task_suspend_if(RT_TASK *task)
 	rt_global_restore_flags(flags);
 	return task->suspdepth;
 }
-
 
 RTAI_SYSCALL_MODE int rt_task_suspend_until(RT_TASK *task, RTIME time)
 {
@@ -444,12 +435,10 @@ RTAI_SYSCALL_MODE int rt_task_suspend_until(RT_TASK *task, RTIME time)
 	return task->suspdepth;
 }
 
-
 RTAI_SYSCALL_MODE int rt_task_suspend_timed(RT_TASK *task, RTIME delay)
 {
 	return rt_task_suspend_until(task, get_time() + delay);
 }
-
 
 /**
  * @anchor rt_task_resume
@@ -487,7 +476,6 @@ RTAI_SYSCALL_MODE int rt_task_resume(RT_TASK *task)
 	rt_global_restore_flags(flags);
 	return 0;
 }
-
 
 /**
  * @anchor rt_get_task_state
@@ -533,7 +521,6 @@ int rt_get_task_state(RT_TASK *task)
 	return task->state;
 }
 
-
 /**
  * @anchor rt_linux_use_fpu
  * @brief Set indication of FPU usage.
@@ -571,7 +558,6 @@ void rt_linux_use_fpu(int use_fpu_flag)
 	}
 }
 
-
 /**
  * @anchor rt_task_use_fpu
  * @brief
@@ -605,7 +591,6 @@ RTAI_SYSCALL_MODE int rt_task_use_fpu(RT_TASK *task, int use_fpu_flag)
 	task->uses_fpu = use_fpu_flag ? 1 : 0;
 	return 0;
 }
-
 
 /**
  * @anchor rt_task_signal_handler
@@ -732,7 +717,6 @@ RTAI_SYSCALL_MODE int rt_task_make_periodic_relative_ns(RT_TASK *task, RTIME sta
 	return 0;
 }
 
-
 /**
  * @anchor rt_task_make_periodic
  * Make a task run periodically
@@ -789,7 +773,6 @@ RTAI_SYSCALL_MODE int rt_task_make_periodic(RT_TASK *task, RTIME start_time, RTI
 	rt_global_restore_flags(flags);
 	return 0;
 }
-
 
 /**
  * @anchor rt_task_wait_period
@@ -1804,7 +1787,6 @@ int rt_register(unsigned long name, void *adr, int type, struct task_struct *t)
 	return get_adr(name) ? 0 : registr(name, adr, type, t );
 }
 
-
 /**
  * @ingroup lxrt
  * Deregister an object by its name.
@@ -2106,7 +2088,6 @@ int rtai_proc_lxrt_register(void)
 {
 	struct proc_dir_entry *proc_lxrt_ent;
 
-
 	proc_lxrt_ent = create_proc_entry("names", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root);
 	if (!proc_lxrt_ent) {
 		printk("Unable to initialize /proc/rtai/lxrt\n");
@@ -2115,7 +2096,6 @@ int rtai_proc_lxrt_register(void)
 	proc_lxrt_ent->read_proc = rtai_read_lxrt;
 	return(0);
 }  /* End function - rtai_proc_lxrt_register */
-
 
 void rtai_proc_lxrt_unregister(void)
 {

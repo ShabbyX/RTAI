@@ -16,7 +16,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 #ifndef _RTAI_ASM_PPC_RTAI_H_
 #define _RTAI_ASM_PPC_RTAI_H_
 
@@ -213,7 +212,6 @@ static inline void hard_cli(void)
 		: : : "r0"
 	);
 }
-
 
 static inline void hard_restore_flags(unsigned long flags)
 {

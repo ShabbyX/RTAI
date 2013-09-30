@@ -30,7 +30,6 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 #ifndef _RTAI_ASM_PPC_HAL_H
 #define _RTAI_ASM_PPC_HAL_H
 
@@ -111,7 +110,6 @@ static inline unsigned long long rtai_llimd(unsigned long long ull, unsigned lon
 
 	return (r + r) > div ? low + 1 : low;
 }
-
 
 //---------------------------------------------------------------------------//
 //                     Synchronization primitives                            //
@@ -527,7 +525,6 @@ static inline unsigned long rt_global_save_flags_and_cli(void)
 
 #endif /* CONFIG_SMP */
 
-
 //---------------------------------------------------------------------------//
 //                     domain switching routines                             //
 //---------------------------------------------------------------------------//
@@ -640,7 +637,6 @@ long rtai_catch_event (struct hal_domain_struct *ipd, unsigned long event, int (
 
 #endif /* __KERNEL__ && !__cplusplus */
 
-
 //---------------------------------------------------------------------------//
 //                           Public interface                                //
 //---------------------------------------------------------------------------//
@@ -680,7 +676,6 @@ static inline int rt_request_irq_wack(unsigned irq, int (*handler)(unsigned irq,
 	return rt_set_irq_ack(irq, irq_ack);
 }
 
-
 /*
  * irq/PIC management functions.
  */
@@ -694,7 +689,6 @@ void rt_mask_and_ack_irq(unsigned irq);
 void rt_unmask_irq(unsigned irq);
 void rt_ack_irq(unsigned irq);
 void rt_end_irq(unsigned irq);
-
 
 /*
  * Linux related irq function

@@ -19,7 +19,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
-
 #ifndef _RTAI_SYSV_MSG_H
 #define _RTAI_SYSV_MSG_H
 
@@ -91,7 +90,6 @@ struct msginfo {
 #define MSGSSZ  16                /* message segment size */
 #define __MSGSEG ((MSGPOOL*1024)/ MSGSSZ) /* max no. of segments */
 #define MSGSEG (__MSGSEG <= 0xffff ? __MSGSEG : 0xffff)
-
 
 int rt_msgget (key_t key, int msgflg);
 

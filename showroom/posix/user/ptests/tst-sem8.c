@@ -32,7 +32,6 @@ remove_sem (int status, void *arg)
   sem_unlink (arg);
 }
 
-
 int
 main (void)
 {

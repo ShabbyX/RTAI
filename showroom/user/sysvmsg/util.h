@@ -7,7 +7,6 @@
  * Paolo Mantegazza <mantegazza@aero.polimi.it>
  */
 
-
 #include <rtai_schedcore.h>
 #include <rtai_sem.h>
 #include "rtai_sysvmsg.h"

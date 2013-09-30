@@ -36,7 +36,6 @@ final_test (void)
   kill (getpid (), SIGUSR1);
 }
 
-
 static void *
 tf (void *a)
 {
@@ -78,7 +77,6 @@ tf (void *a)
 
   return NULL;
 }
-
 
 int
 do_test (void)

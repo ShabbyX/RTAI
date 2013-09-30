@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 #ifndef _RTAI_SCHEDCORE_H
 #define _RTAI_SCHEDCORE_H
 
@@ -55,7 +54,6 @@
 #include <rtai_netrpc.h>
 #include <rtai_shm.h>
 #include <rtai_usi.h>
-
 
 #ifdef OOM_DISABLE
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
@@ -437,7 +435,6 @@ static inline void enqueue_blocked(RT_TASK *task, QUEUE *queue, int qtype)
 	q->prev = (task->queue.prev = q->prev)->next  = &(task->queue);
 	task->queue.next = q;
 }
-
 
 static inline void dequeue_blocked(RT_TASK *task)
 {

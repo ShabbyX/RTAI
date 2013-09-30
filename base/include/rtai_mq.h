@@ -248,7 +248,6 @@ RTAI_PROTO(int, rt_request_signal_mq, (mqd_t mq))
 	return -1;
 }
 
-
 RTAI_PROTO(mqd_t, mq_open,(char *mq_name, int oflags, mode_t permissions, struct mq_attr *mq_attr))
 {
 	mqd_t ret;

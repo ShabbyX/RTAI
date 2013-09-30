@@ -1,5 +1,3 @@
-
-
 /* @(#)w_pow.c 5.2 93/10/01 */
 /*
  * ====================================================
@@ -18,7 +16,6 @@
 
 #include "math.h"
 #include "mathP.h"
-
 
 #ifdef __STDC__
 	double pow(double x, double y)	/* wrapper pow */

@@ -34,7 +34,6 @@ tf1 (void *arg)
   return (void *) 1l;
 }
 
-
 static void *
 tf2 (void *arg)
 {
@@ -44,7 +43,6 @@ tf2 (void *arg)
 
   return (void *) 1l;
 }
-
 
 static int
 do_test (void)

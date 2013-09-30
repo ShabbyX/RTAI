@@ -24,7 +24,6 @@
  * This is the module to support using COMEDI in hard real time within RTAI.
  */
 
-
 #include <linux/module.h>
 #include <linux/version.h>
 #include <linux/delay.h>

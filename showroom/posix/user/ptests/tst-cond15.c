@@ -96,7 +96,6 @@ tf (void *p)
   return NULL;
 }
 
-
 static int
 do_test (void)
 {
@@ -138,7 +137,6 @@ do_test (void)
       printf ("parent: failed to join: %s\n", strerror (err));
       return 1;
     }
-
 
   puts ("parent: create 2nd child");
 

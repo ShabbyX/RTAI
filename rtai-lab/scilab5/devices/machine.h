@@ -5,7 +5,6 @@
 #define MACHINE_H
 /* This file defines global element configuration of the build host */
 
-
 /* Define C2F without Trailing Underscore */
 #define C2F(name) name##_
 
@@ -471,8 +470,6 @@
 
 /* Provide a macro to do exp10 */
 /* #undef log_10_ */
-
-
 
 #ifdef DIR_SEPARATOR
 /* 	   #undef DIR_SEPARATOR */

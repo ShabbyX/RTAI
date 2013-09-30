@@ -172,7 +172,6 @@ do_test (void)
   }
 #endif /* ORIGINAL */
 
-
       puts ("waiting for child");
 
       waitpid (pid, NULL, 0);
