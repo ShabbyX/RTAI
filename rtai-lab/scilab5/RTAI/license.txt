@@ -3,7 +3,7 @@ License for the toolbox RTAI
 Please update this file with the license terms (Copy and paste the license agreement e.g).
 
     Copyright (C) 2009  Roberto Bucher
-                  2010-2011  Holger  Nahrstaedt
+		    2010-2011  Holger  Nahrstaedt
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by

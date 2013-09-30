@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2002  Lorenzo Dozio (dozio@aero.polimi.it)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		      Paolo Mantegazza (mantegazza@aero.polimi.it)
  
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -62,7 +62,7 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
     case 2 : 
       if(*nevprt>0) {/* get the input value */
   	/*for (k=0;k<*nu;k++) {????=u[k];} */
-        th1.h[0] = u[0];
+	 th1.h[0] = u[0];
 	if (++c1 == 2) {
 		th1.t = *t;
 		rt_mbx_send_if(mbx1, &th1, sizeof(th1));
@@ -127,7 +127,7 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
     case 2 : 
       if(*nevprt>0) {/* get the input value */
   	/*for (k=0;k<*nu;k++) {????=u[k];} */
-        th2.h[0] = u[0];
+	 th2.h[0] = u[0];
 	if (++c2 == 2) {
 		th2.t = *t;
 		rt_mbx_send_if(mbx2, &th2, sizeof(th2));
@@ -219,7 +219,7 @@ pid_sensor(flag,nport,nevprt,t,y,ny)
   case 1 : /* set the ouput value */
     /* for (k=0;k<*ny;k++) {y[k]=????;}*/
 	y[0] = UPAR1[0]*sin(UPAR1[1]**t + UPAR1[2]);
-        if (task) {
+	 if (task) {
 		if (!rt_waiting_return(node, port)) {
 			RT_task_resume(node, -port, task);
 		} else {
@@ -274,7 +274,7 @@ pid_upar_update(int index)
 					RT_rpc(node, port, host, msg, (void *)&task);
 				}
 			}
-        	} else {
+	 	} else {
 			task = 0;
 		}
 	}

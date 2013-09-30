@@ -24,13 +24,13 @@ function [x,y,typ] = rtai4_meter(job,arg1,arg2)
       if exists('inport') then in=ones(inport,1), out=[], else in=1, out=[], end
       [model,graphics,ok]=check_io(model,graphics,in,out,1,[])
       if ok then
-        graphics.exprs=exprs;
-        model.rpar=[];
-        model.ipar=[length(name);
-                    ascii(name)'];
-        model.dstate=[];
-        x.graphics=graphics;x.model=model
-        break
+	 graphics.exprs=exprs;
+	 model.rpar=[];
+	 model.ipar=[length(name);
+		      ascii(name)'];
+	 model.dstate=[];
+	 x.graphics=graphics;x.model=model
+	 break
       end
     end
   case 'define' then
@@ -41,7 +41,7 @@ function [x,y,typ] = rtai4_meter(job,arg1,arg2)
     model.evtin=1
     model.rpar=[]
     model.ipar=[length(name);
-                ascii(name)']
+		  ascii(name)']
     model.dstate=[];
     model.blocktype='d'
     model.dep_ut=[%t %f]

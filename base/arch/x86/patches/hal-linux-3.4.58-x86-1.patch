@@ -60,9 +60,9 @@ index b1478f4..438d2cf 100644
 
  config X86_SUMMIT_NUMA
 @@ -672,11 +677,11 @@ config APB_TIMER
-        select DW_APB_TIMER
-        depends on X86_INTEL_MID && SFI
-        help
+	 select DW_APB_TIMER
+	 depends on X86_INTEL_MID && SFI
+	 help
 -         APB timer is the replacement for 8254, HPET on X86 MID platforms.
 -         The APBT provides a stable time base on SMP
 -         systems, unlike the TSC, but it is more expensive to access,
@@ -4135,7 +4135,7 @@ index 1d92a5a..2166aea 100644
  	return 0;
  }
 @@ -79,6 +87,10 @@ void arch_task_cache_init(void)
-         	kmem_cache_create("task_xstate", xstate_size,
+	  	kmem_cache_create("task_xstate", xstate_size,
  				  __alignof__(union thread_xstate),
  				  SLAB_PANIC | SLAB_NOTRACK, NULL);
 +#ifdef CONFIG_IPIPE

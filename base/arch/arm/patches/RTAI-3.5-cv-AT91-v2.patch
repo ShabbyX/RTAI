@@ -766,7 +766,7 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/arch/arm/hal/hal.c rtai-3.5-cv/b
      adattr_t attr;
 
      /* Allocate a virtual interrupt to handle sysreqs within the Linux
-        domain. */
+	 domain. */
      rtai_sysreq_virq = adeos_alloc_irq();
 +#endif /* CONFIG_RTAI_IPIPE */
 
@@ -793,8 +793,8 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/arch/arm/hal/hal.c rtai-3.5-cv/b
 +    rtai_install_archdep();
 +#else /* ! CONFIG_RTAI_IPIPE */
      /* Reserve the first two _consecutive_ per-thread data key in the
-        Linux domain. This is rather crappy, since we depend on
-        statically defined PTD key values, which is exactly what the
+	 Linux domain. This is rather crappy, since we depend on
+	 statically defined PTD key values, which is exactly what the
 @@ -767,6 +1269,7 @@ __rtai_hal_init(void)
 
      /* set TSC frequency, other values of rtai_tunables are set by the scheduler */
@@ -2399,7 +2399,7 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/include/asm-arm/rtai_usi.h rtai-
 
 -#define IF_IS_A_USI_SRQ_CALL_IT() \
 +#define IF_IS_A_USI_SRQ_CALL_IT(srq, arg, retval, psr, retpath)  \
-         if (srq > USI_SRQ_MASK) { \
+	  if (srq > USI_SRQ_MASK) { \
  		*(long long*)&regs->ARM_r0 \
  		    = usi_fun_entry[srq & ~USI_SRQ_MASK](arg, &regs->ARM_cpsr); \
 diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/include/rtai_hal_names.h rtai-3.5-cv/base/include/rtai_hal_names.h
@@ -2448,7 +2448,7 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/include/rtai_posix.h rtai-3.5-cv
 +#endif
  RTAI_PROTO(int, __wrap_pthread_condattr_setclock, (pthread_condattr_t *condattr, clockid_t clockid))
  {
-         return clockid == CLOCK_MONOTONIC ? 0 : EINVAL;
+	  return clockid == CLOCK_MONOTONIC ? 0 : EINVAL;
 diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/base/sched/api.c rtai-3.5-cv/base/sched/api.c
 --- rtai-3.5-cv-clean/base/sched/api.c	2007-08-23 14:18:16.000000000 +0200
 +++ rtai-3.5-cv/base/sched/api.c	2007-08-30 17:28:22.000000000 +0200
@@ -2491,12 +2491,12 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/configure.in rtai-3.5-cv/configure.in
 --- rtai-3.5-cv-clean/configure.in	2007-08-23 14:42:48.000000000 +0200
 +++ rtai-3.5-cv/configure.in	2007-08-30 18:01:36.000000000 +0200
 @@ -69,6 +69,7 @@ case "$host" in
-         ;;
+	  ;;
   arm-*)
  	RTAI_TARGET_ARCH=arm
 +	arch_supports_lxrt=y
  	wanted_kernel_arch=CONFIG_ARM
-         ;;
+	  ;;
   powerpc-*|ppc-*)
 @@ -1423,6 +1424,7 @@ AM_CONDITIONAL(CONFIG_PPC,[test "$CONFIG
  AM_CONDITIONAL(CONFIG_ARM,[test "$CONFIG_ARM" = y])
@@ -2507,9 +2507,9 @@ diff -NaurdpbB -X nodiff rtai-3.5-cv-clean/configure.in rtai-3.5-cv/configure.in
  AM_CONDITIONAL(CONFIG_SMP,[test "$CONFIG_SMP" = y])
 
 @@ -1586,6 +1588,8 @@ case $RTAI_TARGET_ARCH in
-                RTAI_TARGET_SUBARCH=ep9301
+		  RTAI_TARGET_SUBARCH=ep9301
  	elif test "$CONFIG_ARCH_PXA" = y; then
-                RTAI_TARGET_SUBARCH=pxa
+		  RTAI_TARGET_SUBARCH=pxa
 +	elif test "$CONFIG_ARCH_AT91" = y; then
 +               RTAI_TARGET_SUBARCH=at91
  	else

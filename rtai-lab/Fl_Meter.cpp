@@ -183,7 +183,7 @@ void Fl_Meter::initgl()
 	if (Meter_Style & MS_ANGLE)
 	  glOrtho(-1, 1, -1., 1, 1, 1); 	   
 	else
-          glOrtho(-w()/2., w()/2., -h()/3., 2.*h()/3., -1, 1);	  
+	   glOrtho(-w()/2., w()/2., -h()/3., 2.*h()/3., -1, 1);	  
    
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -219,7 +219,7 @@ void Fl_Meter::drawgrid()
 	float angle, x;
 
 /** draw the clock grid */
-        if ( Meter_Style & MS_ANGLE ) {
+	 if ( Meter_Style & MS_ANGLE ) {
 	  glLineWidth(0.1);
 	  glColor3f(Grid_rgb[0], Grid_rgb[1], Grid_rgb[2]);
 	  for ( angle = 0; angle < 2*M_PI; angle += M_PI / 8.0 ) 

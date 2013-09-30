@@ -28,7 +28,7 @@ m4_define([_LT_MANGLE_OPTION],
 m4_define([_LT_SET_OPTION],
 [m4_define(_LT_MANGLE_OPTION([$1], [$2]))dnl
 m4_ifdef(_LT_MANGLE_DEFUN([$1], [$2]),
-        _LT_MANGLE_DEFUN([$1], [$2]),
+	 _LT_MANGLE_DEFUN([$1], [$2]),
     [m4_warning([Unknown $1 option `$2'])])[]dnl
 ])
 

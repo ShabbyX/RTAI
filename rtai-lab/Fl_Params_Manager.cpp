@@ -52,17 +52,17 @@ int Fl_Parameters_Manager::h()
 
 void Fl_Parameters_Manager::show()
 {
-        PWin->show();
+	 PWin->show();
 }
 
 void Fl_Parameters_Manager::hide()
 {
-        PWin->hide();
+	 PWin->hide();
 }
 
 int Fl_Parameters_Manager::visible()
 {
-        return PWin->visible();
+	 return PWin->visible();
 }
 
 int Fl_Parameters_Manager::batch_download()

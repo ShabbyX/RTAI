@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2006 Roberto Bucher (roberto.bucher@supsi.ch)
-              2009 Guillaume Millet (millet@isir.fr)
+		2009 Guillaume Millet (millet@isir.fr)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -108,8 +108,8 @@ static void init(scicos_block *block)
   } else {
     if (flags & SDF_SOFT_CALIBRATED) {/* board uses software calibration */
       if ((comdev->use_softcal = get_softcal_coef(devName, comdev->subdev,
-                comdev->channel, comdev->range, 0, comdev->coefficients)) == 0)
-        fprintf(stderr, "No software calibration found for AI Channel %d\n",comdev->channel);
+		  comdev->channel, comdev->range, 0, comdev->coefficients)) == 0)
+	 fprintf(stderr, "No software calibration found for AI Channel %d\n",comdev->channel);
     }
   }
 #endif
@@ -170,7 +170,7 @@ void rt_comedi_datain(scicos_block *block,int flag)
   if (flag==1){          /* set output */
     inout(block);
   }
-  else if (flag==5){     /* termination */ 
+  else if (flag==5){     /* termination */
     end(block);
   }
   else if (flag ==4){    /* initialisation */

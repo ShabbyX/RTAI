@@ -68,14 +68,14 @@ there are those more relevant to the controller modes of executions.
 
 So it is possible to specify:
 -s, --soft:       to run the controller in soft real time, to ease initial 
-                  debugging and checking;
+		    debugging and checking;
 -w, --wait:       to have the execution started by the supervisor program, 
-                  default is immediate execution;
+		    default is immediate execution;
 -p, --priority:   the priority of the controller real time task, default is the
-                  highest priority of an RTAI task (0), recall that the highest
+		    highest priority of an RTAI task (0), recall that the highest
 		  priorities have the lowest numbers under RTAI;
 -r, --samptime:   controller period, in microseconds. A default is nonsense but
-                  one is provided anyhow: 10000 (us), this option is for use
+		    one is provided anyhow: 10000 (us), this option is for use
 		  with SCICOS only, RTW embeds its sampling time in its
 		  generated code and does not allow changing it, with SCICOS
 		  instead you can assign it when the controller is started,
@@ -83,7 +83,7 @@ So it is possible to specify:
 		  to change some parameters before activating it, but that is
 		  possible through the parameter tuning offered by "(x)rtailab";
 -f, --finaltime:  a possible time to have the controller end its execution 
-                  without any external intervention, default is never end and
+		    without any external intervention, default is never end and
 		  you can stop the controller using "(x)rtailab", a case where
 		  using the simpler "rtailab" might suffice;
 -m, --stackinc:   a preincrement of the stack before locking the controller 
@@ -108,9 +108,9 @@ So it is possible to specify:
 		  be "only" 999 scopes per controller, any further comment is 
 		  as for the controller name above;
 -t, --clocktick:  if non zero the hard timer will run in periodic mode, the
-                  default is oneshot mode, it is the tick giving the resolution
-                  to be used when using the hard timer in periodic mode, all 
-                  controller tasks executing on a machine must conform,
+		    default is oneshot mode, it is the tick giving the resolution
+		    to be used when using the hard timer in periodic mode, all 
+		    controller tasks executing on a machine must conform,
 		  RTW controllers run in such a way by default so this option
 		  is compulsory if you are mixing RTW with SCICOS as SCICOS
 		  must comply accordingly, either if it is run first, in such 
@@ -126,8 +126,8 @@ So it is possible to specify:
 		  option is available just for SCICOS applications, see its 
 		  specific directory found here for further comments;
 -c, --cpumap:     the map of the CPU on which to run the controller on multi 
-                  processors machines; a single bit has to be set, so it is
-                  a power of 2 always, for SCICOS and single tasking RTW 
+		    processors machines; a single bit has to be set, so it is
+		    a power of 2 always, for SCICOS and single tasking RTW 
 		  applications there nothing more to be said, for RTW multi
 		  tasking this option forces just the base rate task to the 
 		  assigned CPU all other task will then be equally distributed 

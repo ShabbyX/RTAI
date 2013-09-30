@@ -41,11 +41,11 @@
 
     <xsl:element name = "img" >
       <xsl:attribute name = "src" >
-        <xsl:value-of select ="concat($navig.graphics.path,'w3_xhtml11.png')" />
-        </xsl:attribute>
-        <xsl:attribute name="alt">Standard-compliant XHTML</xsl:attribute>
-        <xsl:attribute name="width">80</xsl:attribute>
-        <xsl:attribute name="height">15</xsl:attribute>
+	 <xsl:value-of select ="concat($navig.graphics.path,'w3_xhtml11.png')" />
+	 </xsl:attribute>
+	 <xsl:attribute name="alt">Standard-compliant XHTML</xsl:attribute>
+	 <xsl:attribute name="width">80</xsl:attribute>
+	 <xsl:attribute name="height">15</xsl:attribute>
       </xsl:element>
 
     </a>
@@ -55,11 +55,11 @@
 
     <xsl:element name = "img" >
       <xsl:attribute name = "src" >
-        <xsl:value-of select ="concat($navig.graphics.path, 'w3_css2.png')" />
-        </xsl:attribute>
-        <xsl:attribute name="alt">Standard-compliant CSS 2</xsl:attribute>
-        <xsl:attribute name="width">80</xsl:attribute>
-        <xsl:attribute name="height">15</xsl:attribute>
+	 <xsl:value-of select ="concat($navig.graphics.path, 'w3_css2.png')" />
+	 </xsl:attribute>
+	 <xsl:attribute name="alt">Standard-compliant CSS 2</xsl:attribute>
+	 <xsl:attribute name="width">80</xsl:attribute>
+	 <xsl:attribute name="height">15</xsl:attribute>
       </xsl:element>
 
     </a>

@@ -625,8 +625,8 @@ RTAI_PROTO(unsigned long, rt_get_name, (void *adr))
 #ifndef __SUPPORT_HARD_SOFT_TOGGLER__
 #define __SUPPORT_HARD_SOFT_TOGGLER__
 
-static void hard_soft_toggler(int sig) 
-{ 
+static void hard_soft_toggler(int sig)
+{
 	if (sig == SIGUSR1) {
 		struct { RT_TASK *task; } arg = { NULL };
 		rtai_lxrt(BIDX, SIZARG, HARD_SOFT_TOGGLER, &arg);

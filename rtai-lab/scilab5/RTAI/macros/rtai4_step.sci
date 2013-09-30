@@ -19,18 +19,18 @@ function [x,y,typ] = rtai4_step(job,arg1,arg2)
       [ok,A,delay,exprs]=..
       scicos_getvalue('Set RTAI STEP block parameters',..
       ['Amplitude:';
-       'Delay:'],..
+	'Delay:'],..
       list('vec',-1,'vec',-1),exprs)
       if ~ok then break,end
       if exists('outport') then out=ones(outport,1), in=[], else out=1, in=[], end
       [model,graphics,ok]=check_io(model,graphics,in,out,1,[])
       if ok then
-        graphics.exprs=exprs;
-        model.rpar=[A,delay];
-        model.ipar=[];
-        model.dstate=[];
-        x.graphics=graphics;x.model=model
-        break
+	 graphics.exprs=exprs;
+	 model.rpar=[A,delay];
+	 model.ipar=[];
+	 model.dstate=[];
+	 x.graphics=graphics;x.model=model
+	 break
       end
     end
   case 'define' then

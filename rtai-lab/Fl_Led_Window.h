@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 
 class Fl_Led_Window
 {
-        public:
+	 public:
 		Fl_Led_Window(int x, int y, int w, int h, Fl_MDI_Viewport *s, const char *name, int n_leds);
 		Fl_Led **Leds;
 		Fl_Group *Led_Group;

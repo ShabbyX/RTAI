@@ -19,20 +19,20 @@ function [x,y,typ] = rtai_fifoout(job,arg1,arg2)
       [ok,inport,fifon,fifodim,exprs]=..
       getvalue('Set FIFO parameters',..
       ['Number of signals:';
-       'FIFO Nr:';
-       'Dimension:'],..
+	'FIFO Nr:';
+	'Dimension:'],..
       list('vec',-1,'vec',-1,'vec',-1),exprs)
       if ~ok then break,end
       if exists('inport') then in=ones(inport,1), else in=1, end
       out=[]
       [model,graphics,ok]=check_io(model,graphics,in,out,1,[])
       if ok then
-        graphics.exprs=exprs;
-        model.rpar=[];
-        model.ipar=[fifon;fifodim];
-        model.dstate=[];
-        x.graphics=graphics;x.model=model
-        break
+	 graphics.exprs=exprs;
+	 model.rpar=[];
+	 model.ipar=[fifon;fifodim];
+	 model.dstate=[];
+	 x.graphics=graphics;x.model=model
+	 break
       end
     end
   case 'define' then

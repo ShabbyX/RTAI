@@ -21,11 +21,11 @@ MODEL = $$MODEL$$
 OBJSSTAN = rtmain.o common.o $$MODEL$$.o $$OBJ$$
 
 SCILIBS = \
-          $(SCIDIR)/libs/libsciscicos.a \
-          $(SCIDIR)/libs/libsciscicos_blocks.a \
-          $(SCIDIR)/libs/libscipolynomials.a \
-          $(SCIDIR)/libs/calelm.a \
-          $(SCIDIR)/libs/os_specific.a
+	   $(SCIDIR)/libs/libsciscicos.a \
+	   $(SCIDIR)/libs/libsciscicos_blocks.a \
+	   $(SCIDIR)/libs/libscipolynomials.a \
+	   $(SCIDIR)/libs/calelm.a \
+	   $(SCIDIR)/libs/os_specific.a
 
 OTHERLIBS = 
 ULIBRARY = $(RTAIDIR)/lib/libsciblk.a $(RTAIDIR)/lib/liblxrt.a

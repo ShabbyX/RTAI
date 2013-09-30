@@ -1,7 +1,7 @@
 function  SetTarget_()
   Cmenu='Open/Set'
   xinfo('Click on a Superblock (without activation output)'+..
-        ' to obtain a coded block ! ')
+	 ' to obtain a coded block ! ')
 
   k=[]
   while %t
@@ -9,7 +9,7 @@ function  SetTarget_()
       [btn,%pt,win,Cmenu]=cosclick()
 
       if Cmenu<>[] then
-        [%win,Cmenu]=resume(win,Cmenu)
+	 [%win,Cmenu]=resume(win,Cmenu)
       end
     else
       win=%win
@@ -32,38 +32,38 @@ function  SetTarget_()
 
     while %t
       [ok,target,odefun,stp]=getvalue(..
-          'Please fill the following values',..
-          ['Target: ';
+	   'Please fill the following values',..
+	   ['Target: ';
 	  'Ode function: ';
 	  'Step between sampling: '],..
-          list('str',1,'str',1,'str',1),lab);
+	   list('str',1,'str',1,'str',1),lab);
       if ~ok then break,end
 
       TARGETDIR=SCI+'/contrib/RTAI/RT_templates';
       if exists('TARGET_DIR') then
-        [fd,ierr]=mopen(TARGET_DIR+'/'+target+'.gen','r');
-        if ierr==0 then
+	 [fd,ierr]=mopen(TARGET_DIR+'/'+target+'.gen','r');
+	 if ierr==0 then
 	   TARGETDIR=TARGET_DIR;
-           mclose(fd);
-        end
+	    mclose(fd);
+	 end
       end
 
       [fd,ierr]=mopen(TARGETDIR+'/'+target+'.gen','r');
       if ierr==0 then
-        mclose(fd);
+	 mclose(fd);
       else
-        ok=%f;x_message('Target not valid '+target+'.gen');
+	 ok=%f;x_message('Target not valid '+target+'.gen');
       end
       
       if grep(odefun,ode_x) == [] then
-         x_message('Ode function not valid');
-         ok = %f;
+	  x_message('Ode function not valid');
+	  ok = %f;
       end
-        
+	 
       if ok then
-         lab=[target,odefun,stp];
+	  lab=[target,odefun,stp];
 	 scs_m.objs(k).model.rpar.props.void3 = lab;
-         break;
+	  break;
       end
     end
 

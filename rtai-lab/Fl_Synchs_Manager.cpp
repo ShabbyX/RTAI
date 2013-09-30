@@ -47,12 +47,12 @@ int Fl_Synchs_Manager::h()
 
 void Fl_Synchs_Manager::show()
 {
-        SWin->show();
+	 SWin->show();
 }
 
 void Fl_Synchs_Manager::hide()
 {
-        SWin->hide();
+	 SWin->hide();
 }
 
 int Fl_Synchs_Manager::show_hide(int n)
@@ -73,7 +73,7 @@ void Fl_Synchs_Manager::show_hide(int n, bool v)
 
 int Fl_Synchs_Manager::visible()
 {
-        return SWin->visible();
+	 return SWin->visible();
 }
 
 int Fl_Synchs_Manager::sw_x(int n)

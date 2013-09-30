@@ -19,7 +19,7 @@ function [x,y,typ] = rtai4_log(job,arg1,arg2)
     while %t do
       [ok,name,exprs]=..
       getvalue('Set RTAI-log block parameters',..
-        ['LOG name:'],..
+	 ['LOG name:'],..
       list('str',1),exprs)
      if ~ok then break,end
       in=[model.in]
@@ -32,14 +32,14 @@ function [x,y,typ] = rtai4_log(job,arg1,arg2)
       evtout=[]
       [model,graphics,ok]=set_io(model,graphics,list([in,in2],intyp),list([out,out2],outtyp),evtin,evtout,[],[]);
       if ok then
-        graphics.exprs=exprs;
-        model.ipar=[length(name);
-                    ascii(name)'
-                   ];
-        model.rpar=[];
+	 graphics.exprs=exprs;
+	 model.ipar=[length(name);
+		      ascii(name)'
+		     ];
+	 model.rpar=[];
 	  model.dstate=[];
-        x.graphics=graphics;x.model=model
-        break
+	 x.graphics=graphics;x.model=model
+	 break
       end
     end
   case 'define' then
@@ -53,8 +53,8 @@ function [x,y,typ] = rtai4_log(job,arg1,arg2)
    model.evtin=[1]
    model.evtout=[]
    model.ipar=[length(name);
-              ascii(name)'
-              ];
+		ascii(name)'
+		];
    model.rpar=[];
 	model.dstate=[];
 	model.blocktype='d';

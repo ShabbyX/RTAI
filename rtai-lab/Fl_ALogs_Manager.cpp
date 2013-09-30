@@ -48,17 +48,17 @@ int Fl_ALogs_Manager::h()
 
 void Fl_ALogs_Manager::show()
 {
-        ALWin->show();
+	 ALWin->show();
 }
 
 void Fl_ALogs_Manager::hide()
 {
-        ALWin->hide();
+	 ALWin->hide();
 }
 
 int Fl_ALogs_Manager::visible()
 {
-        return ALWin->visible();
+	 return ALWin->visible();
 }
 
 int Fl_ALogs_Manager::start_saving(int n)
@@ -180,7 +180,7 @@ void Fl_ALogs_Manager::select_log(Fl_Browser *b, void *v)
 
 inline void Fl_ALogs_Manager::select_save_i(Fl_Check_Button *b, void *v)
 {
-        long n = (long)v;
+	 long n = (long)v;
 	if (b->value()) {
 		Save_Points[n]->activate();
 		Save_Time[n]->deactivate();

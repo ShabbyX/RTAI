@@ -21,68 +21,68 @@ MODEL = $$MODEL$$
 OBJSSTAN = rtmain.o common.o $$MODEL$$.o $$OBJ$$
 
 LIBDIRS = -L$(SCIDIR)/../../lib/scilab\
-        -L$(SCIDIR)/../../lib/thirdparty\
-        -L${JAVA_HOME}/jre/lib/i386 \
-         -L${JAVA_HOME}/jre/lib/i386/native_threads \
-        -L${JAVA_HOME}/jre/lib/i386/server \
-        -L${JAVA_HOME}/lib/i386 \
-         -L${JAVA_HOME}/lib/i386/native_threads \
-        -L${JAVA_HOME}/lib/i386/server
+	 -L$(SCIDIR)/../../lib/thirdparty\
+	 -L${JAVA_HOME}/jre/lib/i386 \
+	  -L${JAVA_HOME}/jre/lib/i386/native_threads \
+	 -L${JAVA_HOME}/jre/lib/i386/server \
+	 -L${JAVA_HOME}/lib/i386 \
+	  -L${JAVA_HOME}/lib/i386/native_threads \
+	 -L${JAVA_HOME}/lib/i386/server
 
 SCILIBS =\
-          -lsciscicos \
-          -lsciscicos_blocks \
-          -lsciapi_scilab \
-          -lscipvm \
-         -lscishell \
-         -lscicompletion        \
-         -lsciscinotes\
-         -lscifunctions\
-         -lscicore\
-         -lsciconsole \
-        -lscifftw \
-        -lscijvm \
-         -lscisparse \
-        -lscigraphic_export \
-        -lsciboolean \
+	   -lsciscicos \
+	   -lsciscicos_blocks \
+	   -lsciapi_scilab \
+	   -lscipvm \
+	  -lscishell \
+	  -lscicompletion        \
+	  -lsciscinotes\
+	  -lscifunctions\
+	  -lscicore\
+	  -lsciconsole \
+	 -lscifftw \
+	 -lscijvm \
+	  -lscisparse \
+	 -lscigraphic_export \
+	 -lsciboolean \
      -lscispecial_functions\
       -lscilocalization \
-        -lsciwindows_tools \
-        -lscidouble \
-        -lscistring \
-        -lmat \
-        -lmx \
-        -lsciintersci \
-        -lscigraphics \
-        -lscielementary_functions\
-        -lscitime\
-        -lscidynamic_link\
-        -lscisundials\
+	 -lsciwindows_tools \
+	 -lscidouble \
+	 -lscistring \
+	 -lmat \
+	 -lmx \
+	 -lsciintersci \
+	 -lscigraphics \
+	 -lscielementary_functions\
+	 -lscitime\
+	 -lscidynamic_link\
+	 -lscisundials\
 	-lmex\
-        -lscimalloc\
-        -lscioutput_stream\
-        -lsciarnoldi\
-        -lscicacsd\
-        -lscirenderer\
-        -lscipolynomials\
-        -lscifileio\
-        -lscilinear_algebra\
-        -lsciaction_binding\
-        -lscihistory_manager\
-        -lscihistory_browser \
-        -lscidynamiclibrary\
-        -lsciio\
-        -lscistatistics\
-        -lpcreposix\
-        -lpcre\
-        -lscidata_structures\
-        -lscilibst\
-        -lsciinteger\
-        -lscigui\
-        -lscihashtable\
-        -lscitclsci\
-        -lscidoublylinkedlist\
-        -lscidifferential_equations\
+	 -lscimalloc\
+	 -lscioutput_stream\
+	 -lsciarnoldi\
+	 -lscicacsd\
+	 -lscirenderer\
+	 -lscipolynomials\
+	 -lscifileio\
+	 -lscilinear_algebra\
+	 -lsciaction_binding\
+	 -lscihistory_manager\
+	 -lscihistory_browser \
+	 -lscidynamiclibrary\
+	 -lsciio\
+	 -lscistatistics\
+	 -lpcreposix\
+	 -lpcre\
+	 -lscidata_structures\
+	 -lscilibst\
+	 -lsciinteger\
+	 -lscigui\
+	 -lscihashtable\
+	 -lscitclsci\
+	 -lscidoublylinkedlist\
+	 -lscidifferential_equations\
 	-lscicall_scilab
 
 JAVALIBS =  -ljava -lverify  -ljvm  -lhpi

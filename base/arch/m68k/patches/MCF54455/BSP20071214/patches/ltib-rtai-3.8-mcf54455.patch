@@ -151,8 +151,8 @@ index 39a9b16..909172d 100644
 --- a/config/userspace/packages.lkc
 +++ b/config/userspace/packages.lkc
 @@ -1670,6 +1670,23 @@ config PKG_RSYNC
-       report which describes the rsync algorithm is included in this
-       package.
+	report which describes the rsync algorithm is included in this
+	package.
 
 +config PKG_RTAI
 +    depends !KERNEL_NONE

@@ -124,7 +124,7 @@ install-dbx-htmldocs: $(DBX_ALL_HTML:%=$(HTML_DOCSDIR)%)
 	    dest=$(DESTDIR)$(dbx_docdir)/html/`basename $$dir`; \
 	    $(mkinstalldirs) $$dest; \
 	    abs_dest=`cd $$dest && pwd` ; \
-            pushd $$dir; \
+	     pushd $$dir; \
 	    for f in * ; do \
 	        case $$f in \
 		    *~|CVS|[mM]akefile*|GNUmakefile*);; \
@@ -140,7 +140,7 @@ dist-dbx-htmldocs: $(DBX_ALL_HTML:%=$(HTML_DOCSDIR)%)
 	for dir in $$docs; do \
 	    dest=$(DBX_DIST_ROOT)/html/`basename $$dir`; \
 	    $(mkinstalldirs) $$dest && abs_dest=`cd $$dest && pwd` && \
-            pushd $$dir && \
+	     pushd $$dir && \
 	    for f in * ; do \
 		case $$f in \
 		    *~|CVS|[mM]akefile*|GNUmakefile*);; \

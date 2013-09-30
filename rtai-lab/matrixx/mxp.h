@@ -29,7 +29,7 @@ extern int mxp_getidxbyname(const char *name);
 /* return var based on idx (-1 if missing) */
 extern int mxp_getvarbyidx(int idx, mxp_t *nt);
 
-/* copy var in nt ("name" is the original, not a copy!), 
+/* copy var in nt ("name" is the original, not a copy!),
  * or return -1 if missing */
 extern int mxp_getvarbyname(const char *name, mxp_t *nt);
 

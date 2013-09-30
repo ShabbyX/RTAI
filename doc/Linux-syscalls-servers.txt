@@ -1,4 +1,4 @@
-       *** SERVING LINUX SYSCALLS IN RTAI HARD REAL TIME MODE ***
+	*** SERVING LINUX SYSCALLS IN RTAI HARD REAL TIME MODE ***
 
 This document explains a possible way to be used by hard real time RTAI
 applications in user space wanting to access Linux services. It is based

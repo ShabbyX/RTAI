@@ -47,17 +47,17 @@ int Fl_Logs_Manager::h()
 
 void Fl_Logs_Manager::show()
 {
-        LWin->show();
+	 LWin->show();
 }
 
 void Fl_Logs_Manager::hide()
 {
-        LWin->hide();
+	 LWin->hide();
 }
 
 int Fl_Logs_Manager::visible()
 {
-        return LWin->visible();
+	 return LWin->visible();
 }
 
 int Fl_Logs_Manager::start_saving(int n)

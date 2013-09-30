@@ -20,8 +20,8 @@ function [x,y,typ] = rtai4_comedi_encoder(job,arg1,arg2)
     while %t do
       [ok, number, name, chA, chB, chZ, initval, index, cmode, map, exprs]=..
       scicos_getvalue(['Set RTAI-COMEDI Encoder block parameters';
-                'For NI cards in up/down mode, set B to -1';
-                'to input the up/down signal on P0.6 or P0.7'],..
+		  'For NI cards in up/down mode, set B to -1';
+		  'to input the up/down signal on P0.6 or P0.7'],..
       ['Counter No';
       'Device';
       'A PFI';
@@ -37,20 +37,20 @@ function [x,y,typ] = rtai4_comedi_encoder(job,arg1,arg2)
       [model,graphics,ok]=check_io(model,graphics,in,out,1,[])
       dev=str2code(name)
       if ok then
-        graphics.exprs=exprs;
-        model.ipar=[number;
-                    chA;
-                    chB;
-                    chZ;
-                    initval;
-                    index;
-                    cmode;
+	 graphics.exprs=exprs;
+	 model.ipar=[number;
+		      chA;
+		      chB;
+		      chZ;
+		      initval;
+		      index;
+		      cmode;
 		    map;
-                    dev(length(dev))];
-        model.rpar=[];
-        model.dstate=[];
-        x.graphics=graphics;x.model=model
-        break
+		      dev(length(dev))];
+	 model.rpar=[];
+	 model.dstate=[];
+	 x.graphics=graphics;x.model=model
+	 break
       end
     end
   case 'define' then
@@ -69,14 +69,14 @@ function [x,y,typ] = rtai4_comedi_encoder(job,arg1,arg2)
     model.evtin=1
     model.rpar=[]
     model.ipar=[number;
-                chA;
-                chB;
-                chZ;
-                initval;
-                index;
-                cmode;
+		  chA;
+		  chB;
+		  chZ;
+		  initval;
+		  index;
+		  cmode;
 		map;
-                0]
+		  0]
     model.dstate=[];
     model.blocktype='d'
     model.dep_ut=[%t %f]

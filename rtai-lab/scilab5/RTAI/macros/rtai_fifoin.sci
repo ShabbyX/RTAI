@@ -19,20 +19,20 @@ function [x,y,typ] = rtai_fifoin(job,arg1,arg2)
       [ok,outport,fifon,fifodim,exprs]=..
       scicos_getvalue('Set FIFO parameters',..
       ['Number of signals:';
-       'FIFO Nr:';
-       'Dimension:'],..
+	'FIFO Nr:';
+	'Dimension:'],..
       list('vec',-1,'vec',-1,'vec',-1),exprs)
       if ~ok then break,end
       in=[],
       if exists('outport') then out=ones(outport,1), else out=1, end
       [model,graphics,ok]=check_io(model,graphics,in,out,1,[])
       if ok then
-        graphics.exprs=exprs;
-        model.rpar=[];
-        model.ipar=[fifon;fifodim];
-        model.dstate=[];
-        x.graphics=graphics;x.model=model
-        break
+	 graphics.exprs=exprs;
+	 model.rpar=[];
+	 model.ipar=[fifon;fifodim];
+	 model.dstate=[];
+	 x.graphics=graphics;x.model=model
+	 break
       end
     end
   case 'define' then

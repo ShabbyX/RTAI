@@ -37,7 +37,7 @@ echo -n 'Looking for removed files...'
 { cd "$abs_srcdir" && find generated -name CVS -prune -o -type f -print ; } | {
 cd tmp-dist/doc && while read -a file; do
     if ! [ -f "${file[*]}" ]; then
-        echo "${file[*]}" >> ../removed
+	 echo "${file[*]}" >> ../removed
     fi
 done
 }
@@ -49,11 +49,11 @@ echo -n 'Looking for added files and directories...'
 { cd tmp-dist/doc && find generated; } | {
 cd "$abs_srcdir" && while read -a file; do
     if ! [ -e "${file[*]}" ]; then
-        if [ -f "$builddir/tmp-dist/doc/${file[*]}" ]; then
-            echo "${file[*]}" >> "$builddir/tmp-dist/added_files"
-        else
-            echo "${file[*]}" >> "$builddir/tmp-dist/added_dirs"
-        fi
+	 if [ -f "$builddir/tmp-dist/doc/${file[*]}" ]; then
+	     echo "${file[*]}" >> "$builddir/tmp-dist/added_files"
+	 else
+	     echo "${file[*]}" >> "$builddir/tmp-dist/added_dirs"
+	 fi
     fi
 done
 }

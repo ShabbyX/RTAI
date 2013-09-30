@@ -58,7 +58,7 @@ ldd -v > /dev/null 2>&1 && ldd -v || ldd --version |head -1 | awk \
 'NR==1{print "Dynamic linker (ldd)  ", $NF}'
 
 ls -l /usr/lib/lib{g,stdc}++.so  2>/dev/null | awk -F. \
-       '{print "Linux C++ Library      " $4"."$5"."$6}'
+	'{print "Linux C++ Library      " $4"."$5"."$6}'
 
 ps --version 2>&1 | awk 'NR==1{print "Procps                ", $NF}'
 

@@ -138,8 +138,8 @@ index d280c32..7fd3e60 100644
 --- a/config/userspace/packages.lkc
 +++ b/config/userspace/packages.lkc
 @@ -2486,6 +2486,21 @@ config PKG_RT_TESTS
-       "realtime" kernel behavior, such as timer latency, signal latency and
-       the functioning of priority-inheritance mutexes.
+	"realtime" kernel behavior, such as timer latency, signal latency and
+	the functioning of priority-inheritance mutexes.
 
 +config PKG_RTAI
 +    depends !KERNEL_NONE && PLATFORM1

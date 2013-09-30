@@ -19,22 +19,22 @@ function [x,y,typ] = rtai4_mbx_ovrwr_send(job,arg1,arg2)
       [ok,inport,name,ipaddr,exprs]=..
       getvalue('Set RTAI mbx_ovrwr_send block parameters',..
       ['Input ports:';
-       'MBX Name:';
-       'IP address:'],..
+	'MBX Name:';
+	'IP address:'],..
       list('vec',-1,'str',1,'str',1),exprs)
       if ~ok then break,end
       if exists('inport') then in=ones(inport,1), out=[], else in=1, out=[], end
       [model,graphics,ok]=check_io(model,graphics,in,out,1,[])
       if ok then
-        graphics.exprs=exprs;
-        model.rpar=[];
-        model.ipar=[length(name);
-                    length(ipaddr);
-                    ascii(name)';
-                    ascii(ipaddr)'];
-        model.dstate=[];
-        x.graphics=graphics;x.model=model
-        break
+	 graphics.exprs=exprs;
+	 model.rpar=[];
+	 model.ipar=[length(name);
+		      length(ipaddr);
+		      ascii(name)';
+		      ascii(ipaddr)'];
+	 model.dstate=[];
+	 x.graphics=graphics;x.model=model
+	 break
       end
     end
   case 'define' then
@@ -47,9 +47,9 @@ function [x,y,typ] = rtai4_mbx_ovrwr_send(job,arg1,arg2)
     model.evtin=1
     model.rpar=[]
     model.ipar=[length(name);
-                length(ipaddr);
-                ascii(name)';
-                ascii(ipaddr)']
+		  length(ipaddr);
+		  ascii(name)';
+		  ascii(ipaddr)']
     model.dstate=[];
     model.blocktype='d'
     model.dep_ut=[%t %f]

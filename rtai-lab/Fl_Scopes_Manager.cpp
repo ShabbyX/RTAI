@@ -78,12 +78,12 @@ int Fl_Scopes_Manager::h()
 
 void Fl_Scopes_Manager::show()
 {
-        SWin->show();
+	 SWin->show();
 }
 
 void Fl_Scopes_Manager::hide()
 {
-        SWin->hide();
+	 SWin->hide();
 }
 
 int Fl_Scopes_Manager::show_hide(int n)
@@ -178,7 +178,7 @@ int Fl_Scopes_Manager::sw_h(int n)
 
 int Fl_Scopes_Manager::visible()
 {
-        return SWin->visible();
+	 return SWin->visible();
 }
 
 void Fl_Scopes_Manager::b_color(int n, RGB_Color_T c_rgb)
@@ -332,9 +332,9 @@ inline void Fl_Scopes_Manager::enter_options_i(Fl_Menu_Button *b, void *v)
 {
 	s_idx_T *idx = (s_idx_T *)v;
 	int val = 0;
-        int i;
+	 int i;
  	
-        for(i=0;i<b->children();i++) { // loop through all menu items, and add checked items to the value
+	 for(i=0;i<b->children();i++) { // loop through all menu items, and add checked items to the value
 	  if( b->child(i)->value() ) val |= (int)(long)b->child(i)->user_data();
 	} 
 	if ( b->label() == "Options " ) { // callback is used for trace and scope flags, if there is a space after "Options" set trace flags
@@ -487,7 +487,7 @@ inline void Fl_Scopes_Manager::oneshot_scope_i(Fl_Check_Button *b, void *v)
 {
 	long n = (long)v;
 	Scope_Windows[n]->Plot->oneshot(b->value() != 0);
-        if ( b->value() ) 
+	 if ( b->value() ) 
   	  Scope_Pause[n]->activate();
 	else 
 	  Scope_Pause[n]->deactivate();
@@ -736,7 +736,7 @@ Fl_Scopes_Manager::Fl_Scopes_Manager(int x, int y, int width, int height, Fl_MDI
 	Trace_Width = new Fl_Dial**[Num_Scopes];
  	Trigger_Mode = new Fl_Choice*[Num_Scopes];
 
-        Trace_Options = new Fl_Menu_Button**[Num_Scopes];
+	 Trace_Options = new Fl_Menu_Button**[Num_Scopes];
 
 	Scope_Windows = new Fl_Scope_Window*[Num_Scopes];
 
@@ -800,12 +800,12 @@ Fl_Scopes_Manager::Fl_Scopes_Manager(int x, int y, int width, int height, Fl_MDI
 		    o->callback((Fl_Callback *)enable_saving, (void *)i);
 		  }
    		  {  Fl_Choice *o = Trigger_Mode[i] = new Fl_Choice(60, 200, 170, 25, "Trigger:");
-                    o->add("Continuous Roling|Continuous Overwrite|Rising (-to+) CH1|Falling (+to-) CH1|Hold");
-                    o->align(FL_ALIGN_LEFT);
-                    o->value(0);
-                    o->when(FL_WHEN_ENTER_KEY);
-                    o->callback((Fl_Callback *)enter_trigger_mode, (void *)i);
-                  }
+		      o->add("Continuous Roling|Continuous Overwrite|Rising (-to+) CH1|Falling (+to-) CH1|Hold");
+		      o->align(FL_ALIGN_LEFT);
+		      o->value(0);
+		      o->when(FL_WHEN_ENTER_KEY);
+		      o->callback((Fl_Callback *)enter_trigger_mode, (void *)i);
+		    }
 
 
 		  Trace_Page[i] = new Fl_Group*[Scopes[i].ntraces];

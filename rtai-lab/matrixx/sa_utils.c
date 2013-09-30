@@ -130,7 +130,7 @@ RT_INTEGER SA_External_Input()
     /* values for your model */
 
     for (i=0; i<NUMIN; i++)
-        XINPUT[i] = 0;
+	 XINPUT[i] = 0;
 
     /* For super_cruise model, we recommend the */
     /* foll. initial values. If this or similar */
@@ -161,8 +161,8 @@ RT_INTEGER SA_External_Input()
     
     if ( (numInputData <= 0 && NUMIN > 0) || TCOUNT > (0.5*MAXY-2)  ) /* exhausted all input */
     {
-        outOfInputData = TRUE;
-        return ERROR;
+	 outOfInputData = TRUE;
+	 return ERROR;
     }
     else numInputData--;
     /* Get next input values by interpolation */
@@ -171,17 +171,17 @@ RT_INTEGER SA_External_Input()
     TCOUNT++;   
 
     if( NUMIN > 0 ){ 
-       for( i=ICNT; i<UCOUNT; i++ ){ 
-          if( XT >= UTIME[i]  &&  XT <= UTIME[i+1] ){ 
-             ALPHA = (XT - UTIME[i]) / (UTIME[i+1]-UTIME[i]);
-             ICNT = i;
-             for( j=1; j<=NUMIN; j++ ){ 
-                XINPUT[j-1] = ALPHA * (U[j+i*COLU]-U[j+(i-1)*COLU]) 
-                              + U[j+(i-1)*COLU];
-             } 
-             break;
-          } 
-       } 
+	for( i=ICNT; i<UCOUNT; i++ ){ 
+	   if( XT >= UTIME[i]  &&  XT <= UTIME[i+1] ){ 
+	      ALPHA = (XT - UTIME[i]) / (UTIME[i+1]-UTIME[i]);
+	      ICNT = i;
+	      for( j=1; j<=NUMIN; j++ ){ 
+		  XINPUT[j-1] = ALPHA * (U[j+i*COLU]-U[j+(i-1)*COLU]) 
+				  + U[j+(i-1)*COLU];
+	      } 
+	      break;
+	   } 
+	} 
     } 
     return SCHEDULER_STATUS;
 }
@@ -205,19 +205,19 @@ RT_INTEGER SA_External_Output()
     /* Copy last outputs */
 
     for(  i=1; i<=NUMOUT; i++ ){ 
-       YTIME[YCOUNT] = XT;
-       if( YCOUNT>1 ){ 
-          Y[i+(YCOUNT-1)*COLY] = Y[i+(YCOUNT-2)*COLY];
-       }
+	YTIME[YCOUNT] = XT;
+	if( YCOUNT>1 ){ 
+	   Y[i+(YCOUNT-1)*COLY] = Y[i+(YCOUNT-2)*COLY];
+	}
     } 
     YCOUNT++;
 
     /* Deposit new outputs */
 
     for(  i=1; i<=NUMOUT; i++ ){ 
-       /* Outputs from scheduler are zero-based */
-       YTIME[YCOUNT] = XT;    
-       Y[i+(YCOUNT-1)*COLY] = XOUTPUT[i-1];
+	/* Outputs from scheduler are zero-based */
+	YTIME[YCOUNT] = XT;    
+	Y[i+(YCOUNT-1)*COLY] = XOUTPUT[i-1];
     }
     YCOUNT++;
     return SCHEDULER_STATUS;
@@ -239,8 +239,8 @@ RT_INTEGER SA_External_Output()
  *  the Fortran format (1P3D25.17).
  */ 
 void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI, 
-                               RT_FLOAT BUS_OUT[], RT_INTEGER NO,
-                               RT_FLOAT SCHEDULER_FREQ, void *clkISRptr)
+				   RT_FLOAT BUS_OUT[], RT_INTEGER NO,
+				   RT_FLOAT SCHEDULER_FREQ, void *clkISRptr)
 {
 
     char               line[81], FILENAME[81], str1[20], str2[20], LFORM[20];
@@ -262,7 +262,7 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
 #if defined(FILE_IO)
 
     for(  i=1; i<=NUMOUT; i++ ){
-          Y[i] = XOUTPUT[i-1];
+	   Y[i] = XOUTPUT[i-1];
     }
     /* Request and open Xmath {MATRIXx, ASCII} format input file */
 
@@ -271,8 +271,8 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
     sprintf(inFile, "%s/%s", DATA_FILE_LOCATION, FILENAME);
     /*if( ( fp = fopen(FILENAME, "r") ) == NULL ){ */
     if( ( fp = fopen(inFile, "r") ) == NULL ){
-       E = 315;
-       fatalerr( E );
+	E = 315;
+	fatalerr( E );
     } 
 
     /* Process FSAVE file header line and then skip directory */
@@ -280,26 +280,26 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
     fgets( line, 81, fp );
     /* check for bad file format */
     if(sscanf( line, "%8s %8s %d %d", str1, str2, &VERSION, &NUMVAR)  != 4 ||
-       strcmp(str1, "MATRIXx")  ||  strcmp(str2, "VERSION" ) ){ 
-       fclose ( fp );
-       E=301;
-       fatalerr( E );
+	strcmp(str1, "MATRIXx")  ||  strcmp(str2, "VERSION" ) ){ 
+	fclose ( fp );
+	E=301;
+	fatalerr( E );
     } 
     
     /* check version number */
     
     if( VERSION < REQVER ){ 
-       fclose ( fp );
-       E=303;
-       fatalerr( E );
+	fclose ( fp );
+	E=303;
+	fatalerr( E );
     } 
     
     /* check for no more than two input arrays */
     
     if( NUMVAR > reqvar ){ 
-       fclose ( fp );
-       E=305;
-       fatalerr( E );
+	fclose ( fp );
+	E=305;
+	fatalerr( E );
     } 
     
     /* skip directory (a single line for two arrays or less)  */
@@ -314,100 +314,100 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
     /* check for single column and not imaginary */
     
     if( ICOL!=1  ||  IIMG ){ 
-       fclose ( fp );
-       E=307;
-       fatalerr( E );
+	fclose ( fp );
+	E=307;
+	fatalerr( E );
     } 
     
     /* check size limit on input time vector */
     
     if( IROW > MAXUTIM ){ 
-       fclose ( fp );
-       E=309;
-       fatalerr( E );
+	fclose ( fp );
+	E=309;
+	fatalerr( E );
     } 
     
     /* read in the input time vector */
     
     if (sizeof(RT_FLOAT) == sizeof(float))
-        readformat = " %f %f %f ";
+	 readformat = " %f %f %f ";
     else if (sizeof(RT_FLOAT) == sizeof(double))
-        readformat = " %lf %lf %lf ";
+	 readformat = " %lf %lf %lf ";
     else {
-        fclose(fp);
-        E = 501;
-        fatalerr(E);
+	 fclose(fp);
+	 E = 501;
+	 fatalerr(E);
     }
 
     for( i=1; i<=IROW; i+=3 ){ 
-       fgets ( line, 81, fp );
-       for( j=0; line[j]; j++ ){ 
-          if( line[j]=='D' ){ 
-             line[j]='E'; 
-          } 
-       } 
-       x = sscanf( line, readformat, &UTIME[i], &UTIME[i+1], &UTIME[i+2] );
-       if ((i > 3  && (UTIME[i]   - UTIME[i-1] <= EPSILON_SA)) || 
-           (x == 2 && (UTIME[i+1] - UTIME[i]   <= EPSILON_SA)) || 
-           (x == 3 && (UTIME[i+2] - UTIME[i+1] <= EPSILON_SA))) {
-            fclose(fp);
-            E = 320;
-            fatalerr(E);
-            break;
-       }
+	fgets ( line, 81, fp );
+	for( j=0; line[j]; j++ ){ 
+	   if( line[j]=='D' ){ 
+	      line[j]='E'; 
+	   } 
+	} 
+	x = sscanf( line, readformat, &UTIME[i], &UTIME[i+1], &UTIME[i+2] );
+	if ((i > 3  && (UTIME[i]   - UTIME[i-1] <= EPSILON_SA)) || 
+	    (x == 2 && (UTIME[i+1] - UTIME[i]   <= EPSILON_SA)) || 
+	    (x == 3 && (UTIME[i+2] - UTIME[i+1] <= EPSILON_SA))) {
+	     fclose(fp);
+	     E = 320;
+	     fatalerr(E);
+	     break;
+	}
     } 
     UCOUNT = IROW;
     
     if(UTIME[1] != 0.0) {
-       fclose ( fp );
-       E=319;
-       fatalerr( E );
+	fclose ( fp );
+	E=319;
+	fatalerr( E );
     }
     
     /* Load input array if number of external inputs .GT. zero */
 
     if( NUMIN>0  &&  NUMVAR==reqvar ){ 
-       fgets ( line, 81, fp );
-       sscanf( line, "%11s %d %d %d %12s", str1, &ROWU, &COLU, &IIMG, LFORM );
+	fgets ( line, 81, fp );
+	sscanf( line, "%11s %d %d %d %12s", str1, &ROWU, &COLU, &IIMG, LFORM );
     
-       /* check for correct number of inputs and not imaginary */
+	/* check for correct number of inputs and not imaginary */
 
-       if( COLU != NUMIN  ||  IIMG ){ 
-          fclose ( fp );
-          E=311;
-          fatalerr( E );
-       } 
+	if( COLU != NUMIN  ||  IIMG ){ 
+	   fclose ( fp );
+	   E=311;
+	   fatalerr( E );
+	} 
     
-       /* check size limit on input value array */
+	/* check size limit on input value array */
     
-       if( ROWU*COLU > MAXU ){ 
-          fclose ( fp );
-          E=313;
-          fatalerr( E );
-       } 
+	if( ROWU*COLU > MAXU ){ 
+	   fclose ( fp );
+	   E=313;
+	   fatalerr( E );
+	} 
     
-       /* read in the input value array (row-wise) 
-        * MATRIXx stores vectors column-wise    */
-       
-       for( col=1; col<=COLU; col++ ){ 
-          for( row=1; row<=ROWU; row++ ){ 
-             arg_index = ((col-1) * ROWU + row - 1) % 3;
-             if( arg_index  ==  0 ){ 
-                fgets ( line, 81, fp );
-                for(  j=0; line[j]; j++ ){ 
-                   if( line[j]=='D' ){ 
-                      line[j]='E'; 
-                   } 
-                } 
-                sscanf( line, readformat, arg, arg+1, arg+2 );
-             } 
-             U[ (row-1)*COLU + col ] = arg[ arg_index ];
-          } 
-       } 
+	/* read in the input value array (row-wise) 
+	 * MATRIXx stores vectors column-wise    */
+	
+	for( col=1; col<=COLU; col++ ){ 
+	   for( row=1; row<=ROWU; row++ ){ 
+	      arg_index = ((col-1) * ROWU + row - 1) % 3;
+	      if( arg_index  ==  0 ){ 
+		  fgets ( line, 81, fp );
+		  for(  j=0; line[j]; j++ ){ 
+		     if( line[j]=='D' ){ 
+			 line[j]='E'; 
+		     } 
+		  } 
+		  sscanf( line, readformat, arg, arg+1, arg+2 );
+	      } 
+	      U[ (row-1)*COLU + col ] = arg[ arg_index ];
+	   } 
+	} 
     } else if (NUMIN != 0) {
-          fclose ( fp );
-          E=321;
-          fatalerr( E );
+	   fclose ( fp );
+	   E=321;
+	   fatalerr( E );
       } 
  
 
@@ -428,8 +428,8 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
     /* Check limits on output storage */
 
     if( 2*(YCOUNTT+1) > MAXYTIM  ||  2*(YCOUNTT+1)*COLY > MAXY ){ 
-       E=401;
-       fatalerr( E );
+	E=401;
+	fatalerr( E );
     } 
 
     numInputData = YCOUNTT; /* ANITA */
@@ -442,12 +442,12 @@ void Implementation_Initialize(RT_FLOAT BUS_IN[],  RT_INTEGER NI,
 
     /*if( (  fp=fopen(FILENAME,"w")  ) == NULL ){ */
     if( (  fp=fopen(outFile,"w")  ) == NULL ){
-       E=317;
-       fatalerr( E );
+	E=317;
+	fatalerr( E );
     }
     if (NUMIN > 0)
     printf( "\n Scheduler running for %6d cycles at %.7E seconds per cycle.\n",
-            YCOUNTT, XDELTAT );
+	     YCOUNTT, XDELTAT );
 
 #endif /* defined(FILE_IO) */
 }
@@ -479,9 +479,9 @@ static void PrintReal_C_FORM(FILE *pFile, RT_FLOAT val)
      int i=0;
 
      if( DOUBLE_PRECISION )
-         sprintf( string, C_FORM_D, val );
+	  sprintf( string, C_FORM_D, val );
      else 
-         sprintf( string, C_FORM_S, val );
+	  sprintf( string, C_FORM_S, val );
      
      p = string; while(*p && *p++ != 'E') i++;
      if(*p && *(p+3)) while((string[i++] = *p++)) ;
@@ -504,150 +504,150 @@ void SA_Output_To_File(void)
      IUCNT = 0;
      IU    = 1;
      if( DOUBLE_PRECISION ){ 
-        ITEMS_PER_LINE = 3;
+	 ITEMS_PER_LINE = 3;
      }else{ 
-        ITEMS_PER_LINE = 5;
+	 ITEMS_PER_LINE = 5;
      } 
 
      for( IY=1; IY<YCOUNT; IY++ ){ 
-        if( fabs( UTIME[IU]-YTIME[IY] ) <= IEPS  &&  IU < UCOUNT ){ 
-           IU++;
-        } 
-        while( UTIME[IU] < YTIME[IY]
-           &&  fabs( UTIME[IU]-YTIME[IY] ) > IEPS 
-           && IU < UCOUNT ){ 
-           IUCNT++;
-           IU++;
-        } 
+	 if( fabs( UTIME[IU]-YTIME[IY] ) <= IEPS  &&  IU < UCOUNT ){ 
+	    IU++;
+	 } 
+	 while( UTIME[IU] < YTIME[IY]
+	    &&  fabs( UTIME[IU]-YTIME[IY] ) > IEPS 
+	    && IU < UCOUNT ){ 
+	    IUCNT++;
+	    IU++;
+	 } 
      } 
      
      for( ; IU<=UCOUNT; IU++ ){ 
-        if( UTIME[IU]-YTIME[YCOUNT-1] > IEPS ){ 
-           IUCNT++;
-        } 
+	 if( UTIME[IU]-YTIME[YCOUNT-1] > IEPS ){ 
+	    IUCNT++;
+	 } 
      } 
 
      /* write Xmath {MATRIXx, ASCII} formatted file header and directory */
      
      fprintf( fp, "%-44s\n","MATRIXx VERSION 700   2" );
      fprintf( fp, "YTIME     %5ld%5ldYRT       %5ld%5d\n", 
-                   YCOUNT-1+IUCNT, ICOL, YCOUNT-1+IUCNT, NUMOUT );
+		     YCOUNT-1+IUCNT, ICOL, YCOUNT-1+IUCNT, NUMOUT );
      
      /* write the time points vector */
      
      if( DOUBLE_PRECISION ){ 
-        fprintf( fp, "YTIME     %5ld%5ld%5d%-20s\n", 
-                 YCOUNT-1+IUCNT, ICOL, IIMG, F_FORM_D );
+	 fprintf( fp, "YTIME     %5ld%5ld%5d%-20s\n", 
+		   YCOUNT-1+IUCNT, ICOL, IIMG, F_FORM_D );
      }else{ 
-        fprintf( fp, "YTIME     %5ld%5ld%5d%-20s\n", 
-                 YCOUNT-1+IUCNT, ICOL, IIMG, F_FORM_S );
+	 fprintf( fp, "YTIME     %5ld%5ld%5d%-20s\n", 
+		   YCOUNT-1+IUCNT, ICOL, IIMG, F_FORM_S );
      } 
      
      IU      = 1;
      CURRENT = 0;
      for( IY=1; IY<YCOUNT; IY++ ){ 
-        if( fabs( UTIME[IU]-YTIME[IY] ) <= IEPS  &&  IU < UCOUNT ){ 
-          IU++;
-        } 
+	 if( fabs( UTIME[IU]-YTIME[IY] ) <= IEPS  &&  IU < UCOUNT ){ 
+	   IU++;
+	 } 
 
-        while( UTIME[IU] < YTIME[IY]  
-           &&  fabs( UTIME[IU]-YTIME[IY] ) > IEPS 
-           && IU < UCOUNT ){ 
+	 while( UTIME[IU] < YTIME[IY]  
+	    &&  fabs( UTIME[IU]-YTIME[IY] ) > IEPS 
+	    && IU < UCOUNT ){ 
 
-           fprintf( fp, " ");
-           PrintReal_C_FORM(fp, UTIME[IU]);
+	    fprintf( fp, " ");
+	    PrintReal_C_FORM(fp, UTIME[IU]);
 
-           CURRENT++;
-           if( (CURRENT % ITEMS_PER_LINE) == 0 ){ 
-              fprintf( fp, "\n" );
-           } 
+	    CURRENT++;
+	    if( (CURRENT % ITEMS_PER_LINE) == 0 ){ 
+		fprintf( fp, "\n" );
+	    } 
 
-           IU++;
-        } 
+	    IU++;
+	 } 
 
-        fprintf( fp, " ");
-        PrintReal_C_FORM(fp, YTIME[IY]);
+	 fprintf( fp, " ");
+	 PrintReal_C_FORM(fp, YTIME[IY]);
 
-        CURRENT++;
-        if( (CURRENT % ITEMS_PER_LINE) == 0 ){ 
-           fprintf( fp, "\n" );
-        } 
+	 CURRENT++;
+	 if( (CURRENT % ITEMS_PER_LINE) == 0 ){ 
+	    fprintf( fp, "\n" );
+	 } 
 
      } 
 
      for( ; IU<=UCOUNT; IU++ ){ 
-        if( UTIME[IU]-YTIME[YCOUNT-1] > IEPS ){ 
-           fprintf( fp, " ");
-           PrintReal_C_FORM(fp, UTIME[IU]);
+	 if( UTIME[IU]-YTIME[YCOUNT-1] > IEPS ){ 
+	    fprintf( fp, " ");
+	    PrintReal_C_FORM(fp, UTIME[IU]);
 
-           CURRENT++;
-           if( (CURRENT % ITEMS_PER_LINE) == 0 ){ 
-              fprintf( fp, "\n" );
-           } 
-        } 
+	    CURRENT++;
+	    if( (CURRENT % ITEMS_PER_LINE) == 0 ){ 
+		fprintf( fp, "\n" );
+	    } 
+	 } 
      }  
 
      /* write the output array */
 
      if( (CURRENT % ITEMS_PER_LINE) != 0 ){ 
-        fprintf( fp, "\n" );
+	 fprintf( fp, "\n" );
      } 
 
      if( DOUBLE_PRECISION ){ 
-        fprintf( fp, "YRT       %5ld%5d%5d%-20s\n", 
-                 YCOUNT-1+IUCNT, NUMOUT, IIMG, F_FORM_D );
+	 fprintf( fp, "YRT       %5ld%5d%5d%-20s\n", 
+		   YCOUNT-1+IUCNT, NUMOUT, IIMG, F_FORM_D );
      }else{ 
-        fprintf( fp, "YRT       %5ld%5d%5d%-20s\n", 
-                 YCOUNT-1+IUCNT, NUMOUT, IIMG, F_FORM_S );
+	 fprintf( fp, "YRT       %5ld%5d%5d%-20s\n", 
+		   YCOUNT-1+IUCNT, NUMOUT, IIMG, F_FORM_S );
      } 
 
      CURRENT = 0;
      for( i=1; i<=(int)NUMOUT; i++ ){ 
-        IU      = 1;
-        for( IY=1; IY<(int)YCOUNT; IY++ ){ 
-           if( fabs( UTIME[IU]-YTIME[IY] ) <= IEPS
-              &&  IU < (int)UCOUNT ){ 
-              IU++;
-           } 
+	 IU      = 1;
+	 for( IY=1; IY<(int)YCOUNT; IY++ ){ 
+	    if( fabs( UTIME[IU]-YTIME[IY] ) <= IEPS
+		&&  IU < (int)UCOUNT ){ 
+		IU++;
+	    } 
 
-           while( UTIME[IU] < YTIME[IY]
-              &&  fabs(UTIME[IU]-YTIME[IY]) > IEPS 
-              && IU < UCOUNT ) { 
-              fprintf( fp, " ");
-              PrintReal_C_FORM(fp, Y[i+(IY-2)*(int)NUMOUT]);
+	    while( UTIME[IU] < YTIME[IY]
+		&&  fabs(UTIME[IU]-YTIME[IY]) > IEPS 
+		&& IU < UCOUNT ) { 
+		fprintf( fp, " ");
+		PrintReal_C_FORM(fp, Y[i+(IY-2)*(int)NUMOUT]);
 
-              CURRENT++;
-              if( (CURRENT % ITEMS_PER_LINE) == 0 ){ 
-                 fprintf( fp, "\n" );
-              } 
+		CURRENT++;
+		if( (CURRENT % ITEMS_PER_LINE) == 0 ){ 
+		   fprintf( fp, "\n" );
+		} 
 
-              IU++;
-           } 
+		IU++;
+	    } 
 
-           fprintf( fp, " ");
-           PrintReal_C_FORM(fp, Y[i+(IY-1)*(int)NUMOUT]);
+	    fprintf( fp, " ");
+	    PrintReal_C_FORM(fp, Y[i+(IY-1)*(int)NUMOUT]);
 
-           CURRENT++;
-           if( (CURRENT % ITEMS_PER_LINE) == 0 ){ 
-              fprintf( fp, "\n" );
-           } 
-        } 
+	    CURRENT++;
+	    if( (CURRENT % ITEMS_PER_LINE) == 0 ){ 
+		fprintf( fp, "\n" );
+	    } 
+	 } 
 
-        for( ; IU<=UCOUNT; IU++ ){ 
-           if( UTIME[IU]-YTIME[YCOUNT-1] >  IEPS ){ 
-              fprintf( fp, " ");
-              PrintReal_C_FORM(fp, Y[i+(int)NUMOUT*(YCOUNT-2)]);
+	 for( ; IU<=UCOUNT; IU++ ){ 
+	    if( UTIME[IU]-YTIME[YCOUNT-1] >  IEPS ){ 
+		fprintf( fp, " ");
+		PrintReal_C_FORM(fp, Y[i+(int)NUMOUT*(YCOUNT-2)]);
 
-              CURRENT++;
-              if( (CURRENT % ITEMS_PER_LINE) == 0 ){ 
-                 fprintf( fp, "\n" );
-              } 
-           } 
-        } 
+		CURRENT++;
+		if( (CURRENT % ITEMS_PER_LINE) == 0 ){ 
+		   fprintf( fp, "\n" );
+		} 
+	    } 
+	 } 
 
      } 
      if( (CURRENT % ITEMS_PER_LINE) != 0 ) 
-        fprintf( fp, "\n" );
+	 fprintf( fp, "\n" );
      
      fclose( fp );
 #endif
@@ -655,49 +655,49 @@ void SA_Output_To_File(void)
 
 
 void SA_Error(RT_INTEGER NTSK, RT_INTEGER eventType,
-              RT_INTEGER errorCode, char cIn)
+		RT_INTEGER errorCode, char cIn)
 {
    switch (errorCode)
    { 
       case STOP_BLOCK    :     
-         printf("*** Stop Block encountered in task 0x%lx, eventType:%ld\n", 
-                NTSK, eventType);
-         break;
+	  printf("*** Stop Block encountered in task 0x%lx, eventType:%ld\n", 
+		  NTSK, eventType);
+	  break;
       case MATH_ERROR    :
-         printf("*** Math error encountered in task 0x%lx, eventType:%ld\n",
-                NTSK, eventType);
-         break;
+	  printf("*** Math error encountered in task 0x%lx, eventType:%ld\n",
+		  NTSK, eventType);
+	  break;
       case UCB_ERROR     :
-         printf("*** Usercode error encountered in task 0x%lx, eventType:%ld\n", 
-                NTSK, eventType);
-         break;
+	  printf("*** Usercode error encountered in task 0x%lx, eventType:%ld\n", 
+		  NTSK, eventType);
+	  break;
       case RANGE_ERROR   :
-         printf("*** Value out of range encountered in task 0x%lx, eventType:%ld\n", 
-                NTSK, eventType);
-         break;
+	  printf("*** Value out of range encountered in task 0x%lx, eventType:%ld\n", 
+		  NTSK, eventType);
+	  break;
       case UNKNOWN_ERROR :
-         printf("*** Unknown error encountered in task 0x%lx, eventType:%ld\n", 
-                NTSK, eventType);
-         break;
+	  printf("*** Unknown error encountered in task 0x%lx, eventType:%ld\n", 
+		  NTSK, eventType);
+	  break;
       case TIME_OVERFLOW : 
-         printf("*** Time overflow encountered in task 0x%lx, eventType:%ld\n", 
-                NTSK, eventType);
-         break;
+	  printf("*** Time overflow encountered in task 0x%lx, eventType:%ld\n", 
+		  NTSK, eventType);
+	  break;
       case VXWORKS_ERROR : 
-         printf("*** VxWorks error encountered in task 0x%lx, eventType:%ld\n", 
-                NTSK, eventType);
-         break;
+	  printf("*** VxWorks error encountered in task 0x%lx, eventType:%ld\n", 
+		  NTSK, eventType);
+	  break;
       case TASK_OVERRUN  :
-         printf("*** Task overrun error encountered in task 0x%lx, eventType:%ld\n", 
-                NTSK, eventType);
-         break;
+	  printf("*** Task overrun error encountered in task 0x%lx, eventType:%ld\n", 
+		  NTSK, eventType);
+	  break;
       case OUT_OF_INPUT_DATA  :
-         printf("*** Out of input data error encountered in task 0x%lx, eventType:%ld\n", 
-                NTSK, eventType);
-         break;
+	  printf("*** Out of input data error encountered in task 0x%lx, eventType:%ld\n", 
+		  NTSK, eventType);
+	  break;
       default            :
-         printf("*** Unexpected error in task 0x%lx, errorCode:0x%lx\n", 
-                NTSK, errorCode);
+	  printf("*** Unexpected error in task 0x%lx, errorCode:0x%lx\n", 
+		  NTSK, errorCode);
    }
    errorFound = TRUE;
 }
@@ -709,22 +709,22 @@ static void fatalerr(RT_INTEGER errorCode)
 
     /* Exceptions */
     switch( errorCode ){ 
-       case 301:string="INPUT FILE IS NOT IN Xmath{matrixx, ascii} SAVE FORMAT";
-                 break;
-       case 303: string="INPUT FILE VERSION IS NOT V7.0 OR LATER";        break;
-       case 305: string="INPUT FILE CONTAINS MORE THAN TWO ARRAYS";       break;
-       case 307: string="INPUT TIME VECTOR NOT ONE COLUMN";               break;
-       case 309: string="INPUT TIME VECTOR TOO LARGE";                    break;
-       case 311: string="INPUT U DIMENSION NOT (TIME x NUMBER OF INPUTS)";break;
-       case 313: string="INPUT U ARRAY TOO LARGE FOR AVAILABLE STORAGE";  break;
-       case 315: string="ERROR OPENING THE INPUT FILE";                   break;
-       case 317: string="ERROR OPENING THE OUTPUT FILE";                  break;
-       case 319: string="NON-ZERO FIRST TIME POINT IN INPUT TIME VECTOR"; break;
-       case 320: string="ERROR IN TIME POINT IN INPUT TIME VECTOR";       break;
-       case 321: string="INSUFFICIENT DATA: MISSING TIME/U VECTOR";       break;
-       case 401: string="OUTPUT STORAGE EXCEEDS THE AVAILABLE STORAGE";   break;
-       case 501: string="INCONSISTENT SIZE OF RT_FLOAT WHEN READING";   break;
-       default : string="UNKNOWN ERROR";
+	case 301:string="INPUT FILE IS NOT IN Xmath{matrixx, ascii} SAVE FORMAT";
+		   break;
+	case 303: string="INPUT FILE VERSION IS NOT V7.0 OR LATER";        break;
+	case 305: string="INPUT FILE CONTAINS MORE THAN TWO ARRAYS";       break;
+	case 307: string="INPUT TIME VECTOR NOT ONE COLUMN";               break;
+	case 309: string="INPUT TIME VECTOR TOO LARGE";                    break;
+	case 311: string="INPUT U DIMENSION NOT (TIME x NUMBER OF INPUTS)";break;
+	case 313: string="INPUT U ARRAY TOO LARGE FOR AVAILABLE STORAGE";  break;
+	case 315: string="ERROR OPENING THE INPUT FILE";                   break;
+	case 317: string="ERROR OPENING THE OUTPUT FILE";                  break;
+	case 319: string="NON-ZERO FIRST TIME POINT IN INPUT TIME VECTOR"; break;
+	case 320: string="ERROR IN TIME POINT IN INPUT TIME VECTOR";       break;
+	case 321: string="INSUFFICIENT DATA: MISSING TIME/U VECTOR";       break;
+	case 401: string="OUTPUT STORAGE EXCEEDS THE AVAILABLE STORAGE";   break;
+	case 501: string="INCONSISTENT SIZE OF RT_FLOAT WHEN READING";   break;
+	default : string="UNKNOWN ERROR";
     } 
 
     /* Write the error message */

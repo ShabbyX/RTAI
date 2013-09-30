@@ -57,12 +57,12 @@ int Fl_Meters_Manager::h()
 
 void Fl_Meters_Manager::show()
 {
-        MWin->show();
+	 MWin->show();
 }
 
 void Fl_Meters_Manager::hide()
 {
-        MWin->hide();
+	 MWin->hide();
 }
 
 int Fl_Meters_Manager::show_hide(int n)
@@ -83,7 +83,7 @@ void Fl_Meters_Manager::show_hide(int n, bool v)
 
 int Fl_Meters_Manager::visible()
 {
-        return MWin->visible();
+	 return MWin->visible();
 }
 
 float Fl_Meters_Manager::minv(int n)
@@ -328,9 +328,9 @@ inline void Fl_Meters_Manager::enter_options_i(Fl_Menu_Button *b, void *v)
 {
 	long n = (long)v;
 	int val = 0;
-        int i;
+	 int i;
  	
-        for(i=0;i<b->children();i++) { // loop through all menu items, and add checked items to the value
+	 for(i=0;i<b->children();i++) { // loop through all menu items, and add checked items to the value
       if( b->child(i)->value() ) val |= (int)(long)b->child(i)->user_data();		} 
 	
 	Meter_Windows[n]->Meter->meter_style( 
@@ -402,12 +402,12 @@ Fl_Meters_Manager::Fl_Meters_Manager(int x, int y, int width, int height, Fl_MDI
 		    o->callback((Fl_Callback *)enter_maxval, (void *)i);
 		  }
   		  {  Fl_Choice *o = Meter_Style[i] = new Fl_Choice(10, 90, 90, 25, "");
-                    o->add("Dial|Bar|+- Bar|Rotameter|Value");
-                    o->align(FL_ALIGN_LEFT);
-                    o->value(0);
-                    o->when(FL_WHEN_ENTER_KEY);
-                    o->callback((Fl_Callback *)enter_meter_style, (void *)i);
-                  }
+		      o->add("Dial|Bar|+- Bar|Rotameter|Value");
+		      o->align(FL_ALIGN_LEFT);
+		      o->value(0);
+		      o->when(FL_WHEN_ENTER_KEY);
+		      o->callback((Fl_Callback *)enter_meter_style, (void *)i);
+		    }
 		  { Fl_Button *o = Bg_Color[i] = new Fl_Button(10, 120, 90, 25, "Bg Color");
 		    o->callback((Fl_Callback *)select_bg_color, (void *)i);
 		  }

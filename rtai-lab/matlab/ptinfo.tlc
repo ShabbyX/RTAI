@@ -178,15 +178,15 @@ static const %<tBlockTuningType> %<tBlockTuning>[] = {
 		%assign nRows = -1
 		%assign nDims = CAST("Number", data.NumDimensions)
 	    %endif
-          %if Type == "Opaque"
-            %assign mdlParamIdx = FcnGetModelParamIdxFromBlockParam(param)
-            %assign mdlParam    = CompiledModel.ModelParameters.Parameter[mdlParamIdx]
-            %assign blkPath     = SLibMangledGrBlockPath(mdlParam.GraphicalRef[0])
-            %assign blkType     = FcnGrBlockType(mdlParam.GraphicalRef[0])
-          %else
-            %assign blkType = Type
-            %assign blkPath = LibMangledPathName(Name)
-          %endif
+	   %if Type == "Opaque"
+	     %assign mdlParamIdx = FcnGetModelParamIdxFromBlockParam(param)
+	     %assign mdlParam    = CompiledModel.ModelParameters.Parameter[mdlParamIdx]
+	     %assign blkPath     = SLibMangledGrBlockPath(mdlParam.GraphicalRef[0])
+	     %assign blkType     = FcnGrBlockType(mdlParam.GraphicalRef[0])
+	   %else
+	     %assign blkType = Type
+	     %assign blkPath = LibMangledPathName(Name)
+	   %endif
 	      /* %<blkType> */
 	      {"%<blkPath>", "%<param.Name>",
 	        {%<class>, %<nRows>, %<nCols>, %<nDims>, %<dimsOffset>,\

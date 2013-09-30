@@ -91,7 +91,7 @@ for k in range(0, NR_RT_TASKS) :
 tss = rt_get_cpu_time_ns()
 for i in range(0, LOOPS) :
 	for k  in range(0, NR_RT_TASKS) :
-        	rt_sem_signal(sem)
+	 	rt_sem_signal(sem)
 tss = rt_get_cpu_time_ns() - tss
 
 change = 2

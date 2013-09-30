@@ -4,7 +4,7 @@ COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
 		    Roberto Bucher (roberto.bucher@supsi.ch)
 		    Peter Brier (pbrier@dds.nl)
 		    Alberto Sechi (albertosechi@libero.it)
-                    Rob Dye (rdye@telos-systems.com)
+		      Rob Dye (rdye@telos-systems.com)
 
 Modified March 2009 by Robert Dye (rdye@telos-systems.com)
 Modified August 2009 by Henrik Slotholt (rtai@slotholt.net)
@@ -1025,7 +1025,7 @@ void rlg_delete_profile_cb(Fl_Widget *, void *)
 			RLG_Delete_Profile_Dialog->redraw();
 			RLG_Main_Window->redraw();
 			break;
-        	case FL_DLG_CANCEL:
+	 	case FL_DLG_CANCEL:
 			break;
 	}
 }
@@ -1075,7 +1075,7 @@ void rlg_save_profile_cb(Fl_Widget *, void *)
 nothing_else_to_do:
 			RLG_Main_Window->redraw();
 			break;
-        	case FL_DLG_CANCEL:
+	 	case FL_DLG_CANCEL:
 			break;
 	}
 }
@@ -1695,7 +1695,7 @@ static int get_parameters_info(long port, RT_TASK *task)
 	else               Tunable_Parameters = new Target_Parameters_T [1];
 
 	RT_rpcx(Target_Node, port, task, &c_req, &Tunable_Parameters[0], sizeof(char), sizeof(Target_Parameters_T));
-        RLG_Target_Name = strdup(Tunable_Parameters[0].model_name);
+	 RLG_Target_Name = strdup(Tunable_Parameters[0].model_name);
 
 	for (int n = 0; n < n_params; n++) {
 		RT_rpcx(Target_Node, port, task, &c_req, &Tunable_Parameters[n], sizeof(char), sizeof(Target_Parameters_T));
@@ -2014,7 +2014,7 @@ static void rlg_update_after_connect(void)
 	RLG_Main_Menu_Table[4].activate();
 	RLG_Main_Menu_Table[5].deactivate();
 	for (int i = 9; i <= 14; i++) RLG_Main_Menu_Table[i].activate();
-        if(Num_Tunable_Parameters!=0)
+	 if(Num_Tunable_Parameters!=0)
 	  RLG_Params_Mgr_Button->activate();
 	sprintf(buf, "Target: %s.", RLG_Target_Name);
 	RLG_Main_Status->label(buf);

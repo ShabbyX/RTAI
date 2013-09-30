@@ -28,7 +28,7 @@ which is located at: http://www.ni.com/legal/license.
 
 
 /*================================================================
-              O T H E R   C O N V E R S I O N S              
+		O T H E R   C O N V E R S I O N S              
  ================================================================*/
 #define I_Ipr(a)     (a)
 #define F_Fpr(a)     (a)
@@ -36,7 +36,7 @@ which is located at: http://www.ni.com/legal/license.
 #define F_Ipr(a)     ((RT_FLOAT)a)
 
 /*================================================================
-              G E T  A N D  S E T  M A C R O S              
+		G E T  A N D  S E T  M A C R O S              
  ================================================================*/
 
 #define GET_EXTIN(type, b)   \
@@ -78,9 +78,9 @@ which is located at: http://www.ni.com/legal/license.
   **   specifies an abort exit. 
   */
   EXTERN_FUNC( void  SA_Implementation_Terminate, 
-       (
-        RT_INTEGER   errcode         /* specifies the type of exit */
-       ));
+	(
+	 RT_INTEGER   errcode         /* specifies the type of exit */
+	));
 
   /* Function: SA_Output_To_File +++++++++++++++++++++++++++++++++++++++++++++
   **
@@ -110,12 +110,12 @@ which is located at: http://www.ni.com/legal/license.
   **   services and signal that the application needs to stop.
   */
   EXTERN_FUNC( void  SA_Error, 
-       (
-        RT_INTEGER   n_task,         /* Task_id of the reporting task  */
-        RT_INTEGER   error_num,      /* Error code                     */
+	(
+	 RT_INTEGER   n_task,         /* Task_id of the reporting task  */
+	 RT_INTEGER   error_num,      /* Error code                     */
 	RT_INTEGER   perror_code,    /* RTOS error code                */
-        RT_INTEGER   pnum            /* Processor_id of reporting task */
-       ));
+	 RT_INTEGER   pnum            /* Processor_id of reporting task */
+	));
 
 extern RT_BOOLEAN outOfInputData;
 extern RT_INTEGER numInputData;
@@ -129,11 +129,11 @@ extern RT_INTEGER numInputData;
    extern void SA_Initialize(void);
 
    extern void Implementation_Initialize(RT_FLOAT BUS_IN[],  
-                                           RT_INTEGER NI, 
-                                           RT_FLOAT BUS_OUT[], 
-                                           RT_INTEGER NO,
-                                           RT_FLOAT SCHEDULER_FREQ,
-                                           void *funcPtr);
+						 RT_INTEGER NI, 
+						 RT_FLOAT BUS_OUT[], 
+						 RT_INTEGER NO,
+						 RT_FLOAT SCHEDULER_FREQ,
+						 void *funcPtr);
 
   /********************
   * Macro definitions *

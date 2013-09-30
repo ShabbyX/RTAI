@@ -36,8 +36,8 @@ RT_POLL_MBX_RECV = 1
 RT_POLL_MBX_SEND = 2
 
 class rt_poll_s(Structure) :
-        _fields_ = [("what",    c_void_p),
-                    ("forwhat", c_ulong)]
+	 _fields_ = [("what",    c_void_p),
+		      ("forwhat", c_ulong)]
 
 rtai.rt_typed_sem_init.argtypes = [c_ulong, c_int, c_int]
 rtai.rt_typed_sem_init.restype = c_void_p
@@ -47,7 +47,7 @@ def rt_sem_init(name, value) :
 	return rt_typed_sem_init(name, value, CNT_SEM);x
 
 def rt_named_sem_init(sem_name, value) :
-        return rt_typed_named_sem_init(sem_name, value, CNT_SEM)
+	 return rt_typed_named_sem_init(sem_name, value, CNT_SEM)
 
 rtai.rt_sem_delete.argtypes = [c_void_p]
 rt_sem_delete = rtai.rt_sem_delete

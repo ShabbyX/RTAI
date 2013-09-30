@@ -57,7 +57,7 @@ static void init(scicos_block *block)
     inet_aton(str, &addr.sin_addr);
     sem->tNode = addr.sin_addr.s_addr;
     while ((sem->tPort = rt_request_port(sem->tNode)) <= 0
-           && sem->tPort != -EINVAL);
+	    && sem->tPort != -EINVAL);
   }
 
   sem->sem = RT_typed_named_sem_init(sem->tNode,sem->tPort,sem->semName, 0, CNT_SEM);
@@ -93,7 +93,7 @@ void rtai_sem_signal(scicos_block *block,int flag)
   if (flag==1){          /* get input */
     inout(block);
   }
-  else if (flag==5){     /* termination */ 
+  else if (flag==5){     /* termination */
     end(block);
   }
   else if (flag ==4){    /* initialisation */

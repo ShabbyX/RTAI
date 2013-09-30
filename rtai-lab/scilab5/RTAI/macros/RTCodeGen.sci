@@ -19,12 +19,12 @@ function RTCodeGen(scs_m,k)
  end;
   
  if argn(2)<2 then
-       k=1;
-       for i=1:(size(scs_m.objs)-1)
-          if scs_m.objs(i).model.sim(1)=="super" then
-               k=i;
-          end;
-       end
+	k=1;
+	for i=1:(size(scs_m.objs)-1)
+	   if scs_m.objs(i).model.sim(1)=="super" then
+		 k=i;
+	   end;
+	end
    
    end;
    
@@ -33,15 +33,15 @@ function RTCodeGen(scs_m,k)
     //**         <k>
     if scs_m.objs(k).model.sim(1)=="super" then
       
-        XX = scs_m.objs(k); //** isolate the super block to use 
-        
+	 XX = scs_m.objs(k); //** isolate the super block to use 
+	 
 //---------------------------------------------------->       THE REAL CODE GEN IS HERE --------------------------------
-        //** the real code generator is here 
-        [ok, XX, alreadyran, flgcdgen, szclkINTemp, freof] =  do_compile_superblock_rt(XX, scs_m, k, %f);
-        
-        
-        //**quick fix for sblock that contains scope
-       // gh_curwin = scf(curwin)
+	 //** the real code generator is here 
+	 [ok, XX, alreadyran, flgcdgen, szclkINTemp, freof] =  do_compile_superblock_rt(XX, scs_m, k, %f);
+	 
+	 
+	 //**quick fix for sblock that contains scope
+	// gh_curwin = scf(curwin)
     
     else
       //** the clicked/selected block is NOT a superblock 

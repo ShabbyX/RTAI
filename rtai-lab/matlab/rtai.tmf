@@ -32,7 +32,7 @@ include $(MATLAB_ROOT)/rtw/c/tools/unixtools.mk
 
 MATLAB_INCLUDES = \
 	-I$(MATLAB_ROOT)/simulink/include \
-        -I$(MATLAB_ROOT)/extern/include \
+	 -I$(MATLAB_ROOT)/extern/include \
 	-I$(MATLAB_ROOT)/rtw/c/src \
 	-I$(MATLAB_ROOT)/rtw/c/libsrc \
 	-I$(MATLAB_ROOT)/rtw/c/rtai/devices

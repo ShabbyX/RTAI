@@ -37,9 +37,9 @@ The handler code is likely to be a kind of:
 int x_handler(unsigned int fifo, int rw);
 {
     if (rw == 'r') {
-        // do stuff for a call from read and return appropriate value.
+	 // do stuff for a call from read and return appropriate value.
     } else {
-        // do stuff for a call from write and return appropriate value.
+	 // do stuff for a call from write and return appropriate value.
     }
 }
 @endcode

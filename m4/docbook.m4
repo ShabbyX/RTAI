@@ -36,7 +36,7 @@ AC_ARG_ENABLE(dbx,
 if test \! -f "$srcdir/$1/catalog.in"; then
     if test x$DBX_DOC = xyes;
     then
-        AC_MSG_ERROR([$1/catalog.in could not be found in the source tree,
+	 AC_MSG_ERROR([$1/catalog.in could not be found in the source tree,
 DocBook documentation can not be generated.])
     fi
     AC_MSG_RESULT([not present.])
@@ -76,16 +76,16 @@ DBX_DTD_VERSION="$3"
 
 AC_MSG_CHECKING(whether Docbook XML documentation generation can use network.)
 AC_ARG_ENABLE(dbx-network,
-        [--enable-dbx-network	Try to access Docbook DTD and
+	 [--enable-dbx-network	Try to access Docbook DTD and
 XSL stylesheets through network (default is to die if local installation can not
 be found by configure).],
-        [ case "$enable_dbx_network" in
-           y | yes | yes )
-                DBX_NET=yes;;
-           n | no )
-                DBX_NET="";;
-          esac
-        ])
+	 [ case "$enable_dbx_network" in
+	    y | yes | yes )
+		  DBX_NET=yes;;
+	    n | no )
+		  DBX_NET="";;
+	   esac
+	 ])
 
 # Do not define the --nonet xsltproc flag if the option --enable-dbx-network was
 # passed
@@ -100,26 +100,26 @@ AC_SUBST(DBX_MAYBE_NONET)
 
 AC_MSG_CHECKING(for docbook-xml root dir)
 AC_ARG_WITH(dbx-root,
-        [--with-dbx-root	specify the Docbook XML root (that
+	 [--with-dbx-root	specify the Docbook XML root (that
 is, the directory where docbookx.dtd should be found). Default is to use
 well-known locations (or network if --enable-dbx-network was passed).],
-        [DBX_ROOT="$withval"])
+	 [DBX_ROOT="$withval"])
 if test x"$DBX_ROOT" = x; then
    # Still not found, we will hence look for it using the "well-known"
    # places (well... for the moment, only the Debian package directory)
    for dir in \
-       /usr/share/sgml/docbook/dtd/xml/$DBX_DTD_VERSION
+	/usr/share/sgml/docbook/dtd/xml/$DBX_DTD_VERSION
    do
-        if test -e $dir/docbookx.dtd; then
-           DBX_ROOT="$dir";
-           break;
-        fi
+	 if test -e $dir/docbookx.dtd; then
+	    DBX_ROOT="$dir";
+	    break;
+	 fi
    done
 fi
 AC_MSG_RESULT(${DBX_ROOT:-network})
 if test x"$DBX_ROOT" = x; then
    if test x"$enable_dbx_network" != x  -a -n "$DBX_DOC"; then
-        AC_MSG_ERROR([The Docbook XML DTD was not found, and accessing it
+	 AC_MSG_ERROR([The Docbook XML DTD was not found, and accessing it
 through network is forbidden.])
    fi
    DBX_ROOT="http://www.oasis-open.org/docbook/xml/$DBX_DTD_VERSION/"
@@ -134,23 +134,23 @@ AC_ARG_WITH(docbook-xsl-root,
 	[--with-dbx-xsl-root	specify the Docbook XML XSL
 stylesheet root. Default is to use well-known locations (or network if
 --enable-dbx-network was passed)],
-        [ DBX_XSL_ROOT="$withval" ])
+	 [ DBX_XSL_ROOT="$withval" ])
 if test x"$DBX_XSL_ROOT" = x; then
    # Still not found, we will hence look for it using the "well-known"
    # places (well... for the moment, only the Debian standard directory)
    for dir in \
-       /usr/share/sgml/docbook/stylesheet/xsl/nwalsh
+	/usr/share/sgml/docbook/stylesheet/xsl/nwalsh
    do
-        if test -e "$dir/html/docbook.xsl"; then
-           DBX_XSL_ROOT="$dir";
-           break;
-        fi
+	 if test -e "$dir/html/docbook.xsl"; then
+	    DBX_XSL_ROOT="$dir";
+	    break;
+	 fi
    done
 fi
 AC_MSG_RESULT(${DBX_XSL_ROOT:-network})
 if test x"$DBX_XSL_ROOT" = x; then
    if test x"$enable_dbx_network" != x -a -n "$DBX_DOC"; then
-        AC_MSG_ERROR([The Docbook XML DTD was not found, and accessing it
+	 AC_MSG_ERROR([The Docbook XML DTD was not found, and accessing it
 through network is forbidden.])
    fi
    DBX_XSL_ROOT="http://http://docbook.sourceforge.net/release/xsl/current"

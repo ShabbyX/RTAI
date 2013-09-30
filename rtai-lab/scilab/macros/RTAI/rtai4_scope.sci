@@ -19,17 +19,17 @@ function [x,y,typ] = rtai4_scope(job,arg1,arg2)
     end
     if size(tnames,1)==size(arg1.model.in,1) then
       if size(tnames,1)>1 then
-        [xin,yin,typin]=standard_inputs(arg1)
-        dy=yin(2)-yin(1)
-        for i=1:size(tnames,1)
-          if flip then
-            xstringb(orig(1),yin(i)-dy/2,tnames(i),sz(1),dy,'fill')
-          else
-            xstringb(orig(1)-sz(1),yin(i)-dy/2,tnames(i),sz(1),dy,'fill')
-          end
-        end
+	 [xin,yin,typin]=standard_inputs(arg1)
+	 dy=yin(2)-yin(1)
+	 for i=1:size(tnames,1)
+	   if flip then
+	     xstringb(orig(1),yin(i)-dy/2,tnames(i),sz(1),dy,'fill')
+	   else
+	     xstringb(orig(1)-sz(1),yin(i)-dy/2,tnames(i),sz(1),dy,'fill')
+	   end
+	 end
       else
-        xstringb(orig(1),orig(2),tnames,sz(1),sz(2),'fill')
+	 xstringb(orig(1),orig(2),tnames,sz(1),sz(2),'fill')
       end
     end
   case 'getinputs' then
@@ -45,11 +45,11 @@ function [x,y,typ] = rtai4_scope(job,arg1,arg2)
       arg1.model.opar=list(iconvert([ascii(stripblanks(name,1)),0],11))
       traceNames=''
       for i=1:size(arg1.model.in,1)
-        if i~=1
-          traceNames=traceNames+';'
-        end
-        traceNames=traceNames+sci2exp(i)
-        arg1.model.opar(i+1)=iconvert([ascii(sci2exp(i)),0],11)
+	 if i~=1
+	   traceNames=traceNames+';'
+	 end
+	 traceNames=traceNames+sci2exp(i)
+	 arg1.model.opar(i+1)=iconvert([ascii(sci2exp(i)),0],11)
       end
       arg1.graphics.exprs=[name,traceNames]
       arg1.model.ipar=[]
@@ -80,23 +80,23 @@ function [x,y,typ] = rtai4_scope(job,arg1,arg2)
 			
       [model,graphics,ok]=check_io(model,graphics,in,out,1,[])
       if ok then
-        graphics.exprs=exprs
-        model.rpar=[]
-        model.ipar=[]
-        if index<>[] then
-          tnames=strsplit(traceNames,index)
-          tnames=strsubst(tnames,';','')
-        else
-          tnames=traceNames
-        end
-        opar=list(iconvert([ascii(stripblanks(name,1)),0],11))
-        for i=1:size(tnames, 1)
-          opar(i+1)=iconvert([ascii(stripblanks(tnames(i),1)),0],11)
-        end
-        model.opar=opar
-        model.dstate=[]
-        x.graphics=graphics;x.model=model
-        break
+	 graphics.exprs=exprs
+	 model.rpar=[]
+	 model.ipar=[]
+	 if index<>[] then
+	   tnames=strsplit(traceNames,index)
+	   tnames=strsubst(tnames,';','')
+	 else
+	   tnames=traceNames
+	 end
+	 opar=list(iconvert([ascii(stripblanks(name,1)),0],11))
+	 for i=1:size(tnames, 1)
+	   opar(i+1)=iconvert([ascii(stripblanks(tnames(i),1)),0],11)
+	 end
+	 model.opar=opar
+	 model.dstate=[]
+	 x.graphics=graphics;x.model=model
+	 break
       end
     end
   case 'define' then

@@ -19,25 +19,25 @@ function [x,y,typ] = rtai4_sinus(job,arg1,arg2)
       [ok,A,frq,phase,bias,delay,exprs]=..
       getvalue('Set RTAI-sinus block parameters',..
       ['Amplitude:';
-       'Frequency:';
-       'Phase:';
-       'Bias:';
-       'Delay:'],..
+	'Frequency:';
+	'Phase:';
+	'Bias:';
+	'Delay:'],..
       list('vec',-1,'vec',-1,'vec',-1,'vec',-1,'vec',-1),exprs)
       if ~ok then break,end
       if exists('outport') then out=ones(outport,1), in=[], else out=1, in=[], end
       [model,graphics,ok]=check_io(model,graphics,in,out,1,[])
       if ok then
-        graphics.exprs=exprs;
-        model.rpar=[A;
-                    frq;
-                    phase;
-                    bias;
-                    delay];
-        model.ipar=[];
-        model.dstate=[];
-        x.graphics=graphics;x.model=model
-        break
+	 graphics.exprs=exprs;
+	 model.rpar=[A;
+		      frq;
+		      phase;
+		      bias;
+		      delay];
+	 model.ipar=[];
+	 model.dstate=[];
+	 x.graphics=graphics;x.model=model
+	 break
       end
     end
   case 'define' then
@@ -51,10 +51,10 @@ function [x,y,typ] = rtai4_sinus(job,arg1,arg2)
     if exists('outport') then model.out=ones(outport,1), model.in=[], else model.out=1, model.in=[], end
     model.evtin=1
     model.rpar=[A;
-                frq;
-                phase;
-                bias;
-                delay]
+		  frq;
+		  phase;
+		  bias;
+		  delay]
     model.ipar=[]
     model.dstate=[];
     model.blocktype='d'

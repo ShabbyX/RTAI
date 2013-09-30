@@ -69,7 +69,7 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 	ssSetOffsetTime(S, 0, 0.0);
 }
 
-#define MDL_START 
+#define MDL_START
 static void mdlStart(SimStruct *S)
 {
 #ifndef MATLAB_MEX_FILE
@@ -95,7 +95,7 @@ static void mdlStart(SimStruct *S)
 static void mdlOutputs(SimStruct *S, int_T tid)
 {
 	InputRealPtrsType uPtrs = ssGetInputPortRealSignalPtrs(S,0);
-	InputRealPtrsType fPtrs = ssGetInputPortRealSignalPtrs(S,1);	
+	InputRealPtrsType fPtrs = ssGetInputPortRealSignalPtrs(S,1);
 	int_T *dim = ssGetInputPortDimensions(S,0);
 #ifndef MATLAB_MEX_FILE
 	struct {
@@ -107,7 +107,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 	MBX *mbx = (MBX *)ssGetPWork(S)[0];
 	for (i = 0; i < (dim[0]*dim[1]); i++) {
 		data.u[i] = (float)*uPtrs[i];
-		data.flag[0] = (int)*fPtrs[0]; 
+		data.flag[0] = (int)*fPtrs[0];
 		//printf("%d flag %f data\n",data.flag[0], data.u[0]);
 	}
 	rt_mbx_send_if(mbx, &data, sizeof(data));

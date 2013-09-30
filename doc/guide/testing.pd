@@ -35,39 +35,39 @@ Create the following script for startup, namely in `/etc/init.d/rtai`
 
     start)
 
-        if test \! -c /dev/rtai_shm; then
-            mknod -m 666 /dev/rtai_shm c 10 254
-        fi
-        for n in `seq 0 9`; do
-            f=/dev/rtf$n
-            if test \! -c $f; then
-                mknod -m 666 $f c 150 $n
-            fi
-        done
+	 if test \! -c /dev/rtai_shm; then
+	     mknod -m 666 /dev/rtai_shm c 10 254
+	 fi
+	 for n in `seq 0 9`; do
+	     f=/dev/rtf$n
+	     if test \! -c $f; then
+		  mknod -m 666 $f c 150 $n
+	     fi
+	 done
 
-        insmod /usr/realtime/modules/rtai_hal.ko
-        insmod /usr/realtime/modules/rtai_sched.ko
-        insmod /usr/realtime/modules/rtai_sem.ko
-        insmod /usr/realtime/modules/rtai_shm.ko
-        insmod /usr/realtime/modules/rtai_mbx.ko
-        insmod /usr/realtime/modules/rtai_rtdm.ko
-        exit 0
-        ;;
+	 insmod /usr/realtime/modules/rtai_hal.ko
+	 insmod /usr/realtime/modules/rtai_sched.ko
+	 insmod /usr/realtime/modules/rtai_sem.ko
+	 insmod /usr/realtime/modules/rtai_shm.ko
+	 insmod /usr/realtime/modules/rtai_mbx.ko
+	 insmod /usr/realtime/modules/rtai_rtdm.ko
+	 exit 0
+	 ;;
 
     stop)
 
-        rmmod rtai_rtdm
-        rmmod rtai_mbx
-        rmmod rtai_shm
-        rmmod rtai_sem
-        rmmod rtai_sched
-        rmmod rtai_hal
-        exit 0
-        ;;
+	 rmmod rtai_rtdm
+	 rmmod rtai_mbx
+	 rmmod rtai_shm
+	 rmmod rtai_sem
+	 rmmod rtai_sched
+	 rmmod rtai_hal
+	 exit 0
+	 ;;
 
     *)
-        echo "Usage: $0 {start|stop}"
-        ;;
+	 echo "Usage: $0 {start|stop}"
+	 ;;
 
     esac
 

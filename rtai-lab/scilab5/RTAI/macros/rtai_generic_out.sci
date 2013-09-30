@@ -19,10 +19,10 @@ case 'set' then
   label=graphics.exprs;
   while %t do
     [ok,ip,name,lab]=..
-        scicos_getvalue('Set RTAI generic output block parameters',..
-        ['input ports';
+	 scicos_getvalue('Set RTAI generic output block parameters',..
+	 ['input ports';
 	'Identifier'],..
-         list('vec',-1,'str',1),label(1)')
+	  list('vec',-1,'str',1),label(1)')
 
     if ~ok then break,end
     label(1)=lab
@@ -98,15 +98,15 @@ function [ok,tt]=getCode_generic_out(funam,tt)
 if tt==[] then
   
    textmp=[
-          '#ifndef MODEL'
-          '#include <math.h>';
-          '#include <stdlib.h>';
-          '#include <machine.h>';
-          '#include <scicos_block4.h>';
-          '#endif'
-          '';
-          'void '+funam+'(scicos_block *block,int flag)';
-         ];
+	   '#ifndef MODEL'
+	   '#include <math.h>';
+	   '#include <stdlib.h>';
+	   '#include <machine.h>';
+	   '#include <scicos_block4.h>';
+	   '#endif'
+	   '';
+	   'void '+funam+'(scicos_block *block,int flag)';
+	  ];
   textmp($+1)='{'
   textmp($+1)='#ifdef MODEL'
   textmp($+1)='int i;'

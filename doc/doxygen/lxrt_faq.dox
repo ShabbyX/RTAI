@@ -36,9 +36,9 @@ wait until etc.   You will also find semaphores, mail boxes, remote procedure
 calls, send and receive primitives integrated into the state machine of the
 real time scheduler.   Typically, the IPC function calls support:
 
-            . Blocking until the transaction occurs.
-            . Returning immediately if the other end is not ready.
-            . Blocking for the transaction until a timeout occurs.
+	     . Blocking until the transaction occurs.
+	     . Returning immediately if the other end is not ready.
+	     . Blocking for the transaction until a timeout occurs.
 
 How do I setup my Linux program for LXRT?
 
@@ -100,9 +100,9 @@ rt_task->msg_buf.   At this point, the addresses of three functions are stored
 above stack_top (LXRT made sure this wizardry would be possible when it first
 created the real time task):
 
-            top-1 lxrt_suspend(...)
-            top-2 fun(...)
-            top-3 lxrt_global_sti(...)
+	     top-1 lxrt_suspend(...)
+	     top-2 fun(...)
+	     top-3 lxrt_global_sti(...)
 
 The stack is changed to point to top-3, global interrupts are disabled and and
 the context of execution is switched to RTAI with the call to LXRT_RESUME

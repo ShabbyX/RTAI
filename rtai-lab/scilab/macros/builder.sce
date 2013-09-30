@@ -21,15 +21,15 @@ genlib(libname,MACROS)
 cd(ROUTINES)
 
 names=['rtsinus';
-       'rtsquare';
-       'rt_step';
-       'exit_on_error';
-       'par_getstr']
+	'rtsquare';
+	'rt_step';
+	'exit_on_error';
+	'par_getstr']
 files=['rtai_sinus.o';
-       'rtai_square.o';
-       'rtai_step.o';
-       'exit_on_error.o';
-       'getstr.o']
+	'rtai_square.o';
+	'rtai_step.o';
+	'exit_on_error.o';
+	'getstr.o']
 
 libn=ilib_for_link(names,files,[],"c","Makelib","loader.sce","rtinp","","-I.")
 

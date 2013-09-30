@@ -1,17 +1,17 @@
 /*
 COPYRIGHT (C) 2001-2006  Paolo Mantegazza  (mantegazza@aero.polimi.it)
-                         Giuseppe Quaranta (quaranta@aero.polimi.it)
- 
+			    Giuseppe Quaranta (quaranta@aero.polimi.it)
+
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License as
   published by the Free Software Foundation; either version 2 of the
   License, or (at your option) any later version.
- 
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
@@ -54,7 +54,7 @@ static void rtc_periodic_timer_setup(int pwr2)
 	rt_release_irq(RTC_IRQ);
 	rtai_hw_cli();
 	CMOS_WRITE(CMOS_READ(RTC_FREQ_SELECT), RTC_FREQ_SELECT);
-        CMOS_WRITE(CMOS_READ(RTC_CONTROL),     RTC_CONTROL);
+	 CMOS_WRITE(CMOS_READ(RTC_CONTROL),     RTC_CONTROL);
 	CMOS_WRITE(RTC_REF_CLCK_32KHZ | (16 - pwr2),          RTC_FREQ_SELECT);
 	CMOS_WRITE((CMOS_READ(RTC_CONTROL) & 0x8F) | RTC_PIE, RTC_CONTROL);
 	rtai_hw_sti();
@@ -119,7 +119,7 @@ long long aux_clk_manager(unsigned long *args)
 					return ticks_per_sec = pwr2 = ERROR;
 				}
 				pwr2 = ffs(freq) - 1;
-			} 
+			}
 			ticks_per_sec = UseTask ? freq : 1 << pwr2;
 			return OK;
 		}

@@ -19,22 +19,22 @@ function [x,y,typ] = rtai4_mbx_rcv_if(job,arg1,arg2)
       [ok,outport,name,ipaddr,exprs]=..
       scicos_getvalue('Set RTAI mbx_rcv_if block parameters',..
       ['Output ports:';
-       'MBX Name:';
-       'IP Addr:'],..
+	'MBX Name:';
+	'IP Addr:'],..
       list('vec',-1,'str',1,'str',1),exprs)
       if ~ok then break,end
       if exists('outport') then out=ones(outport,1), in=[], else out=1, in=[], end
       [model,graphics,ok]=check_io(model,graphics,in,out,1,[])
       if ok then
-        graphics.exprs=exprs;
-        model.rpar=[];
-        model.ipar=[length(name);
-                    length(ipaddr);
-                    ascii(name)';
-                    ascii(ipaddr)'];
-        model.dstate=[];
-        x.graphics=graphics;x.model=model
-        break
+	 graphics.exprs=exprs;
+	 model.rpar=[];
+	 model.ipar=[length(name);
+		      length(ipaddr);
+		      ascii(name)';
+		      ascii(ipaddr)'];
+	 model.dstate=[];
+	 x.graphics=graphics;x.model=model
+	 break
       end
     end
   case 'define' then
@@ -47,9 +47,9 @@ function [x,y,typ] = rtai4_mbx_rcv_if(job,arg1,arg2)
     model.evtin=1
     model.rpar=[]
     model.ipar=[length(name);
-                length(ipaddr);
-                ascii(name)';
-                ascii(ipaddr)']
+		  length(ipaddr);
+		  ascii(name)';
+		  ascii(ipaddr)']
     model.dstate=[];
     model.blocktype='d'
     model.dep_ut=[%t %f]

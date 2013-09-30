@@ -556,7 +556,7 @@ void Init_Application_Data ()
 @system_data_init()@@
 @IFF not procs_only_b@@
    for(  cnt=0; cnt<NUMOUT; cnt++ ){
-       ExtOut[cnt] = -EPSILON;
+	ExtOut[cnt] = -EPSILON;
    }
 @ENDIFF@@
 
@@ -571,14 +571,14 @@ void Init_Application_Data ()
 @SEGMENT gen_scheduler() INT k, INIT_OFCHECK@
 @FILECLOSE@@
 @FILEOPEN("stdout","append")@@
-             Generating the scheduler ...
+	      Generating the scheduler ...
 @FILECLOSE@@
 @*
    Set this INIT_OFCHECK flag to 0 if you want the scheduler not to check for
    subsystems overflow during their first cycle so that the subsystems can take
    their own time to complete their initialization cycles.
    ******** WARNING: Resetting this flag will improve the performance ********
-            but will introduce non-determinacy in the system.
+	     but will introduce non-determinacy in the system.
 *@
 @INIT_OFCHECK = 1@@
 /*---------------*
@@ -588,10 +588,10 @@ void Init_Application_Data ()
 /*** Manager Data ***/
 
 enum SUBSYSTEM_TYPE  { CONTINUOUS, PERIODIC, ENABLED_PERIODIC, TRIGGERED_ANT,
-                          TRIGGERED_ATR, TRIGGERED_SAF, isi_NONE };
+			     TRIGGERED_ATR, TRIGGERED_SAF, isi_NONE };
 @IFF timerequired_b@@
 const RT_DURATION              MANAGER_TIMER_INTERVAL              =
-                                      (RT_DURATION) (1.0/MANAGER_TIMER_FREQ);
+					   (RT_DURATION) (1.0/MANAGER_TIMER_FREQ);
 @ENDIFF@@
 static const enum SUBSYSTEM_TYPE      TASK_TYPE            [NTASKS+1] =
   {isi_NONE@LOOPP i=0, i lt ntasks_i, i=i plus 1@, @
@@ -661,7 +661,7 @@ void Update_Outputs(NTSK)
    switch(NTSK) {
      @toggle_rwbuffers()@
      default:
-        break;
+	 break;
    }
    return;
 }
@@ -689,12 +689,12 @@ void Init_Manager()
 @ENDIFF@@
       TASK_STATE[NTSK]           = INITIAL_TASK_STATE[NTSK];
       if(TASK_TYPE[NTSK]==TRIGGERED_ATR || TASK_TYPE[NTSK]==TRIGGERED_SAF){
-         SSWORKSIDE[NTSK] = 0;
-         TCB[NTSK].DS_UPDATE = TRUE;
+	  SSWORKSIDE[NTSK] = 0;
+	  TCB[NTSK].DS_UPDATE = TRUE;
       }
       else {
-         SSWORKSIDE[NTSK] = 1;
-         TCB[NTSK].DS_UPDATE = FALSE;
+	  SSWORKSIDE[NTSK] = 1;
+	  TCB[NTSK].DS_UPDATE = FALSE;
       }
 
       TASK_OVERRUN_CNT[NTSK] = 0;
@@ -732,15 +732,15 @@ enum event_type eventtype;
     case TIME_EV:
      if(APPLICATION_manager_state[eventtype] == NON_PREEMPTABLE)
      {
-        if (schedulerOverflowCnt >= OVERFLOW_LIMIT)
-        {
-           msgbuf[1] = EVENT_OVERFLOW;
-           msgbuf[2] = taskIdSelf();
-           msgbuf[3] = 1;
-           msgQSend(qid_ovflow1, &msgbuf[0], sizeof (msgbuf), NO_WAIT, MSG_PRI_URGENT);
-           return EVENT_OVERFLOW;
-        }
-        else schedulerOverflowCnt++;
+	 if (schedulerOverflowCnt >= OVERFLOW_LIMIT)
+	 {
+	    msgbuf[1] = EVENT_OVERFLOW;
+	    msgbuf[2] = taskIdSelf();
+	    msgbuf[3] = 1;
+	    msgQSend(qid_ovflow1, &msgbuf[0], sizeof (msgbuf), NO_WAIT, MSG_PRI_URGENT);
+	    return EVENT_OVERFLOW;
+	 }
+	 else schedulerOverflowCnt++;
      }
      else schedulerOverflowCnt = 0;
 
@@ -751,17 +751,17 @@ enum event_type eventtype;
 @SCOPE PROCEDURE i@@
     case @procedurename_s@_EV:
      if (taskResume(tid_int@i@)) {
-        msgbuf[1] = EVENT_OVERFLOW;
-        msgbuf[2] = taskIdSelf();
-        msgbuf[3] = 1;
-        msgQSend(qid_ovflow1, &msgbuf[0], sizeof (msgbuf), NO_WAIT, MSG_PRI_URGENT);
-        return EVENT_OVERFLOW;
+	 msgbuf[1] = EVENT_OVERFLOW;
+	 msgbuf[2] = taskIdSelf();
+	 msgbuf[3] = 1;
+	 msgQSend(qid_ovflow1, &msgbuf[0], sizeof (msgbuf), NO_WAIT, MSG_PRI_URGENT);
+	 return EVENT_OVERFLOW;
      }
      break;
 @ENDLOOPP@@
     default:
-        semGive(semid_mgr1);
-        return INVALID_EVENT;
+	 semGive(semid_mgr1);
+	 return INVALID_EVENT;
      break;
   }
 
@@ -774,7 +774,7 @@ void event_ovflow_handler(unsigned long delete_tid_ovflow1) {
   RT_INTEGER errorCode, taskId;
 
   if(delete_tid_ovflow1) {
-         /* Clean Up */
+	  /* Clean Up */
    taskDelete(tid_ovflow1);
   }
   else { /* Initialize */
@@ -782,7 +782,7 @@ void event_ovflow_handler(unsigned long delete_tid_ovflow1) {
 
   for(;;) {
    if ((msgQReceive(qid_ovflow1, &msgbuf[0], 16, WAIT_FOREVER)) == ERROR)
-                         SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+			    SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
    eventtype = msgbuf[0];
    errorCode = msgbuf[1];
    taskId    = msgbuf[2];
@@ -798,15 +798,15 @@ void event_ovflow_handler(unsigned long delete_tid_ovflow1) {
 
 void APPLICATION_Manager(unsigned long delete_tid_mgr1)
 {
-              RT_INTEGER io_status;
+		RT_INTEGER io_status;
    register   RT_INTEGER    NTSK;
    register   RT_INTEGER    I,J;
-              char msgbuf[4], errMsgBuf[4];
-              unsigned long sendbuf[4];
-              enum event_type eventtype;
+		char msgbuf[4], errMsgBuf[4];
+		unsigned long sendbuf[4];
+		enum event_type eventtype;
 
   if(delete_tid_mgr1) {
-         /* Clean Up */
+	  /* Clean Up */
     taskDelete(tid_mgr1);
   }
   else { /* Initialize */
@@ -818,23 +818,23 @@ void APPLICATION_Manager(unsigned long delete_tid_mgr1)
 MANAGER_LOOP:
 
    if ((semTake(semid_mgr1, WAIT_FOREVER)) == ERROR)
-                           SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+			      SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 
 INNER_LOOP:
    do {
       if (applEventType == TIME_EV)
       {
-            manager_current_events[TIME_EV] = TRUE;
-            /*** Update elapsed time ***/
+	     manager_current_events[TIME_EV] = TRUE;
+	     /*** Update elapsed time ***/
 @IFF timerequired_b@@
-            ELAPSED_TIME = ((RT_DURATION)TIME_COUNT)*MANAGER_TIMER_INTERVAL;
-            TIME_COUNT++;
+	     ELAPSED_TIME = ((RT_DURATION)TIME_COUNT)*MANAGER_TIMER_INTERVAL;
+	     TIME_COUNT++;
 @ENDIFF@@
       }
       else
       {
-            SA_Error(taskIdSelf(), applEventType, INVALID_EVENT, 1);
-            goto MANAGER_LOOP;
+	     SA_Error(taskIdSelf(), applEventType, INVALID_EVENT, 1);
+	     goto MANAGER_LOOP;
       }
    } while((semTake(semid_mgr1, NO_WAIT)) != ERROR);
 
@@ -851,8 +851,8 @@ INNER_LOOP:
       }
       else
       {
-         SA_Error(taskIdSelf(),ERROR_EV,io_status,1);
-         goto MANAGER_LOOP;
+	  SA_Error(taskIdSelf(),ERROR_EV,io_status,1);
+	  goto MANAGER_LOOP;
       }
     }
    /*** System Input ***/
@@ -873,189 +873,189 @@ INNER_LOOP:
     for( NTSK=NTASKS; NTSK>=1; NTSK--  ){
 
       switch( TASK_STATE[NTSK] ){
-         case IDLE :
+	  case IDLE :
 
-            switch( TCB[NTSK].TASK_TYPE ){
-               case CONTINUOUS :
-               case PERIODIC :
-                  if( TCB[NTSK].START == 0 ){
-                     Queue_Task(NTSK);
-                     Update_Outputs(NTSK);
-                     TCB[NTSK].START  = TCB[NTSK].SCHEDULING_COUNT;
-                  }else{
-                     TCB[NTSK].START  = TCB[NTSK].START - 1;
-                  }
-                  break;
+	     switch( TCB[NTSK].TASK_TYPE ){
+		 case CONTINUOUS :
+		 case PERIODIC :
+		    if( TCB[NTSK].START == 0 ){
+			Queue_Task(NTSK);
+			Update_Outputs(NTSK);
+			TCB[NTSK].START  = TCB[NTSK].SCHEDULING_COUNT;
+		    }else{
+			TCB[NTSK].START  = TCB[NTSK].START - 1;
+		    }
+		    break;
 
-               case ENABLED_PERIODIC :
-                  if( !TCB[NTSK].ENABLED ){
-                     TASK_STATE[NTSK] = BLOCKED;
-                  }else if( TCB[NTSK].START == 0 ){
-                     Queue_Task(NTSK);
-                     Update_Outputs(NTSK);
-                     TCB[NTSK].START  = TCB[NTSK].SCHEDULING_COUNT;
-                  }else{
-                     TCB[NTSK].START  = TCB[NTSK].START - 1;
-                  }
-                  break;
+		 case ENABLED_PERIODIC :
+		    if( !TCB[NTSK].ENABLED ){
+			TASK_STATE[NTSK] = BLOCKED;
+		    }else if( TCB[NTSK].START == 0 ){
+			Queue_Task(NTSK);
+			Update_Outputs(NTSK);
+			TCB[NTSK].START  = TCB[NTSK].SCHEDULING_COUNT;
+		    }else{
+			TCB[NTSK].START  = TCB[NTSK].START - 1;
+		    }
+		    break;
 
-               case TRIGGERED_ANT :
-                  if( TCB[NTSK].START == 0 ){
-                     Queue_Task(NTSK);
-                     Update_Outputs(NTSK);
-                     TCB[NTSK].START  = 1;
-                  }
-                  break;
+		 case TRIGGERED_ANT :
+		    if( TCB[NTSK].START == 0 ){
+			Queue_Task(NTSK);
+			Update_Outputs(NTSK);
+			TCB[NTSK].START  = 1;
+		    }
+		    break;
 
-               case TRIGGERED_ATR :
-                  if( TCB[NTSK].OUTPUT == 0 ){
-                     Update_Outputs(NTSK);
-                     TASK_STATE[NTSK] = BLOCKED;
-                     if( TCB[NTSK].START == 0 ){
-                        Queue_Task(NTSK);
-                        TCB[NTSK].OUTPUT = TCB[NTSK].OUTPUT_COUNT;
-                        TCB[NTSK].START  = 1;
-                     }
-                  }else{
-                     TCB[NTSK].OUTPUT = TCB[NTSK].OUTPUT - 1;
-                  }
-                  break;
+		 case TRIGGERED_ATR :
+		    if( TCB[NTSK].OUTPUT == 0 ){
+			Update_Outputs(NTSK);
+			TASK_STATE[NTSK] = BLOCKED;
+			if( TCB[NTSK].START == 0 ){
+			   Queue_Task(NTSK);
+			   TCB[NTSK].OUTPUT = TCB[NTSK].OUTPUT_COUNT;
+			   TCB[NTSK].START  = 1;
+			}
+		    }else{
+			TCB[NTSK].OUTPUT = TCB[NTSK].OUTPUT - 1;
+		    }
+		    break;
 
-               case TRIGGERED_SAF :
-                  if( TCB[NTSK].OUTPUT == 0 ){
-                     Update_Outputs(NTSK);
-                     TASK_STATE[NTSK] = BLOCKED;
-                     if( TCB[NTSK].START == 0 ){
-                        Queue_Task(NTSK);
-                        TCB[NTSK].OUTPUT = 0;
-                        TCB[NTSK].START  = 1;
-                     }
-                  }
-                  break;
+		 case TRIGGERED_SAF :
+		    if( TCB[NTSK].OUTPUT == 0 ){
+			Update_Outputs(NTSK);
+			TASK_STATE[NTSK] = BLOCKED;
+			if( TCB[NTSK].START == 0 ){
+			   Queue_Task(NTSK);
+			   TCB[NTSK].OUTPUT = 0;
+			   TCB[NTSK].START  = 1;
+			}
+		    }
+		    break;
 
-               default :
-                  break;
-            }
-            break;
+		 default :
+		    break;
+	     }
+	     break;
 
-         case RUNNING :
+	  case RUNNING :
 
-            switch( TCB[NTSK].TASK_TYPE ){
-               case CONTINUOUS :
-               case PERIODIC :
-               case ENABLED_PERIODIC :
-                  if( TCB[NTSK].START > 0 ){
-                     TCB[NTSK].START  = TCB[NTSK].START - 1;
+	     switch( TCB[NTSK].TASK_TYPE ){
+		 case CONTINUOUS :
+		 case PERIODIC :
+		 case ENABLED_PERIODIC :
+		    if( TCB[NTSK].START > 0 ){
+			TCB[NTSK].START  = TCB[NTSK].START - 1;
 @IFF INIT_OFCHECK@@
-                  } else {
-                     if (TASK_OVERRUN_CNT[NTSK] >= OVERFLOW_LIMIT)
-                     {
-                        errMsgBuf[0] = ERROR_EV;
-                        errMsgBuf[1] = TASK_OVERRUN;
-                        errMsgBuf[2] = NTSK;
-                        errMsgBuf[3] = 1;
-                        msgQSend(qid_ovflow1, &errMsgBuf[0], sizeof(errMsgBuf),
-                                 NO_WAIT, MSG_PRI_URGENT);
-                        goto MANAGER_LOOP;
-                     }
-                     else TASK_OVERRUN_CNT[NTSK]++;
-                  }
+		    } else {
+			if (TASK_OVERRUN_CNT[NTSK] >= OVERFLOW_LIMIT)
+			{
+			   errMsgBuf[0] = ERROR_EV;
+			   errMsgBuf[1] = TASK_OVERRUN;
+			   errMsgBuf[2] = NTSK;
+			   errMsgBuf[3] = 1;
+			   msgQSend(qid_ovflow1, &errMsgBuf[0], sizeof(errMsgBuf),
+				     NO_WAIT, MSG_PRI_URGENT);
+			   goto MANAGER_LOOP;
+			}
+			else TASK_OVERRUN_CNT[NTSK]++;
+		    }
 @ELSE@@
-                  }else if(ERROR_FLAG[NTSK] != OK || !SUBSYS_INIT[NTSK]) {
-                     SA_Error(NTSK, ERROR_EV, TASK_OVERRUN, 1);
-                     goto MANAGER_LOOP;
-                  }
+		    }else if(ERROR_FLAG[NTSK] != OK || !SUBSYS_INIT[NTSK]) {
+			SA_Error(NTSK, ERROR_EV, TASK_OVERRUN, 1);
+			goto MANAGER_LOOP;
+		    }
 @ENDIFF@@
-                  break;
+		    break;
 
-               case TRIGGERED_ANT :
-                  if( TCB[NTSK].START == 0 ){
+		 case TRIGGERED_ANT :
+		    if( TCB[NTSK].START == 0 ){
 @IFF INIT_OFCHECK@@
-                     if (TASK_OVERRUN_CNT[NTSK] >= OVERFLOW_LIMIT)
-                     {
-                        errMsgBuf[0] = ERROR_EV;
-                        errMsgBuf[1] = TASK_OVERRUN;
-                        errMsgBuf[2] = NTSK;
-                        errMsgBuf[3] = 1;
-                        msgQSend(qid_ovflow1, &errMsgBuf[0], sizeof (errMsgBuf),
-                                 NO_WAIT, MSG_PRI_URGENT);
-                        goto MANAGER_LOOP;
-                     }
-                     else TASK_OVERRUN_CNT[NTSK]++;
+			if (TASK_OVERRUN_CNT[NTSK] >= OVERFLOW_LIMIT)
+			{
+			   errMsgBuf[0] = ERROR_EV;
+			   errMsgBuf[1] = TASK_OVERRUN;
+			   errMsgBuf[2] = NTSK;
+			   errMsgBuf[3] = 1;
+			   msgQSend(qid_ovflow1, &errMsgBuf[0], sizeof (errMsgBuf),
+				     NO_WAIT, MSG_PRI_URGENT);
+			   goto MANAGER_LOOP;
+			}
+			else TASK_OVERRUN_CNT[NTSK]++;
 @ELSE@@
-                   if(ERROR_FLAG[NTSK] != OK || !SUBSYS_INIT[NTSK]) {
-                     SA_Error(NTSK, ERROR_EV, TASK_OVERRUN, 1);
-                     goto MANAGER_LOOP;
-                   }
+		     if(ERROR_FLAG[NTSK] != OK || !SUBSYS_INIT[NTSK]) {
+			SA_Error(NTSK, ERROR_EV, TASK_OVERRUN, 1);
+			goto MANAGER_LOOP;
+		     }
 @ENDIFF@@
-                  }
-                  break;
+		    }
+		    break;
 
-               case TRIGGERED_ATR :
-                  if( TCB[NTSK].OUTPUT > 0 ){
-                     TCB[NTSK].OUTPUT = TCB[NTSK].OUTPUT - 1;
+		 case TRIGGERED_ATR :
+		    if( TCB[NTSK].OUTPUT > 0 ){
+			TCB[NTSK].OUTPUT = TCB[NTSK].OUTPUT - 1;
 @IFF INIT_OFCHECK@@
-                  } else {
-                     if (TASK_OVERRUN_CNT[NTSK] >= OVERFLOW_LIMIT)
-                     {
-                        errMsgBuf[0] = ERROR_EV;
-                        errMsgBuf[1] = TASK_OVERRUN;
-                        errMsgBuf[2] = NTSK;
-                        errMsgBuf[3] = 1;
-                        msgQSend(qid_ovflow1, &errMsgBuf[0], sizeof (errMsgBuf),
-                                 NO_WAIT, MSG_PRI_URGENT);
-                        goto MANAGER_LOOP;
-                     }
-                     else TASK_OVERRUN_CNT[NTSK]++;
-                  }
+		    } else {
+			if (TASK_OVERRUN_CNT[NTSK] >= OVERFLOW_LIMIT)
+			{
+			   errMsgBuf[0] = ERROR_EV;
+			   errMsgBuf[1] = TASK_OVERRUN;
+			   errMsgBuf[2] = NTSK;
+			   errMsgBuf[3] = 1;
+			   msgQSend(qid_ovflow1, &errMsgBuf[0], sizeof (errMsgBuf),
+				     NO_WAIT, MSG_PRI_URGENT);
+			   goto MANAGER_LOOP;
+			}
+			else TASK_OVERRUN_CNT[NTSK]++;
+		    }
 @ELSE@@
-                  }else if(ERROR_FLAG[NTSK] != OK || !SUBSYS_INIT[NTSK]) {
-                     SA_Error(NTSK, ERROR_EV, TASK_OVERRUN, 1);
-                     goto MANAGER_LOOP;
-                  }
+		    }else if(ERROR_FLAG[NTSK] != OK || !SUBSYS_INIT[NTSK]) {
+			SA_Error(NTSK, ERROR_EV, TASK_OVERRUN, 1);
+			goto MANAGER_LOOP;
+		    }
 @ENDIFF@@
-                  break;
+		    break;
 
-               case TRIGGERED_SAF :
-                  break;
+		 case TRIGGERED_SAF :
+		    break;
 
-               default :
-                  break;
-            }
-            break;
+		 default :
+		    break;
+	     }
+	     break;
 
-         case BLOCKED :
+	  case BLOCKED :
 
-            switch( TCB[NTSK].TASK_TYPE ){
-               case ENABLED_PERIODIC :
-                  if( TCB[NTSK].ENABLED ){
-                     Queue_Task(NTSK);
-                     Update_Outputs(NTSK);
-                     TCB[NTSK].START  = TCB[NTSK].SCHEDULING_COUNT;
-                  }
-                  break;
+	     switch( TCB[NTSK].TASK_TYPE ){
+		 case ENABLED_PERIODIC :
+		    if( TCB[NTSK].ENABLED ){
+			Queue_Task(NTSK);
+			Update_Outputs(NTSK);
+			TCB[NTSK].START  = TCB[NTSK].SCHEDULING_COUNT;
+		    }
+		    break;
 
-               case TRIGGERED_ATR :
-                  if( TCB[NTSK].START == 0 ){
-                     Queue_Task(NTSK);
-                     TCB[NTSK].OUTPUT = TCB[NTSK].OUTPUT_COUNT;
-                     TCB[NTSK].START  = 1;
-                  }
-                  break;
+		 case TRIGGERED_ATR :
+		    if( TCB[NTSK].START == 0 ){
+			Queue_Task(NTSK);
+			TCB[NTSK].OUTPUT = TCB[NTSK].OUTPUT_COUNT;
+			TCB[NTSK].START  = 1;
+		    }
+		    break;
 
-               case TRIGGERED_SAF :
-                  if( TCB[NTSK].START == 0 ){
-                     Queue_Task(NTSK);
-                     TCB[NTSK].OUTPUT = 0;
-                     TCB[NTSK].START  = 1;
-                  }
-                  break;
+		 case TRIGGERED_SAF :
+		    if( TCB[NTSK].START == 0 ){
+			Queue_Task(NTSK);
+			TCB[NTSK].OUTPUT = 0;
+			TCB[NTSK].START  = 1;
+		    }
+		    break;
 
-               default :
-                  break;
-            }
-          default :
-               break;
+		 default :
+		    break;
+	     }
+	   default :
+		 break;
       }
     }
    }
@@ -1076,8 +1076,8 @@ INNER_LOOP:
 
   for(I=TIME_EV; I<NUM_EVENTS; I++) {
      if(manager_current_events[I]) {
-       APPLICATION_response_state[I] = PREEMPTABLE;
-       manager_current_events[I] = FALSE;
+	APPLICATION_response_state[I] = PREEMPTABLE;
+	manager_current_events[I] = FALSE;
      }
   }
 
@@ -1086,9 +1086,9 @@ INNER_LOOP:
    for( I=READY_COUNT; I>=1; I-- ){
       NTSK   = READY_QUEUE[I];
       switch (NTSK){
-         @sample_hold()@
-         default:
-           break;
+	  @sample_hold()@
+	  default:
+	    break;
       }
 @IFF timerequired_b@@
       SUBSYS_TIME[NTSK] = ELAPSED_TIME;
@@ -1114,12 +1114,12 @@ INNER_LOOP:
      switch(NTSK){
 @LOOPP i=1, i le ntasks_i, i=i plus 1@@
 @SCOPE SUBSYSTEM i@@
-         case @i@ :
-                if ((semGive(semid_sub@i@)) == ERROR)
-                    SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
-                break;
+	  case @i@ :
+		  if ((semGive(semid_sub@i@)) == ERROR)
+		      SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+		  break;
 @ENDLOOPP@@
-         default :  break;
+	  default :  break;
      }
    } while(--DISPATCH_COUNT);
   }
@@ -1135,9 +1135,9 @@ INNER_LOOP:
  *--------------------*/
 
 void APPLICATION_Get_Params (RT_FLOAT *TimerInterruptFrequency,
-       RT_FLOAT **ExternalInputs,  RT_INTEGER *NumIn,
-       RT_FLOAT **ExternalOutputs, RT_INTEGER *NumOut,
-       unsigned long *max_taskprio,  unsigned long *min_taskprio)
+	RT_FLOAT **ExternalInputs,  RT_INTEGER *NumIn,
+	RT_FLOAT **ExternalOutputs, RT_INTEGER *NumOut,
+	unsigned long *max_taskprio,  unsigned long *min_taskprio)
 /*
   Get the Real-Time parameters for this generated code application
   including the application timer frequency.
@@ -1162,18 +1162,18 @@ RT_INTEGER APPLICATION_Start (void)
 ***/
 
     if ((qid_ovflow1 = msgQCreate(NUM_EVENTS, 16, MSG_Q_PRIORITY))
-                           == NULL)  SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+			      == NULL)  SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
     if ((tid_ovflow1 = taskSpawn("OF01", MANAGER_PRIORITY - 1, tsOptions, 4096,
-               (void *)event_ovflow_handler, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
-                           == ERROR) SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+		 (void *)event_ovflow_handler, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+			      == ERROR) SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 
     /*** Create and initialize Manager task and its queue ***/
 
     if ((semid_mgr1 = semCCreate(SEM_Q_PRIORITY, 0))
-                           == NULL)  SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+			      == NULL)  SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
     if ((tid_mgr1 = taskSpawn("AM01", MANAGER_PRIORITY, tsOptions, 4096,
-               (void *)APPLICATION_Manager, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
-                           == ERROR) SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+		 (void *)APPLICATION_Manager, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+			      == ERROR) SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 
     /* Initialize Application data structures */
 
@@ -1191,13 +1191,13 @@ RT_INTEGER APPLICATION_Start (void)
 @LOOPP i=1, i le ntasks_i, i=i plus 1@@
 @SCOPE SUBSYSTEM i@@
     if ((semid_sub@i@ = semBCreate(SEM_Q_PRIORITY, SEM_EMPTY))
-                           == NULL)  SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+			      == NULL)  SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
     if ((tid_sub@i@ = taskSpawn("SS@IFF i le 9 @0@ENDIFF@@i@", TASK_PRIORITY[@i@], tsOptions, 16384,
-                 (void *)@procedurename_s@_task, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
-                           == ERROR) SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+		   (void *)@procedurename_s@_task, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+			      == ERROR) SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 
     if ((semGive(semid_sub@i@)) == ERROR)
-       SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 @ENDLOOPP@@
 
     /******* Create and start Interrupt tasks for this PE. *******/
@@ -1205,8 +1205,8 @@ RT_INTEGER APPLICATION_Start (void)
 @SCOPE PROCEDURE j@@
 @k = j minus nstandard_procs_i plus 1@@
     if ((tid_int@j@ = taskSpawn("IT@IFF i le 9 @0@ENDIFF@@i@", TASK_PRIORITY[NTASKS+@k@], tsOptions, 4096,
-                 (void *)@procedurename_s@_task, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
-                           == ERROR) SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+		   (void *)@procedurename_s@_task, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+			      == ERROR) SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 @ENDLOOPP@@
 
 @IFF nbackgnd_procs_i@@
@@ -1215,8 +1215,8 @@ RT_INTEGER APPLICATION_Start (void)
 @SCOPE PROCEDURE j@@
 @k = j minus nstandard_procs_i plus 1@@
     if ((tid_bgd@j@ = taskSpawn("BG@IFF j le 9 @0@ENDIFF@@j@", TASK_PRIORITY[NTASKS+@k@], tsOptions, 4096,
-                 (void *)@procedurename_s@_task, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
-                           == ERROR) SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+		   (void *)@procedurename_s@_task, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+			      == ERROR) SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 @ENDLOOPP@@
 @ENDIFF@@
 
@@ -1224,7 +1224,7 @@ RT_INTEGER APPLICATION_Start (void)
 @IFF nbackgnd_procs_i@@
 @LOOPP i=0, i lt nbackgnd_procs_i, i=i plus 1@@j = backgnd_procs_li[i]@@
     if ((taskResume(tid_bgd@j@)) == ERROR)
-           SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	    SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 @ENDLOOPP@@
 @ENDIFF@@
 
@@ -1264,7 +1264,7 @@ RT_INTEGER APPLICATION_Shut_Down(void)
 @LOOPP i=0, i lt nbackgnd_procs_i, i=i plus 1@@j = backgnd_procs_li[i]@@
     delete_tid_bgd@j@ = 1;
     if ((taskDelete(tid_bgd@j@)) == ERROR)
-             SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	      SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 @ENDLOOPP@@
 @ENDIFF@@
 
@@ -1273,23 +1273,23 @@ RT_INTEGER APPLICATION_Shut_Down(void)
 @LOOPP i=ntasks_i, i gt 0, i=i minus 1@@
     delete_tid_sub@i@ = 1;
     if ((taskDelete(tid_sub@i@)) == ERROR)
-             SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	      SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
     if ((semDelete(semid_sub@i@)) == ERROR)
-             SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	      SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 @ENDLOOPP@@
 
     delete_tid_mgr1 = 1;
     if ((taskDelete(tid_mgr1)) == ERROR)
-             SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	      SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
     if ((semDelete(semid_mgr1)) == ERROR)
-             SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	      SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 
 
     /******* Delete Interrupt tasks *******/
 @LOOPP i=0, i lt ninterrupt_procs_i, i=i plus 1@@j = interrupt_procs_li[i]@@
     delete_tid_int@j@ = 1;
     if ((taskDelete(tid_int@j@)) == ERROR)
-             SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	      SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 @ENDLOOPP@@
 
 
@@ -1299,10 +1299,10 @@ RT_INTEGER APPLICATION_Shut_Down(void)
     /* Delete the overflow task last coz' in case of critical errors */
     /* APPLICATION_Shut_Down happens from the context of overflow task */
     if ((msgQDelete(qid_ovflow1)) == ERROR)
-             SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	      SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
     delete_tid_ovflow1 = 1;
     if ((taskDelete(tid_ovflow1)) == ERROR)
-             SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	      SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 
     return (OK);
 }
@@ -1326,11 +1326,11 @@ int MXmain (void)
 
 
    APPLICATION_Get_Params(&timerInterruptFreq, &externalInputs,
-                          &numIn, &externalOutputs, &numOut,
-                          &highestTaskPrio, &lowestTaskPrio);
+			     &numIn, &externalOutputs, &numOut,
+			     &highestTaskPrio, &lowestTaskPrio);
 
    Implementation_Initialize(externalInputs, numIn, externalOutputs,
-                             numOut, timerInterruptFreq, auxClkISR);
+				 numOut, timerInterruptFreq, auxClkISR);
 
    if ((errorSemId = semBCreate(SEM_Q_FIFO, SEM_EMPTY)) == NULL)
       SA_Error(taskIdSelf(), VXWORKS_ERROR, errno, 1);
@@ -1358,7 +1358,7 @@ void Background_task(unsigned long delete_tid_Background);
 @IFF ntasks_i le 0@@RETURN 0@@ENDIFF@@
 @FILECLOSE@@
 @FILEOPEN("stdout","append")@@
-             Generating subsystems declarations ...
+	      Generating subsystems declarations ...
 @FILECLOSE@@
 @LOOPP i=1, i le ntasks_i, i=i plus 1@@
 @SCOPE SUBSYSTEM i@@
@@ -1394,7 +1394,7 @@ extern void @procedurename_s@();
 @IFF ntasks_i le 0@@RETURN 0@@ENDIFF@@
 @FILECLOSE@@
 @FILEOPEN("stdout","append")@@
-             Generating subsystems definitions ...
+	      Generating subsystems definitions ...
 @FILECLOSE@@
 /******** Tasks code ********/
 @LOOPP i=1, i le ntasks_i, i=i plus 1@@
@@ -1414,8 +1414,8 @@ extern void @procedurename_s@();
 #endif
 @define_subsystem()@
       if(iinfo[1]) {
-         SUBSYS_INIT[@i@] = FALSE;
-         iinfo[1] = 0;
+	  SUBSYS_INIT[@i@] = FALSE;
+	  iinfo[1] = 0;
       }
       return;
 EXEC_ERROR: ERROR_FLAG[@i@] = iinfo[0];
@@ -1444,175 +1444,175 @@ void @procedurename_s@_task(unsigned long delete_tid_sub@i@)
 @ENDIFF@@
 
     if(delete_tid_sub@i@) {
-           /* Clean Up */
+	    /* Clean Up */
       taskDelete(tid_sub@i@);
     }
     else { /* Initialize */
-       SUBSYS_PREINIT[@i@] = TRUE;
-       if ((semTake(semid_sub@i@, WAIT_FOREVER)) == ERROR)
-                SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	SUBSYS_PREINIT[@i@] = TRUE;
+	if ((semTake(semid_sub@i@, WAIT_FOREVER)) == ERROR)
+		  SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 
 @IFF continuous_b@@
 @IFF i eq continuous_id_i@@
-       @IFF utype_b@U = &@utype_obj_s@;@ENDIFF@
+	@IFF utype_b@U = &@utype_obj_s@;@ENDIFF@
 @IFF initop_b@@
 @IFF doublebuf_b@@
-       @IFF ytype_b@Y = ss@i@_outw;@ENDIFF@
+	@IFF ytype_b@Y = ss@i@_outw;@ENDIFF@
 @ELSE@@
-       @IFF ytype_b@Y = &@ytype_obj_s@;@ENDIFF@
+	@IFF ytype_b@Y = &@ytype_obj_s@;@ENDIFF@
 @ENDIFF@@
 @ENDIFF@@
-       @IFF stype_b@S = @stype_obj_s@;@ENDIFF@
-       @IFF itype_b@I = &@itype_obj_s@;@ENDIFF@
-       RESETC = FALSE;
-       @procedurename_s@_init(@IFF initop_b and ytype_b@Y@ENDIFF@@
+	@IFF stype_b@S = @stype_obj_s@;@ENDIFF@
+	@IFF itype_b@I = &@itype_obj_s@;@ENDIFF@
+	RESETC = FALSE;
+	@procedurename_s@_init(@IFF initop_b and ytype_b@Y@ENDIFF@@
 @IFF stype_b@@IFF (initop_b and ytype_b)@,@ENDIFF@S@ENDIFF@@
 @IFF itype_b@@IFF (initop_b and ytype_b) or stype_b@,@ENDIFF@I@ENDIFF@);
 @ELSE@@
-       @IFF utype_b@U = &@utype_obj_s@;@ENDIFF@
+	@IFF utype_b@U = &@utype_obj_s@;@ENDIFF@
 @IFF doublebuf_b@@
-       @IFF ytype_b@Y = ss@i@_outw;@ENDIFF@
+	@IFF ytype_b@Y = ss@i@_outw;@ENDIFF@
 @ELSE@@
-       @IFF ytype_b@Y = &@ytype_obj_s@;@ENDIFF@
+	@IFF ytype_b@Y = &@ytype_obj_s@;@ENDIFF@
 @ENDIFF@@
-       @procedurename_s@(@IFF utype_b@U@ENDIFF@@IFF ytype_b@@IFF utype_b@,@ENDIFF@Y@ENDIFF@);
+	@procedurename_s@(@IFF utype_b@U@ENDIFF@@IFF ytype_b@@IFF utype_b@,@ENDIFF@Y@ENDIFF@);
 @ENDIFF@@
 @ELSE@@
-       @IFF utype_b@U = &@utype_obj_s@;@ENDIFF@
+	@IFF utype_b@U = &@utype_obj_s@;@ENDIFF@
 @IFF doublebuf_b@@
-       @IFF ytype_b@Y = ss@i@_outw;@ENDIFF@
+	@IFF ytype_b@Y = ss@i@_outw;@ENDIFF@
 @ELSE@@
-       @IFF ytype_b@Y = &@ytype_obj_s@;@ENDIFF@
+	@IFF ytype_b@Y = &@ytype_obj_s@;@ENDIFF@
 @ENDIFF@@
-       @procedurename_s@(@IFF utype_b@U@ENDIFF@@IFF ytype_b@@IFF utype_b@,@ENDIFF@Y@ENDIFF@);
+	@procedurename_s@(@IFF utype_b@U@ENDIFF@@IFF ytype_b@@IFF utype_b@,@ENDIFF@Y@ENDIFF@);
 @ENDIFF@@/ continuous_b?
 
-       if( ERROR_FLAG[@i@] == OK ){
-           TASK_OVERRUN_CNT[@i@] = 0;
-           TASK_STATE[@i@] =  IDLE;
-       }
-       else {
-           errMsgBuf[0] = ERROR_EV;      /* type of event */
-           errMsgBuf[1] = ERROR_FLAG[@i@]; /* type of error */
-           errMsgBuf[2] = @i@;           /* task id */
-           errMsgBuf[3] = 1;             /* processor number */
-           ERROR_FLAG[@i@] = OK;
-           if ((msgQSend(qid_ovflow1, errMsgBuf, sizeof (errMsgBuf), NO_WAIT, MSG_PRI_URGENT)) == ERROR)
-                    SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
-       }
+	if( ERROR_FLAG[@i@] == OK ){
+	    TASK_OVERRUN_CNT[@i@] = 0;
+	    TASK_STATE[@i@] =  IDLE;
+	}
+	else {
+	    errMsgBuf[0] = ERROR_EV;      /* type of event */
+	    errMsgBuf[1] = ERROR_FLAG[@i@]; /* type of error */
+	    errMsgBuf[2] = @i@;           /* task id */
+	    errMsgBuf[3] = 1;             /* processor number */
+	    ERROR_FLAG[@i@] = OK;
+	    if ((msgQSend(qid_ovflow1, errMsgBuf, sizeof (errMsgBuf), NO_WAIT, MSG_PRI_URGENT)) == ERROR)
+		      SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	}
     }
     for(;;) {
-       if ((semTake(semid_sub@i@, WAIT_FOREVER)) == ERROR)
-                SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	if ((semTake(semid_sub@i@, WAIT_FOREVER)) == ERROR)
+		  SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
 
 @IFF continuous_b@@
 @IFF i eq continuous_id_i@@
-       @IFF utype_b@U = &@utype_obj_s@;@ENDIFF@
+	@IFF utype_b@U = &@utype_obj_s@;@ENDIFF@
 @IFF doublebuf_b@@
-       @IFF ytype_b@Y = ss@i@_outw;@ENDIFF@
+	@IFF ytype_b@Y = ss@i@_outw;@ENDIFF@
 @ELSE@@
-       @IFF ytype_b@Y = &@ytype_obj_s@;@ENDIFF@
+	@IFF ytype_b@Y = &@ytype_obj_s@;@ENDIFF@
 @ENDIFF@@
-       @IFF stype_b@S = @stype_obj_s@;@ENDIFF@
-       @IFF itype_b@I = &@itype_obj_s@;@ENDIFF@
+	@IFF stype_b@S = @stype_obj_s@;@ENDIFF@
+	@IFF itype_b@I = &@itype_obj_s@;@ENDIFF@
 @IFF stype_b@@/ should generate update?
-       if( TIME_COUNT == 0) {
-           ss@i@_rinfo[0] = (RT_FLOAT)SUBSYS_TIME[@i@];
-           @procedurename_s@(@IFF utype_b@U@ENDIFF@@
+	if( TIME_COUNT == 0) {
+	    ss@i@_rinfo[0] = (RT_FLOAT)SUBSYS_TIME[@i@];
+	    @procedurename_s@(@IFF utype_b@U@ENDIFF@@
 @IFF ytype_b@@IFF utype_b@,@ENDIFF@Y@ENDIFF@@
 @IFF stype_b@@IFF utype_b or ytype_b@,@ENDIFF@S@ENDIFF@@
 @IFF itype_b@@IFF utype_b or ytype_b or stype_b@,@ENDIFF@I@ENDIFF@);
-       }
+	}
 @IFF integrator_i eq 0 and numxs_i neq 0@@
-       usrintegrator(@numxs_i@,
-                     (RT_FLOAT *)(&@stype_obj_s@[0]),
-                     (RT_FLOAT *)(&@stype_obj_s@[1]),
-                     (RT_FLOAT )SUBSYS_TIME[@i@],
-                     @subsys_sampletime_r@);
+	usrintegrator(@numxs_i@,
+			(RT_FLOAT *)(&@stype_obj_s@[0]),
+			(RT_FLOAT *)(&@stype_obj_s@[1]),
+			(RT_FLOAT )SUBSYS_TIME[@i@],
+			@subsys_sampletime_r@);
 @ENDIFF@@
 @IFF integrator_i eq 1 and numxs_i neq 0@@
-       rungekutta1(@numxs_i@,
-                     (RT_FLOAT *)(&@stype_obj_s@[0]),
-                     (RT_FLOAT *)(&@stype_obj_s@[1]),
-                     (RT_FLOAT )SUBSYS_TIME[@i@],
-                     @subsys_sampletime_r@);
+	rungekutta1(@numxs_i@,
+			(RT_FLOAT *)(&@stype_obj_s@[0]),
+			(RT_FLOAT *)(&@stype_obj_s@[1]),
+			(RT_FLOAT )SUBSYS_TIME[@i@],
+			@subsys_sampletime_r@);
 @ENDIFF@@
 @IFF integrator_i eq 2 and numxs_i neq 0@@
-       rungekutta2(@numxs_i@,
-                     (RT_FLOAT *)(&@stype_obj_s@[0]),
-                     (RT_FLOAT *)(&@stype_obj_s@[1]),
-                     (RT_FLOAT )SUBSYS_TIME[@i@],
-                     @subsys_sampletime_r@);
+	rungekutta2(@numxs_i@,
+			(RT_FLOAT *)(&@stype_obj_s@[0]),
+			(RT_FLOAT *)(&@stype_obj_s@[1]),
+			(RT_FLOAT )SUBSYS_TIME[@i@],
+			@subsys_sampletime_r@);
 @ENDIFF@@
 @IFF integrator_i eq 3 and numxs_i neq 0@@
-       rungekutta4(@numxs_i@,
-                     (RT_FLOAT *)(&@stype_obj_s@[0]),
-                     (RT_FLOAT *)(&@stype_obj_s@[1]),
-                     (RT_FLOAT )SUBSYS_TIME[@i@],
-                     @subsys_sampletime_r@);
+	rungekutta4(@numxs_i@,
+			(RT_FLOAT *)(&@stype_obj_s@[0]),
+			(RT_FLOAT *)(&@stype_obj_s@[1]),
+			(RT_FLOAT )SUBSYS_TIME[@i@],
+			@subsys_sampletime_r@);
 @ENDIFF@@
 @IFF integrator_i eq 4 and numxs_i neq 0@@
-       kuttamerson(@numxs_i@,
-                     (RT_FLOAT *)(&@stype_obj_s@[0]),
-                     (RT_FLOAT *)(&@stype_obj_s@[1]),
-                     (RT_FLOAT )SUBSYS_TIME[@i@],
-                     @subsys_sampletime_r@);
+	kuttamerson(@numxs_i@,
+			(RT_FLOAT *)(&@stype_obj_s@[0]),
+			(RT_FLOAT *)(&@stype_obj_s@[1]),
+			(RT_FLOAT )SUBSYS_TIME[@i@],
+			@subsys_sampletime_r@);
 @ENDIFF@@
-       ss@i@_iinfo[1] = 0;
-       ss@i@_iinfo[2] = 0;
-       ss@i@_iinfo[3] = 1;
-       ss@i@_iinfo[4] = 7;
-       ss@i@_rinfo[0] = (RT_FLOAT )SUBSYS_TIME[@i@];
-       @procedurename_s@(@IFF utype_b@U@ENDIFF@@
+	ss@i@_iinfo[1] = 0;
+	ss@i@_iinfo[2] = 0;
+	ss@i@_iinfo[3] = 1;
+	ss@i@_iinfo[4] = 7;
+	ss@i@_rinfo[0] = (RT_FLOAT )SUBSYS_TIME[@i@];
+	@procedurename_s@(@IFF utype_b@U@ENDIFF@@
 @IFF ytype_b@@IFF utype_b@,@ENDIFF@Y@ENDIFF@@
 @IFF stype_b@@IFF utype_b or ytype_b@,@ENDIFF@S@ENDIFF@@
 @IFF itype_b@@IFF utype_b or ytype_b or stype_b@,@ENDIFF@I@ENDIFF@);
 @IFF reset_b@@/ should generate reset? Autocode doesnot support this
-       if( RESETC ) {
-           RESETC = 0;
-       }
+	if( RESETC ) {
+	    RESETC = 0;
+	}
 @ENDIFF@@/ should generate reset?
 @ELSE@@/ should generate update?
 @IFF not stype_b@@/ if not generate update also?
-       ss@i@_rinfo[0] = (RT_FLOAT )SUBSYS_TIME[@i@];
-       @procedurename_s@(@IFF utype_b@U@ENDIFF@@
+	ss@i@_rinfo[0] = (RT_FLOAT )SUBSYS_TIME[@i@];
+	@procedurename_s@(@IFF utype_b@U@ENDIFF@@
 @IFF ytype_b@@IFF utype_b@,@ENDIFF@Y@ENDIFF@@
 @IFF stype_b@@IFF utype_b or ytype_b@,@ENDIFF@S@ENDIFF@@
 @IFF itype_b@@IFF utype_b or ytype_b or stype_b@,@ENDIFF@I@ENDIFF@);
 @ENDIFF@@
 @ENDIFF@@
 @ELSE@@
-       @IFF utype_b@U = &@utype_obj_s@;@ENDIFF@
+	@IFF utype_b@U = &@utype_obj_s@;@ENDIFF@
 @IFF doublebuf_b@@
-       @IFF ytype_b@Y = ss@i@_outw;@ENDIFF@
+	@IFF ytype_b@Y = ss@i@_outw;@ENDIFF@
 @ELSE@@
-       @IFF ytype_b@Y = &@ytype_obj_s@;@ENDIFF@
+	@IFF ytype_b@Y = &@ytype_obj_s@;@ENDIFF@
 @ENDIFF@@
-       @procedurename_s@(@IFF utype_b@U@ENDIFF@@IFF ytype_b@@IFF utype_b@,@ENDIFF@Y@ENDIFF@);
+	@procedurename_s@(@IFF utype_b@U@ENDIFF@@IFF ytype_b@@IFF utype_b@,@ENDIFF@Y@ENDIFF@);
 @ENDIFF@@
 @ELSE@@
-       @IFF utype_b@U = &@utype_obj_s@;@ENDIFF@
+	@IFF utype_b@U = &@utype_obj_s@;@ENDIFF@
 @IFF doublebuf_b@@
-       @IFF ytype_b@Y = ss@i@_outw;@ENDIFF@
+	@IFF ytype_b@Y = ss@i@_outw;@ENDIFF@
 @ELSE@@
-       @IFF ytype_b@Y = &@ytype_obj_s@;@ENDIFF@
+	@IFF ytype_b@Y = &@ytype_obj_s@;@ENDIFF@
 @ENDIFF@@
-       @procedurename_s@(@IFF utype_b@U@ENDIFF@@IFF ytype_b@@IFF utype_b@,@ENDIFF@Y@ENDIFF@);
+	@procedurename_s@(@IFF utype_b@U@ENDIFF@@IFF ytype_b@@IFF utype_b@,@ENDIFF@Y@ENDIFF@);
 @ENDIFF@@/ continuous_b?
 
-       if( ERROR_FLAG[@i@] == OK ){
-           TASK_OVERRUN_CNT[@i@] = 0;
-           TASK_STATE[@i@] =  IDLE;
-       }
-       else {
-           errMsgBuf[0] = ERROR_EV;      /* type of event */
-           errMsgBuf[1] = ERROR_FLAG[@i@]; /* type of error */
-           errMsgBuf[2] = @i@;           /* task id */
-           errMsgBuf[3] = 1;             /* processor number */
-           ERROR_FLAG[@i@] = OK;
-           if ((msgQSend(qid_ovflow1, errMsgBuf, sizeof (errMsgBuf), NO_WAIT, MSG_PRI_URGENT)) == ERROR)
-                    SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
-       }
+	if( ERROR_FLAG[@i@] == OK ){
+	    TASK_OVERRUN_CNT[@i@] = 0;
+	    TASK_STATE[@i@] =  IDLE;
+	}
+	else {
+	    errMsgBuf[0] = ERROR_EV;      /* type of event */
+	    errMsgBuf[1] = ERROR_FLAG[@i@]; /* type of error */
+	    errMsgBuf[2] = @i@;           /* task id */
+	    errMsgBuf[3] = 1;             /* processor number */
+	    ERROR_FLAG[@i@] = OK;
+	    if ((msgQSend(qid_ovflow1, errMsgBuf, sizeof (errMsgBuf), NO_WAIT, MSG_PRI_URGENT)) == ERROR)
+		      SA_Error(taskIdSelf(), errno, VXWORKS_ERROR, 1);
+	}
     }
 
 }
@@ -1630,7 +1630,7 @@ void @procedurename_s@_task(unsigned long delete_tid_sub@i@)
 @IFF nprocedures_i le 0@@RETURN 0@@ENDIFF@@
 @FILECLOSE@@
 @FILEOPEN("stdout","append")@@
-             Generating procedures declarations ...
+	      Generating procedures declarations ...
 @FILECLOSE@@
 /******** Procedures' declarations ********/
 @LOOPP i=0, i lt nprocedures_i, i=i plus 1@@
@@ -1651,7 +1651,7 @@ extern void @procedurename_s@();
 @IFF nprocedures_i le 0@@RETURN 0@@ENDIFF@@
 @FILECLOSE@@
 @FILEOPEN("stdout","append")@@
-             Generating procedures definitions ...
+	      Generating procedures definitions ...
 @FILECLOSE@@
 /* ERROR is a #define in VxWorks                */
 /* UCBs have ERROR as part of the status record */
@@ -1689,7 +1689,7 @@ void @procedurename_s@_task(unsigned long delete_tid_bgd@j@);
 void @procedurename_s@_task(unsigned long delete_tid_int@j@)
 {
     if(delete_tid_int@j@) {
-           /* Clean Up */
+	    /* Clean Up */
       taskDelete(0);
     }
     else { /* Initialize */
@@ -1710,7 +1710,7 @@ void @procedurename_s@_task(unsigned long delete_tid_bgd@j@)
 {
 
     if(delete_tid_bgd@j@) {
-           /* Clean Up */
+	    /* Clean Up */
       taskDelete(0);
     }
     else { /* Initialize */
@@ -1757,7 +1757,7 @@ void @procedurename_s@_task(unsigned long delete_tid_bgd@j@)
 
 @SEGMENT gen_proc_ucbwrapper_defn()@@
 @FILEOPEN("stdout","append")@@
-             Generating UCB-style wrapper(s) around procedure(s) ...
+	      Generating UCB-style wrapper(s) around procedure(s) ...
 @FILECLOSE@@
 @gen_proc_ucb_hook_defn(0)@@
 
@@ -1807,22 +1807,22 @@ INT subsys_i, proc_i, nchildprocs_i, ip@@
 
 @IFF nchildprocs_i eq 1@@
 @FILEOPEN("stdout","append")@@
-             Generating subsystem-style wrapper (subsys_@subsys_i@)
-             around procedure @procedurename_s@ ...
+	      Generating subsystem-style wrapper (subsys_@subsys_i@)
+	      around procedure @procedurename_s@ ...
 @FILECLOSE@@
 @ELSE@@
 @FILEOPEN("stdout","append")@@
-             Generating subsystem-style wrapper (subsys_@subsys_i@) around procedure(s):
+	      Generating subsystem-style wrapper (subsys_@subsys_i@) around procedure(s):
 @FILECLOSE@@
 @LOOPP ip=0, ip lt nchildprocs_i, ip=ip plus 1@@
 @SCOPE PROCEDURE childprocs_li[childprocs_off_li[proc_i] plus ip]@@
 @IFF ip eq nchildprocs_i minus 1@@
 @FILEOPEN("stdout","append")@@
-                 @procedurename_s@() ...
+		   @procedurename_s@() ...
 @FILECLOSE@@
 @ELSE@@
 @FILEOPEN("stdout","append")@@
-                 @procedurename_s@(),
+		   @procedurename_s@(),
 @FILECLOSE@@
 @ENDIFF@@
 @ENDLOOPP@@
@@ -1841,7 +1841,7 @@ INT subsys_i, proc_i, nchildprocs_i, ip@@
 @gen_subsys_defn(subsys_i)@@
 @ELSE@@
 @FILEOPEN("stdout","append")@@
-             Warning: no procedures in subsystem @subsys_i@ ...
+	      Warning: no procedures in subsystem @subsys_i@ ...
 @FILECLOSE@@
 @ENDIFF@@
 @ENDLOOPP@@
@@ -1930,7 +1930,7 @@ static struct shared_varblk_type {
 @/due to the 32 bit hardware requirement.
 @
 @ASSERT(vars_type_li[k] lt fixed_unsigned_byte_type_i or
-        vars_type_li[k] gt fixed_signed_short_type_i)@@
+	 vars_type_li[k] gt fixed_signed_short_type_i)@@
 @
 @
     @vars_typ_pfix_ls[k]@ @vars_ls[k]@@
@@ -2043,14 +2043,14 @@ extern SEM_ID errorSemId;
 
 /* Returns useful application parameters */
 extern void APPLICATION_Get_Params(
-        RT_FLOAT    *timer_frequency,     /* application timer freq.   */
-        RT_FLOAT    **u_ptr,              /* pointer to external in vector */
-        RT_INTEGER  *nu,                  /* number of external inputs     */
-        RT_FLOAT    **y_ptr,              /* pointer to external out vector*/
-        RT_INTEGER  *ny,                  /* number of external outputs    */
-        unsigned long *max_taskprio,      /* Max. priority used */
-        unsigned long *min_taxprio        /* Min. priority used */
-       );
+	 RT_FLOAT    *timer_frequency,     /* application timer freq.   */
+	 RT_FLOAT    **u_ptr,              /* pointer to external in vector */
+	 RT_INTEGER  *nu,                  /* number of external inputs     */
+	 RT_FLOAT    **y_ptr,              /* pointer to external out vector*/
+	 RT_INTEGER  *ny,                  /* number of external outputs    */
+	 unsigned long *max_taskprio,      /* Max. priority used */
+	 unsigned long *min_taxprio        /* Min. priority used */
+	);
 
 /* Initializes the application and returns OK (=0) if no init errors */
 extern RT_INTEGER APPLICATION_Start(void);
@@ -2115,7 +2115,7 @@ void define_shared_mem()
 @SEGMENT gen_objlist() INT ii@@
 @IFF ((nucb_filenames_i plus nsystem_best_charts_i) gt 0)@
 @FILEOPEN("stdout","append")@@
-             Generating list of UCB and BetterState files ...
+	      Generating list of UCB and BetterState files ...
 @FILECLOSE@@
 @FILECLOSE@@
 @FILEOPEN(modelname_s cat ".cmd","new")@@
@@ -2156,7 +2156,7 @@ compile @system_best_filebasenames_ls[ii]@
 @****************************************************************************
 
   The following routine taken directly from c_core.tpl:
-          gen_banner()
+	   gen_banner()
 ****************************************************************************@
 
 @*

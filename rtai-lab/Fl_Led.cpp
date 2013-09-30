@@ -28,34 +28,34 @@ void Fl_Led::draw()
 	int X = 0, Y = 0, W = w(), H = h();
 	if (!(type() == FILL && box() == FL_OVAL_BOX)) {
 		if (damage()&FL_DAMAGE_ALL) draw_box();
-        	box()->inset(X,Y,W,H);
+	 	box()->inset(X,Y,W,H);
 	}
 	Fl_Color fillcolor = selection_color();
 	Fl_Color linecolor = highlight_color();
 	if (!active_r()) {
-        	fillcolor = fl_inactive(fillcolor);
-        	linecolor = fl_inactive(linecolor);
+	 	fillcolor = fl_inactive(fillcolor);
+	 	linecolor = fl_inactive(linecolor);
 	}
 	float angle = (a2-a1)*float((value()-minimum())/(maximum()-minimum())) + a1;
-       	if (damage()&FL_DAMAGE_EXPOSE && box() == FL_OVAL_BOX) {
-       		fl_push_clip(0, 0, w(), h());
-       		parent()->draw_group_box();
-       		fl_pop_clip();
-       	}
-       	fl_color(color());
-       	fl_pie(X, Y, W-1, H-1, float(270-a1), float(angle > a1 ? 360+270-angle : 270-360-angle));
-       	fl_color(fillcolor);
-       	fl_pie(X, Y, W-1, H-1, float(270-angle), float(270-a1));
-       	if (box() == FL_OVAL_BOX) {
-       	    fl_ellipse(X, Y, W-1, H-1);
-       	    fl_color(linecolor); fl_stroke();
-       	}
+		if (damage()&FL_DAMAGE_EXPOSE && box() == FL_OVAL_BOX) {
+			fl_push_clip(0, 0, w(), h());
+			parent()->draw_group_box();
+			fl_pop_clip();
+		}
+		fl_color(color());
+		fl_pie(X, Y, W-1, H-1, float(270-a1), float(angle > a1 ? 360+270-angle : 270-360-angle));
+		fl_color(fillcolor);
+		fl_pie(X, Y, W-1, H-1, float(270-angle), float(270-a1));
+		if (box() == FL_OVAL_BOX) {
+		    fl_ellipse(X, Y, W-1, H-1);
+		    fl_color(linecolor); fl_stroke();
+		}
 	if (focused() && focus_box()!=FL_NO_BOX) {
-        	fl_ellipse(X+2, Y+2, W-5, H-5);
-        	fl_color(linecolor);
-        	fl_line_style(FL_DASH);
-        	fl_stroke();
-        	fl_line_style(0);
+	 	fl_ellipse(X+2, Y+2, W-5, H-5);
+	 	fl_color(linecolor);
+	 	fl_line_style(FL_DASH);
+	 	fl_stroke();
+	 	fl_line_style(0);
 	}
 }
 

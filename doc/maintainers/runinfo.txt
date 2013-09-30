@@ -63,13 +63,13 @@ semi-colons, executed one at a time in sequential order. Five special
 verbs have a special meaning when found at the beginning of an action:
 
       > "push <kernel-module>", causes the given kernel module to be
-        installed. <kernel-module> should be passed without ".o" or
-        ".ko" extension. e.g. "push rt_process" will perform as
+	 installed. <kernel-module> should be passed without ".o" or
+	 ".ko" extension. e.g. "push rt_process" will perform as
 	"insmod rt_process.o"
 
       > "pop [<kernel-module-list>]", causes the given kernel modules
-        to be removed. If no module list is specified, the last pushed
-        module is popped. e.g. "pop rt_process" or "pop" will unload
+	 to be removed. If no module list is specified, the last pushed
+	 module is popped. e.g. "pop rt_process" or "pop" will unload
 	rt_process.o right after it has been loaded using "push".
 
       > "popall" or "flush", causes all modules to be recursively
@@ -77,7 +77,7 @@ verbs have a special meaning when found at the beginning of an action:
 	pushed.
 
       > "klog", causes "tail -f /var/log/messages" to be substituted,
-        so that the kernel message log is displayed in follow mode.
+	 so that the kernel message log is displayed in follow mode.
 
       > "exec" is syntactic sugar silently stripped when found from
       the beginning of the action.

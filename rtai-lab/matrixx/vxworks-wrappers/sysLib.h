@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2001-2006  Paolo Mantegazza  (mantegazza@aero.polimi.it)
-                         Giuseppe Quaranta (quaranta@aero.polimi.it)
+			    Giuseppe Quaranta (quaranta@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

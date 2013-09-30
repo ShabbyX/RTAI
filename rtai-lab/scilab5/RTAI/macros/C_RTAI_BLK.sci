@@ -17,24 +17,24 @@ case 'set' then
  label=graphics.exprs;
   while %t do
     [ok,junction_name,impli,i,o,ci,co,xx,ng,z,rpar,ipar,auto0,depu,dept,lab]=..
-        scicos_getvalue('Set C-Block2 block parameters',..
-        ['simulation function';
+	 scicos_getvalue('Set C-Block2 block parameters',..
+	 ['simulation function';
 	 'is block implicit? (y,n)';
-        'input ports sizes';
-        'output ports sizes';
-        'input event ports sizes';
-        'output events ports sizes';
-        'initial continuous state';
+	 'input ports sizes';
+	 'output ports sizes';
+	 'input event ports sizes';
+	 'output events ports sizes';
+	 'initial continuous state';
 	'number of zero crossing surfaces';
-        'initial discrete state';
-        'Real parameters vector';
-        'Integer parameters vector';      
-        'initial firing vector (<0 for no firing)';
-        'direct feedthrough (y or n)';                                       
-        'time dependence (y or n)'],..
-         list('str',1,'str',1,'vec',-1,'vec',-1,'vec',-1,'vec',-1,..
-         'vec',-1,'vec',1,'vec',-1,'vec',-1,'vec',-1,'vec','sum(%7)',..
-         'str',1,'str',1),label(1))
+	 'initial discrete state';
+	 'Real parameters vector';
+	 'Integer parameters vector';      
+	 'initial firing vector (<0 for no firing)';
+	 'direct feedthrough (y or n)';                                       
+	 'time dependence (y or n)'],..
+	  list('str',1,'str',1,'vec',-1,'vec',-1,'vec',-1,'vec',-1,..
+	  'vec',-1,'vec',1,'vec',-1,'vec',-1,'vec',-1,'vec','sum(%7)',..
+	  'str',1,'str',1),label(1))
     if ~ok then break,end
     label(1)=lab
     funam=stripblanks(junction_name)
@@ -128,10 +128,10 @@ if tt==[] then
   textmp=[
 	  '#include <math.h>';
 	  '#include <stdlib.h>';
-         '#ifndef MODEL'
+	  '#ifndef MODEL'
  	  '#include <scicos/scicos_block.h>';
-          '#endif'
-          '';
+	   '#endif'
+	   '';
 	  'void '+funam+'(scicos_block *block,int flag)';
 	 ];
   ttext=[];
@@ -169,13 +169,13 @@ if tt==[] then
   if nz<>0 then 
     textmp($+1)='  } else if(flag == 2) { /* computation of next discrte state*/ ',
     textmp($+1)='     set_block_error('+funam+"_bloc_states(block,flag));";
-        ttext=[ttext;'int '+funam+"_bloc_states(scicos_block *block,int flag)";
+	 ttext=[ttext;'int '+funam+"_bloc_states(scicos_block *block,int flag)";
 	   "{";
 	   "return 0;}"];
   elseif min(nx,ng+nevin)>0 then 
     textmp($+1)='  } else if(flag == 2) { /* computation of jumped state*/ ',
     textmp($+1)='     set_block_error('+funam+"_bloc_states(block,flag));";
-        ttext=[ttext;'int '+funam+"_bloc_states(scicos_block *block,int flag)";
+	 ttext=[ttext;'int '+funam+"_bloc_states(scicos_block *block,int flag)";
 	   "{";
 	   "return 0;}"];
   end
@@ -183,13 +183,13 @@ if tt==[] then
   if nevout<>0 then 
     textmp($+1)='  } else if(flag == 3) { /* computation of output event times*/',
     textmp($+1)='     set_block_error('+funam+"_bloc_evtout(block,flag));";
-        ttext=[ttext;'int '+funam+"_bloc_evtout(scicos_block *block,int flag)";
+	 ttext=[ttext;'int '+funam+"_bloc_evtout(scicos_block *block,int flag)";
 	   "{";
 	   "return 0;}"];
   end
   textmp($+1)='  } else  if (flag == 5) { /* ending */'
       textmp($+1)='     set_block_error('+funam+"_bloc_ending(block,flag));";
-        ttext=[ttext;'int '+funam+"_bloc_ending(scicos_block *block,int flag)";
+	 ttext=[ttext;'int '+funam+"_bloc_ending(scicos_block *block,int flag)";
 	   "{";
 	   "return 0;}"];
   textmp($+1)='  }'

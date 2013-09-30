@@ -3,10 +3,10 @@ MATRIXx VERSION 720   0 SB 12-JAN-107 17:00
    SYS BUILD  700     pc                     
      1
      1                                                                  
-                                           2           4           0          -1
+						 2           4           0          -1
 ||
 2 4 0 0
-           1         177         137           6
+	    1         177         137           6
 An_ISI_Dummy                             0   1        0        0       0       0
 An_ISI_Dummy                             177         137           6          -1
 An_ISI_Dummy|||000000|000000|DigitalOutput||rtai_comedi_dioout.c|rtai_co

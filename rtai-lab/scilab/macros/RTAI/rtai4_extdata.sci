@@ -19,18 +19,18 @@ function [x,y,typ] = rtai4_extdata(job,arg1,arg2)
       [ok,filename,npts,exprs]=..
       getvalue('Set extdata data block parameters',..
       ['Filename (max 29 chars) :';
-       'Nr. of Points:'],..
+	'Nr. of Points:'],..
       list('str',1,'vec',-1),exprs)
       if ~ok then break,end
       if exists('outport') then out=ones(outport,1), in=[], else out=1, in=[], end
       [model,graphics,ok]=check_io(model,graphics,in,out,1,[])
       if ok then
-        graphics.exprs=exprs;
-        model.rpar=[];
-        model.ipar=[npts;0;length(filename);ascii(filename)'];
-        model.dstate=[];
-        x.graphics=graphics;x.model=model
-        break
+	 graphics.exprs=exprs;
+	 model.rpar=[];
+	 model.ipar=[npts;0;length(filename);ascii(filename)'];
+	 model.dstate=[];
+	 x.graphics=graphics;x.model=model
+	 break
       end
     end
   case 'define' then

@@ -79,13 +79,13 @@ int main(int argc, char *argv[])
 {
 	int kern_latency;
 
-        while (1) {
+	 while (1) {
 		int c;
 		if ((c = getopt_long(argc, argv, "hp:t:", options, NULL)) < 0) {
 			break;
 		}
 		switch(c) {
-			case 'h': { print_usage();         return 0; } 
+			case 'h': { print_usage();         return 0; }
 			case 'p': { period = atoi(optarg);    break; }
 			case 't': { loops  = atoi(optarg);    break; }
 		}

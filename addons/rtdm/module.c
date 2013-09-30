@@ -462,7 +462,7 @@ static inline xnintr_t *xnintr_shirq_next(xnintr_t *prev)
 
 static inline int xnintr_irq_attach(xnintr_t *intr)
 {
-	return xnarch_hook_irq(intr->irq, &xnintr_irq_handler, 
+	return xnarch_hook_irq(intr->irq, &xnintr_irq_handler,
 				                  intr->iack, intr);
 }
 
@@ -503,7 +503,7 @@ static void xnintr_irq_handler(unsigned irq, void *cookie)
 	xnlock_get(&xnirqs[irq].lock);
 
 #ifdef CONFIG_SMP
-	/* 
+	/*
 	 * In SMP case, we have to reload the cookie under the per-IRQ
 	 * lock to avoid racing with xnintr_detach. However, we
 	 * assume that no CPU migration will occur while running the

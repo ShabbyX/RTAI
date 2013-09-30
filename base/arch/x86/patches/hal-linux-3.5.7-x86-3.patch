@@ -60,9 +60,9 @@ index c70684f..deb77ae 100644
 
  config X86_SUMMIT_NUMA
 @@ -677,11 +682,11 @@ config APB_TIMER
-        select DW_APB_TIMER
-        depends on X86_INTEL_MID && SFI
-        help
+	 select DW_APB_TIMER
+	 depends on X86_INTEL_MID && SFI
+	 help
 -         APB timer is the replacement for 8254, HPET on X86 MID platforms.
 -         The APBT provides a stable time base on SMP
 -         systems, unlike the TSC, but it is more expensive to access,
@@ -4139,7 +4139,7 @@ index 735279e..2afee62 100644
  	return 0;
  }
 @@ -93,6 +101,10 @@ void arch_task_cache_init(void)
-         	kmem_cache_create("task_xstate", xstate_size,
+	  	kmem_cache_create("task_xstate", xstate_size,
  				  __alignof__(union thread_xstate),
  				  SLAB_PANIC | SLAB_NOTRACK, NULL);
 +#ifdef CONFIG_IPIPE
@@ -13616,7 +13616,7 @@ index 8c4c070..64ac2e1 100644
 +	depends on !IPIPE_TRACE_MCOUNT
  	default y
  	help
-           This option will modify all the calls to ftrace dynamically
+	    This option will modify all the calls to ftrace dynamically
 diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
 index a008663..a460831 100644
 --- a/kernel/trace/ftrace.c

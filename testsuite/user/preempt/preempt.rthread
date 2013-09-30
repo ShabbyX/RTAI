@@ -48,26 +48,26 @@ static SEM *barrier;
 
 static void *slow_fun(void *arg)
 {
-        int jit;
-        RTIME svt, t;
+	 int jit;
+	 RTIME svt, t;
 
-        if (!(Slow_Task = rt_task_init_schmod(nam2num("SLWTSK"), 3, 0, 0, SCHED_FIFO, 1))) {
-                printf("CANNOT INIT SLOW TASK\n");
-                exit(1);
-        }
+	 if (!(Slow_Task = rt_task_init_schmod(nam2num("SLWTSK"), 3, 0, 0, SCHED_FIFO, 1))) {
+		  printf("CANNOT INIT SLOW TASK\n");
+		  exit(1);
+	 }
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	rt_make_hard_real_time();
 	rt_sem_wait_barrier(barrier);
-        svt = rt_get_time() - SLOWMUL*period;
-        while (!end) {
-                jit = (int) count2nano((t = rt_get_time()) - svt - SLOWMUL*period);
-                svt = t;
-                if (jit) { jit = - jit; }
-                if (jit > slowjit) { slowjit = jit; }
-                rt_busy_sleep(SLOWMUL/2*TICK_TIME);
-                rt_task_wait_period();
-        }
+	 svt = rt_get_time() - SLOWMUL*period;
+	 while (!end) {
+		  jit = (int) count2nano((t = rt_get_time()) - svt - SLOWMUL*period);
+		  svt = t;
+		  if (jit) { jit = - jit; }
+		  if (jit > slowjit) { slowjit = jit; }
+		  rt_busy_sleep(SLOWMUL/2*TICK_TIME);
+		  rt_task_wait_period();
+	 }
 	rt_sem_wait_barrier(barrier);
 	rt_make_soft_real_time();
 	rt_task_delete(Slow_Task);
@@ -76,26 +76,26 @@ static void *slow_fun(void *arg)
 
 static void *fast_fun(void *arg)
 {
-        int jit;
-        RTIME svt, t;
+	 int jit;
+	 RTIME svt, t;
 
-        if (!(Fast_Task = rt_task_init_schmod(nam2num("FSTSK"), 2, 0, 0, SCHED_FIFO, 1))) {
-                printf("CANNOT INIT FAST TASK\n");
-                exit(1);
-        }
+	 if (!(Fast_Task = rt_task_init_schmod(nam2num("FSTSK"), 2, 0, 0, SCHED_FIFO, 1))) {
+		  printf("CANNOT INIT FAST TASK\n");
+		  exit(1);
+	 }
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	rt_make_hard_real_time();
 	rt_sem_wait_barrier(barrier);
-        svt = rt_get_time() - SLOWMUL*period;
-        while (!end) {
-                jit = (int) count2nano((t = rt_get_time()) - svt - FASTMUL*period);
-                svt = t;
-                if (jit) { jit = - jit; }
-                if (jit > fastjit) { fastjit = jit; }
-                rt_busy_sleep(FASTMUL/2*TICK_TIME);
-                rt_task_wait_period();
-        }
+	 svt = rt_get_time() - SLOWMUL*period;
+	 while (!end) {
+		  jit = (int) count2nano((t = rt_get_time()) - svt - FASTMUL*period);
+		  svt = t;
+		  if (jit) { jit = - jit; }
+		  if (jit > fastjit) { fastjit = jit; }
+		  rt_busy_sleep(FASTMUL/2*TICK_TIME);
+		  rt_task_wait_period();
+	 }
 	rt_sem_wait_barrier(barrier);
 	rt_make_soft_real_time();
 	rt_task_delete(Fast_Task);
@@ -113,15 +113,15 @@ static void *latency_fun(void *arg)
 
 	min_diff = 1000000000;
 	max_diff = -1000000000;
-        if (!(Latency_Task = rt_task_init_schmod(nam2num("LTCTSK"), 1, 0, 0, SCHED_FIFO, 1))) {
-                printf("CANNOT INIT LATENCY TASK\n");
-                exit(1);
-        }
+	 if (!(Latency_Task = rt_task_init_schmod(nam2num("LTCTSK"), 1, 0, 0, SCHED_FIFO, 1))) {
+		  printf("CANNOT INIT LATENCY TASK\n");
+		  exit(1);
+	 }
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	rt_make_hard_real_time();
 	rt_sem_wait_barrier(barrier);
-        while (!end) {
+	 while (!end) {
 		average = 0;
 		for (skip = 0; skip < NAVRG; skip++) {
 			expected += period;
@@ -156,16 +156,16 @@ int main(void)
 	RT_TASK *Main_Task;
 	int fifo;
 
-        if (!(Main_Task = rt_task_init_schmod(nam2num("MNTSK"), 0, 0, 0, SCHED_FIFO, 1))) {
-                printf("CANNOT INIT MAIN TASK\n");
-                exit(1);
-        }
+	 if (!(Main_Task = rt_task_init_schmod(nam2num("MNTSK"), 0, 0, 0, SCHED_FIFO, 1))) {
+		  printf("CANNOT INIT MAIN TASK\n");
+		  exit(1);
+	 }
 
 	rtf_create(FIFO, 1000);
-        if ((fifo = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDWR)) < 0) {
-                printf("ERROR OPENING FIFO %s\n",nm);
-                exit(1);
-        }
+	 if ((fifo = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDWR)) < 0) {
+		  printf("ERROR OPENING FIFO %s\n",nm);
+		  exit(1);
+	 }
 	rtf_sem_init(fifo, 0);
 	barrier = rt_sem_init(nam2num("PREMSM"), 4);
 	latency_thread = rt_thread_create(latency_fun, NULL, 10000);

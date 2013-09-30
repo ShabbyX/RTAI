@@ -85,9 +85,9 @@ How to install the support
   /usr/local/matlab)
 
 - copy "rtmain.c"
-       "rtai.tlc"
-       "rtai.tmf"
-       "setup.m"
+	"rtai.tlc"
+	"rtai.tmf"
+	"setup.m"
   and the directory "devices" to $(MATLABROOT)/rtw/c/rtai
 
 - from the Matlab session run "setup"

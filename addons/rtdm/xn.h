@@ -534,10 +534,10 @@ do { \
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 
 #define __WORK_INITIALIZER(n,f,d) {                             \
-        .list   = { &(n).list, &(n).list },                     \
-        .sync = 0,                                              \
-        .routine = (f),                                         \
-        .data = (d),                                            \
+	 .list   = { &(n).list, &(n).list },                     \
+	 .sync = 0,                                              \
+	 .routine = (f),                                         \
+	 .data = (d),                                            \
 }
 
 #define DECLARE_WORK(n,f,d)             struct tq_struct n = __WORK_INITIALIZER(n, f, d)

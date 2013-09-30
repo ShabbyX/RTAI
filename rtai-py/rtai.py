@@ -195,7 +195,7 @@ def rt_sem_init(name, value) :
 	return rt_typed_sem_init(name, value, CNT_SEM);x
 
 def rt_named_sem_init(sem_name, value) :
-        return rt_typed_named_sem_init(sem_name, value, CNT_SEM)
+	 return rt_typed_named_sem_init(sem_name, value, CNT_SEM)
 
 rtai.rt_sem_delete.argtypes = [c_void_p]
 rt_sem_delete = rtai.rt_sem_delete

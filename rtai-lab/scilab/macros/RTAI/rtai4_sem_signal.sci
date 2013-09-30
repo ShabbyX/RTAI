@@ -19,21 +19,21 @@ function [x,y,typ] = rtai4_sem_signal(job,arg1,arg2)
       [ok,name,ipaddr,exprs]=..
       getvalue('Set RTAI sem_signal block parameters',..
       ['Semaphore name:';
-       'IP addr:'],..
+	'IP addr:'],..
       list('str',1,'str',1),exprs)
       if ~ok then break,end
       if exists('inport') then in=ones(inport,1), out=[], else in=1, out=[], end
       [model,graphics,ok]=check_io(model,graphics,in,out,1,[])
       if ok then
-        graphics.exprs=exprs;
-        model.rpar=[];
-        model.ipar=[length(name);
-                    length(ipaddr);
-                    ascii(name)';
-                    ascii(ipaddr)'];
-        model.dstate=[];
-        x.graphics=graphics;x.model=model
-        break
+	 graphics.exprs=exprs;
+	 model.rpar=[];
+	 model.ipar=[length(name);
+		      length(ipaddr);
+		      ascii(name)';
+		      ascii(ipaddr)'];
+	 model.dstate=[];
+	 x.graphics=graphics;x.model=model
+	 break
       end
     end
   case 'define' then
@@ -45,9 +45,9 @@ function [x,y,typ] = rtai4_sem_signal(job,arg1,arg2)
     model.evtin=1
     model.rpar=[]
     model.ipar=[length(name);
-                length(ipaddr);
-                ascii(name)';
-                ascii(ipaddr)']
+		  length(ipaddr);
+		  ascii(name)';
+		  ascii(ipaddr)']
     model.dstate=[];
     model.blocktype='d'
     model.dep_ut=[%t %f]

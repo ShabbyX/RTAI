@@ -1,17 +1,17 @@
 /*
 COPYRIGHT (C) 2002  Lorenzo Dozio (dozio@aero.polimi.it)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
- 
+		      Paolo Mantegazza (mantegazza@aero.polimi.it)
+
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either
 version 2 of the License, or (at your option) any later version.
- 
+
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
- 
+
 You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
@@ -32,15 +32,15 @@ static float mat2[3][2] = { { 1, 1 }, { 2, 2 }, { 3, 3 } };
 #include <errno.h>
 #include "/home/mante/scilab-2.6/routines/machine.h"
 
-/*---------------------------------------- Actuators */ 
-void 
+/*---------------------------------------- Actuators */
+void
 pid_actuator(flag,nport,nevprt,t,u,nu)
      /*
       * To be customized for standalone execution
       * flag  : specifies the action to be done
-      * nport : specifies the  index of the Super Bloc 
-      *         regular input (The input ports are numbered 
-      *         from the top to the bottom ) 
+      * nport : specifies the  index of the Super Bloc
+      *         regular input (The input ports are numbered
+      *         from the top to the bottom )
       * nevprt: indicates if an activation had been received
       *         0 = no activation
       *         1 = activation
@@ -59,17 +59,17 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
   case 1 :/* Port number 1 ----------*/
     /* skeleton to be customized */
     switch (*flag) {
-    case 2 : 
+    case 2 :
       if(*nevprt>0) {/* get the input value */
   	/*for (k=0;k<*nu;k++) {????=u[k];} */
-        th1.h[0] = u[0];
+	 th1.h[0] = u[0];
 	if (++c1 == 2) {
 		th1.t = *t;
 		rt_mbx_send_if(mbx1, &th1, sizeof(th1));
 		rt_mbx_send_if(lmbx1, mat1, sizeof(mat1));
 		c1 = 0;
 	}
-      } 
+      }
       break;
     case 4 : /* actuator initialisation */
       /* do whatever you want to initialize the actuator */
@@ -82,7 +82,7 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
   case 2 :/* Port number 2 ----------*/
     /* skeleton to be customized */
     switch (*flag) {
-    case 2 : 
+    case 2 :
       if(*nevprt>0) {/* get the input value */
   	/*for (k=0;k<*nu;k++) {????=u[k];} */
 	th1.h[1] = u[0];
@@ -92,7 +92,7 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
 		rt_mbx_send_if(lmbx1, mat1, sizeof(mat1));
 		c1 = 0;
 	}
-      } 
+      }
       break;
     case 4 : /* actuator initialisation */
       /* do whatever you want to initialize the actuator */
@@ -124,17 +124,17 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
   case 3 :/* Port number 3 ----------*/
     /* skeleton to be customized */
     switch (*flag) {
-    case 2 : 
+    case 2 :
       if(*nevprt>0) {/* get the input value */
   	/*for (k=0;k<*nu;k++) {????=u[k];} */
-        th2.h[0] = u[0];
+	 th2.h[0] = u[0];
 	if (++c2 == 2) {
 		th2.t = *t;
 		rt_mbx_send_if(mbx2, &th2, sizeof(th2));
 		rt_mbx_send_if(lmbx2, mat2, sizeof(mat2));
 		c2 = 0;
 	}
-      } 
+      }
       break;
     case 4 : /* actuator initialisation */
       /* do whatever you want to initialize the actuator */
@@ -147,7 +147,7 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
   case 4 :/* Port number 4 ----------*/
     /* skeleton to be customized */
     switch (*flag) {
-    case 2 : 
+    case 2 :
       if(*nevprt>0) {/* get the input value */
   	/*for (k=0;k<*nu;k++) {????=u[k];} */
 	th2.h[1] = u[0];
@@ -157,7 +157,7 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
 		rt_mbx_send_if(lmbx2, mat2, sizeof(mat2));
 		c2 = 0;
 	}
-      } 
+      }
       break;
     case 4 : /* actuator initialisation */
       /* do whatever you want to initialize the actuator */
@@ -193,15 +193,15 @@ static int node, port;
 static RT_TASK *task;
 static unsigned long resume_misses;
 
-/*---------------------------------------- Sensor */ 
-void 
+/*---------------------------------------- Sensor */
+void
 pid_sensor(flag,nport,nevprt,t,y,ny)
      /*
       * To be customized for standalone execution
       * flag  : specifies the action to be done
-      * nport : specifies the  index of the Super Bloc 
-      *         regular input (The input ports are numbered 
-      *         from the top to the bottom ) 
+      * nport : specifies the  index of the Super Bloc
+      *         regular input (The input ports are numbered
+      *         from the top to the bottom )
       * nevprt: indicates if an activation had been received
       *         0 = no activation
       *         1 = activation
@@ -219,7 +219,7 @@ pid_sensor(flag,nport,nevprt,t,y,ny)
   case 1 : /* set the ouput value */
     /* for (k=0;k<*ny;k++) {y[k]=????;}*/
 	y[0] = UPAR1[0]*sin(UPAR1[1]**t + UPAR1[2]);
-        if (task) {
+	 if (task) {
 		if (!rt_waiting_return(node, port)) {
 			RT_task_resume(node, -port, task);
 		} else {
@@ -255,8 +255,8 @@ pid_sensor(flag,nport,nevprt,t,y,ny)
     break;
   }
 }
-/*---------------------------------------- callback at user params updates */ 
-void 
+/*---------------------------------------- callback at user params updates */
+void
 pid_upar_update(int index)
 {
 	if (index == 3) {
@@ -274,7 +274,7 @@ pid_upar_update(int index)
 					RT_rpc(node, port, host, msg, (void *)&task);
 				}
 			}
-        	} else {
+	 	} else {
 			task = 0;
 		}
 	}

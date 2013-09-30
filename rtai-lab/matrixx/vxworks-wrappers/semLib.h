@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2001-2006  Paolo Mantegazza  (mantegazza@aero.polimi.it)
-                         Giuseppe Quaranta (quaranta@aero.polimi.it)
+			    Giuseppe Quaranta (quaranta@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -32,12 +32,12 @@ typedef SEM * SEM_ID;
 #define SEM_Q_FIFO      (FIFO_Q)
 #define SEM_Q_PRIORITY  (PRIO_Q)
 
-static inline SEM_ID semBCreate(int options, int initialState) 
+static inline SEM_ID semBCreate(int options, int initialState)
 {
 	return rt_typed_sem_init(rt_get_name(NULL), initialState, BIN_SEM | options);
 }
 
-static inline SEM_ID semCCreate(int options, int initialCount) 
+static inline SEM_ID semCCreate(int options, int initialCount)
 {
 	return rt_typed_sem_init(rt_get_name(NULL), initialCount, CNT_SEM | options);
 }

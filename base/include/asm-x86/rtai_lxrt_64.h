@@ -99,7 +99,7 @@
 #ifdef CONFIG_GENERIC_CLOCKEVENTS
 #define USE_LINUX_TIMER
 #define update_linux_timer(cpuid) \
-        do { hal_pend_uncond(LOCAL_TIMER_IPI, cpuid); } while (0)
+	 do { hal_pend_uncond(LOCAL_TIMER_IPI, cpuid); } while (0)
 #else /* !CONFIG_GENERIC_CLOCKEVENTS */
 #define update_linux_timer(cpuid)
 #endif /* CONFIG_GENERIC_CLOCKEVENTS */
@@ -142,10 +142,10 @@ static inline void _lxrt_context_switch (struct task_struct *prev, struct task_s
 }
 
 #define rt_copy_from_user(a, b, c)  \
-        ( { int ret = __copy_from_user_inatomic(a, b, c); ret; } )
+	 ( { int ret = __copy_from_user_inatomic(a, b, c); ret; } )
 
 #define rt_copy_to_user(a, b, c)  \
-        ( { int ret = __copy_to_user_inatomic(a, b, c); ret; } )
+	 ( { int ret = __copy_to_user_inatomic(a, b, c); ret; } )
 
 #define rt_put_user  __put_user
 #define rt_get_user  __get_user
@@ -153,7 +153,7 @@ static inline void _lxrt_context_switch (struct task_struct *prev, struct task_s
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,19)
 
 #define rt_strncpy_from_user(a, b, c)  \
-        ( { int ret = strncpy_from_user(a, b, c); ret; } )
+	 ( { int ret = strncpy_from_user(a, b, c); ret; } )
 
 #else
 

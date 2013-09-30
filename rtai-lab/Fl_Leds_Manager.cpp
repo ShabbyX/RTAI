@@ -47,7 +47,7 @@ int Fl_Leds_Manager::h()
 
 void Fl_Leds_Manager::show()
 {
-        LWin->show();
+	 LWin->show();
 }
 
 int Fl_Leds_Manager::show_hide(int n)
@@ -68,12 +68,12 @@ void Fl_Leds_Manager::show_hide(int n, bool v)
 
 void Fl_Leds_Manager::hide()
 {
-        LWin->hide();
+	 LWin->hide();
 }
 
 int Fl_Leds_Manager::visible()
 {
-        return LWin->visible();
+	 return LWin->visible();
 }
 
 Fl_String Fl_Leds_Manager::color(int n)

@@ -45,7 +45,7 @@ static void init(scicos_block *block)
 
   int i;
   if (ipar[0]>20)
-       ipar[0]=20;
+	ipar[0]=20;
 
   par_getstr(logName,ipar,1,ipar[0]);
   rtRegisterLogData(logName,nu,mu);
@@ -90,10 +90,10 @@ static void end(scicos_block *block)
 
 void rtlog(scicos_block *block,int flag)
 {
-  if (flag==1){          
+  if (flag==1){
     inout(block);
   }
-  else if (flag==5){     /* termination */ 
+  else if (flag==5){     /* termination */
     end(block);
   }
   else if (flag ==4){    /* initialisation */

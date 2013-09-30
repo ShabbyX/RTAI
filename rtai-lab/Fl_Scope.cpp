@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		      Paolo Mantegazza (mantegazza@aero.polimi.it)
 		    Roberto Bucher (roberto.bucher@supsi.ch)
 		    Peter Brier (pbrier@dds.nl)
 
@@ -217,7 +217,7 @@ float Fl_Scope::time_range()
 
 void Fl_Scope::trigger_mode(int m)
 {
-       Trigger_Mode = m;
+	Trigger_Mode = m;
 }
 int Fl_Scope::trigger_mode(void)
 {
@@ -298,28 +298,28 @@ void Fl_Scope::add_to_trace(int n, float val)
       switch ( Trigger_Mode) {
       case tmRoll: 
 	Trigger = 1;
-        break;
+	 break;
       case tmOverwrite: 
-        Trigger = 1;
-        break;
+	 Trigger = 1;
+	 break;
       case tmTriggerCh1Pos: 
-        Trigger = (Prev_Val <= 0) && (val > 0 );
-        Prev_Val = val;
-        break;
+	 Trigger = (Prev_Val <= 0) && (val > 0 );
+	 Prev_Val = val;
+	 break;
       case tmTriggerCh1Neg: 
-        Trigger = (Prev_Val >= 0) && (val < 0 );
-        Prev_Val = val;
-        break;
+	 Trigger = (Prev_Val >= 0) && (val < 0 );
+	 Prev_Val = val;
+	 break;
       case tmHold:
-        Trigger = 0;
-        break;
+	 Trigger = 0;
+	 break;
       default:
-        Trigger =  !Pause_Flag;
-        break;
+	 Trigger =  !Pause_Flag;
+	 break;
       } // case
       if ( (Trigger && !OneShot_Flag) || // Not a oneshot, just start again when triggered
 	   (Trigger && OneShot_Flag && !Pause_Flag) ) // oneshot: continue if manually retriggered
-        Data_Ptr[0] = Trace_Len-1; 
+	 Data_Ptr[0] = Trace_Len-1; 
     } // if
   } // trigger logic
 
@@ -425,16 +425,16 @@ void Fl_Scope::drawstats()
     if (Trace_Flags[i] & tfStats) {
       s.sum=0; s.sum2=0; s.min=1E99; s.max=-1E99;
       for (int n = Trace_Len - 1; n >= 0; n--) {
-        s.min = (Trace[i][n] < s.min) ? Trace[i][n] : s.min;
-        s.max = (Trace[i][n] > s.max) ? Trace[i][n] : s.max;
-        s.sum += Trace[i][n];
+	 s.min = (Trace[i][n] < s.min) ? Trace[i][n] : s.min;
+	 s.max = (Trace[i][n] > s.max) ? Trace[i][n] : s.max;
+	 s.sum += Trace[i][n];
       }
 
       s.n = Trace_Len;
       s.avg = s.sum / s.n;
       s.pkpk = s.max - s.min;
       for (int n = Trace_Len - 1; n >= 0; n--) 
-        s.sum2 += (Trace[i][n]-s.avg)*(Trace[i][n]-s.avg);
+	 s.sum2 += (Trace[i][n]-s.avg)*(Trace[i][n]-s.avg);
       if (s.sum2 != 0.0) s.rms = sqrt(s.sum2/s.n); else s.rms = 0.0;
      
       s.t1 = t*cursors[0].x;  
@@ -453,13 +453,13 @@ void Fl_Scope::drawstats()
 
       gl_color(FL_GRAY);
       if ( Trace_Flags[i] & tfDrawLabel) { 
-        sprintf(str, " Trace %d", i+1); gl_draw(str, xo,yo); yo -= yh; 
-        glLineWidth(Trace_Width[i]);
-        glColor3f(Trace_rgb[i][0], Trace_rgb[i][1], Trace_rgb[i][2]);
-        glBegin(GL_LINE_STRIP);
-        glVertex2f(xo+5*yh, h()-0.7*yh);
-        glVertex2f(xo+8*yh, h()-0.7*yh);
-        glEnd();
+	 sprintf(str, " Trace %d", i+1); gl_draw(str, xo,yo); yo -= yh; 
+	 glLineWidth(Trace_Width[i]);
+	 glColor3f(Trace_rgb[i][0], Trace_rgb[i][1], Trace_rgb[i][2]);
+	 glBegin(GL_LINE_STRIP);
+	 glVertex2f(xo+5*yh, h()-0.7*yh);
+	 glVertex2f(xo+8*yh, h()-0.7*yh);
+	 glEnd();
       }
       gl_color(FL_GRAY);
       if ( Trace_Flags[i] & tfStatUd ) { sprintf(str, "U/d: %10.4f",ydiv); gl_draw(str, xo,yo); yo -= yh; }
@@ -486,7 +486,7 @@ void Fl_Scope::drawhline(float y, float c[], float lw, GLushort p)
 	  glColor3f(c[0], c[1], c[2]);
 	  glVertex2f(0., y);
 	  glVertex2f(w(),y);
-          glEnd();
+	   glEnd();
 	  glDisable(GL_LINE_STIPPLE);
 }
 
@@ -499,7 +499,7 @@ void Fl_Scope::drawvline(float x, float c[], float lw, GLushort p)
 	  glColor3f(c[0], c[1], c[2]);
 	  glVertex2f(x, 0);
 	  glVertex2f(x, h());
-          glEnd();
+	   glEnd();
 	  glDisable(GL_LINE_STIPPLE);
 }
 
@@ -571,29 +571,29 @@ void Fl_Scope::draw()
 	  float dt =  t * (cursors[1].x - cursors[0].x);
 	  float idt = (dt!=0.0) ? 1/dt : 0;
  	  triggered = (Data_Ptr[0] >= 0) && (Data_Ptr[0] < Trace_Len);
-          if (Trigger_Mode == tmRoll) tmode="roll";
-          else if (Trigger_Mode == tmHold) tmode="hold";
-          else if (triggered) tmode = "trig";
-          else tmode = "wait";
+	   if (Trigger_Mode == tmRoll) tmode="roll";
+	   else if (Trigger_Mode == tmHold) tmode="hold";
+	   else if (triggered) tmode = "trig";
+	   else tmode = "wait";
   	  gl_color(FL_GRAY);
 	  glDisable(GL_DEPTH_TEST);
 	  sprintf(secdiv,"x:%.5Gs/div %s ", Time_Range/NDIV_GRID_X, tmode);
-          sprintf(buf, "t1:%.4Gsec t2:%.4Gsec dt:%.4Gsec 1/dt:%.4GHz", t*cursors[0].x, t*cursors[1].x,  dt, idt);
-          if ( Scope_Flags & sfCursors )  strcat(secdiv, buf);
+	   sprintf(buf, "t1:%.4Gsec t2:%.4Gsec dt:%.4Gsec 1/dt:%.4GHz", t*cursors[0].x, t*cursors[1].x,  dt, idt);
+	   if ( Scope_Flags & sfCursors )  strcat(secdiv, buf);
 
 	  gl_draw(secdiv, 10.0f, 5.0f);
 	  if ( Scope_Flags & sfCursors ) {
 	    if ( Scope_Flags & sfHorBar ) { 
 	      drawhline(h()-cursors[0].y, c, 2., 0xAAAA);
 	      drawhline(h()-cursors[1].y, c, 2, 0xAAAA);
-            }
-            if ( Scope_Flags & sfVerBar ) {
+	     }
+	     if ( Scope_Flags & sfVerBar ) {
 	      drawvline(cursors[0].x, c, 2, 0xAAAA);
 	      drawvline(cursors[1].x, c, 2, 0xAAAA);
 	    }
-            glRectf(cursors[0].x-2, h()-cursors[0].y-2, cursors[0].x+2, h()-cursors[0].y+2); 
+	     glRectf(cursors[0].x-2, h()-cursors[0].y-2, cursors[0].x+2, h()-cursors[0].y+2); 
 	    gl_draw("1", cursors[0].x-10, h()-cursors[0].y-5);
-            glRectf(cursors[1].x-2, h()-cursors[1].y-2, cursors[1].x+2, h()-cursors[1].y+2); 
+	     glRectf(cursors[1].x-2, h()-cursors[1].y-2, cursors[1].x+2, h()-cursors[1].y+2); 
 	    gl_draw("2", cursors[1].x-10., h()-cursors[1].y-5);
 	  }
 	}
@@ -630,7 +630,7 @@ int Fl_Scope::handle(int e)
 		Event = Fl::event_state();
 		return (1); */
 	  }
-        }
+	 }
 	return Fl_Gl_Window::handle(e);
 }
 

@@ -87,9 +87,9 @@ def fun(idx, null) :
 		rt_busy_sleep(100000)
 	rt_sleep(nano2count(10000000))
 	printf("TASK %d EXITED\n", idx)
-        rt_task_delete(task)
-        end -= 1
-        return
+	 rt_task_delete(task)
+	 end -= 1
+	 return
 
 
 
@@ -99,7 +99,7 @@ start_rt_timer(0)
 for i in range(0, NTASKS) :
 	start_new_thread(fun, (i + 1, NULL))
 while end > 0 :
-        rt_sleep(nano2count(1000000000))
+	 rt_sleep(nano2count(1000000000))
 stop_rt_timer()
 rt_rwl_delete(rwl)
 rt_task_delete(task)

@@ -796,7 +796,7 @@ static void kernel_calibrator(struct kern_cal_arg *calpar)
 		rt_task_wait_period();
 		average += rt_get_time() - expected;
 		s += 3.14;
-        }
+	 }
 	calpar->period = average;
 	rt_task_resume(calpar->task);
 }
@@ -823,18 +823,18 @@ void rt_daemonize(void);
 
 struct thread_args { void *fun; long data; int priority; int policy; int cpus_allowed; RT_TASK *task; struct semaphore *sem; };
 
-static void kthread_fun(struct thread_args *args) 
+static void kthread_fun(struct thread_args *args)
 {
 	int linux_rt_priority;
 
 	rt_daemonize();
-        if (args->policy == SCHED_NORMAL) {
-                linux_rt_priority = 0;
-        } else if ((linux_rt_priority = MAX_RT_PRIO - 1 - args->priority) < 1) {
-                linux_rt_priority = 1;
+	 if (args->policy == SCHED_NORMAL) {
+		  linux_rt_priority = 0;
+	 } else if ((linux_rt_priority = MAX_RT_PRIO - 1 - args->priority) < 1) {
+		  linux_rt_priority = 1;
 	}
 	rtai_set_linux_task_priority(current, args->policy, linux_rt_priority);
-	
+
 	if ((args->task = __task_init(rt_get_name(NULL), args->priority, 0, 0, args->cpus_allowed))) {
 		RT_TASK *task = args->task;
 		void (*fun)(long) = args->fun;
@@ -843,7 +843,7 @@ static void kthread_fun(struct thread_args *args)
 		rt_make_hard_real_time(task);
 		fun(data);
 		rt_thread_delete(task);
-	} 
+	}
 	return;
 }
 
@@ -857,7 +857,7 @@ RT_TASK *rt_kthread_create(void *fun, long data, int priority, int linux_policy,
 	msleep(100);
 	return args.task;
 }
-	
+
 #include <linux/kthread.h>
 long rt_thread_create(void *fun, void *args, int stack_size)
 {
@@ -874,21 +874,21 @@ long rt_thread_create(void *fun, void *args, int stack_size)
 	return retval;
 }
 EXPORT_SYMBOL(rt_thread_create);
-	
+
 RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int policy, int cpus_allowed)
 {
 	int linux_rt_priority;
 	RT_TASK *task;
-        if (policy == SCHED_NORMAL) {
-                linux_rt_priority = 0;
-        } else if ((linux_rt_priority = MAX_RT_PRIO - 1 - priority) < 1) {
-                linux_rt_priority = 1;
+	 if (policy == SCHED_NORMAL) {
+		  linux_rt_priority = 0;
+	 } else if ((linux_rt_priority = MAX_RT_PRIO - 1 - priority) < 1) {
+		  linux_rt_priority = 1;
 	}
 	rtai_set_linux_task_priority(current, policy, linux_rt_priority);
 //	rt_daemonize();
 	if ((task = __task_init(name ? name : rt_get_name(NULL), priority, 0, max_msg_size, cpus_allowed))) {
 		rt_make_hard_real_time(task);
-	} 
+	}
 	return task;
 }
 EXPORT_SYMBOL(rt_thread_init);

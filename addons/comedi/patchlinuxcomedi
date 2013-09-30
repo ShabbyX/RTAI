@@ -76,10 +76,10 @@ extern void (*rt_comedi_release_irq)(unsigned int, void *);
 extern void (*rt_comedi_busy_sleep)(unsigned long);
 
 #define comedi_request_irq(irq, handler, flags, name, dev) \
-        ({ rt_comedi_request_irq(irq, (void *)handler, flags, name, dev); })
+	 ({ rt_comedi_request_irq(irq, (void *)handler, flags, name, dev); })
 
 #define comedi_free_irq(irq, dev) \
-        rt_comedi_release_irq(irq, dev)
+	 rt_comedi_release_irq(irq, dev)
 
 #define comedi_udelay(usec) \
 	rt_comedi_busy_sleep(usec)

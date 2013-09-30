@@ -19,11 +19,11 @@
      id="metadata3240">
     <rdf:RDF>
       <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title>Graphic window number 0</dc:title>
+	  rdf:about="">
+	 <dc:format>image/svg+xml</dc:format>
+	 <dc:type
+	    rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+	 <dc:title>Graphic window number 0</dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -58,52 +58,52 @@ CreationDate: Mon Oct 18 08:20:38 2010
   <defs
      id="defs3200">
     <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 20 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="60 : 20 : 1"
-       inkscape:persp3d-origin="30 : 13.333333 : 1"
-       id="perspective3242" />
+	sodipodi:type="inkscape:persp3d"
+	inkscape:vp_x="0 : 20 : 1"
+	inkscape:vp_y="0 : 1000 : 0"
+	inkscape:vp_z="60 : 20 : 1"
+	inkscape:persp3d-origin="30 : 13.333333 : 1"
+	id="perspective3242" />
     <inkscape:perspective
-       id="perspective3470"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
+	id="perspective3470"
+	inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+	inkscape:vp_z="1 : 0.5 : 1"
+	inkscape:vp_y="0 : 1000 : 0"
+	inkscape:vp_x="0 : 0.5 : 1"
+	sodipodi:type="inkscape:persp3d" />
     <inkscape:perspective
-       id="perspective2825"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
+	id="perspective2825"
+	inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+	inkscape:vp_z="1 : 0.5 : 1"
+	inkscape:vp_y="0 : 1000 : 0"
+	inkscape:vp_x="0 : 0.5 : 1"
+	sodipodi:type="inkscape:persp3d" />
   </defs>
   <g
      id="g3204">
     <text
-       style="font-size:11px;font-style:normal;font-weight:normal;fill:#000000;stroke:none;font-family:SansSerif"
-       x="11.522093"
-       y="16.414391"
-       font-size="11"
-       font-style="normal"
-       font-weight="normal"
-       id="text3234">
+	style="font-size:11px;font-style:normal;font-weight:normal;fill:#000000;stroke:none;font-family:SansSerif"
+	x="11.522093"
+	y="16.414391"
+	font-size="11"
+	font-style="normal"
+	font-weight="normal"
+	id="text3234">
       <tspan
-         style="font-size:16px"
-         id="tspan2841">SEM</tspan>
+	  style="font-size:16px"
+	  id="tspan2841">SEM</tspan>
     </text>
     <text
-       style="font-size:11px;font-style:normal;font-weight:normal;fill:#000000;stroke:none;font-family:SansSerif"
-       x="9.3187027"
-       y="33.592354"
-       font-size="11"
-       font-style="normal"
-       font-weight="normal"
-       id="text3234-1">
+	style="font-size:11px;font-style:normal;font-weight:normal;fill:#000000;stroke:none;font-family:SansSerif"
+	x="9.3187027"
+	y="33.592354"
+	font-size="11"
+	font-style="normal"
+	font-weight="normal"
+	id="text3234-1">
       <tspan
-         style="font-size:16px"
-         id="tspan2839">signal</tspan>
+	  style="font-size:16px"
+	  id="tspan2839">signal</tspan>
     </text>
   </g>
 </svg>

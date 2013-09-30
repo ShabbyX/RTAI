@@ -1,4 +1,4 @@
-                      *** EXPLOITING CPUs ISOLATION ***
+			 *** EXPLOITING CPUs ISOLATION ***
 
 Written by:
 Bernhard Pfund <bernhard@chapter7.ch>
@@ -23,23 +23,23 @@ There should be no better explanation of what it is than the following
 excerpts from Linux 'Documentation/kernel-parameters.txt':
 
 isolcpus=       [KNL,SMP] Isolate CPUs from the general scheduler.
-                Format:
-                <cpu number>,...,<cpu number>
-                or
-                <cpu number>-<cpu number>
-                (must be a positive range in ascending order) or a mixture
-                <cpu number>,...,<cpu number>-<cpu number>
-                This option can be used to specify one or more CPUs
-                to isolate from the general SMP balancing and scheduling
-                algorithms. The only way to move a process onto or off
-                an "isolated" CPU is via the CPU affinity syscalls.
-                <cpu number> begins at 0 and the maximum value is
-                "number of CPUs in system - 1".
+		  Format:
+		  <cpu number>,...,<cpu number>
+		  or
+		  <cpu number>-<cpu number>
+		  (must be a positive range in ascending order) or a mixture
+		  <cpu number>,...,<cpu number>-<cpu number>
+		  This option can be used to specify one or more CPUs
+		  to isolate from the general SMP balancing and scheduling
+		  algorithms. The only way to move a process onto or off
+		  an "isolated" CPU is via the CPU affinity syscalls.
+		  <cpu number> begins at 0 and the maximum value is
+		  "number of CPUs in system - 1".
 
-                This option is the preferred way to isolate CPUs. The
-                alternative -- manually setting the CPU mask of all
-                tasks in the system -- can cause problems and
-                suboptimal load balancer performance.
+		  This option is the preferred way to isolate CPUs. The
+		  alternative -- manually setting the CPU mask of all
+		  tasks in the system -- can cause problems and
+		  suboptimal load balancer performance.
 
 Add the following to the above, from the very same source:
 
@@ -174,68 +174,68 @@ NAME=cpuset
 
 reset_cpus()
 {
-         # Shutdown CPU cores 1 - 3
-         $ECHO 0 > $DEVICES/cpu1/online
-         $ECHO 0 > $DEVICES/cpu2/online
-         $ECHO 0 > $DEVICES/cpu3/online
+	  # Shutdown CPU cores 1 - 3
+	  $ECHO 0 > $DEVICES/cpu1/online
+	  $ECHO 0 > $DEVICES/cpu2/online
+	  $ECHO 0 > $DEVICES/cpu3/online
 
-         # Noop
-         $SLEEP 1
+	  # Noop
+	  $SLEEP 1
 
-         # Enable CPU cores 1 - 3
-         $ECHO 1 > $DEVICES/cpu1/online
-         $ECHO 1 > $DEVICES/cpu2/online
-         $ECHO 1 > $DEVICES/cpu3/online
+	  # Enable CPU cores 1 - 3
+	  $ECHO 1 > $DEVICES/cpu1/online
+	  $ECHO 1 > $DEVICES/cpu2/online
+	  $ECHO 1 > $DEVICES/cpu3/online
 }
 
 mount_cpuset()
 {
-         $MKDIR $CPUSET
+	  $MKDIR $CPUSET
 
-         # Configure the root set
-         if [ -e $CPUSET ]; then
-                 $MOUNT -t cgroup -ocpuset cpuset $CPUSET
-                 # Disable load balancing in the root set
-                 $ECHO 0 > $CPUSET/cpuset.sched_load_balance
-         fi
+	  # Configure the root set
+	  if [ -e $CPUSET ]; then
+		   $MOUNT -t cgroup -ocpuset cpuset $CPUSET
+		   # Disable load balancing in the root set
+		   $ECHO 0 > $CPUSET/cpuset.sched_load_balance
+	  fi
 }
 
 
 create_rtnet_set()
 {
-         # Configure the RTnet cpuset
-         if [ -e $CPUSET ]; then
-                 $MKDIR $CPUSET/rtnet
-                 $ECHO 1 > $CPUSET/rtnet/cpuset.cpus
-                 $ECHO 1 > $CPUSET/rtnet/cpuset.cpu_exclusive
+	  # Configure the RTnet cpuset
+	  if [ -e $CPUSET ]; then
+		   $MKDIR $CPUSET/rtnet
+		   $ECHO 1 > $CPUSET/rtnet/cpuset.cpus
+		   $ECHO 1 > $CPUSET/rtnet/cpuset.cpu_exclusive
 
-                 # Disable load balancing in the rtnet set
-                 $ECHO 0 > $CPUSET/rtnet/cpuset.sched_load_balance
-         fi
+		   # Disable load balancing in the rtnet set
+		   $ECHO 0 > $CPUSET/rtnet/cpuset.sched_load_balance
+	  fi
 }
 
 create_production_set()
 {
-         # Configure the production cpuset
-         if [ -e $CPUSET ]; then
-                 $MKDIR $CPUSET/production
-                 $ECHO 2,3 > $CPUSET/production/cpuset.cpus
-                 $ECHO 1 > $CPUSET/production/cpuset.cpu_exclusive
+	  # Configure the production cpuset
+	  if [ -e $CPUSET ]; then
+		   $MKDIR $CPUSET/production
+		   $ECHO 2,3 > $CPUSET/production/cpuset.cpus
+		   $ECHO 1 > $CPUSET/production/cpuset.cpu_exclusive
 
-                 # Enable load balancing in the production set
-                 $ECHO 1 > $CPUSET/production/cpuset.sched_load_balance
-         fi
+		   # Enable load balancing in the production set
+		   $ECHO 1 > $CPUSET/production/cpuset.sched_load_balance
+	  fi
 }
 
 case "$1" in
    start)
-         reset_cpus
-         mount_cpuset
-         create_rtnet_set
-         create_production_set
+	  reset_cpus
+	  mount_cpuset
+	  create_rtnet_set
+	  create_production_set
    ;;
    stop)
-         reset_cpus
+	  reset_cpus
    ;;
    *)
      echo "Usage: /etc/init.d/$NAME {start|stop}" >&2
