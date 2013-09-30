@@ -7,8 +7,6 @@ This branch has many additional features, bug fixes,
 performance enhancements, and many other things that
 are NOT supported by the official RTAI developers.
 
-This branch is where the latest, bleeding edge code takes place.
-
 This repository does not keep track of RTAI's history before
 version 3.9, which is the initial commit of this repository.
 
