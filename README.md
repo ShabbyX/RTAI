@@ -10,4 +10,4 @@ in the original CVS repository at https://gna.org/cvs/?group=rtai.
 This is magma branch, keeping track of RTAI's magma repository. The showroom
 module has also been added to provide tests and examples for users and developers.
 
-Latest update: June 23 2013
+Latest update: September 29 2013
