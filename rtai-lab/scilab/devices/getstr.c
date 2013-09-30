@@ -26,3 +26,4 @@ void par_getstr(char * str, int par[], int init, int len)
 
   str[j]='\0';
 }
+

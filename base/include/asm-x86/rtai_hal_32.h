@@ -365,18 +365,7 @@ extern volatile long rtai_tsc_ofst[];
 
 #endif /* CONFIG_X86_TSC */
 
-struct calibration_data {
-
-    unsigned long cpu_freq;
-    unsigned long apic_freq;
-    int latency;
-    int setup_time_TIMER_CPUNIT;
-    int setup_time_TIMER_UNIT;
-    int timers_tol[RTAI_NR_CPUS];
-};
-
 struct apic_timer_setup_data {
-
     int mode;
     int count;
 };

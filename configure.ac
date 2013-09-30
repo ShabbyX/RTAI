@@ -761,6 +761,15 @@ AC_ARG_ENABLE(task-switch-signal,
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_TASK_SWITCH_SIGNAL:-no})
 
+AC_MSG_CHECKING(for hard-soft toggler)
+AC_ARG_ENABLE(hard-soft-toggler,
+	      [ --enable-hard-soft-toggler		Enable RTAI hard-soft toggler],
+	[case "$enableval" in
+	y | yes) CONFIG_RTAI_HARD_SOFT_TOGGLER=y ;;
+	*) unset CONFIG_RTAI_HARD_SOFT_TOGGLER ;;
+	esac])
+AC_MSG_RESULT(${CONFIG_RTAI_HARD_SOFT_TOGGLER:-no})
+
 AC_MSG_CHECKING(for Linux task priority alignment to RTAI)
 AC_ARG_ENABLE(align-priority,
 	      [ --enable-align-priority		Keep Linux task priority aligned to RTAI],
@@ -1331,6 +1340,7 @@ esac
 test \! x$CONFIG_RTAI_RTDM = x && AC_DEFINE(CONFIG_RTAI_RTDM,1,[Kconfig])
 test \! x$CONFIG_RTAI_ALIGN_LINUX_PRIORITY = x && AC_DEFINE(CONFIG_RTAI_ALIGN_LINUX_PRIORITY,1,[Kconfig])
 test \! x$CONFIG_RTAI_TASK_SWITCH_SIGNAL = x && AC_DEFINE(CONFIG_RTAI_TASK_SWITCH_SIGNAL,1,[Kconfig])
+test \! x$CONFIG_RTAI_HARD_SOFT_TOGGLER = x && AC_DEFINE(CONFIG_RTAI_HARD_SOFT_TOGGLER,1,[Kconfig])
 
 test x$CONFIG_RTAI_MATH = xy && AC_DEFINE(CONFIG_RTAI_MATH_BUILTIN,1,[Kconfig])
 test x$CONFIG_RTAI_BITS = xy && AC_DEFINE(CONFIG_RTAI_BITS_BUILTIN,1,[Kconfig])
@@ -1588,7 +1598,6 @@ AC_MSG_RESULT([$RTAI_MODULE_EXT])
 RTAI_USER_CFLAGS="-D_GNU_SOURCE"
 
 if test x"$LINUX_KERNELOUTPUT" != x"$LINUX_KERNELSRC"; then
-  RTAI_REAL_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include2 $RTAI_REAL_USER_CFLAGS"
   RTAI_REAL_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include $RTAI_REAL_USER_CFLAGS"
 fi
 
@@ -1712,7 +1721,7 @@ RTAI_KMOD_CFLAGS="$RTAI_KMOD_CFLAGS -D__IN_RTAI__"
 RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CXXFLAGS -D__IN_RTAI__"
 RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -D__IN_RTAI__"
 
-AC_CONFIG_LINKS(base/include/asm:base/include/asm-$RTAI_TARGET_ARCH)
+AC_CONFIG_LINKS(base/include/asm:$srcdir/base/include/asm-$RTAI_TARGET_ARCH)
 
 if test x$CONFIG_RTAI_OLD_FASHIONED_BUILD = xy; then
 AC_CONFIG_LINKS(base/include/rtai_config.h:rtai_config.h)

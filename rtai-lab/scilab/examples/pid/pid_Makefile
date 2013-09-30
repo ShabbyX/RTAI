@@ -6,7 +6,7 @@ OBJS = pid.o pid_void_io.o
 OBJSSTAN=pid.o rtmain.o
 SCILIBS = $(SCIDIR)/libs/scicos.a $(SCIDIR)/libs/lapack.a $(SCIDIR)/libs/poly.a $(SCIDIR)/libs/calelm.a $(SCIDIR)/libs/blas.a $(SCIDIR)/libs/lapack.a
 LIBRARY = libpid
-OTHERLIBS =
+OTHERLIBS = 
 include $(SCIDIR)/Makefile.incl
 CFLAGS = $(CC_OPTIONS) -O2 -I$(SCIDIR)/routines/ -I$(RTAIDIR)/include/ -DMODEL=pid
 FFLAGS = $(FC_OPTIONS) -O2 -I$(SCIDIR)/routines/

@@ -1,6 +1,6 @@
 /*
-  COPYRIGHT (C) 2002  Lorenzo Dozio <dozio@aero.polimi.it>
-  Paolo Mantegazza <mantegazza@aero.polimi.it>
+  COPYRIGHT (C) 2002  Lorenzo Dozio (dozio@aero.polimi.it)
+  Paolo Mantegazza (mantegazza@aero.polimi.it)
 
   Modified 15.1.2003 Roberto Bucher bucher@die.supsi.ch
   Modified 15.8.2009 Henrik Slotholt rtai@slotholt.net
@@ -64,7 +64,7 @@ static void mdlInitializeSizes(SimStruct *S)
 	ssSetNumOutputPorts(S, 0);
 	for (i = 0; i < nchan; i++) {
 		ssSetInputPortWidth(S, i, 1);
-		ssSetInputPortDirectFeedThrough(S, i, 1);
+	        ssSetInputPortDirectFeedThrough(S, i, 1);
 	}
 	ssSetNumContStates(S, 0);
 	ssSetNumDiscStates(S, 0);
@@ -78,7 +78,7 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 	ssSetOffsetTime(S, 0, 0.0);
 }
 
-#define MDL_START
+#define MDL_START 
 static void mdlStart(SimStruct *S)
 {
 #ifndef MATLAB_MEX_FILE

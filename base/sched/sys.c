@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001-2008  Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright (C) 2001-2013  Paolo Mantegazza <mantegazza@aero.polimi.it>,
  *		            Pierre Cloutier <pcloutier@poseidoncontrols.com>,
  *		            Steve Papacharalambous <stevep@zentropix.com>.
  *
@@ -337,6 +337,8 @@ void rt_make_soft_real_time(RT_TASK *task)
 }
 EXPORT_SYMBOL(rt_make_soft_real_time);
 
+static long kernel_calibrator_spv(long period, long loops, RT_TASK *task);
+
 static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_TASK *task)
 {
 #define larg ((struct arg *)arg)
@@ -640,10 +642,15 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 			return 0;
 		}
 
+		case KERNEL_CALIBRATOR: {
+			struct arg { long period, loops; };
+			return kernel_calibrator_spv(larg->period, larg->loops, task);
+		}
+
 		default: {
-		    rt_printk("RTAI/LXRT: Unknown srq #%d\n", srq);
-		    arg0.i = -ENOSYS;
-		    return arg0.ll;
+			rt_printk("RTAI/LXRT: Unknown srq #%d\n", srq);
+			arg0.i = -ENOSYS;
+			return arg0.ll;
 		}
 	}
 	return 0;
@@ -771,3 +778,124 @@ void init_fun_ext (void)
 {
 	rt_fun_ext[0] = rt_fun_lxrt;
 }
+
+/* SUPPORT FOR CALIBRATING SCHEDULING LATENCIES FOR KERNEL SPACE TASKS */
+
+struct kern_cal_arg { long period, loops; RT_TASK *task; };
+
+static void kernel_calibrator(struct kern_cal_arg *calpar)
+{
+	RTIME expected;
+	int average = 0;
+	double s = 0;
+
+	expected = rt_get_time() + 10*calpar->period;
+	rt_task_make_periodic(NULL, expected, calpar->period);
+	while (calpar->loops--) {
+		expected += calpar->period;
+		rt_task_wait_period();
+		average += rt_get_time() - expected;
+		s += 3.14;
+        }
+	calpar->period = average;
+	rt_task_resume(calpar->task);
+}
+
+struct calsup { struct kern_cal_arg calpar; RT_TASK rtask; };
+
+long kernel_calibrator_spv(long period, long loops, RT_TASK *task)
+{
+			struct calsup *calsup;
+			calsup = kmalloc(sizeof(struct calsup), GFP_KERNEL);
+			calsup->calpar = (struct kern_cal_arg) { period, loops, task };
+			rt_task_init_cpuid(&calsup->rtask, (void *)kernel_calibrator, (long)&calsup->calpar, 4096, 0, 1, 0, rtai_cpuid());
+			rt_task_resume(&calsup->rtask);
+			task->fun_args[0] = (long)task;
+			((struct fun_args *)task->fun_args)->fun = (void *)rt_task_suspend;
+			rt_schedule_soft(task);
+			period = calsup->calpar.period;
+			kfree(calsup);
+			return period;
+}
+
+#if 0
+void rt_daemonize(void);
+
+struct thread_args { void *fun; long data; int priority; int policy; int cpus_allowed; RT_TASK *task; struct semaphore *sem; };
+
+static void kthread_fun(struct thread_args *args) 
+{
+	int linux_rt_priority;
+
+	rt_daemonize();
+        if (args->policy == SCHED_NORMAL) {
+                linux_rt_priority = 0;
+        } else if ((linux_rt_priority = MAX_RT_PRIO - 1 - args->priority) < 1) {
+                linux_rt_priority = 1;
+	}
+	rtai_set_linux_task_priority(current, args->policy, linux_rt_priority);
+	
+	if ((args->task = __task_init(rt_get_name(NULL), args->priority, 0, 0, args->cpus_allowed))) {
+		RT_TASK *task = args->task;
+		void (*fun)(long) = args->fun;
+		long data = args->data;
+		up(args->sem);
+		rt_make_hard_real_time(task);
+		fun(data);
+		rt_thread_delete(task);
+	} 
+	return;
+}
+
+RT_TASK *rt_kthread_create(void *fun, long data, int priority, int linux_policy, int cpus_allowed)
+{
+	struct semaphore sem;
+	struct thread_args args = { fun, data, priority, linux_policy, cpus_allowed, NULL, &sem };
+	init_MUTEX_LOCKED(&sem);
+	kernel_thread((void *)kthread_fun, &args, 0);
+	down(&sem);
+	msleep(100);
+	return args.task;
+}
+	
+#include <linux/kthread.h>
+long rt_thread_create(void *fun, void *args, int stack_size)
+{
+	long retval;
+	RT_TASK *task;
+	if ((task = current->rtai_tskext(TSKEXT0)) && task->is_hard > 0) {
+		rt_make_soft_real_time(task);
+	}
+//	retval = kernel_thread(fun, args, 0);
+	retval = (long)kthread_run(fun, args, "RTAI");
+	if (task && !task->is_hard) {
+		rt_make_hard_real_time(task);
+	}
+	return retval;
+}
+EXPORT_SYMBOL(rt_thread_create);
+	
+RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int policy, int cpus_allowed)
+{
+	int linux_rt_priority;
+	RT_TASK *task;
+        if (policy == SCHED_NORMAL) {
+                linux_rt_priority = 0;
+        } else if ((linux_rt_priority = MAX_RT_PRIO - 1 - priority) < 1) {
+                linux_rt_priority = 1;
+	}
+	rtai_set_linux_task_priority(current, policy, linux_rt_priority);
+//	rt_daemonize();
+	if ((task = __task_init(name ? name : rt_get_name(NULL), priority, 0, max_msg_size, cpus_allowed))) {
+		rt_make_hard_real_time(task);
+	} 
+	return task;
+}
+EXPORT_SYMBOL(rt_thread_init);
+
+int rt_thread_delete(RT_TASK *rt_task)
+{
+	return __task_delete(rt_task);
+}
+EXPORT_SYMBOL(rt_thread_delete);
+#endif

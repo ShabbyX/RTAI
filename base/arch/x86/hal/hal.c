@@ -148,7 +148,7 @@ static inline long long get_delta(long long *rt, long long *master, unsigned int
 	return done ? rtai_tsc_ofst[slave] = (8*rtai_tsc_ofst[slave] + 2*((long)(tcenter - best_tm)))/10 : 0;
 }
 
-static void sync_tsc(unsigned int master, unsigned int slave)
+static void sync_tsc(unsigned long master, unsigned int slave)
 {
 	unsigned long flags;
 	long long delta, rt = 0, master_time_stamp = 0;
@@ -213,3 +213,30 @@ void cleanup_tsc_sync(void)
 }
 
 #endif /* defined(CONFIG_SMP) && defined(CONFIG_RTAI_DIAG_TSC_SYNC) */
+
+#define CAL_LOOPS 200
+int rtai_calibrate_hard_timer(void)
+{
+        unsigned long flags;
+        RTIME t;
+        int i, dt;
+
+        flags = rtai_critical_enter(NULL);
+#ifdef CONFIG_X86_LOCAL_APIC
+        t = rtai_rdtsc();
+        for (i = 0; i < CAL_LOOPS; i++) {
+                apic_write_around(APIC_TMICT, 8000);
+        }
+#else
+        outb(0x34, 0x43);
+        t = rtai_rdtsc();
+        for (i = 0; i < CAL_LOOPS; i++) {
+                outb(LATCH & 0xff,0x40);
+                outb(LATCH >> 8,0x40);
+        }
+#endif
+	dt = (int)(rtai_rdtsc() - t);
+	rtai_critical_exit(flags);
+	return rtai_imuldiv((dt + CAL_LOOPS/2)/CAL_LOOPS, 1000000000, rtai_tunables.cpu_freq);
+}
+EXPORT_SYMBOL(rtai_calibrate_hard_timer);

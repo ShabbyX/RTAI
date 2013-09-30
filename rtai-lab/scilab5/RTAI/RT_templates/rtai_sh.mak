@@ -8,7 +8,7 @@ C_FLAGS = $(shell rtai-config --lxrt-cflags)
 COMEDIDIR = $(shell rtai-config --comedi-dir)
 ifneq ($(strip $(COMEDIDIR)),)
 COMEDILIB = -lcomedi
-endif
+endif 
 
 SCIDIR = $$SCILAB_DIR$$
 RM = rm -f
@@ -87,7 +87,7 @@ SCILIBS =\
 
 JAVALIBS =  -ljava -lverify  -ljvm  -lhpi
 ifeq ($(strip $(COMEDIDIR)),)
-OTHERLIBS =
+OTHERLIBS = 
 else
 OTHERLIBS = -lcomedi
 endif

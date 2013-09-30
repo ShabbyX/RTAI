@@ -8,55 +8,55 @@
 #include "/home/mante/scilab-2.6/routines/machine.h"
 #include "/home/mante/scilab-2.6/routines/sun/link.h"
 #include "/home/mante/scilab-2.6/routines/scicos/scicos.h"
-
+ 
 void pidmain1(double *z, double *t, double * rpar, int *nrpar,
    int *ipar, int *nipar);
-
+ 
 void pidmain2(double *z, double *t, double * rpar, int *nrpar,
    int *ipar, int *nipar) ;
-
+ 
 void pid_init(double *z, double *t, double * rpar, int *nrpar,
    int *ipar, int *nipar) ;
-
+ 
 void pid_end(double *z, double *t, double * rpar, int *nrpar,
    int *ipar, int *nipar) ;
-
+ 
 int pid()  ;
-
+ 
 int pidddoit1(double *z, int * zptr, double *t, double *tevts,
    int *evtspt, int * nevts, int *pointi, int * outptr, int *clkptr,
    int *ordptr, int *ordclk, int *nordcl, double * rpar, int *ipar,
    int *funptr, int *funtyp, double *outtb, int *iwa)  ;
-
+ 
 int pidddoit2(double *z, int * zptr, double *t, double *tevts,
    int *evtspt, int * nevts, int *pointi, int * outptr, int *clkptr,
    int *ordptr, int *ordclk, int *nordcl, double * rpar, int *ipar,
    int *funptr, int *funtyp, double *outtb, int *iwa)  ;
-
+ 
 int pidedoit1(double *z, int * zptr, double *t, double *tevts,
    int *evtspt, int * nevts, int *pointi, int * outptr, int *clkptr,
    int *ordptr, int *ordclk, int *nordcl, double * rpar, int *ipar,
    int *funptr, int *funtyp, double *outtb, int * urg, int *iwa)  ;
-
+ 
 int pid_initi(double *z, int * zptr, double *t, double *tevts,
    int *evtspt, int * nevts, int *pointi, int * outptr, int *clkptr,
    int *ordptr, int *ordclk, int *nordcl, double * rpar, int *ipar,
    int *funptr, int *funtyp, double *outtb, int *iwa)  ;
-
+ 
 int pid_endi(double *z, int * zptr, double *t, double *tevts,
    int *evtspt, int * nevts, int *pointi, int * outptr, int *clkptr,
    int *ordptr, int *ordclk, int *nordcl, double * rpar, int *ipar,
    int *funptr, int *funtyp, double *outtb, int *iwa)  ;
-
+ 
 int pid_outtb(double *z, int * zptr, double *t, double *tevts,
    int *evtspt, int * nevts, int *pointi, int * outptr, int *clkptr,
    int *ordptr, int *ordclk, int *nordcl, double * rpar, int *ipar,
    int *funptr, int *funtyp, double *outtb, int *iwa)  ;
-
+ 
 int C2F(putevs)(double *tevts, int *evtspt, int * nevts, int *pointi,
    double *told, int *i2, int *ierr);
 /* ---- block simulation functions -------*/
-
+ 
 
 void C2F(gain)(int *flag, int *nevprt, double *told, double *xd,
    double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec,
@@ -115,9 +115,9 @@ void C2F(rndblk)(int *flag, int *nevprt, double *told, double *xd,
    double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec,
    double *rpar, int *nrpar,int *ipar,int *nipar, double *u, int *nu,
    double *y, int *ny);
-/* Table of constant values */
-
-static integer totalnevprt;
+/* Table of constant values */ 
+ 
+static integer totalnevprt; 
 static integer evtspt[ ]={-1,-1,-1};
 static integer nevts[ ]={3};
 static double x[1];
@@ -142,8 +142,8 @@ void set_nevprt(int nevprt)
 {
   totalnevprt=nevprt;
 }
-/*---------------------------------------- Block Computational function */
-int
+/*---------------------------------------- Block Computational function */ 
+int 
 pid(flag ,nevprt ,t ,xd ,x ,nx ,z ,nz ,tvec ,ntvec ,rpar ,nrpar ,
   ipar ,nipar ,u1 ,nu1 ,y1 ,ny1 ,y2 ,ny2 ,y3 ,ny3 ,y4 ,ny4)
 
@@ -158,19 +158,19 @@ pid(flag ,nevprt ,t ,xd ,x ,nx ,z ,nz ,tvec ,ntvec ,rpar ,nrpar ,
   /*Copy inputs in the block outtb */
   block_outtb[14] = u1[0];
    set_nevprt(*nevprt);
-
+ 
   if (*flag == 1) { /* update outputs */
     pidmain1(z,t,rpar,nrpar,ipar,nipar);
-  }
+  } 
   else if (*flag == 2) { /* update discrete states */
     pidmain2(z,t,rpar,nrpar,ipar,nipar);
-  }
+  } 
   else if (*flag == 4) { /* initialisation */
     pid_init(z,t,rpar,nrpar,ipar,nipar);
-  }
+  } 
   else if (*flag == 5) { /* ending */
     pid_end(z,t,rpar,nrpar,ipar,nipar);
-  }
+  } 
   y1[0] =  block_outtb[15];
   y2[0] =  block_outtb[14];
   y3[0] =  block_outtb[12];
@@ -178,8 +178,8 @@ pid(flag ,nevprt ,t ,xd ,x ,nx ,z ,nz ,tvec ,ntvec ,rpar ,nrpar ,
   return 0;
 
 } /* pid */
-/*---------------------------------------- main1 */
-void
+/*---------------------------------------- main1 */ 
+void 
 pidmain1(double *z, double *t, double * rpar, integer *nrpar,
   integer *ipar,integer *nipar)
 {
@@ -189,9 +189,9 @@ integer nordcl = 42;
   pidddoit1(z, zptr, t, tevts, evtspt, nevts, pointi, outptr, clkptr,
      ordptr, ordclk, &nordcl, rpar, ipar, rdfunptr, funtyp, &(z[8]),
      (int *)(z+28));
-}
-/*---------------------------------------- main2 */
-void
+} 
+/*---------------------------------------- main2 */ 
+void 
 pidmain2(double *z, double *t, double * rpar, integer *nrpar,
   integer *ipar,integer *nipar)
 {
@@ -201,9 +201,9 @@ integer nordcl = 42;
   pidddoit2(z, zptr, t, tevts, evtspt, nevts, pointi, outptr, clkptr,
      ordptr, ordclk, &nordcl, rpar, ipar, rdfunptr, funtyp, &(z[8]),
      (int *)(z+28));
-}
-/*---------------------------------------- init */
-void
+} 
+/*---------------------------------------- init */ 
+void 
 pid_init(double *z, double *t, double * rpar, integer *nrpar,
   integer *ipar,integer *nipar)
 {
@@ -217,9 +217,9 @@ integer nordcl = 42;
   pid_outtb(z, zptr, t, tevts, evtspt, nevts, pointi, outptr, clkptr,
      ordptr, ordclk, &nordcl, rpar, ipar, rdfunptr,funtyp, &(z[8]),
      (int *)(z+28));
-}
-/*---------------------------------------- end */
-void
+} 
+/*---------------------------------------- end */ 
+void 
 pid_end(double *z, double *t, double * rpar, integer *nrpar,
   integer *ipar,integer *nipar)
 {
@@ -229,9 +229,9 @@ integer nordcl = 42;
   pid_endi(z, zptr, t, tevts, evtspt, nevts, pointi, outptr, clkptr,
      ordptr, ordclk, &nordcl, rpar, ipar, rdfunptr, funtyp, &(z[8]),
      (int *)(z+28));
-}
-/*---------------------------------------- Scicos real constants update */
-void
+} 
+/*---------------------------------------- Scicos real constants update */ 
+void 
 pid_const_update(double *z, double *t, double * rpar, integer *nrpar,
   integer *ipar,integer *nipar)
 {
@@ -242,38 +242,38 @@ integer nordcl = 42;
   pid_outtb(z, zptr, t, tevts, evtspt, nevts, pointi, outptr, clkptr,
      ordptr, ordclk, &nordcl, rpar, ipar, rdfunptr,funtyp, &(z[8]),
      (int *)(z+28));
-}
+} 
 
-/*---------------------------------------- ddoit1.c */
-int
+/*---------------------------------------- ddoit1.c */ 
+int 
 pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    clkptr, ordptr, ordclk, nordcl, rpar, ipar, funptr, funtyp, outtb,
    iwa)
 
-     double  *z;
-     integer *zptr;
-     double  *told,  *tevts;
+     double  *z; 
+     integer *zptr; 
+     double  *told,  *tevts; 
 
-     integer *evtspt, *nevts, *pointi, *outptr;
-     integer *clkptr, *ordptr, *ordclk, *nordcl;
-     double  *rpar, *outtb;
-     integer *ipar, *funptr, *funtyp;
-     integer *iwa;
+     integer *evtspt, *nevts, *pointi, *outptr; 
+     integer *clkptr, *ordptr, *ordclk, *nordcl; 
+     double  *rpar, *outtb; 
+     integer *ipar, *funptr, *funtyp; 
+     integer *iwa; 
 {
-  /* System generated locals */
-  integer ordclk_dim1, ordclk_offset, i2;
-
-  /* Local variables */
-  integer flag, keve, nport;
-  double  tvec[3];
-  double  rdouttb[21];
-  double  *args[100];
-  integer sz[100];
-  integer ierr1;
-  integer ntvec;
-  integer nevprt;
-  integer urg;
-
+  /* System generated locals */ 
+  integer ordclk_dim1, ordclk_offset, i2; 
+ 
+  /* Local variables */ 
+  integer flag, keve, nport; 
+  double  tvec[3]; 
+  double  rdouttb[21]; 
+  double  *args[100]; 
+  integer sz[100]; 
+  integer ierr1; 
+  integer ntvec; 
+  integer nevprt; 
+  integer urg; 
+ 
   /* Generated constants */
   integer nrd_0 = 0;
   integer nrd_1 = 1;
@@ -285,51 +285,51 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
   integer nrd_7 = 7;
   integer nrd_8 = 8;
   integer nrd_9 = 9;
-  /* Parameter adjustments */
-  --z;
-  --zptr;
-  --tevts;
-  --evtspt;
-  --outptr;
-  --clkptr;
-  --ordptr;
+  /* Parameter adjustments */ 
+  --z; 
+  --zptr; 
+  --tevts; 
+  --evtspt; 
+  --outptr; 
+  --clkptr; 
+  --ordptr; 
 
-  ordclk_dim1 = *nordcl;
-  ordclk_offset = ordclk_dim1 + 1;
-  ordclk -= ordclk_offset;
-  --rpar;
-  --ipar;
-  --funptr;
-  --funtyp;
-  --iwa;
-  --outtb;
-
-  /* Function Body */
-  iwa[26] = 0;
-  urg = 0;
+  ordclk_dim1 = *nordcl; 
+  ordclk_offset = ordclk_dim1 + 1; 
+  ordclk -= ordclk_offset; 
+  --rpar; 
+  --ipar; 
+  --funptr; 
+  --funtyp; 
+  --iwa; 
+  --outtb; 
+ 
+  /* Function Body */ 
+  iwa[26] = 0; 
+  urg = 0; 
   *pointi=0+ totalnevprt;
   tevts[*pointi]=*told;
-  keve = *pointi;
-  *pointi = evtspt[keve];
-  evtspt[keve] = -1;
-
-  ++iwa[26];
+  keve = *pointi; 
+  *pointi = evtspt[keve]; 
+  evtspt[keve] = -1; 
+ 
+  ++iwa[26]; 
   iwa[iwa[26]] = keve;
-
+ 
   switch(keve) {
   case 1:
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[12]);
    args[1]=&(outtb[13]);
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_2, tvec, &ntvec, &(rpar[2]), &nrd_9, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[1]=&(outtb[15]);
    nport = 1;
@@ -337,78 +337,78 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
     if(flag < 0 ) return(5 - flag);
     break;
   case 2:
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[15]);
    args[1]=&(outtb[2]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[13]);
    args[1]=&(outtb[14]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[25]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[1]);
    args[1]=&(outtb[17]);
    C2F(gensqr)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[6]),
       &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[1]);
    args[1]=&(outtb[20]);
    C2F(rndblk)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_1, &(z[7]),
       &nrd_2, tvec, &ntvec, &(rpar[29]), &nrd_3, &(ipar[7]), &nrd_1,
       (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[2]);
    args[1]=&(outtb[3]);
    C2F(samphold)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[17]);
    args[1]=&(outtb[18]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[27]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[20]);
    args[1]=&(outtb[19]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[28]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=3;
    args[0] = &(outtb[3]);
    sz[0] = 1;
@@ -419,10 +419,10 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
       tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
       &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0] = &(outtb[18]);
    sz[0] = 1;
@@ -433,60 +433,60 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    selector(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[5]),
      &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0,
       &(args[0]), &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[7]);
    args[1]=&(outtb[8]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[16]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[7]);
    args[1]=&(outtb[4]);
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[3]),
       &nrd_1, tvec, &ntvec, &(rpar[17]), &nrd_4, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[7]);
    args[1]=&(outtb[5]);
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[4]),
       &nrd_1, tvec, &ntvec, &(rpar[21]), &nrd_4, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[4]);
    args[1]=&(outtb[9]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[14]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[5]);
    args[1]=&(outtb[6]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[15]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=3;
    args[0] = &(outtb[9]);
    sz[0] = 1;
@@ -497,20 +497,20 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
       tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
       &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[6]);
    args[1]=&(outtb[11]);
    C2F(lusat)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[11]), &nrd_3, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=3;
    args[0] = &(outtb[11]);
    sz[0] = 1;
@@ -521,82 +521,82 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
       tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
       &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
     break;
   case 3:
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[15]);
    args[1]=&(outtb[2]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[13]);
    args[1]=&(outtb[14]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[25]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[1]);
    args[1]=&(outtb[17]);
    C2F(gensqr)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[6]),
       &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[1]);
    args[1]=&(outtb[20]);
    C2F(rndblk)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_1, &(z[7]),
       &nrd_2, tvec, &ntvec, &(rpar[29]), &nrd_3, &(ipar[7]), &nrd_1,
       (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[2]);
    args[1]=&(outtb[3]);
    C2F(samphold)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[17]);
    args[1]=&(outtb[18]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[27]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[20]);
    args[1]=&(outtb[19]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[28]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=3;
    args[0] = &(outtb[3]);
    sz[0] = 1;
@@ -607,10 +607,10 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
       tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
       &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=2;
    args[0] = &(outtb[18]);
    sz[0] = 1;
@@ -621,60 +621,60 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    selector(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[5]),
      &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0,
       &(args[0]), &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[7]);
    args[1]=&(outtb[8]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[16]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[7]);
    args[1]=&(outtb[4]);
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[3]),
       &nrd_1, tvec, &ntvec, &(rpar[17]), &nrd_4, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[7]);
    args[1]=&(outtb[5]);
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[4]),
       &nrd_1, tvec, &ntvec, &(rpar[21]), &nrd_4, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[4]);
    args[1]=&(outtb[9]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[14]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[5]);
    args[1]=&(outtb[6]);
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[15]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=3;
    args[0] = &(outtb[9]);
    sz[0] = 1;
@@ -685,20 +685,20 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
       tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
       &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=1;
    args[0]=&(outtb[6]);
    args[1]=&(outtb[11]);
    C2F(lusat)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[11]), &nrd_3, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
-
-    flag = 1;
+ 
+    flag = 1; 
     nevprt=3;
    args[0] = &(outtb[11]);
    sz[0] = 1;
@@ -709,24 +709,24 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
       tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
       &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+    
     if(flag < 0 ) return(5 - flag);
     break;
-  }
-
+  }  
+  
   switch(keve) {
   case 1:
   /*        Initialize tvec */
   ntvec=2;
-
+	
   flag = 3;
   nevprt = 1;
  C2F(ifthel)(&flag, &nevprt, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]),
     &nrd_0, &(outtb[1]),  &nrd_1);
-
-
+  
+ 
 	 if(flag < 0 ) return(5 - flag);
-
+ 
   ++urg;
   i2 = ntvec + clkptr[22] - 1;
   C2F(putevs)(&tevts[1], &evtspt[1], nevts, pointi, told, &i2, &ierr1);
@@ -740,44 +740,44 @@ pidddoit1( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
   if (urg > 0) {
  L43:
     pidedoit1(&z[1], &zptr[1], told, &tevts[1], &evtspt[1], nevts, pointi,
-	&outptr[1], &clkptr[1], &ordptr[1],  &ordclk[ordclk_offset], nordcl,
-	&rpar[1], &ipar[1], &funptr[1], &funtyp[1], &(z[9]), &urg, (int *)(z+
+       &outptr[1], &clkptr[1], &ordptr[1],  &ordclk[ordclk_offset], nordcl,
+       &rpar[1], &ipar[1], &funptr[1], &funtyp[1], &(z[9]), &urg, (int *)(z+
       29));
     if (urg > 0) {
       goto L43;
     }
   }
   return 0;
-
+ 
 } /* ddoit1 */
-
-/*---------------------------------------- edoit1.c */
-int
+  
+/*---------------------------------------- edoit1.c */ 
+int 
 pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    clkptr, ordptr, ordclk, nordcl, rpar, ipar, funptr, funtyp, outtb,
    urg, iwa)
-     double  *z;
-     integer *zptr;
-     double  *told,  *tevts;
-     integer *evtspt, *nevts, *pointi, *outptr;
-     integer *clkptr, *ordptr, *ordclk, *nordcl;
-     double  *rpar, *outtb;
-     integer *ipar,  *funptr, *funtyp;
-     integer *urg,  *iwa;
-{
-  /* System generated locals */
-  integer ordclk_dim1, ordclk_offset, i2;
-
-  /* Local variables */
-  integer flag, keve, nport;
-  integer nord;
-  double  tvec[3];
-  double  rdouttb[21];
-  double  *args[100];
-  integer sz[100];
-  integer ierr1, i, nx=0;
-  integer ntvec, nevprt;
-
+     double  *z; 
+     integer *zptr; 
+     double  *told,  *tevts; 
+     integer *evtspt, *nevts, *pointi, *outptr; 
+     integer *clkptr, *ordptr, *ordclk, *nordcl; 
+     double  *rpar, *outtb; 
+     integer *ipar,  *funptr, *funtyp; 
+     integer *urg,  *iwa; 
+{ 
+  /* System generated locals */ 
+  integer ordclk_dim1, ordclk_offset, i2; 
+ 
+  /* Local variables */ 
+  integer flag, keve, nport; 
+  integer nord; 
+  double  tvec[3]; 
+  double  rdouttb[21]; 
+  double  *args[100]; 
+  integer sz[100]; 
+  integer ierr1, i, nx=0; 
+  integer ntvec, nevprt; 
+ 
   /* Generated constants */
   integer nrd_0 = 0;
   integer nrd_1 = 1;
@@ -789,36 +789,36 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
   integer nrd_7 = 7;
   integer nrd_8 = 8;
   integer nrd_9 = 9;
-  /* Parameter adjustments */
-  --z;
-  --zptr;
-  --tevts;
-  --evtspt;
-  --outptr;
-  --clkptr;
-  --ordptr;
-  ordclk_dim1 = *nordcl;
-  ordclk_offset = ordclk_dim1 + 1;
-  ordclk -= ordclk_offset;
-  --rpar;
-  --ipar;
-  --funptr;
-  --funtyp;
-  --iwa;
-  --outtb;
-
-  /* Function Body */
-  --(*urg);
-  keve = *pointi;
-  *pointi = evtspt[keve];
-  evtspt[keve] = -1;
-
-  nord = ordptr[keve + 1] - ordptr[keve];
-  if (nord == 0) {
-    return 0;
-  }
-  ++(iwa[26]);
-  iwa[iwa[26]] = keve;
+  /* Parameter adjustments */ 
+  --z; 
+  --zptr; 
+  --tevts; 
+  --evtspt; 
+  --outptr; 
+  --clkptr; 
+  --ordptr; 
+  ordclk_dim1 = *nordcl; 
+  ordclk_offset = ordclk_dim1 + 1; 
+  ordclk -= ordclk_offset; 
+  --rpar; 
+  --ipar; 
+  --funptr; 
+  --funtyp; 
+  --iwa; 
+  --outtb; 
+ 
+  /* Function Body */ 
+  --(*urg); 
+  keve = *pointi; 
+  *pointi = evtspt[keve]; 
+  evtspt[keve] = -1; 
+ 
+  nord = ordptr[keve + 1] - ordptr[keve]; 
+  if (nord == 0) { 
+    return 0; 
+  } 
+  ++(iwa[26]);   
+  iwa[iwa[26]] = keve;   
   switch(keve) {
   case 1:
     flag = 1 ;
@@ -828,18 +828,18 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_2, tvec, &ntvec, &(rpar[2]), &nrd_9, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[1]=&(outtb[15]);
    nport = 1;
    pid_sensor(&flag, &nport, &nevprt, told, (double *)args[1], &nrd_1);
-
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     break;
   case 2:
     flag = 1 ;
@@ -849,10 +849,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[13]);
@@ -860,10 +860,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[25]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[1]);
@@ -871,10 +871,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gensqr)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[6]),
       &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[1]);
@@ -882,10 +882,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(rndblk)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_1, &(z[7]),
       &nrd_2, tvec, &ntvec, &(rpar[29]), &nrd_3, &(ipar[7]), &nrd_1,
       (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[2]);
@@ -893,10 +893,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(samphold)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[17]);
@@ -904,10 +904,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[27]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[20]);
@@ -915,10 +915,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[28]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=3;
    args[0] = &(outtb[3]);
@@ -930,10 +930,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
       tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
       &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0] = &(outtb[18]);
@@ -945,10 +945,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    selector(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[5]),
      &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0,
       &(args[0]), &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[7]);
@@ -956,10 +956,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[16]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[7]);
@@ -967,10 +967,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[3]),
       &nrd_1, tvec, &ntvec, &(rpar[17]), &nrd_4, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[7]);
@@ -978,10 +978,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[4]),
       &nrd_1, tvec, &ntvec, &(rpar[21]), &nrd_4, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[4]);
@@ -989,10 +989,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[14]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[5]);
@@ -1000,10 +1000,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[15]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=3;
    args[0] = &(outtb[9]);
@@ -1015,10 +1015,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
       tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
       &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[6]);
@@ -1026,10 +1026,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(lusat)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[11]), &nrd_3, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=3;
    args[0] = &(outtb[11]);
@@ -1041,10 +1041,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
       tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
       &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     break;
   case 3:
     flag = 1 ;
@@ -1054,10 +1054,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[13]);
@@ -1065,10 +1065,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[25]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[1]);
@@ -1076,10 +1076,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gensqr)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[6]),
       &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[1]);
@@ -1087,10 +1087,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(rndblk)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_1, &(z[7]),
       &nrd_2, tvec, &ntvec, &(rpar[29]), &nrd_3, &(ipar[7]), &nrd_1,
       (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[2]);
@@ -1098,10 +1098,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(samphold)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[17]);
@@ -1109,10 +1109,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[27]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[20]);
@@ -1120,10 +1120,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[28]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=3;
    args[0] = &(outtb[3]);
@@ -1135,10 +1135,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
       tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
       &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=2;
    args[0] = &(outtb[18]);
@@ -1150,10 +1150,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    selector(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[5]),
      &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0,
       &(args[0]), &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[7]);
@@ -1161,10 +1161,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[16]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[7]);
@@ -1172,10 +1172,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[3]),
       &nrd_1, tvec, &ntvec, &(rpar[17]), &nrd_4, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[7]);
@@ -1183,10 +1183,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[4]),
       &nrd_1, tvec, &ntvec, &(rpar[21]), &nrd_4, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[4]);
@@ -1194,10 +1194,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[14]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[5]);
@@ -1205,10 +1205,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[15]), &nrd_1, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=3;
    args[0] = &(outtb[9]);
@@ -1220,10 +1220,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
       tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
       &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=1;
    args[0]=&(outtb[6]);
@@ -1231,10 +1231,10 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    C2F(lusat)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_0, tvec, &ntvec, &(rpar[11]), &nrd_3, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     flag = 1 ;
     nevprt=3;
    args[0] = &(outtb[11]);
@@ -1246,32 +1246,32 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
    plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
       tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
       &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
-
+    
+ 
     if(flag < 0 ) return(5 - flag);
-
+ 
     break;
-  }
-
+  }  
+  
   switch(keve) {
   case 1:
     /*     .     Initialize tvec */
     ntvec=2;
     nevprt=1;
-
+ 
     flag = 3;
     C2F(ifthel)(&flag, &nevprt, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]),
-	&nrd_0, &(outtb[1]),  &nrd_1);
-
-
+       &nrd_0, &(outtb[1]),  &nrd_1);
+     
+ 
 	   if(flag < 0 ) return(5 - flag);
-
+ 
     if (ntvec >= 1) {
       if (funtyp[22] == -1) {
-	++(*urg);
-	i2 = ntvec + clkptr[22] - 1;
-	C2F(putevs)(&tevts[1], &evtspt[1],  nevts, pointi, told, &i2, &ierr1);
-	if (ierr1 != 0) return 3;
+        ++(*urg);
+        i2 = ntvec + clkptr[22] - 1;
+        C2F(putevs)(&tevts[1], &evtspt[1],  nevts, pointi, told, &i2, &ierr1); 
+        if (ierr1 != 0) return 3;
     }
   }
     break;
@@ -1279,37 +1279,37 @@ pidedoit1( z, zptr, told,tevts, evtspt, nevts, pointi,  outptr,
     break;
   case 3:
     break;
-  }
+  }  
   return 0;
-} /* edoit1 */
+} /* edoit1 */      
 
-/*---------------------------------------- ddoit2 */
-int
+/*---------------------------------------- ddoit2 */ 
+int 
 pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    clkptr, ordptr, ordclk, nordcl, rpar,  ipar, funptr, funtyp, outtb,
    iwa)
 
-     double  *z;
-     integer *zptr;
-     double  *told,  *tevts;
-     integer *evtspt, *nevts, *pointi, *outptr;
-     integer *clkptr, *ordptr, *ordclk, *nordcl;
-     double  *rpar, *outtb;
-     integer *ipar, *funptr, *funtyp;
-     integer *iwa;
-{
-  /* System generated locals */
-  integer  i1, i;
-
-  /* Local variables */
-  integer flag, keve, nport;
-  double  tvec[3];
-  double  rdouttb[21];
-  double  *args[100];
-  integer sz[100];
-  integer ntvec;
-  integer nevprt;
-
+     double  *z; 
+     integer *zptr; 
+     double  *told,  *tevts; 
+     integer *evtspt, *nevts, *pointi, *outptr; 
+     integer *clkptr, *ordptr, *ordclk, *nordcl; 
+     double  *rpar, *outtb; 
+     integer *ipar, *funptr, *funtyp; 
+     integer *iwa; 
+{ 
+  /* System generated locals */ 
+  integer  i1, i; 
+ 
+  /* Local variables */ 
+  integer flag, keve, nport; 
+  double  tvec[3]; 
+  double  rdouttb[21]; 
+  double  *args[100]; 
+  integer sz[100]; 
+  integer ntvec; 
+  integer nevprt; 
+ 
   /* Generated constants */
   integer nrd_0 = 0;
   integer nrd_1 = 1;
@@ -1321,23 +1321,23 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
   integer nrd_7 = 7;
   integer nrd_8 = 8;
   integer nrd_9 = 9;
-    /* Parameter adjustments */
-  --z;
-  --zptr;
-  --tevts;
-  --evtspt;
-  --outptr;
-  --clkptr;
-  --ordptr;
-  --rpar;
-  --ipar;
-  --funptr;
-  --funtyp;
-  --iwa;
-  --outtb;
-
-  /* Function Body */
-
+    /* Parameter adjustments */ 
+  --z; 
+  --zptr; 
+  --tevts; 
+  --evtspt; 
+  --outptr; 
+  --clkptr; 
+  --ordptr; 
+  --rpar; 
+  --ipar; 
+  --funptr; 
+  --funtyp; 
+  --iwa; 
+  --outtb; 
+ 
+  /* Function Body */ 
+ 
   /*update continuous and discrete states on event */
   if (iwa[26] == 0) {
     return 0 ;
@@ -1354,26 +1354,26 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
       &nrd_2, tvec, &ntvec, &(rpar[2]), &nrd_9, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-	   if(flag < 0 ) return (5 - flag);
+    
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=1;
    args[0]=&(outtb[13]);
    nport = 1;
    pid_actuator(&flag, &nport, &nevprt, told, (double *)args[0], &nrd_1);
-	   if(flag < 0 ) return (5 - flag);
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=1;
    args[0]=&(outtb[15]);
    nport = 2;
    pid_actuator(&flag, &nport, &nevprt, told, (double *)args[0], &nrd_1);
-	   if(flag < 0 ) return (5 - flag);
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=1;
    args[0]=&(outtb[15]);
    nport = 4;
    pid_actuator(&flag, &nport, &nevprt, told, (double *)args[0], &nrd_1);
-	   if(flag < 0 ) return (5 - flag);
+	   if(flag < 0 ) return (5 - flag); 
     break;
     case 2:
     flag = 2;
@@ -1381,7 +1381,7 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    args[0]=&(outtb[16]);
    nport = 3;
    pid_actuator(&flag, &nport, &nevprt, told, (double *)args[0], &nrd_1);
-	   if(flag < 0 ) return (5 - flag);
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=1;
    args[0]=&(outtb[1]);
@@ -1389,8 +1389,8 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    C2F(gensqr)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[6]),
       &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
-	   if(flag < 0 ) return (5 - flag);
+    
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=1;
    args[0]=&(outtb[1]);
@@ -1398,8 +1398,8 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    C2F(rndblk)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_1, &(z[7]),
       &nrd_2, tvec, &ntvec, &(rpar[29]), &nrd_3, &(ipar[7]), &nrd_1,
       (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
-	   if(flag < 0 ) return (5 - flag);
+    
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=1;
    args[0] = &(outtb[18]);
@@ -1411,8 +1411,8 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    selector(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[5]),
      &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0,
       &(args[0]), &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
-	   if(flag < 0 ) return (5 - flag);
+    
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=1;
    args[0]=&(outtb[7]);
@@ -1420,8 +1420,8 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[3]),
       &nrd_1, tvec, &ntvec, &(rpar[17]), &nrd_4, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-	   if(flag < 0 ) return (5 - flag);
+    
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=1;
    args[0]=&(outtb[7]);
@@ -1429,8 +1429,8 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[4]),
       &nrd_1, tvec, &ntvec, &(rpar[21]), &nrd_4, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-	   if(flag < 0 ) return (5 - flag);
+    
+	   if(flag < 0 ) return (5 - flag); 
     break;
     case 3:
     flag = 2;
@@ -1438,7 +1438,7 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    args[0]=&(outtb[16]);
    nport = 3;
    pid_actuator(&flag, &nport, &nevprt, told, (double *)args[0], &nrd_1);
-	   if(flag < 0 ) return (5 - flag);
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=1;
    args[0]=&(outtb[1]);
@@ -1446,8 +1446,8 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    C2F(gensqr)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[6]),
       &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
-	   if(flag < 0 ) return (5 - flag);
+    
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=1;
    args[0]=&(outtb[1]);
@@ -1455,8 +1455,8 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    C2F(rndblk)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_1, &(z[7]),
       &nrd_2, tvec, &ntvec, &(rpar[29]), &nrd_3, &(ipar[7]), &nrd_1,
       (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
-	   if(flag < 0 ) return (5 - flag);
+    
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=2;
    args[0] = &(outtb[18]);
@@ -1468,8 +1468,8 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    selector(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[5]),
      &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0,
       &(args[0]), &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
-	   if(flag < 0 ) return (5 - flag);
+    
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=1;
    args[0]=&(outtb[7]);
@@ -1477,8 +1477,8 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[3]),
       &nrd_1, tvec, &ntvec, &(rpar[17]), &nrd_4, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-	   if(flag < 0 ) return (5 - flag);
+    
+	   if(flag < 0 ) return (5 - flag); 
     flag = 2;
     nevprt=1;
    args[0]=&(outtb[7]);
@@ -1486,39 +1486,39 @@ pidddoit2( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
    C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[4]),
       &nrd_1, tvec, &ntvec, &(rpar[21]), &nrd_4, &(ipar[1]), &nrd_0,
       (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
-	   if(flag < 0 ) return (5 - flag);
+    
+	   if(flag < 0 ) return (5 - flag); 
     break;
     }
   }
   return 0;
 } /* ddoit2 */
-/*---------------------------------------- outtbini */
-int
+/*---------------------------------------- outtbini */ 
+int 
 pid_outtb( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
-	clkptr, ordptr, ordclk, nordcl, rpar, ipar, funptr, funtyp,
-    outtb, iwa)
+	clkptr, ordptr, ordclk, nordcl, rpar, ipar, funptr, funtyp, 
+    outtb, iwa) 
 
      /*Constants propagation*/
-     double  *z;
-     integer *zptr;
-     double  *told,  *tevts;
-     integer *evtspt, *nevts, *pointi, *outptr;
-     integer *clkptr, *ordptr, *ordclk, *nordcl;
-     double  *rpar, *outtb;
-     integer *ipar, *funptr, *funtyp;
-     integer *iwa;
-{
-
-  /* Local variables */
-  integer flag;
-  double  tvec[3];
-  double  rdouttb[21];
-  double  *args[100];
-  integer sz[100];
-  integer ntvec;
-  integer nevprt=0;
-
+     double  *z; 
+     integer *zptr; 
+     double  *told,  *tevts; 
+     integer *evtspt, *nevts, *pointi, *outptr; 
+     integer *clkptr, *ordptr, *ordclk, *nordcl; 
+     double  *rpar, *outtb; 
+     integer *ipar, *funptr, *funtyp; 
+     integer *iwa; 
+{ 
+ 
+  /* Local variables */ 
+  integer flag; 
+  double  tvec[3]; 
+  double  rdouttb[21]; 
+  double  *args[100]; 
+  integer sz[100]; 
+  integer ntvec; 
+  integer nevprt=0; 
+ 
   /* Generated constants */
   integer nrd_0 = 0;
   integer nrd_1 = 1;
@@ -1530,65 +1530,65 @@ pid_outtb( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
   integer nrd_7 = 7;
   integer nrd_8 = 8;
   integer nrd_9 = 9;
-  /* Parameter adjustments */
-  --z;
-  --zptr;
-  --tevts;
-  --evtspt;
-  --outptr;
-  --clkptr;
-  --ordptr;
-  --rpar;
-  --ipar;
-  --funptr;
-  --funtyp;
-  --iwa;
-  --outtb;
-
-  /* Function Body */
-
+  /* Parameter adjustments */ 
+  --z; 
+  --zptr; 
+  --tevts; 
+  --evtspt; 
+  --outptr; 
+  --clkptr; 
+  --ordptr; 
+  --rpar; 
+  --ipar; 
+  --funptr; 
+  --funtyp; 
+  --iwa; 
+  --outtb; 
+ 
+  /* Function Body */ 
+  
   flag=1 ;
   args[0]=&(outtb[1]);
   args[1]=&(outtb[1]);
   C2F(bidon)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[3]), &nrd_1,
      (double *)args[0], &nrd_0, (double *)args[1], &nrd_0);
-
-   if(flag < 0 ) return(5 - flag);
+   
+   if(flag < 0 ) return(5 - flag); 
   C2F(cstblk)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[26]), &nrd_1, &(ipar[1]), &nrd_0,
      &(outtb[1]), &nrd_1);
-
-   if(flag < 0 ) return(5 - flag);
+   
+   if(flag < 0 ) return(5 - flag); 
   return 0;
 } /* pid_outtb */
-/*---------------------------------------- initi */
-int
+/*---------------------------------------- initi */ 
+int 
 pid_initi( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
-	clkptr, ordptr, ordclk, nordcl, rpar, ipar, funptr, funtyp,
-    outtb, iwa)
+	clkptr, ordptr, ordclk, nordcl, rpar, ipar, funptr, funtyp, 
+    outtb, iwa) 
 
      /*Block initialization (flag=4)*/
-     double  *z;
-     integer *zptr;
-     double  *told,  *tevts;
-     integer *evtspt, *nevts, *pointi, *outptr;
-     integer *clkptr, *ordptr, *ordclk, *nordcl;
-     double  *rpar, *outtb;
-     integer *ipar, *funptr, *funtyp;
-     integer *iwa;
-{
-
-  /* Local variables */
-  integer flag;
-  double  tvec[3];
-  double  rdouttb[21];
-  double  *args[100];
-  integer sz[100];
-  integer nport;
-  integer ntvec;
-  integer nevprt=0;
-
+     double  *z; 
+     integer *zptr; 
+     double  *told,  *tevts; 
+     integer *evtspt, *nevts, *pointi, *outptr; 
+     integer *clkptr, *ordptr, *ordclk, *nordcl; 
+     double  *rpar, *outtb; 
+     integer *ipar, *funptr, *funtyp; 
+     integer *iwa; 
+{ 
+ 
+  /* Local variables */ 
+  integer flag; 
+  double  tvec[3]; 
+  double  rdouttb[21]; 
+  double  *args[100]; 
+  integer sz[100]; 
+  integer nport; 
+  integer ntvec; 
+  integer nevprt=0; 
+ 
   /* Generated constants */
   integer nrd_0 = 0;
   integer nrd_1 = 1;
@@ -1600,32 +1600,32 @@ pid_initi( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
   integer nrd_7 = 7;
   integer nrd_8 = 8;
   integer nrd_9 = 9;
-  /* Parameter adjustments */
-  --z;
-  --zptr;
-  --tevts;
-  --evtspt;
-  --outptr;
-  --clkptr;
-  --ordptr;
-  --rpar;
-  --ipar;
-  --funptr;
-  --funtyp;
-  --iwa;
-  --outtb;
-
-  /* Function Body */
-
+  /* Parameter adjustments */ 
+  --z; 
+  --zptr; 
+  --tevts; 
+  --evtspt; 
+  --outptr; 
+  --clkptr; 
+  --ordptr; 
+  --rpar; 
+  --ipar; 
+  --funptr; 
+  --funtyp; 
+  --iwa; 
+  --outtb; 
+ 
+  /* Function Body */ 
+  
   flag=4 ;
   args[0]=&(outtb[15]);
   args[1]=&(outtb[2]);
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0] = &(outtb[9]);
   sz[0] = 1;
   args[1] = &(outtb[8]);
@@ -1635,81 +1635,81 @@ pid_initi( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
   plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
      tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
      &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[12]);
   args[1]=&(outtb[13]);
   C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_2, tvec, &ntvec, &(rpar[2]), &nrd_9, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[6]);
   args[1]=&(outtb[11]);
   C2F(lusat)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[11]), &nrd_3, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[4]);
   args[1]=&(outtb[9]);
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[14]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[5]);
   args[1]=&(outtb[6]);
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[15]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[7]);
   args[1]=&(outtb[8]);
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[16]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[7]);
   args[1]=&(outtb[4]);
   C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[3]),
      &nrd_1, tvec, &ntvec, &(rpar[17]), &nrd_4, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[7]);
   args[1]=&(outtb[5]);
   C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[4]),
      &nrd_1, tvec, &ntvec, &(rpar[21]), &nrd_4, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[2]);
   args[1]=&(outtb[3]);
   C2F(samphold)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[13]);
   args[1]=&(outtb[14]);
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[25]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0] = &(outtb[11]);
   sz[0] = 1;
   args[1] = &(outtb[10]);
@@ -1719,9 +1719,9 @@ pid_initi( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
   plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
      tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
      &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0] = &(outtb[3]);
   sz[0] = 1;
   args[1] = &(outtb[14]);
@@ -1731,48 +1731,48 @@ pid_initi( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
   plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
      tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
      &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[1]=&(outtb[15]);
   nport = 1;
   pid_sensor(&flag, &nport, &nevprt, told, (double *)args[1], &nrd_1);
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[13]);
   nport = 1;
   pid_actuator(&flag, &nport, &nevprt, told, (double *)args[0], &nrd_1);
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[1]);
   args[1]=&(outtb[1]);
   C2F(bidon)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[3]), &nrd_1,
      (double *)args[0], &nrd_0, (double *)args[1], &nrd_0);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[15]);
   nport = 2;
   pid_actuator(&flag, &nport, &nevprt, told, (double *)args[0], &nrd_1);
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[16]);
   nport = 3;
   pid_actuator(&flag, &nport, &nevprt, told, (double *)args[0], &nrd_1);
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[15]);
   nport = 4;
   pid_actuator(&flag, &nport, &nevprt, told, (double *)args[0], &nrd_1);
    if(flag < 0 )  return(5 - flag);
-
+  
   C2F(cstblk)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[26]), &nrd_1, &(ipar[1]), &nrd_0,
      &(outtb[1]), &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0] = &(outtb[18]);
   sz[0] = 1;
   args[1] = &(outtb[19]);
@@ -1782,75 +1782,75 @@ pid_initi( z, zptr, told, tevts, evtspt, nevts, pointi, outptr,
   selector(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[5]),
     &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0,
      &(args[0]), &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   C2F(ifthel)(&flag, &nevprt, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]),
      &nrd_0, &(outtb[1]),  &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[1]);
   args[1]=&(outtb[17]);
   C2F(gensqr)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[6]),
      &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[17]);
   args[1]=&(outtb[18]);
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[27]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[20]);
   args[1]=&(outtb[19]);
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[28]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   args[0]=&(outtb[1]);
   args[1]=&(outtb[20]);
   C2F(rndblk)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_1, &(z[7]),
      &nrd_2, tvec, &ntvec, &(rpar[29]), &nrd_3, &(ipar[7]), &nrd_1,
      (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
+   
    if(flag < 0 )  return(5 - flag);
-
+  
   return 0;
 } /* pid_initi */
-/*---------------------------------------- endi */
-/* file_end.c */
-/* Subroutine */ int
-pid_endi( z, zptr, told,
-    tevts, evtspt, nevts, pointi, outptr,
-    clkptr, ordptr, ordclk, nordcl,
-    rpar, ipar, funptr, funtyp, outtb, iwa)
+/*---------------------------------------- endi */ 
+/* file_end.c */ 
+/* Subroutine */ int 
+pid_endi( z, zptr, told, 
+    tevts, evtspt, nevts, pointi, outptr, 
+    clkptr, ordptr, ordclk, nordcl,  
+    rpar, ipar, funptr, funtyp, outtb, iwa) 
 
-     double  *z;
-     integer *zptr;
-     double  *told,  *tevts;
-     integer *evtspt, *nevts, *pointi, *outptr;
-     integer *clkptr, *ordptr, *ordclk, *nordcl;
-     double  *rpar, *outtb;
-     integer *ipar, *funptr, *funtyp;
-     integer *iwa;
-{
-  /* Local variables */
-  integer flag;
-  double  tvec[3];
-  double  rdouttb[21];
-  double  *args[100];
-  integer sz[100];
-  integer nport;
-  integer ntvec;
-  integer nevprt;
-
+     double  *z; 
+     integer *zptr; 
+     double  *told,  *tevts; 
+     integer *evtspt, *nevts, *pointi, *outptr; 
+     integer *clkptr, *ordptr, *ordclk, *nordcl; 
+     double  *rpar, *outtb; 
+     integer *ipar, *funptr, *funtyp; 
+     integer *iwa; 
+{ 
+  /* Local variables */ 
+  integer flag; 
+  double  tvec[3]; 
+  double  rdouttb[21]; 
+  double  *args[100]; 
+  integer sz[100]; 
+  integer nport; 
+  integer ntvec; 
+  integer nevprt; 
+ 
   /* Generated constants */
   integer nrd_0 = 0;
   integer nrd_1 = 1;
@@ -1862,22 +1862,22 @@ pid_endi( z, zptr, told,
   integer nrd_7 = 7;
   integer nrd_8 = 8;
   integer nrd_9 = 9;
-  /* Parameter adjustments */
-  --z;
-  --zptr;
-  --tevts;
-  --evtspt;
-  --outptr;
-  --clkptr;
-  --ordptr;
-  --rpar;
-  --ipar;
-  --funptr;
-  --funtyp;
-  --iwa;
-  --outtb;
-
-  /* Function Body */
+  /* Parameter adjustments */ 
+  --z; 
+  --zptr; 
+  --tevts; 
+  --evtspt; 
+  --outptr; 
+  --clkptr; 
+  --ordptr; 
+  --rpar; 
+  --ipar; 
+  --funptr; 
+  --funtyp; 
+  --iwa; 
+  --outtb; 
+ 
+  /* Function Body */ 
 
   /*     ending  subroutine */
   flag=5 ;
@@ -1887,7 +1887,7 @@ pid_endi( z, zptr, told,
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -1900,7 +1900,7 @@ pid_endi( z, zptr, told,
   plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
      tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
      &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -1909,7 +1909,7 @@ pid_endi( z, zptr, told,
   C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_2, tvec, &ntvec, &(rpar[2]), &nrd_9, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -1918,7 +1918,7 @@ pid_endi( z, zptr, told,
   C2F(lusat)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[11]), &nrd_3, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -1927,7 +1927,7 @@ pid_endi( z, zptr, told,
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[14]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -1936,7 +1936,7 @@ pid_endi( z, zptr, told,
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[15]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -1945,7 +1945,7 @@ pid_endi( z, zptr, told,
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[16]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -1954,7 +1954,7 @@ pid_endi( z, zptr, told,
   C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[3]),
      &nrd_1, tvec, &ntvec, &(rpar[17]), &nrd_4, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -1963,7 +1963,7 @@ pid_endi( z, zptr, told,
   C2F(dsslti)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[4]),
      &nrd_1, tvec, &ntvec, &(rpar[21]), &nrd_4, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -1972,7 +1972,7 @@ pid_endi( z, zptr, told,
   C2F(samphold)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -1981,7 +1981,7 @@ pid_endi( z, zptr, told,
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[25]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -1994,7 +1994,7 @@ pid_endi( z, zptr, told,
   plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
      tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
      &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -2007,7 +2007,7 @@ pid_endi( z, zptr, told,
   plusblk(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[1]),&nrd_0,
      tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0, &(args[0]),
      &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -2028,7 +2028,7 @@ pid_endi( z, zptr, told,
   C2F(bidon)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[3]), &nrd_1,
      (double *)args[0], &nrd_0, (double *)args[1], &nrd_0);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -2053,7 +2053,7 @@ pid_endi( z, zptr, told,
   C2F(cstblk)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[26]), &nrd_1, &(ipar[1]), &nrd_0,
      &(outtb[1]), &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -2066,13 +2066,13 @@ pid_endi( z, zptr, told,
   selector(&flag, &nevprt, told,&(w[1]), &(x[1]), &nrd_0, &(z[5]),
     &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0,&(ipar[1]), &nrd_0,
      &(args[0]), &(sz[0]), &nrd_2,&(args[2]),&(sz[2]),&nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
   C2F(ifthel)(&flag, &nevprt, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]),
      &nrd_0, &(outtb[1]),  &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -2081,7 +2081,7 @@ pid_endi( z, zptr, told,
   C2F(gensqr)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[6]),
      &nrd_1, tvec, &ntvec, &(rpar[1]), &nrd_0, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -2090,7 +2090,7 @@ pid_endi( z, zptr, told,
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[27]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -2099,7 +2099,7 @@ pid_endi( z, zptr, told,
   C2F(gain)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_0, &(z[1]),
      &nrd_0, tvec, &ntvec, &(rpar[28]), &nrd_1, &(ipar[1]), &nrd_0,
      (double *)args[0], &nrd_1, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
 
@@ -2108,8 +2108,9 @@ pid_endi( z, zptr, told,
   C2F(rndblk)(&flag, &nevprt,told, &(w[1]), &(x[1]), &nrd_1, &(z[7]),
      &nrd_2, tvec, &ntvec, &(rpar[29]), &nrd_3, &(ipar[7]), &nrd_1,
      (double *)args[0], &nrd_0, (double *)args[1], &nrd_1);
-
+   
 
   if(flag < 0 ) return (5-flag);
   return 0;
 } /* ending */
+

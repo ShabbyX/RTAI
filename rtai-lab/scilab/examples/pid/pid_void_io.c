@@ -1,13 +1,13 @@
 #include "/home/mante/scilab-2.6/routines/machine.h"
-/*---------------------------------------- Actuators */
-void
+/*---------------------------------------- Actuators */ 
+void 
 pid_actuator(flag,nport,nevprt,t,u,nu)
      /*
       * To be customized for standalone execution
       * flag  : specifies the action to be done
-      * nport : specifies the  index of the Super Bloc
-      *         regular input (The input ports are numbered
-      *         from the top to the bottom )
+      * nport : specifies the  index of the Super Bloc 
+      *         regular input (The input ports are numbered 
+      *         from the top to the bottom ) 
       * nevprt: indicates if an activation had been received
       *         0 = no activation
       *         1 = activation
@@ -25,10 +25,10 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
   case 1 :/* Port number 1 ----------*/
     /* skeleton to be customized */
     switch (*flag) {
-    case 2 :
+    case 2 : 
       if(*nevprt>0) {/* get the input value */
   	/*for (k=0;k<*nu;k++) {????=u[k];} */
-      }
+      } 
       break;
     case 4 : /* actuator initialisation */
       /* do whatever you want to initialize the actuator */
@@ -41,10 +41,10 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
   case 2 :/* Port number 2 ----------*/
     /* skeleton to be customized */
     switch (*flag) {
-    case 2 :
+    case 2 : 
       if(*nevprt>0) {/* get the input value */
   	/*for (k=0;k<*nu;k++) {????=u[k];} */
-      }
+      } 
       break;
     case 4 : /* actuator initialisation */
       /* do whatever you want to initialize the actuator */
@@ -57,10 +57,10 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
   case 3 :/* Port number 3 ----------*/
     /* skeleton to be customized */
     switch (*flag) {
-    case 2 :
+    case 2 : 
       if(*nevprt>0) {/* get the input value */
   	/*for (k=0;k<*nu;k++) {????=u[k];} */
-      }
+      } 
       break;
     case 4 : /* actuator initialisation */
       /* do whatever you want to initialize the actuator */
@@ -73,10 +73,10 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
   case 4 :/* Port number 4 ----------*/
     /* skeleton to be customized */
     switch (*flag) {
-    case 2 :
+    case 2 : 
       if(*nevprt>0) {/* get the input value */
   	/*for (k=0;k<*nu;k++) {????=u[k];} */
-      }
+      } 
       break;
     case 4 : /* actuator initialisation */
       /* do whatever you want to initialize the actuator */
@@ -88,15 +88,15 @@ pid_actuator(flag,nport,nevprt,t,u,nu)
   break;
   }
 }
-/*---------------------------------------- Sensor */
-void
+/*---------------------------------------- Sensor */ 
+void 
 pid_sensor(flag,nport,nevprt,t,y,ny)
      /*
       * To be customized for standalone execution
       * flag  : specifies the action to be done
-      * nport : specifies the  index of the Super Bloc
-      *         regular input (The input ports are numbered
-      *         from the top to the bottom )
+      * nport : specifies the  index of the Super Bloc 
+      *         regular input (The input ports are numbered 
+      *         from the top to the bottom ) 
       * nevprt: indicates if an activation had been received
       *         0 = no activation
       *         1 = activation
@@ -124,8 +124,9 @@ pid_sensor(flag,nport,nevprt,t,y,ny)
     break;
   }
 }
-/*---------------------------------------- callback at user params updates */
-void
+/*---------------------------------------- callback at user params updates */ 
+void 
 pid_upar_update(int index)
 {
 }
+

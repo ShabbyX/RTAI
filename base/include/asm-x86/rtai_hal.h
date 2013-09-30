@@ -23,10 +23,24 @@
 #ifndef _RTAI_ASM_X86_HAL_H
 #define _RTAI_ASM_X86_HAL_H
 
+#define RTAI_BUSY_ALIGN_RET_DELAY  500 // to be CONFIG_RTAI_BUSY_ALIGN_RET_DELAY
+
 #ifdef __i386__
 #include "rtai_hal_32.h"
 #else
 #include "rtai_hal_64.h"
 #endif
+
+struct calibration_data {
+	unsigned long cpu_freq;
+	unsigned long apic_freq;
+	int latency;
+	int latency_busy_align_ret_delay;
+	int setup_time_TIMER_CPUNIT;
+	int setup_time_TIMER_UNIT;
+	int timers_tol[RTAI_NR_CPUS];
+};
+
+int rtai_calibrate_hard_timer(void);
 
 #endif /* !_RTAI_ASM_X86_HAL_H */

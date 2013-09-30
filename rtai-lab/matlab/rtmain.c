@@ -1,6 +1,6 @@
 /*
-  COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
-  Paolo Mantegazza <mantegazza@aero.polimi.it>
+  COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
+  Paolo Mantegazza (mantegazza@aero.polimi.it)
   Roberto Bucher (roberto.bucher@supsi.ch)
   Daniele Gasperini (daniele.gasperini@elet.polimi.it)
 
@@ -177,7 +177,7 @@ SimStruct *rtaiLed[MAX_RTAI_LEDS];
 SimStruct *rtaiMeter[MAX_RTAI_METERS];
 SimStruct *rtaiSynchronoscope[MAX_RTAI_SYNCHS];
 
-#define MAX_COMEDI_DEVICES        10
+#define MAX_COMEDI_DEVICES        10	
 
 void *ComediDev[MAX_COMEDI_DEVICES];
 int ComediDev_InUse[MAX_COMEDI_DEVICES] = {0};
@@ -202,7 +202,7 @@ static inline void strncpyz(char *dest, const char *src, size_t n)
     n = strlen(src);
   } else
     n = 0;
-
+		
   dest[n] = '\0';
 }
 
@@ -347,7 +347,7 @@ int_T rt_GetParameterInfo(void *mpi, rtTargetParamInfo *rtpi, int i)
   uint_T dataClass;
 
   mmi   = (ModelMappingInfo *)mpi;
-
+	
   ptRec = (ParameterTuning*)mmiGetBlockTuningParamInfo(mmi,i);
   pMap  = mmiGetParametersMap(mmi);
   nRows = ptinfoGetNumRows(ptRec);
@@ -522,7 +522,7 @@ static void *rt_HostInterface(void *args)
   while (!endInterface) {
     task = rt_receive(0, &IRequest);
     Request = (char)(IRequest);
-
+		
     if (endInterface) break;
 
     switch (Request) {
@@ -541,12 +541,12 @@ static void *rt_HostInterface(void *args)
       rt_receivex(task, &rtParameters, sizeof(char), &len);
       rt_GetParameterInfo(MMI, &rtParameters, 0);
       rt_returnx(task, &rtParameters, sizeof(rtParameters));
-
+					  
       for (i = 0; i < nBlockParams; i++) {
 	rt_receivex(task, &rtParameters, sizeof(char), &len);
 	rt_GetParameterInfo(MMI, &rtParameters, i);
 	rt_returnx(task, &rtParameters, sizeof(rtParameters));
-      }
+      } 
       }
       { int scopeIdx, Reply;
       float samplingTime;
@@ -568,7 +568,7 @@ static void *rt_HostInterface(void *args)
 				if(j < 0) break;
 	      char traceName[10];
 				sprintf(traceName, "Trace %d", j+1);
-	      rt_returnx(task, traceName, strlen(traceName)+1); // return null terminated string
+	      rt_returnx(task, traceName, strlen(traceName)+1); // return null terminated string	    
 	  }
 	  samplingTime = ssGetSampleTime(rtaiScope[scopeIdx],0);
 	  rt_returnx(task, &samplingTime, sizeof(float));
@@ -709,7 +709,7 @@ static void *rt_HostInterface(void *args)
     rt_receivex(task, &matIdx, sizeof(int), &len);
     rt_ModifyParameterValue(MMI, index, matIdx, &newv);
     rt_returnx(task, &Reply, sizeof(int));
-    break;
+    break;			
     }
 
     case 'g': { int i;
@@ -724,8 +724,8 @@ static void *rt_HostInterface(void *args)
       rt_receivex(task, &rtParameters, sizeof(char), &len);
       rt_GetParameterInfo(MMI, &rtParameters, i);
       rt_returnx(task, &rtParameters, sizeof(rtParameters));
-    }
-    break;
+    } 
+    break;			
     }
 
     case 'd': { int ParamCnt;
@@ -970,7 +970,7 @@ static int_T rt_Main(RT_MODEL * (*model_name)(void), int_T priority)
       rt_sem_delete(hard_timers_cnt);
     }
   }
-
+	
 #ifdef MULTITASKING
   free(rt_SubRateTasks);
   free(rt_SubRateThreads);
@@ -1125,7 +1125,7 @@ int main(int argc, char *argv[])
       break;
     case 'a':
       TargetALogMbxID = strdup(optarg);
-      break;
+      break;	
     case 'd':
       TargetLedMbxID = strdup(optarg);
       break;
@@ -1154,7 +1154,7 @@ int main(int argc, char *argv[])
   if (Verbose) {
     printf("\nTarget settings\n");
     printf("===============\n");
-    printf("  Real-time : %s\n", UseHRT ? "HARD" : "SOFT");
+    printf("  Real-time : %s\n", UseHRT ? "HARD" : "SOFT");	
     printf("  Timing    : %s / ", InternalTimer ? "internal" : "external");
     printf("%s\n", ClockTick ? "periodic" : "oneshot");
     printf("  Priority  : %d\n", priority);

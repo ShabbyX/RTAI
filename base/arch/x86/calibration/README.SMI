@@ -1,8 +1,8 @@
 To fix SMI problems run "setsmi [hal_smi_masked_bits=<xxx>]", where
 "hal_smi_masked_bits" should be used if SMI devices must be disabled
-selectivily. Without it SMI is disabled completly. Note that using
-"setsmi hal_smi_masked_bits=1" will disable SMI competely, it is in
-fact the default action if nothing is said at insmod.
+selectively. Without it SMI is disabled completely. Note that using
+"setsmi hal_smi_masked_bits=1" will disable SMI completely, it is in
+fact the default action if nothing is said at insmod, but ca be very dangerous.
 
 A list of a few specific bits:
 #define INTEL_USB2_EN_BIT   (0x01 << 18) /* ICH4, ... */

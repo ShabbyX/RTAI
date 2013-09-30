@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2008-2009 Guillaume MILLET (millet@isir.fr)
-	      2008 Julien VITARD (vitard@isir.fr)
+              2008 Julien VITARD (vitard@isir.fr)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -163,18 +163,18 @@ static void init(scicos_block *block)
   if (comdev->indexSig)
     counter_mode |= (NI_GPCT_INDEX_ENABLE_BIT | NI_GPCT_INDEX_PHASE_HIGH_A_HIGH_B_BITS);
   unsigned int config[][4] = {{3, INSN_CONFIG_SET_GATE_SRC, 0, NI_GPCT_DISABLED_GATE_SELECT}, \
-			      {3, INSN_CONFIG_SET_GATE_SRC, 1, NI_GPCT_DISABLED_GATE_SELECT}, \
-			      {3, INSN_CONFIG_SET_OTHER_SRC, NI_GPCT_SOURCE_ENCODER_A, NI_GPCT_PFI_OTHER_SELECT(comdev->a)}, \
-			      {3, INSN_CONFIG_SET_OTHER_SRC, NI_GPCT_SOURCE_ENCODER_B, NI_GPCT_PFI_OTHER_SELECT(comdev->b)}, \
-			      {3, INSN_CONFIG_SET_OTHER_SRC, NI_GPCT_SOURCE_ENCODER_Z, NI_GPCT_PFI_OTHER_SELECT(comdev->z)}, \
-			      {2, INSN_CONFIG_SET_COUNTER_MODE, counter_mode, 0}, \
-			      {2, INSN_CONFIG_ARM, NI_GPCT_ARM_IMMEDIATE, 0}};
+                              {3, INSN_CONFIG_SET_GATE_SRC, 1, NI_GPCT_DISABLED_GATE_SELECT}, \
+                              {3, INSN_CONFIG_SET_OTHER_SRC, NI_GPCT_SOURCE_ENCODER_A, NI_GPCT_PFI_OTHER_SELECT(comdev->a)}, \
+                              {3, INSN_CONFIG_SET_OTHER_SRC, NI_GPCT_SOURCE_ENCODER_B, NI_GPCT_PFI_OTHER_SELECT(comdev->b)}, \
+                              {3, INSN_CONFIG_SET_OTHER_SRC, NI_GPCT_SOURCE_ENCODER_Z, NI_GPCT_PFI_OTHER_SELECT(comdev->z)}, \
+                              {2, INSN_CONFIG_SET_COUNTER_MODE, counter_mode, 0}, \
+                              {2, INSN_CONFIG_ARM, NI_GPCT_ARM_IMMEDIATE, 0}};
   if (comdev->cmode==UP_DOWN) {
     unsigned int conf_src[] =  {3, INSN_CONFIG_SET_CLOCK_SRC, NI_GPCT_PFI_CLOCK_SRC_BITS(comdev->a),0, \
-				0, 0, 0, 0, 0, 0, 0, 0};
+                                0, 0, 0, 0, 0, 0, 0, 0};
     unsigned int conf_srcB[] = {3, INSN_CONFIG_SET_CLOCK_SRC, NI_GPCT_PFI_CLOCK_SRC_BITS(comdev->a),0, \
-				3, INSN_CONFIG_SET_OTHER_SRC, NI_GPCT_SOURCE_ENCODER_B, NI_GPCT_PFI_OTHER_SELECT(comdev->b), \
-				0, 0, 0, 0};
+                                3, INSN_CONFIG_SET_OTHER_SRC, NI_GPCT_SOURCE_ENCODER_B, NI_GPCT_PFI_OTHER_SELECT(comdev->b), \
+                                0, 0, 0, 0};
     for (i=0;i<12;i++)
       config[2+i/4][i%4] = (comdev->b==-1)?conf_src[i]:conf_srcB[i];
   }
@@ -198,14 +198,14 @@ static void init(scicos_block *block)
   ComediDev_InUse[comdev->index]++;
   ComediDev_CounterInUse[comdev->index][comdev->map?0:comdev->number]++;
   printf("Counter %d - MaxData : %u - Initial value : %lu - Index enable : %d\nMode ",
-	  comdev->number, comdev->maxdata, comdev->initval,comdev->indexSig);
+          comdev->number, comdev->maxdata, comdev->initval,comdev->indexSig);
   if (comdev->cmode==UP_DOWN) {
     printf("UP/DOWN - Channel A on PFI%d - Channel B on ",comdev->a);
     (block->ipar[2]==-1)?printf("P0.%d (GP_UP_DOWN)",6+comdev->number):printf("PFI%d",comdev->b);
   }
   else
     printf("X%d - Channel A on PFI%d - Channel B on PFI%d - Channel Z on PFI%d",
-	   comdev->cmode,comdev->a,comdev->b,comdev->z);
+           comdev->cmode,comdev->a,comdev->b,comdev->z);
   printf("\n\n");
 }
 
@@ -245,7 +245,7 @@ void rt_comedi_encoder(scicos_block *block,int flag)
   if (flag==1){          /* set output */
     inout(block);
   }
-  else if (flag==5){     /* termination */
+  else if (flag==5){     /* termination */ 
     end(block);
   }
   else if (flag ==4){    /* initialisation */

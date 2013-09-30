@@ -80,10 +80,12 @@ void rtextdata(scicos_block *block,int flag)
   if (flag==1){          /* set output */
     inout(block);
   }
-  else if (flag==5){     /* termination */
+  else if (flag==5){     /* termination */ 
     end(block);
   }
   else if (flag ==4){    /* initialisation */
     init(block);
   }
 }
+
+

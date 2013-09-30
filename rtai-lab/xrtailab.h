@@ -1,6 +1,6 @@
 /*
-COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
-		    Paolo Mantegazza <mantegazza@aero.polimi.it>
+COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
+		    Paolo Mantegazza (mantegazza@aero.polimi.it)
 		    Roberto Bucher (roberto.bucher@supsi.ch)
 		    Peter Brier (pbrier@dds.nl)
 
@@ -235,7 +235,7 @@ struct Profile_Struct
 	int Log_Mgr_PSave[MAX_RTAI_LOGS];	/* logs manager n points to save */
 	float Log_Mgr_TSave[MAX_RTAI_LOGS];	/* logs manager n seconds to save */
 	char *Log_Mgr_File[MAX_RTAI_LOGS];	/* logs manager save file name */
-
+	
 	W_Geometry_T ALog_Mgr_W;		/* logs manager geometry */			//added 4/5
 	char *ALog_Mgr_File[MAX_RTAI_LOGS];	/* logs manager save file name */
 

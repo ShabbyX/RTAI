@@ -578,7 +578,7 @@ main(int argc, char *argv[])
 				}
 			}
 		}
-
+		
 		if (mxp_pvt_parse_line(&r, buf, NDIM, NMATCH, match) ) {
 			exit(EXIT_FAILURE);
 		}
@@ -651,7 +651,7 @@ done:;
 	fprintf(fout, "#endif /* MXP_DATA_HC */\n");
 
 	fclose(fout);
-
+	
 	fout = fopen("mxp_data.h", "w");
 	if (fout == NULL) {
 		fprintf(stderr, "unable to open file \"mxp_data.hc\"\n");
@@ -697,3 +697,4 @@ done:;
 	return 0;
 }
 #endif /* ! MXP_LIB */
+

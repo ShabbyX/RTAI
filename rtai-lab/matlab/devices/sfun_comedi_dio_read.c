@@ -1,6 +1,6 @@
 /*
-  COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
-		2009 Guillaume Millet (millet@isir.fr)
+  COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
+                2009 Guillaume Millet (millet@isir.fr)
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -110,7 +110,7 @@ static void mdlInitializeSampleTimes(SimStruct *S)
   ssSetOffsetTime(S, 0, 0.0);
 }
 
-#define MDL_START
+#define MDL_START 
 #if defined(MDL_START)
 static void mdlStart(SimStruct *S)
 {
@@ -124,7 +124,7 @@ static void mdlStart(SimStruct *S)
   char *devname[4] = {"/dev/comedi0","/dev/comedi1","/dev/comedi2","/dev/comedi3"};
   char board[50];
   static char_T errMsg[256];
-
+	
   if (!ComediDev[index]) {
     dev = comedi_open(devname[index]);
     if (!dev) {
@@ -150,7 +150,7 @@ static void mdlStart(SimStruct *S)
     }
     else subdev_type =COMEDI_SUBD_DIO;
   }
-  else subdev_type =COMEDI_SUBD_DI;
+  else subdev_type =COMEDI_SUBD_DI; 
 
   if (!ComediDev_DIOInUse[index] && comedi_lock(dev, subdev) < 0) {
     sprintf(errMsg, "Comedi lock failed for subdevice %d\n",subdev);
@@ -177,7 +177,7 @@ static void mdlStart(SimStruct *S)
     comedi_unlock(dev, subdev);
     comedi_close(dev);
     return;
-  }
+  }	
   ComediDev_InUse[index]++;
   ComediDev_DIOInUse[index]++;
   ssGetPWork(S)[0] = (void *)dev;
@@ -195,7 +195,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
   void *dev        = (void *)ssGetPWork(S)[0];
   int subdev       = ssGetIWork(S)[0];
   unsigned int bit;
-
+	
   comedi_dio_read(dev, subdev, channel, &bit);
   *y = (double)bit;
 #endif

@@ -1,4 +1,4 @@
-all:
+all: 
 
 SCILAB_VERSION = 5.3.0
 SCILAB_DIR = /usr/local/scilab-$(SCILAB_VERSION)/share/scilab

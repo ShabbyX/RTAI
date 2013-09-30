@@ -36,7 +36,7 @@ MATLAB_INCLUDES = \
 	-I$(MATLAB_ROOT)/rtw/c/src \
 	-I$(MATLAB_ROOT)/rtw/c/libsrc \
 	-I$(MATLAB_ROOT)/rtw/c/rtai/devices
-
+ 
 USER_INCLUDES = -I$(LINUX_HOME)/include -I$(RTAIDIR)/include -I$(RTAI_RTW)/include -I$(COMEDI_HOME)/include
 
 # Additional file include paths
@@ -50,13 +50,13 @@ INCLUDES = -I. -I.. $(MATLAB_INCLUDES) $(ADD_INCLUDES) $(USER_INCLUDES) \
 #-------------------------------- C Flags --------------------------------------
 
 # Optimization Options
-OPT_OPTS = -O2
+OPT_OPTS = -O2 
 
 # General User Options
 OPTS =
 DEB_OPT = -DDBGPRT
 
-ANSI_OPTS =
+ANSI_OPTS = 
 
 # Compiler options, etc:
 CC_OPTS = -Wall $(DEB_OPT) $(OPT_OPTS) $(OPTS) $(ANSI_OPTS) $(EXT_CC_OPTS) \
@@ -64,12 +64,12 @@ CC_OPTS = -Wall $(DEB_OPT) $(OPT_OPTS) $(OPTS) $(ANSI_OPTS) $(EXT_CC_OPTS) \
 
 CPP_REQ_DEFINES = -DMODEL=$(MODEL) -DRT -DNUMST=$(NUMST) \
 		  -DTID01EQ=$(TID01EQ) -DNCSTATES=$(NCSTATES) -DUNIX \
-		  -DMT=$(MULTITASKING)
+		  -DMT=$(MULTITASKING) 
 
 CFLAGS = -D_GNU_SOURCE -DRT -DUSE_RTMODEL $(CC_OPTS) $(CPP_REQ_DEFINES) $(INCLUDES) $(NOVERSION) -ffast-math -c
 
-RT_MAIN_DEFINES =
-LDFLAGS = -static
+RT_MAIN_DEFINES = 
+LDFLAGS = -static 
 
 #-------------------------- Additional Libraries ------------------------------
 
@@ -90,7 +90,7 @@ LIBS += $(S_FUNCTIONS_LIB) $(INSTRUMENT_LIBS)
 
 REQ_SRCS  = $(MODEL).c $(MODULES) rtmain.c rt_sim.c rt_nonfinite.c $(EXT_SRC)
 USER_SRCS =
-USER_OBJS =
+USER_OBJS = 
 LOCAL_USER_OBJS = $(notdir $(USER_OBJS))
 
 SRCS      = $(REQ_SRCS) $(S_FUNCTIONS) $(SOLVER)
@@ -111,7 +111,7 @@ $(PROGRAM) : $(OBJS) $(LIBS)
 %.o : $(MATLAB_ROOT)/rtw/c/src/%.c
 	gcc -c $(CFLAGS) $<
 
-rtmain.o : $(MATLAB_ROOT)/rtw/c/rtai/rtmain.c $(MODEL).c
+rtmain.o : $(MATLAB_ROOT)/rtw/c/rtai/rtmain.c $(MODEL).c 
 	gcc -c $(CFLAGS) $(RT_MAIN_DEFINES) $(MATLAB_ROOT)/rtw/c/rtai/rtmain.c
 
 %.o : $(MATLAB_ROOT)/rtw/c/rtai/%.c

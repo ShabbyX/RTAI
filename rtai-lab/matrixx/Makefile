@@ -27,8 +27,8 @@ CPPFLAGS =  $(LXRT_CFLAGS) -I/usr/include \
 	-I$(MATRIXX_DEV)  \
 	-I$(PREFIX)  \
 	-I$(PREFIX)/vxworks-wrappers/ -I./ \
-	 -DMSG_Q_PRIORITY -DRS_VXWORKS $(DOUBLE_FLAG) $(FILEIO_FLAG)
-CFLAGS = -O2 -g -Wall
+        -DMSG_Q_PRIORITY -DRS_VXWORKS $(DOUBLE_FLAG) $(FILEIO_FLAG)
+CFLAGS = -O2 -g -Wall 
 LIBS = $(LXRT_LDFLAGS) -lm -llxrt -L$(PREFIX)/lib/
 
 SRC =   rtmain.c   \
@@ -69,3 +69,4 @@ clean:
 	rm -f *.o mxp mxp_data.h mxp_data.hc mxp.c mxp.h rtmain.c rtmain.h
 
 .PHONY: clean
+

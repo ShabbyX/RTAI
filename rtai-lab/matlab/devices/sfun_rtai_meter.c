@@ -1,5 +1,5 @@
 /*
-  COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
+  COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,7 @@ extern char *TargetMeterMbxID;
 static void mdlInitializeSizes(SimStruct *S)
 {
 	uint_T i;
-
+	
 	ssSetNumSFcnParams(S, NUMBER_OF_PARAMS);
 	if (ssGetNumSFcnParams(S) != ssGetSFcnParamsCount(S)) {
 		return;
@@ -56,7 +56,7 @@ static void mdlInitializeSizes(SimStruct *S)
 	ssSetNumInputPorts(S, 1);
 	ssSetNumOutputPorts(S, 0);
 	ssSetInputPortWidth(S, 0, 1);
-	ssSetInputPortDirectFeedThrough(S, 0, 1);
+        ssSetInputPortDirectFeedThrough(S, 0, 1);
 	ssSetNumContStates(S, 0);
 	ssSetNumDiscStates(S, 0);
 	ssSetNumSampleTimes(S, 1);
@@ -69,7 +69,7 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 	ssSetOffsetTime(S, 0, 0.0);
 }
 
-#define MDL_START
+#define MDL_START 
 static void mdlStart(SimStruct *S)
 {
 #ifndef MATLAB_MEX_FILE

@@ -4,28 +4,28 @@ Module sysAuxClk implements the functions listed below, in user space only by
 using an RTAI proper srq.
 Its primary aim is to make available the support for a few vxWorks APIs for
 the auxiliary timer to be used for implementing autocode support for vxWorks.
-The auxiliary timer can be implemented either using the RTC or a periodic RTAI
+The auxiliary timer can be implemented either using the RTC or a periodic RTAI 
 kernel task, depending on the value of the internal flag "UseTask". The latter
-can be set at insmod, its default is 0, i.e. use the RTC.
+can be set at insmod, its default is 0, i.e. use the RTC. 
 
 FUNCTIONS LIST:
 
 int sysAuxClkRateSet(int TicksPerSecond)
-Sets the timer interrupt frequency. It returns OK or ERROR. The ERROR value is
-returned only if the RTC is being used and the requested frequency is neither
+Sets the timer interrupt frequency. It returns OK or ERROR. The ERROR value is 
+returned only if the RTC is being used and the requested frequency is neither 
 between 2 and 8192 nor a power of 2.
 
 int sysAuxClkRateGet(void)
 Returns the timer interrupt frequency in use.
 
 int sysAuxClkConnect(FUNCPTR routine, int arg)
-This call activates the clock so that the function "routine" is called, with
+This call activates the clock so that the function "routine" is called, with 
 arg "arg", at the set frequency. It returns OK or ERROR if it was not possible
 to connect the auxiliary clock to the service routine, if "routine" is NULL
 RTC is disabled.
 
 void sysAuxClkEnable(void)
-Enables the calling of the service function, if set, at each interrupt.
+Enables the calling of the service function, if set, at each interrupt. 
 
 void sysAuxClkDisable(void)
 Disables the timer operation.

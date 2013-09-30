@@ -1,5 +1,5 @@
 /*
-  COPYRIGHT (C) 2002  Lorenzo Dozio <dozio@aero.polimi.it>
+  COPYRIGHT (C) 2002  Lorenzo Dozio (dozio@aero.polimi.it)
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -60,7 +60,7 @@ static void mdlInitializeSizes(SimStruct *S)
 	ssSetNumOutputPorts(S, 0);
 	for (i = 0; i < nchan; i++) {
 		ssSetInputPortWidth(S, i, 1);
-		ssSetInputPortDirectFeedThrough(S, i, 1);
+	        ssSetInputPortDirectFeedThrough(S, i, 1);
 	}
 	ssSetNumContStates(S, 0);
 	ssSetNumDiscStates(S, 0);
@@ -74,7 +74,7 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 	ssSetOffsetTime(S, 0, 0.0);
 }
 
-#define MDL_START
+#define MDL_START 
 static void mdlStart(SimStruct *S)
 {
 #ifndef MATLAB_MEX_FILE

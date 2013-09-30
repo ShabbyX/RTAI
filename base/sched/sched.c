@@ -955,12 +955,6 @@ static void rt_schedule_on_schedule_ipi(void)
 	}
 sched_exit:
 	CALL_TIMER_HANDLER();
-#if CONFIG_RTAI_BUSY_TIME_ALIGN
-	if (rt_current->busy_time_align) {
-		rt_current->busy_time_align = 0;
-		while(rtai_rdtsc() < rt_current->resume_time);
-	}
-#endif
 }
 #endif
 
@@ -1060,8 +1054,9 @@ sched_exit:
 	CALL_TIMER_HANDLER();
 #if CONFIG_RTAI_BUSY_TIME_ALIGN
 	if (rt_current->busy_time_align) {
+		RTIME resume_time = rt_current->resume_time - tuned.latency_busy_align_ret_delay;
 		rt_current->busy_time_align = 0;
-		while(rtai_rdtsc() < rt_current->resume_time);
+		while(rtai_rdtsc() < resume_time);
 	}
 #endif
 	sched_get_global_lock(cpuid);
@@ -1932,7 +1927,7 @@ static inline void fast_schedule(RT_TASK *new_task, struct task_struct *lnxtsk, 
 /* detach the kernel thread from user space; not fully, only:
    session, process-group, tty. */
 
-extern void rt_daemonize(void);
+void rt_daemonize(void) { }
 
 #define WAKE_UP_TASKs(klist) \
 do { \
@@ -2041,11 +2036,7 @@ void give_back_to_linux(RT_TASK *rt_task, int keeprio)
 
 static void wake_up_srq_handler(unsigned srq)
 {
-#ifdef CONFIG_SMP
-	int cpuid = srq - wake_up_srq[0].srq;
-#else
-	int cpuid = 0; // optimises, ok for x86_64-2.6.10, which can be UP only.
-#endif
+	int cpuid = rtai_cpuid();
 	WAKE_UP_TASKs(wake_up_hts);
 	WAKE_UP_TASKs(wake_up_srq);
 	set_need_resched();
@@ -2514,12 +2505,6 @@ static int __rtai_lxrt_init(void)
 		rt_linux_task.resq.task = NULL;
 	}
 	tuned.latency = imuldiv(Latency, tuned.cpu_freq, 1000000000);
-	tuned.setup_time_TIMER_CPUNIT = imuldiv( SetupTimeTIMER,
-						 tuned.cpu_freq,
-						 1000000000);
-	tuned.setup_time_TIMER_UNIT   = imuldiv( SetupTimeTIMER,
-						 TIMER_FREQ,
-						 1000000000);
 	tuned.timers_tol[0] = 0;
 	oneshot_span = ONESHOT_SPAN;
 	satdlay = oneshot_span - tuned.latency;

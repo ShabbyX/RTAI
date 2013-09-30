@@ -1,7 +1,7 @@
 RTAI
 ====
 
-Welcome to the `master` branch of the RTAI repository!
+Welcome to the `dev` branch of the RTAI repository!
 
 This branch has many additional features, bug fixes,
 performance enhancements, and many other things that

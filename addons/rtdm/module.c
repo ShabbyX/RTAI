@@ -216,11 +216,11 @@ static inline xnintr_t *xnintr_shirq_next(xnintr_t *prev)
 static void xnintr_shirq_handler(unsigned irq, void *cookie)
 {
 
-
-
 	xnintr_irq_t *shirq = &xnirqs[irq];
+
+
 	xnintr_t *intr;
-	int s = 0;
+	int s = 0, ret;
 
 
 
@@ -228,11 +228,14 @@ static void xnintr_shirq_handler(unsigned irq, void *cookie)
 
 	RTAI_SCHED_ISR_LOCK();
 
+
 	xnlock_get(&shirq->lock);
 	intr = shirq->handlers;
 
 	while (intr) {
-		int ret;
+
+
+
 
 		ret = intr->isr(intr);
 		s |= ret;
@@ -270,6 +273,9 @@ static void xnintr_shirq_handler(unsigned irq, void *cookie)
 
 
 
+
+
+
 }
 
 /*
@@ -280,12 +286,11 @@ static void xnintr_edge_shirq_handler(unsigned irq, void *cookie)
 {
 	const int MAX_EDGEIRQ_COUNTER = 128;
 
-
-
-
 	xnintr_irq_t *shirq = &xnirqs[irq];
-	xnintr_t *intr, *end = NULL;
-	int s = 0, counter = 0;
+	int s = 0, counter = 0, ret, code;
+	struct xnintr *intr, *end = NULL;
+
+
 
 
 
@@ -293,11 +298,13 @@ static void xnintr_edge_shirq_handler(unsigned irq, void *cookie)
 
 	RTAI_SCHED_ISR_LOCK();
 
+
 	xnlock_get(&shirq->lock);
 	intr = shirq->handlers;
 
 	while (intr != end) {
-		int ret, code;
+
+
 
 
 
@@ -345,6 +352,9 @@ static void xnintr_edge_shirq_handler(unsigned irq, void *cookie)
 	else if (!(s & XN_ISR_NOENABLE))
 		xnarch_end_irq(irq);
 
+
+
+
 	RTAI_SCHED_ISR_UNLOCK();
 
 
@@ -357,12 +367,6 @@ static inline int xnintr_irq_attach(xnintr_t *intr)
 	xnintr_irq_t *shirq = &xnirqs[intr->irq];
 	xnintr_t *prev, **p = &shirq->handlers;
 	int err;
-
-	if (intr->irq >= RTHAL_NR_IRQS)
-		return -EINVAL;
-
-	if (__testbits(intr->flags, XN_ISR_ATTACHED))
-		return -EPERM;
 
 	if ((prev = *p) != NULL) {
 		/* Check on whether the shared mode is allowed. */
@@ -390,12 +394,11 @@ static inline int xnintr_irq_attach(xnintr_t *intr)
 		}
 		shirq->unhandled = 0;
 
-		err = xnarch_hook_irq(intr->irq, handler, intr->iack, intr);
+		err = xnarch_hook_irq(intr->irq, handler,
+							 intr->iack, intr);
 		if (err)
 			return err;
 	}
-
-	__setbits(intr->flags, XN_ISR_ATTACHED);
 
 	intr->next = NULL;
 
@@ -411,14 +414,6 @@ static inline int xnintr_irq_detach(xnintr_t *intr)
 	xnintr_irq_t *shirq = &xnirqs[intr->irq];
 	xnintr_t *e, **p = &shirq->handlers;
 	int err = 0;
-
-	if (intr->irq >= RTHAL_NR_IRQS)
-		return -EINVAL;
-
-	if (!__testbits(intr->flags, XN_ISR_ATTACHED))
-		return -EPERM;
-
-	__clrbits(intr->flags, XN_ISR_ATTACHED);
 
 	while ((e = *p) != NULL) {
 		if (e == intr) {
@@ -467,20 +462,21 @@ static inline xnintr_t *xnintr_shirq_next(xnintr_t *prev)
 
 static inline int xnintr_irq_attach(xnintr_t *intr)
 {
-	return xnarch_hook_irq(intr->irq, &xnintr_irq_handler, intr->iack, intr);
+	return xnarch_hook_irq(intr->irq, &xnintr_irq_handler, 
+				                  intr->iack, intr);
 }
 
 static inline int xnintr_irq_detach(xnintr_t *intr)
 {
-	int irq = intr->irq, err;
+	int irq = intr->irq, ret;
 
 	xnlock_get(&xnirqs[irq].lock);
-	err = xnarch_release_irq(irq);
+	ret = xnarch_release_irq(irq);
 	xnlock_put(&xnirqs[irq].lock);
 
 
 
-	return err;
+	return ret;
 }
 
 #endif /* !CONFIG_RTAI_RTDM_SHIRQ */
@@ -492,8 +488,8 @@ static inline int xnintr_irq_detach(xnintr_t *intr)
 static void xnintr_irq_handler(unsigned irq, void *cookie)
 {
 
-	xnintr_t *intr;
 
+	struct xnintr *intr;
 
 	int s;
 
@@ -503,11 +499,17 @@ static void xnintr_irq_handler(unsigned irq, void *cookie)
 
 	RTAI_SCHED_ISR_LOCK();
 
+
 	xnlock_get(&xnirqs[irq].lock);
 
 #ifdef CONFIG_SMP
-	/* In SMP case, we have to reload the cookie under the per-IRQ lock
-	   to avoid racing with xnintr_detach. */
+	/* 
+	 * In SMP case, we have to reload the cookie under the per-IRQ
+	 * lock to avoid racing with xnintr_detach. However, we
+	 * assume that no CPU migration will occur while running the
+	 * interrupt service routine, so the scheduler pointer will
+	 * remain valid throughout this function.
+	 */
 	intr = xnarch_get_irq_cookie(irq);
 	if (unlikely(!intr)) {
 		s = 0;
@@ -518,7 +520,6 @@ static void xnintr_irq_handler(unsigned irq, void *cookie)
 	intr = cookie;
 #endif
 	s = intr->isr(intr);
-
 	if (unlikely(s == XN_ISR_NONE)) {
 		if (++intr->unhandled == XNINTR_MAX_UNHANDLED) {
 			xnlogerr("%s: IRQ%d not handled. Disabling IRQ "
@@ -543,7 +544,10 @@ static void xnintr_irq_handler(unsigned irq, void *cookie)
 	else if (!(s & XN_ISR_NOENABLE))
 		xnarch_end_irq(irq);
 
+
+
 	RTAI_SCHED_ISR_UNLOCK();
+
 
 
 
@@ -562,6 +566,9 @@ int xnintr_init(xnintr_t *intr,
 		const char *name,
 		unsigned irq, xnisr_t isr, xniack_t iack, xnflags_t flags)
 {
+	if (irq >= RTHAL_NR_IRQS)
+		return -EINVAL;
+
 	intr->irq = irq;
 	intr->isr = isr;
 	intr->iack = iack;
@@ -576,16 +583,17 @@ int xnintr_init(xnintr_t *intr,
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(xnintr_init);
 
 int xnintr_destroy(xnintr_t *intr)
 {
-	xnintr_detach(intr);
-	return 0;
+	return xnintr_detach(intr);
 }
+EXPORT_SYMBOL_GPL(xnintr_destroy);
 
 int xnintr_attach(xnintr_t *intr, void *cookie)
 {
-	int err;
+	int ret;
 	spl_t s;
 
 
@@ -594,53 +602,83 @@ int xnintr_attach(xnintr_t *intr, void *cookie)
 	intr->cookie = cookie;
 	memset(&intr->stat, 0, sizeof(intr->stat));
 
-	xnlock_get_irqsave(&intrlock, s);
-
 #ifdef CONFIG_SMP
 	xnarch_set_irq_affinity(intr->irq, nkaffinity);
 #endif /* CONFIG_SMP */
-	err = xnintr_irq_attach(intr);
 
+	xnlock_get_irqsave(&intrlock, s);
 
+	if (__testbits(intr->flags, XN_ISR_ATTACHED)) {
+		ret = -EBUSY;
+		goto out;
+	}
 
+	ret = xnintr_irq_attach(intr);
+	if (ret)
+		goto out;
 
+	__setbits(intr->flags, XN_ISR_ATTACHED);
+
+out:
 	xnlock_put_irqrestore(&intrlock, s);
 
-	return err;
+	return ret;
 }
+EXPORT_SYMBOL_GPL(xnintr_attach);
 
 int xnintr_detach(xnintr_t *intr)
 {
-	int err;
+	int ret;
 	spl_t s;
 
 
 
 	xnlock_get_irqsave(&intrlock, s);
 
-	err = xnintr_irq_detach(intr);
+	if (!__testbits(intr->flags, XN_ISR_ATTACHED)) {
+		ret = -EINVAL;
+		goto out;
+	}
+
+	__clrbits(intr->flags, XN_ISR_ATTACHED);
+
+	ret = xnintr_irq_detach(intr);
+	if (ret)
+		goto out;
 
 
-
-
+ out:
 	xnlock_put_irqrestore(&intrlock, s);
 
-	return err;
+	return ret;
 }
+EXPORT_SYMBOL_GPL(xnintr_detach);
 
-int xnintr_enable (xnintr_t *intr)
+int xnintr_enable(xnintr_t *intr)
 {
 
 	rt_enable_irq(intr->irq);
 	return 0;
 }
+EXPORT_SYMBOL_GPL(xnintr_enable);
 
-int xnintr_disable (xnintr_t *intr)
+int xnintr_disable(xnintr_t *intr)
 {
 
 	rt_disable_irq(intr->irq);
 	return 0;
 }
+EXPORT_SYMBOL_GPL(xnintr_disable);
+
+typedef cpumask_t xnarch_cpumask_t;
+void xnintr_affinity(xnintr_t *intr, xnarch_cpumask_t cpumask)
+{
+	trace_mark(xn_nucleus, irq_affinity, "irq %u %lu",
+		   intr->irq, *(unsigned long *)&cpumask);
+
+	xnarch_set_irq_affinity(intr->irq, cpumask);
+}
+EXPORT_SYMBOL_GPL(xnintr_affinity);
 
 extern struct epoch_struct boot_epoch;
 
@@ -665,7 +703,6 @@ static struct rtdm_timer_struct timers_list[NUM_CPUS] =
 
 //static spinlock_t timers_lock[NUM_CPUS] = { SPIN_LOCK_UNLOCKED, };
 static spinlock_t timers_lock[NUM_CPUS] = { __SPIN_LOCK_UNLOCKED(timers_lock[0]), };
-
 
 #ifdef CONFIG_RTAI_LONG_TIMED_LIST
 
@@ -938,10 +975,3 @@ void __exit rtdm_skin_exit(void)
 
 module_init(rtdm_skin_init);
 module_exit(rtdm_skin_exit);
-
-EXPORT_SYMBOL(xnintr_init);
-EXPORT_SYMBOL(xnintr_destroy);
-EXPORT_SYMBOL(xnintr_attach);
-EXPORT_SYMBOL(xnintr_detach);
-EXPORT_SYMBOL(xnintr_disable);
-EXPORT_SYMBOL(xnintr_enable);

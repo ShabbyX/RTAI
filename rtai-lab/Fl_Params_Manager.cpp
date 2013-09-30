@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
+COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
 		    Roberto Bucher (roberto.bucher@supsi.ch)
 
 This library is free software; you can redistribute it and/or
@@ -194,7 +194,7 @@ Fl_Parameters_Manager::Fl_Parameters_Manager(int x, int y, int width, int height
 				unsigned int ncols = Tunable_Parameters[Tunable_Blocks[i].offset+j].n_cols;
 				unsigned int nrows = Tunable_Parameters[Tunable_Blocks[i].offset+j].n_rows;
 				Input_Blocks[Tunable_Blocks[i].offset+j].inputW = new Fl_Float_Input*[nrows*ncols];
-
+				
 				sprintf(param_label, "%s", Tunable_Parameters[Tunable_Blocks[i].offset+j].param_name);
 				for (unsigned int nr = 0; nr < nrows; nr++) {
 					for (unsigned int nc = 0; nc < ncols; nc++) {
@@ -258,7 +258,7 @@ Fl_Parameters_Manager::Fl_Parameters_Manager(int x, int y, int width, int height
 	Download = new Fl_Button(width-150, height-60, 70, 25, "Download");
 	Download->callback((Fl_Callback *)rlg_batch_update_parameters_cb);
 	Download->deactivate();
-	Upload = new Fl_Button(width-75, height-60, 70, 25, "Upload");
+	Upload = new Fl_Button(width-75, height-60, 70, 25, "Upload"); 
 	Upload->callback((Fl_Callback *)rlg_upload_parameters_cb);
 //	Upload->deactivate();
 	Help = new Fl_Button(width-150, height-30, 70, 25, "Help");

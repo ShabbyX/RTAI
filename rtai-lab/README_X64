@@ -1,5 +1,5 @@
 for people who are faced to this issue, the problem comes from EFLTK lib.
-It is necessary to compile with -m64 option and to declare a pointer as int64_t rather than int in
+It is necessary to compile with -m64 option and to declare a pointer as int64_t rather than int in 
 Fl_Group.cpp.
 
 Below the "efltk-2.0.7-compil64.patch" patch usable for EFLTK 2.0.7
@@ -14,21 +14,21 @@ Below the "efltk-2.0.7-compil64.patch" patch usable for EFLTK 2.0.7
 -CXXFLAGS    = -DHAVE_CONFIG_H -I$(EFLTK_BUILDDIR) $(WALL) @CXXFLAGS@ @DEBUGFLAG@
 +CFLAGS        = -m64 -DHAVE_CONFIG_H -I$(EFLTK_BUILDDIR) $(WALL) @CFLAGS@ @DEBUGFLAG@
 +CXXFLAGS    = -m64 -DHAVE_CONFIG_H -I$(EFLTK_BUILDDIR) $(WALL) @CXXFLAGS@ @DEBUGFLAG@
-
+ 
  # static libs:
  LIBEXT        =@LIBEXT@
 --- efltk/src/core/Fl_Group.cpp    2009-02-21 16:36:21.000000000 +0100
 +++ efltk/src/core/Fl_Group.cpp    2009-02-21 16:35:10.000000000 +0100
 @@ -421,9 +421,9 @@
-
+ 
      m_auto_grow_min_width = m_auto_grow_min_height = 0;
-
+ 
 -    int* p = 0;
 +    int64_t* p = 0;
-     if (resizable() && children() > 0)
--        p = store_sizes(); // initialize the size array
-+        p = (int64_t*)store_sizes(); // initialize the size array
-
+     if (resizable() && children() > 0) 
+-        p = store_sizes(); // initialize the size array         
++        p = (int64_t*)store_sizes(); // initialize the size array         
+ 
      if(children() > 0 && layout_damage&(FL_LAYOUT_DAMAGE|FL_LAYOUT_WH))
      {
 --- efltk/configure    2009-02-21 17:55:56.000000000 +0100
@@ -41,16 +41,16 @@ Below the "efltk-2.0.7-compil64.patch" patch usable for EFLTK 2.0.7
 +libdir='${exec_prefix}/lib64'
  localedir='${datarootdir}/locale'
  mandir='${datarootdir}/man'
-
+ 
 @@ -1252,7 +1252,7 @@
                [PREFIX]
-
+ 
  By default, \`make install' will install all the files in
 -\`$ac_default_prefix/bin', \`$ac_default_prefix/lib' etc.  You can specify
 +\`$ac_default_prefix/bin', \`$ac_default_prefix/lib64' etc.  You can specify
  an installation prefix other than \`$ac_default_prefix' using \`--prefix',
  for instance \`--prefix=\$HOME'.
-
+ 
 @@ -10363,7 +10363,7 @@
  echo "-------------------------"
  echo "Prefix: $prefix"
@@ -63,7 +63,7 @@ Below the "efltk-2.0.7-compil64.patch" patch usable for EFLTK 2.0.7
 
 
 
-The modification in configure file is optional and allows the EFLTK lib installation in
+The modification in configure file is optional and allows the EFLTK lib installation in 
 <prefix>/lib64 rather than <prefix>/lib.
 
 My environment is the following :
@@ -79,9 +79,9 @@ patch -p0 -b  < efltk-2.0.7-compil64.patch
 ./emake install
 
 
-Most of the EFLTK testcases pass but some of them fail (perhaps it is due to a lot of warning
+Most of the EFLTK testcases pass but some of them fail (perhaps it is due to a lot of warning 
 "deprecated conversion from string constant to char*").
 Nevertheless, all the XRTAILAB checks pass.
 
-
+ 
 Laurent Boudou <lboudou93@live.fr> 2.3.2009

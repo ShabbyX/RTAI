@@ -1,7 +1,7 @@
 function RTAICodeGen_()
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
-// Last update : 28/08/09
+// Last update : 19/07/10
 //
 // Input editor function of Scicos code generator
 
@@ -61,7 +61,7 @@ function RTAICodeGen_()
             // Got to target sblock.
             scs_m_top=goto_target_scs_m(scs_m_top)
             //## call do_compile_superblock
-            [ok, XX, gui_path, flgcdgen, szclkINTemp, freof] = ...
+            [ok, XX, gui_path, flgcdgen, szclkINTemp, freof, c_atomic_code] = ...
                               do_compile_superblock42(scs_m_top, k);
 
             clearglobal scs_m_top;
@@ -84,7 +84,7 @@ endfunction
 // *******************************************************
 
 function [txt]=call_block42(bk,pt,flag)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //** call_block42 : generate C calling sequence
 //                  of a scicos block
@@ -98,6 +98,10 @@ function [txt]=call_block42(bk,pt,flag)
 //
 
   txt=[]
+
+  if flag==2 & (zptr(bk+1)-zptr(bk)+xptr(bk+1)-xptr(bk) == 0) then
+    return
+  end
 
   //**
   if flag==2 & ((zcptr(bk+1)-zcptr(bk))<>0) & pt<0 then
@@ -428,7 +432,7 @@ function [txt]=call_block42(bk,pt,flag)
         else
           blank = get_blank(funs(bk)+'( ');
           txtc(1) = funs(bk)+txtc(1);
-        end
+        end 
       end
       txtc(2:$) = blank + txtc(2:$);
       txt = [txt;txtc];
@@ -866,7 +870,7 @@ endfunction
 // *******************************************************
 
 function [CCode,FCode]=gen_blocks()
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //@@ gen_blocks : generates code for dynamically
 //                linked Fortran and C blocks
@@ -1043,7 +1047,7 @@ endfunction
 // *******************************************************
 
 function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compile_superblock42(all_scs_m,numk,atomicflag)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //@@ do_compile_superblock42 : transforms a given Scicos discrete and continuous
 //                             SuperBlock into a C defined Block
@@ -1151,7 +1155,7 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
   //***********************************************************
 
 
-  //**  These blocks are not ALLOWED for Emb code generation
+  //**  These blocks are not ALLOWED for Emb code generation 
   vorbidden_items=["CLKOUT_f","activation (events) output ports";
                    "IN_f","input ports";
                    "OUT_f","output ports";
@@ -1166,11 +1170,11 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
                    "WRITEC_f","Write block"]
 
   clkIN = [];
-
+  
   //** scan Problem with incapsulated Superblocks
   for i=1:size(scs_m.objs)
 
-    //** BLOCKS
+    //** BLOCKS 
     if typeof(scs_m.objs(i))=="Block" then
       ind=find(vorbidden_items==scs_m.objs(i).gui);
       if(ind~=[]) then
@@ -1178,8 +1182,8 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
         %cpr = list();
         message(vorbidden_items(ind(1),2)+" not allowed in Superblock");
         return; // EXIT point
-
-      elseif scs_m.objs(i).gui=="CLKINV_f" then //** input clock from external diagram
+      
+      elseif scs_m.objs(i).gui=="CLKINV_f" then //** input clock from external diagram 
         //** replace event input ports by  fictious block
         scs_m.objs(i).gui="EVTGEN_f";
         scs_m.objs(i).model.sim(1)="bidon"
@@ -1194,7 +1198,7 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
       end
     end
   end
-
+ 
   szclkIN = size(clkIN,2);
 
   flgcdgen=szclkIN
@@ -1261,7 +1265,7 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
   end
 
   for i=1:size(bllst)
-    if (bllst(i).sim(1)=="bidon") then //** clock input
+    if (bllst(i).sim(1)=="bidon") then //** clock input 
       howclk = i;
     end
   end
@@ -1378,9 +1382,9 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
   //**** solve which blocks use work ****//
   BeforeCG_WinList = winsid();
 
-  ierr=execstr('[state,t]=scicosim(cpr.state,0,0,cpr.sim,'+..
-               '''start'',scs_m.props.tol)','errcatch')
-
+  //  ierr=execstr('[state,t]=scicosim(cpr.state,0,0,cpr.sim,'+..
+  //               '''start'',scs_m.props.tol)','errcatch')
+  ierr = 1
   //@@ save initial outtb
   if ierr==0
     outtb_init = state.outtb;
@@ -1401,8 +1405,8 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
        end
     end
 
-    ierr=execstr('[state,t]=scicosim(state,0,0,cpr.sim,'+..
-                 '''finish'',scs_m.props.tol)','errcatch')
+  //  ierr=execstr('[state,t]=scicosim(state,0,0,cpr.sim,'+..
+  //               '''finish'',scs_m.props.tol)','errcatch')
   end
 
   //@@ remove windows opened by simulation
@@ -1484,12 +1488,12 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
   //** Find the clock connected to the SuperBlock and retreive
   //** the sampling time
   //** Modified for use with external clock by Henrik Slotholt
-
+  
   useInternTimer = 1;
   extClockCode = ['void rtextclk(void) { }']
 
   if XX.graphics.pein==[] | XX.graphics.pein(1)==0 then
-    sTsamp="0.001"; //** default value is ONE millisecond
+    sTsamp="0.001"; //** default value is ONE millisecond 
   else
     o_ev = XX.graphics.pein(1);
     o_ev=all_scs_m.objs(o_ev).from(1);
@@ -1526,25 +1530,31 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
   //***********************************
   // Get the name of the file
   //***********************************
-  okk = %f;
-  rdnom=hname;
-  rpat = getcwd();
-  archname='';
+  okk = %f; 
+  rdnom=hname; 
+  rpat = getcwd(); 
+  archname=''; 
   Tsamp = sci2exp(eval(sTsamp));
-
-  template = ''; //** default values for this version
-
+  can_flag = %f;
+  
   if XX.model.rpar.props.void3 == [] then
-	target = 'rtai'; //** default compilation chain
-	odefun = 'ode4';  //** default solver
-	odestep = '10';   //** default continous step size
-  else
-	target  = XX.model.rpar.props.void3(1); //** user defined parameters
-	odefun  = XX.model.rpar.props.void3(2);
-	odestep = XX.model.rpar.props.void3(3);
+	target = 'rtai'; //** default compilation chain 
+        template = ''; //** default values for this version 
+	odefun = 'ode4';  //** default solver 
+	odestep = '10';   //** default continous step size 
+  elseif size(XX.model.rpar.props.void3,2)==3 then
+	target = 'rtai'; //** default compilation chain 
+        template = ''; //** default target board
+	odefun = 'ode4';  //** default solver 
+	odestep = '10';   //** default continous step size 
+  else  
+	target   = XX.model.rpar.props.void3(1); //** user defined parameters
+	template = XX.model.rpar.props.void3(2);
+	odefun   = XX.model.rpar.props.void3(3);
+	odestep  = XX.model.rpar.props.void3(4);
   end
 
-  ode_x=['ode1';'ode2';'ode4']; //** available continous solver
+  ode_x=['ode1';'ode2';'ode4']; //** available continous solver 
   libs='';
 
   while %t do
@@ -1555,15 +1565,16 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
       rdnom = strsubst(rdnom,' ','_');
       rdnom = strsubst(rdnom,'-','_');
       rdnom = strsubst(rdnom,'.','_');
+      rdnom = strsubst(rdnom,"",'_');
     end
 
-    //** dialog box default variables
+    //** dialog box default variables 
     label1=[rdnom;getcwd()+'/'+rdnom+"_scig";target;template];
     label2=[rdnom;getcwd()+'/'+rdnom+"_scig";target;template;odefun;odestep];
-
+  
     if x==[] then
-      //** Pure discrete system NO CONTINOUS blocks
-
+      //** Pure discrete system NO CONTINOUS blocks 
+     
       [okk, rdnom, rpat,target,template,label1] = getvalue(..
 	            'Embedded Code Generation',..
 		        ['New block''s name :';
@@ -1586,7 +1597,7 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
 
     if okk==%f then
       ok = %f
-      return ; //** EXIT point
+      return ; //** EXIT point 
     end
     rpat = stripblanks(rpat);
 
@@ -1610,14 +1621,14 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
                '""-"" chars will be automatically substituted by ""_"" '])
     end
 
-    rdnom = strsubst(rdnom,'-','_');
+    rdnom = strsubst(rdnom,'-','_'); 
 
     dirinfo = fileinfo(rpat)
-
+    
     if dirinfo==[] then
-      [pathrp, fnamerp, extensionrp] = fileparts(rpat);
-      ok = mkdir(pathrp, fnamerp+extensionrp) ;
-      if ~ok then
+      [pathrp, fnamerp, extensionrp] = fileparts(rpat); 
+      ok = mkdir(pathrp, fnamerp+extensionrp) ; 
+      if ~ok then 
         message("Directory '+rpat+' cannot be created");
       end
     elseif filetype(dirinfo(2))<>'Directory' then
@@ -1625,25 +1636,25 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
       message(rpat+" is not a directory");
     end
 
-    if stripblanks(rdnom)==emptystr() then
+    if stripblanks(rdnom)==emptystr() then 
       ok = %f;
       message("Sorry: C file name not defined");
     end
 
 
-    //** This comments will be moved in the documentation
+    //** This comments will be moved in the documentation 
 
     //** /contrib/RT_templates/pippo.gen
 
-    //** 1: pippo.mak
+    //** 1: pippo.mak 
     //** 2: pippo.cmd
 
-    //** pippo.mak : scheletro del Makefile
+    //** pippo.mak : scheletro del Makefile 
     //**             - GNU/Linux : Makefile template
     //**             - Windows/Erika : conf.oil
     //**                               erika.cmd
-
-    //** pippo.cmd : sequenza di comandi Scilab
+ 
+    //** pippo.cmd : sequenza di comandi Scilab 
 
 
     TARGETDIR = SCI+"/contrib/RT_templates";
@@ -1657,7 +1668,7 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
       ok = %f;
       message("Target not valid " + target + ".gen");
     end
-
+    
     if ok then
       target_t = mgetl(TARGETDIR+'/'+target+'.gen');
       makfil = target_t(1);
@@ -1695,16 +1706,16 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
   Protostalone = [];
   Protos       = [];
   dfuns        = [] ;
+  
 
 
-
-  //** scan the data structure and call the generating functions
+  //** scan the data structure and call the generating functions 
   //** Substitute previous code!!!!
-
+  
   for i=1:length(funs)
-    ki= find(funs(i) == dfuns) ; //**
-    dfuns = [dfuns; funs(i)] ;
-
+    ki= find(funs(i) == dfuns) ; //** 
+    dfuns = [dfuns; funs(i)] ; 
+      
     if ki==[] then
       Protostalone=[Protostalone;'';BlockProto(i)];
     end
@@ -1719,13 +1730,13 @@ function [ok,XX,gui_path,flgcdgen,szclkINTemp,freof,c_atomic_code,cpr]=do_compil
   n_cmd = size(cmdseq,1);
 
   for i=1:n_cmd
-
+  
     if (cmdseq(i)~="") then
-         disp("Executing " + """" +cmdseq(i)+ """" + '...');
+         disp("Executing " + """" +cmdseq(i)+ """" + '...'); 
     end;
-
+    
     execstr(cmdseq(i));
-
+  
   end
 
   disp("----> Target generation terminated!");
@@ -1735,7 +1746,7 @@ endfunction
 // *******************************************************
 
 function [txt]=BlockProto(bk)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //BlockProto : generate prototype for a calling C sequence
 //             of a scicos computational function
@@ -1760,7 +1771,7 @@ endfunction
 // *******************************************************
 
 function [txt]=make_BlockProto(nin,nout,funs_bk,funtyp_bk,ztyp_bk,bk)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //make_BlockProto : generate prototype for a calling C sequence
 //                  of a scicos computational function
@@ -1953,7 +1964,7 @@ function txt=make_rtai_params()
             OO=scs_m(path);
           end
         end
-
+     
         //** Add comments **//
         nbrpa=nbrpa+1;
         ntot_r = ntot_r + (rpptr(i+1)-rpptr(i));
@@ -1983,7 +1994,7 @@ function txt=make_rtai_params()
         ]
   txt($+1) = 'int NRPAR = '+string(nbrpa)+';';
   txt($+1) = 'int NTOTRPAR = '+string(ntot_r)+';';
-
+    
   strRCode = 'char * strRPAR[' + string(nbrpa) + '] = {' + ..
              part(strRCode,[1:length(strRCode)-1]) + '};';
 
@@ -2089,7 +2100,7 @@ endfunction
 // *******************************************************
 
 function [Code, Code_common]=make_standalonert()
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 // Modified for RTAI by Roberto Bucher roberto.bucher@supsi.ch
 
@@ -2188,7 +2199,7 @@ Code_common= []
         get_scicos_version()+' */'
         '/*     date : '+date()+' */'
         ''
-        '/* Copyright (C) 1989-2010 Metalau project INRIA */'
+        '/* Copyright (c) 1989-2010 Metalau project INRIA */'
 	'/* Code generation modified by Roberto Bucher */'
         ''
         '/* ---- Headers ---- */'
@@ -2243,6 +2254,8 @@ Code_common= []
             '/* ---- Solver functions prototype for standalone use ---- */'
             'int '+rdnom+'simblk_imp(double , double *, double *, double *);'
             'int dae1();'
+            'int dae2();'
+            'int dae4();'
             '']
     else
       Code=[Code
@@ -2293,7 +2306,7 @@ Code_common= []
   //## rmk: we can remove a 'bidon' structure
   //## sometimes at the end
   if funs(nblk)=='bidon' then nblk=nblk-1, end;
-
+  
    Code=[Code
         '/* declaration of scicos block structures */'
         'scicos_block block_'+rdnom+'['+string(nblk)+'];'
@@ -2497,16 +2510,26 @@ Code = [Code;
 
       for j=1:nopar
         if mat2scs_c_nb(opar(opptr(i)+j-1)) <> 11 then
-          Code_opar =[Code_opar;
-                 cformatline('  __CONST__ ' + mat2c_typ(opar(opptr(i)+j-1)) +...
-                         ' opar_'+string(opptr(i)+j-1) + '[]={'+...
-                             strcat(string(opar(opptr(i)+j-1)),',')+'};',70)]
-        else //** cmplx test
-          Code_opar =[Code_opar;
-                 cformatline('  __CONST__ ' + mat2c_typ(opar(opptr(i)+j-1)) +...
+
+	// Thanks to Matteo Morelli for the correction of this bug
+
+          Code_tmp = cformatline(mat2c_typ(opar(opptr(i)+j-1)) +...
+                                 ' opar_'+string(opptr(i)+j-1) + '[]={'+...
+                                 strcat(string(opar(opptr(i)+j-1)),',')+'};',70);
+          Code_tmp(1) = '  __CONST__ '+Code_tmp(1); 
+          Code_opar =[Code_opar; Code_tmp]         
+
+
+
+
+
+       else //** cmplx test
+          Code_tmp = cformatline(mat2c_typ(opar(opptr(i)+j-1)) +...
                          ' opar_'+string(opptr(i)+j-1) + '[]={'+...
                              strcat(string([real(opar(opptr(i)+j-1)(:));
-                                            imag(opar(opptr(i)+j-1)(:))]),',')+'};',70)]
+                                            imag(opar(opptr(i)+j-1)(:))]),',')+'};',70);
+          Code_tmp(1) = '  __CONST__ '+Code_tmp(1); 
+          Code_opar =[Code_opar; Code_tmp]         
         end
       end
 
@@ -2997,9 +3020,10 @@ Code = [Code;
    if impl_blk then
     Code=[Code;
           '  double h,dt;'
+	  '  int i;'
           '']
   end
-
+ 
   if with_nrd then
     if with_nrd2 then
       Code=[Code;
@@ -3237,7 +3261,7 @@ Code = [Code;
     Code=[Code;
           '  /* default jacob_param */'
 	  '  dt='+rdnom+'_get_tsamp();'
-          '  h=dt/'+odestep+';'
+          '  h=dt/'+odestep+';' 
           '  CJJ=1/h;'
           '']
   end
@@ -3325,12 +3349,8 @@ Code = [Code;
         '/*'+part('-',ones(1,40))+'  ISR function */'
         'int '+rdnom+'_isr(double t)'
         '{'
-//        '  int nevprt=1;'
         '  int local_flag;'
 	'  int i;'
-//	'#ifdef linux'
-//        '  double *args[2];'
-//	'#endif'
        ]
 
   if (x <> []) then
@@ -3339,25 +3359,16 @@ Code = [Code;
           '']
   end
 
-  if ALL then
-    Code=[Code;
-          '    /* */'
-          '    ptr = *(block_'+rdnom+'['+string(nb_agenda_blk-1)+'].work);'
-          '    kever = ptr->pointi;'
-          '']
-
-    if with_nrd then
-      if with_nrd2 then
-        Code=[Code;
-              '  /* Variables for constant values */'
-              '  int nrd_1, nrd_2;'
-              ''
-              '  double *args[2];'
-              '']
-      end
+  if with_nrd then
+    if with_nrd2 then
+      Code=[Code;
+            '  /* Variables for constant values */'
+            '  int nrd_1, nrd_2;'
+            ''
+            '  double *args[2];'
+            '']
     end
-
-  end
+  end  
 
   //** flag 1,2,3
   for flag=[1,3,2]
@@ -3432,23 +3443,30 @@ Code = [Code;
             '    '+get_comment('flag',list(flag))
             txt3];
     end
+
+  end
+
+  if impl_blk then
+    intgfun=strsubst(odefun,'ode','dae');
+  else
+    intgfun=odefun
   end
 
   if x<>[] then
     Code=[Code
           ''
-          '  tout=t;'
-	  '  dt='+rdnom+'_get_tsamp();'
-          '  h=dt/'+odestep+';'
-          '  while (tout+h<t+dt){'
+          '    tout=t;'
+	  '    dt='+rdnom+'_get_tsamp();'
+          '    h=dt/'+odestep+';' 
+          '    while (tout+h<t+dt){'
 	  ]
     if impl_blk then
       Code=[Code
-            '   dae1('+rdnom+'simblk_imp,x,xd,res,tout,h);'
+            '    '+intgfun+'('+rdnom+'simblk_imp,x,xd,res,tout,h);'
 	   ]
     else
       Code=[Code
-            '  '+odefun+'('+rdnom+'simblk,x,xd,tout,h);'
+            '    '+intgfun+'('+rdnom+'simblk,x,xd,tout,h);'
 	   ]
     end
 
@@ -3460,12 +3478,12 @@ Code = [Code;
 	  ]
     if impl_blk then
       Code=[Code
-            '   dae1('+rdnom+'simblk_imp,x,xd,res,tout,he);'
+            '  '+intgfun+'('+rdnom+'simblk_imp,x,xd,res,tout,he);'
 	   ]
 
     else
       Code=[Code
-            '  '+odefun+'('+rdnom+'simblk,x,xd,tout,he);'
+            '  '+intgfun+'('+rdnom+'simblk,x,xd,tout,he);'
             '']
     end
   end
@@ -3494,7 +3512,7 @@ Code = [Code;
     end
   end
 
- Code=[Code
+  Code=[Code
 	''
 	'  return 0;'
         '}']
@@ -3522,7 +3540,7 @@ Code = [Code;
             '']
     end
   end
-
+  
   Code=[Code;
         '  '+get_comment('flag',list(5))]
 
@@ -3559,7 +3577,8 @@ Code = [Code;
                '#include <machine.h>'
 	       ''
 	       'int phase;'
-	       'int * block_error;'
+	       'int err = 0;'
+	       'int * block_error = &err;'
 	       ''
 	       ]
 
@@ -3588,7 +3607,7 @@ Code = [Code;
                '']
 
                Code_common=[Code_common
-               'void get_block_error(int err)'
+               'int get_block_error(int err)'
                '{'
  	       '  return *block_error;'
                '}'
@@ -3608,7 +3627,7 @@ Code = [Code;
                '  return block_number;'
                '}'
                '']
-
+ 
                Code_common=[Code_common
                'int get_phase_simulation()'
                '{'
@@ -3718,19 +3737,12 @@ Code = [Code;
         else
           with_nrd2=%f
         end
-//         with_nrd2=%f;
-//         for k=1:size(ind,2)
-//           if ~or(oord([ind(k)],1)==cap) then
-//             with_nrd2=%t;
-//             break;
-//           end
-//         end
         if with_nrd2 then
           Code=[Code;
                 '  /* Variables for constant values */'
                 '  int nrd_1, nrd_2;'
                 ''
-                '  double *args[100];'
+                '  double *args[2];'
                 '']
         end
       end
@@ -3770,9 +3782,10 @@ Code = [Code;
             '}'
             ''
             '/* DAE Method */'
+	    '/* Euler''s Method */'
             'int dae1(f,x,xd,res,t,h)'
             '  int (*f) ();'
-            '  double *x,*xd,*res;'
+            '  double *x, *xd, *res;'
             '  double t, h;'
             '{'
             '  int i;'
@@ -3783,11 +3796,111 @@ Code = [Code;
             '  if (ierr!=0) return ierr;'
             ''
             '  for (i=0;i<NEQ;i++) {'
-            '   x[i]=x[i]+h*xd[i];'
+            '   x[i]=x[i]+h*res[i];'
             '  }'
             ''
             '  return 0;'
-            '}']
+	    '}'
+             ''
+            '/* Heun''s Method */'
+            'int dae2(f,x,xd,res,t,h)'
+            '  int (*f) ();'
+            '  double *x, *xd, *res;'
+            '  double t, h;'
+            '{'
+            '  int i;'
+            '  int ierr;'
+            '  double y['+string(nX)+'],yh['+string(nX)+'],temp,f0['+string(nX)+'],th;'
+            ''
+            '  /**/'
+            '  memcpy(y,x,NEQ*sizeof(double));'
+            '  memcpy(f0,res,NEQ*sizeof(double));'
+            ''
+            '  /**/'
+            '  ierr=(*f)(t,y, f0, res);'
+            '  if (ierr!=0) return ierr;'
+            ''
+            '  /**/'
+            '  for (i=0;i<NEQ;i++) {'
+            '    x[i]=y[i]+h*f0[i];'
+            '  }'
+            '  th=t+h;'
+            '  for (i=0;i<NEQ;i++) {'
+            '    yh[i]=y[i]+h*f0[i];'
+            '  }'
+            '  ierr=(*f)(th,yh, xd, res);'
+            '  if (ierr!=0) return ierr;'
+            ''
+            '  /**/'
+            '  temp=0.5*h;'
+            '  for (i=0;i<NEQ;i++) {'
+            '    x[i]=y[i]+temp*(f0[i]+res[i]);'
+            '  }'
+            ''
+            '  return 0;'
+            '}'
+            ''
+            '/* Fourth-Order Runge-Kutta (RK4) Formula */'
+            'int dae4(f,x,xd,res,t,h)'
+            '  int (*f) ();'
+            '  double *x, *xd, *res;'
+            '  double t, h;'
+            '{'
+            '  int i;'
+            '  int ierr;'
+            '  double y['+string(nX)+'],yh['+string(nX)+'],'+...
+              'temp,f0['+string(nX)+'],th,th2,'+...
+              'f1['+string(nX)+'],f2['+string(nX)+'];'
+            ''
+            '  /**/'
+            '  memcpy(y,x,NEQ*sizeof(double));'
+            '  memcpy(f0,res,NEQ*sizeof(double));'
+            ''
+            '  /**/'
+            '  ierr=(*f)(t,y, xd, f0);'
+            '  if (ierr!=0) return ierr;'
+            ''
+            '  /**/'
+            '  for (i=0;i<NEQ;i++) {'
+            '    x[i]=y[i]+h*f0[i];'
+            '  }'
+            '  th2=t+h/2;'
+            '  for (i=0;i<NEQ;i++) {'
+            '    yh[i]=y[i]+(h/2)*f0[i];'
+            '  }'
+            '  ierr=(*f)(th2,yh, xd, f1);'
+            '  if (ierr!=0) return ierr;'
+            ''
+            '  /**/'
+            '  temp=0.5*h;'
+            '  for (i=0;i<NEQ;i++) {'
+            '    x[i]=y[i]+temp*f1[i];'
+            '  }'
+            '  for (i=0;i<NEQ;i++) {'
+            '    yh[i]=y[i]+(h/2)*f1[i];'
+            '  }'
+            '  ierr=(*f)(th2,yh, xd, f2);'
+            '  if (ierr!=0) return ierr;'
+            ''
+            '  /**/'
+            '  for (i=0;i<NEQ;i++) {'
+            '    x[i]=y[i]+h*f2[i];'
+            '  }'
+            '  th=t+h;'
+            '  for (i=0;i<NEQ;i++) {'
+            '    yh[i]=y[i]+h*f2[i];'
+            '  }'
+            '  ierr=(*f)(th2,yh, xd, res);'
+            '  if (ierr!=0) return ierr;'
+            ''
+            '  /**/'
+            '  temp=h/6;'
+            '  for (i=0;i<NEQ;i++) {'
+            '    x[i]=y[i]+temp*(f0[i]+2.0*f1[i]+2.0*f2[i]+res[i]);'
+            '  }'
+            ''
+            '  return 0;'
+           '}']
     //## explicit case
     else
       Code=[Code;
@@ -3828,19 +3941,12 @@ Code = [Code;
         else
           with_nrd2=%f
         end
-//         with_nrd2=%f;
-//         for k=1:size(ind,2)
-//           if ~or(oord([ind(k)],1)==cap) then
-//             with_nrd2=%t;
-//             break;
-//           end
-//         end
         if with_nrd2 then
           Code=[Code;
                 '  /* Variables for constant values */'
                 '  int nrd_1, nrd_2;'
                 ''
-                '  double *args[100];'
+                '  double *args[2];'
                 '']
         end
       end
@@ -4005,7 +4111,7 @@ endfunction
 // *******************************************************
 
 function [ccmat]=adj_clkconnect_dep(blklst,ccmat)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //this part was taken from c_pass2 and put in c_pass1;!!
 nbl=size(blklst)
@@ -4038,7 +4144,7 @@ endfunction
 // *******************************************************
 
 function [new_agenda]=adjust_agenda(evts,clkptr,funtyp)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ adjust_agenda : remove secondary activation sources
 //                   from the scicos cpr agenda
@@ -4075,7 +4181,7 @@ endfunction
 // *******************************************************
 
 function [clkptr]=adjust_clkptr(clkptr,funtyp)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ adjust_clkptr : remove secondary activation sources
 //                   from the compiled clkptr
@@ -4107,7 +4213,7 @@ endfunction
 // *******************************************************
 
 function [bllst,ok]=adjust_id_scopes(list_of_scopes,bllst)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ adjust_adjust_id_scopes : function to adjust negative
 //                             and positive id of scicos scopes
@@ -4184,7 +4290,7 @@ endfunction
 // *******************************************************
 
 function [t1]=cformatline(t ,l)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ cformatline : utilitary fonction used to format long C instruction
 //
@@ -4247,7 +4353,7 @@ endfunction
 // *******************************************************
 
 function [txt]=code_to_read_params(varname,var,fpp,typ_str)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ code_to_read_params :  function that write binary data in a scilab file
 //                          descriptor fpp and returns the C code to read
@@ -4322,7 +4428,7 @@ endfunction
 // *******************************************************
 
 function [t]=filetype(m)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ filetype : return type of file using fileinfo
 //              output 2
@@ -4349,7 +4455,7 @@ endfunction
 // *******************************************************
 
 function [txt]=get_blank(str)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ get_blank : return blanks with a length
 //               of the given input string
@@ -4371,7 +4477,7 @@ endfunction
 // *******************************************************
 
 function [txt]=get_code_to_read_params(varname,var,fpp,typ_str)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ get_code_to_read_params : function that write binary data in a scilab file
 //                             descriptor fpp and returns the C code to read
@@ -4409,7 +4515,7 @@ endfunction
 // *******************************************************
 
 function [txt]=get_comment(typ,param)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ get_comment : return a C comment
 //                 for generated code
@@ -4501,7 +4607,7 @@ endfunction
 // *******************************************************
 
 function [ind]=get_ind_clkptr(bk,clkptr,funtyp)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ get_ind_clkptr : get event index of adjusted
 //                    compiled clkptr vector
@@ -4526,7 +4632,7 @@ endfunction
 // *******************************************************
 
 function [scs_m]=goto_target_scs_m(scs_m)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ goto_target_scs_m : look if we want generate a sblock
 //                       contained in a sblock
@@ -4554,7 +4660,7 @@ endfunction
 // *******************************************************
 
 function [depu_mat,ok]=incidence_mat(bllst,connectmat,clkconnect,cor,corinv)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ incidence_mat : compute the incidence matrix
 //
@@ -4589,7 +4695,7 @@ function [depu_mat,ok]=incidence_mat(bllst,connectmat,clkconnect,cor,corinv)
   //@@ disable function protection
   //   to overload message function
   %mprt=funcprot()
-  funcprot(0)
+  funcprot(0) 
   deff('message(txt)',' ')
   funcprot(%mprt)
 
@@ -4614,7 +4720,7 @@ endfunction
 // *******************************************************
 
 function [dep]=is_dep(i,j,bllst,connectmat,clkconnect,cor,corinv)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ is_dep : return the dep_u dependance concerning block i and j
 //
@@ -4650,7 +4756,7 @@ endfunction
 // *******************************************************
 
 function [txt]=mat2c_typ(outtb)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ mat2c_typ : returns the C type of a given ScicosLab
 //               variable
@@ -4694,7 +4800,7 @@ endfunction
 // *******************************************************
 
 function [c_nb]=mat2scs_c_nb(outtb)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ mat2scs_c_nb : returns the scicos C type of a
 //                  given ScicosLab variable
@@ -4738,7 +4844,7 @@ endfunction
 // *******************************************************
 
 function [txt]=mat2scs_c_ptr(outtb)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ mat2scs_c_ptr : returns the scicos C ptr of a
 //                  given ScicosLab variable
@@ -4783,7 +4889,7 @@ endfunction
 // *******************************************************
 
 function [txt]=mat2scs_c_typ(outtb)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ mat2scs_c_typ matrix to scicos C type
 //
@@ -4827,7 +4933,7 @@ endfunction
 // *******************************************************
 
 function [str]=string_to_c_string(a)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 //
 //@@ string_to_c_string : ScicosLab string to C string
 //
@@ -4855,7 +4961,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_cdoit(flag)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //@@ write_code_cdoit : generate body of the code for
 //                      for all time dependant blocks
@@ -4978,7 +5084,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_doit(ev,flag,vvvv)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //@@ write_code_doit : generate body of the code for
 //                     ordering calls of blocks during
@@ -5163,7 +5269,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_idoit()
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //@@ write_code_idoit : generate body of the code for
 //                   ordering calls of initial
@@ -5288,7 +5394,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_initdoit(ev,flag)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //@@ write_code_initdoit : generate body of the code for
 //                         ordering calls of blocks during
@@ -5413,7 +5519,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_odoit(flag)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //@@ write_code_odoit : generate body of the code for
 //                      ordering calls of blocks before
@@ -5571,7 +5677,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_ozdoit(ev,flag)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //@@ write_code_ozdoit : generate body of the code for both
 //                       flag 0 & flag 9
@@ -5721,7 +5827,7 @@ endfunction
 // *******************************************************
 
 function [txt]=write_code_reinitdoit(flag)
-//Copyright (C) 1989-2010 Metalau project INRIA
+//Copyright (c) 1989-2010 Metalau project INRIA
 
 //@@ write_code_reinitdoit : generate body of the code for
 //                           implicit solver reinitialization
@@ -5926,7 +6032,7 @@ function [files]=write_code(Code,CCode,FCode,Code_common)
     ok=%f
     return
   end
-
+  
   files=[]
   [fd,ierr]=mopen(rpat+'/'+rdnom+'f.f','r')
   if ierr==0 then mclose(fd),files=[files,rdnom+'f'],end
@@ -5957,4 +6063,5 @@ function ok = compile_standalone()
   chdir(wd);
   ok = %t;
 endfunction
+
 

@@ -6,7 +6,7 @@ lines(0);
 try
  getversion('scilab');
 catch
- error(gettext('Scilab 5.0 or more is required.'));
+ error(gettext('Scilab 5.0 or more is required.'));  
 end;
 // ====================================================================
 if ~with_module('development_tools') then

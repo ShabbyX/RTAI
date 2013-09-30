@@ -96,7 +96,7 @@ endfunction
 
 function [ok,tt]=getCode_generic_inp(funam,tt)
 if tt==[] then
-
+  
    textmp=[
           '#ifndef MODEL'
           '#include <math.h>';
@@ -110,11 +110,11 @@ if tt==[] then
   textmp($+1)='#ifdef MODEL'
   textmp($+1)='int i;'
   textmp($+1)='double y[' + string(nout) + '];'
-  textmp($+1)='double t = get_scicos_time();'
+  textmp($+1)='double t = get_scicos_time();' 
   textmp($+1)='  switch(flag) {'
   textmp($+1)='  case 4:'
   textmp($+1)='    /* Initialisation */'
-  textmp($+1)='    break;';
+  textmp($+1)='    break;'; 
   textmp($+1)='  case 1:'
   textmp($+1)='    /* input(y,t); */'
   textmp($+1)='    for (i=0;i<' + string(nout) + ';i++) block->outptr[i][0] = y[i];'
@@ -134,7 +134,7 @@ while 1==1
   [txt]=x_dialog(['Function definition in C';
 		  'Here is a skeleton of the functions which you shoud edit'],..
 		 textmp);
-
+  
   if txt<>[] then
     tt=txt
     [ok]=scicos_block_link(funam,tt,'c')
@@ -144,7 +144,7 @@ while 1==1
     break;
   else
     ok=%f;break;
-  end
+  end  
 end
 
 endfunction

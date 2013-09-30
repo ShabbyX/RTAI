@@ -105,10 +105,6 @@ typedef struct { volatile unsigned long lock[2]; } xnlock_t;
 #define DEFINE_XNLOCK(lock)               xnlock_t lock = XNARCH_LOCK_UNLOCKED
 #define DEFINE_PRIVATE_XNLOCK(lock)       static DEFINE_XNLOCK(lock)
 
-#define DECLARE_WORK_NODATA(f, n)       DECLARE_WORK(f, n)
-#define DECLARE_WORK_FUNC(f)            void f(struct work_struct *work)
-#define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_DELAYED_WORK(n, f)
-
 static inline void xnlock_init(xnlock_t *lock)
 {
 	*lock = XNARCH_LOCK_UNLOCKED;
@@ -532,6 +528,42 @@ do { \
 #else
 
 #define SELECT_SIGNAL(select_block, state)  do { } while (0)
+
+#endif
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
+
+#define __WORK_INITIALIZER(n,f,d) {                             \
+        .list   = { &(n).list, &(n).list },                     \
+        .sync = 0,                                              \
+        .routine = (f),                                         \
+        .data = (d),                                            \
+}
+
+#define DECLARE_WORK(n,f,d)             struct tq_struct n = __WORK_INITIALIZER(n, f, d)
+#define DECLARE_WORK_NODATA(n, f)       DECLARE_WORK(n, f, NULL)
+#define DECLARE_WORK_FUNC(f)            void f(void *cookie)
+#define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_WORK(n, f, NULL)
+
+#define schedule_delayed_work(work, delay) do {                 \
+	if (delay) {                                            \
+		set_current_state(TASK_UNINTERRUPTIBLE);        \
+		schedule_timeout(delay);                        \
+	}                                                       \
+	schedule_task(work);                                    \
+} while (0)
+
+#else
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,20)
+#define DECLARE_WORK_NODATA(f, n)       DECLARE_WORK(f, n, NULL)
+#define DECLARE_WORK_FUNC(f)            void f(void *cookie)
+#define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_DELAYED_WORK(n, f, NULL)
+#else /* >= 2.6.20 */
+#define DECLARE_WORK_NODATA(f, n)       DECLARE_WORK(f, n)
+#define DECLARE_WORK_FUNC(f)            void f(struct work_struct *work)
+#define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_DELAYED_WORK(n, f)
+#endif /* >= 2.6.20 */
 
 #endif
 

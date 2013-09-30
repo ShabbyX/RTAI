@@ -1,7 +1,7 @@
 function blkStruct = slblocks
 %SLBLOCKS Defines the block library for a specific Toolbox or Blockset.
 
-%   Copyright 1986-2002 The MathWorks, Inc.
+%   Copyright 1986-2002 The MathWorks, Inc. 
 % $Revision: 1.1 $
 
 % Name of the subsystem which will show up in the SIMULINK Blocksets

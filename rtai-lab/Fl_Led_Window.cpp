@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
+COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -103,7 +103,7 @@ void Fl_Led_Window::led_color(Fl_String col)
 	if (strcmp(color,"green") == 0) {
 		color_index = FL_GREEN;
 		return;
-	}
+	} 
 	if (strcmp(color,"red") == 0) {
 		color_index = FL_RED;
 		return;
@@ -166,7 +166,7 @@ Fl_Led_Window::Fl_Led_Window(int x, int y, int width, int height, Fl_MDI_Viewpor
 		  	}
 		  }
 		}
-	  }
+	  }  
 	  g->end();
 	}
 

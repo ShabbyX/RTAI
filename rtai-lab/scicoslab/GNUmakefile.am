@@ -1,6 +1,6 @@
 install-data-local:
 
-SUBDIRS =
+SUBDIRS = 
 
 EXTRA_DIST = rtmain44.c macros devices
 

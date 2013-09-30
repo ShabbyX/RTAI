@@ -13,6 +13,6 @@ Now simply add the code to the generated file in order to fit your need.
 Add the file in the GNUmakefile.am and run automake.
 
 Reconfigure, rebuild and reinstall RTAI.
-
+ 
 Roberto Bucher roberto.bucher@die.supsi.ch
 Oct 24 2007

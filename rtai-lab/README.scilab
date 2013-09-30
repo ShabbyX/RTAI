@@ -33,16 +33,16 @@ Installing files for scilab-5.1.1
       "make install_shared" as superuser
 4) launch "make user" for each user to create the .Scilab/scilab-5.1.1/.scilab file
 
-Many thanks to Holger Nahrstaedt for implementing the template Makefile for
+Many thanks to Holger Nahrstaedt for implementing the template Makefile for 
 shared libraries!
 
 Users with static libraries need liblapack.a and libblas.a installed in their PC!
 
 To be tested:
-Users with Scilab-5.1 and static libraries should remove "-lblas -llapack" from the
+Users with Scilab-5.1 and static libraries should remove "-lblas -llapack" from the 
 SCI/share/scilab/contrib/RTAI/RT_templates/rtai.mak file
 
-User with Scilab-5.1 an shared libraries should remove the line
+User with Scilab-5.1 an shared libraries should remove the line 
 "-lscicall_scilab" and the "\" in previous line
 from the SCI/share/scilab/contrib/RTAI/RT_templates/rtai.mak file
 

@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
+COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
 		    Roberto Bucher (roberto.bucher@supsi.ch)
 		    Peter Brier (pbrier@dds.nl)
 
@@ -181,16 +181,16 @@ void Fl_Meter::initgl()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	if (Meter_Style & MS_ANGLE)
-	  glOrtho(-1, 1, -1., 1, 1, 1);
+	  glOrtho(-1, 1, -1., 1, 1, 1); 	   
 	else
-          glOrtho(-w()/2., w()/2., -h()/3., 2.*h()/3., -1, 1);
-
+          glOrtho(-w()/2., w()/2., -h()/3., 2.*h()/3., -1, 1);	  
+   
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glEnable(GL_DEPTH_TEST);
 	gl_font(FL_HELVETICA_BOLD, 12);
 	glClearColor(Bg_rgb[0], Bg_rgb[1], Bg_rgb[2], 0.0);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);	
 }
 
 /* draw angled line */
@@ -222,10 +222,10 @@ void Fl_Meter::drawgrid()
         if ( Meter_Style & MS_ANGLE ) {
 	  glLineWidth(0.1);
 	  glColor3f(Grid_rgb[0], Grid_rgb[1], Grid_rgb[2]);
-	  for ( angle = 0; angle < 2*M_PI; angle += M_PI / 8.0 )
+	  for ( angle = 0; angle < 2*M_PI; angle += M_PI / 8.0 ) 
 	    draw_aline(angle, 0.8, 0.9);
 	  glLineWidth(2.0);
-	  for ( angle = 0; angle < 2*M_PI; angle += M_PI / 4.0 )
+	  for ( angle = 0; angle < 2*M_PI; angle += M_PI / 4.0 ) 
 	    draw_aline(angle, 0.75, 0.9);
 	  return;
 	}
@@ -313,7 +313,7 @@ void Fl_Meter::draw()
 	  glLineWidth(3.0);
 	  glColor3f(Arrow_rgb[0], Arrow_rgb[1], Arrow_rgb[2]);
 	  draw_aline(angle, 0.0, 0.85);
-
+	  
 	}
 
 	else if ( Meter_Style & MS_DIAL ) { /* meter+value */
@@ -330,7 +330,7 @@ void Fl_Meter::draw()
 	  float x1,x2;
 	  glLineWidth(0.1);
    	  glColor3f(Arrow_rgb[0], Arrow_rgb[1], Arrow_rgb[2]);
-
+	   
 	  if ( Meter_Style & MS_BAR ) { /* bar from min to max value */
       	    x1 = -w()/2.;
 	    x2 = x1 + w()* ((Value-Minimum_Value) / (Maximum_Value - Minimum_Value)); /* bar length */
@@ -338,7 +338,7 @@ void Fl_Meter::draw()
 	    x1 = 0;
  	    x2 = (w()/2.) * ((Value) / (Maximum_Value - Minimum_Value)); /* bar length */
 	  }
-	  glRectf(x1, -h()/3., x2 , 2.*h()/3. );
+	  glRectf(x1, -h()/3., x2 , 2.*h()/3. );	  
 
 	} /* bar */
 
@@ -354,8 +354,8 @@ void Fl_Meter::draw()
 	    //gl_draw("_______________", xp,yp);
 	    glEnable(GL_DEPTH_TEST);
 	  }
-
-
+	
+	
 }
 
 Fl_Meter::Fl_Meter(int x, int y, int w, int h, const char *title):Fl_Gl_Window(x,y,w,h,title)
@@ -395,5 +395,5 @@ Fl_Meter::Fl_Meter(int x, int y, int w, int h, const char *title):Fl_Gl_Window(x
 	Arrow_Color = FL_GRAY;
 	fl_set_color(FL_FREE_COLOR, fl_rgb((unsigned char)(Arrow_rgb[0]*255.), (unsigned char)(Arrow_rgb[1]*255.), (unsigned char)(Arrow_rgb[2]*255.)));
 	Arrow_Color = FL_FREE_COLOR;
-	Meter_Style = MS_DIAL | MS_VALUE;
+	Meter_Style = MS_DIAL | MS_VALUE; 
 }

@@ -404,7 +404,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* If it is UMFPACK/Suitesparse or UMFPACK standalone */
-#define UMFPACK_SUITESPARSE
+#define UMFPACK_SUITESPARSE 
 
 /* If we are building a 64 bits version */
 /* #undef USE_DYNAMIC_STACK */
@@ -480,3 +480,4 @@
 #define DIR_SEPARATOR "/"
 
 #endif /* MACHINE_H  */
+

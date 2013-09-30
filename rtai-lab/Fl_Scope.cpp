@@ -1,6 +1,6 @@
 /*
-COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
-                    Paolo Mantegazza <mantegazza@aero.polimi.it>
+COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
+                    Paolo Mantegazza (mantegazza@aero.polimi.it)
 		    Roberto Bucher (roberto.bucher@supsi.ch)
 		    Peter Brier (pbrier@dds.nl)
 
@@ -277,7 +277,7 @@ int Fl_Scope::increment_trace_pointer()
 
 void Fl_Scope::write_to_trace(int n, float val)
 {
-	if (Write_Ptr[n] < 0 || Write_Ptr[n]>Trace_Len) Write_Ptr[n] = Trace_Len;
+	if (Write_Ptr[n] < 0 || Write_Ptr[n]>Trace_Len) Write_Ptr[n] = Trace_Len;	
 	Trace[n][Write_Ptr[n]--] = val;
 }
 
@@ -294,19 +294,19 @@ void Fl_Scope::add_to_trace(int n, float val)
     if ( (Data_Ptr[0] >= 0) && (Data_Ptr[0] < Trace_Len) ) {  // Aquiring
       Data_Ptr[0]--;
     }
-    else { // Waiting for trigger
+    else { // Waiting for trigger 
       switch ( Trigger_Mode) {
-      case tmRoll:
+      case tmRoll: 
 	Trigger = 1;
         break;
-      case tmOverwrite:
+      case tmOverwrite: 
         Trigger = 1;
         break;
-      case tmTriggerCh1Pos:
+      case tmTriggerCh1Pos: 
         Trigger = (Prev_Val <= 0) && (val > 0 );
         Prev_Val = val;
         break;
-      case tmTriggerCh1Neg:
+      case tmTriggerCh1Neg: 
         Trigger = (Prev_Val >= 0) && (val < 0 );
         Prev_Val = val;
         break;
@@ -319,7 +319,7 @@ void Fl_Scope::add_to_trace(int n, float val)
       } // case
       if ( (Trigger && !OneShot_Flag) || // Not a oneshot, just start again when triggered
 	   (Trigger && OneShot_Flag && !Pause_Flag) ) // oneshot: continue if manually retriggered
-        Data_Ptr[0] = Trace_Len-1;
+        Data_Ptr[0] = Trace_Len-1; 
     } // if
   } // trigger logic
 
@@ -331,7 +331,7 @@ void Fl_Scope::add_to_trace(int n, float val)
   } else {
     if ((Data_Ptr[0] >= 0) && (Data_Ptr[0] < Trace_Len && Trigger_Mode != tmHold)) Trace[n][Data_Ptr[0]] = val;
   }
-
+		  
 } // add_to_trace
 
 void Fl_Scope::add_to_trace(int pos, int n, float val)
@@ -350,7 +350,7 @@ void Fl_Scope::initgl()
 	glLoadIdentity();
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(Bg_rgb[0], Bg_rgb[1], Bg_rgb[2], 0.0);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);	
 }
 
 void Fl_Scope::drawticks()
@@ -414,7 +414,7 @@ void Fl_Scope::drawstats()
   float t = (Time_Range / w()), ystep;
   trStat s;
 
-
+ 
   glDisable(GL_DEPTH_TEST);
   yh = 2 + (int)w()/35.0; if (yh>15.0) yh=15.0;
   gl_font(FL_SCREEN, yh-0.8);
@@ -433,14 +433,14 @@ void Fl_Scope::drawstats()
       s.n = Trace_Len;
       s.avg = s.sum / s.n;
       s.pkpk = s.max - s.min;
-      for (int n = Trace_Len - 1; n >= 0; n--)
+      for (int n = Trace_Len - 1; n >= 0; n--) 
         s.sum2 += (Trace[i][n]-s.avg)*(Trace[i][n]-s.avg);
       if (s.sum2 != 0.0) s.rms = sqrt(s.sum2/s.n); else s.rms = 0.0;
-
-      s.t1 = t*cursors[0].x;
-      s.t2 = t*cursors[1].x;
+     
+      s.t1 = t*cursors[0].x;  
+      s.t2 = t*cursors[1].x;  
       ydiv = (Y_Range_Sup[i]-Y_Range_Inf[i])/NDIV_GRID_Y;
-      ystep = (Y_Range_Inf[i]-Y_Range_Sup[i])/h();
+      ystep = (Y_Range_Inf[i]-Y_Range_Sup[i])/h(); 
       s.y1 = ystep*(cursors[0].y-(h()-Trace_Offset[i]));
       s.y2 = ystep*(cursors[1].y-(h()-Trace_Offset[i]));
       s.dy = s.y2-s.y1;
@@ -448,12 +448,12 @@ void Fl_Scope::drawstats()
       if ( s.dt != 0 ) s.dydt = s.dy / s.dt; else s.dydt=0;
 
       j++; // If there is something to show, increment column and calculate start position
-      xo = 10 + (j-1)*(w()/3.0);
+      xo = 10 + (j-1)*(w()/3.0); 
       yo = h()-yh;
 
       gl_color(FL_GRAY);
-      if ( Trace_Flags[i] & tfDrawLabel) {
-        sprintf(str, " Trace %d", i+1); gl_draw(str, xo,yo); yo -= yh;
+      if ( Trace_Flags[i] & tfDrawLabel) { 
+        sprintf(str, " Trace %d", i+1); gl_draw(str, xo,yo); yo -= yh; 
         glLineWidth(Trace_Width[i]);
         glColor3f(Trace_rgb[i][0], Trace_rgb[i][1], Trace_rgb[i][2]);
         glBegin(GL_LINE_STRIP);
@@ -527,7 +527,7 @@ void Fl_Scope::draw()
 
 	if (Scope_Flags & sfDrawTics) drawticks();
 	if (Scope_Flags & sfDrawGrid) drawgrid();
-
+	
 // Draw all trace lines
 	for (int nn = 0; nn < num_of_traces; nn++) {
 	        glLineWidth(Trace_Width[nn]);
@@ -546,7 +546,7 @@ void Fl_Scope::draw()
 	}
 
 // Draw zero line for all traces, include trace identifier
-
+  
 	glLineWidth(0.1);
 	glLineStipple(1, 0x1A1A);
 	glEnable(GL_LINE_STIPPLE);
@@ -583,7 +583,7 @@ void Fl_Scope::draw()
 
 	  gl_draw(secdiv, 10.0f, 5.0f);
 	  if ( Scope_Flags & sfCursors ) {
-	    if ( Scope_Flags & sfHorBar ) {
+	    if ( Scope_Flags & sfHorBar ) { 
 	      drawhline(h()-cursors[0].y, c, 2., 0xAAAA);
 	      drawhline(h()-cursors[1].y, c, 2, 0xAAAA);
             }
@@ -591,14 +591,14 @@ void Fl_Scope::draw()
 	      drawvline(cursors[0].x, c, 2, 0xAAAA);
 	      drawvline(cursors[1].x, c, 2, 0xAAAA);
 	    }
-            glRectf(cursors[0].x-2, h()-cursors[0].y-2, cursors[0].x+2, h()-cursors[0].y+2);
+            glRectf(cursors[0].x-2, h()-cursors[0].y-2, cursors[0].x+2, h()-cursors[0].y+2); 
 	    gl_draw("1", cursors[0].x-10, h()-cursors[0].y-5);
-            glRectf(cursors[1].x-2, h()-cursors[1].y-2, cursors[1].x+2, h()-cursors[1].y+2);
+            glRectf(cursors[1].x-2, h()-cursors[1].y-2, cursors[1].x+2, h()-cursors[1].y+2); 
 	    gl_draw("2", cursors[1].x-10., h()-cursors[1].y-5);
 	  }
 	}
 
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);      
 
 	drawstats();
 
@@ -614,16 +614,16 @@ int Fl_Scope::handle(int e)
 		if ( abs(cursors[0].x - Fl::event_x()) < abs(cursors[1].x - Fl::event_x()) )
 		  active_cursor = 0;
    		else
-		  active_cursor = 1;
+		  active_cursor = 1; 
 		cursors[active_cursor].x = Fl::event_x();
 		cursors[active_cursor].y = Fl::event_y();
-		return(1);
+		return(1); 
 		break;
 	  case FL_DRAG:
 		if ( active_cursor < 0 || active_cursor > 1) return (1);
 		cursors[active_cursor].x = Fl::event_x();
 		cursors[active_cursor].y = Fl::event_y();
-		return(1);
+		return(1); 
 		break;
 
 /*	  case FL_RELEASE:
@@ -645,7 +645,7 @@ Fl_Scope::Fl_Scope(int x, int y, int w, int h, int ntr, const char *title):Fl_Gl
 	dyGrid = 0.;
 	Time_Range = 1.0;
  	Trigger_Mode = tmRoll;
-
+    
 
 	Trace_Visible = new int[num_of_traces];
 	Y_Div = new float[num_of_traces];

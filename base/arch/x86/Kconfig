@@ -83,7 +83,7 @@ config RTAI_DIAG_TSC_SYNC
 	bool "Diagnose out of sync MP-TSCs"
 	default n
 	help
-	Check alignement of MP-TSCs, against a master CPU, and show them in
+	Check alignment of MP-TSCs, against a master CPU, and show them in
 	the RTAI HAL proc file system (in TSC count units).
 
 config RTAI_MASTER_TSC_CPU
@@ -91,7 +91,7 @@ config RTAI_MASTER_TSC_CPU
 	string "Define the master CPU for aligning MP-TSCs"
 	default 0
 	help
-	Master CPU for diagnosis and correction of TSCs alignement.
+	Master CPU for diagnosis and correction of TSCs alignment.
 
 config RTAI_TUNE_TSC_SYNC
 	depends on RTAI_DIAG_TSC_SYNC

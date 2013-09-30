@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2006  Roberto Bucher (roberto.bucher@supsi.ch)
-	      2011  Holger Nahrstaedt
+              2011  Holger Nahrstaedt
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,7 @@ void par_getstr(char * str, int par[], int init, int len);
 static void init(scicos_block *block)
 {
   double *y = block->outptr[0];
-
+ 
   y[0] = 0.0;
 }
 
@@ -58,10 +58,12 @@ void rtsquare(scicos_block *block,int flag)
   if (flag==1){          /* set output */
     inout(block);
   }
-  else if (flag==5){     /* termination */
+  else if (flag==5){     /* termination */ 
     end(block);
   }
   else if (flag ==4){    /* initialisation */
     init(block);
   }
 }
+
+

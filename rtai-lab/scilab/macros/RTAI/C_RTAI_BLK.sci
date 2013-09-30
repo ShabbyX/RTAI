@@ -28,9 +28,9 @@ case 'set' then
 	'number of zero crossing surfaces';
         'initial discrete state';
         'Real parameters vector';
-        'Integer parameters vector';
+        'Integer parameters vector';      
         'initial firing vector (<0 for no firing)';
-        'direct feedthrough (y or n)';
+        'direct feedthrough (y or n)';                                       
         'time dependence (y or n)'],..
          list('str',1,'str',1,'vec',-1,'vec',-1,'vec',-1,'vec',-1,..
          'vec',-1,'vec',1,'vec',-1,'vec',-1,'vec',-1,'vec','sum(%7)',..
@@ -51,7 +51,7 @@ case 'set' then
     depu=stripblanks(depu);if part(depu,1)=='y' then depu=%t; else depu=%f;end
     dept=stripblanks(dept);if part(dept,1)=='y' then dept=%t; else dept=%f;end
     dep_ut=[depu dept];
-
+    
 
     if funam==' ' then break,end
     tt=label(2);
@@ -124,7 +124,7 @@ endfunction
 function [ok,tt]=getCode(funam,tt)
 //
 if tt==[] then
-
+  
   textmp=[
 	  '#include <math.h>';
 	  '#include <stdlib.h>';
@@ -142,22 +142,22 @@ if tt==[] then
 	   "{";
 	   "return 0;}"];
   textmp($+1)=' '
-  if nout<>0 then
+  if nout<>0 then 
     textmp($+1)='  } else if(flag == 1) { /* output computation*/'
     textmp($+1)='   set_block_error('+funam+"_bloc_outputs(block,flag));"
     ttext=[ttext;'int '+funam+"_bloc_outputs(scicos_block *block,int flag)";
 	   "{";
 	   "return 0;}"];
   end
-
-  if nx<>0 then
+  
+  if nx<>0 then 
     textmp($+1)='  } else if(flag == 0) { /* derivative or residual computation*/',
     textmp($+1)='   set_block_error('+funam+"_bloc_deriv(block,flag));"
     ttext=[ttext;'int '+funam+"_bloc_deriv(scicos_block *block,int flag)";
 	   "{";
 	   "return 0;}"];
   end
-
+  
   if ng <>0 then
     textmp($+1)='  } else if(flag == 9) {/* zero crossing surface and mode computation*/',
     textmp($+1)='     set_block_error('+funam+"_bloc_zcross(block,flag));";
@@ -165,22 +165,22 @@ if tt==[] then
 	   "{";
 	   "return 0;}"];
   end
-
-  if nz<>0 then
+  
+  if nz<>0 then 
     textmp($+1)='  } else if(flag == 2) { /* computation of next discrte state*/ ',
     textmp($+1)='     set_block_error('+funam+"_bloc_states(block,flag));";
         ttext=[ttext;'int '+funam+"_bloc_states(scicos_block *block,int flag)";
 	   "{";
 	   "return 0;}"];
-  elseif min(nx,ng+nevin)>0 then
+  elseif min(nx,ng+nevin)>0 then 
     textmp($+1)='  } else if(flag == 2) { /* computation of jumped state*/ ',
     textmp($+1)='     set_block_error('+funam+"_bloc_states(block,flag));";
         ttext=[ttext;'int '+funam+"_bloc_states(scicos_block *block,int flag)";
 	   "{";
 	   "return 0;}"];
   end
-
-  if nevout<>0 then
+   
+  if nevout<>0 then 
     textmp($+1)='  } else if(flag == 3) { /* computation of output event times*/',
     textmp($+1)='     set_block_error('+funam+"_bloc_evtout(block,flag));";
         ttext=[ttext;'int '+funam+"_bloc_evtout(scicos_block *block,int flag)";
@@ -203,7 +203,7 @@ while 1==1
   [txt]=x_dialog(['Function definition in C';
 		  'Here is a skeleton of the functions which you shoud edit'],..
 		 textmp);
-
+  
   if txt<>[] then
     tt=txt
     [ok]=scicos_block_link(funam,tt,'c')
@@ -213,7 +213,8 @@ while 1==1
     break;
   else
     ok=%f;break;
-  end
+  end  
 end
 
 endfunction
+

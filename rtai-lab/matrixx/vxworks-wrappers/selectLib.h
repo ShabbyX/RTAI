@@ -1,6 +1,6 @@
 /*
 COPYRIGHT (C) 2001-2006  Paolo Mantegazza  (mantegazza@aero.polimi.it)
-			 Giuseppe Quaranta (quaranta@aero.polimi.it)
+                         Giuseppe Quaranta (quaranta@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 #include "semLib.h"
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <fcntl.h>
+#include <sys/types.h> 
+#include <sys/time.h>  
+#include <fcntl.h> 
 
 #endif

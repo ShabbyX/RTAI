@@ -1,6 +1,6 @@
 /*
-  COPYRIGHT (C) 2002  Lorenzo Dozio <dozio@aero.polimi.it>
-  Paolo Mantegazza <mantegazza@aero.polimi.it>
+  COPYRIGHT (C) 2002  Lorenzo Dozio (dozio@aero.polimi.it)
+  Paolo Mantegazza (mantegazza@aero.polimi.it)
   Roberto Bucher (roberto.bucher@supsi.ch)
   Daniele Gasperini (daniele.gasperini@elet.polimi.it)
   Guillaume Millet <millet@isir.fr>
@@ -114,7 +114,7 @@ RTIME RTTSKinit=0, RTTSKper;
 #endif
 
 #define SS_DOUBLE  0
-#define rt_SCALAR  0
+#define rt_SCALAR  0 
 
 #define msleep(t)  do { poll(0, 0, t); } while (0)
 
@@ -145,7 +145,7 @@ static inline void strncpyz(char *dest, const char *src, int n)
   dest[n - 1] = '\0';
 }
 
-// the following 2 functions are unsafe, in theory, but can be used anyhow
+// the following 2 functions are unsafe, in theory, but can be used anyhow 
 // since it is very unlikely that two controllers will be started in parallel,
 // moreover it is also possible to avoid using them
 
@@ -171,7 +171,7 @@ int rtRegisterScope(char *name, char **traceName, int n)
       rtaiScope[i].traceName = traceName;
       int j;
       for(j=0; j<n; j++) {
-	printf("%s\n",rtaiScope[i].traceName[j]);
+        printf("%s\n",rtaiScope[i].traceName[j]);
       }
       return 0;
     }
@@ -229,7 +229,7 @@ static void grow_and_lock_stack(int inc)
 static void (*WaitTimingEvent)(unsigned long);
 static void (*SendTimingEvent)(unsigned long);
 static unsigned long TimingEventArg;
-
+	
 #define XNAME(x,y)  x##y
 #define NAME(x,y)   XNAME(x,y)
 
@@ -313,7 +313,7 @@ static void *rt_BaseRate(void *args)
     rt_make_hard_real_time();
   }
 
-  rt_rpc(rt_MainTask,0,(void *) name);
+  rt_rpc(rt_MainTask,0,(void *) name); 
   t0 = rt_get_cpu_time_ns();
   rt_task_make_periodic(rt_BaseRateTask, rt_get_time() + rt_BaseRateTick, rt_BaseRateTick);
   while (!endBaseRate) {
@@ -382,7 +382,7 @@ static void *rt_HostInterface(void *args)
 	rt_return(task, (isRunning << 16) | ((NTOTRPAR + NTOTIPAR) & 0xFFFF));
 	rt_receivex(task, &Request, 1, &len);
 	rt_returnx(task, &rtParam, sizeof(rtParam));
-
+					  
 	for (i = 0; i < NRPAR; i++) {
 	  sprintf(rtParam.blockName,"%s/%s",rtParam.modelName,strRPAR[i]);
 	  if(i==0) Idx = 0;
@@ -522,7 +522,7 @@ static void *rt_HostInterface(void *args)
 
 	modify_any_param(index, param);
 	rt_returnx(task, &Reply, sizeof(int));
-	break;
+	break;			
       }
       case 'g': {
 	int i, j, Idx=0;
@@ -555,7 +555,7 @@ static void *rt_HostInterface(void *args)
 	    sprintf(rtParam.paramName, "Value[%d]",j);
 	    rtParam.dataValue[0] = IPAR[Idx+j];
 	    rt_returnx(task, &rtParam, sizeof(rtParam));
-	  }
+	  } 
 	}
 
 	break;
@@ -607,7 +607,7 @@ static int calculateParametersChecksum(void) {
 	int i;
   for(i=0; i<NIPAR; i++) {
     checksum ^= lenIPAR[i];
-  }
+  }	
   for(i=0; i<NRPAR; i++) {
     checksum ^= lenRPAR[i];
   }
@@ -741,7 +741,7 @@ static int rt_Main(int priority)
 	rt_BaseRateTick = start_rt_timer(nano2count(rt_BaseTaskPeriod));
       }
       hard_timers_cnt = rt_sem_init(nam2num("HTMRCN"), 0);
-    }
+    } 
     else {
       rt_BaseRateTick = nano2count(rt_BaseTaskPeriod);
       rt_sem_signal(hard_timers_cnt);
@@ -795,7 +795,7 @@ static int rt_Main(int priority)
       rt_sem_delete(hard_timers_cnt);
     }
   }
-
+	
  finish:
   if(saveParFile != NULL) {
     saveParametersToFile(saveParFile);
@@ -839,7 +839,7 @@ void print_usage(void)
 	 "  -v, --verbose\n"
 	 "      verbose output\n"
 	 "  -V, --version\n"
-	 "      print rtmain version\n"
+         "      print rtmain version\n"
 	 "  -s, --soft\n"
 	 "      run RT-model in soft real time (default hard RT)\n"
 	 "  -w, --wait\n"
@@ -927,7 +927,7 @@ int main(int argc, char *argv[])
       break;
     case 'a':
       TargetALogMbxID = strdup(optarg);
-      break;
+      break;	
     case 't':
       TargetMeterMbxID = strdup(optarg);
       break;
@@ -988,7 +988,7 @@ int main(int argc, char *argv[])
   if (verbose) {
     printf("\nTarget settings\n");
     printf("===============\n");
-    printf("  Real-time : %s\n", UseHRT ? "HARD" : "SOFT");
+    printf("  Real-time : %s\n", UseHRT ? "HARD" : "SOFT");	
     printf("  Timing    : %s / ", InternTimer ? "internal" : "external");
     printf("%s\n", ClockTick ? "periodic" : "oneshot");
     printf("  Priority  : %d\n", priority);

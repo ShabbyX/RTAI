@@ -9,7 +9,7 @@ SCIDIR = $$SCILAB_DIR$$
 COMEDIDIR = $(shell rtai-config --comedi-dir)
 ifneq ($(strip $(COMEDIDIR)),)
 COMEDILIB = -lcomedi
-endif
+endif 
 
 RM = rm -f
 FILES_TO_CLEAN = *.o ../$$MODEL$$
@@ -21,7 +21,7 @@ MODEL = $$MODEL$$
 OBJSSTAN = rtmain.o common.o $$MODEL$$.o $$OBJ$$
 
 SCILIBS = $(SCIDIR)/libs/scicos.a $(SCIDIR)/libs/poly.a $(SCIDIR)/libs/calelm.a $(SCIDIR)/libs/blas.a $(SCIDIR)/libs/lapack.a $(SCIDIR)/libs/os_specific.a
-OTHERLIBS =
+OTHERLIBS = 
 ULIBRARY = $(RTAIDIR)/lib/libsciblk.a $(RTAIDIR)/lib/liblxrt.a
 
 CFLAGS = $(CC_OPTIONS) -O2 -I$(SCIDIR)/routines -I$(SCIDIR)/routines/scicos $(C_FLAGS) -DMODEL=$(MODEL) -DMODELN=$(MODEL).c

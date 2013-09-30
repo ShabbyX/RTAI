@@ -1,9 +1,9 @@
 /* Copyright INRIA/ENPC */
-#ifndef MACHINE_H
-#define MACHINE_H
+#ifndef MACHINE_H 
+#define MACHINE_H 
 
-#undef VERSION
-#include "config.h"
+#undef VERSION 
+#include "config.h" 
 
 /* Define for using dld for sunos */
 #undef SUNOSDLD
@@ -29,7 +29,7 @@
 
 #if defined(USE_SHARP_SIGN)
 #define CNAME(name1,name2) name1##name2
-#else
+#else 
 #define CNAME(name1,name2) name1/**/name2
 #endif
 
@@ -38,7 +38,7 @@
 #if defined(USE_SHARP_SIGN)
 #define C2F(name) name##_
 #define F2C(name) name##_
-#else
+#else 
 #define C2F(name) name/**/_
 #define F2C(name) name/**/_
 #endif
@@ -57,15 +57,15 @@
 #define getwd(x) getcwd(x,1024) /* you must define char x[1024] */
 #endif
 
-/*
+/* 
    Define integer C type which must fit Fortran integer
-   For Scilab to work, the rule is:
-	  size of Fortran double precision = 2 * size of Fortran integer
+   For Scilab to work, the rule is: 
+          size of Fortran double precision = 2 * size of Fortran integer
 
    At the present time, we suppose:
-	size of Fortran integer = 4 bytes
-	size of Fortran double precision = 8 bytes
-	size of C int = 4 bytes
+       size of Fortran integer = 4 bytes
+       size of Fortran double precision = 8 bytes
+       size of C int = 4 bytes
 */
 
 typedef int integer;
@@ -79,7 +79,7 @@ typedef int integer;
 #ifndef  _PARAMS
 #define  _PARAMS(paramlist)		paramlist
 #endif
-#else
+#else	
 #ifndef  __PARAMS
 #define  __PARAMS(paramlist)		()
 #endif
@@ -90,8 +90,8 @@ typedef int integer;
 
 /** Intel Blas library on win32 */
 
-#ifdef MKL
-#include "MKL.h"
-#endif
+#ifdef MKL 
+#include "MKL.h" 
+#endif 
 
 #endif /* MACHINE_H  */

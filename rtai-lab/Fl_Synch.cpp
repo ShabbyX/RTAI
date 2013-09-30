@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
+COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -46,7 +46,7 @@ void Fl_Synch::initgl()
 	glEnable(GL_DEPTH_TEST);
 	gl_font(FL_HELVETICA_BOLD, 12);
 	glClearColor(Bg_rgb[0], Bg_rgb[1], Bg_rgb[2], 0.0);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);	
 }
 
 void Fl_Synch::drawgrid()
