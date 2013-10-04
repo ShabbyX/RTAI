@@ -23,7 +23,7 @@
 #ifndef _RTAI_ASM_X86_HAL_H
 #define _RTAI_ASM_X86_HAL_H
 
-#define RTAI_BUSY_ALIGN_RET_DELAY  500 // to be CONFIG_RTAI_BUSY_ALIGN_RET_DELAY
+#define RTAI_BUSY_ALIGN_RET_DELAY  0 // to be CONFIG_RTAI_BUSY_ALIGN_RET_DELAY
 
 #ifdef __i386__
 #include "rtai_hal_32.h"

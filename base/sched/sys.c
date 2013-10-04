@@ -642,8 +642,16 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 		}
 
 		case KERNEL_CALIBRATOR: {
-			struct arg { long period, loops; };
-			return kernel_calibrator_spv(larg->period, larg->loops, task);
+			struct arg { long period, loops, Latency; };
+			stop_rt_timer();
+#if !CONFIG_RTAI_BUSY_TIME_ALIGN
+			tuned.latency = imuldiv(abs((int)larg->Latency), tuned.cpu_freq, 1000000000);
+			if (tuned.latency < tuned.setup_time_TIMER_CPUNIT) {
+				tuned.latency = tuned.setup_time_TIMER_CPUNIT;
+			}
+#endif
+			start_rt_timer(0);
+			return larg->Latency < 0 ? 0 : kernel_calibrator_spv(larg->period, larg->loops, task);
 		}
 
 		default: {
@@ -804,17 +812,17 @@ struct calsup { struct kern_cal_arg calpar; RT_TASK rtask; };
 
 long kernel_calibrator_spv(long period, long loops, RT_TASK *task)
 {
-			struct calsup *calsup;
-			calsup = kmalloc(sizeof(struct calsup), GFP_KERNEL);
-			calsup->calpar = (struct kern_cal_arg) { period, loops, task };
-			rt_task_init_cpuid(&calsup->rtask, (void *)kernel_calibrator, (long)&calsup->calpar, 4096, 0, 1, 0, rtai_cpuid());
-			rt_task_resume(&calsup->rtask);
-			task->fun_args[0] = (long)task;
-			((struct fun_args *)task->fun_args)->fun = (void *)rt_task_suspend;
-			rt_schedule_soft(task);
-			period = calsup->calpar.period;
-			kfree(calsup);
-			return period;
+	struct calsup *calsup;
+	calsup = kmalloc(sizeof(struct calsup), GFP_KERNEL);
+	calsup->calpar = (struct kern_cal_arg) { period, loops, task };
+	rt_task_init_cpuid(&calsup->rtask, (void *)kernel_calibrator, (long)&calsup->calpar, 4096, 0, 1, 0, rtai_cpuid());
+	rt_task_resume(&calsup->rtask);
+	task->fun_args[0] = (long)task;
+	((struct fun_args *)task->fun_args)->fun = (void *)rt_task_suspend;
+	rt_schedule_soft(task);
+	period = calsup->calpar.period;
+	kfree(calsup);
+	return period;
 }
 
 #if 0

@@ -1536,9 +1536,9 @@ RTAI_PROTO(RTIME, stop_ftimer,(void))
 	return rtai_lxrt(BIDX, SIZARG, STOP_TIMER, &arg).rt;
 }
 
-RTAI_PROTO(int, kernel_calibrator, (int period, int loops))
+RTAI_PROTO(int, kernel_calibrator, (int period, int loops, int Latency))
 {
-	struct { long period, loops; } arg = { period, loops };
+	struct { long period, loops, Latency; } arg = { period, loops, Latency };
 	return rtai_lxrt(BIDX, SIZARG, KERNEL_CALIBRATOR, &arg).i[0];
 }
 
