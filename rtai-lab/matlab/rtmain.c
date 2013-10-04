@@ -1,10 +1,10 @@
 /*
-  COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
-  Paolo Mantegazza (mantegazza@aero.polimi.it)
-  Roberto Bucher (roberto.bucher@supsi.ch)
-  Daniele Gasperini (daniele.gasperini@elet.polimi.it)
+  COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
+  Paolo Mantegazza <mantegazza@aero.polimi.it>
+  Roberto Bucher <roberto.bucher@supsi.ch>
+  Daniele Gasperini <daniele.gasperini@elet.polimi.it>
 
-  Modified August 2009 by Henrik Slotholt (rtai@slotholt.net)
+  Modified August 2009 by Henrik Slotholt <rtai@slotholt.net>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public

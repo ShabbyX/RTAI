@@ -1,6 +1,6 @@
 /*
-  COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
-  2009 Guillaume Millet (millet@isir.fr)
+  COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
+  2009 Guillaume Millet <millet@isir.fr>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public

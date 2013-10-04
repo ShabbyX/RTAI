@@ -1,7 +1,7 @@
 /*
-COPYRIGHT (C) 2006  Roberto Bucher (roberto.bucher@supsi.ch)
+COPYRIGHT (C) 2006  Roberto Bucher <roberto.bucher@supsi.ch>
 
-Modified August 2009 by Henrik Slotholt (rtai@slotholt.net)
+Modified August 2009 by Henrik Slotholt <rtai@slotholt.net>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

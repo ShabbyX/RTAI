@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 2006  Roberto Bucher (roberto.bucher@supsi.ch)
+COPYRIGHT (C) 2006  Roberto Bucher <roberto.bucher@supsi.ch>
 	      2009  Holger Nahrstaedt
 
 This library is free software; you can redistribute it and/or

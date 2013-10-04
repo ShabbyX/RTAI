@@ -1,6 +1,6 @@
 /*
-COPYRIGHT (C) 2008-2009 Guillaume MILLET (millet@isir.fr)
-		2008 Julien VITARD (vitard@isir.fr)
+COPYRIGHT (C) 2008-2009 Guillaume MILLET <millet@isir.fr>
+		2008 Julien VITARD <vitard@isir.fr>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

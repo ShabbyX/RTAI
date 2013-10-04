@@ -1,13 +1,13 @@
 /*
-COPYRIGHT (C) 2003  Lorenzo Dozio (dozio@aero.polimi.it)
-		    Paolo Mantegazza (mantegazza@aero.polimi.it)
-		    Roberto Bucher (roberto.bucher@supsi.ch)
-		    Peter Brier (pbrier@dds.nl)
-		    Alberto Sechi (albertosechi@libero.it)
-		      Rob Dye (rdye@telos-systems.com)
+COPYRIGHT (C) 2003  Lorenzo Dozio <dozio@aero.polimi.it>
+		    Paolo Mantegazza <mantegazza@aero.polimi.it>
+		    Roberto Bucher <roberto.bucher@supsi.ch>
+		    Peter Brier <pbrier@dds.nl>
+		    Alberto Sechi <albertosechi@libero.it>
+		      Rob Dye <rdye@telos-systems.com>
 
-Modified March 2009 by Robert Dye (rdye@telos-systems.com)
-Modified August 2009 by Henrik Slotholt (rtai@slotholt.net)
+Modified March 2009 by Robert Dye <rdye@telos-systems.com>
+Modified August 2009 by Henrik Slotholt <rtai@slotholt.net>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

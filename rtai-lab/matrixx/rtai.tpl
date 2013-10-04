@@ -1,5 +1,5 @@
 @*
-Mattia Mattaboni (mattaboni@aero.polimi.it) reworked this file for use within
+Mattia Mattaboni <mattaboni@aero.polimi.it> reworked this file for use within
 RTAI-Lab.
 @*
 

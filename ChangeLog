@@ -2754,7 +2754,7 @@
 	* base/sched/sys.c: support use of NULL argument in rt_gettimeorig,
 	  to update epoch origin from user space.
 
-2007-01-12  Mattia Mattaboni (mattaboni@aero.polimi.it)
+2007-01-12  Mattia Mattaboni <mattaboni@aero.polimi.it>
 
 	* rtai-lab/matrixx/ Makefile, rtmain.c, rtmain.h: latest updates to
 	  support IO devices (analogue/digital)
@@ -2848,13 +2848,13 @@
 	* base/ipc/netrpc/README: rewritten and revised to explain new/modified
 	  services.
 
-2006-12-22  Mattia Mattaboni (mattaboni@aero.polimi.it)
+2006-12-22  Mattia Mattaboni <mattaboni@aero.polimi.it>
 
 	* rtai-lab/matrixx/rtmain.*: support for meters and leds.
 	* rtai-lab/matrixx/devices: added meters and leds.
 	* rtai-lab/matrixx/README: explain new devices usage.
 
-2006-12-21  Mattia Mattaboni (mattaboni@aero.polimi.it)
+2006-12-21  Mattia Mattaboni <mattaboni@aero.polimi.it>
 
 	* rtai-lab/matrixx/rtmain.*: adaption of existing rtmains to support
 	  Matrixx autocode generated programs.

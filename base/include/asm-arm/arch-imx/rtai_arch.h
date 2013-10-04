@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /*
 --------------------------------------------------------------------------
 Acknowledgements
-- Paolo Mantegazza	(mantegazza@aero.polimi.it)
+- Paolo Mantegazza	<mantegazza@aero.polimi.it>
 	creator of RTAI
 - port to imx architecture using both
   arch-pxa/rtai_arch.h and arch-ep9301/rtai_arch.h

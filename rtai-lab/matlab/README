@@ -115,5 +115,5 @@ How to test the support
 For the execution options available to run the RTW generated standalone code
 read the file README in the main RTAI-Lab directory.
 
-Lorenzo Dozio (dozio@aero.polimi.it)
+Lorenzo Dozio <dozio@aero.polimi.it>
 2003 July 31.

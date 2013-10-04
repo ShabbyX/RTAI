@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2001  G.M. Bertani (gmbertani@yahoo.it)
+ * COPYRIGHT (C) 2001  G.M. Bertani <gmbertani@yahoo.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

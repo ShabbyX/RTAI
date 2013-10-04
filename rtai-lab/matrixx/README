@@ -469,5 +469,5 @@ above, while in the fourth example the customized RTAI-blocks are used.
 		      "FILEIO_FLAG" during code compilation of this model.
 
 		      
-Mattia Mattaboni (mattaboni@aero.polimi.it)
+Mattia Mattaboni <mattaboni@aero.polimi.it>
 15 January 2007

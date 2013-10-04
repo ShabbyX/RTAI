@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007 Jan Kiszka <jan.kiszka@web.de>.
+ * Copyright (C) 2006-2007 Jan Kiszka <jan.kiszka@web.de>
  * Copyright (C) 2011 Stefan Kisdaroczi <kisda@hispeed.ch>.
  *
  * with adaptions for RTAI by Paolo Mantegazza <mantegazza@aero.polimi.it>

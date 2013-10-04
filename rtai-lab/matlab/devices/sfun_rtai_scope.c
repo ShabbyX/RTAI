@@ -1,6 +1,6 @@
 /*
-  COPYRIGHT (C) 2002  Lorenzo Dozio (dozio@aero.polimi.it)
-  Paolo Mantegazza (mantegazza@aero.polimi.it)
+  COPYRIGHT (C) 2002  Lorenzo Dozio <dozio@aero.polimi.it>
+  Paolo Mantegazza <mantegazza@aero.polimi.it>
 
   Modified 15.1.2003 Roberto Bucher bucher@die.supsi.ch
   Modified 15.8.2009 Henrik Slotholt rtai@slotholt.net
