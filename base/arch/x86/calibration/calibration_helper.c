@@ -54,13 +54,13 @@ static RT_TASK *calmng;
 static inline RTIME rt_get_time_in_usrspc(void)
 {
 #ifdef __i386__
-        unsigned long long t;
-        __asm__ __volatile__ ("rdtsc" : "=A" (t));
-       return t;
+	 unsigned long long t;
+	 __asm__ __volatile__ ("rdtsc" : "=A" (t));
+	return t;
 #else
-        union { unsigned int __ad[2]; RTIME t; } t;
-        __asm__ __volatile__ ("rdtsc" : "=a" (t.__ad[0]), "=d" (t.__ad[1]));
-        return t.t;
+	 union { unsigned int __ad[2]; RTIME t; } t;
+	 __asm__ __volatile__ ("rdtsc" : "=a" (t.__ad[0]), "=d" (t.__ad[1]));
+	 return t.t;
 #endif
 }
 
@@ -86,7 +86,6 @@ int user_calibrator(long loops)
 	}
 	rt_make_soft_real_time();
 	rt_task_resume(calmng);
-
 
 	rt_thread_delete(NULL);
 	return s;

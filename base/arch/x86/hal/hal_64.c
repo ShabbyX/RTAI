@@ -235,7 +235,7 @@ void rt_set_irq_retmode (unsigned irq, int retmode)
 }
 
 /*
- * A bunch of macros to support Linux developers moods in relation to 
+ * A bunch of macros to support Linux developers moods in relation to
  * interrupt handling across various releases.
  * Here we care about Programmable Interrupt Controllers (PIC) in particular.
  */
