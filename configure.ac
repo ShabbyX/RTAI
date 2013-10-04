@@ -277,18 +277,12 @@ dnl
 dnl Identify the base technology used.
 dnl
 
-unset CONFIG_RTAI_ADEOS
 unset CONFIG_RTAI_IPIPE
 
 AC_MSG_CHECKING([for RTAI base technology])
 
-dnl we simply check for {adeos,ipipe}.h; whatever is available
-dnl is used, regardless of the version of the Linux sources.
-if test -r $LINUX_KERNELSRC/include/linux/adeos.h; then
-   AC_DEFINE(CONFIG_RTAI_ADEOS,1,[Use RTAI Adeos-oldgen HAL])
-   AC_MSG_RESULT([RTAI Adeos-oldgen HAL])
-   CONFIG_RTAI_ADEOS=y
-elif test -r $LINUX_KERNELSRC/include/linux/ipipe.h; then
+dnl Only newgen supported
+if test -r $LINUX_KERNELSRC/include/linux/ipipe.h; then
    AC_DEFINE(CONFIG_RTAI_IPIPE,1,[Use RTAI Adeos-newgen HAL])
    AC_MSG_RESULT([RTAI Adeos-newgen HAL])
    CONFIG_RTAI_IPIPE=y
@@ -298,7 +292,7 @@ else
 fi
 
 dnl
-dnl Only use Adeos-newgen since we only support 3.x
+dnl Only use newgen since we only support 3.x
 dnl
 
 CONFIG_KBUILD=y
@@ -343,10 +337,6 @@ fi
 
 if test x${CONFIG_MODULES} = x ; then
   AC_MSG_ERROR([Please set CONFIG_MODULES for $RTAI_LINUX_DIR and rebuild your kernel])
-fi
-
-if test x${CONFIG_RTAI_ADEOS} = xy -a x${CONFIG_ADEOS_CORE} = x; then
-   AC_MSG_ERROR([Please activate the Adeos support in $RTAI_LINUX_DIR and rebuild your kernel])
 fi
 
 dnl
@@ -1297,7 +1287,6 @@ AC_DEFINE_UNQUOTED(CONFIG_RTAI_REVISION_LEVEL,$CONFIG_RTAI_REVISION_LEVEL,[Kconf
 AC_DEFINE(CONFIG_RTAI,1,[Legacy])
 AC_DEFINE(CONFIG_RTAI_MOUNT_ON_LOAD,1,[Legacy])
 AC_DEFINE(CONFIG_KBUILD,1,[Kconfig])
-test \! x$CONFIG_RTAI_ADEOS = x && AC_DEFINE(CONFIG_RTAI_ADEOS,1,[Kconfig])
 test \! x$CONFIG_RTAI_HAL_PREEMPT = x && AC_DEFINE(CONFIG_RTAI_HAL_PREEMPT,1,[Kconfig])
 test \! x$CONFIG_RTAI_CPUS = x && AC_DEFINE_UNQUOTED(CONFIG_RTAI_CPUS,$CONFIG_RTAI_CPUS,[Kconfig])
 test x$CONFIG_RTAI_DIAG_TSC_SYNC = xy && AC_DEFINE(CONFIG_RTAI_DIAG_TSC_SYNC,1,[Kconfig])
@@ -1487,9 +1476,6 @@ dnl Now we can close the conditional section, right after all
 dnl Autoconf-generated symbols have been listed.
 AH_BOTTOM([#endif /* __IN_RTAI__ */])
 
-dnl No longer used after 2.6.17
-dnl AH_BOTTOM([#include <linux/config.h>])
-
 dnl
 dnl Produce automake conditionals.
 dnl
@@ -1564,7 +1550,6 @@ AM_CONDITIONAL(CONFIG_RTAI_MVM,[test x$CONFIG_RTAI_MVM = xy])
 AM_CONDITIONAL(CONFIG_RTAI_TESTSUITE,[test x$CONFIG_RTAI_TESTSUITE = xy])
 
 dnl Misc compilation conditionals
-AM_CONDITIONAL(CONFIG_RTAI_ADEOS,[test "$CONFIG_RTAI_ADEOS" = y])
 AM_CONDITIONAL(CONFIG_RTAI_MATH_C99,[test "$CONFIG_RTAI_MATH_C99" = y])
 
 dnl Documentation
