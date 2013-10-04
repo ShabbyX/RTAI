@@ -1,7 +1,7 @@
 RTAI-Lab Installation
 =====================
 
-- Compile and install the Mesa library
+- Compile and install the Mesa library (normally not required)
 
 1)  Download Mesa:
 
