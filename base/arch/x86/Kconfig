@@ -309,26 +309,50 @@ config RTAI_BUSY_TIME_ALIGN
 	possible to anticipate the scheduling by setting a slightly larger than 
 	needed anticipation. In such cases with this option one can be sure to
 	achieve the desired scheduling time at the expense of waisting some
-	processor time. Useful when there is enough computational power to 
-	waist in favour of more precise scheduled deadlines.
+	processor time. Useful to achieve both more precise scheduled deadlines
+	and non negative latency values.
 	Do not set it if a hard periodic timer is to be used.
 	Since a user space task has a higher scheduling latency, it can be
-	usefully set to allow a better a kernel task to its deadline when the
-	set latency is calibrated for user space tasks.
+	usefully set to allow achieving better deadlines for kernel tasks, when
+	the scheduling latency is calibrated for user space tasks.
+	For more precise results see the following options.
 
-config RTAI_BUSY_ALIGN_RET_DELAY
-	string "Average time to return to the timing call function after a task switch (ns)"
+config RTAI_KERN_BUSY_ALIGN_RET_DELAY
+	string "  Delay to return to a switched in timed kernel task (ns)"
 	default 0
 	depends on RTAI_BUSY_TIME_ALIGN
 	help
-	The average time to return to the timing call function after a task 
-	switch. It is subtracted from the resume time of a timed task to avoid 
-	a delayed return when a busy wait to align the resume time is requested.
-	As for the scheduling latency a single compromise value is used for
-	both kernel and user space.
-	To calibrate it enable this option and set the specific user and space 
-	kernel alignment value to zero, the run the calibration helper available
+	The average time to return to the timed call function after switching 
+	back to a kernel space task switch. 
+	It is subtracted from the resume time of a timed task to avoid 
+	a delayed return when a busy wait to align to the resume time is 
+	requested.
+	To calibrate it enable RTAI_BUSY_TIME_ALIGN and set this and the 
+	following option to one, then run the calibration helper available 
 	in RTAI.
+	A zero value will skip the busy alignment, as if RTAI_BUSY_TIME_ALIGN
+	was not set. Useful to allow the alignment application just to kernel 
+	or user tasks. For example when a precise calibration for user space 
+	is used, a kernel task will anticipate its timed resumption; so setting
+	a positive value here and a zero for the corresponding option 
+	below will allow applying the busy wait just to kernel tasks.
+
+config RTAI_USER_BUSY_ALIGN_RET_DELAY
+	string "  Delay to return to a switched in timed user task (ns)"
+	default 0
+	depends on RTAI_BUSY_TIME_ALIGN
+	help
+	The average time to return to the timed call function after switching 
+	back to a user space task switch. 
+	It is subtracted from the resume time of a timed task to avoid 
+	a delayed return when a busy wait to align to the resume time is
+	requested.
+	To calibrate it enable RTAI_BUSY_TIME_ALIGN and set this and the 
+	previous option to one, then run the calibration helper available 
+	in RTAI.
+	A zero value will skip the busy alignment, as if RTAI_BUSY_TIME_ALIGN
+	was not set. Useful to allow the alignment application just to kernel
+        or user tasks.
 
 config RTAI_SCHED_LXRT_NUMSLOTS
 	string "Number of registrable RTAI objects"
@@ -337,7 +361,7 @@ config RTAI_SCHED_LXRT_NUMSLOTS
 	The maximum number of registrable objects in RTAI.
 
 config RTAI_MONITOR_EXECTIME
-	bool "Display RTAI task execution time (per thousand)"
+	bool "Display RTAI task execution time (in per thousand)"
 	default y
 	help
 	If this option is enabled it is possible to see the time consumed by
@@ -563,7 +587,7 @@ config RTAI_MSG
 	tristate "Message"
 	default m
 	help
-	Direct synchronization by direct interask messaging, either as fast
+	Direct synchronization by direct intertask messaging, either as fast
 	single unsigned long messages or as extended arbitrarily sized
 	messages. Both async and sync messages with replies can be used.
 	QNX styled APIs are also available. Blocking messages exploit priority 
@@ -597,7 +621,7 @@ config RTAI_TBX
 	help
 	RTAI message queues (msgq) are intertask processor messages that allow 
 	exchanging prioritised messages of any size. Broadcasting of messages
-	to all the waiing tasks is also possible.
+	to all the waiting tasks is also possible.
 	Legacy typed mailbox (TBX) services are recovered by using RTAI msgqs
 	and afford a pre canned example of their use offering:
 	1 - message broadcasting allowing to send a message to all the tasks 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright (C) 2003-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,8 +24,8 @@
 struct option options[] = {
 	{ "help",       0, 0, 'h' },
 	{ "period",     1, 0, 'p' },
-	{ "time",       1, 0, 't' },
-	{ "tol",        1, 0, 'l' },
+	{ "spantime",   1, 0, 's' },
+	{ "tol",        1, 0, 't' },
 	{ NULL,         0, 0,  0  }
 };
 
@@ -38,17 +38,19 @@ void print_usage(void)
 	 "  -h, --help\n"
 	 "      print usage\n"
 	 "  -p <period (us)>, --period <period (us)>\n"
-	 "      the period of the hard real time calibrator task, default 200 (us)\n"
-	 "  -t <duration (s)>, --time <duration (s)>\n"
-	 "      the duration of the requested calibration, default 1 (s)\n"
-	 "  -l <conv. tol.>, --time <conv. tol.>\n"
-	 "      the accettable limit within which the latency must stay, default 100 (ns)\n"
+	 "      the period, in microseconds, of the hard real time calibrator task, default 200 (us)\n"
+	 "  -s <spantime (s)>, --spantime <spantime (s)>\n"
+	 "      the duration, in seconds, of the requested calibration, default 1 (s)\n"
+	 "  -t <conv. tol. (ns)>, --tol <conv. tol. (ns)>\n"
+	 "      the acceptable tolerance, in nanoseconds, within which the latency must stay, default 100 (ns)\n"
 	 "\n")
 	, stderr);
 }
 
+static int period = 200 /* us */, loops = 1 /* s */, tol = 100 /* ns */;
+
 static inline int sign(int v) { return v > 0 ? 1 : (v < 0 ? -1 : 0); }
-static int period = 200 /* us */, loops = 1 /* s */, user_latency;
+static int user_latency;
 static RT_TASK *calmng;
 
 static inline RTIME rt_get_time_in_usrspc(void)
@@ -76,7 +78,7 @@ int user_calibrator(long loops)
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
 	rt_make_hard_real_time();
-	expected = rt_get_time() + 10*period;
+	expected = rt_get_time_in_usrspc() + 10*period;
 	rt_task_make_periodic(NULL, expected, period);
 	while(loops--) {
 		expected += period;
@@ -98,7 +100,7 @@ int main(int argc, char *argv[])
 
         while (1) {
 		int c;
-		if ((c = getopt_long(argc, argv, "hp:t:", options, NULL)) < 0) {
+		if ((c = getopt_long(argc, argv, "hp:t:l:", options, NULL)) < 0) {
 			break;
 		}
 		switch(c) {
@@ -108,6 +110,9 @@ int main(int argc, char *argv[])
 			case 'l': { tol    = atoi(optarg);    break; }
 		}
 	}
+
+	system("/sbin/insmod \"" HAL_SCHED_PATH "\"/rtai_hal" HAL_SCHED_MODEXT " >/dev/null 2>&1");
+	system("/sbin/insmod \"" HAL_SCHED_PATH "\"/rtai_sched" HAL_SCHED_MODEXT " >/dev/null 2>&1");
 
  	if (!(calmng = rt_thread_init(nam2num("CALMNG"), 10, 0, SCHED_FIFO, 0xF)) ) {
 		printf("*** CANNOT INIT CALIBRATION TASK ***\n");
@@ -156,5 +161,9 @@ int main(int argc, char *argv[])
 	stop_rt_timer();
 	rt_thread_delete(NULL);
 	printf("\n");
+
+	system("/sbin/rmmod rtai_sched >/dev/null 2>&1");
+	system("/sbin/rmmod rtai_hal >/dev/null 2>&1");
+
 	return 0;
 }

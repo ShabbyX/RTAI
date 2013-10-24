@@ -103,6 +103,9 @@
 #undef CONFIG_RTAI_IPIPE
 
 /* Kconfig */
+#undef CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY
+
+/* Kconfig */
 #undef CONFIG_RTAI_KSTACK_HEAPSZ
 
 /* Kconfig */
@@ -272,6 +275,9 @@
 
 /* Kconfig */
 #undef CONFIG_RTAI_TUNE_TSC_SYNC
+
+/* Kconfig */
+#undef CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY
 
 /* Kconfig */
 #undef CONFIG_RTAI_USE_COMEDI_LOCK

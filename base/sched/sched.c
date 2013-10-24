@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2008 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright (C) 1999-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -96,7 +96,7 @@ static unsigned long rt_smp_linux_cr0[NR_RT_CPUS];
 
 static RT_TASK *rt_smp_fpu_task[NR_RT_CPUS];
 
-static int rt_smp_half_tick[NR_RT_CPUS];
+int rt_smp_half_tick[NR_RT_CPUS];
 
 static int rt_smp_oneshot_running[NR_RT_CPUS];
 
@@ -859,20 +859,30 @@ if (fire_shot) { \
 	int delay; \
 	ONESHOT_DELAY(SHOT_FIRED); \
 	if (delay > tuned.setup_time_TIMER_CPUNIT) { \
-		rt_set_timer_delay(imuldiv(delay, TIMER_FREQ, tuned.cpu_freq));\
 		timer_shot_fired = 1; \
+		rt_set_timer_delay(imuldiv(delay, TIMER_FREQ, tuned.cpu_freq));\
 	} else { \
-		rt_times.intr_time = rt_time_h + tuned.setup_time_TIMER_CPUNIT;\
 		timer_shot_fired = -1;\
+		rt_times.intr_time = rt_time_h + tuned.setup_time_TIMER_CPUNIT;\
 	} \
 } \
 } while (0)
 
 #define CALL_TIMER_HANDLER() \
-	do { if (timer_shot_fired < 0) rt_timer_handler(); } while (0)
+	do { \
+		if (timer_shot_fired < 0) { \
+			timer_shot_fired = 1; \
+			rt_timer_handler(); \
+		} \
+	} while (0)
 
 #define REDO_TIMER_HANDLER() \
-	do { if (timer_shot_fired < 0) goto redo_timer_handler; } while (0)
+	do { \
+		if (timer_shot_fired < 0) { \
+			timer_shot_fired = 1; \
+			goto redo_timer_handler; \
+		} \
+	} while (0)
 
 #define FIRE_IMMEDIATE_LINUX_TIMER_SHOT() \
 do { \
@@ -997,7 +1007,14 @@ void rt_schedule(void)
 		}
 		if (/*USE_RTAI_TASKS && */(!new_task->lnxtsk || !rt_current->lnxtsk)) {
 			if (!(new_task = switch_rtai_tasks(rt_current, new_task, cpuid))) {
-				goto sched_exit;
+#if CONFIG_RTAI_BUSY_TIME_ALIGN && (RTAI_KERN_BUSY_ALIGN_RET_DELAY > 0)
+			if (rt_current->busy_time_align) {
+				RTIME resume_time = rt_current->resume_time - tuned.kern_latency_busy_align_ret_delay;
+				rt_current->busy_time_align = 0;
+				while(rtai_rdtsc() < resume_time);
+			}
+#endif
+				goto ksched_exit;
 			}
 		}
 		rt_smp_current[cpuid] = new_task;
@@ -1059,14 +1076,15 @@ sched_soft:
 		}
 	}
 sched_exit:
-	CALL_TIMER_HANDLER();
-#if CONFIG_RTAI_BUSY_TIME_ALIGN
+#if CONFIG_RTAI_BUSY_TIME_ALIGN && (RTAI_USER_BUSY_ALIGN_RET_DELAY > 0)
 	if (rt_current->busy_time_align) {
-		RTIME resume_time = rt_current->resume_time - tuned.latency_busy_align_ret_delay;
+		RTIME resume_time = rt_current->resume_time - tuned.user_latency_busy_align_ret_delay;
 		rt_current->busy_time_align = 0;
 		while(rtai_rdtsc() < resume_time);
 	}
 #endif
+ksched_exit:
+	CALL_TIMER_HANDLER();
 	sched_get_global_lock(cpuid);
 }
 
@@ -1960,18 +1978,6 @@ extern void rt_daemonize(void);
 
 #endif
 
-
-#define WAKE_UP_TASKs(klist) \
-do { \
-	struct klist_t *p = &klist[cpuid]; \
-	struct task_struct *task; \
-	while (p->out != p->in) { \
-		task = p->task[p->out++ & (MAX_WAKEUP_SRQ - 1)]; \
-		wake_up_process(task); \
-	} \
-} while (0)
-
-
 void steal_from_linux(RT_TASK *rt_task)
 {
 	struct klist_t *klistp;
@@ -2065,6 +2071,15 @@ void give_back_to_linux(RT_TASK *rt_task, int keeprio)
 	return;
 }
 
+#define WAKE_UP_TASKs(klist) \
+do { \
+	struct klist_t *p = &klist[cpuid]; \
+	struct task_struct *task; \
+	while (p->out != p->in) { \
+		task = p->task[p->out++ & (MAX_WAKEUP_SRQ - 1)]; \
+		wake_up_process(task); \
+	} \
+} while (0)
 
 static void wake_up_srq_handler(unsigned srq)
 {
@@ -2544,7 +2559,8 @@ static int __rtai_lxrt_init(void)
 		rt_linux_task.resq.task = NULL;
 	}
 	tuned.latency = imuldiv(Latency, tuned.cpu_freq, 1000000000);
-	tuned.latency_busy_align_ret_delay = imuldiv(RTAI_BUSY_ALIGN_RET_DELAY, tuned.cpu_freq, 1000000000);
+	tuned.kern_latency_busy_align_ret_delay = imuldiv(RTAI_KERN_BUSY_ALIGN_RET_DELAY, tuned.cpu_freq, 1000000000);
+	tuned.user_latency_busy_align_ret_delay = imuldiv(RTAI_USER_BUSY_ALIGN_RET_DELAY, tuned.cpu_freq, 1000000000);
 	SetupTimeTIMER = rtai_calibrate_hard_timer();
 	tuned.setup_time_TIMER_UNIT = imuldiv(SetupTimeTIMER, TIMER_FREQ, 1000000000);
 	if (tuned.setup_time_TIMER_UNIT < 1) {

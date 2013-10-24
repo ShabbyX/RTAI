@@ -978,6 +978,8 @@ enable_rtc_freq
 enable_long_timed_lists
 enable_sched_8254_latency
 enable_sched_apic_latency
+enable_user_busy_align_ret_delay
+enable_kernel_busy_align_ret_delay
 enable_sched_lxrt_numslots
 enable_rtdm
 enable_rtdm_fd_max
@@ -1696,6 +1698,8 @@ Optional Features:
  --enable-long-timed-lists	Enable long timed lists
  --enable-sched-8254-latency	Set 8254 tuning latency
  --enable-sched-apic-latency	Set APIC tuning latency
+ --user-busy-align-ret-delay	Set user busy align ret delay
+ --kernel-busy-align-ret-delay	Set kernel busy align ret delay
  --enable-sched-lxrt-numslots	Set maximum number of LXRT slots
  --enable-rtdm		Enable RTDM support
  --enable-rtdm-fd-max        	Set maximum number of RTDM file descriptor slots
@@ -16182,6 +16186,40 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $CONFIG_RTAI_SCHED_APIC_LATENCY" >&5
 $as_echo "$CONFIG_RTAI_SCHED_APIC_LATENCY" >&6; }
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for user busy align ret delay" >&5
+$as_echo_n "checking for user busy align ret delay... " >&6; }
+# Check whether --enable-user-busy-align-ret-delay was given.
+if test "${enable_user_busy_align_ret_delay+set}" = set; then :
+  enableval=$enable_user_busy_align_ret_delay; case "$enableval" in
+ 	[0-9]*) CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY=$enableval ;;
+ 	*) as_fn_error $? "Bad argument to option: --user-busy-align-ret-delay=<nanoseconds>" "$LINENO" 5 ;;
+	esac
+fi
+
+if test x$CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY = x ; then
+  # Use a reasonable default if unset
+  CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY=0
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY" >&5
+$as_echo "$CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY" >&6; }
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for kernel busy align ret delay" >&5
+$as_echo_n "checking for kernel busy align ret delay... " >&6; }
+# Check whether --enable-kernel-busy-align-ret-delay was given.
+if test "${enable_kernel_busy_align_ret_delay+set}" = set; then :
+  enableval=$enable_kernel_busy_align_ret_delay; case "$enableval" in
+ 	[0-9]*) CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY=$enableval ;;
+ 	*) as_fn_error $? "Bad argument to option: --kernel-busy-align-ret-delay=<nanoseconds>" "$LINENO" 5 ;;
+	esac
+fi
+
+if test x$CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY = x ; then
+  # Use a reasonable default if unset
+  CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY=0
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY" >&5
+$as_echo "$CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY" >&6; }
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for maximum number of LXRT slots" >&5
 $as_echo_n "checking for maximum number of LXRT slots... " >&6; }
 # Check whether --enable-sched-lxrt-numslots was given.
@@ -18811,6 +18849,16 @@ esac
 
 cat >>confdefs.h <<_ACEOF
 #define CONFIG_RTAI_BUSY_TIME_ALIGN $CONFIG_RTAI_BUSY_TIME_ALIGN
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY $CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY $CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY
 _ACEOF
 
 

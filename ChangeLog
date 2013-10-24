@@ -1,3 +1,38 @@
+2013-10-15 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: make rt_smp_half_tick available to the whole 
+	  module files, have wake_up_srq_handler loop over all pending 
+	  cpu task lists.
+	* base/sched/sys.c: avoid stopping/starting the hard oneshot timer by
+	  setting rt_smp_haf_tick accordingly to the just update latency.
+
+2013-10-05 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/calibration/calibration_helper.c: restructured in a, 
+	  hopefully, better way, with respect to its first commit.
+	* base/arch/x86/calibration/README: rewritten according to the new 
+	  calibration way.
+	* base/arch/x86/Kconfig: added BUSY_ALIGN_RET_DELAY parameters for 
+	  kernel and user space.
+	* base/include/rtai_posix.h: fixed the return values of user space 
+	  to better comply with the related specs.
+	* base/include/asm-x86/rtai_hal.h: added various definition related to 
+	  the setting and declaration of busy aligns in the calibrate struct.
+	* base/sched/sched.c: reordered the one shot firing macros and enabled
+	  the newest busy wait align stuff.
+	* base/arch/i386/hal/hal.immed and base/arch/x86_646/hal/hal.immed:
+	  check irq desc and chip addr to avoid invalid pointers when used
+	  in a brute mode to divert all Linux interrupts belonging to 
+	  IsolCpuMask; return a null cpumask in case of failure an irq 
+	  affinity assignment.
+
+2013-10-04 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* configure.in, base/arch/x86/Kconfig: add support for 
+	  configurable user/kernel busy align delay
+	* base/arch/x86/calibration/calibration_helper.c, GNUmakefile.am:
+	  insert/remove modules directly from within helper
+
 2013-09-30 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/sched/sched.c: take into account the newly settable return
@@ -116,7 +151,7 @@
 	  32-64 specific versions; GNUmakefile.am GNUmakefile.in also 
 	  modified accordingly.
 
-2012-08-17 Mark Fortescue <mark@mtfhpc.demon.co.uk>
+2013-08-17 Mark Fortescue <mark@mtfhpc.demon.co.uk>
 
 	* base/addons/rtdm/module.c: split the loop initializing the timers
 	  into two parts, fixes possible SMP preemption issues.
@@ -283,9 +318,9 @@
 
 2013-02-28 John Morris <john@zultron.com>
 
-	* base/sched/sched.c: changed set_cpu_allowed to set_cpu_allowed_ptr and 
-	  to cpumask_of_cpu to cpumask_of, to allow compilation against kernels 
-	  that have CONFIG_CPUMASK_OFFSTACK=y
+	* base/sched/sched.c: changed set_cpu_allowed to set_cpu_allowed_ptr 
+ 	  and to cpumask_of_cpu to cpumask_of, to allow compilation against 
+	  kernels that have CONFIG_CPUMASK_OFFSTACK=y
 
 2013-02-28 Shahbaz Youssefi <ShabbyX@gmail.com>
 

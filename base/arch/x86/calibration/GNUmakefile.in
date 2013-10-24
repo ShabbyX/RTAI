@@ -294,6 +294,8 @@ calibrate_CPPFLAGS = \
 calibration_helper_SOURCES = calibration_helper.c
 calibration_helper_CPPFLAGS = \
 	@RTAI_REAL_USER_CFLAGS@ \
+	-DHAL_SCHED_PATH="\"$(DESTDIR)$(moduledir)\"" \
+	-DHAL_SCHED_MODEXT="\"$(modext)\"" \
 	-I$(top_srcdir)/base/include \
 	-I../../../include
 

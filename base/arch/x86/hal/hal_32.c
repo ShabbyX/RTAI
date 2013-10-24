@@ -967,7 +967,7 @@ void rt_free_apic_timers(void)
  * to the CPUs of an assigned mask.
  *
  * @the mask of the interrupts routing before its call.
- * @-EINVAL if @a irq is not a valid IRQ number or some internal data
+ * @0 if @a irq is not a valid IRQ number or some internal data
  * inconsistency is found.
  *
  * @note This functions has effect only on multiprocessors systems.
@@ -980,8 +980,8 @@ void rt_free_apic_timers(void)
  */
 unsigned long rt_assign_irq_to_cpu (int irq, unsigned long cpumask)
 {
-	if (irq >= IPIPE_NR_XIRQS) {
-		return -EINVAL;
+	if (irq >= IPIPE_NR_XIRQS || &rtai_irq_desc(irq) == NULL || rtai_irq_desc_chip(irq) == NULL) {
+		return 0;
 	} else {
 		unsigned long oldmask, flags;
 
@@ -1007,7 +1007,7 @@ unsigned long rt_assign_irq_to_cpu (int irq, unsigned long cpumask)
  * rt_assign_irq_to_cpu. This function applies to external interrupts only.
  *
  * @the mask of the interrupts routing before its call.
- * @-EINVAL if @a irq is not a valid IRQ number or some internal data
+ * @0 if @a irq is not a valid IRQ number or some internal data
  * inconsistency is found.
  *
  * @note This function has effect only on multiprocessors systems.
@@ -1023,7 +1023,7 @@ unsigned long rt_reset_irq_to_sym_mode (int irq)
 	unsigned long oldmask, flags;
 
 	if (irq >= IPIPE_NR_XIRQS) {
-		return -EINVAL;
+		return 0;
 	} else {
 		rtai_save_flags_and_cli(flags);
 		spin_lock(&rtai_iset_lock);
