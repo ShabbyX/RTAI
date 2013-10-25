@@ -1,6 +1,72 @@
+# Build Files
 *.o
 *.cmd
 *.mod.c
 *.ko
 *.a
+*.lo
+*.la
 *.swp
+*~
+base/sched/malloc.c
+Module.symvers
+modules.order
+base/include/asm
+base/scripts/rtai-config
+base/scripts/rtai-load
+rtai_config.h
+
+# Auto-generated files
+rtai_config.h.in
+configure
+aclocal.m4
+ltversion.m4
+bin/
+doc/guide/*.html
+addons/drivers/16550A/FORCE
+
+# Generated Makefiles
+GNUmakefile.in
+GNUmakefile
+Makefile.in
+Makefile
+
+# Config Temp Files
+.cfok
+.cfchanged
+.rtai_config*
+addons/rtdm/FORCE
+autom4te.cache/
+config.log
+config.status
+libtool
+stamp-h1
+
+# Make Temp Files
+.deps
+.tmp_versions
+.libs
+
+# Executables
+base/arch/*/calibration/calibrate
+base/arch/*/calibration/calibration_helper
+base/arch/*/calibration/setsmi
+testsuite/*/*/display
+testsuite/*/*/latency
+testsuite/*/*/preempt
+testsuite/*/*/switches
+
+# KConfig Generated files
+base/config/kconfig/.config*
+base/config/kconfig/.ncurses
+base/config/kconfig/lex.zconf.c
+base/config/kconfig/libkconfig.so
+base/config/kconfig/lxdialog/lxdialog
+base/config/kconfig/mconf
+base/config/kconfig/zconf.tab.c
+
+# Documentation Files
+doc/doxygen/api
+doc/docbook/catalog
+doc/docbook/custom-stylesheets/xsl/html/chunk.xsl
+doc/doxygen/Doxyfile
