@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
 	rt_make_hard_real_time();
-	rt_task_make_periodic(task, expected = rt_get_time() + 10*period, period);
+	rt_task_make_periodic(task, expected = rt_get_tscnt() + 10*period, period);
 
 	svt = rt_get_cpu_time_ns();
 	samp.ovrn = i = 0;
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 					diff = (int) ((t = rt_get_cpu_time_ns()) - svt - PERIOD);
 					svt = t;
 				} else {
-					diff = (int) count2nano(rt_get_time() - expected);
+					diff = (int) count2nano(rt_get_tscnt() - expected);
 				}
 			} else {
 				samp.ovrn++;

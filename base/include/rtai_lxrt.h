@@ -1091,22 +1091,26 @@ RTAI_PROTO(void, stop_rt_timer, (void))
 	}
 }
 
-RTAI_PROTO(void, rt_request_rtc,(int rtc_freq, void *handler))
+RTAI_PROTO(void, rt_request_rtc, (int rtc_freq, void *handler))
 {
 	struct { long rtc_freq; void *handler; } arg = { rtc_freq, handler };
 	rtai_lxrt(BIDX, SIZARG, REQUEST_RTC, &arg);
 }
 
-RTAI_PROTO(void, rt_release_rtc,(void))
+RTAI_PROTO(void, rt_release_rtc, (void))
 {
 	struct { unsigned long dummy; } arg;
 	rtai_lxrt(BIDX, SIZARG, RELEASE_RTC, &arg);
 }
 
-RTAI_PROTO(RTIME,rt_get_time,(void))
+RTAI_PROTO(RTIME, rt_get_time, (void))
 {
+#ifdef CONFIG_RTAI_TSC
+	return rt_get_tscnt();
+#else
 	struct { unsigned long dummy; } arg;
 	return rtai_lxrt(BIDX, SIZARG, GET_TIME, &arg).rt;
+#endif
 }
 
 RTAI_PROTO(RTIME, rt_get_real_time, (void))
@@ -1121,31 +1125,31 @@ RTAI_PROTO(RTIME, rt_get_real_time_ns, (void))
 	return rtai_lxrt(BIDX, SIZARG, GET_REAL_TIME_NS, &arg).rt;
 }
 
-RTAI_PROTO(RTIME,count2nano,(RTIME count))
+RTAI_PROTO(RTIME, count2nano, (RTIME count))
 {
 	struct { RTIME count; } arg = { count };
 	return rtai_lxrt(BIDX, SIZARG, COUNT2NANO, &arg).rt;
 }
 
-RTAI_PROTO(RTIME,nano2count,(RTIME nanos))
+RTAI_PROTO(RTIME, nano2count, (RTIME nanos))
 {
 	struct { RTIME nanos; } arg = { nanos };
 	return rtai_lxrt(BIDX, SIZARG, NANO2COUNT, &arg).rt;
 }
 
-RTAI_PROTO(void,rt_busy_sleep,(int ns))
+RTAI_PROTO(void, rt_busy_sleep, (int ns))
 {
 	struct { long ns; } arg = { ns };
 	rtai_lxrt(BIDX, SIZARG, BUSY_SLEEP, &arg);
 }
 
-RTAI_PROTO(void,rt_set_periodic_mode,(void))
+RTAI_PROTO(void, rt_set_periodic_mode, (void))
 {
 	struct { unsigned long dummy; } arg;
 	rtai_lxrt(BIDX, SIZARG, SET_PERIODIC_MODE, &arg);
 }
 
-RTAI_PROTO(void,rt_set_oneshot_mode,(void))
+RTAI_PROTO(void, rt_set_oneshot_mode, (void))
 {
 	struct { unsigned long dummy; } arg;
 	rtai_lxrt(BIDX, SIZARG, SET_ONESHOT_MODE, &arg);

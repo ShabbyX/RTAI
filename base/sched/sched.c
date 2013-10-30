@@ -38,7 +38,7 @@ ACKNOWLEDGMENTS:
 #include <linux/sys.h>
 
 #include <asm/param.h>
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0)
 #include <asm/system.h>
 #endif
 #include <asm/io.h>
@@ -677,7 +677,7 @@ do { \
 #define pend_wake_up_hts(lnxtsk, cpuid) \
 do { \
 	wake_up_hts[cpuid].task[wake_up_hts[cpuid].in++ & (MAX_WAKEUP_SRQ - 1)] = lnxtsk; \
-	hal_pend_uncond(wake_up_srq[cpuid].srq, cpuid); \
+	hal_pend_uncond(wake_up_srq[0].srq, cpuid); \
 } while (0)
 
 
@@ -2074,10 +2074,8 @@ void give_back_to_linux(RT_TASK *rt_task, int keeprio)
 #define WAKE_UP_TASKs(klist) \
 do { \
 	struct klist_t *p = &klist[cpuid]; \
-	struct task_struct *task; \
 	while (p->out != p->in) { \
-		task = p->task[p->out++ & (MAX_WAKEUP_SRQ - 1)]; \
-		wake_up_process(task); \
+		wake_up_process(p->task[p->out++ & (MAX_WAKEUP_SRQ - 1)]); \
 	} \
 } while (0)
 

@@ -1,3 +1,31 @@
+2013-10-27 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-x86/hal/hal_32.c and hal_64.c: let hal proc file
+	  display IsolCpusMask.
+
+2013-10-26 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-x86/rtai_hal.h: make available an inlined support
+	  for reading the tsc directly from user space.
+	* base/include/asm-x86/hal/hal_32.c and hal_64.c: echo more proper 
+	  informations about system frequencies and timings.
+	* base/include/rtai_lxrt.h: rt_get_time can read the tsc directly.
+	* base/include/rtai_posix.h: read the tsc directly from user space.
+	* testsuite/user/ latency/latency.c and latency/latency.c: use tsc
+	  reading from user space, so to be more consistent with the 
+	  calibration-helper results.
+
+2013-10-25 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* configure.in, configure: propagate TSC detection to user space
+
+2013-10-25 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/rtai_schedcore.h: assign and use only 
+          wake_up_srq[0].srq.
+	* base/sched/sched.c: pend hard to soft task transitions to 
+          wake_up_srq[0].srq.
+
 2013-10-15 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/sched/sched.c: make rt_smp_half_tick available to the whole 

@@ -1128,6 +1128,11 @@ AC_ARG_ENABLE(tune-tsc-sync,
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_TUNE_TSC_SYNC:-no})
 
+dnl add arch specific tests
+if test x$CONFIG_X86_TSC = xy ; then
+	AC_DEFINE(CONFIG_RTAI_TSC,1,[Use TSC in user space])
+fi
+
 dnl
 dnl Check for additional build options.
 dnl

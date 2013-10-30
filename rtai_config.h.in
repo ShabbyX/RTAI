@@ -273,6 +273,9 @@
 /* Kconfig */
 #undef CONFIG_RTAI_TRACE
 
+/* Use TSC in user space */
+#undef CONFIG_RTAI_TSC
+
 /* Kconfig */
 #undef CONFIG_RTAI_TUNE_TSC_SYNC
 

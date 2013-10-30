@@ -17897,6 +17897,12 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: ${CONFIG_RTAI_TUNE_TSC_SYNC:-no}" >&5
 $as_echo "${CONFIG_RTAI_TUNE_TSC_SYNC:-no}" >&6; }
 
+if test x$CONFIG_X86_TSC = xy ; then
+
+$as_echo "#define CONFIG_RTAI_TSC 1" >>confdefs.h
+
+fi
+
 
 if test \! -d $srcdir/doc; then
     unset RTAI_MAYBE_DOCDIR

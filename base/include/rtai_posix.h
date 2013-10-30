@@ -2214,7 +2214,7 @@ RTAI_PROTO(int, __wrap_clock_getres, (clockid_t clockid, struct timespec *res))
 RTAI_PROTO(int, __wrap_clock_gettime, (clockid_t clockid, struct timespec *tp))
 {
 	if (clockid == CLOCK_MONOTONIC) {
-		count2timespec(rt_get_time(), tp);
+		count2timespec(rt_get_tscnt(), tp);
 		return 0;
 	} else if (clockid == CLOCK_REALTIME) {
 		count2timespec(rt_get_real_time(), tp);
@@ -2255,10 +2255,10 @@ RTAI_PROTO(int, __wrap_clock_nanosleep,(clockid_t clockid, int flags, const stru
 	expire = timespec2count(rqtp);
 	if (clockid == CLOCK_MONOTONIC) {
 		if (flags != TIMER_ABSTIME) {
-			expire += rt_get_time();
+			expire += rt_get_tscnt();
 		}
 		ret = rt_sleep_until(expire);
-        	expire -= rt_get_time();
+        	expire -= rt_get_tscnt();
 	} else {
 		if (flags != TIMER_ABSTIME) {
 			expire += rt_get_real_time();
@@ -2288,8 +2288,8 @@ RTAI_PROTO(int, __wrap_nanosleep,(const struct timespec *rqtp, struct timespec *
 
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &canc_type);
 
-	ret = rt_sleep_until(expire = rt_get_time() + timespec2count(rqtp));
-	if ((expire -= rt_get_time()) > 0) {
+	ret = rt_sleep_until(expire = rt_get_tscnt() + timespec2count(rqtp));
+	if ((expire -= rt_get_tscnt()) > 0) {
 		if (rmtp) {
 			count2timespec(expire, rmtp);
 		}

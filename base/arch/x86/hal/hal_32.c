@@ -1577,11 +1577,10 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	int i, none;
 
 	PROC_PRINT("\n** RTAI/x86:\n\n");
-#ifdef CONFIG_X86_LOCAL_APIC
-	PROC_PRINT("    APIC Frequency: %lu\n",rtai_tunables.apic_freq);
-	PROC_PRINT("    APIC Latency: %d ns\n",RTAI_LATENCY_APIC);
-	PROC_PRINT("    APIC Setup: %d ns\n",RTAI_SETUP_TIME_APIC);
-#endif /* CONFIG_X86_LOCAL_APIC */
+	PROC_PRINT("    CPU   Frequency: %lu (Hz)\n", rtai_tunables.cpu_freq);
+	PROC_PRINT("    TIMER Frequency: %lu (Hz)\n", TIMER_FREQ);
+	PROC_PRINT("    TIMER Latency: %d (ns)\n", rtai_imuldiv(rtai_tunables.latency, 1000000000, rtai_tunables.cpu_freq));
+	PROC_PRINT("    TIMER Setup: %d (ns)\n", rtai_imuldiv(rtai_tunables.setup_time_TIMER_CPUNIT, 1000000000, rtai_tunables.cpu_freq));
     
 	none = 1;
 	PROC_PRINT("\n** Real-time IRQs used by RTAI: ");
@@ -1615,11 +1614,15 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	}
     	PROC_PRINT("\n\n");
 
-#if defined(CONFIG_SMP) && defined(CONFIG_RTAI_DIAG_TSC_SYNC)
+#ifdef CONFIG_SMP
+#ifdef CONFIG_RTAI_DIAG_TSC_SYNC
 	PROC_PRINT("** RTAI TSC OFFSETs (TSC units, 0 ref. CPU): ");
     	for (i = 0; i < num_online_cpus(); i++) {
 		PROC_PRINT("CPU#%d: %ld; ", i, rtai_tsc_ofst[i]);
         }
+    	PROC_PRINT("\n\n");
+#endif
+	PROC_PRINT("** MASK OF CPUs ISOLATED FOR RTAI: 0x%lx.", IsolCpusMask);
     	PROC_PRINT("\n\n");
 #endif
 
