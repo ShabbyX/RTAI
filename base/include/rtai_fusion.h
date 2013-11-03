@@ -66,7 +66,7 @@ void ftask_make_hard_real_time(void)
 typedef long long FTIME;
 
 typedef struct ftimer_info
-	{ FTIME period; FTIME date; FTIME tsc; } FTIMER_INFO;
+{ FTIME period; FTIME date; FTIME tsc; } FTIMER_INFO;
 
 #ifdef __cplusplus
 extern "C" {
@@ -139,14 +139,15 @@ static inline void ftimer_stop(void)
 #define T_HIPRIO  99
 
 typedef struct ftask_placeholder
-	{ unsigned long opaque, opaque2; } FTASK_PLACEHOLDER;
+{ unsigned long opaque, opaque2; } FTASK_PLACEHOLDER;
 
-typedef struct ftask_info {
-    int bprio;			/* !< Base priority. */
-    int cprio;			/* !< Current priority. */
-    unsigned status;		/* !< Status. */
-    FTIME relpoint;		/* !< Periodic release point. */
-    char name[XNOBJECT_NAME_LEN]; /* !< Symbolic name. */
+typedef struct ftask_info
+{
+	int bprio;			/* !< Base priority. */
+	int cprio;			/* !< Current priority. */
+	unsigned status;		/* !< Status. */
+	FTIME relpoint;		/* !< Periodic release point. */
+	char name[XNOBJECT_NAME_LEN]; /* !< Symbolic name. */
 } FTASK_INFO;
 
 typedef FTASK_PLACEHOLDER FTASK;

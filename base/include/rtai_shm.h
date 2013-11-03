@@ -121,14 +121,17 @@ static inline unsigned long uvirt_to_kva(pgd_t *pgd, unsigned long adr)
 
 static inline unsigned long uvirt_to_kva(pgd_t *pgd, unsigned long adr)
 {
-	if (!pgd_none(*pgd) && !pgd_bad(*pgd)) {
+	if (!pgd_none(*pgd) && !pgd_bad(*pgd))
+	{
 		pmd_t *pmd;
 		pmd = pmd_offset(pud_offset(pgd, adr), adr);
-		if (!pmd_none(*pmd)) {
+		if (!pmd_none(*pmd))
+		{
 			pte_t *ptep, pte;
 			ptep = pte_offset_kernel(pmd, adr);
 			pte = *ptep;
-			if (pte_present(pte)) {
+			if (pte_present(pte))
+			{
 				return (((unsigned long)page_address(pte_page(pte))) | (adr & (PAGE_SIZE - 1)));
 			}
 		}
@@ -220,22 +223,31 @@ RTAI_PROTO (void *, _rt_shm_alloc, (void *start, unsigned long name, int size, i
 	int hook;
 	void *adr = NULL;
 
-	if ((hook = open(RTAI_SHM_DEV, O_RDWR)) <= 0) {
+	if ((hook = open(RTAI_SHM_DEV, O_RDWR)) <= 0)
+	{
 		return NULL;
-	} else {
+	}
+	else
+	{
 		struct { unsigned long name, arg, suprt; } arg = { name, size, suprt };
 #ifdef SHM_USE_LXRT
-		if ((size = rtai_lxrt(BIDX, SIZARG, SHM_ALLOC, &arg).i[LOW])) {
+		if ((size = rtai_lxrt(BIDX, SIZARG, SHM_ALLOC, &arg).i[LOW]))
+		{
 #else
-		if ((size = ioctl(hook, SHM_ALLOC, (unsigned long)(&arg)))) {
+		if ((size = ioctl(hook, SHM_ALLOC, (unsigned long)(&arg))))
+		{
 #endif
-			if ((adr = mmap(start, size, PROT_WRITE | PROT_READ, MAP_SHARED | MAP_LOCKED, hook, 0)) == MAP_FAILED) {;
+			if ((adr = mmap(start, size, PROT_WRITE | PROT_READ, MAP_SHARED | MAP_LOCKED, hook, 0)) == MAP_FAILED)
+			{
+				;
 #ifdef SHM_USE_LXRT
 				rtai_lxrt(BIDX, sizeof(name), SHM_FREE, &name);
 #else
 				ioctl(hook, SHM_FREE, &name);
 #endif
-			} else if (isheap) {
+			}
+			else if (isheap)
+			{
 				arg.arg = (unsigned long)adr;
 #ifdef SHM_USE_LXRT
 				rtai_lxrt(BIDX, SIZARG, HEAP_SET, &arg);
@@ -361,17 +373,21 @@ RTAI_PROTO(int, rt_shm_free, (unsigned long name))
 {
 	int hook, size;
 	struct { void *nameadr; } arg = { &name };
-	if ((hook = open(RTAI_SHM_DEV, O_RDWR)) <= 0) {
+	if ((hook = open(RTAI_SHM_DEV, O_RDWR)) <= 0)
+	{
 		return 0;
 	}
 // no SHM_FREE needed, we release it all and munmap will do it through
 // the vma close operation provided by shm.c
 #ifdef SHM_USE_LXRT
-	if ((size = rtai_lxrt(BIDX, SIZARG, SHM_SIZE, &arg).i[LOW])) {
+	if ((size = rtai_lxrt(BIDX, SIZARG, SHM_SIZE, &arg).i[LOW]))
+	{
 #else
-	if ((size = ioctl(hook, SHM_SIZE, (unsigned long)&arg))) {
+	if ((size = ioctl(hook, SHM_SIZE, (unsigned long)&arg)))
+	{
 #endif
-		if (munmap((void *)name, size)) {
+		if (munmap((void *)name, size))
+		{
 			size = 0;
 		}
 	}

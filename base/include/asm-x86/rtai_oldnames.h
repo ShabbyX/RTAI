@@ -83,17 +83,20 @@
 
 #include <linux/irq.h>
 
-static inline int rt_request_cpu_own_irq (unsigned irq, void (*handler)(void)) {
+static inline int rt_request_cpu_own_irq (unsigned irq, void (*handler)(void))
+{
 
-    return rt_request_irq(irq, (rt_irq_handler_t)handler, NULL, 0);
+	return rt_request_irq(irq, (rt_irq_handler_t)handler, NULL, 0);
 }
 
-static inline int rt_free_cpu_own_irq (unsigned irq) {
+static inline int rt_free_cpu_own_irq (unsigned irq)
+{
 
-    return rt_release_irq(irq);
+	return rt_release_irq(irq);
 }
 
-static inline unsigned long get_cr2 (void) {
+static inline unsigned long get_cr2 (void)
+{
 	unsigned long address;
 	__asm__("movq %%cr2,%0":"=r" (address));
 	return address;

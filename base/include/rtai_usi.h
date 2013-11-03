@@ -67,9 +67,9 @@ static inline unsigned long usi_atomic_cmpxchg(volatile void *ptr, unsigned long
 {
 	unsigned long prev;
 	__asm__ __volatile__	("lock; cmpxchgl %1, %2"
-				: "=a" (prev)
-				: "q"(n), "m" (*__usi_xg(ptr)), "0" (o)
-				: "memory");
+				 : "=a" (prev)
+				 : "q"(n), "m" (*__usi_xg(ptr)), "0" (o)
+				 : "memory");
 	return prev;
 }
 

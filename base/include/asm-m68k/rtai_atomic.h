@@ -44,33 +44,33 @@ struct __rtai_xchg_dummy { unsigned long a[100]; };
 
 static inline unsigned long atomic_xchg(volatile void *ptr, unsigned long x)
 {
-    register unsigned tmp __asm__ ("%d0");
-    register unsigned __ptr __asm__ ("%a1") = (unsigned)ptr;
-    register unsigned long __x __asm__ ("%d2") = x;
-    __asm__ __volatile__ ( "trap #13\n\t" : "+d" (tmp) : "a" (__ptr), "d" (__x) : "memory" );
-    return tmp;
+	register unsigned tmp __asm__ ("%d0");
+	register unsigned __ptr __asm__ ("%a1") = (unsigned)ptr;
+	register unsigned long __x __asm__ ("%d2") = x;
+	__asm__ __volatile__ ( "trap #13\n\t" : "+d" (tmp) : "a" (__ptr), "d" (__x) : "memory" );
+	return tmp;
 }
 
 static inline unsigned long atomic_cmpxchg(volatile void *ptr, unsigned long o, unsigned long n)
 {
-    register unsigned prev __asm__ ("%d0");
-    register unsigned __ptr __asm__ ("%a1") = (unsigned)ptr;
-    register unsigned long __o __asm__ ("%d2") = o;
-    register unsigned long __n __asm__ ("%d3") = n;
-    __asm__ __volatile__ ( "trap #12\n\t" : "+d" (prev) : "a" (__ptr), "d" (__o), "d" (__n) : "memory" );
-    return prev;
+	register unsigned prev __asm__ ("%d0");
+	register unsigned __ptr __asm__ ("%a1") = (unsigned)ptr;
+	register unsigned long __o __asm__ ("%d2") = o;
+	register unsigned long __n __asm__ ("%d3") = n;
+	__asm__ __volatile__ ( "trap #12\n\t" : "+d" (prev) : "a" (__ptr), "d" (__o), "d" (__n) : "memory" );
+	return prev;
 }
 
 static __inline__ int atomic_dec_and_test(atomic_t *v)
 {
-    char c;
-    __asm__ __volatile__("subql #1,%1; seq %0" : "=d" (c), "+m" (*v));
-    return c != 0;
+	char c;
+	__asm__ __volatile__("subql #1,%1; seq %0" : "=d" (c), "+m" (*v));
+	return c != 0;
 }
 
 static __inline__ void atomic_inc(atomic_t *v)
 {
-    __asm__ __volatile__("addql #1,%0" : "+m" (*v));
+	__asm__ __volatile__("addql #1,%0" : "+m" (*v));
 }
 
 /* Depollute the namespace a bit. */

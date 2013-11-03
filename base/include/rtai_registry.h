@@ -31,7 +31,8 @@
 
 struct task_struct;
 
-struct rt_registry_entry {
+struct rt_registry_entry
+{
 	unsigned long name;	 // Numerical representation of resource name
 	void *adr;		 // Physical rt memory address of resource
 	struct task_struct *tsk; // Linux task owner of the resource

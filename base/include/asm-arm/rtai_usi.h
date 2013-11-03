@@ -54,14 +54,18 @@ static unsigned long usi_save_flags_and_cli(unsigned long arg, unsigned long *ef
 
 static void usi_restore_flags(unsigned long flags, unsigned long *eflags)
 {
-	if (test_bit(RTAI_IFLAG, &flags)) {
+	if (test_bit(RTAI_IFLAG, &flags))
+	{
 		set_bit(RTAI_IFLAG, eflags);
-	} else {
+	}
+	else
+	{
 		clear_bit(RTAI_IFLAG, eflags);
 	}
 }
 
-static unsigned long (*usi_fun_entry[ ])(unsigned long, unsigned long *) = {
+static unsigned long (*usi_fun_entry[ ])(unsigned long, unsigned long *) =
+{
 	[_STARTUP_IRQ]	    = (void *)rt_startup_irq,
 	[_SHUTDOWN_IRQ]	    = (void *)rt_shutdown_irq,
 	[_ENABLE_IRQ]	    = (void *)rt_enable_irq,
@@ -81,7 +85,7 @@ static unsigned long (*usi_fun_entry[ ])(unsigned long, unsigned long *) = {
 		    = usi_fun_entry[srq & ~USI_SRQ_MASK](arg, &regs->ARM_cpsr); \
 		return 1; \
 		} \
-
+ 
 #endif /* __KERNEL__ */
 
 #endif /* !_RTAI_ASM_USI_H */

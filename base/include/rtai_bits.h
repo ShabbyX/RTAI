@@ -56,12 +56,13 @@ struct rt_bits_struct;
 
 #ifndef __cplusplus
 
-typedef struct rt_bits_struct {
+typedef struct rt_bits_struct
+{
 
-    struct rt_queue queue;  /* <= Must be first in struct. */
-    int magic;
-    int type;  // to align mask to semaphore count, for easier uspace init
-    unsigned long mask;
+	struct rt_queue queue;  /* <= Must be first in struct. */
+	int magic;
+	int type;  // to align mask to semaphore count, for easier uspace init
+	unsigned long mask;
 
 } BITS;
 
@@ -183,8 +184,9 @@ RTAI_PROTO(int, rt_bits_wait_timed,(struct rt_bits_struct *bits, int testfun, un
 
 #if !defined(__KERNEL__) || defined(__cplusplus)
 
-typedef struct rt_bits_struct {
-    int opaque;
+typedef struct rt_bits_struct
+{
+	int opaque;
 } BITS;
 
 #endif /* !__KERNEL__ || __cplusplus */

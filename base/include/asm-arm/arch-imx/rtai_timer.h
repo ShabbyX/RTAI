@@ -47,7 +47,8 @@ static inline int rtai_timer_irq_ack( void )
 
 	rt_unmask_irq(RTAI_TIMER_IRQ);
 
-	if ( (int)(IMX_TCN(0) - IMX_TCMP(0)) < 0 ) {
+	if ( (int)(IMX_TCN(0) - IMX_TCMP(0)) < 0 )
+	{
 		/* This is what just happened: we were setting a next timer
 		   interrupt in the scheduler, while a previously configured
 		   timer-interrupt happened, so, just restore the correct value
@@ -59,7 +60,8 @@ static inline int rtai_timer_irq_ack( void )
 	return 0;
 }
 
-union rtai_tsc {
+union rtai_tsc
+{
 	unsigned long long tsc;
 	unsigned long hltsc[2];
 };
@@ -104,7 +106,8 @@ static inline void rt_set_timer_delay(int delay)
 		next_match = ( IMX_TCMP(0) += rt_times.periodic_tick );
 
 #ifdef PROTECT_TIMER
-	while ((int)(next_match - IMX_TCN(0)) < 2 * SETUP_TIME_TICKS ) {
+	while ((int)(next_match - IMX_TCN(0)) < 2 * SETUP_TIME_TICKS )
+	{
 		next_match = IMX_TCMP(0) = IMX_TCN(0) + 4 * SETUP_TIME_TICKS;
 	}
 #endif /* PROTECT_TIMER */

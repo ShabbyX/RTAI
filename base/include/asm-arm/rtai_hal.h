@@ -85,11 +85,11 @@
 extern inline unsigned long
 ffnz(unsigned long word)
 {
-    int count;
+	int count;
 
-    /* CLZ is available only on ARMv5 */
-    asm( "clz %0, %1" : "=r" (count) : "r" (word) );
-    return 31-count;
+	/* CLZ is available only on ARMv5 */
+	asm( "clz %0, %1" : "=r" (count) : "r" (word) );
+	return 31-count;
 }
 
 #else /* __KERNEL__ */
@@ -97,7 +97,7 @@ ffnz(unsigned long word)
 extern inline unsigned long
 ffnz(unsigned long word)
 {
-    return ffs(word) - 1;
+	return ffs(word) - 1;
 }
 #endif /* !__KERNEL__ */
 
@@ -140,9 +140,9 @@ ffnz(unsigned long word)
 #ifndef rtai_ullmul
 extern inline unsigned long long
 __rtai_generic_ullmul(const unsigned m0,
-		       const unsigned m1)
+		      const unsigned m1)
 {
-    return (unsigned long long) m0 * m1;
+	return (unsigned long long) m0 * m1;
 }
 #define rtai_ullmul(m0,m1) __rtai_generic_ullmul((m0),(m1))
 #endif /* !rtai_ullmul */
@@ -150,15 +150,15 @@ __rtai_generic_ullmul(const unsigned m0,
 #ifndef rtai_ulldiv
 static inline unsigned long long
 __rtai_generic_ulldiv (unsigned long long ull,
-			const unsigned uld,
-			unsigned long *const rp)
+		       const unsigned uld,
+		       unsigned long *const rp)
 {
-    const unsigned r = do_div(ull, uld);
+	const unsigned r = do_div(ull, uld);
 
-    if (rp)
-	*rp = r;
+	if (rp)
+		*rp = r;
 
-    return ull;
+	return ull;
 }
 #define rtai_ulldiv(ull,uld,rp) __rtai_generic_ulldiv((ull),(uld),(rp))
 #endif /* !rtai_ulldiv */
@@ -170,12 +170,12 @@ __rtai_generic_ulldiv (unsigned long long ull,
 #ifndef rtai_imuldiv
 extern inline int
 __rtai_generic_imuldiv (int i,
-			 int mult,
-			 int div)
+			int mult,
+			int div)
 {
-    /* Returns (int)i = (unsigned long long)i*(unsigned)(mult)/(unsigned)div. */
-    const unsigned long long ull = rtai_ullmul(i, mult);
-    return rtai_uldivrem(ull, div, NULL);
+	/* Returns (int)i = (unsigned long long)i*(unsigned)(mult)/(unsigned)div. */
+	const unsigned long long ull = rtai_ullmul(i, mult);
+	return rtai_uldivrem(ull, div, NULL);
 }
 #define rtai_imuldiv(i,m,d) __rtai_generic_imuldiv((i),(m),(d))
 #endif /* !rtai_imuldiv */
@@ -186,44 +186,44 @@ __rtai_generic_imuldiv (int i,
    after each call to uldivrem. */
 static inline unsigned long long
 __rtai_generic_div96by32 (const unsigned long long h,
-			   const unsigned l,
-			   const unsigned d,
-			   unsigned long *const rp)
+			  const unsigned l,
+			  const unsigned d,
+			  unsigned long *const rp)
 {
-    unsigned long rh;
-    const unsigned qh = rtai_uldivrem(h, d, &rh);
-    const unsigned long long t = __rtai_u64fromu32(rh, l);
-    const unsigned ql = rtai_uldivrem(t, d, rp);
+	unsigned long rh;
+	const unsigned qh = rtai_uldivrem(h, d, &rh);
+	const unsigned long long t = __rtai_u64fromu32(rh, l);
+	const unsigned ql = rtai_uldivrem(t, d, rp);
 
-    return __rtai_u64fromu32(qh, ql);
+	return __rtai_u64fromu32(qh, ql);
 }
 
 extern inline unsigned long long
 __rtai_generic_ullimd (const unsigned long long op,
-			const unsigned m,
-			const unsigned d)
+		       const unsigned m,
+		       const unsigned d)
 {
-    unsigned oph, opl, tlh, tll;
-    unsigned long long th, tl;
+	unsigned oph, opl, tlh, tll;
+	unsigned long long th, tl;
 
-    __rtai_u64tou32(op, oph, opl);
-    tl = rtai_ullmul(opl, m);
-    __rtai_u64tou32(tl, tlh, tll);
-    th = rtai_ullmul(oph, m);
-    th += tlh;
+	__rtai_u64tou32(op, oph, opl);
+	tl = rtai_ullmul(opl, m);
+	__rtai_u64tou32(tl, tlh, tll);
+	th = rtai_ullmul(oph, m);
+	th += tlh;
 
-    return __rtai_generic_div96by32(th, tll, d, NULL);
+	return __rtai_generic_div96by32(th, tll, d, NULL);
 }
 
 extern inline  long long
 __rtai_generic_llimd (long long op,
-		       unsigned m,
-		       unsigned d)
+		      unsigned m,
+		      unsigned d)
 {
 
-    if(op < 0LL)
-	return -__rtai_generic_ullimd(-op, m, d);
-    return __rtai_generic_ullimd(op, m, d);
+	if(op < 0LL)
+		return -__rtai_generic_ullimd(-op, m, d);
+	return __rtai_generic_ullimd(op, m, d);
 }
 #define rtai_llimd(ll,m,d) __rtai_generic_llimd((ll),(m),(d))
 #endif /* !rtai_llimd */
@@ -239,7 +239,8 @@ __rtai_generic_llimd (long long op,
 
 #include <rtai_trace.h>
 
-struct rtai_realtime_irq_s {
+struct rtai_realtime_irq_s
+{
 	int (*handler)(unsigned irq, void *cookie);
 	void *cookie;
 	int retmode;
@@ -279,9 +280,11 @@ static inline struct hal_domain_struct *get_domain_pointer(int n)
 	struct list_head *p = hal_pipeline.next;
 	struct hal_domain_struct *d;
 	unsigned long i = 0;
-	while (p != &hal_pipeline) {
+	while (p != &hal_pipeline)
+	{
 		d = list_entry(p, struct hal_domain_struct, p_link);
-		if (++i == n) {
+		if (++i == n)
+		{
 			return d;
 		}
 		p = d->p_link.next;
@@ -331,20 +334,22 @@ typedef int (*rt_irq_handler_t)(unsigned irq, void *cookie);
 
 #define RTAI_CPU_FREQ              (rtai_tunables.cpu_freq)
 
-struct calibration_data {
+struct calibration_data
+{
 
-    unsigned long cpu_freq;
-    unsigned long apic_freq;
-    int latency;
-    int setup_time_TIMER_CPUNIT;
-    int setup_time_TIMER_UNIT;
-    int timers_tol[RTAI_NR_CPUS];
+	unsigned long cpu_freq;
+	unsigned long apic_freq;
+	int latency;
+	int setup_time_TIMER_CPUNIT;
+	int setup_time_TIMER_UNIT;
+	int timers_tol[RTAI_NR_CPUS];
 };
 
-struct apic_timer_setup_data {
+struct apic_timer_setup_data
+{
 
-    int mode;
-    int count;
+	int mode;
+	int count;
 };
 
 extern struct rt_times			rt_times;
@@ -355,7 +360,8 @@ extern volatile unsigned long rtai_cpu_lock;
 #define SET_TASKPRI(cpuid)
 #define CLR_TASKPRI(cpuid)
 
-extern struct rtai_switch_data {
+extern struct rtai_switch_data
+{
 	volatile unsigned long sflags;
 	volatile unsigned long lflags;
 } rtai_linux_context[RTAI_NR_CPUS];
@@ -451,10 +457,11 @@ do { \
 static inline int rt_save_switch_to_real_time(int cpuid)
 {
 	SET_TASKPRI(cpuid);
-	if (!rtai_linux_context[cpuid].sflags) {
+	if (!rtai_linux_context[cpuid].sflags)
+	{
 		_rt_switch_to_real_time(cpuid);
 		return 0;
-    }
+	}
 	return 1;
 }
 
@@ -470,7 +477,7 @@ do { \
 
 #define in_hrt_mode(cpuid)  (rtai_linux_context[cpuid].sflags)
 
-    /* Private interface -- Internal use only */
+/* Private interface -- Internal use only */
 
 unsigned long rtai_critical_enter(void (*synch)(void));
 
@@ -486,7 +493,7 @@ long rtai_catch_event (struct hal_domain_struct *ipd, unsigned long event, int (
 
 #endif /* __KERNEL__ && !__cplusplus */
 
-    /* Public interface */
+/* Public interface */
 
 #ifdef __KERNEL__
 
@@ -512,7 +519,8 @@ int rt_set_irq_ack(unsigned int irq, int (*irq_ack)(unsigned int));
 static inline int rt_request_irq_wack(unsigned irq, int (*handler)(unsigned irq, void *cookie), void *cookie, int retmode, int (*irq_ack)(unsigned int))
 {
 	int retval;
-	if ((retval = rt_request_irq(irq, handler, cookie, retmode)) < 0) {
+	if ((retval = rt_request_irq(irq, handler, cookie, retmode)) < 0)
+	{
 		return retval;
 	}
 	return rt_set_irq_ack(irq, irq_ack);
@@ -606,12 +614,12 @@ static inline int rt_request_global_irq_ext(unsigned irq, void (*handler)(void),
 
 static inline void rt_set_global_irq_ext(unsigned irq, int ext, unsigned long cookie)
 {
-    rt_set_irq_cookie(irq, (void *)cookie);
+	rt_set_irq_cookie(irq, (void *)cookie);
 }
 
 static inline int rt_free_global_irq(unsigned irq)
 {
-    return rt_release_irq(irq);
+	return rt_release_irq(irq);
 }
 
 #ifdef __cplusplus

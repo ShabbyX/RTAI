@@ -31,12 +31,12 @@
 
 /* The functions to the tracer management code */
 int rt_register_tracer
-	(tracer_call   /* The tracer function */);
+(tracer_call   /* The tracer function */);
 int rt_unregister_tracer
-	(tracer_call   /* The tracer function */);
+(tracer_call   /* The tracer function */);
 int rt_trace_event
-	(uint8_t       /* Event ID (as defined in this header file) */,
-	void*         /* Structure describing the event */);
+(uint8_t       /* Event ID (as defined in this header file) */,
+ void*         /* Structure describing the event */);
 
 /* Generic macros */
 #define RT_TRACE_EVENT(ID, DATA) rt_trace_event(ID, DATA)
@@ -82,8 +82,8 @@ int rt_trace_event
 /*  TRACE_RTAI_GLOBAL_IRQ_ENTRY */
 typedef struct _trace_rtai_global_irq_entry
 {
-  uint8_t  irq_id;      /* IRQ number */
-  uint8_t  kernel;      /* Are we executing kernel code */
+	uint8_t  irq_id;      /* IRQ number */
+	uint8_t  kernel;      /* Are we executing kernel code */
 } LTT_PACKED_STRUCT trace_rtai_global_irq_entry;
 #if CONFIG_X86
 #define TRACE_RTAI_GLOBAL_IRQ_ENTRY(ID, __dummy) \
@@ -115,8 +115,8 @@ typedef struct _trace_rtai_global_irq_entry
 /*  TRACE_RTAI_OWN_IRQ_ENTRY */
 typedef struct _trace_rtai_own_irq_entry
 {
-  uint8_t  irq_id;      /* IRQ number */
-  uint8_t  kernel;      /* Are we executing kernel code */
+	uint8_t  irq_id;      /* IRQ number */
+	uint8_t  kernel;      /* Are we executing kernel code */
 } LTT_PACKED_STRUCT trace_rtai_own_irq_entry;
 #if CONFIG_X86
 #define TRACE_RTAI_OWN_IRQ_ENTRY(ID) \
@@ -148,8 +148,8 @@ typedef struct _trace_rtai_own_irq_entry
 /*  TRACE_RTAI_TRAP_ENTRY */
 typedef struct _trace_rtai_trap_entry
 {
-  uint8_t   trap_id;        /* Trap number */
-  uint32_t  address;        /* Address where trap occured */
+	uint8_t   trap_id;        /* Trap number */
+	uint32_t  address;        /* Address where trap occured */
 } LTT_PACKED_STRUCT trace_rtai_trap_entry;
 #define TRACE_RTAI_TRAP_ENTRY(ID,ADDR) \
 	   do \
@@ -171,8 +171,8 @@ typedef struct _trace_rtai_trap_entry
 /*  TRACE_RTAI_SRQ_ENTRY */
 typedef struct _trace_rtai_srq_entry
 {
-  uint8_t  srq_id;      /* SRQ number */
-  uint8_t  kernel;      /* Are we executing kernel code */
+	uint8_t  srq_id;      /* SRQ number */
+	uint8_t  kernel;      /* Are we executing kernel code */
 } LTT_PACKED_STRUCT trace_rtai_srq_entry;
 #if CONFIG_X86
 #define TRACE_RTAI_SRQ_ENTRY(ID) \
@@ -204,7 +204,7 @@ typedef struct _trace_rtai_srq_entry
 /*  TRACE_RTAI_SWITCHTO_LINUX */
 typedef struct _trace_rtai_switchto_linux
 {
-  uint8_t   cpu_id;         /* The CPUID being switched to Linux */
+	uint8_t   cpu_id;         /* The CPUID being switched to Linux */
 } LTT_PACKED_STRUCT trace_rtai_switchto_linux;
 #define TRACE_RTAI_SWITCHTO_LINUX(ID) \
 	   do \
@@ -217,7 +217,7 @@ typedef struct _trace_rtai_switchto_linux
 /*  TRACE_RTAI_SWITCHTO_RT */
 typedef struct _trace_rtai_switchto_rt
 {
-  uint8_t   cpu_id;         /* The CPUID being switched to RT */
+	uint8_t   cpu_id;         /* The CPUID being switched to RT */
 } LTT_PACKED_STRUCT trace_rtai_switchto_rt;
 #define TRACE_RTAI_SWITCHTO_RT(ID) \
 	   do \
@@ -230,9 +230,9 @@ typedef struct _trace_rtai_switchto_rt
 /*  TRACE_RTAI_SCHED_CHANGE */
 typedef struct _trace_rtai_sched_change
 {
-  uint32_t  out;         /* Outgoing process */
-  uint32_t  in;          /* Incoming process */
-  uint32_t  out_state;   /* Outgoing process' state */
+	uint32_t  out;         /* Outgoing process */
+	uint32_t  in;          /* Incoming process */
+	uint32_t  out_state;   /* Outgoing process' state */
 } LTT_PACKED_STRUCT trace_rtai_sched_change;
 #define TRACE_RTAI_SCHED_CHANGE(OUT, IN, OUT_STATE) \
 	   do \
@@ -259,10 +259,10 @@ typedef struct _trace_rtai_sched_change
 #define TRACE_RTAI_EV_TASK_SLEEP_UNTIL            12     /* Sleep until */
 typedef struct _trace_rtai_task
 {
-  uint8_t   event_sub_id;  /* Task event ID */
-  uint32_t  event_data1;   /* Event data */
-  uint64_t  event_data2;   /* Event data 2 */
-  uint64_t  event_data3;   /* Event data 3 */
+	uint8_t   event_sub_id;  /* Task event ID */
+	uint32_t  event_data1;   /* Event data */
+	uint64_t  event_data2;   /* Event data 2 */
+	uint64_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_task;
 #define TRACE_RTAI_TASK(ID, DATA1, DATA2, DATA3) \
 	   do \
@@ -283,9 +283,9 @@ typedef struct _trace_rtai_task
 #define TRACE_RTAI_EV_TIMER_HANDLE_EXPIRY          5     /* Handle timer expiry */
 typedef struct _trace_rtai_timer
 {
-  uint8_t   event_sub_id;  /* Timer event ID */
-  uint32_t  event_data1;   /* Event data 1 */
-  uint32_t  event_data2;   /* Event data 2 */
+	uint8_t   event_sub_id;  /* Timer event ID */
+	uint32_t  event_data1;   /* Event data 1 */
+	uint32_t  event_data2;   /* Event data 2 */
 } LTT_PACKED_STRUCT trace_rtai_timer;
 #define TRACE_RTAI_TIMER(ID, DATA1, DATA2) \
 	   do \
@@ -306,9 +306,9 @@ typedef struct _trace_rtai_timer
 #define TRACE_RTAI_EV_SEM_WAIT_UNTIL               6     /* Wait on semaphore until a certain time */
 typedef struct _trace_rtai_sem
 {
-  uint8_t   event_sub_id;  /* Semaphore event ID */
-  uint32_t  event_data1;   /* Event data 1 */
-  uint64_t  event_data2;   /* Event data 2 */
+	uint8_t   event_sub_id;  /* Semaphore event ID */
+	uint32_t  event_data1;   /* Event data 1 */
+	uint64_t  event_data2;   /* Event data 2 */
 } LTT_PACKED_STRUCT trace_rtai_sem;
 #define TRACE_RTAI_SEM(ID, DATA1, DATA2) \
 	   do \
@@ -329,10 +329,10 @@ typedef struct _trace_rtai_sem
 #define TRACE_RTAI_EV_MSG_RECV_UNTIL                6    /* Try receiving until a certain time */
 typedef struct _trace_rtai_msg
 {
-  uint8_t   event_sub_id;  /* Message event ID */
-  uint32_t  event_data1;   /* Event data 1 */
-  uint32_t  event_data2;   /* Event data 2 */
-  uint64_t  event_data3;   /* Event data 3 */
+	uint8_t   event_sub_id;  /* Message event ID */
+	uint32_t  event_data1;   /* Event data 1 */
+	uint32_t  event_data2;   /* Event data 2 */
+	uint64_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_msg;
 #define TRACE_RTAI_MSG(ID, DATA1, DATA2, DATA3) \
 	   do \
@@ -352,10 +352,10 @@ typedef struct _trace_rtai_msg
 #define TRACE_RTAI_EV_RPC_RETURN                     4    /* Send result of RPC back to caller */
 typedef struct _trace_rtai_rpc
 {
-  uint8_t   event_sub_id;  /* RPC event ID */
-  uint32_t  event_data1;   /* Event data 1 */
-  uint32_t  event_data2;   /* Event data 2 */
-  uint64_t  event_data3;   /* Event data 3 */
+	uint8_t   event_sub_id;  /* RPC event ID */
+	uint32_t  event_data1;   /* Event data 1 */
+	uint32_t  event_data2;   /* Event data 2 */
+	uint64_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_rpc;
 #define TRACE_RTAI_RPC(ID, DATA1, DATA2, DATA3) \
 	   do \
@@ -381,10 +381,10 @@ typedef struct _trace_rtai_rpc
 #define TRACE_RTAI_EV_MBX_RECV_UNTIL                10    /* Try receiving until a certain time */
 typedef struct _trace_rtai_mbx
 {
-  uint8_t   event_sub_id;  /* Message Box event ID */
-  uint32_t  event_data1;   /* Event data 1 */
-  uint32_t  event_data2;   /* Event data 2 */
-  uint64_t  event_data3;   /* Event data 3 */
+	uint8_t   event_sub_id;  /* Message Box event ID */
+	uint32_t  event_data1;   /* Event data 1 */
+	uint32_t  event_data2;   /* Event data 2 */
+	uint64_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_mbx;
 #define TRACE_RTAI_MBX(ID, DATA1, DATA2, DATA3) \
 	   do \
@@ -426,9 +426,9 @@ typedef struct _trace_rtai_mbx
 #define TRACE_RTAI_EV_FIFO_SEM_DESTROY               26   /* Destroy semaphore  */
 typedef struct _trace_rtai_fifo
 {
-  uint8_t   event_sub_id;  /* FIFO event ID */
-  uint32_t  event_data1;   /* Event data 1 */
-  uint32_t  event_data2;   /* Event data 2 */
+	uint8_t   event_sub_id;  /* FIFO event ID */
+	uint32_t  event_data1;   /* Event data 1 */
+	uint32_t  event_data2;   /* Event data 2 */
 } LTT_PACKED_STRUCT trace_rtai_fifo;
 #define TRACE_RTAI_FIFO(ID, DATA1, DATA2) \
 	   do \
@@ -448,10 +448,10 @@ typedef struct _trace_rtai_fifo
 #define TRACE_RTAI_EV_SHM_KFREE                        5  /* Free kernel space shared memory */
 typedef struct _trace_rtai_shm
 {
-  uint8_t   event_sub_id;  /* SHared Memory event ID */
-  uint32_t  event_data1;   /* Event data 1 */
-  uint32_t  event_data2;   /* Event data 2 */
-  uint32_t  event_data3;   /* Event data 3 */
+	uint8_t   event_sub_id;  /* SHared Memory event ID */
+	uint32_t  event_data1;   /* Event data 1 */
+	uint32_t  event_data2;   /* Event data 2 */
+	uint32_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_shm;
 #define TRACE_RTAI_SHM(ID, DATA1, DATA2, DATA3) \
 	   do \
@@ -511,10 +511,10 @@ typedef struct _trace_rtai_shm
 #define TRACE_RTAI_EV_POSIX_PTHREAD_COND_BROADCAST       44  /* Signal all waiting threads */
 typedef struct _trace_rtai_posix
 {
-  uint8_t   event_sub_id;  /* POSIX event ID */
-  uint32_t  event_data1;   /* Event data 1 */
-  uint32_t  event_data2;   /* Event data 2 */
-  uint32_t  event_data3;   /* Event data 3 */
+	uint8_t   event_sub_id;  /* POSIX event ID */
+	uint32_t  event_data1;   /* Event data 1 */
+	uint32_t  event_data2;   /* Event data 2 */
+	uint32_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_posix;
 #define TRACE_RTAI_POSIX(ID, DATA1, DATA2, DATA3) \
 	   do \
@@ -538,10 +538,10 @@ typedef struct _trace_rtai_posix
 #define TRACE_RTAI_EV_LXRT_HANDLE                         8  /* Handle a request for an RTAI service */
 typedef struct _trace_rtai_lxrt
 {
-  uint8_t   event_sub_id;  /* LXRT event ID */
-  uint32_t  event_data1;   /* Event data 1 */
-  uint32_t  event_data2;   /* Event data 2 */
-  uint32_t  event_data3;   /* Event data 3 */
+	uint8_t   event_sub_id;  /* LXRT event ID */
+	uint32_t  event_data1;   /* Event data 1 */
+	uint32_t  event_data2;   /* Event data 2 */
+	uint32_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_lxrt;
 #define TRACE_RTAI_LXRT(ID, DATA1, DATA2, DATA3) \
 	   do \
@@ -567,10 +567,10 @@ typedef struct _trace_rtai_lxrt
 #define TRACE_RTAI_EV_LXRTI_TRIGGER                       10  /* Trigger proxy */
 typedef struct _trace_rtai_lxrti
 {
-  uint8_t   event_sub_id;  /* LXRT event ID */
-  uint32_t  event_data1;   /* Event data 1 */
-  uint32_t  event_data2;   /* Event data 2 */
-  uint64_t  event_data3;   /* Event data 3 */
+	uint8_t   event_sub_id;  /* LXRT event ID */
+	uint32_t  event_data1;   /* Event data 1 */
+	uint32_t  event_data2;   /* Event data 2 */
+	uint64_t  event_data3;   /* Event data 3 */
 } LTT_PACKED_STRUCT trace_rtai_lxrti;
 #define TRACE_RTAI_LXRTI(ID, DATA1, DATA2, DATA3) \
 	   do \

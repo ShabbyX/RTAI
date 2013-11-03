@@ -45,7 +45,8 @@ typedef long long RTIME;
 
 typedef int (*RT_TRAP_HANDLER)(int, int, struct pt_regs *,void *);
 
-struct rt_times {
+struct rt_times
+{
 	int linux_tick;
 	int periodic_tick;
 	RTIME tick_time;

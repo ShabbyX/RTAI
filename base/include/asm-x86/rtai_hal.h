@@ -31,7 +31,8 @@
 #include "rtai_hal_64.h"
 #endif
 
-struct calibration_data {
+struct calibration_data
+{
 	unsigned long cpu_freq;
 	unsigned long apic_freq;
 	int latency;

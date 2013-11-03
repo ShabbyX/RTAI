@@ -88,10 +88,11 @@ do { \
 #define IN_INTERCEPT_IRQ_ENABLE()	do { /* nop */ } while (0)
 #define IN_INTERCEPT_IRQ_DISABLE()	do { /* nop */ } while (0)
 
-union rtai_lxrt_t {
-    RTIME rt;
-    int i[2];
-    void *v[2];
+union rtai_lxrt_t
+{
+	RTIME rt;
+	int i[2];
+	void *v[2];
 };
 
 #ifdef __cplusplus
@@ -152,11 +153,11 @@ static inline long long _rtai_lxrt(long srq, void *args)
 }
 
 static inline union rtai_lxrt_t
-rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
+		rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
 {
-    union rtai_lxrt_t retval;
-    retval.rt = _rtai_lxrt(ENCODE_LXRT_REQ(dynx, srq, lsize), arg);
-    return retval;
+	union rtai_lxrt_t retval;
+	retval.rt = _rtai_lxrt(ENCODE_LXRT_REQ(dynx, srq, lsize), arg);
+	return retval;
 }
 
 #define rtai_iopl()  do { /* nop */ } while (0)

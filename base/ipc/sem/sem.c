@@ -170,15 +170,21 @@ RTAI_SYSCALL_MODE void rt_typed_sem_init(SEM *sem, int value, int type)
 	sem->magic = RT_SEM_MAGIC;
 	sem->count = value;
 	sem->restype = 0;
-	if ((type & RES_SEM) == RES_SEM) {
+	if ((type & RES_SEM) == RES_SEM)
+	{
 		sem->qtype = 0;
-	} else {
+	}
+	else
+	{
 		sem->qtype = (type & FIFO_Q) ? 1 : 0;
 	}
 	type = (type & 3) - 2;
-	if ((sem->type = type) < 0 && value > 1) {
+	if ((sem->type = type) < 0 && value > 1)
+	{
 		sem->count = 1;
-	} else if (type > 0) {
+	}
+	else if (type > 0)
+	{
 		sem->type = sem->count = 1;
 		sem->restype = value;
 	}
@@ -267,9 +273,11 @@ RTAI_SYSCALL_MODE int rt_sem_delete(SEM *sem)
 	q = &(sem->queue);
 	flags = rt_global_save_flags_and_cli();
 	sem->magic = 0;
-	while ((q = q->next) != &(sem->queue) && (task = q->task)) {
+	while ((q = q->next) != &(sem->queue) && (task = q->task))
+	{
 		rem_timed_task(task);
-		if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED)) == RT_SCHED_READY) {
+		if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED)) == RT_SCHED_READY)
+		{
 			task->blocked_on = RTP_OBJREM;
 			enq_ready_task(task);
 			set_bit(task->runnable_on_cpus & 0x1F, &schedmap);
@@ -277,22 +285,31 @@ RTAI_SYSCALL_MODE int rt_sem_delete(SEM *sem)
 	}
 	sched = schedmap;
 	clear_bit(rtai_cpuid(), &schedmap);
-	if ((task = sem->owndby) && sem->type > 0) {
+	if ((task = sem->owndby) && sem->type > 0)
+	{
 		sched |= dequeue_resqel_reset_task_priority(&sem->resq, task);
-		if (task->suspdepth) {
-			if (task->suspdepth > 0) {
+		if (task->suspdepth)
+		{
+			if (task->suspdepth > 0)
+			{
 				task->state |= RT_SCHED_SUSPENDED;
 				rem_ready_task(task);
 				sched = 1;
-			} else if (task->suspdepth == RT_RESEM_SUSPDEL) {
+			}
+			else if (task->suspdepth == RT_RESEM_SUSPDEL)
+			{
 				rt_task_delete(task);
 			}
 		}
 	}
-	if (sched) {
-		if (schedmap) {
+	if (sched)
+	{
+		if (schedmap)
+		{
 			RT_SCHEDULE_MAP_BOTH(schedmap);
-		} else {
+		}
+		else
+		{
 			rt_schedule();
 		}
 	}
@@ -338,28 +355,37 @@ RTAI_SYSCALL_MODE int rt_sem_signal(SEM *sem)
 	CHECK_SEM_MAGIC(sem);
 
 	flags = rt_global_save_flags_and_cli();
-	if (sem->type) {
-		if (sem->restype && (!sem->owndby || sem->owndby != RT_CURRENT)) {
+	if (sem->type)
+	{
+		if (sem->restype && (!sem->owndby || sem->owndby != RT_CURRENT))
+		{
 			rt_global_restore_flags(flags);
 			return RTE_PERM;
 		}
-		if (sem->type > 1) {
+		if (sem->type > 1)
+		{
 			sem->type--;
 			rt_global_restore_flags(flags);
 			return 0;
 		}
-		if (++sem->count > 1) {
+		if (++sem->count > 1)
+		{
 			sem->count = 1;
 		}
-	} else {
+	}
+	else
+	{
 		sem->count++;
 	}
-	if ((task = (sem->queue.next)->task)) {
+	if ((task = (sem->queue.next)->task))
+	{
 		dequeue_blocked(task);
 		rem_timed_task(task);
-		if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED)) == RT_SCHED_READY) {
+		if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED)) == RT_SCHED_READY)
+		{
 			enq_ready_task(task);
-			if (sem->type <= 0) {
+			if (sem->type <= 0)
+			{
 				RT_SCHEDULE(task, rtai_cpuid());
 				rt_global_restore_flags(flags);
 				WAKEUP_WAIT_ALL_POLLERS(1);
@@ -371,28 +397,39 @@ RTAI_SYSCALL_MODE int rt_sem_signal(SEM *sem)
 		}
 	}
 	tosched = 0;
-res:	if (sem->type > 0) {
+res:	if (sem->type > 0)
+	{
 		DECLARE_RT_CURRENT;
 		int sched;
 		ASSIGN_RT_CURRENT;
 		sem->owndby = task;
 		sched = dequeue_resqel_reset_current_priority(&sem->resq, rt_current);
-		if (rt_current->suspdepth) {
-			if (rt_current->suspdepth > 0) {
+		if (rt_current->suspdepth)
+		{
+			if (rt_current->suspdepth > 0)
+			{
 				rt_current->state |= RT_SCHED_SUSPENDED;
 				rem_ready_current(rt_current);
 				sched = 1;
-			} else if (task->suspdepth == RT_RESEM_SUSPDEL) {
+			}
+			else if (task->suspdepth == RT_RESEM_SUSPDEL)
+			{
 				rt_task_delete(rt_current);
 			}
 		}
-		if (sched) {
-			if (tosched) {
+		if (sched)
+		{
+			if (tosched)
+			{
 				RT_SCHEDULE_BOTH(task, cpuid);
-			} else {
+			}
+			else
+			{
 				rt_schedule();
 			}
-		} else if (tosched) {
+		}
+		else if (tosched)
+		{
 			RT_SCHEDULE(task, cpuid);
 		}
 	}
@@ -427,11 +464,14 @@ RTAI_SYSCALL_MODE int rt_sem_broadcast(SEM *sem)
 
 	schedmap = 0;
 	flags = rt_global_save_flags_and_cli();
-	while ((q = sem->queue.next) != &(sem->queue)) {
-		if ((task = q->task)) {
+	while ((q = sem->queue.next) != &(sem->queue))
+	{
+		if ((task = q->task))
+		{
 			dequeue_blocked(task = q->task);
 			rem_timed_task(task);
-			if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED)) == RT_SCHED_READY) {
+			if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED)) == RT_SCHED_READY)
+			{
 				enq_ready_task(task);
 				set_bit(task->runnable_on_cpus & 0x1F, &schedmap);
 			}
@@ -440,10 +480,14 @@ RTAI_SYSCALL_MODE int rt_sem_broadcast(SEM *sem)
 		flags = rt_global_save_flags_and_cli();
 	}
 	sem->count = 0;
-	if (schedmap) {
-		if (test_and_clear_bit(rtai_cpuid(), &schedmap)) {
+	if (schedmap)
+	{
+		if (test_and_clear_bit(rtai_cpuid(), &schedmap))
+		{
 			RT_SCHEDULE_MAP_BOTH(schedmap);
-		} else {
+		}
+		else
+		{
 			RT_SCHEDULE_MAP(schedmap);
 		}
 	}
@@ -504,13 +548,17 @@ RTAI_SYSCALL_MODE int rt_sem_wait(SEM *sem)
 
 	flags = rt_global_save_flags_and_cli();
 	rt_current = RT_CURRENT;
-	if ((count = sem->count) <= 0) {
+	if ((count = sem->count) <= 0)
+	{
 		void *retp;
 		unsigned long schedmap;
-		if (sem->type > 0) {
+		if (sem->type > 0)
+		{
 			UBI_MAIOR_MINOR_CESSAT_WAIT(sem);
-			if (sem->restype && sem->owndby == rt_current) {
-				if (sem->restype > 0) {
+			if (sem->restype && sem->owndby == rt_current)
+			{
+				if (sem->restype > 0)
+				{
 					count = sem->type++;
 					rt_global_restore_flags(flags);
 					return count + 1;
@@ -519,7 +567,9 @@ RTAI_SYSCALL_MODE int rt_sem_wait(SEM *sem)
 				return RTE_DEADLOK;
 			}
 			schedmap = pass_prio(sem->owndby, rt_current);
-		} else {
+		}
+		else
+		{
 			schedmap = 0;
 		}
 		sem->count--;
@@ -527,29 +577,40 @@ RTAI_SYSCALL_MODE int rt_sem_wait(SEM *sem)
 		rem_ready_current(rt_current);
 		enqueue_blocked(rt_current, &sem->queue, sem->qtype);
 		RT_SCHEDULE_MAP_BOTH(schedmap);
-		if (likely(!(retp = rt_current->blocked_on))) {
+		if (likely(!(retp = rt_current->blocked_on)))
+		{
 			count = sem->count;
-		} else {
-			if (likely(retp != RTP_OBJREM)) {
+		}
+		else
+		{
+			if (likely(retp != RTP_OBJREM))
+			{
 				dequeue_blocked(rt_current);
-				if (++sem->count > 1 && sem->type) {
+				if (++sem->count > 1 && sem->type)
+				{
 					sem->count = 1;
 				}
-				if (sem->owndby && sem->type > 0) {
+				if (sem->owndby && sem->type > 0)
+				{
 					set_task_prio_from_resq(sem->owndby);
 				}
 				rt_global_restore_flags(flags);
 				return RTE_UNBLKD;
-			} else {
+			}
+			else
+			{
 				rt_current->prio_passed_to = NULL;
 				rt_global_restore_flags(flags);
 				return RTE_OBJREM;
 			}
 		}
-	} else {
+	}
+	else
+	{
 		sem->count--;
 	}
-	if (sem->type > 0) {
+	if (sem->type > 0)
+	{
 		enqueue_resqel(&sem->resq, sem->owndby = rt_current);
 	}
 	rt_global_restore_flags(flags);
@@ -586,10 +647,13 @@ RTAI_SYSCALL_MODE int rt_sem_wait_if(SEM *sem)
 	CHECK_SEM_MAGIC(sem);
 
 	flags = rt_global_save_flags_and_cli();
-	if ((count = sem->count) <= 0) {
+	if ((count = sem->count) <= 0)
+	{
 		UBI_MAIOR_MINOR_CESSAT_WAIT_IF(sem);
-		if (sem->restype && sem->owndby == RT_CURRENT) {
-			if (sem->restype > 0) {
+		if (sem->restype && sem->owndby == RT_CURRENT)
+		{
+			if (sem->restype > 0)
+			{
 				count = sem->type++;
 				rt_global_restore_flags(flags);
 				return count + 1;
@@ -597,9 +661,12 @@ RTAI_SYSCALL_MODE int rt_sem_wait_if(SEM *sem)
 			rt_global_restore_flags(flags);
 			return RTE_DEADLOK;
 		}
-	} else {
+	}
+	else
+	{
 		sem->count--;
-		if (sem->type > 0) {
+		if (sem->type > 0)
+		{
 			enqueue_resqel(&sem->resq, sem->owndby = RT_CURRENT);
 		}
 	}
@@ -653,15 +720,20 @@ RTAI_SYSCALL_MODE int rt_sem_wait_until(SEM *sem, RTIME time)
 
 	flags = rt_global_save_flags_and_cli();
 	ASSIGN_RT_CURRENT;
-	if ((count = sem->count) <= 0) {
+	if ((count = sem->count) <= 0)
+	{
 		void *retp;
 		rt_current->blocked_on = &sem->queue;
-		if ((rt_current->resume_time = time) > rt_time_h) {
+		if ((rt_current->resume_time = time) > rt_time_h)
+		{
 			unsigned long schedmap;
-			if (sem->type > 0) {
+			if (sem->type > 0)
+			{
 				UBI_MAIOR_MINOR_CESSAT_WAIT(sem);
-				if (sem->restype && sem->owndby == rt_current) {
-					if (sem->restype > 0) {
+				if (sem->restype && sem->owndby == rt_current)
+				{
+					if (sem->restype > 0)
+					{
 						count = sem->type++;
 						rt_global_restore_flags(flags);
 						return count + 1;
@@ -670,7 +742,9 @@ RTAI_SYSCALL_MODE int rt_sem_wait_until(SEM *sem, RTIME time)
 					return RTE_DEADLOK;
 				}
 				schedmap = pass_prio(sem->owndby, rt_current);
-			} else {
+			}
+			else
+			{
 				schedmap = 0;
 			}
 			sem->count--;
@@ -679,31 +753,43 @@ RTAI_SYSCALL_MODE int rt_sem_wait_until(SEM *sem, RTIME time)
 			enqueue_blocked(rt_current, &sem->queue, sem->qtype);
 			enq_timed_task(rt_current);
 			RT_SCHEDULE_MAP_BOTH(schedmap);
-		} else {
+		}
+		else
+		{
 			sem->count--;
 			rt_current->queue.prev = rt_current->queue.next = &rt_current->queue;
 		}
-		if (likely(!(retp = rt_current->blocked_on))) {
+		if (likely(!(retp = rt_current->blocked_on)))
+		{
 			count = sem->count;
-		} else if (likely(retp != RTP_OBJREM)) {
+		}
+		else if (likely(retp != RTP_OBJREM))
+		{
 			dequeue_blocked(rt_current);
-			if (++sem->count > 1 && sem->type) {
+			if (++sem->count > 1 && sem->type)
+			{
 				sem->count = 1;
 			}
-			if (sem->owndby && sem->type > 0) {
+			if (sem->owndby && sem->type > 0)
+			{
 				set_task_prio_from_resq(sem->owndby);
 			}
 			rt_global_restore_flags(flags);
 			return likely(retp > RTP_HIGERR) ? RTE_TIMOUT : RTE_UNBLKD;
-		} else {
+		}
+		else
+		{
 			rt_current->prio_passed_to = NULL;
 			rt_global_restore_flags(flags);
 			return RTE_OBJREM;
 		}
-	} else {
+	}
+	else
+	{
 		sem->count--;
 	}
-	if (sem->type > 0) {
+	if (sem->type > 0)
+	{
 		enqueue_resqel(&sem->resq, sem->owndby = rt_current);
 	}
 	rt_global_restore_flags(flags);
@@ -769,11 +855,13 @@ RTAI_SYSCALL_MODE int rt_sem_wait_barrier(SEM *sem)
 	CHECK_SEM_MAGIC(sem);
 
 	flags = rt_global_save_flags_and_cli();
-	if (!sem->owndby) {
+	if (!sem->owndby)
+	{
 		sem->owndby = (void *)(long)(sem->count < 1 ? 1 : sem->count);
 		sem->count = sem->type = 0;
 	}
-	if ((1 - sem->count) < (long)sem->owndby) {
+	if ((1 - sem->count) < (long)sem->owndby)
+	{
 		rt_sem_wait(sem);
 		rt_global_restore_flags(flags);
 		return -1;
@@ -808,10 +896,12 @@ RTAI_SYSCALL_MODE int rt_cond_signal(CND *cnd)
 	CHECK_SEM_MAGIC(cnd);
 
 	flags = rt_global_save_flags_and_cli();
-	if ((task = (cnd->queue.next)->task)) {
+	if ((task = (cnd->queue.next)->task))
+	{
 		dequeue_blocked(task);
 		rem_timed_task(task);
-		if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED)) == RT_SCHED_READY) {
+		if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED)) == RT_SCHED_READY)
+		{
 			enq_ready_task(task);
 			RT_SCHEDULE(task, rtai_cpuid());
 		}
@@ -825,25 +915,32 @@ static inline int rt_cndmtx_signal(SEM *mtx, RT_TASK *rt_current)
 	int type;
 	RT_TASK *task;
 
-	if ((type = mtx->type) > 1) {
+	if ((type = mtx->type) > 1)
+	{
 		mtx->type = 1;
 	}
-	if (++mtx->count > 1) {
+	if (++mtx->count > 1)
+	{
 		mtx->count = 1;
 	}
-	if ((task = (mtx->queue.next)->task)) {
+	if ((task = (mtx->queue.next)->task))
+	{
 		dequeue_blocked(task);
 		rem_timed_task(task);
-		if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED)) == RT_SCHED_READY) {
+		if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED)) == RT_SCHED_READY)
+		{
 			enq_ready_task(task);
 			task->running = - (task->state & RT_SCHED_DELAYED);
 		}
 	}
 	mtx->owndby = 0;
 	dequeue_resqel_reset_current_priority(&mtx->resq, rt_current);
-	if (task) {
-		 RT_SCHEDULE_BOTH(task, rtai_cpuid());
-	} else {
+	if (task)
+	{
+		RT_SCHEDULE_BOTH(task, rtai_cpuid());
+	}
+	else
+	{
 		rt_schedule();
 	}
 	return type;
@@ -881,7 +978,8 @@ RTAI_SYSCALL_MODE int rt_cond_wait(CND *cnd, SEM *mtx)
 
 	flags = rt_global_save_flags_and_cli();
 	rt_current = RT_CURRENT;
-	if (mtx->owndby != rt_current) {
+	if (mtx->owndby != rt_current)
+	{
 		rt_global_restore_flags(flags);
 		return RTE_PERM;
 	}
@@ -889,18 +987,25 @@ RTAI_SYSCALL_MODE int rt_cond_wait(CND *cnd, SEM *mtx)
 	rem_ready_current(rt_current);
 	enqueue_blocked(rt_current, &cnd->queue, cnd->qtype);
 	type = rt_cndmtx_signal(mtx, rt_current);
-	if (likely((retp = rt_current->blocked_on) != RTP_OBJREM)) {
-		if (unlikely(retp != NULL)) {
+	if (likely((retp = rt_current->blocked_on) != RTP_OBJREM))
+	{
+		if (unlikely(retp != NULL))
+		{
 			dequeue_blocked(rt_current);
 			retval = RTE_UNBLKD;
-		} else {
+		}
+		else
+		{
 			retval = 0;
 		}
-	} else {
+	}
+	else
+	{
 		retval = RTE_OBJREM;
 	}
 	rt_global_restore_flags(flags);
-	if (rt_sem_wait(mtx) < RTE_LOWERR) {
+	if (rt_sem_wait(mtx) < RTE_LOWERR)
+	{
 		mtx->type = type;
 	}
 	return retval;
@@ -944,29 +1049,39 @@ RTAI_SYSCALL_MODE int rt_cond_wait_until(CND *cnd, SEM *mtx, RTIME time)
 
 	flags = rt_global_save_flags_and_cli();
 	ASSIGN_RT_CURRENT;
-	if (mtx->owndby != rt_current) {
+	if (mtx->owndby != rt_current)
+	{
 		rt_global_restore_flags(flags);
 		return RTE_PERM;
 	}
-	if ((rt_current->resume_time = time) > rt_time_h) {
+	if ((rt_current->resume_time = time) > rt_time_h)
+	{
 		rt_current->state |= (RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED);
 		rem_ready_current(rt_current);
 		enqueue_blocked(rt_current, &cnd->queue, cnd->qtype);
 		enq_timed_task(rt_current);
 		type = rt_cndmtx_signal(mtx, rt_current);
-		if (unlikely((retp = rt_current->blocked_on) == RTP_OBJREM)) {
+		if (unlikely((retp = rt_current->blocked_on) == RTP_OBJREM))
+		{
 			retval = RTE_OBJREM;
-		} else if (unlikely(retp != NULL)) {
+		}
+		else if (unlikely(retp != NULL))
+		{
 			dequeue_blocked(rt_current);
 			retval = likely(retp > RTP_HIGERR) ? RTE_TIMOUT : RTE_UNBLKD;
-		} else {
+		}
+		else
+		{
 			retval = 0;
 		}
 		rt_global_restore_flags(flags);
-		if (rt_sem_wait(mtx) < RTE_LOWERR) {
+		if (rt_sem_wait(mtx) < RTE_LOWERR)
+		{
 			mtx->type = type;
 		}
-	} else {
+	}
+	else
+	{
 		retval = RTE_TIMOUT;
 		rt_global_restore_flags(flags);
 	}
@@ -1076,13 +1191,16 @@ RTAI_SYSCALL_MODE int rt_rwl_rdlock(RWL *rwl)
 
 	flags = rt_global_save_flags_and_cli();
 	rt_current = RT_CURRENT;
-	while (rwl->wrmtx.owndby || ((wtask = (rwl->wrsem.queue.next)->task) && wtask->priority <= rt_current->priority)) {
+	while (rwl->wrmtx.owndby || ((wtask = (rwl->wrsem.queue.next)->task) && wtask->priority <= rt_current->priority))
+	{
 		int ret;
-		if (rwl->wrmtx.owndby == rt_current) {
+		if (rwl->wrmtx.owndby == rt_current)
+		{
 			rt_global_restore_flags(flags);
 			return RTE_RWLINV;
 		}
-		if ((ret = rt_sem_wait(&rwl->rdsem)) >= RTE_LOWERR) {
+		if ((ret = rt_sem_wait(&rwl->rdsem)) >= RTE_LOWERR)
+		{
 			rt_global_restore_flags(flags);
 			return ret;
 		}
@@ -1112,7 +1230,8 @@ RTAI_SYSCALL_MODE int rt_rwl_rdlock_if(RWL *rwl)
 	RT_TASK *wtask;
 
 	flags = rt_global_save_flags_and_cli();
-	if (!rwl->wrmtx.owndby && (!(wtask = (rwl->wrsem.queue.next)->task) || wtask->priority > RT_CURRENT->priority)) {
+	if (!rwl->wrmtx.owndby && (!(wtask = (rwl->wrsem.queue.next)->task) || wtask->priority > RT_CURRENT->priority))
+	{
 		((volatile int *)&rwl->rdsem.owndby)[0]++;
 		rt_global_restore_flags(flags);
 		return 0;
@@ -1146,13 +1265,16 @@ RTAI_SYSCALL_MODE int rt_rwl_rdlock_until(RWL *rwl, RTIME time)
 
 	flags = rt_global_save_flags_and_cli();
 	rt_current = RT_CURRENT;
-	while (rwl->wrmtx.owndby || ((wtask = (rwl->wrsem.queue.next)->task) && wtask->priority <= rt_current->priority)) {
+	while (rwl->wrmtx.owndby || ((wtask = (rwl->wrsem.queue.next)->task) && wtask->priority <= rt_current->priority))
+	{
 		int ret;
-		if (rwl->wrmtx.owndby == rt_current) {
+		if (rwl->wrmtx.owndby == rt_current)
+		{
 			rt_global_restore_flags(flags);
 			return RTE_RWLINV;
 		}
-		if ((ret = rt_sem_wait_until(&rwl->rdsem, time)) >= RTE_LOWERR) {
+		if ((ret = rt_sem_wait_until(&rwl->rdsem, time)) >= RTE_LOWERR)
+		{
 			rt_global_restore_flags(flags);
 			return ret;
 		}
@@ -1206,13 +1328,16 @@ RTAI_SYSCALL_MODE int rt_rwl_wrlock(RWL *rwl)
 	int ret;
 
 	flags = rt_global_save_flags_and_cli();
-	while (rwl->rdsem.owndby) {
-		if ((ret = rt_sem_wait(&rwl->wrsem)) >= RTE_LOWERR) {
+	while (rwl->rdsem.owndby)
+	{
+		if ((ret = rt_sem_wait(&rwl->wrsem)) >= RTE_LOWERR)
+		{
 			rt_global_restore_flags(flags);
 			return ret;
 		}
 	}
-	if ((ret = rt_sem_wait(&rwl->wrmtx)) >= RTE_LOWERR) {
+	if ((ret = rt_sem_wait(&rwl->wrmtx)) >= RTE_LOWERR)
+	{
 		rt_global_restore_flags(flags);
 		return ret;
 	}
@@ -1239,7 +1364,8 @@ RTAI_SYSCALL_MODE int rt_rwl_wrlock_if(RWL *rwl)
 	int ret;
 
 	flags = rt_global_save_flags_and_cli();
-	if (!rwl->rdsem.owndby && (ret = rt_sem_wait_if(&rwl->wrmtx)) > 0 && ret  < RTE_LOWERR) {
+	if (!rwl->rdsem.owndby && (ret = rt_sem_wait_if(&rwl->wrmtx)) > 0 && ret  < RTE_LOWERR)
+	{
 		rt_global_restore_flags(flags);
 		return 0;
 	}
@@ -1271,13 +1397,16 @@ RTAI_SYSCALL_MODE int rt_rwl_wrlock_until(RWL *rwl, RTIME time)
 	int ret;
 
 	flags = rt_global_save_flags_and_cli();
-	while (rwl->rdsem.owndby) {
-		if ((ret = rt_sem_wait_until(&rwl->wrsem, time)) >= RTE_LOWERR) {
+	while (rwl->rdsem.owndby)
+	{
+		if ((ret = rt_sem_wait_until(&rwl->wrsem, time)) >= RTE_LOWERR)
+		{
 			rt_global_restore_flags(flags);
 			return ret;
 		};
 	}
-	if ((ret = rt_sem_wait_until(&rwl->wrmtx, time)) >= RTE_LOWERR) {
+	if ((ret = rt_sem_wait_until(&rwl->wrmtx, time)) >= RTE_LOWERR)
+	{
 		rt_global_restore_flags(flags);
 		return ret;
 	};
@@ -1329,29 +1458,43 @@ RTAI_SYSCALL_MODE int rt_rwl_unlock(RWL *rwl)
 	unsigned long flags;
 
 	flags = rt_global_save_flags_and_cli();
-	if (rwl->wrmtx.owndby == RT_CURRENT) {
+	if (rwl->wrmtx.owndby == RT_CURRENT)
+	{
 		rt_sem_signal(&rwl->wrmtx);
-	} else if (rwl->rdsem.owndby) {
+	}
+	else if (rwl->rdsem.owndby)
+	{
 		((volatile int *)&rwl->rdsem.owndby)[0]--;
-	} else {
+	}
+	else
+	{
 		rt_global_restore_flags(flags);
 		return RTE_PERM;
 	}
 	rt_global_restore_flags(flags);
 	flags = rt_global_save_flags_and_cli();
-	if (!rwl->wrmtx.owndby && !rwl->rdsem.owndby) {
+	if (!rwl->wrmtx.owndby && !rwl->rdsem.owndby)
+	{
 		RT_TASK *wtask, *rtask;
 		wtask = (rwl->wrsem.queue.next)->task;
 		rtask = (rwl->rdsem.queue.next)->task;
-		if (wtask && rtask) {
-			if (wtask->priority <= rtask->priority) {
+		if (wtask && rtask)
+		{
+			if (wtask->priority <= rtask->priority)
+			{
 				rt_sem_signal(&rwl->wrsem);
-			} else {
+			}
+			else
+			{
 				rt_sem_broadcast(&rwl->rdsem);
 			}
-		} else if (wtask) {
+		}
+		else if (wtask)
+		{
 			rt_sem_signal(&rwl->wrsem);
-		} else if (rtask) {
+		}
+		else if (rtask)
+		{
 			rt_sem_broadcast(&rwl->rdsem);
 		}
 	}
@@ -1426,9 +1569,12 @@ RTAI_SYSCALL_MODE int rt_spl_lock(SPL *spl)
 	RT_TASK *rt_current;
 
 	rtai_save_flags_and_cli(flags);
-	if (spl->owndby == (rt_current = RT_CURRENT)) {
+	if (spl->owndby == (rt_current = RT_CURRENT))
+	{
 		spl->count++;
-	} else {
+	}
+	else
+	{
 		while (cmpxchg(&spl->owndby, 0L, rt_current));
 		spl->flags = flags;
 	}
@@ -1457,10 +1603,14 @@ RTAI_SYSCALL_MODE int rt_spl_lock_if(SPL *spl)
 	RT_TASK *rt_current;
 
 	rtai_save_flags_and_cli(flags);
-	if (spl->owndby == (rt_current = RT_CURRENT)) {
+	if (spl->owndby == (rt_current = RT_CURRENT))
+	{
 		spl->count++;
-	} else {
-		if (cmpxchg(&spl->owndby, 0L, rt_current)) {
+	}
+	else
+	{
+		if (cmpxchg(&spl->owndby, 0L, rt_current))
+		{
 			rtai_restore_flags(flags);
 			return -1;
 		}
@@ -1497,14 +1647,18 @@ RTAI_SYSCALL_MODE int rt_spl_lock_timed(SPL *spl, unsigned long ns)
 	RT_TASK *rt_current;
 
 	rtai_save_flags_and_cli(flags);
-	if (spl->owndby == (rt_current = RT_CURRENT)) {
+	if (spl->owndby == (rt_current = RT_CURRENT))
+	{
 		spl->count++;
-	} else {
+	}
+	else
+	{
 		RTIME end_time;
 		long locked;
 		end_time = rtai_rdtsc() + imuldiv(ns, tuned.cpu_freq, 1000000000);
 		while ((locked = (long)cmpxchg(&spl->owndby, 0L, rt_current)) && rtai_rdtsc() < end_time);
-		if (locked) {
+		if (locked)
+		{
 			rtai_restore_flags(flags);
 			return -1;
 		}
@@ -1537,10 +1691,14 @@ RTAI_SYSCALL_MODE int rt_spl_unlock(SPL *spl)
 	RT_TASK *rt_current;
 
 	rtai_save_flags_and_cli(flags);
-	if (spl->owndby == (rt_current = RT_CURRENT)) {
-		if (spl->count) {
+	if (spl->owndby == (rt_current = RT_CURRENT))
+	{
+		if (spl->count)
+		{
 			--spl->count;
-		} else {
+		}
+		else
+		{
 			spl->owndby = 0;
 			spl->count  = 0;
 		}
@@ -1600,19 +1758,26 @@ RTAI_SYSCALL_MODE SEM *_rt_typed_named_sem_init(unsigned long sem_name, int valu
 {
 	SEM *sem;
 
-	if ((sem = rt_get_adr_cnt(sem_name))) {
-		if (handle) {
-			if ((unsigned long)handle > PAGE_OFFSET) {
+	if ((sem = rt_get_adr_cnt(sem_name)))
+	{
+		if (handle)
+		{
+			if ((unsigned long)handle > PAGE_OFFSET)
+			{
 				*handle = 1;
-			} else {
+			}
+			else
+			{
 				rt_copy_to_user(handle, sem, sizeof(SEM *));
 			}
 		}
 		return sem;
 	}
-	if ((sem = rt_malloc(sizeof(SEM)))) {
+	if ((sem = rt_malloc(sizeof(SEM))))
+	{
 		rt_typed_sem_init(sem, value, type);
-		if (rt_register(sem_name, sem, IS_SEM, 0)) {
+		if (rt_register(sem_name, sem, IS_SEM, 0))
+		{
 			return sem;
 		}
 		rt_sem_delete(sem);
@@ -1645,11 +1810,15 @@ RTAI_SYSCALL_MODE SEM *_rt_typed_named_sem_init(unsigned long sem_name, int valu
 RTAI_SYSCALL_MODE int rt_named_sem_delete(SEM *sem)
 {
 	int ret;
-	if (!(ret = rt_drg_on_adr_cnt(sem))) {
-		if (!rt_sem_delete(sem)) {
+	if (!(ret = rt_drg_on_adr_cnt(sem)))
+	{
+		if (!rt_sem_delete(sem))
+		{
 			rt_free(sem);
 			return 0;
-		} else {
+		}
+		else
+		{
 			return RTE_OBJINV;
 		}
 	}
@@ -1689,12 +1858,15 @@ RTAI_SYSCALL_MODE RWL *_rt_named_rwl_init(unsigned long rwl_name)
 {
 	RWL *rwl;
 
-	if ((rwl = rt_get_adr_cnt(rwl_name))) {
+	if ((rwl = rt_get_adr_cnt(rwl_name)))
+	{
 		return rwl;
 	}
-	if ((rwl = rt_malloc(sizeof(RWL)))) {
+	if ((rwl = rt_malloc(sizeof(RWL))))
+	{
 		rt_rwl_init(rwl);
-		if (rt_register(rwl_name, rwl, IS_RWL, 0)) {
+		if (rt_register(rwl_name, rwl, IS_RWL, 0))
+		{
 			return rwl;
 		}
 		rt_rwl_delete(rwl);
@@ -1726,11 +1898,15 @@ RTAI_SYSCALL_MODE RWL *_rt_named_rwl_init(unsigned long rwl_name)
 RTAI_SYSCALL_MODE int rt_named_rwl_delete(RWL *rwl)
 {
 	int ret;
-	if (!(ret = rt_drg_on_adr_cnt(rwl))) {
-		if (!rt_rwl_delete(rwl)) {
+	if (!(ret = rt_drg_on_adr_cnt(rwl)))
+	{
+		if (!rt_rwl_delete(rwl))
+		{
 			rt_free(rwl);
 			return 0;
-		} else {
+		}
+		else
+		{
 			return RTE_OBJINV;
 		}
 	}
@@ -1769,12 +1945,15 @@ RTAI_SYSCALL_MODE SPL *_rt_named_spl_init(unsigned long spl_name)
 {
 	SPL *spl;
 
-	if ((spl = rt_get_adr_cnt(spl_name))) {
+	if ((spl = rt_get_adr_cnt(spl_name)))
+	{
 		return spl;
 	}
-	if ((spl = rt_malloc(sizeof(SPL)))) {
+	if ((spl = rt_malloc(sizeof(SPL))))
+	{
 		rt_spl_init(spl);
-		if (rt_register(spl_name, spl, IS_SPL, 0)) {
+		if (rt_register(spl_name, spl, IS_SPL, 0))
+		{
 			return spl;
 		}
 		rt_spl_delete(spl);
@@ -1805,7 +1984,8 @@ RTAI_SYSCALL_MODE SPL *_rt_named_spl_init(unsigned long spl_name)
 RTAI_SYSCALL_MODE int rt_named_spl_delete(SPL *spl)
 {
 	int ret;
-	if (!(ret = rt_drg_on_adr_cnt(spl))) {
+	if (!(ret = rt_drg_on_adr_cnt(spl)))
+	{
 		rt_spl_delete(spl);
 		rt_free(spl);
 		return 0;
@@ -1815,7 +1995,8 @@ RTAI_SYSCALL_MODE int rt_named_spl_delete(SPL *spl)
 
 /* ++++++++++++++++++++++++++++++ POLLING SERVICE +++++++++++++++++++++++++++ */
 
-struct rt_poll_enc rt_poll_ofstfun[] = {
+struct rt_poll_enc rt_poll_ofstfun[] =
+{
 	[RT_POLL_NOT_TO_USE]   = {            0           , NULL },
 #ifdef CONFIG_RTAI_RT_POLL
 	[RT_POLL_MBX_RECV]     = { offsetof(MBX, poll_recv), NULL },
@@ -1841,7 +2022,8 @@ static inline void rt_schedule_tosched(unsigned long tosched_mask)
 #ifdef CONFIG_SMP
 	unsigned long cpumask, rmask;
 	rmask = tosched_mask & ~(cpumask = (1 << rtai_cpuid()));
-	if (rmask) {
+	if (rmask)
+	{
 		rtai_save_flags_and_cli(flags);
 		send_sched_ipi(rmask);
 		rtai_restore_flags(flags);
@@ -1861,12 +2043,14 @@ static inline int rt_poll_wait(POLL_SEM *sem, RT_TASK *rt_current)
 	int retval = 0;
 
 	flags = rt_global_save_flags_and_cli();
-	if (sem->wait) {
+	if (sem->wait)
+	{
 		rt_current->state |= RT_SCHED_POLL;
 		rem_ready_current(rt_current);
 		enqueue_blocked(rt_current, &sem->queue, 1);
 		rt_schedule();
-		if (unlikely(rt_current->blocked_on != NULL)) {
+		if (unlikely(rt_current->blocked_on != NULL))
+		{
 			dequeue_blocked(rt_current);
 			retval = RTE_UNBLKD;
 		}
@@ -1881,16 +2065,19 @@ static inline int rt_poll_wait_until(POLL_SEM *sem, RTIME time, RT_TASK *rt_curr
 	int retval = 0;
 
 	flags = rt_global_save_flags_and_cli();
-	if (sem->wait) {
+	if (sem->wait)
+	{
 		rt_current->blocked_on = &sem->queue;
-		if ((rt_current->resume_time = time) > rt_time_h) {
+		if ((rt_current->resume_time = time) > rt_time_h)
+		{
 			rt_current->state |= (RT_SCHED_POLL | RT_SCHED_DELAYED);
 			rem_ready_current(rt_current);
 			enqueue_blocked(rt_current, &sem->queue, 1);
 			enq_timed_task(rt_current);
 			rt_schedule();
 		}
-		if (unlikely(rt_current->blocked_on != NULL)) {
+		if (unlikely(rt_current->blocked_on != NULL))
+		{
 			retval = likely((void *)rt_current->blocked_on > RTP_HIGERR) ? RTE_TIMOUT : RTE_UNBLKD;
 			dequeue_blocked(rt_current);
 		}
@@ -1907,10 +2094,12 @@ static inline int rt_poll_signal(POLL_SEM *sem)
 
 	flags = rt_global_save_flags_and_cli();
 	sem->wait = 0;
-	if ((task = (sem->queue.next)->task)) {
+	if ((task = (sem->queue.next)->task))
+	{
 		dequeue_blocked(task);
 		rem_timed_task(task);
-		if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_POLL | RT_SCHED_DELAYED)) == RT_SCHED_READY) {
+		if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_POLL | RT_SCHED_DELAYED)) == RT_SCHED_READY)
+		{
 			enq_ready_task(task);
 			retval = (1 << task->runnable_on_cpus);
 		}
@@ -1921,24 +2110,29 @@ static inline int rt_poll_signal(POLL_SEM *sem)
 
 void rt_wakeup_pollers(struct rt_poll_ql *ql, int reason)
 {
-		QUEUE *q, *queue = &ql->pollq;
-		spinlock_t *qlock = &ql->pollock;
+	QUEUE *q, *queue = &ql->pollq;
+	spinlock_t *qlock = &ql->pollock;
 
 	rt_spin_lock_irq(qlock);
-	if ((q = queue->next) != queue) {
+	if ((q = queue->next) != queue)
+	{
 		POLL_SEM *sem;
 		unsigned long tosched_mask = 0UL;
-		do {
+		do
+		{
 			sem = (POLL_SEM *)q->task;
 			q->task = (void *)((unsigned long)reason);
 			(queue->next = q->next)->prev = queue;
 			tosched_mask |= rt_poll_signal(sem);
 			rt_spin_unlock_irq(qlock);
 			rt_spin_lock_irq(qlock);
-		} while ((q = queue->next) != queue);
+		}
+		while ((q = queue->next) != queue);
 		rt_spin_unlock_irq(qlock);
 		rt_schedule_tosched(tosched_mask);
-	} else {
+	}
+	else
+	{
 		rt_spin_unlock_irq(qlock);
 	}
 }
@@ -2039,32 +2233,42 @@ RTAI_SYSCALL_MODE int _rt_poll(struct rt_poll_s *pdsa, unsigned long nr, RTIME t
 #else
 	struct rt_poll_s *pdsv;
 	QUEUE *pollq;
-	if (!(pdsv = rt_malloc(nr*sizeof(struct rt_poll_s))) && nr > 0) {
+	if (!(pdsv = rt_malloc(nr*sizeof(struct rt_poll_s))) && nr > 0)
+	{
 		return ENOMEM;
 	}
-	if (!(pollq = rt_malloc(nr*sizeof(QUEUE))) && nr > 0) {
+	if (!(pollq = rt_malloc(nr*sizeof(QUEUE))) && nr > 0)
+	{
 		rt_free(pdsv);
 		return ENOMEM;
 	}
 #endif
-	if (space) {
+	if (space)
+	{
 		pds = pdsa;
-	} else {
+	}
+	else
+	{
 		rt_copy_from_user(pdsv, pdsa, nr*sizeof(struct rt_poll_s));
 		pds = pdsv;
 	}
-	for (polled = i = 0; i < nr; i++) {
+	for (polled = i = 0; i < nr; i++)
+	{
 		QUEUE *queue = NULL;
 		spinlock_t *qlock = NULL;
-		if (rt_poll_ofstfun[pds[i].forwhat].topoll(pds[i].what)) {
+		if (rt_poll_ofstfun[pds[i].forwhat].topoll(pds[i].what))
+		{
 			struct rt_poll_ql *ql = QL(i);
 			queue = &ql->pollq;
 			qlock = &ql->pollock;
-		} else {
+		}
+		else
+		{
 			pollq[i].task = NULL;
 			polled++;
 		}
-		if (queue) {
+		if (queue)
+		{
 			QUEUE *q = queue;
 			pollq[i].task = (RT_TASK *)&sem;
 			rt_spin_lock_irq(qlock);
@@ -2072,36 +2276,49 @@ RTAI_SYSCALL_MODE int _rt_poll(struct rt_poll_s *pdsa, unsigned long nr, RTIME t
 			pollq[i].next = q;
 			q->prev = (pollq[i].prev = q->prev)->next  = &pollq[i];
 			rt_spin_unlock_irq(qlock);
-		} else {
+		}
+		else
+		{
 			pds[i].forwhat = 0;
 		}
 	}
 	semret = 0;
-	if (!polled) {
-		if (timeout < 0) {
+	if (!polled)
+	{
+		if (timeout < 0)
+		{
 			semret = rt_poll_wait_until(&sem, get_time() - timeout, sem.task, cpuid);
-		} else if (timeout > 1) {
+		}
+		else if (timeout > 1)
+		{
 			semret = rt_poll_wait_until(&sem, timeout, sem.task, cpuid);
-		} else if (timeout < 1 && nr > 0) {
+		}
+		else if (timeout < 1 && nr > 0)
+		{
 			semret = rt_poll_wait(&sem, sem.task);
 		}
 	}
-	for (polled = i = 0; i < nr; i++) {
-		if (pds[i].forwhat) {
+	for (polled = i = 0; i < nr; i++)
+	{
+		if (pds[i].forwhat)
+		{
 			spinlock_t *qlock = &QL(i)->pollock;
 			rt_spin_lock_irq(qlock);
-			if (pollq[i].task == (void *)&sem) {
+			if (pollq[i].task == (void *)&sem)
+			{
 				(pollq[i].prev)->next = pollq[i].next;
 				(pollq[i].next)->prev = pollq[i].prev;
 			}
 			rt_spin_unlock_irq(qlock);
 		}
-		if (pollq[i].task != (void *)&sem) {
+		if (pollq[i].task != (void *)&sem)
+		{
 			pds[i].what = pollq[i].task;
 			polled++;
 		}
 	}
-	if (!space) {
+	if (!space)
+	{
 		rt_copy_to_user(pdsa, pds, nr*sizeof(struct rt_poll_s));
 	}
 #ifndef CONFIG_RTAI_RT_POLL_ON_STACK
@@ -2119,7 +2336,8 @@ EXPORT_SYMBOL(_rt_poll);
 
 /* +++++ SEMAPHORES, BARRIER, COND VARIABLES, RWLOCKS, SPINLOCKS ENTRIES ++++ */
 
-struct rt_native_fun_entry rt_sem_entries[] = {
+struct rt_native_fun_entry rt_sem_entries[] =
+{
 	{ { 0, rt_typed_sem_init },        TYPED_SEM_INIT },
 	{ { 0, rt_sem_delete },            SEM_DELETE },
 	{ { 0, _rt_typed_named_sem_init }, NAMED_SEM_INIT },
@@ -2171,14 +2389,14 @@ static int poll_wait(void *sem) { return ((SEM *)sem)->count <= 0; }
 int __rtai_sem_init (void)
 {
 	rt_poll_ofstfun[RT_POLL_SEM_WAIT_ALL].topoll =
-	rt_poll_ofstfun[RT_POLL_SEM_WAIT_ONE].topoll = poll_wait;
+		rt_poll_ofstfun[RT_POLL_SEM_WAIT_ONE].topoll = poll_wait;
 	return set_rt_fun_entries(rt_sem_entries);
 }
 
 void __rtai_sem_exit (void)
 {
 	rt_poll_ofstfun[RT_POLL_SEM_WAIT_ALL].topoll =
-	rt_poll_ofstfun[RT_POLL_SEM_WAIT_ONE].topoll = NULL;
+		rt_poll_ofstfun[RT_POLL_SEM_WAIT_ONE].topoll = NULL;
 	reset_rt_fun_entries(rt_sem_entries);
 }
 

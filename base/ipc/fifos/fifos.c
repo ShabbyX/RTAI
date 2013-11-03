@@ -172,26 +172,30 @@ static int rtai_proc_fifo_register(void);
 static void rtai_proc_fifo_unregister(void);
 #endif
 
-typedef struct lx_queue {
+typedef struct lx_queue
+{
 	struct lx_queue *prev;
 	struct lx_queue *next;
 	struct lx_task_struct *task;
 } F_QUEUE;
 
-typedef struct lx_semaphore {
+typedef struct lx_semaphore
+{
 	int free;
 	int qtype;
 	F_QUEUE queue;
 } F_SEM;
 
-typedef struct lx_task_struct {
+typedef struct lx_task_struct
+{
 	int blocked;
 	int priority;
 	F_QUEUE queue;
 	struct task_struct *task;
 } LX_TASK;
 
-typedef struct lx_mailbox {
+typedef struct lx_mailbox
+{
 	int size;   // size of the entire buffer
 	int fbyte;  // head
 	int lbyte;  // tail
@@ -203,7 +207,8 @@ typedef struct lx_mailbox {
 	spinlock_t buflock;
 } F_MBX;
 
-typedef struct rt_fifo_struct {
+typedef struct rt_fifo_struct
+{
 	F_MBX mbx;		// MUST BE THE FIRST!
 	int opncnt;
 	int malloc_type;
@@ -235,7 +240,8 @@ static inline void enqueue_blocked(LX_TASK *task, F_QUEUE *queue, int qtype, int
 
 	task->blocked = 1;
 	q = queue;
-	if (!qtype) {
+	if (!qtype)
+	{
 		while ((q = q->next) != queue && (q->task)->priority >= priority);
 	}
 	q->prev = (task->queue.prev = q->prev)->next  = &(task->queue);
@@ -255,16 +261,20 @@ static inline void mbx_sem_signal(F_SEM *sem, FIFO *fifop)
 	LX_TASK *task;
 
 	rtf_save_flags_and_cli(flags);
-	if ((task = (sem->queue.next)->task)) {
+	if ((task = (sem->queue.next)->task))
+	{
 		dequeue_blocked(task);
 		taskq.task[taskq.in] = task->task;
 		taskq.in = (taskq.in + 1) & (MAXREQS - 1);
 		rtf_pend_srq(fifo_srq);
-	} else {
+	}
+	else
+	{
 		sem->free = 1;
 		if (fifop && !(fifop->pol_asyn_pended) &&
-		    (((F_MBX *)fifop)->avbs || ((F_MBX *)fifop)->frbs) &&
-		    (waitqueue_active(&fifop->pollq) || fifop->asynq)) {
+				(((F_MBX *)fifop)->avbs || ((F_MBX *)fifop)->frbs) &&
+				(waitqueue_active(&fifop->pollq) || fifop->asynq))
+		{
 			fifop->pol_asyn_pended = 1;
 			pol_asyn_q.fifo[pol_asyn_q.in] = fifop;
 			pol_asyn_q.in = (pol_asyn_q.in + 1) & (MAXREQS - 1);
@@ -281,7 +291,8 @@ static inline void mbx_signal(F_MBX *mbx)
 	struct task_struct *task;
 
 	rtf_save_flags_and_cli(flags);
-	if ((task = mbx->waiting_task)) {
+	if ((task = mbx->waiting_task))
+	{
 		mbx->waiting_task = 0;
 		taskq.task[taskq.in] = task;
 		taskq.in = (taskq.in + 1) & (MAXREQS - 1);
@@ -296,7 +307,8 @@ static inline int mbx_sem_wait_if(F_SEM *sem)
 	unsigned long flags;
 
 	rtf_save_flags_and_cli(flags);
-	if (sem->free) {
+	if (sem->free)
+	{
 		sem->free = 0;
 		rtf_restore_flags(flags);
 		return 1;
@@ -313,7 +325,8 @@ static inline int mbx_sem_wait(F_SEM *sem)
 
 	ret = 0;
 	rtf_save_flags_and_cli(flags);
-	if (!sem->free) {
+	if (!sem->free)
+	{
 		task.queue.task = &task;
 		task.priority = current->rt_priority;
 		enqueue_blocked(&task, &sem->queue, sem->qtype, task.priority);
@@ -321,20 +334,26 @@ static inline int mbx_sem_wait(F_SEM *sem)
 		rtf_restore_flags(flags);
 		current->state = TASK_INTERRUPTIBLE;
 		schedule();
-		if (signal_pending(current)) {
+		if (signal_pending(current))
+		{
 			ret = -ERESTARTSYS;
 		}
 		rtf_save_flags_and_cli(flags);
-		if (task.blocked) {
+		if (task.blocked)
+		{
 			dequeue_blocked(&task);
-			if (!(sem->queue.next)->task) {
+			if (!(sem->queue.next)->task)
+			{
 				sem->free = 1;
 			}
-			if (!ret) {
+			if (!ret)
+			{
 				ret = -1;
 			}
 		}
-	} else {
+	}
+	else
+	{
 		sem->free = 0;
 	}
 	rtf_restore_flags(flags);
@@ -346,16 +365,19 @@ static inline int mbx_wait(F_MBX *mbx, int *fravbs)
 	unsigned long flags;
 
 	rtf_save_flags_and_cli(flags);
-	if (!(*fravbs)) {
+	if (!(*fravbs))
+	{
 		mbx->waiting_task = current;
 		current->state = TASK_INTERRUPTIBLE;
 		rtf_restore_flags(flags);
 		schedule();
-		if (signal_pending(current)) {
+		if (signal_pending(current))
+		{
 			return -ERESTARTSYS;
 		}
 		rtf_save_flags_and_cli(flags);
-		if (mbx->waiting_task == current) {
+		if (mbx->waiting_task == current)
+		{
 			mbx->waiting_task = 0;
 			rtf_restore_flags(flags);
 			return -1;
@@ -371,7 +393,8 @@ static inline int mbx_sem_wait_timed(F_SEM *sem, int delay)
 	LX_TASK task;
 
 	rtf_save_flags_and_cli(flags);
-	if (!sem->free) {
+	if (!sem->free)
+	{
 		task.queue.task = &task;
 		task.priority = current->rt_priority;
 		enqueue_blocked(&task, &sem->queue, sem->qtype, task.priority);
@@ -379,19 +402,24 @@ static inline int mbx_sem_wait_timed(F_SEM *sem, int delay)
 		rtf_restore_flags(flags);
 		current->state = TASK_INTERRUPTIBLE;
 		schedule_timeout(delay);
-		if (signal_pending(current)) {
+		if (signal_pending(current))
+		{
 			return -ERESTARTSYS;
 		}
 		rtf_save_flags_and_cli(flags);
-		if (task.blocked) {
+		if (task.blocked)
+		{
 			dequeue_blocked(&task);
-			if (!((sem->queue.next)->task)) {
+			if (!((sem->queue.next)->task))
+			{
 				sem->free = 1;
 			}
 			rtf_restore_flags(flags);
 			return -1;
 		}
-	} else {
+	}
+	else
+	{
 		sem->free = 0;
 	}
 	rtf_restore_flags(flags);
@@ -403,16 +431,20 @@ static inline int mbx_wait_timed(F_MBX *mbx, int *fravbs, int delay)
 	unsigned long flags;
 
 	rtf_save_flags_and_cli(flags);
-	if (!(*fravbs)) {
+	if (!(*fravbs))
+	{
 		mbx->waiting_task = current;
 		rtf_restore_flags(flags);
 		current->state = TASK_INTERRUPTIBLE;
 		schedule_timeout(delay);
-		if (signal_pending(current)) {
+		if (signal_pending(current))
+		{
 			return -ERESTARTSYS;
 		}
 		rtf_save_flags_and_cli(flags);
-		if (mbx->waiting_task == current) {;
+		if (mbx->waiting_task == current)
+		{
+			;
 			mbx->waiting_task = 0;
 			rtf_restore_flags(flags);
 			return -1;
@@ -429,16 +461,22 @@ static inline int mbx_put(F_MBX *mbx, char **msg, int msg_size, int lnx)
 	unsigned long flags;
 	int tocpy;
 
-	while (msg_size > 0 && mbx->frbs) {
-		if ((tocpy = mbx->size - mbx->lbyte) > msg_size) {
+	while (msg_size > 0 && mbx->frbs)
+	{
+		if ((tocpy = mbx->size - mbx->lbyte) > msg_size)
+		{
 			tocpy = msg_size;
 		}
-		if (tocpy > mbx->frbs) {
+		if (tocpy > mbx->frbs)
+		{
 			tocpy = mbx->frbs;
 		}
-		if (lnx) {
+		if (lnx)
+		{
 			rt_copy_from_user(mbx->bufadr + mbx->lbyte, *msg, tocpy);
-		} else {
+		}
+		else
+		{
 			memcpy(mbx->bufadr + mbx->lbyte, *msg, tocpy);
 		}
 		rtf_spin_lock_irqsave(flags, mbx->buflock);
@@ -457,21 +495,29 @@ static inline int mbx_ovrwr_put(F_MBX *mbx, char **msg, int msg_size, int lnx)
 	unsigned long flags;
 	int tocpy,n;
 
-	if ((n = msg_size - mbx->size) > 0) {
+	if ((n = msg_size - mbx->size) > 0)
+	{
 		*msg += n;
 		msg_size -= n;
 	}
-	while (msg_size > 0) {
-		if (mbx->frbs) {
-			if ((tocpy = mbx->size - mbx->lbyte) > msg_size) {
+	while (msg_size > 0)
+	{
+		if (mbx->frbs)
+		{
+			if ((tocpy = mbx->size - mbx->lbyte) > msg_size)
+			{
 				tocpy = msg_size;
 			}
-			if (tocpy > mbx->frbs) {
+			if (tocpy > mbx->frbs)
+			{
 				tocpy = mbx->frbs;
 			}
-			if (lnx) {
+			if (lnx)
+			{
 				rt_copy_from_user(mbx->bufadr + mbx->lbyte, *msg, tocpy);
-			} else {
+			}
+			else
+			{
 				memcpy(mbx->bufadr + mbx->lbyte, *msg, tocpy);
 			}
 			rtf_spin_lock_irqsave(flags, mbx->buflock);
@@ -482,12 +528,16 @@ static inline int mbx_ovrwr_put(F_MBX *mbx, char **msg, int msg_size, int lnx)
 			*msg     += tocpy;
 			mbx->lbyte = MOD_SIZE(mbx->lbyte + tocpy);
 		}
-		if (msg_size) {
-			while ((n = msg_size - mbx->frbs) > 0) {
-				if ((tocpy = mbx->size - mbx->fbyte) > n) {
+		if (msg_size)
+		{
+			while ((n = msg_size - mbx->frbs) > 0)
+			{
+				if ((tocpy = mbx->size - mbx->fbyte) > n)
+				{
 					tocpy = n;
 				}
-				if (tocpy > mbx->avbs) {
+				if (tocpy > mbx->avbs)
+				{
 					tocpy = mbx->avbs;
 				}
 				rtf_spin_lock_irqsave(flags, mbx->buflock);
@@ -506,16 +556,22 @@ static inline int mbx_get(F_MBX *mbx, char **msg, int msg_size, int lnx)
 	unsigned long flags;
 	int tocpy;
 
-	while (msg_size > 0 && mbx->avbs) {
-		if ((tocpy = mbx->size - mbx->fbyte) > msg_size) {
+	while (msg_size > 0 && mbx->avbs)
+	{
+		if ((tocpy = mbx->size - mbx->fbyte) > msg_size)
+		{
 			tocpy = msg_size;
 		}
-		if (tocpy > mbx->avbs) {
+		if (tocpy > mbx->avbs)
+		{
 			tocpy = mbx->avbs;
 		}
-		if (lnx) {
+		if (lnx)
+		{
 			rt_copy_to_user(*msg, mbx->bufadr + mbx->fbyte, tocpy);
-		} else {
+		}
+		else
+		{
 			memcpy(*msg, mbx->bufadr + mbx->fbyte, tocpy);
 		}
 		rtf_spin_lock_irqsave(flags, mbx->buflock);
@@ -535,16 +591,22 @@ static inline int mbx_evdrp(F_MBX *mbx, char **msg, int msg_size, int lnx)
 
 	fbyte = mbx->fbyte;
 	avbs  = mbx->avbs;
-	while (msg_size > 0 && avbs) {
-		if ((tocpy = mbx->size - fbyte) > msg_size) {
+	while (msg_size > 0 && avbs)
+	{
+		if ((tocpy = mbx->size - fbyte) > msg_size)
+		{
 			tocpy = msg_size;
 		}
-		if (tocpy > avbs) {
+		if (tocpy > avbs)
+		{
 			tocpy = avbs;
 		}
-		if (lnx) {
+		if (lnx)
+		{
 			rt_copy_to_user(*msg, mbx->bufadr + fbyte, tocpy);
-		} else {
+		}
+		else
+		{
 			memcpy(*msg, mbx->bufadr + fbyte, tocpy);
 		}
 		avbs     -= tocpy;
@@ -570,7 +632,8 @@ static inline int mbx_sem_delete(F_SEM *sem)
 	LX_TASK *task;
 
 	rtf_save_flags_and_cli(flags);
-	while ((task = (sem->queue.next)->task)) {
+	while ((task = (sem->queue.next)->task))
+	{
 		sem->queue.next = task->queue.next;
 		(task->queue.next)->prev = &(sem->queue);
 		taskq.task[taskq.in] = task->task;
@@ -598,7 +661,8 @@ static inline void mbx_init(F_MBX *mbx, int size, char *bufadr)
 static inline int mbx_delete(F_MBX *mbx)
 {
 	mbx_signal(mbx);
-	if (mbx_sem_delete(&(mbx->sndsem)) || mbx_sem_delete(&(mbx->rcvsem))) {
+	if (mbx_sem_delete(&(mbx->sndsem)) || mbx_sem_delete(&(mbx->rcvsem)))
+	{
 		return -EFAULT;
 	}
 	return 0;
@@ -606,11 +670,14 @@ static inline int mbx_delete(F_MBX *mbx)
 
 static inline int mbx_send(F_MBX *mbx, const char *msg, int msg_size, int lnx)
 {
-	if (mbx_sem_wait(&(mbx->sndsem))) {
+	if (mbx_sem_wait(&(mbx->sndsem)))
+	{
 		return msg_size;
 	}
-	while (msg_size) {
-		if (mbx_wait(mbx, &mbx->frbs)) {
+	while (msg_size)
+	{
+		if (mbx_wait(mbx, &mbx->frbs))
+		{
 			mbx_sem_signal(&(mbx->sndsem), (FIFO *)mbx);
 			return msg_size;
 		}
@@ -626,13 +693,16 @@ static inline int mbx_send_wp(F_MBX *mbx, const char *msg, int msg_size, int lnx
 	unsigned long flags;
 
 	rtf_save_flags_and_cli(flags);
-	if (mbx->sndsem.free && mbx->frbs) {
+	if (mbx->sndsem.free && mbx->frbs)
+	{
 		mbx->sndsem.free = 0;
 		rtf_restore_flags(flags);
 		msg_size = mbx_put(mbx, (char **)(&msg), msg_size, lnx);
 		mbx_signal(mbx);
 		mbx_sem_signal(&(mbx->sndsem), (FIFO *)mbx);
-	} else {
+	}
+	else
+	{
 		rtf_restore_flags(flags);
 	}
 	return msg_size;
@@ -643,13 +713,16 @@ static inline int mbx_send_if(F_MBX *mbx, const char *msg, int msg_size, int lnx
 	unsigned long flags;
 
 	rtf_save_flags_and_cli(flags);
-	if (mbx->sndsem.free && (mbx->frbs >= msg_size)) {
+	if (mbx->sndsem.free && (mbx->frbs >= msg_size))
+	{
 		mbx->sndsem.free = 0;
 		rtf_restore_flags(flags);
 		msg_size = mbx_put(mbx, (char **)(&msg), msg_size, lnx);
 		mbx_signal(mbx);
 		mbx_sem_signal(&(mbx->sndsem), (FIFO *)mbx);
-	} else {
+	}
+	else
+	{
 		rtf_restore_flags(flags);
 	}
 	return msg_size;
@@ -657,11 +730,14 @@ static inline int mbx_send_if(F_MBX *mbx, const char *msg, int msg_size, int lnx
 
 static int mbx_send_timed(F_MBX *mbx, const char *msg, int msg_size, int delay, int lnx)
 {
-	if (mbx_sem_wait_timed(&(mbx->sndsem), delay)) {
+	if (mbx_sem_wait_timed(&(mbx->sndsem), delay))
+	{
 		return msg_size;
 	}
-	while (msg_size) {
-		if (mbx_wait_timed(mbx, &(mbx->frbs), delay)) {
+	while (msg_size)
+	{
+		if (mbx_wait_timed(mbx, &(mbx->frbs), delay))
+		{
 			mbx_sem_signal(&(mbx->sndsem), (FIFO *)mbx);
 			return msg_size;
 		}
@@ -674,11 +750,14 @@ static int mbx_send_timed(F_MBX *mbx, const char *msg, int msg_size, int delay, 
 
 static inline int mbx_receive(F_MBX *mbx, void *msg, int msg_size, int lnx)
 {
-	if (mbx_sem_wait(&(mbx->rcvsem))) {
+	if (mbx_sem_wait(&(mbx->rcvsem)))
+	{
 		return msg_size;
 	}
-	while (msg_size) {
-		if (mbx_wait(mbx, &mbx->avbs)) {
+	while (msg_size)
+	{
+		if (mbx_wait(mbx, &mbx->avbs))
+		{
 			mbx_sem_signal(&(mbx->rcvsem), (FIFO *)mbx);
 			return msg_size;
 		}
@@ -691,11 +770,14 @@ static inline int mbx_receive(F_MBX *mbx, void *msg, int msg_size, int lnx)
 
 static inline int mbx_receive_wjo(F_MBX *mbx, void *msg, int msg_size, int lnx)
 {
-	if (mbx_sem_wait(&(mbx->rcvsem))) {
+	if (mbx_sem_wait(&(mbx->rcvsem)))
+	{
 		return msg_size;
 	}
-	if (msg_size) {
-		if (mbx_wait(mbx, &mbx->avbs)) {
+	if (msg_size)
+	{
+		if (mbx_wait(mbx, &mbx->avbs))
+		{
 			mbx_sem_signal(&(mbx->rcvsem), (FIFO *)mbx);
 			return msg_size;
 		}
@@ -711,13 +793,16 @@ static inline int mbx_receive_wp(F_MBX *mbx, void *msg, int msg_size, int lnx)
 	unsigned long flags;
 
 	rtf_save_flags_and_cli(flags);
-	if (mbx->rcvsem.free && mbx->avbs) {
+	if (mbx->rcvsem.free && mbx->avbs)
+	{
 		mbx->rcvsem.free = 0;
 		rtf_restore_flags(flags);
 		msg_size = mbx_get(mbx, (char **)(&msg), msg_size, lnx);
 		mbx_signal(mbx);
 		mbx_sem_signal(&(mbx->rcvsem), (FIFO *)mbx);
-	} else {
+	}
+	else
+	{
 		rtf_restore_flags(flags);
 	}
 	return msg_size;
@@ -728,13 +813,16 @@ static inline int mbx_receive_if(F_MBX *mbx, void *msg, int msg_size, int lnx)
 	unsigned long flags;
 
 	rtf_save_flags_and_cli(flags);
-	if (mbx->rcvsem.free && mbx->avbs >= msg_size) {
+	if (mbx->rcvsem.free && mbx->avbs >= msg_size)
+	{
 		mbx->rcvsem.free = 0;
 		rtf_restore_flags(flags);
 		msg_size = mbx_get(mbx, (char **)(&msg), msg_size, lnx);
 		mbx_signal(mbx);
 		mbx_sem_signal(&(mbx->rcvsem), (FIFO *)mbx);
-	} else {
+	}
+	else
+	{
 		rtf_restore_flags(flags);
 	}
 	return msg_size;
@@ -742,11 +830,14 @@ static inline int mbx_receive_if(F_MBX *mbx, void *msg, int msg_size, int lnx)
 
 static int mbx_receive_timed(F_MBX *mbx, void *msg, int msg_size, int delay, int lnx)
 {
-	if (mbx_sem_wait_timed(&(mbx->rcvsem), delay)) {
+	if (mbx_sem_wait_timed(&(mbx->rcvsem), delay))
+	{
 		return msg_size;
 	}
-	while (msg_size) {
-		if (mbx_wait_timed(mbx, &(mbx->avbs), delay)) {
+	while (msg_size)
+	{
+		if (mbx_wait_timed(mbx, &(mbx->avbs), delay))
+		{
 			mbx_sem_signal(&(mbx->rcvsem), (FIFO *)mbx);
 			return msg_size;
 		}
@@ -762,13 +853,16 @@ static inline int mbx_ovrwr_send(F_MBX *mbx, void *msg, int msg_size, int lnx)
 	unsigned long flags;
 
 	rtf_save_flags_and_cli(flags);
-	if (mbx->sndsem.free) {
+	if (mbx->sndsem.free)
+	{
 		mbx->sndsem.free = 0;
 		rtf_restore_flags(flags);
 		msg_size = mbx_ovrwr_put(mbx, (char **)(&msg), msg_size, lnx);
 		mbx_signal(mbx);
 		mbx_sem_signal(&(mbx->sndsem), (FIFO *)mbx);
-	} else {
+	}
+	else
+	{
 		rtf_restore_flags(flags);
 	}
 	return msg_size;
@@ -777,20 +871,25 @@ static inline int mbx_ovrwr_send(F_MBX *mbx, void *msg, int msg_size, int lnx)
 static void rtf_sysrq_handler(void)
 {
 	FIFO *fifop;
-	while (taskq.out != taskq.in) {
-		if (taskq.task[taskq.out]->state == TASK_INTERRUPTIBLE) {
+	while (taskq.out != taskq.in)
+	{
+		if (taskq.task[taskq.out]->state == TASK_INTERRUPTIBLE)
+		{
 			wake_up_process(taskq.task[taskq.out]);
 		}
 		taskq.out = (taskq.out + 1) & (MAXREQS - 1);
 	}
 
-	while (pol_asyn_q.out != pol_asyn_q.in) {
+	while (pol_asyn_q.out != pol_asyn_q.in)
+	{
 		fifop = pol_asyn_q.fifo[pol_asyn_q.out];
 		fifop->pol_asyn_pended = 0;
-		if (waitqueue_active(&(fifop = pol_asyn_q.fifo[pol_asyn_q.out])->pollq)) {
+		if (waitqueue_active(&(fifop = pol_asyn_q.fifo[pol_asyn_q.out])->pollq))
+		{
 			wake_up_interruptible(&(fifop->pollq));
 		}
-		if (fifop->asynq) {
+		if (fifop->asynq)
+		{
 			kill_fasync(&fifop->asynq, async_sig, POLL_IN);
 		}
 		pol_asyn_q.out = (pol_asyn_q.out + 1) & (MAXREQS - 1);
@@ -827,19 +926,26 @@ RTAI_SYSCALL_MODE int rtf_reset(unsigned int minor)
 	TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_RESET, minor, 0);
 
 	mbx = &(fifo[minor].mbx);
-	if (!mbx_sem_wait(&(mbx->rcvsem))) {
-		while (!(semval = mbx_sem_wait_if(&mbx->sndsem)) && !mbx->waiting_task) {
+	if (!mbx_sem_wait(&(mbx->rcvsem)))
+	{
+		while (!(semval = mbx_sem_wait_if(&mbx->sndsem)) && !mbx->waiting_task)
+		{
 			current->state = TASK_INTERRUPTIBLE;
 			schedule_timeout(1);
 		}
-	} else {
+	}
+	else
+	{
 		return -EBADF;
 	}
 	mbx->frbs = mbx->size;
 	mbx->fbyte = mbx->lbyte = mbx->avbs = 0;
-	if (semval) {
+	if (semval)
+	{
 		mbx_sem_signal(&mbx->sndsem, (FIFO *)mbx);
-	} else {
+	}
+	else
+	{
 		mbx_signal(mbx);
 	}
 	mbx_sem_signal(&mbx->rcvsem, (FIFO *)mbx);
@@ -877,30 +983,42 @@ RTAI_SYSCALL_MODE int rtf_resize(unsigned int minor, int size)
 	TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_RESIZE, minor, size);
 
 	mbx = &(fifo[minor].mbx);
-	if (!size) {
+	if (!size)
+	{
 		return -EINVAL;
 	}
-	if (size <= PAGE_SIZE*32) {
-		if (!(newbuf = kmalloc(size, GFP_KERNEL))) {
+	if (size <= PAGE_SIZE*32)
+	{
+		if (!(newbuf = kmalloc(size, GFP_KERNEL)))
+		{
 			return -ENOMEM;
 		}
 		new_malloc_type = 'k';
-	} else {
-		if (!(newbuf = vmalloc(size))) {
+	}
+	else
+	{
+		if (!(newbuf = vmalloc(size)))
+		{
 			return -ENOMEM;
 		}
 		new_malloc_type = 'v';
 	}
-	if (!mbx_sem_wait(&(mbx->rcvsem))) {
-		while (!(semval = mbx_sem_wait_if(&mbx->sndsem)) && !mbx->waiting_task) {
+	if (!mbx_sem_wait(&(mbx->rcvsem)))
+	{
+		while (!(semval = mbx_sem_wait_if(&mbx->sndsem)) && !mbx->waiting_task)
+		{
 			current->state = TASK_INTERRUPTIBLE;
 			schedule_timeout(1);
 		}
-	} else {
+	}
+	else
+	{
 		return -EBADF;
 	}
-	if (size < mbx->avbs) {
-		if (semval) {
+	if (size < mbx->avbs)
+	{
+		if (semval)
+		{
 			mbx_sem_signal(&mbx->sndsem, (FIFO *)mbx);
 		}
 		mbx_sem_signal(&mbx->rcvsem, (FIFO *)mbx);
@@ -915,10 +1033,13 @@ RTAI_SYSCALL_MODE int rtf_resize(unsigned int minor, int size)
 	mbx->bufadr = newbuf;
 	old_malloc_type = fifo[minor].malloc_type;
 	fifo[minor].malloc_type = new_malloc_type;
-	if (semval) {
+	if (semval)
+	{
 		mbx->size = size;
 		mbx_sem_signal(&mbx->sndsem, (FIFO *)mbx);
-	} else if (size > mbx->size) {
+	}
+	else if (size > mbx->size)
+	{
 		mbx->size = size;
 		mbx_signal(mbx);
 	}
@@ -969,19 +1090,26 @@ RTAI_SYSCALL_MODE int rtf_create(unsigned int minor, int size)
 {
 	void *buf;
 
-	if (minor >= MAX_FIFOS) {
+	if (minor >= MAX_FIFOS)
+	{
 		return -ENODEV;
 	}
 	TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_CREATE, minor, size);
-	if (!atomic_cmpxchg((atomic_t *)&fifo[minor].opncnt, 0, 1)) {
-		if (size <= PAGE_SIZE*32) {
-			if (!(buf = kmalloc(size, GFP_KERNEL))) {
+	if (!atomic_cmpxchg((atomic_t *)&fifo[minor].opncnt, 0, 1))
+	{
+		if (size <= PAGE_SIZE*32)
+		{
+			if (!(buf = kmalloc(size, GFP_KERNEL)))
+			{
 				fifo[minor].opncnt = 0;
 				return -ENOMEM;
 			}
 			fifo[minor].malloc_type = 'k';
-		} else {
-			if (!(buf = vmalloc(size))) {
+		}
+		else
+		{
+			if (!(buf = vmalloc(size)))
+			{
 				fifo[minor].opncnt = 0;
 				return -ENOMEM;
 			}
@@ -992,8 +1120,11 @@ RTAI_SYSCALL_MODE int rtf_create(unsigned int minor, int size)
 		mbx_sem_init(&(fifo[minor].sem), 0);
 		fifo[minor].pol_asyn_pended = 0;
 		fifo[minor].asynq = 0;
-	} else {
-		if (size > fifo[minor].mbx.size) {
+	}
+	else
+	{
+		if (size > fifo[minor].mbx.size)
+		{
 			rtf_resize(minor, size);
 		}
 		atomic_inc((atomic_t *)&fifo[minor].opncnt);
@@ -1030,10 +1161,14 @@ RTAI_SYSCALL_MODE int rtf_destroy(unsigned int minor)
 
 	TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_DESTROY, minor, 0);
 
-	if (atomic_dec_and_test((atomic_t *)&fifo[minor].opncnt)) {
-		if (fifo[minor].malloc_type == 'k') {
+	if (atomic_dec_and_test((atomic_t *)&fifo[minor].opncnt))
+	{
+		if (fifo[minor].malloc_type == 'k')
+		{
 			kfree(fifo[minor].mbx.bufadr);
-		} else {
+		}
+		else
+		{
 			vfree(fifo[minor].mbx.bufadr);
 		}
 		fifo[minor].handler = do_nothing;
@@ -1073,7 +1208,8 @@ RTAI_SYSCALL_MODE int rtf_destroy(unsigned int minor)
  */
 int rtf_create_handler(unsigned int minor, void *handler)
 {
-	if (minor >= MAX_FIFOS || !handler) {
+	if (minor >= MAX_FIFOS || !handler)
+	{
 		return -EINVAL;
 	}
 
@@ -1332,7 +1468,8 @@ static int rtf_fasync(int fd, struct file *filp, int mode)
 	TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_FASYNC, minor, fd);
 
 	return fasync_helper(fd, filp, mode, &(fifo[minor].asynq));
-	if (!mode) {
+	if (!mode)
+	{
 		fifo[minor].asynq = 0;
 	}
 }
@@ -1344,7 +1481,8 @@ static int rtf_release(struct inode *inode, struct file *filp)
 
 	TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_RELEASE, minor, 0);
 
-	if (waitqueue_active(&(fifo[minor].pollq))) {
+	if (waitqueue_active(&(fifo[minor].pollq)))
+	{
 		wake_up_interruptible(&(fifo[minor].pollq));
 	}
 	rtf_fasync(-1, filp, 0);
@@ -1360,18 +1498,24 @@ static ssize_t rtf_read(struct file *filp, char *buf, size_t count, loff_t* ppos
 
 	TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_READ, minor, count);
 
-	if (filp->f_flags & O_NONBLOCK) {
+	if (filp->f_flags & O_NONBLOCK)
+	{
 		count -= mbx_receive_wp(&(fifo[minor].mbx), buf, count, 1);
-		if (!count) {
+		if (!count)
+		{
 			return -EAGAIN;
 		}
-	} else {
+	}
+	else
+	{
 		count -= mbx_receive_wjo(&(fifo[minor].mbx), buf, count, 1);
 	}
 
-	if (count) {
+	if (count)
+	{
 		inode->i_atime = CURRENT_TIME;
-		if ((handler_ret = (fifo[minor].handler)(minor, 'r')) < 0) {
+		if ((handler_ret = (fifo[minor].handler)(minor, 'r')) < 0)
+		{
 			return handler_ret;
 		}
 	}
@@ -1387,17 +1531,22 @@ static ssize_t rtf_write(struct file *filp, const char *buf, size_t count, loff_
 
 	TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_WRITE, minor, count);
 
-	if (filp->f_flags & O_NONBLOCK) {
+	if (filp->f_flags & O_NONBLOCK)
+	{
 		count -= mbx_send_wp(&(fifo[minor].mbx), (char *)buf, count, 1);
-		if (!count) {
+		if (!count)
+		{
 			return -EAGAIN;
 		}
-	} else {
+	}
+	else
+	{
 		count -= mbx_send(&(fifo[minor].mbx), (char *)buf, count, 1);
 	}
 
 	inode->i_ctime = inode->i_mtime = CURRENT_TIME;
-	if ((handler_ret = (fifo[minor].handler)(minor, 'w')) < 0) {
+	if ((handler_ret = (fifo[minor].handler)(minor, 'w')) < 0)
+	{
 		return handler_ret;
 	}
 
@@ -1421,213 +1570,259 @@ static int rtf_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, u
 
 	TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_IOCTL, minor, cmd);
 
-	switch(cmd) {
-		case RESET: {
-			return rtf_reset(minor);
+	switch(cmd)
+	{
+	case RESET:
+	{
+		return rtf_reset(minor);
+	}
+	case RESIZE:
+	{
+		return rtf_resize(minor, arg);
+	}
+	case SUSPEND_TIMED:
+	{
+		TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SUSPEND_TIMED, DELAY(arg), 0);
+		current->state = TASK_INTERRUPTIBLE;
+		schedule_timeout(DELAY(arg));
+		if (signal_pending(current))
+		{
+			return -ERESTARTSYS;
 		}
-		case RESIZE: {
-			return rtf_resize(minor, arg);
-		}
-		case SUSPEND_TIMED: {
-			TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SUSPEND_TIMED, DELAY(arg), 0);
-			current->state = TASK_INTERRUPTIBLE;
-			schedule_timeout(DELAY(arg));
-			if (signal_pending(current)) {
-				return -ERESTARTSYS;
+		return 0;
+	}
+	case OPEN_SIZED:
+	{
+		return rtf_create(minor, arg);
+	}
+	case READ_ALL_AT_ONCE:
+	{
+		struct { char *buf; int count; } args;
+		int handler_ret;
+		TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_READ_ALLATONCE, 0, 0);
+		rt_copy_from_user(&args, (void *)arg, sizeof(args));
+		args.count -= mbx_receive(&(fifop->mbx), args.buf, args.count, 1);
+		if (args.count)
+		{
+			inode->i_atime = CURRENT_TIME;
+			if ((handler_ret = (fifo[minor].handler)(minor,
+					   'r')) < 0)
+			{
+				return handler_ret;
 			}
-			return 0;
+			return args.count;
 		}
-		case OPEN_SIZED: {
-			return rtf_create(minor, arg);
-		}
-		case READ_ALL_AT_ONCE: {
-			struct { char *buf; int count; } args;
-			int handler_ret;
-			TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_READ_ALLATONCE, 0, 0);
-			rt_copy_from_user(&args, (void *)arg, sizeof(args));
-			args.count -= mbx_receive(&(fifop->mbx), args.buf, args.count, 1);
-			if (args.count) {
-				inode->i_atime = CURRENT_TIME;
-				if ((handler_ret = (fifo[minor].handler)(minor,
-'r')) < 0) {
-					return handler_ret;
-				}
-				return args.count;
+		return 0;
+	}
+	case EAVESDROP:
+	{
+		struct { char *buf; int count; } args;
+		rt_copy_from_user(&args, (void *)arg, sizeof(args));
+		return args.count - mbx_evdrp(&(fifop->mbx), (char **)&args.buf, args.count, 1);
+	}
+	case READ_TIMED:
+	{
+		struct { char *buf; int count, delay; } args;
+		int handler_ret;
+		rt_copy_from_user(&args, (void *)arg, sizeof(args));
+		TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_READ_TIMED, args.count, DELAY(args.delay));
+		if (!args.delay)
+		{
+			args.count -= mbx_receive_wp(&(fifop->mbx), args.buf, args.count, 1);
+			if (!args.count)
+			{
+				return -EAGAIN;
 			}
-			return 0;
 		}
-		case EAVESDROP: {
-			struct { char *buf; int count; } args;
-			rt_copy_from_user(&args, (void *)arg, sizeof(args));
-			return args.count - mbx_evdrp(&(fifop->mbx), (char **)&args.buf, args.count, 1);
+		else
+		{
+			args.count -= mbx_receive_timed(&(fifop->mbx), args.buf, args.count, DELAY(args.delay), 1);
 		}
-		case READ_TIMED: {
-			struct { char *buf; int count, delay; } args;
-			int handler_ret;
-			rt_copy_from_user(&args, (void *)arg, sizeof(args));
-			TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_READ_TIMED, args.count, DELAY(args.delay));
-			if (!args.delay) {
-				args.count -= mbx_receive_wp(&(fifop->mbx), args.buf, args.count, 1);
-				if (!args.count) {
-					return -EAGAIN;
-				}
-			} else {
-				args.count -= mbx_receive_timed(&(fifop->mbx), args.buf, args.count, DELAY(args.delay), 1);
-			}
-			if (args.count) {
-				inode->i_atime = CURRENT_TIME;
+		if (args.count)
+		{
+			inode->i_atime = CURRENT_TIME;
 //				if ((handler_ret = (fifop->handler)(minor)) < 0) {
-				if ((handler_ret = (fifop->handler)(minor, 'r')) < 0) {
-					return handler_ret;
-				}
-				return args.count;
+			if ((handler_ret = (fifop->handler)(minor, 'r')) < 0)
+			{
+				return handler_ret;
 			}
-			return 0;
+			return args.count;
 		}
-		case READ_IF: {
-			struct { char *buf; int count; } args;
-			int handler_ret;
-			rt_copy_from_user(&args, (void *)arg, sizeof(args));
-			args.count -= mbx_receive_if(&(fifop->mbx), args.buf, args.count, 1);
-			if (args.count) {
-				inode->i_atime = CURRENT_TIME;
-				if ((handler_ret = (fifo[minor].handler)(minor, 'r')) < 0) {
-					return handler_ret;
-				}
-				return args.count;
+		return 0;
+	}
+	case READ_IF:
+	{
+		struct { char *buf; int count; } args;
+		int handler_ret;
+		rt_copy_from_user(&args, (void *)arg, sizeof(args));
+		args.count -= mbx_receive_if(&(fifop->mbx), args.buf, args.count, 1);
+		if (args.count)
+		{
+			inode->i_atime = CURRENT_TIME;
+			if ((handler_ret = (fifo[minor].handler)(minor, 'r')) < 0)
+			{
+				return handler_ret;
 			}
-			return 0;
+			return args.count;
 		}
-		case WRITE_TIMED: {
-			struct { char *buf; int count, delay; } args;
-			int handler_ret;
-			rt_copy_from_user(&args, (void *)arg, sizeof(args));
-			TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_WRITE_TIMED, args.count, DELAY(args.delay));
-			if (!args.delay) {
-				args.count -= mbx_send_wp(&(fifop->mbx), args.buf, args.count, 1);
-				if (!args.count) {
-					return -EAGAIN;
-				}
-			} else {
-				args.count -= mbx_send_timed(&(fifop->mbx), args.buf, args.count, DELAY(args.delay), 1);
+		return 0;
+	}
+	case WRITE_TIMED:
+	{
+		struct { char *buf; int count, delay; } args;
+		int handler_ret;
+		rt_copy_from_user(&args, (void *)arg, sizeof(args));
+		TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_WRITE_TIMED, args.count, DELAY(args.delay));
+		if (!args.delay)
+		{
+			args.count -= mbx_send_wp(&(fifop->mbx), args.buf, args.count, 1);
+			if (!args.count)
+			{
+				return -EAGAIN;
 			}
-			inode->i_ctime = inode->i_mtime = CURRENT_TIME;
+		}
+		else
+		{
+			args.count -= mbx_send_timed(&(fifop->mbx), args.buf, args.count, DELAY(args.delay), 1);
+		}
+		inode->i_ctime = inode->i_mtime = CURRENT_TIME;
 //			if ((handler_ret = (fifop->handler)(minor)) < 0) {
-			if ((handler_ret = (fifop->handler)(minor, 'w')) < 0) {
-				return handler_ret;
+		if ((handler_ret = (fifop->handler)(minor, 'w')) < 0)
+		{
+			return handler_ret;
+		}
+		return args.count;
+	}
+	case WRITE_IF:
+	{
+		struct { char *buf; int count, delay; } args;
+		int handler_ret;
+		rt_copy_from_user(&args, (void *)arg, sizeof(args));
+		if (args.count)
+		{
+			args.count -= mbx_send_wp(&(fifop->mbx), args.buf, args.count, 1);
+			if (!args.count)
+			{
+				return -EAGAIN;
 			}
-			return args.count;
 		}
-		case WRITE_IF: {
-			struct { char *buf; int count, delay; } args;
-			int handler_ret;
-			rt_copy_from_user(&args, (void *)arg, sizeof(args));
-			if (args.count) {
-				args.count -= mbx_send_wp(&(fifop->mbx), args.buf, args.count, 1);
-				if (!args.count) {
-					return -EAGAIN;
-				}
-			}
-			inode->i_ctime = inode->i_mtime = CURRENT_TIME;
-			if ((handler_ret = (fifo[minor].handler)(minor, 'w')) <
-0) {
-				return handler_ret;
-			}
-			return args.count;
+		inode->i_ctime = inode->i_mtime = CURRENT_TIME;
+		if ((handler_ret = (fifo[minor].handler)(minor, 'w')) <
+				0)
+		{
+			return handler_ret;
 		}
-		case OVRWRITE: {
-			struct { char *buf; int count; } args;
-			rt_copy_from_user(&args, (void *)arg, sizeof(args));
-			return mbx_ovrwr_send(&(fifop->mbx), (char **)&args.buf, args.count, 1);
-		}
-		case RTF_SEM_INIT: {
-			TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SEM_INIT, minor, arg);
-			mbx_sem_init(&(fifop->sem), arg);
-			return 0;
-		}
-		case RTF_SEM_WAIT: {
-			TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SEM_WAIT, minor, 0);
-			return mbx_sem_wait(&(fifop->sem));
-		}
-		case RTF_SEM_TRYWAIT: {
-			TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SEM_TRY_WAIT, minor, 0);
-			return mbx_sem_wait_if(&(fifop->sem));
-		}
-		case RTF_SEM_TIMED_WAIT: {
-			TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SEM_TIMED_WAIT, minor, DELAY(arg));
-			return mbx_sem_wait_timed(&(fifop->sem), DELAY(arg));
-		}
-		case RTF_SEM_POST: {
-			TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SEM_POST, minor, 0);
-			mbx_sem_signal(&(fifop->sem), 0);
-			return 0;
-		}
-		case RTF_SEM_DESTROY: {
-			TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SEM_DESTROY, minor, 0);
-			mbx_sem_delete(&(fifop->sem));
-			return 0;
-		}
-		case SET_ASYNC_SIG: {
-			TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SET_ASYNC_SIG, arg, 0);
-			async_sig = arg;
-			return 0;
-		}
-		case FIONREAD: {
-			return put_user(fifo[minor].mbx.avbs, (int *)arg);
-		}
-		/*
-		 * Support for named FIFOS : Ian Soanes (ians@zentropix.com)
-		 * Based on ideas from Stuart Hughes and David Schleef
-		 */
-		case RTF_GET_N_FIFOS: {
-			return MAX_FIFOS;
-		}
-		case RTF_GET_FIFO_INFO: {
-			struct rt_fifo_get_info_struct req;
-			int i, n;
+		return args.count;
+	}
+	case OVRWRITE:
+	{
+		struct { char *buf; int count; } args;
+		rt_copy_from_user(&args, (void *)arg, sizeof(args));
+		return mbx_ovrwr_send(&(fifop->mbx), (char **)&args.buf, args.count, 1);
+	}
+	case RTF_SEM_INIT:
+	{
+		TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SEM_INIT, minor, arg);
+		mbx_sem_init(&(fifop->sem), arg);
+		return 0;
+	}
+	case RTF_SEM_WAIT:
+	{
+		TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SEM_WAIT, minor, 0);
+		return mbx_sem_wait(&(fifop->sem));
+	}
+	case RTF_SEM_TRYWAIT:
+	{
+		TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SEM_TRY_WAIT, minor, 0);
+		return mbx_sem_wait_if(&(fifop->sem));
+	}
+	case RTF_SEM_TIMED_WAIT:
+	{
+		TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SEM_TIMED_WAIT, minor, DELAY(arg));
+		return mbx_sem_wait_timed(&(fifop->sem), DELAY(arg));
+	}
+	case RTF_SEM_POST:
+	{
+		TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SEM_POST, minor, 0);
+		mbx_sem_signal(&(fifop->sem), 0);
+		return 0;
+	}
+	case RTF_SEM_DESTROY:
+	{
+		TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SEM_DESTROY, minor, 0);
+		mbx_sem_delete(&(fifop->sem));
+		return 0;
+	}
+	case SET_ASYNC_SIG:
+	{
+		TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_SET_ASYNC_SIG, arg, 0);
+		async_sig = arg;
+		return 0;
+	}
+	case FIONREAD:
+	{
+		return put_user(fifo[minor].mbx.avbs, (int *)arg);
+	}
+	/*
+	 * Support for named FIFOS : Ian Soanes (ians@zentropix.com)
+	 * Based on ideas from Stuart Hughes and David Schleef
+	 */
+	case RTF_GET_N_FIFOS:
+	{
+		return MAX_FIFOS;
+	}
+	case RTF_GET_FIFO_INFO:
+	{
+		struct rt_fifo_get_info_struct req;
+		int i, n;
 
-			rt_copy_from_user(&req, (void *)arg, sizeof(req));
-			for ( i = req.fifo, n = 0;
-			      i < MAX_FIFOS && n < req.n;
-			      i++, n++
-			      ) {
-				struct rt_fifo_info_struct info;
+		rt_copy_from_user(&req, (void *)arg, sizeof(req));
+		for ( i = req.fifo, n = 0;
+				i < MAX_FIFOS && n < req.n;
+				i++, n++
+		    )
+		{
+			struct rt_fifo_info_struct info;
 
-				info.fifo_number = i;
-				info.size        = fifo[i].mbx.size;
-				info.opncnt      = fifo[i].opncnt;
-				info.avbs        = fifo[i].mbx.avbs;
-				info.frbs        = fifo[i].mbx.frbs;
-				strncpy(info.name, fifo[i].name, RTF_NAMELEN+1);
-				rt_copy_to_user(req.ptr + n, &info, sizeof(info));
-			}
-			return n;
+			info.fifo_number = i;
+			info.size        = fifo[i].mbx.size;
+			info.opncnt      = fifo[i].opncnt;
+			info.avbs        = fifo[i].mbx.avbs;
+			info.frbs        = fifo[i].mbx.frbs;
+			strncpy(info.name, fifo[i].name, RTF_NAMELEN+1);
+			rt_copy_to_user(req.ptr + n, &info, sizeof(info));
 		}
-		case RTF_NAMED_CREATE: {
-			struct { char name[RTF_NAMELEN+1]; int size; } args;
+		return n;
+	}
+	case RTF_NAMED_CREATE:
+	{
+		struct { char name[RTF_NAMELEN+1]; int size; } args;
 
-			rt_copy_from_user(&args, (void *)arg, sizeof(args));
-			return rtf_named_create(args.name, args.size);
-		}
-		case RTF_CREATE_NAMED: {
-			char name[RTF_NAMELEN+1];
+		rt_copy_from_user(&args, (void *)arg, sizeof(args));
+		return rtf_named_create(args.name, args.size);
+	}
+	case RTF_CREATE_NAMED:
+	{
+		char name[RTF_NAMELEN+1];
 
-			rt_copy_from_user(name, (void *)arg, RTF_NAMELEN+1);
-			return rtf_create_named(name);
-		}
-		case RTF_NAME_LOOKUP: {
-			char name[RTF_NAMELEN+1];
+		rt_copy_from_user(name, (void *)arg, RTF_NAMELEN+1);
+		return rtf_create_named(name);
+	}
+	case RTF_NAME_LOOKUP:
+	{
+		char name[RTF_NAMELEN+1];
 
-			rt_copy_from_user(name, (void *)arg, RTF_NAMELEN+1);
-			return rtf_getfifobyname(name);
-		}
-		case TCGETS:
-			/* Keep isatty() probing silent */
-			return -ENOTTY;
+		rt_copy_from_user(name, (void *)arg, RTF_NAMELEN+1);
+		return rtf_getfifobyname(name);
+	}
+	case TCGETS:
+		/* Keep isatty() probing silent */
+		return -ENOTTY;
 
-		default : {
-			printk("RTAI-FIFO: cmd %d is not implemented\n", cmd);
-			return -EINVAL;
+	default :
+	{
+		printk("RTAI-FIFO: cmd %d is not implemented\n", cmd);
+		return -EINVAL;
 	}
 	}
 	return 0;
@@ -1641,10 +1836,12 @@ static unsigned int rtf_poll(struct file *filp, poll_table *wait)
 	minor = MINOR((filp->f_dentry->d_inode)->i_rdev);
 	TRACE_RTAI_FIFO(TRACE_RTAI_EV_FIFO_POLL, minor, 0);
 	poll_wait(filp, &(fifo[minor].pollq), wait);
-	if (fifo[minor].mbx.avbs) {
+	if (fifo[minor].mbx.avbs)
+	{
 		retval |= POLLIN | POLLRDNORM;
 	}
-	if (fifo[minor].mbx.frbs) {
+	if (fifo[minor].mbx.frbs)
+	{
 		retval |= POLLOUT | POLLWRNORM;
 	}
 	return retval;
@@ -1659,19 +1856,19 @@ static loff_t rtf_llseek(struct file *filp, loff_t offset, int origin)
 
 static struct file_operations rtf_fops =
 {
-	owner:		THIS_MODULE,
-	llseek:		rtf_llseek,
-	read:		rtf_read,
-	write:		rtf_write,
-	poll:		rtf_poll,
+owner:		THIS_MODULE,
+llseek:		rtf_llseek,
+read:		rtf_read,
+write:		rtf_write,
+poll:		rtf_poll,
 #ifdef HAVE_UNLOCKED_IOCTL
-	unlocked_ioctl:	rtf_ioctl,
+unlocked_ioctl:	rtf_ioctl,
 #else
-	ioctl:		rtf_ioctl,
+ioctl:		rtf_ioctl,
 #endif
-	open:		rtf_open,
-	release:	rtf_release,
-	fasync:		rtf_fasync,
+open:		rtf_open,
+release:	rtf_release,
+fasync:		rtf_fasync,
 };
 
 #ifdef CONFIG_DEVFS_FS
@@ -1685,7 +1882,8 @@ RTAI_MODULE_PARM(MaxFifos, int);
 
 #ifdef LXRTEXT
 
-static struct rt_fun_entry rtai_fifos_fun[] = {
+static struct rt_fun_entry rtai_fifos_fun[] =
+{
 	[_CREATE]       = { 0, rtf_create },
 	[_DESTROY]      = { 0, rtf_destroy },
 	[_PUT]          = { 0, rtf_put },
@@ -1707,7 +1905,8 @@ static struct rt_fun_entry rtai_fifos_fun[] = {
 
 static int register_lxrt_fifos_support(void)
 {
-	if (set_rt_fun_ext_index(rtai_fifos_fun, FUN_FIFOS_LXRT_INDX)) {
+	if (set_rt_fun_ext_index(rtai_fifos_fun, FUN_FIFOS_LXRT_INDX))
+	{
 		printk("LXRT EXTENSION SLOT FOR FIFOS (%d) ALREADY USED\n", FUN_FIFOS_LXRT_INDX);
 		return -EACCES;
 	}
@@ -1736,19 +1935,23 @@ int __rtai_fifos_init(void)
 {
 	int minor;
 
-	if (!(fifo = (FIFO *)kmalloc(MaxFifos*sizeof(FIFO), GFP_KERNEL))) {
+	if (!(fifo = (FIFO *)kmalloc(MaxFifos*sizeof(FIFO), GFP_KERNEL)))
+	{
 		printk("RTAI-FIFO: cannot allocate memory for FIFOS structure.\n");
 		return -ENOSPC;
 	}
 	memset(fifo, 0, MaxFifos*sizeof(FIFO));
 
 #if USE_UDEV_CLASS
-	if ((fifo_class = class_create(THIS_MODULE, "rtai_fifos")) == NULL) {
+	if ((fifo_class = class_create(THIS_MODULE, "rtai_fifos")) == NULL)
+	{
 		printk("RTAI-FIFO: cannot create class.\n");
 		return -EBUSY;
 	}
-	for (minor = 0; minor < MAX_FIFOS; minor++) {
-		if (CLASS_DEVICE_CREATE(fifo_class, MKDEV(RTAI_FIFOS_MAJOR, minor), NULL, "rtf%d", minor) == NULL) {
+	for (minor = 0; minor < MAX_FIFOS; minor++)
+	{
+		if (CLASS_DEVICE_CREATE(fifo_class, MKDEV(RTAI_FIFOS_MAJOR, minor), NULL, "rtf%d", minor) == NULL)
+		{
 			printk("RTAI-FIFO: cannot attach class.\n");
 			class_destroy(fifo_class);
 			return -EBUSY;
@@ -1756,19 +1959,22 @@ int __rtai_fifos_init(void)
 	}
 #endif
 
-	if (register_chrdev(RTAI_FIFOS_MAJOR, "rtai_fifo", &rtf_fops)) {
+	if (register_chrdev(RTAI_FIFOS_MAJOR, "rtai_fifo", &rtf_fops))
+	{
 		printk("RTAI-FIFO: cannot register major %d.\n", RTAI_FIFOS_MAJOR);
 		return -EIO;
 	}
 
-	if ((fifo_srq = rtf_request_srq(rtf_sysrq_handler)) < 0) {
+	if ((fifo_srq = rtf_request_srq(rtf_sysrq_handler)) < 0)
+	{
 		printk("RTAI-FIFO: no srq available in rtai.\n");
 		return fifo_srq;
 	}
 	taskq.in = taskq.out = pol_asyn_q.in = pol_asyn_q.out = 0;
 	async_sig = SIGIO;
 
-	for (minor = 0; minor < MAX_FIFOS; minor++) {
+	for (minor = 0; minor < MAX_FIFOS; minor++)
+	{
 		fifo[minor].opncnt = fifo[minor].pol_asyn_pended = 0;
 		init_waitqueue_head(&fifo[minor].pollq);
 		fifo[minor].asynq = 0;;
@@ -1786,16 +1992,18 @@ void __rtai_fifos_exit(void)
 	unregister_chrdev(RTAI_FIFOS_MAJOR, "rtai_fifo");
 
 #if USE_UDEV_CLASS
-{
-	int minor;
-	for (minor = 0; minor < MAX_FIFOS; minor++) {
-		class_device_destroy(fifo_class, MKDEV(RTAI_FIFOS_MAJOR, minor));
+	{
+		int minor;
+		for (minor = 0; minor < MAX_FIFOS; minor++)
+		{
+			class_device_destroy(fifo_class, MKDEV(RTAI_FIFOS_MAJOR, minor));
+		}
+		class_destroy(fifo_class);
 	}
-	class_destroy(fifo_class);
-}
 #endif
 
-	if (rtf_free_srq(fifo_srq) < 0) {
+	if (rtf_free_srq(fifo_srq) < 0)
+	{
 		printk("RTAI-FIFO: rtai srq %d illegal or already free.\n", fifo_srq);
 	}
 #ifdef CONFIG_PROC_FS
@@ -1813,46 +2021,55 @@ module_exit(__rtai_fifos_exit);
 /* ----------------------< proc filesystem section >----------------------*/
 
 static int rtai_read_fifos(char* buf, char** start, off_t offset,
-	int len, int *eof, void *data)
+			   int len, int *eof, void *data)
 {
 	int i;
 
 	len = sprintf(buf, "RTAI Real Time fifos status.\n\n" );
-	if (len > LIMIT) {
+	if (len > LIMIT)
+	{
 		return(len);
 	}
 	len += sprintf(buf + len, "Maximum number of FIFOS %d.\n\n", MaxFifos);
-	if (len > LIMIT) {
+	if (len > LIMIT)
+	{
 		return(len);
 	}
 	len += sprintf(buf+len, "fifo No  Open Cnt  Buff Size  handler  malloc type");
-	if (len > LIMIT) {
+	if (len > LIMIT)
+	{
 		return(len);
 	}
 	len += sprintf(buf+len, " Name\n----------------");
-	if (len > LIMIT) {
+	if (len > LIMIT)
+	{
 		return(len);
 	}
 	len += sprintf(buf+len, "-----------------------------------------\n");
-	if (len > LIMIT) {
+	if (len > LIMIT)
+	{
 		return(len);
 	}
-/*
- * Display the status of all open RT fifos.
- */
-	for (i = 0; i < MAX_FIFOS; i++) {
-		if (fifo[i].opncnt > 0) {
+	/*
+	 * Display the status of all open RT fifos.
+	 */
+	for (i = 0; i < MAX_FIFOS; i++)
+	{
+		if (fifo[i].opncnt > 0)
+		{
 			len += sprintf( buf+len, "%-8d %-9d %-10d %-10p %-12s", i,
 					fifo[i].opncnt, fifo[i].mbx.size,
 					fifo[i].handler,
 					fifo[i].malloc_type == 'v'
-					    ? "vmalloc" : "kmalloc"
-					);
-			if (len > LIMIT) {
+					? "vmalloc" : "kmalloc"
+				      );
+			if (len > LIMIT)
+			{
 				return(len);
 			}
 			len += sprintf(buf+len, "%s\n", fifo[i].name);
-			if (len > LIMIT) {
+			if (len > LIMIT)
+			{
 				return(len);
 			}
 		} /* End if - fifo is open. */
@@ -1865,8 +2082,9 @@ static int rtai_proc_fifo_register(void)
 {
 	struct proc_dir_entry *proc_fifo_ent;
 	proc_fifo_ent = create_proc_entry("fifos", S_IFREG|S_IRUGO|S_IWUSR,
-								rtai_proc_root);
-	if (!proc_fifo_ent) {
+					  rtai_proc_root);
+	if (!proc_fifo_ent)
+	{
 		printk("Unable to initialize /proc/rtai/fifos\n");
 		return(-1);
 	}
@@ -1891,17 +2109,23 @@ int rtf_named_create(const char *name, int size)
 	int minor, err;
 	unsigned long flags;
 
-	if (strlen(name) > RTF_NAMELEN) {
-	    	return -EINVAL;
+	if (strlen(name) > RTF_NAMELEN)
+	{
+		return -EINVAL;
 	}
 	rtf_spin_lock_irqsave(flags, rtf_name_lock);
-	for (minor = 0; minor < MAX_FIFOS; minor++) {
-	    	if (!strncmp(name, fifo[minor].name, RTF_NAMELEN)) {
+	for (minor = 0; minor < MAX_FIFOS; minor++)
+	{
+		if (!strncmp(name, fifo[minor].name, RTF_NAMELEN))
+		{
 			break;
-		} else if (!fifo[minor].opncnt && !fifo[minor].name[0]) {
+		}
+		else if (!fifo[minor].opncnt && !fifo[minor].name[0])
+		{
 			strncpy(fifo[minor].name, name, RTF_NAMELEN + 1);
 			rtf_spin_unlock_irqrestore(flags, rtf_name_lock);
-			if ((err = rtf_create(minor, size)) < 0) {
+			if ((err = rtf_create(minor, size)) < 0)
+			{
 				fifo[minor].name[0] = 0;
 				return err;
 			}
@@ -1919,16 +2143,19 @@ RTAI_SYSCALL_MODE int rtf_create_named(const char *name)
 
 RTAI_SYSCALL_MODE int rtf_getfifobyname(const char *name)
 {
-    	int minor;
+	int minor;
 
-	if (strlen(name) > RTF_NAMELEN) {
-	    	return -EINVAL;
+	if (strlen(name) > RTF_NAMELEN)
+	{
+		return -EINVAL;
 	}
-	for (minor = 0; minor < MAX_FIFOS; minor++) {
-	    	if ( fifo[minor].opncnt &&
-		     !strncmp(name, fifo[minor].name, RTF_NAMELEN)
-		     ) {
-		    	return minor;
+	for (minor = 0; minor < MAX_FIFOS; minor++)
+	{
+		if ( fifo[minor].opncnt &&
+				!strncmp(name, fifo[minor].name, RTF_NAMELEN)
+		   )
+		{
+			return minor;
 		}
 	}
 	return -ENODEV;

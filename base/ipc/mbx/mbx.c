@@ -72,14 +72,16 @@ static int mbx_wait(MBX *mbx, int *fravbs, RT_TASK *rt_current)
 	unsigned long flags;
 
 	flags = rt_global_save_flags_and_cli();
-	if (!(*fravbs)) {
+	if (!(*fravbs))
+	{
 		unsigned long retval;
 		rt_current->state |= RT_SCHED_MBXSUSP;
 		rem_ready_current(rt_current);
 		rt_current->blocked_on = (void *)mbx;
 		mbx->waiting_task = rt_current;
 		rt_schedule();
-		if (unlikely(retval = (unsigned long)rt_current->blocked_on)) {
+		if (unlikely(retval = (unsigned long)rt_current->blocked_on))
+		{
 			mbx->waiting_task = NULL;
 			rt_global_restore_flags(flags);
 			return retval;
@@ -94,17 +96,20 @@ static int mbx_wait_until(MBX *mbx, int *fravbs, RTIME time, RT_TASK *rt_current
 	unsigned long flags;
 
 	flags = rt_global_save_flags_and_cli();
-	if (!(*fravbs)) {
+	if (!(*fravbs))
+	{
 		void *retp;
 		rt_current->blocked_on = (void *)mbx;
 		mbx->waiting_task = rt_current;
-		if ((rt_current->resume_time = time) > rt_smp_time_h[rtai_cpuid()]) {
+		if ((rt_current->resume_time = time) > rt_smp_time_h[rtai_cpuid()])
+		{
 			rt_current->state |= (RT_SCHED_MBXSUSP | RT_SCHED_DELAYED);
 			rem_ready_current(rt_current);
 			enq_timed_task(rt_current);
 			rt_schedule();
 		}
-		if (unlikely((retp = rt_current->blocked_on) != NULL)) {
+		if (unlikely((retp = rt_current->blocked_on) != NULL))
+		{
 			mbx->waiting_task = NULL;
 			rt_global_restore_flags(flags);
 			return likely(retp > RTP_HIGERR) ? RTE_TIMOUT : (retp == RTP_UNBLKD ? RTE_UNBLKD : RTE_OBJREM);
@@ -121,16 +126,22 @@ static int mbxput(MBX *mbx, char **msg, int msg_size, int space)
 	unsigned long flags;
 	int tocpy;
 
-	while (msg_size > 0 && mbx->frbs) {
-		if ((tocpy = mbx->size - mbx->lbyte) > msg_size) {
+	while (msg_size > 0 && mbx->frbs)
+	{
+		if ((tocpy = mbx->size - mbx->lbyte) > msg_size)
+		{
 			tocpy = msg_size;
 		}
-		if (tocpy > mbx->frbs) {
+		if (tocpy > mbx->frbs)
+		{
 			tocpy = mbx->frbs;
 		}
-		if (space) {
+		if (space)
+		{
 			memcpy(mbx->bufadr + mbx->lbyte, *msg, tocpy);
-		} else {
+		}
+		else
+		{
 			rt_copy_from_user(mbx->bufadr + mbx->lbyte, *msg, tocpy);
 		}
 		flags = rt_spin_lock_irqsave(&(mbx->lock));
@@ -149,21 +160,29 @@ static int mbxovrwrput(MBX *mbx, char **msg, int msg_size, int space)
 	unsigned long flags;
 	int tocpy,n;
 
-	if ((n = msg_size - mbx->size) > 0) {
+	if ((n = msg_size - mbx->size) > 0)
+	{
 		*msg += n;
 		msg_size -= n;
 	}
-	while (msg_size > 0) {
-		if (mbx->frbs) {
-			if ((tocpy = mbx->size - mbx->lbyte) > msg_size) {
+	while (msg_size > 0)
+	{
+		if (mbx->frbs)
+		{
+			if ((tocpy = mbx->size - mbx->lbyte) > msg_size)
+			{
 				tocpy = msg_size;
 			}
-			if (tocpy > mbx->frbs) {
+			if (tocpy > mbx->frbs)
+			{
 				tocpy = mbx->frbs;
 			}
-			if (space) {
+			if (space)
+			{
 				memcpy(mbx->bufadr + mbx->lbyte, *msg, tocpy);
-			} else {
+			}
+			else
+			{
 				rt_copy_from_user(mbx->bufadr + mbx->lbyte, *msg, tocpy);
 			}
 			flags = rt_spin_lock_irqsave(&(mbx->lock));
@@ -174,12 +193,16 @@ static int mbxovrwrput(MBX *mbx, char **msg, int msg_size, int space)
 			*msg     += tocpy;
 			mbx->lbyte = MOD_SIZE(mbx->lbyte + tocpy);
 		}
-		if (msg_size) {
-			while ((n = msg_size - mbx->frbs) > 0) {
-				if ((tocpy = mbx->size - mbx->fbyte) > n) {
+		if (msg_size)
+		{
+			while ((n = msg_size - mbx->frbs) > 0)
+			{
+				if ((tocpy = mbx->size - mbx->fbyte) > n)
+				{
 					tocpy = n;
 				}
-				if (tocpy > mbx->avbs) {
+				if (tocpy > mbx->avbs)
+				{
 					tocpy = mbx->avbs;
 				}
 				flags = rt_spin_lock_irqsave(&(mbx->lock));
@@ -198,16 +221,22 @@ static int mbxget(MBX *mbx, char **msg, int msg_size, int space)
 	unsigned long flags;
 	int tocpy;
 
-	while (msg_size > 0 && mbx->avbs) {
-		if ((tocpy = mbx->size - mbx->fbyte) > msg_size) {
+	while (msg_size > 0 && mbx->avbs)
+	{
+		if ((tocpy = mbx->size - mbx->fbyte) > msg_size)
+		{
 			tocpy = msg_size;
 		}
-		if (tocpy > mbx->avbs) {
+		if (tocpy > mbx->avbs)
+		{
 			tocpy = mbx->avbs;
 		}
-		if (space) {
+		if (space)
+		{
 			memcpy(*msg, mbx->bufadr + mbx->fbyte, tocpy);
-		} else {
+		}
+		else
+		{
 			rt_copy_to_user(*msg, mbx->bufadr + mbx->fbyte, tocpy);
 		}
 		flags = rt_spin_lock_irqsave(&(mbx->lock));
@@ -227,16 +256,22 @@ static int mbxevdrp(MBX *mbx, char **msg, int msg_size, int space)
 
 	fbyte = mbx->fbyte;
 	avbs  = mbx->avbs;
-	while (msg_size > 0 && avbs) {
-		if ((tocpy = mbx->size - fbyte) > msg_size) {
+	while (msg_size > 0 && avbs)
+	{
+		if ((tocpy = mbx->size - fbyte) > msg_size)
+		{
 			tocpy = msg_size;
 		}
-		if (tocpy > avbs) {
+		if (tocpy > avbs)
+		{
 			tocpy = avbs;
 		}
-		if (space) {
+		if (space)
+		{
 			memcpy(*msg, mbx->bufadr + fbyte, tocpy);
-		} else {
+		}
+		else
+		{
 			rt_copy_to_user(*msg, mbx->bufadr + mbx->fbyte, tocpy);
 		}
 		avbs     -= tocpy;
@@ -298,7 +333,8 @@ do { if (!mbx || mbx->magic != RT_MBX_MAGIC) return (CONFIG_RTAI_USE_NEWERR ? RT
  */
 RTAI_SYSCALL_MODE int rt_typed_mbx_init(MBX *mbx, int size, int type)
 {
-	if (!(mbx->bufadr = rt_malloc(size))) {
+	if (!(mbx->bufadr = rt_malloc(size)))
+	{
 		return -ENOMEM;
 	}
 	rt_typed_sem_init(&(mbx->sndsem), 1, type & 3 ? type : BIN_SEM | type);
@@ -376,10 +412,12 @@ RTAI_SYSCALL_MODE int rt_mbx_delete(MBX *mbx)
 	mbx->magic = 0;
 	rt_wakeup_pollers(&mbx->poll_recv, RTE_OBJREM);
 	rt_wakeup_pollers(&mbx->poll_send, RTE_OBJREM);
-	if (rt_sem_delete(&mbx->sndsem) || rt_sem_delete(&mbx->rcvsem)) {
+	if (rt_sem_delete(&mbx->sndsem) || rt_sem_delete(&mbx->rcvsem))
+	{
 		return -EFAULT;
 	}
-	while (mbx->waiting_task) {
+	while (mbx->waiting_task)
+	{
 		mbx_delete_signal(mbx);
 	}
 	rt_free(mbx->bufadr);
@@ -414,11 +452,14 @@ RTAI_SYSCALL_MODE int _rt_mbx_send(MBX *mbx, void *msg, int msg_size, int space)
 	int retval;
 
 	CHK_MBX_MAGIC;
-	if ((retval = rt_sem_wait(&mbx->sndsem)) > 1) {
+	if ((retval = rt_sem_wait(&mbx->sndsem)) > 1)
+	{
 		return MBX_RET(msg_size, retval);
 	}
-	while (msg_size) {
-		if ((retval = mbx_wait(mbx, &mbx->frbs, rt_current))) {
+	while (msg_size)
+	{
+		if ((retval = mbx_wait(mbx, &mbx->frbs, rt_current)))
+		{
 			rt_sem_signal(&mbx->sndsem);
 			retval = MBX_RET(msg_size, retval);
 			rt_wakeup_pollers(&mbx->poll_recv, retval);
@@ -456,9 +497,11 @@ RTAI_SYSCALL_MODE int _rt_mbx_send_wp(MBX *mbx, void *msg, int msg_size, int spa
 
 	CHK_MBX_MAGIC;
 	flags = rt_global_save_flags_and_cli();
-	if (mbx->sndsem.count > 0 && mbx->frbs) {
+	if (mbx->sndsem.count > 0 && mbx->frbs)
+	{
 		mbx->sndsem.count = 0;
-		if (mbx->sndsem.type > 0) {
+		if (mbx->sndsem.type > 0)
+		{
 			mbx->sndsem.owndby = rt_current;
 			enqueue_resqel(&mbx->sndsem.resq, rt_current);
 		}
@@ -466,10 +509,13 @@ RTAI_SYSCALL_MODE int _rt_mbx_send_wp(MBX *mbx, void *msg, int msg_size, int spa
 		msg_size = mbxput(mbx, (char **)(&msg), msg_size, space);
 		mbx_signal(mbx);
 		rt_sem_signal(&mbx->sndsem);
-	} else {
+	}
+	else
+	{
 		rt_global_restore_flags(flags);
 	}
-	if (msg_size < size) {
+	if (msg_size < size)
+	{
 		rt_wakeup_pollers(&mbx->poll_recv, 0);
 	}
 	return msg_size;
@@ -495,9 +541,11 @@ RTAI_SYSCALL_MODE int _rt_mbx_send_if(MBX *mbx, void *msg, int msg_size, int spa
 
 	CHK_MBX_MAGIC;
 	flags = rt_global_save_flags_and_cli();
-	if (mbx->sndsem.count > 0 && msg_size <= mbx->frbs) {
+	if (mbx->sndsem.count > 0 && msg_size <= mbx->frbs)
+	{
 		mbx->sndsem.count = 0;
-		if (mbx->sndsem.type > 0) {
+		if (mbx->sndsem.type > 0)
+		{
 			mbx->sndsem.owndby = rt_current;
 			enqueue_resqel(&mbx->sndsem.resq, rt_current);
 		}
@@ -541,11 +589,14 @@ RTAI_SYSCALL_MODE int _rt_mbx_send_until(MBX *mbx, void *msg, int msg_size, RTIM
 	int retval;
 
 	CHK_MBX_MAGIC;
-	if ((retval = rt_sem_wait_until(&mbx->sndsem, time)) > 1) {
+	if ((retval = rt_sem_wait_until(&mbx->sndsem, time)) > 1)
+	{
 		return MBX_RET(msg_size, retval);
 	}
-	while (msg_size) {
-		if ((retval = mbx_wait_until(mbx, &mbx->frbs, time, rt_current))) {
+	while (msg_size)
+	{
+		if ((retval = mbx_wait_until(mbx, &mbx->frbs, time, rt_current)))
+		{
 			rt_sem_signal(&mbx->sndsem);
 			retval = MBX_RET(msg_size, retval);
 			rt_wakeup_pollers(&mbx->poll_recv, retval);
@@ -612,11 +663,14 @@ RTAI_SYSCALL_MODE int _rt_mbx_receive(MBX *mbx, void *msg, int msg_size, int spa
 	int retval;
 
 	CHK_MBX_MAGIC;
-	if ((retval = rt_sem_wait(&mbx->rcvsem)) > 1) {
+	if ((retval = rt_sem_wait(&mbx->rcvsem)) > 1)
+	{
 		return msg_size;
 	}
-	while (msg_size) {
-		if ((retval = mbx_wait(mbx, &mbx->avbs, rt_current))) {
+	while (msg_size)
+	{
+		if ((retval = mbx_wait(mbx, &mbx->avbs, rt_current)))
+		{
 			rt_sem_signal(&mbx->rcvsem);
 			retval = MBX_RET(msg_size, retval);
 			rt_wakeup_pollers(&mbx->poll_recv, retval);
@@ -656,9 +710,11 @@ RTAI_SYSCALL_MODE int _rt_mbx_receive_wp(MBX *mbx, void *msg, int msg_size, int 
 
 	CHK_MBX_MAGIC;
 	flags = rt_global_save_flags_and_cli();
-	if (mbx->rcvsem.count > 0 && mbx->avbs) {
+	if (mbx->rcvsem.count > 0 && mbx->avbs)
+	{
 		mbx->rcvsem.count = 0;
-		if (mbx->rcvsem.type > 0) {
+		if (mbx->rcvsem.type > 0)
+		{
 			mbx->rcvsem.owndby = rt_current;
 			enqueue_resqel(&mbx->rcvsem.resq, rt_current);
 		}
@@ -666,10 +722,13 @@ RTAI_SYSCALL_MODE int _rt_mbx_receive_wp(MBX *mbx, void *msg, int msg_size, int 
 		msg_size = mbxget(mbx, (char **)(&msg), msg_size, space);
 		mbx_signal(mbx);
 		rt_sem_signal(&mbx->rcvsem);
-	} else {
+	}
+	else
+	{
 		rt_global_restore_flags(flags);
 	}
-	if (msg_size < size) {
+	if (msg_size < size)
+	{
 		rt_wakeup_pollers(&mbx->poll_send, 0);
 	}
 	return msg_size;
@@ -700,9 +759,11 @@ RTAI_SYSCALL_MODE int _rt_mbx_receive_if(MBX *mbx, void *msg, int msg_size, int 
 
 	CHK_MBX_MAGIC;
 	flags = rt_global_save_flags_and_cli();
-	if (mbx->rcvsem.count > 0 && msg_size <= mbx->avbs) {
+	if (mbx->rcvsem.count > 0 && msg_size <= mbx->avbs)
+	{
 		mbx->rcvsem.count = 0;
-		if (mbx->rcvsem.type > 0) {
+		if (mbx->rcvsem.type > 0)
+		{
 			mbx->rcvsem.owndby = rt_current;
 			enqueue_resqel(&mbx->rcvsem.resq, rt_current);
 		}
@@ -746,11 +807,14 @@ RTAI_SYSCALL_MODE int _rt_mbx_receive_until(MBX *mbx, void *msg, int msg_size, R
 	int retval;
 
 	CHK_MBX_MAGIC;
-	if ((retval = rt_sem_wait_until(&mbx->rcvsem, time)) > 1) {
+	if ((retval = rt_sem_wait_until(&mbx->rcvsem, time)) > 1)
+	{
 		return MBX_RET(msg_size, retval);
 	}
-	while (msg_size) {
-		if ((retval = mbx_wait_until(mbx, &mbx->avbs, time, rt_current))) {
+	while (msg_size)
+	{
+		if ((retval = mbx_wait_until(mbx, &mbx->avbs, time, rt_current)))
+		{
 			rt_sem_signal(&mbx->rcvsem);
 			retval = MBX_RET(msg_size, retval);
 			rt_wakeup_pollers(&mbx->poll_recv, retval);
@@ -813,9 +877,11 @@ RTAI_SYSCALL_MODE int _rt_mbx_ovrwr_send(MBX *mbx, void *msg, int msg_size, int 
 	CHK_MBX_MAGIC;
 
 	flags = rt_global_save_flags_and_cli();
-	if (mbx->sndsem.count > 0) {
+	if (mbx->sndsem.count > 0)
+	{
 		mbx->sndsem.count = 0;
-		if (mbx->sndsem.type > 0) {
+		if (mbx->sndsem.type > 0)
+		{
 			mbx->sndsem.owndby = rt_current;
 			enqueue_resqel(&mbx->sndsem.resq, rt_current);
 		}
@@ -823,7 +889,9 @@ RTAI_SYSCALL_MODE int _rt_mbx_ovrwr_send(MBX *mbx, void *msg, int msg_size, int 
 		msg_size = mbxovrwrput(mbx, (char **)(&msg), msg_size, space);
 		mbx_signal(mbx);
 		rt_sem_signal(&mbx->sndsem);
-	} else {
+	}
+	else
+	{
 		rt_global_restore_flags(flags);
 	}
 	return msg_size;
@@ -859,12 +927,15 @@ RTAI_SYSCALL_MODE MBX *_rt_typed_named_mbx_init(unsigned long mbx_name, int size
 {
 	MBX *mbx;
 
-	if ((mbx = rt_get_adr_cnt(mbx_name))) {
+	if ((mbx = rt_get_adr_cnt(mbx_name)))
+	{
 		return mbx;
 	}
-	if ((mbx = rt_malloc(sizeof(MBX)))) {
+	if ((mbx = rt_malloc(sizeof(MBX))))
+	{
 		rt_typed_mbx_init(mbx, size, qtype);
-		if (rt_register(mbx_name, mbx, IS_MBX, 0)) {
+		if (rt_register(mbx_name, mbx, IS_MBX, 0))
+		{
 			return mbx;
 		}
 		rt_mbx_delete(mbx);
@@ -896,11 +967,15 @@ RTAI_SYSCALL_MODE MBX *_rt_typed_named_mbx_init(unsigned long mbx_name, int size
 RTAI_SYSCALL_MODE int rt_named_mbx_delete(MBX *mbx)
 {
 	int ret;
-	if (!(ret = rt_drg_on_adr_cnt(mbx))) {
-		if (!rt_mbx_delete(mbx)) {
+	if (!(ret = rt_drg_on_adr_cnt(mbx)))
+	{
+		if (!rt_mbx_delete(mbx))
+		{
 			rt_free(mbx);
 			return 0;
-		} else {
+		}
+		else
+		{
 			return -EFAULT;
 		}
 	}
@@ -909,7 +984,8 @@ RTAI_SYSCALL_MODE int rt_named_mbx_delete(MBX *mbx)
 
 /* +++++++++++++++++++++++++ MAIL BOXES ENTRIES +++++++++++++++++++++++++++++ */
 
-struct rt_native_fun_entry rt_mbx_entries[] = {
+struct rt_native_fun_entry rt_mbx_entries[] =
+{
 
 	{ { 0, rt_typed_mbx_init }, 	      	TYPED_MBX_INIT },
 	{ { 0, rt_mbx_delete }, 	      	MBX_DELETE },

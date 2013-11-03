@@ -66,7 +66,7 @@ static inline unsigned long long ullmul(unsigned long m0, unsigned long m1)
 	unsigned long long res;
 
 	__asm__ __volatile__ ("mulhwu %0, %1, %2"
-	: "=r" (((unsigned long *)&res)[0]) : "%r" (m0), "r" (m1));
+			      : "=r" (((unsigned long *)&res)[0]) : "%r" (m0), "r" (m1));
 	((unsigned long *)&res)[1] = m0*m1;
 
 	return res;
@@ -82,7 +82,8 @@ static inline unsigned long long ulldiv(unsigned long long ull, unsigned long ul
 	q = 0;
 	rf = (unsigned long long)(0xFFFFFFFF - (qf = 0xFFFFFFFF / uld) * uld) + 1ULL;
 
-	while (ull >= uld) {
+	while (ull >= uld)
+	{
 		((unsigned long *)&q)[0] += (qh = ((unsigned long *)&ull)[0] / uld);
 		rh = ((unsigned long *)&ull)[0] - qh * uld;
 		q += rh * (unsigned long long)qf + (ql = ((unsigned long *)&ull)[1] / uld);
@@ -153,8 +154,8 @@ extern void send_ipi_logical(unsigned long dest, int irq);
 #define rt_reset_irq_to_sym_mode(irq)
 extern int  rt_request_global_irq(unsigned int irq, void (*handler)(unsigned int irq));
 extern int  rt_request_global_irq_arg(unsigned int irq,
-		int (*handler)(int,void *,struct pt_regs *),
-		unsigned long flags,const char *dev,void *dev_id);
+				      int (*handler)(int,void *,struct pt_regs *),
+				      unsigned long flags,const char *dev,void *dev_id);
 extern int rt_request_global_irq_ext(unsigned int irq,
 				     int (*handler)(unsigned int irq, unsigned long handler),
 				     unsigned long data);
@@ -168,8 +169,8 @@ extern void rt_shutdown_irq(unsigned int irq);
 extern void rt_enable_irq(unsigned int irq);
 extern void rt_disable_irq(unsigned int irq);
 extern int rt_request_linux_irq(unsigned int irq,
-	void (*linux_handler)(int irq, void *dev_id, struct pt_regs *regs),
-	char *linux_handler_id, void *dev_id);
+				void (*linux_handler)(int irq, void *dev_id, struct pt_regs *regs),
+				char *linux_handler_id, void *dev_id);
 extern int rt_free_linux_irq(unsigned int irq, void *dev_id);
 extern void rt_pend_linux_irq(unsigned int irq);
 extern void rt_tick_linux_timer(void);
@@ -220,7 +221,7 @@ static inline void hard_restore_flags(unsigned long flags)
 		"\tmfmsr 	0\n"
 		"\trlwimi	%0,0,0,17,15\n"
 		"\tmtmsr	%0\n"
-	: : "r" (flags) : "r0"
+		: : "r" (flags) : "r0"
 	);
 }
 
@@ -257,7 +258,8 @@ static inline void __hard_save_flags(unsigned long *flags)
 static inline void rt_get_global_lock(void)
 {
 	hard_cli();
-	if (!test_and_set_bit(hard_cpu_id(), locked_cpus)) {
+	if (!test_and_set_bit(hard_cpu_id(), locked_cpus))
+	{
 		while (test_and_set_bit(31, locked_cpus));
 	}
 }
@@ -265,7 +267,8 @@ static inline void rt_get_global_lock(void)
 static inline void rt_release_global_lock(void)
 {
 	hard_cli();
-	if (test_and_clear_bit(hard_cpu_id(), locked_cpus)) {
+	if (test_and_clear_bit(hard_cpu_id(), locked_cpus))
+	{
 		clear_bit(31, locked_cpus);
 	}
 }
@@ -346,10 +349,13 @@ static inline int rt_global_save_flags_and_cli(void)
 	unsigned long flags;
 
 	hard_save_flags_and_cli(flags);
-	if (!test_and_set_bit(hard_cpu_id(), locked_cpus)) {
+	if (!test_and_set_bit(hard_cpu_id(), locked_cpus))
+	{
 		while (test_and_set_bit(31, locked_cpus));
 		return ((flags & (1 << IFLAG)) + 1);
-	} else {
+	}
+	else
+	{
 		return (flags & (1 << IFLAG));
 	}
 }
@@ -361,7 +367,8 @@ static inline void rt_global_save_flags(unsigned long *flags)
 	hard_save_flags_and_cli(hflags);
 	hflags = hflags & (1 << IFLAG);
 	rflags = hflags | !test_bit(hard_cpu_id(), locked_cpus);
-	if (hflags) {
+	if (hflags)
+	{
 		hard_sti();
 	}
 	*flags = rflags;
@@ -369,17 +376,18 @@ static inline void rt_global_save_flags(unsigned long *flags)
 
 static inline void rt_global_restore_flags(unsigned long flags)
 {
-	switch (flags) {
-		case (1 << IFLAG) | 1:	rt_release_global_lock();
-				  	hard_sti();
-					break;
-		case (1 << IFLAG) | 0:	rt_get_global_lock();
-				 	hard_sti();
-					break;
-		case (0 << IFLAG) | 1:	rt_release_global_lock();
-					break;
-		case (0 << IFLAG) | 0:	rt_get_global_lock();
-					break;
+	switch (flags)
+	{
+	case (1 << IFLAG) | 1:	rt_release_global_lock();
+		hard_sti();
+		break;
+	case (1 << IFLAG) | 0:	rt_get_global_lock();
+		hard_sti();
+		break;
+	case (0 << IFLAG) | 1:	rt_release_global_lock();
+		break;
+	case (0 << IFLAG) | 0:	rt_get_global_lock();
+		break;
 	}
 }
 
@@ -388,7 +396,8 @@ static inline RT_TRAP_HANDLER rt_set_rtai_trap_handler(RT_TRAP_HANDLER handler)
 	return (RT_TRAP_HANDLER) 0;
 }
 
-struct calibration_data {
+struct calibration_data
+{
 	unsigned int cpu_freq;
 	int latency;
 	int setup_time_TIMER_CPUNIT;
@@ -436,7 +445,7 @@ static inline unsigned long long rdtsc(void)
 	unsigned long chk;
 // The code below is as suggested in Motorola reference manual for 32 bits PPCs.
 	__asm__ __volatile__ ("1: mftbu %0; mftb %1; mftbu %2; cmpw %2,%0; bne 1b"
-	: "=r" (((unsigned long *)&ts)[0]), "=r" (((unsigned long *)&ts)[1]), "=r" (chk) );
+			      : "=r" (((unsigned long *)&ts)[0]), "=r" (((unsigned long *)&ts)[1]), "=r" (chk) );
 
 	return ts;
 }
@@ -448,7 +457,7 @@ static inline void rt_set_decrementer_count(int delay)
 // NOTE: delay MUST be 0 if a periodic timer is being used.
 	if(!delay)delay = rt_times.intr_time - rdtsc();
 
-	if(delay<1){RT_BUG();}
+	if(delay<1) {RT_BUG();}
 #ifdef CONFIG_4xx
 	set_dec_4xx(delay);
 #else

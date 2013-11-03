@@ -49,7 +49,8 @@ static inline int rtai_timer_irq_ack( void )
 	return 0;
 }
 
-union rtai_tsc {
+union rtai_tsc
+{
 	unsigned long long tsc;
 	unsigned long hltsc[2];
 };
@@ -94,7 +95,8 @@ static inline void rt_set_timer_match_reg(int delay)
 //		next_match = OSMR0 = ((unsigned long *)&rt_times.intr_time)[0];
 
 #ifdef PROTECT_TIMER
-	while ((int)(next_match - OSCR) < 2 * SETUP_TIME_TICKS ) {
+	while ((int)(next_match - OSCR) < 2 * SETUP_TIME_TICKS )
+	{
 		OSSR = OSSR_M0;  /* Clear match on timer 0 */
 		next_match = OSMR0 = OSCR + 4 * SETUP_TIME_TICKS;
 	}

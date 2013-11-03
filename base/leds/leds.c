@@ -72,11 +72,12 @@ void rt_set_leds_port(int p)
 }
 
 void rt_config_leds(unsigned int type,
-	void (*func)(unsigned long p, unsigned int l),
-	unsigned long p)
+		    void (*func)(unsigned long p, unsigned int l),
+		    unsigned long p)
 {
 
-	switch(type){
+	switch(type)
+	{
 	case 0:
 		leds_func = func;
 		port = p;

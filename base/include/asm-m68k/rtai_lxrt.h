@@ -91,10 +91,11 @@ do { \
 
 #endif /* CONFIG_RTAI_RTC_FREQ != 0 */
 
-union rtai_lxrt_t {
-    RTIME rt;
-    int i[2];
-    void *v[2];
+union rtai_lxrt_t
+{
+	RTIME rt;
+	int i[2];
+	void *v[2];
 };
 
 #ifdef __cplusplus

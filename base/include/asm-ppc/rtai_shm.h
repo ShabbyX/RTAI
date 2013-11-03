@@ -38,11 +38,11 @@ static inline long long rtai_shmrq(unsigned long srq, unsigned long whatever)
 
 	__sc_0 = (__sc_3 = srq | (RTAI_SHM_VECTOR << 24)) + (__sc_4 = whatever);
 	__asm__ __volatile__
-		("trap         \n\t"
-		: "=&r" (__sc_3), "=&r" (__sc_4)
-		: "0"   (__sc_3), "1"   (__sc_4),
-		  "r"   (__sc_0)
-		: "r0", "r3", "r4" );
+	("trap         \n\t"
+	 : "=&r" (__sc_3), "=&r" (__sc_4)
+	 : "0"   (__sc_3), "1"   (__sc_4),
+	 "r"   (__sc_0)
+	 : "r0", "r3", "r4" );
 	((unsigned long *)&retval)[0] = __sc_3;
 	((unsigned long *)&retval)[1] = __sc_4;
 	return retval;
@@ -70,12 +70,15 @@ static inline unsigned long uvirt_to_kva(pgd_t *pgd, unsigned long adr)
 	pmd_t *pmd;
 	pte_t *ptep, pte;
 
-	if(!pgd_none(*pgd)) {
+	if(!pgd_none(*pgd))
+	{
 		pmd = pmd_offset(pgd, adr);
-		if (!pmd_none(*pmd)) {
+		if (!pmd_none(*pmd))
+		{
 			ptep = pte_offset_kernel(pmd, adr);
 			pte = *ptep;
-			if(pte_present(pte)){
+			if(pte_present(pte))
+			{
 				ret = (unsigned long) page_address(pte_page(pte));
 				ret |= (adr&(PAGE_SIZE-1));
 			}

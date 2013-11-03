@@ -70,7 +70,8 @@ struct rt_task_struct;
 
 #define TASKLET_STACK_SIZE  8196
 
-struct rt_usp_tasklet_struct {
+struct rt_usp_tasklet_struct
+{
 	struct rt_tasklet_struct *next, *prev;
 	int priority, uses_fpu, cpuid;
 	RTIME firing_time, period;
@@ -84,7 +85,8 @@ struct rt_usp_tasklet_struct {
 
 #ifdef __KERNEL__
 
-struct rt_tasklet_struct {
+struct rt_tasklet_struct
+{
 	struct rt_tasklet_struct *next, *prev;
 	int priority, uses_fpu, cpuid;
 	RTIME firing_time, period;
@@ -295,7 +297,8 @@ RTAI_SYSCALL_MODE void rt_register_task(struct rt_tasklet_struct *tasklet, struc
 
 #define rt_tasklet_struct  rt_usp_tasklet_struct
 #if 0
-struct rt_tasklet_struct {
+struct rt_tasklet_struct
+{
 	struct rt_tasklet_struct *next, *prev;
 	int priority, uses_fpu, cpuid;
 	RTIME firing_time, period;
@@ -322,20 +325,25 @@ static int support_tasklet(struct support_tasklet_s *args)
 	RT_TASK *task;
 	struct rt_tasklet_struct usptasklet;
 
-	if ((task = rt_thread_init((unsigned long)args->tasklet, 98, 0, SCHED_FIFO, 0xF))) {
+	if ((task = rt_thread_init((unsigned long)args->tasklet, 98, 0, SCHED_FIFO, 0xF)))
 	{
-		struct { struct rt_tasklet_struct *tasklet, *usptasklet; RT_TASK *task; } reg = { args->tasklet, &usptasklet, task };
-		rtai_lxrt(TASKLETS_IDX, sizeof(reg), REG_TASK, &reg);
-	}
+		{
+			struct { struct rt_tasklet_struct *tasklet, *usptasklet; RT_TASK *task; } reg = { args->tasklet, &usptasklet, task };
+			rtai_lxrt(TASKLETS_IDX, sizeof(reg), REG_TASK, &reg);
+		}
 		rt_grow_and_lock_stack(TASKLET_STACK_SIZE/2);
 		mlockall(MCL_CURRENT | MCL_FUTURE);
 		rt_make_hard_real_time();
 		args->done = 1;
-		while (1) {
+		while (1)
+		{
 			rt_task_suspend(task);
-			if (usptasklet.handler) {
+			if (usptasklet.handler)
+			{
 				usptasklet.handler(usptasklet.data);
-			} else {
+			}
+			else
+			{
 				break;
 			}
 		}
@@ -361,28 +369,36 @@ RTAI_PROTO(struct rt_tasklet_struct *, rt_init_tasklet, (void))
 	int is_hard;
 	struct support_tasklet_s arg;
 
-	if ((arg.tasklet = (struct rt_tasklet_struct*)rtai_lxrt(TASKLETS_IDX, SIZARG, INIT, &arg).v[LOW])) {
-		if ((is_hard = rt_is_hard_real_time(NULL))) {
+	if ((arg.tasklet = (struct rt_tasklet_struct*)rtai_lxrt(TASKLETS_IDX, SIZARG, INIT, &arg).v[LOW]))
+	{
+		if ((is_hard = rt_is_hard_real_time(NULL)))
+		{
 			rt_make_soft_real_time();
 		}
 		arg.done = 0;
-		if ((arg.thread = rt_thread_create((void *)support_tasklet, &arg.tasklet, TASKLET_STACK_SIZE))) {
+		if ((arg.thread = rt_thread_create((void *)support_tasklet, &arg.tasklet, TASKLET_STACK_SIZE)))
+		{
 			int i;
 #define POLLS_PER_SEC 100
-			for (i = 0; i < POLLS_PER_SEC/5 && !arg.done; i++) {
+			for (i = 0; i < POLLS_PER_SEC/5 && !arg.done; i++)
+			{
 				struct timespec delay = { 0, 1000000000/POLLS_PER_SEC };
 				nanosleep(&delay, NULL);
-				}
+			}
 #undef POLLS_PER_SEC
-			if (!arg.done || rtai_lxrt(TASKLETS_IDX, SIZARG, WAIT_IS_HARD, &arg).i[LOW]) {
+			if (!arg.done || rtai_lxrt(TASKLETS_IDX, SIZARG, WAIT_IS_HARD, &arg).i[LOW])
+			{
 				goto notdone;
 			}
-		} else {
+		}
+		else
+		{
 notdone:
 			rt_delete_tasklet(arg.tasklet);
 			arg.tasklet = NULL;
 		}
-		if (is_hard) {
+		if (is_hard)
+		{
 			rt_make_hard_real_time();
 		}
 	}
@@ -395,7 +411,8 @@ RTAI_PROTO(void, rt_delete_tasklet, (struct rt_tasklet_struct *tasklet))
 {
 	int thread;
 	struct { struct rt_tasklet_struct *tasklet; } arg = { tasklet };
-	if ((thread = rtai_lxrt(TASKLETS_IDX, SIZARG, DELETE, &arg).i[LOW])) {
+	if ((thread = rtai_lxrt(TASKLETS_IDX, SIZARG, DELETE, &arg).i[LOW]))
+	{
 		rt_thread_join(thread);
 	}
 }
@@ -440,11 +457,12 @@ RTAI_PROTO(void, rt_set_timer_period, (struct rt_tasklet_struct *timer, RTIME pe
 
 RTAI_PROTO(void, rt_get_timer_times, (struct rt_tasklet_struct *timer, RTIME timer_times[]))
 {
-	if (timer_times) {
-		  RTIME ltimer_times[2];
-			struct { struct rt_tasklet_struct *timer; RTIME *timer_times; } arg = { timer, ltimer_times };
-	    rtai_lxrt(TASKLETS_IDX, SIZARG, GET_TMR_TIM, &arg);
-	    memcpy(timer_times, ltimer_times, sizeof(ltimer_times));
+	if (timer_times)
+	{
+		RTIME ltimer_times[2];
+		struct { struct rt_tasklet_struct *timer; RTIME *timer_times; } arg = { timer, ltimer_times };
+		rtai_lxrt(TASKLETS_IDX, SIZARG, GET_TMR_TIM, &arg);
+		memcpy(timer_times, ltimer_times, sizeof(ltimer_times));
 	}
 }
 
@@ -474,7 +492,8 @@ RTAI_PROTO(RT_TASK *, rt_tasklet_use_fpu, (struct rt_tasklet_struct *tasklet, in
 {
 	RT_TASK *task;
 	struct { struct rt_tasklet_struct *tasklet; long use_fpu; } arg = { tasklet, use_fpu };
-	if ((task = (RT_TASK*)rtai_lxrt(TASKLETS_IDX, SIZARG, USE_FPU, &arg).v[LOW])) {
+	if ((task = (RT_TASK*)rtai_lxrt(TASKLETS_IDX, SIZARG, USE_FPU, &arg).v[LOW]))
+	{
 		rt_task_use_fpu(task, use_fpu);
 	}
 	return task;
@@ -518,13 +537,18 @@ struct rt_tasklets_struct { volatile int in, out, avb, ntasklets; struct rt_task
 RTAI_PROTO(struct rt_tasklets_struct *, rt_create_tasklets, (int ntasklets))
 {
 	struct rt_tasklets_struct *tasklets;
-	if ((tasklets = (struct rt_tasklets_struct *)malloc(sizeof(struct rt_tasklets_struct)))) {
-		if ((tasklets->tasklets = (struct rt_tasklet_struct **)malloc(ntasklets*sizeof(struct rt_tasklet_struct *)))) {
+	if ((tasklets = (struct rt_tasklets_struct *)malloc(sizeof(struct rt_tasklets_struct))))
+	{
+		if ((tasklets->tasklets = (struct rt_tasklet_struct **)malloc(ntasklets*sizeof(struct rt_tasklet_struct *))))
+		{
 			int i;
-			for (i = 0; i < ntasklets; i++) {
-				if (!(tasklets->tasklets[i] = rt_init_tasklet())) {
+			for (i = 0; i < ntasklets; i++)
+			{
+				if (!(tasklets->tasklets[i] = rt_init_tasklet()))
+				{
 					int k;
-					for (k = 0; k < i; k++) {
+					for (k = 0; k < i; k++)
+					{
 						rt_delete_tasklet(tasklets->tasklets[k]);
 					}
 					free(tasklets->tasklets);
@@ -534,7 +558,9 @@ RTAI_PROTO(struct rt_tasklets_struct *, rt_create_tasklets, (int ntasklets))
 			tasklets->lock = 0;
 			tasklets->ntasklets = tasklets->avb = tasklets->in = tasklets->out = ntasklets;
 			return tasklets;
-		} else {
+		}
+		else
+		{
 free_tasklets:
 			free(tasklets);
 		}
@@ -547,7 +573,8 @@ free_tasklets:
 RTAI_PROTO(void, rt_destroy_tasklets, (struct rt_tasklets_struct *tasklets))
 {
 	int i;
-	for (i = 0; i < tasklets->ntasklets; i++) {
+	for (i = 0; i < tasklets->ntasklets; i++)
+	{
 		rt_delete_tasklet(tasklets->tasklets[i]);
 	}
 	free(tasklets->tasklets);
@@ -562,8 +589,10 @@ RTAI_PROTO(struct rt_tasklet_struct *, rt_get_tasklet, (struct rt_tasklets_struc
 {
 	struct rt_tasklet_struct *tasklet;
 	while (atomic_cmpxchg((void *)&tasklets->lock, 0, 1));
-	if (tasklets->avb > 0) {
-		if (tasklets->out >= tasklets->ntasklets) {
+	if (tasklets->avb > 0)
+	{
+		if (tasklets->out >= tasklets->ntasklets)
+		{
 			tasklets->out = 0;
 		}
 		tasklets->avb--;
@@ -580,8 +609,10 @@ RTAI_PROTO(struct rt_tasklet_struct *, rt_get_tasklet, (struct rt_tasklets_struc
 RTAI_PROTO(int, rt_gvb_tasklet, (struct rt_tasklet_struct *tasklet, struct rt_tasklets_struct *tasklets))
 {
 	while (atomic_cmpxchg((void *)&tasklets->lock, 0, 1));
-	if (tasklets->avb < tasklets->ntasklets) {
-		if (tasklets->in >= tasklets->ntasklets) {
+	if (tasklets->avb < tasklets->ntasklets)
+	{
+		if (tasklets->in >= tasklets->ntasklets)
+		{
 			tasklets->in = 0;
 		}
 		tasklets->avb++;

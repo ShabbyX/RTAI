@@ -223,7 +223,8 @@ static inline void enq_ready_edf_task(RT_TASK *ready_task)
 #else
 	task = rt_smp_linux_task[0].rnext;
 #endif
-	while (task->policy < 0 && ready_task->period >= task->period) {
+	while (task->policy < 0 && ready_task->period >= task->period)
+	{
 		task = task->rnext;
 	}
 	task->rprev = (ready_task->rprev = task->rprev)->rnext = ready_task;
@@ -255,18 +256,22 @@ do { \
 static inline void enq_ready_task(RT_TASK *ready_task)
 {
 	RT_TASK *task;
-	if (ready_task->is_hard) {
+	if (ready_task->is_hard)
+	{
 #ifdef CONFIG_SMP
 		task = rt_smp_linux_task[ready_task->runnable_on_cpus].rnext;
 #else
 		task = rt_smp_linux_task[0].rnext;
 #endif
-		while (ready_task->priority >= task->priority) {
+		while (ready_task->priority >= task->priority)
+		{
 			if ((task = task->rnext)->priority < 0) break;
 		}
 		task->rprev = (ready_task->rprev = task->rprev)->rnext = ready_task;
 		ready_task->rnext = task;
-	} else {
+	}
+	else
+	{
 		ready_task->state |= RT_SCHED_SFTRDY;
 		NON_RTAI_TASK_RESUME(ready_task);
 	}
@@ -275,9 +280,11 @@ static inline void enq_ready_task(RT_TASK *ready_task)
 static inline int renq_ready_task(RT_TASK *ready_task, int priority)
 {
 	int retval;
-	if ((retval = ready_task->priority != priority)) {
+	if ((retval = ready_task->priority != priority))
+	{
 		ready_task->priority = priority;
-		if (ready_task->state == RT_SCHED_READY) {
+		if (ready_task->state == RT_SCHED_READY)
+		{
 			(ready_task->rprev)->rnext = ready_task->rnext;
 			(ready_task->rnext)->rprev = ready_task->rprev;
 			enq_ready_task(ready_task);
@@ -288,8 +295,10 @@ static inline int renq_ready_task(RT_TASK *ready_task, int priority)
 
 static inline void rem_ready_task(RT_TASK *task)
 {
-	if (task->state == RT_SCHED_READY) {
-		if (!task->is_hard) {
+	if (task->state == RT_SCHED_READY)
+	{
+		if (!task->is_hard)
+		{
 			NON_RTAI_TASK_SUSPEND(task);
 		}
 //		task->unblocked = 0;
@@ -300,7 +309,8 @@ static inline void rem_ready_task(RT_TASK *task)
 
 static inline void rem_ready_current(RT_TASK *rt_current)
 {
-	if (!rt_current->is_hard) {
+	if (!rt_current->is_hard)
+	{
 		NON_RTAI_TASK_SUSPEND(rt_current);
 	}
 //	rt_current->unblocked = 0;
@@ -322,12 +332,16 @@ static inline void enq_timed_task(RT_TASK *timed_task)
 #endif
 	rbtn = &taskh->rbr.rb_node;
 
-	while (*rbtn) {
+	while (*rbtn)
+	{
 		rbtpn = *rbtn;
 		tsknxt = rb_entry(rbtpn, RT_TASK, rbn);
-		if (timed_task->resume_time > tsknxt->resume_time) {
+		if (timed_task->resume_time > tsknxt->resume_time)
+		{
 			rbtn = &(rbtpn)->rb_right;
-		} else {
+		}
+		else
+		{
 			rbtn = &(rbtpn)->rb_left;
 			task = tsknxt;
 		}
@@ -352,7 +366,8 @@ static inline void enq_timed_task(RT_TASK *timed_task)
 #else
 	task = rt_smp_linux_task[0].tnext;
 #endif
-	while (timed_task->resume_time > task->resume_time) {
+	while (timed_task->resume_time > task->resume_time)
+	{
 		task = task->tnext;
 	}
 	task->tprev = (timed_task->tprev = task->tprev)->tnext = timed_task;
@@ -365,7 +380,8 @@ static inline void enq_timed_task(RT_TASK *timed_task)
 
 static inline void rem_timed_task(RT_TASK *task)
 {
-	if ((task->state & RT_SCHED_DELAYED)) {
+	if ((task->state & RT_SCHED_DELAYED))
+	{
 		(task->tprev)->tnext = task->tnext;
 		(task->tnext)->tprev = task->tprev;
 #ifdef CONFIG_SMP
@@ -384,15 +400,22 @@ static inline void wake_up_timed_tasks(int cpuid)
 #else
 	task = (taskh = &rt_smp_linux_task[0])->tnext;
 #endif
-	if (task->resume_time <= rt_time_h) {
-		do {
-			if ((task->state & RT_SCHED_SUSPENDED) && task->suspdepth > 0) {
+	if (task->resume_time <= rt_time_h)
+	{
+		do
+		{
+			if ((task->state & RT_SCHED_SUSPENDED) && task->suspdepth > 0)
+			{
 				task->suspdepth = 0;
 			}
-			if ((task->state &= ~(RT_SCHED_DELAYED | RT_SCHED_SUSPENDED | RT_SCHED_SEMAPHORE | RT_SCHED_RECEIVE | RT_SCHED_SEND | RT_SCHED_RPC | RT_SCHED_RETURN | RT_SCHED_MBXSUSP | RT_SCHED_POLL)) == RT_SCHED_READY) {
-				if (task->policy < 0) {
+			if ((task->state &= ~(RT_SCHED_DELAYED | RT_SCHED_SUSPENDED | RT_SCHED_SEMAPHORE | RT_SCHED_RECEIVE | RT_SCHED_SEND | RT_SCHED_RPC | RT_SCHED_RETURN | RT_SCHED_MBXSUSP | RT_SCHED_POLL)) == RT_SCHED_READY)
+			{
+				if (task->policy < 0)
+				{
 					enq_ready_edf_task(task);
-				} else {
+				}
+				else
+				{
 					enq_ready_task(task);
 				}
 #if defined(CONFIG_RTAI_BUSY_TIME_ALIGN) && CONFIG_RTAI_BUSY_TIME_ALIGN
@@ -401,7 +424,8 @@ static inline void wake_up_timed_tasks(int cpuid)
 			}
 			rb_erase_task(task, cpuid);
 			task = task->tnext;
-		} while (task->resume_time <= rt_time_h);
+		}
+		while (task->resume_time <= rt_time_h);
 #ifdef CONFIG_SMP
 		rt_smp_linux_task[cpuid].tnext = task;
 		task->tprev = &rt_smp_linux_task[cpuid];
@@ -429,7 +453,8 @@ static inline void enqueue_blocked(RT_TASK *task, QUEUE *queue, int qtype)
 {
 	QUEUE *q;
 	task->blocked_on = (q = queue);
-	if (!qtype) {
+	if (!qtype)
+	{
 		while ((q = q->next) != queue && (q->task)->priority <= task->priority);
 	}
 	q->prev = (task->queue.prev = q->prev)->next  = &(task->queue);
@@ -453,10 +478,13 @@ static inline unsigned long pass_prio(RT_TASK *to, RT_TASK *from)
 	schedmap = 0;
 #endif
 //	from->prio_passed_to = to;
-	while (to && to->priority > from->priority) {
+	while (to && to->priority > from->priority)
+	{
 		to->priority = from->priority;
-		if (to->state == RT_SCHED_READY) {
-			if ((to->rprev)->priority > to->priority || (to->rnext)->priority < to->priority) {
+		if (to->state == RT_SCHED_READY)
+		{
+			if ((to->rprev)->priority > to->priority || (to->rnext)->priority < to->priority)
+			{
 #ifdef CONFIG_SMP
 				rhead = rt_smp_linux_task[to->runnable_on_cpus].rnext;
 #endif
@@ -464,22 +492,27 @@ static inline unsigned long pass_prio(RT_TASK *to, RT_TASK *from)
 				(to->rnext)->rprev = to->rprev;
 				enq_ready_task(to);
 #ifdef CONFIG_SMP
-				if (rhead != rt_smp_linux_task[to->runnable_on_cpus].rnext)  {
+				if (rhead != rt_smp_linux_task[to->runnable_on_cpus].rnext)
+				{
 					__set_bit(to->runnable_on_cpus & 0x1F, &schedmap);
 				}
 #endif
 			}
 			break;
 //		} else if ((void *)(q = to->blocked_on) > RTE_HIGERR && !((to->state & RT_SCHED_SEMAPHORE) && ((SEM *)q)->qtype)) {
-		} else if ((unsigned long)(blocked_on = to->blocked_on) > RTE_HIGERR && (((to->state & RT_SCHED_SEMAPHORE) && ((SEM *)blocked_on)->type > 0) || (to->state & (RT_SCHED_SEND | RT_SCHED_RPC | RT_SCHED_RETURN)))) {
-			if (to->queue.prev != blocked_on) {
+		}
+		else if ((unsigned long)(blocked_on = to->blocked_on) > RTE_HIGERR && (((to->state & RT_SCHED_SEMAPHORE) && ((SEM *)blocked_on)->type > 0) || (to->state & (RT_SCHED_SEND | RT_SCHED_RPC | RT_SCHED_RETURN))))
+		{
+			if (to->queue.prev != blocked_on)
+			{
 				q = blocked_on;
 				(to->queue.prev)->next = to->queue.next;
 				(to->queue.next)->prev = to->queue.prev;
 				while ((q = q->next) != blocked_on && (q->task)->priority <= to->priority);
 				q->prev = (to->queue.prev = q->prev)->next  = &(to->queue);
 				to->queue.next = q;
-				if (to->queue.prev != blocked_on) {
+				if (to->queue.prev != blocked_on)
+				{
 					break;
 				}
 			}
@@ -513,7 +546,8 @@ static inline void __call_exit_handlers(RT_TASK *task)
 	XHDL *pt, *tmp;
 
 	pt = task->ExitHook; // Initialise ExitHook in rt_task_init()
-	while ( pt ) {
+	while ( pt )
+	{
 		(*pt->fun) (pt->arg1, pt->arg2);
 		tmp = pt;
 		pt  = pt->nxt;
@@ -541,40 +575,40 @@ static inline int rtai_init_features (void)
 
 {
 #ifdef CONFIG_RTAI_LEDS_BUILTIN
-    __rtai_leds_init();
+	__rtai_leds_init();
 #endif /* CONFIG_RTAI_LEDS_BUILTIN */
 #ifdef CONFIG_RTAI_SEM_BUILTIN
-    __rtai_sem_init();
+	__rtai_sem_init();
 #endif /* CONFIG_RTAI_SEM_BUILTIN */
 #ifdef CONFIG_RTAI_MSG_BUILTIN
-    __rtai_msg_init();
+	__rtai_msg_init();
 #endif /* CONFIG_RTAI_MSG_BUILTIN */
 #ifdef CONFIG_RTAI_MBX_BUILTIN
-    __rtai_mbx_init();
+	__rtai_mbx_init();
 #endif /* CONFIG_RTAI_MBX_BUILTIN */
 #ifdef CONFIG_RTAI_TBX_BUILTIN
-    __rtai_msg_queue_init();
+	__rtai_msg_queue_init();
 #endif /* CONFIG_RTAI_TBX_BUILTIN */
 #ifdef CONFIG_RTAI_MQ_BUILTIN
-    __rtai_mq_init();
+	__rtai_mq_init();
 #endif /* CONFIG_RTAI_MQ_BUILTIN */
 #ifdef CONFIG_RTAI_BITS_BUILTIN
-    __rtai_bits_init();
+	__rtai_bits_init();
 #endif /* CONFIG_RTAI_BITS_BUILTIN */
 #ifdef CONFIG_RTAI_TASKLETS_BUILTIN
-    __rtai_tasklets_init();
+	__rtai_tasklets_init();
 #endif /* CONFIG_RTAI_TASKLETS_BUILTIN */
 #ifdef CONFIG_RTAI_FIFOS_BUILTIN
-    __rtai_fifos_init();
+	__rtai_fifos_init();
 #endif /* CONFIG_RTAI_FIFOS_BUILTIN */
 #ifdef CONFIG_RTAI_NETRPC_BUILTIN
-    __rtai_netrpc_init();
+	__rtai_netrpc_init();
 #endif /* CONFIG_RTAI_NETRPC_BUILTIN */
 #ifdef CONFIG_RTAI_SHM_BUILTIN
-    __rtai_shm_init();
+	__rtai_shm_init();
 #endif /* CONFIG_RTAI_SHM_BUILTIN */
 #ifdef CONFIG_RTAI_MATH_BUILTIN
-    __rtai_math_init();
+	__rtai_math_init();
 #endif /* CONFIG_RTAI_MATH_BUILTIN */
 #ifdef CONFIG_RTAI_USI
 	printk(KERN_INFO "RTAI[usi]: enabled.\n");
@@ -583,43 +617,44 @@ static inline int rtai_init_features (void)
 	return 0;
 }
 
-static inline void rtai_cleanup_features (void) {
+static inline void rtai_cleanup_features (void)
+{
 
 #ifdef CONFIG_RTAI_MATH_BUILTIN
-    __rtai_math_exit();
+	__rtai_math_exit();
 #endif /* CONFIG_RTAI_MATH_BUILTIN */
 #ifdef CONFIG_RTAI_SHM_BUILTIN
-    __rtai_shm_exit();
+	__rtai_shm_exit();
 #endif /* CONFIG_RTAI_SHM_BUILTIN */
 #ifdef CONFIG_RTAI_NETRPC_BUILTIN
-    __rtai_netrpc_exit();
+	__rtai_netrpc_exit();
 #endif /* CONFIG_RTAI_NETRPC_BUILTIN */
 #ifdef CONFIG_RTAI_FIFOS_BUILTIN
-    __rtai_fifos_exit();
+	__rtai_fifos_exit();
 #endif /* CONFIG_RTAI_FIFOS_BUILTIN */
 #ifdef CONFIG_RTAI_TASKLETS_BUILTIN
-    __rtai_tasklets_exit();
+	__rtai_tasklets_exit();
 #endif /* CONFIG_RTAI_TASKLETS_BUILTIN */
 #ifdef CONFIG_RTAI_BITS_BUILTIN
-    __rtai_bits_exit();
+	__rtai_bits_exit();
 #endif /* CONFIG_RTAI_BITS_BUILTIN */
 #ifdef CONFIG_RTAI_MQ_BUILTIN
-    __rtai_mq_exit();
+	__rtai_mq_exit();
 #endif /* CONFIG_RTAI_MQ_BUILTIN */
 #ifdef CONFIG_RTAI_TBX_BUILTIN
-    __rtai_msg_queue_exit();
+	__rtai_msg_queue_exit();
 #endif /* CONFIG_RTAI_TBX_BUILTIN */
 #ifdef CONFIG_RTAI_MBX_BUILTIN
-    __rtai_mbx_exit();
+	__rtai_mbx_exit();
 #endif /* CONFIG_RTAI_MBX_BUILTIN */
 #ifdef CONFIG_RTAI_MSG_BUILTIN
-    __rtai_msg_exit();
+	__rtai_msg_exit();
 #endif /* CONFIG_RTAI_MSG_BUILTIN */
 #ifdef CONFIG_RTAI_SEM_BUILTIN
-    __rtai_sem_exit();
+	__rtai_sem_exit();
 #endif /* CONFIG_RTAI_SEM_BUILTIN */
 #ifdef CONFIG_RTAI_LEDS_BUILTIN
-    __rtai_leds_exit();
+	__rtai_leds_exit();
 #endif /* CONFIG_RTAI_LEDS_BUILTIN */
 }
 

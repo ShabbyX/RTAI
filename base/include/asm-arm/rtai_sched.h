@@ -110,9 +110,9 @@
 extern inline unsigned long
 current_domain_access_control(void)
 {
-    unsigned long domain_access_control;
-    asm("mrc p15, 0, %0, c3, c0" : "=r" (domain_access_control));
-    return domain_access_control;
+	unsigned long domain_access_control;
+	asm("mrc p15, 0, %0, c3, c0" : "=r" (domain_access_control));
+	return domain_access_control;
 }
 
 /*
@@ -155,9 +155,9 @@ do { \
 extern inline void *
 get_stack_pointer(void)
 {
-    void *sp;
-    asm("mov %0, sp" : "=r" (sp));
-    return sp;
+	void *sp;
+	asm("mov %0, sp" : "=r" (sp));
+	return sp;
 }
 
 /* acknowledge timer interrupt in scheduler's timer-handler (using the

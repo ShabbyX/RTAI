@@ -31,28 +31,30 @@
 #define WDLOG(fmt, args...) rt_printk("RTAI[watchdog]: " fmt, ##args)
 
 // What should happen to misbehaving tasks
-typedef enum watchdog_policy {
-    WD_NOTHING, 				// Not recommended
-    WD_RESYNC,				// Good for occasional overruns
-    WD_DEBUG,				// Good for debugging oneshot tasks
-    WD_STRETCH,				// Good for overrunning tasks
-    WD_SLIP, 				// Good for infinite loops
-    WD_SUSPEND, 				// Good for most things
-    WD_KILL 				// Death sentence
+typedef enum watchdog_policy
+{
+	WD_NOTHING, 				// Not recommended
+	WD_RESYNC,				// Good for occasional overruns
+	WD_DEBUG,				// Good for debugging oneshot tasks
+	WD_STRETCH,				// Good for overrunning tasks
+	WD_SLIP, 				// Good for infinite loops
+	WD_SUSPEND, 				// Good for most things
+	WD_KILL 				// Death sentence
 } wd_policy;
 
 // Information about a misbehaving task
-typedef struct bad_rt_task {
-    RT_TASK		*task;		// Pointer to the bad task
-    int			 in_use;	// Allocated (static memory management)
-    int		 	 slipping;	// In the process of being slipped
-    int		 	 countdown;	// Watchdog ticks to stay suspended
-    int		 	 count;		// How many times it's offended
-    int			 valid;		// Still an existing RT task
-    int			 forced;	// Forcibly suspended
-    RTIME		 orig_period;	// Original period before adjustments
-    wd_policy		 policy;	// Policy at time of last offence
-    struct bad_rt_task	*next;		// Next in list
+typedef struct bad_rt_task
+{
+	RT_TASK		*task;		// Pointer to the bad task
+	int			 in_use;	// Allocated (static memory management)
+	int		 	 slipping;	// In the process of being slipped
+	int		 	 countdown;	// Watchdog ticks to stay suspended
+	int		 	 count;		// How many times it's offended
+	int			 valid;		// Still an existing RT task
+	int			 forced;	// Forcibly suspended
+	RTIME		 orig_period;	// Original period before adjustments
+	wd_policy		 policy;	// Policy at time of last offence
+	struct bad_rt_task	*next;		// Next in list
 } BAD_RT_TASK;
 
 #define WD_INDX          2

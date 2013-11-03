@@ -50,11 +50,12 @@
 
 #define O_NOTIFY_NP 	0x1000
 
-typedef struct mq_attr {
-    long mq_maxmsg;		/* Maximum number of messages in queue */
-    long mq_msgsize;		/* Maximum size of a message (in bytes) */
-    long mq_flags;		/* Blocking/Non-blocking behaviour specifier */
-    long mq_curmsgs;		/* Number of messages currently in queue */
+typedef struct mq_attr
+{
+	long mq_maxmsg;		/* Maximum number of messages in queue */
+	long mq_msgsize;		/* Maximum size of a message (in bytes) */
+	long mq_flags;		/* Blocking/Non-blocking behaviour specifier */
+	long mq_curmsgs;		/* Number of messages currently in queue */
 } MQ_ATTR;
 
 #define	INVALID_PQUEUE	0
@@ -72,64 +73,72 @@ typedef int mq_bool_t;
 #define FALSE 0
 #endif
 
-typedef struct msg_hdr {
-    size_t size;		/* Actual message size */
-    uint priority;		/* Usage priority (message/task) */
-    void *next;			/* Pointer to next message on queue */
+typedef struct msg_hdr
+{
+	size_t size;		/* Actual message size */
+	uint priority;		/* Usage priority (message/task) */
+	void *next;			/* Pointer to next message on queue */
 } MSG_HDR;
 
 #define MSG_HDR_SIZE	(sizeof(MSG_HDR))
 
-typedef struct queue_control {
-    int nodind;
-    void **nodes;
-    void *base;		/* Pointer to the base of the queue in memory */
-    void *head;		/* Pointer to the element at the front of the queue */
-    void *tail;		/* Pointer to the element at the back of the queue */
-    MQ_ATTR attrs;	/* Queue attributes */
+typedef struct queue_control
+{
+	int nodind;
+	void **nodes;
+	void *base;		/* Pointer to the base of the queue in memory */
+	void *head;		/* Pointer to the element at the front of the queue */
+	void *tail;		/* Pointer to the element at the back of the queue */
+	MQ_ATTR attrs;	/* Queue attributes */
 } Q_CTRL;
 
-typedef struct msg {
-    MSG_HDR hdr;
-    char data;		/* Anchor point for message data */
+typedef struct msg
+{
+	MSG_HDR hdr;
+	char data;		/* Anchor point for message data */
 } MQMSG;
 
-struct notify {
-    RT_TASK *task;
-    struct sigevent data;
+struct notify
+{
+	RT_TASK *task;
+	struct sigevent data;
 };
 
-typedef struct _pqueue_descr_struct {
-    RT_TASK *owner;		/* Task that created the queue */
-    int open_count;		/* Count of the number of tasks that have */
-				/*  'opened' the queue for access */
-    char q_name[MQ_NAME_MAX];	/* Name supplied for queue */
-    uint q_id;			/* Queue Id (index into static list of queues) */
-    mq_bool_t marked_for_deletion;	/* Queue can be deleted once all tasks have  */
-				/*  closed it	*/
-    Q_CTRL data;		/* Data queue (real messages) */
-    mode_t permissions;		/* Permissions granted by creator (ugo, rwx) */
-    struct notify notify;	/* Notification data (empty -> !empty) */
-    SEM emp_cond;		/* For blocking on empty queue */
-    SEM full_cond;		/* For blocking on full queue */
-    SEM mutex;			/* For synchronisation of queue */
+typedef struct _pqueue_descr_struct
+{
+	RT_TASK *owner;		/* Task that created the queue */
+	int open_count;		/* Count of the number of tasks that have */
+	/*  'opened' the queue for access */
+	char q_name[MQ_NAME_MAX];	/* Name supplied for queue */
+	uint q_id;			/* Queue Id (index into static list of queues) */
+	mq_bool_t marked_for_deletion;	/* Queue can be deleted once all tasks have  */
+	/*  closed it	*/
+	Q_CTRL data;		/* Data queue (real messages) */
+	mode_t permissions;		/* Permissions granted by creator (ugo, rwx) */
+	struct notify notify;	/* Notification data (empty -> !empty) */
+	SEM emp_cond;		/* For blocking on empty queue */
+	SEM full_cond;		/* For blocking on full queue */
+	SEM mutex;			/* For synchronisation of queue */
 } MSG_QUEUE;
 
-struct _pqueue_access_data {
-    int q_id;
-    int oflags;			/* Queue access permissions & blocking spec */
-    struct sigevent *usp_notifier;
+struct _pqueue_access_data
+{
+	int q_id;
+	int oflags;			/* Queue access permissions & blocking spec */
+	struct sigevent *usp_notifier;
 };
 
-typedef struct _pqueue_access_struct {
-    RT_TASK *this_task;
-    int n_open_pqueues;
-    struct _pqueue_access_data q_access[MQ_OPEN_MAX];
+typedef struct _pqueue_access_struct
+{
+	RT_TASK *this_task;
+	int n_open_pqueues;
+	struct _pqueue_access_data q_access[MQ_OPEN_MAX];
 } *QUEUE_CTRL;
 
-typedef enum {
-    FOR_READ,
-    FOR_WRITE
+typedef enum
+{
+	FOR_READ,
+	FOR_WRITE
 } Q_ACCESS;
 
 #else /* __cplusplus */
@@ -211,19 +220,25 @@ static void signal_suprt_fun_mq(struct suprt_fun_arg *fun_arg)
 {
 	struct sigtsk_t { RT_TASK *sigtask; RT_TASK *task; };
 	struct suprt_fun_arg arg = *fun_arg;
- 	struct sigreq_t { RT_TASK *sigtask; RT_TASK *task; long signal;} sigreq = {NULL, arg.task, (arg.mq + MAXSIGNALS)};
- 	struct sigevent notification;
+	struct sigreq_t { RT_TASK *sigtask; RT_TASK *task; long signal;} sigreq = {NULL, arg.task, (arg.mq + MAXSIGNALS)};
+	struct sigevent notification;
 
-	if ((sigreq.sigtask = rt_thread_init(rt_get_name(0), SIGNAL_TASK_INIPRIO, 0, SCHED_FIFO, 1 << arg.cpuid))) {
-		if (!rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(struct sigreq_t), RT_SIGNAL_REQUEST, &sigreq).i[LOW]) {
+	if ((sigreq.sigtask = rt_thread_init(rt_get_name(0), SIGNAL_TASK_INIPRIO, 0, SCHED_FIFO, 1 << arg.cpuid)))
+	{
+		if (!rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(struct sigreq_t), RT_SIGNAL_REQUEST, &sigreq).i[LOW])
+		{
 			struct arg_reg { mqd_t mq; RT_TASK *task; struct sigevent *usp_notification;} arg_reg = {arg.mq, arg.task, &notification};
 			rtai_lxrt(MQIDX, sizeof(struct arg_reg), MQ_REG_USP_NOTIFIER, &arg_reg);
 			mlockall(MCL_CURRENT | MCL_FUTURE);
 			rt_make_hard_real_time();
-			while (rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(struct sigtsk_t), RT_SIGNAL_WAITSIG, &sigreq).i[LOW]) {
-				if (notification.sigev_notify == SIGEV_THREAD) {
+			while (rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(struct sigtsk_t), RT_SIGNAL_WAITSIG, &sigreq).i[LOW])
+			{
+				if (notification.sigev_notify == SIGEV_THREAD)
+				{
 					notification._sigev_un._sigev_thread._function((sigval_t)notification.sigev_value.sival_int);
-				} else if (notification.sigev_notify == SIGEV_SIGNAL) {
+				}
+				else if (notification.sigev_notify == SIGEV_SIGNAL)
+				{
 					pthread_kill((pthread_t)arg.self, notification.sigev_signo);
 				}
 			}
@@ -237,14 +252,15 @@ static void signal_suprt_fun_mq(struct suprt_fun_arg *fun_arg)
 
 RTAI_PROTO(int, rt_request_signal_mq, (mqd_t mq))
 {
-		struct suprt_fun_arg arg = { mq, NULL, 0, pthread_self() };
-		arg.cpuid = rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(void *), RT_SIGNAL_HELPER, (void *)&arg.task).i[LOW];
-		arg.task = rt_buddy();
-		if (rt_thread_create(signal_suprt_fun_mq, &arg, SIGNAL_TASK_STACK_SIZE)) {
-			int ret;
-			ret = rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(RT_TASK *), RT_SIGNAL_HELPER, &arg.task).i[LOW];
-			return ret;
-		}
+	struct suprt_fun_arg arg = { mq, NULL, 0, pthread_self() };
+	arg.cpuid = rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(void *), RT_SIGNAL_HELPER, (void *)&arg.task).i[LOW];
+	arg.task = rt_buddy();
+	if (rt_thread_create(signal_suprt_fun_mq, &arg, SIGNAL_TASK_STACK_SIZE))
+	{
+		int ret;
+		ret = rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(RT_TASK *), RT_SIGNAL_HELPER, &arg.task).i[LOW];
+		return ret;
+	}
 	return -1;
 }
 
@@ -252,9 +268,11 @@ RTAI_PROTO(mqd_t, mq_open,(char *mq_name, int oflags, mode_t permissions, struct
 {
 	mqd_t ret;
 	struct {char *mq_name; long oflags; long permissions; struct mq_attr *mq_attr; long namesize, attrsize; long space; } arg = { mq_name, oflags, permissions, mq_attr, strlen(mq_name) + 1, sizeof(struct mq_attr), 0 };
-	if ((ret = (mqd_t)rtai_lxrt(MQIDX, SIZARG, MQ_OPEN, &arg).i[LOW]) >= 0) {
+	if ((ret = (mqd_t)rtai_lxrt(MQIDX, SIZARG, MQ_OPEN, &arg).i[LOW]) >= 0)
+	{
 		// Prepare notify task
-		if (oflags & O_NOTIFY_NP)	{
+		if (oflags & O_NOTIFY_NP)
+		{
 			rt_request_signal_mq (ret);
 		}
 	}
@@ -295,8 +313,10 @@ RTAI_PROTO(int, mq_notify,(mqd_t mq, const struct sigevent *notification))
 {
 	int ret;
 	struct { long mq; RT_TASK* task; long space; long rem; const struct sigevent *notification; long size;} arg = { mq, rt_buddy(), 0, (notification ? 0 : 1), notification, sizeof(struct sigevent) };
-	if ((ret = rtai_lxrt(MQIDX, SIZARG, MQ_NOTIFY, &arg).i[LOW]) >= 0) {
-		if (ret == O_NOTIFY_NP) {
+	if ((ret = rtai_lxrt(MQIDX, SIZARG, MQ_NOTIFY, &arg).i[LOW]) >= 0)
+	{
+		if (ret == O_NOTIFY_NP)
+		{
 			rt_request_signal_mq (mq);
 			ret = 0;
 		}

@@ -27,10 +27,11 @@ struct rtai_spl;
 
 #ifndef __cplusplus
 
-typedef struct rtai_spl {
-    void *owndby;
-    int count;
-    unsigned long flags;
+typedef struct rtai_spl
+{
+	void *owndby;
+	int count;
+	unsigned long flags;
 } SPL;
 
 #else /* __cplusplus */
@@ -50,7 +51,7 @@ RTAI_SYSCALL_MODE int rt_spl_lock(struct rtai_spl *spl);
 RTAI_SYSCALL_MODE int rt_spl_lock_if(struct rtai_spl *spl);
 
 RTAI_SYSCALL_MODE int rt_spl_lock_timed(struct rtai_spl *spl,
-		      unsigned long ns);
+					unsigned long ns);
 
 RTAI_SYSCALL_MODE int rt_spl_unlock(struct rtai_spl *spl);
 
@@ -79,7 +80,7 @@ RTAI_PROTO(int, rt_spl_delete,(struct rtai_spl *spl))
 RTAI_PROTO(struct rtai_spl *, rt_named_spl_init,(const char *name))
 {
 	struct { unsigned long name; } arg = { nam2num(name) };
-		return (struct rtai_spl *)rtai_lxrt(BIDX, SIZARG, NAMED_SPL_INIT, &arg).v[LOW];
+	return (struct rtai_spl *)rtai_lxrt(BIDX, SIZARG, NAMED_SPL_INIT, &arg).v[LOW];
 }
 
 RTAI_PROTO(int, rt_named_spl_delete,(struct rtai_spl *spl))
@@ -120,8 +121,9 @@ RTAI_PROTO(int, rt_spl_unlock,(struct rtai_spl *spl))
 
 #if !defined(__KERNEL__) || defined(__cplusplus)
 
-typedef struct rtai_spl {
-    int opaque;
+typedef struct rtai_spl
+{
+	int opaque;
 } SPL;
 
 #endif /* !__KERNEL__ || __cplusplus */

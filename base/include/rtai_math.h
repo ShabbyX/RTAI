@@ -182,18 +182,18 @@ extern int signgam;
 
 /* All floating-point numbers can be put in one of these categories.  */
 enum
-  {
-    FP_NAN,
+{
+	FP_NAN,
 # define FP_NAN FP_NAN
-    FP_INFINITE,
+	FP_INFINITE,
 # define FP_INFINITE FP_INFINITE
-    FP_ZERO,
+	FP_ZERO,
 # define FP_ZERO FP_ZERO
-    FP_SUBNORMAL,
+	FP_SUBNORMAL,
 # define FP_SUBNORMAL FP_SUBNORMAL
-    FP_NORMAL
+	FP_NORMAL
 # define FP_NORMAL FP_NORMAL
-  };
+};
 
 /* Return number of classification appropriate for X.  */
 # ifdef __NO_LONG_DOUBLE_MATH
@@ -269,11 +269,11 @@ enum
 /* Support for various different standard error handling behaviors.  */
 typedef enum
 {
-  _IEEE_ = -1,	/* According to IEEE 754/IEEE 854.  */
-  _SVID_,	/* According to System V, release 4.  */
-  _XOPEN_,	/* Nowadays also Unix98.  */
-  _POSIX_,
-  _ISOC_	/* Actually this is ISO C99.  */
+	_IEEE_ = -1,	/* According to IEEE 754/IEEE 854.  */
+	_SVID_,	/* According to System V, release 4.  */
+	_XOPEN_,	/* Nowadays also Unix98.  */
+	_POSIX_,
+	_ISOC_	/* Actually this is ISO C99.  */
 } _LIB_VERSION_TYPE;
 
 /* This variable can be changed at run-time to any of the values above to
@@ -293,13 +293,13 @@ struct __exception
 # else
 struct exception
 # endif
-  {
-    int type;
-    char *name;
-    double arg1;
-    double arg2;
-    double retval;
-  };
+{
+	int type;
+	char *name;
+	double arg1;
+	double arg2;
+	double retval;
+};
 
 # ifdef __cplusplus
 extern int matherr (struct __exception *__exc) throw ();
@@ -438,9 +438,10 @@ __END_DECLS
 
 /* Missing declarations */
 
-struct complex {
-	double x;
-	double y;
+struct complex
+{
+double x;
+double y;
 };
 
 double cabs __P((struct complex));

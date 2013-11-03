@@ -56,14 +56,18 @@ static unsigned long usi_save_flags_and_cli(unsigned long arg, unsigned long *ef
 
 static void usi_restore_flags(unsigned long flags, unsigned long *eflags)
 {
-	if (!(flags & ~ALLOWINT)) {
+	if (!(flags & ~ALLOWINT))
+	{
 		*eflags &= ALLOWINT;
-	} else {
+	}
+	else
+	{
 		*eflags |= ~ALLOWINT;
 	}
 }
 
-static unsigned long (*usi_fun_entry[ ])(unsigned long, unsigned long *) = {
+static unsigned long (*usi_fun_entry[ ])(unsigned long, unsigned long *) =
+{
 	[_STARTUP_IRQ]	    = (void *)rt_startup_irq,
 	[_SHUTDOWN_IRQ]	    = (void *)rt_shutdown_irq,
 	[_ENABLE_IRQ]	    = (void *)rt_enable_irq,

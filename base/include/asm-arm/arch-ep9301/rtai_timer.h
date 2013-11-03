@@ -32,9 +32,9 @@
 extern inline int
 rtai_timer_irq_ack(void)
 {
-    rt_unmask_irq(RTAI_TIMER_IRQ);
-    /* *TODO* when return -1? (return < 0 => abort rt_timer_handler() for this interrupt) */
-    return 0;
+	rt_unmask_irq(RTAI_TIMER_IRQ);
+	/* *TODO* when return -1? (return < 0 => abort rt_timer_handler() for this interrupt) */
+	return 0;
 }
 
 /* read time-stamp-counter */
@@ -44,20 +44,23 @@ rtai_timer_irq_ack(void)
 extern inline void
 rt_set_timer_delay(unsigned int delay)
 {
-    ADEOS_PARANOIA_ASSERT(adeos_hw_irqs_disabled());
-    if (delay) {
-	/*
-	 * one-shot mode: reprogramm timer
-	 */
-	outl(0, TIMER1CONTROL);		/* stop timer */
-	outl(delay - 1, TIMER1LOAD);	/* set load value */
-	outl(0x88, TIMER1CONTROL);	/* set 508 kHz clock, free running mode & enable timer */
-    } else {
-	/*
-	 * periodic mode: nothing to do as the timer reloads itself
-	 * with the value set in rt_request_timer()
-	 */
-    }
+	ADEOS_PARANOIA_ASSERT(adeos_hw_irqs_disabled());
+	if (delay)
+	{
+		/*
+		 * one-shot mode: reprogramm timer
+		 */
+		outl(0, TIMER1CONTROL);		/* stop timer */
+		outl(delay - 1, TIMER1LOAD);	/* set load value */
+		outl(0x88, TIMER1CONTROL);	/* set 508 kHz clock, free running mode & enable timer */
+	}
+	else
+	{
+		/*
+		 * periodic mode: nothing to do as the timer reloads itself
+		 * with the value set in rt_request_timer()
+		 */
+	}
 }
 
 #endif /* _ASM_ARCH_RTAI_TIMER_H_ */

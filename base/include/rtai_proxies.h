@@ -35,9 +35,9 @@ RT_TASK *__rt_proxy_attach(void (*func)(long),
 
 // Create a raw proxy task.
 RTAI_SYSCALL_MODE RT_TASK *rt_proxy_attach(RT_TASK *task,
-			 void *msg,
-			 int nbytes,
-			 int priority);
+		void *msg,
+		int nbytes,
+		int priority);
 
 // Delete a proxy task (a simplified specific rt_task_delete).
 RTAI_SYSCALL_MODE int rt_proxy_detach(RT_TASK *proxy);

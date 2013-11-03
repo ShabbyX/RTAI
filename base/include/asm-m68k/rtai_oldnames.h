@@ -95,14 +95,16 @@ static inline void rt_reset_full_intr_vect(unsigned vector,
     idt_table[vector] = e;
 }
 */
-static inline int rt_request_cpu_own_irq (unsigned irq, void (*handler)(void)) {
+static inline int rt_request_cpu_own_irq (unsigned irq, void (*handler)(void))
+{
 
-    return rt_request_irq(irq, (rt_irq_handler_t)handler, NULL, 0);
+	return rt_request_irq(irq, (rt_irq_handler_t)handler, NULL, 0);
 }
 
-static inline int rt_free_cpu_own_irq (unsigned irq) {
+static inline int rt_free_cpu_own_irq (unsigned irq)
+{
 
-    return rt_release_irq(irq);
+	return rt_release_irq(irq);
 }
 /*
 static inline void *get_intr_handler (unsigned vector) {

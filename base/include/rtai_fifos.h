@@ -59,16 +59,18 @@
 
 #define RTF_NAMELEN 15
 
-struct rt_fifo_info_struct{
-    	unsigned int fifo_number;
+struct rt_fifo_info_struct
+{
+	unsigned int fifo_number;
 	unsigned int size;
 	unsigned int opncnt;
 	int avbs, frbs;
 	char name[RTF_NAMELEN+1];
 };
 
-struct rt_fifo_get_info_struct{
-    	unsigned int fifo;
+struct rt_fifo_get_info_struct
+{
+	unsigned int fifo;
 	unsigned int n;
 	struct rt_fifo_info_struct *ptr;
 };
@@ -201,8 +203,8 @@ RTAI_SYSCALL_MODE int rtf_resize(unsigned int minor, int size);
  */
 
 RTAI_SYSCALL_MODE int rtf_put(unsigned int fifo,	/* RT-FIFO */
-	    void * buf,		/* buffer address */
-	    int count		/* number of bytes to write */);
+			      void * buf,		/* buffer address */
+			      int count		/* number of bytes to write */);
 
 /* Write to an RT-FIFO, over writing if there is not enough space.
  *
@@ -210,8 +212,8 @@ RTAI_SYSCALL_MODE int rtf_put(unsigned int fifo,	/* RT-FIFO */
  */
 
 RTAI_SYSCALL_MODE int rtf_ovrwr_put(unsigned int fifo,	/* RT-FIFO */
-		  void * buf,		/* buffer address */
-		  int count		/* number of bytes to write */);
+				    void * buf,		/* buffer address */
+				    int count		/* number of bytes to write */);
 
 /* Write atomically to an RT-FIFO.
  *
@@ -221,7 +223,7 @@ RTAI_SYSCALL_MODE int rtf_ovrwr_put(unsigned int fifo,	/* RT-FIFO */
 
 extern RTAI_SYSCALL_MODE int rtf_put_if (unsigned int fifo,	/* RT-FIFO */
 		void * buf,			/* buffer address */
-	       	int count			/* number of bytes to write */);
+		int count			/* number of bytes to write */);
 
 /* Read from an RT-FIFO.
  *
@@ -229,8 +231,8 @@ extern RTAI_SYSCALL_MODE int rtf_put_if (unsigned int fifo,	/* RT-FIFO */
  */
 
 RTAI_SYSCALL_MODE int rtf_get(unsigned int fifo,	/* RT-FIFO */
-	    void * buf, 		/* buffer address */
-	    int count		/* number of bytes to read */);
+			      void * buf, 		/* buffer address */
+			      int count		/* number of bytes to read */);
 
 /* Atomically read from an RT-FIFO.
  *
@@ -238,8 +240,8 @@ RTAI_SYSCALL_MODE int rtf_get(unsigned int fifo,	/* RT-FIFO */
  */
 
 RTAI_SYSCALL_MODE int rtf_get_if(unsigned int fifo,	/* RT-FIFO */
-	    void * buf, 		/* buffer address */
-	    int count		/* number of bytes to read */);
+				 void * buf, 		/* buffer address */
+				 int count		/* number of bytes to read */);
 
 /*
  * Preview the an RT-FIFO content.
@@ -254,7 +256,7 @@ int rtf_evdrp(unsigned int fifo,	/* RT-FIFO */
  */
 
 RTAI_SYSCALL_MODE int rtf_sem_init(unsigned int fifo,	/* RT-FIFO */
-		 int value			/* initial semaphore value */);
+				   int value			/* initial semaphore value */);
 
 /* Post to an RT-FIFO semaphore.
  *
@@ -342,7 +344,8 @@ RTAI_PROTO(int, rtf_get,(unsigned int fifo, void *buf, int count))
 	char lbuf[count];
 	struct { unsigned long fifo; void *buf; long count; } arg = { fifo, lbuf, count };
 	retval = rtai_lxrt(FUN_FIFOS_LXRT_INDX, SIZARG, _GET, &arg).i[LOW];
-	if (retval > 0) {
+	if (retval > 0)
+	{
 		memcpy(buf, lbuf, retval);
 	}
 	return retval;
@@ -354,7 +357,8 @@ RTAI_PROTO(int, rtf_get_if,(unsigned int fifo, void *buf, int count))
 	char lbuf[count];
 	struct { unsigned long fifo; void *buf; long count; } arg = { fifo, lbuf, count };
 	retval = rtai_lxrt(FUN_FIFOS_LXRT_INDX, SIZARG, _GET_IF, &arg).i[LOW];
-	if (retval > 0) {
+	if (retval > 0)
+	{
 		memcpy(buf, lbuf, retval);
 	}
 	return retval;
@@ -513,11 +517,13 @@ RTAI_PROTO(int, rtf_open_sized,(const char *dev, int perm, int size))
 {
 	int fd;
 
-	if ((fd = open(dev, perm)) < 0) {
+	if ((fd = open(dev, perm)) < 0)
+	{
 		return -errno;
 	}
-	if (ioctl(fd, RESIZE, size) < 0) {
-	    	close(fd);
+	if (ioctl(fd, RESIZE, size) < 0)
+	{
+		close(fd);
 		return -errno;
 	}
 	return fd;
@@ -738,20 +744,22 @@ RTAI_PROTO(int, rtf_set_async_sig,(int fd, int signum))
 
 RTAI_PROTO_ALWAYS_INLINE(char *, rtf_getfifobyminor,(int minor, char *buf, int len))
 {
-    snprintf(buf,len,CONFIG_RTAI_FIFOS_TEMPLATE,minor);
-    return buf;
+	snprintf(buf,len,CONFIG_RTAI_FIFOS_TEMPLATE,minor);
+	return buf;
 }
 
 RTAI_PROTO(int, rtf_getfifobyname,(const char *name))
 {
-    	int fd, minor;
+	int fd, minor;
 	char nm[RTF_NAMELEN+1];
 
-	if (strlen(name) > RTF_NAMELEN) {
-	    	return -1;
+	if (strlen(name) > RTF_NAMELEN)
+	{
+		return -1;
 	}
-	if ((fd = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDONLY)) < 0) {
-	    	return -errno;
+	if ((fd = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDONLY)) < 0)
+	{
+		return -errno;
 	}
 	strncpy(nm, name, RTF_NAMELEN+1);
 	minor = ioctl(fd, RTF_NAME_LOOKUP, nm);
@@ -764,10 +772,12 @@ RTAI_PROTO(int, rtf_named_create,(const char *name, int size))
 	int fd, minor;
 	char nm[RTF_NAMELEN+1];
 
-	if (strlen(name) > RTF_NAMELEN) {
+	if (strlen(name) > RTF_NAMELEN)
+	{
 		return -1;
 	}
-	if ((fd = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDONLY)) < 0) {
+	if ((fd = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDONLY)) < 0)
+	{
 		return -errno;
 	}
 	strncpy(nm, name, RTF_NAMELEN+1);
@@ -781,10 +791,12 @@ RTAI_PROTO(int, rtf_create_named,(const char *name))
 	int fd, minor;
 	char nm[RTF_NAMELEN+1];
 
-	if (strlen(name) > RTF_NAMELEN) {
-	    	return -1;
+	if (strlen(name) > RTF_NAMELEN)
+	{
+		return -1;
 	}
-	if ((fd = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDONLY)) < 0) {
+	if ((fd = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDONLY)) < 0)
+	{
 		return -errno;
 	}
 	strncpy(nm, name, RTF_NAMELEN+1);

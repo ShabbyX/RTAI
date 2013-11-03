@@ -35,7 +35,8 @@ struct rt_mailbox;
 
 #ifndef __cplusplus
 
-typedef struct rt_mailbox {
+typedef struct rt_mailbox
+{
 	int magic;
 	SEM sndsem, rcvsem;
 	struct rt_task_struct *waiting_task, *owndby;
@@ -279,8 +280,9 @@ RTAI_PROTO(int, rt_mbx_receive_timed, (struct rt_mailbox *mbx, void *msg, int ms
 
 #if !defined(__KERNEL__) || defined(__cplusplus)
 
-typedef struct rt_mailbox {
-    int opaque;
+typedef struct rt_mailbox
+{
+	int opaque;
 } MBX;
 
 #endif /* !__KERNEL__ || __cplusplus */

@@ -64,13 +64,13 @@ Acknowledgements
 extern inline void
 rtai_archdep_init(void)
 {
-    /* nothing to do */
+	/* nothing to do */
 }
 
 extern inline void
 rtai_archdep_exit(void)
 {
-    /* nothing to do */
+	/* nothing to do */
 }
 
 #endif /* _ASM_ARCH_RTAI_ARCH_H_ */

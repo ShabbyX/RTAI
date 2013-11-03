@@ -27,10 +27,11 @@ struct rtai_rwlock;
 
 #ifndef __cplusplus
 
-typedef struct rtai_rwlock {
-    SEM wrmtx,
-	wrsem,
-	rdsem;
+typedef struct rtai_rwlock
+{
+	SEM wrmtx,
+	    wrsem,
+	    rdsem;
 } RWL;
 
 #else /* __cplusplus */
@@ -80,7 +81,7 @@ extern "C" {
 RTAI_PROTO(struct rtai_rwlock *, rt_typed_rwl_init,(unsigned long name, int type))
 {
 	struct { unsigned long name; long type; } arg = { name, type };
-		return (struct rtai_rwlock *)rtai_lxrt(BIDX, SIZARG, LXRT_RWL_INIT, &arg).v[LOW];
+	return (struct rtai_rwlock *)rtai_lxrt(BIDX, SIZARG, LXRT_RWL_INIT, &arg).v[LOW];
 }
 
 RTAI_PROTO(int, rt_rwl_delete,(struct rtai_rwlock *rwl))
@@ -163,8 +164,9 @@ RTAI_PROTO(int, rt_rwl_unlock,(struct rtai_rwlock *rwl))
 
 #if !defined(__KERNEL__) || defined(__cplusplus)
 
-typedef struct rtai_rwlock {
-    int opaque;
+typedef struct rtai_rwlock
+{
+	int opaque;
 } RWL;
 
 #endif /* !__KERNEL__ || __cplusplus */

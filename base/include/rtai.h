@@ -42,7 +42,8 @@ static inline long next_rand(long rand)
 	hi = rand/q;
 	lo = rand - hi*q;
 	rand = a*lo - r*hi;
-	if (rand <= 0) {
+	if (rand <= 0)
+	{
 		rand += m;
 	}
 	return rand;

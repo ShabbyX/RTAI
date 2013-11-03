@@ -84,12 +84,15 @@ static inline RTIME rtai_rdtsc(void)
 
 static inline void rt_set_timer_delay(unsigned long delay)
 {
-	if (delay) {
+	if (delay)
+	{
 		/*
 		 * one-shot mode : reprogramm timer
 		 */
 		__ipipe_mach_set_dec(delay);
-	} else {
+	}
+	else
+	{
 		/*
 		 * periodic mode: at91's TC reload itself
 		 * so nothing to do

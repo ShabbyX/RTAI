@@ -58,28 +58,30 @@
 static inline unsigned long
 atomic_xchg(volatile void *ptr, unsigned long x)
 {
-    asm volatile(
-	"swp %0, %1, [%2]"
-	: "=&r" (x)
-	: "r" (x), "r" (ptr)
-	: "memory"
-    );
-    return x;
+	asm volatile(
+		"swp %0, %1, [%2]"
+		: "=&r" (x)
+		: "r" (x), "r" (ptr)
+		: "memory"
+	);
+	return x;
 }
 
 static inline unsigned long atomic_cmpxchg(volatile void *ptr, unsigned long old, unsigned long new)
 {
 	unsigned long oldval, res;
 
-	do {
+	do
+	{
 		__asm__ __volatile__("@ atomic_cmpxchg\n"
-		"ldrex	%1, [%2]\n"
-		"teq	%1, %3\n"
-		"strexeq %0, %4, [%2]\n"
-		    : "=&r" (res), "=&r" (oldval)
-		    : "r" (*(unsigned long*)ptr), "r" (old), "r" (new)
-		    : "cc");
-	} while (res);
+				     "ldrex	%1, [%2]\n"
+				     "teq	%1, %3\n"
+				     "strexeq %0, %4, [%2]\n"
+				     : "=&r" (res), "=&r" (oldval)
+				     : "r" (*(unsigned long*)ptr), "r" (old), "r" (new)
+				     : "cc");
+	}
+	while (res);
 
 	return oldval;
 }
@@ -105,14 +107,14 @@ static inline int atomic_add_return(int i, atomic_t *v)
 	int result;
 
 	__asm__ __volatile__("@ atomic_add_return\n"
-"1:	ldrex	%0, [%2]\n"
-"	add	%0, %0, %3\n"
-"	strex	%1, %0, [%2]\n"
-"	teq	%1, #0\n"
-"	bne	1b"
-	: "=&r" (result), "=&r" (tmp)
-	: "r" (&v->counter), "Ir" (i)
-	: "cc");
+			     "1:	ldrex	%0, [%2]\n"
+			     "	add	%0, %0, %3\n"
+			     "	strex	%1, %0, [%2]\n"
+			     "	teq	%1, #0\n"
+			     "	bne	1b"
+			     : "=&r" (result), "=&r" (tmp)
+			     : "r" (&v->counter), "Ir" (i)
+			     : "cc");
 
 	return result;
 }
@@ -123,14 +125,14 @@ static inline int atomic_sub_return(int i, atomic_t *v)
 	int result;
 
 	__asm__ __volatile__("@ atomic_sub_return\n"
-"1:	ldrex	%0, [%2]\n"
-"	sub	%0, %0, %3\n"
-"	strex	%1, %0, [%2]\n"
-"	teq	%1, #0\n"
-"	bne	1b"
-	: "=&r" (result), "=&r" (tmp)
-	: "r" (&v->counter), "Ir" (i)
-	: "cc");
+			     "1:	ldrex	%0, [%2]\n"
+			     "	sub	%0, %0, %3\n"
+			     "	strex	%1, %0, [%2]\n"
+			     "	teq	%1, #0\n"
+			     "	bne	1b"
+			     : "=&r" (result), "=&r" (tmp)
+			     : "r" (&v->counter), "Ir" (i)
+			     : "cc");
 
 	return result;
 }

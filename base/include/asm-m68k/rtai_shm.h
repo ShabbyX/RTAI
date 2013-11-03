@@ -44,14 +44,17 @@ static inline long long rtai_shmrq(int srq, unsigned long args)
 
 static inline unsigned long uvirt_to_kva(pgd_t *pgd, unsigned long adr)
 {
-	if (!pgd_none(*pgd)) {
+	if (!pgd_none(*pgd))
+	{
 		pmd_t *pmd;
 		pmd = pmd_offset(pud_offset(pgd, adr), adr);
-		if (!pmd_none(*pmd)) {
+		if (!pmd_none(*pmd))
+		{
 			pte_t *ptep, pte;
 			ptep = pte_offset_kernel(pmd, adr);
 			pte = *ptep;
-			if (pte_present(pte)) {
+			if (pte_present(pte))
+			{
 				return ((unsigned long)page_address(pte_page(pte)) | (adr & (PAGE_SIZE - 1)));
 			}
 		}

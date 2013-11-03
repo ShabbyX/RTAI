@@ -71,15 +71,16 @@
 #define RTHEAP_NOMEM   (-1)
 #define RTHEAP_PARAM   (-2)
 
-typedef struct rtextent {
+typedef struct rtextent
+{
 
-    struct list_head link;
+	struct list_head link;
 
-    caddr_t membase,	/* Base address of the page array */
-	    memlim,	/* Memory limit of page array */
-	    freelist;	/* Head of the free page list */
+	caddr_t membase,	/* Base address of the page array */
+		memlim,	/* Memory limit of page array */
+		freelist;	/* Head of the free page list */
 
-    u_char pagemap[1];	/* Beginning of page map */
+	u_char pagemap[1];	/* Beginning of page map */
 
 } rtextent_t;
 
@@ -89,23 +90,24 @@ typedef struct rtextent {
 /* Allocation flags */
 #define RTHEAP_EXTEND    0x1
 
-typedef struct rtheap {
+typedef struct rtheap
+{
 
-    spinlock_t lock;
+	spinlock_t lock;
 
-    int flags;
+	int flags;
 
-    u_long extentsize,
-	   pagesize,
-	   pageshift,
-	   hdrsize,
-	   npages,	/* Number of pages per extent */
-	   ubytes,
-	   maxcont;
+	u_long extentsize,
+	       pagesize,
+	       pageshift,
+	       hdrsize,
+	       npages,	/* Number of pages per extent */
+	       ubytes,
+	       maxcont;
 
-    struct list_head extents;
+	struct list_head extents;
 
-    caddr_t buckets[RTHEAP_NBUCKETS];
+	caddr_t buckets[RTHEAP_NBUCKETS];
 
 } rtheap_t;
 

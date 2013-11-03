@@ -33,10 +33,13 @@ static inline void enq_msg(RT_MSGQ *q, RT_MSGH *msg)
 	RT_MSGH *prev, *next;
 
 	for (prev = next = q->firstmsg; msg->priority >= next->priority; prev = next, next = next->next);
-	if (next == prev) {
+	if (next == prev)
+	{
 		msg->next = next;
 		q->firstmsg = msg;
-	} else {
+	}
+	else
+	{
 		msg->next = prev->next;
 		prev->next = msg;
 	}
@@ -47,14 +50,16 @@ RTAI_SYSCALL_MODE int rt_msgq_init(RT_MSGQ *mq, int nmsg, int msg_size)
 	int i;
 	void *p;
 
-	if (!(mq->slots = rt_malloc((msg_size + RT_MSGH_SIZE + sizeof(void *))*nmsg + RT_MSGH_SIZE))) {
+	if (!(mq->slots = rt_malloc((msg_size + RT_MSGH_SIZE + sizeof(void *))*nmsg + RT_MSGH_SIZE)))
+	{
 		return -ENOMEM;
 	}
 	mq->nmsg  = nmsg;
 	mq->fastsize = msg_size;
 	mq->slot = 0;
 	p = mq->slots + nmsg;
-	for (i = 0; i < nmsg; i++) {
+	for (i = 0; i < nmsg; i++)
+	{
 		mq->slots[i] = p;
 		((RT_MSGH *)p)->priority = 0;
 		p += (msg_size + RT_MSGH_SIZE);
@@ -81,12 +86,15 @@ RTAI_SYSCALL_MODE RT_MSGQ *_rt_named_msgq_init(unsigned long msgq_name, int nmsg
 {
 	RT_MSGQ *msgq;
 
-	if ((msgq = rt_get_adr_cnt(msgq_name))) {
+	if ((msgq = rt_get_adr_cnt(msgq_name)))
+	{
 		return msgq;
 	}
-	if ((msgq = rt_malloc(sizeof(RT_MSGQ)))) {
+	if ((msgq = rt_malloc(sizeof(RT_MSGQ))))
+	{
 		rt_msgq_init(msgq, nmsg, msg_size);
-		if (rt_register(msgq_name, msgq, IS_MBX, 0)) {
+		if (rt_register(msgq_name, msgq, IS_MBX, 0))
+		{
 			return msgq;
 		}
 		rt_msgq_delete(msgq);
@@ -98,11 +106,15 @@ RTAI_SYSCALL_MODE RT_MSGQ *_rt_named_msgq_init(unsigned long msgq_name, int nmsg
 RTAI_SYSCALL_MODE int rt_named_msgq_delete(RT_MSGQ *msgq)
 {
 	int ret;
-	if (!(ret = rt_drg_on_adr_cnt(msgq))) {
-		if (!rt_msgq_delete(msgq)) {
+	if (!(ret = rt_drg_on_adr_cnt(msgq)))
+	{
+		if (!rt_msgq_delete(msgq))
+		{
 			rt_free(msgq);
 			return 0;
-		} else {
+		}
+		else
+		{
 			return -EFAULT;
 		}
 	}
@@ -115,13 +127,17 @@ static int _send(RT_MSGQ *mq, void *msg, int msg_size, int msgpri, int space)
 	RT_MSG *msg_ptr;
 	void *p;
 
-	if (msg_size > mq->fastsize) {
-		if (!(p = rt_malloc(msg_size))) {
+	if (msg_size > mq->fastsize)
+	{
+		if (!(p = rt_malloc(msg_size)))
+		{
 			rt_sem_signal(&mq->freslots);
 			rt_sem_signal(&mq->senders);
 			return -ENOMEM;
 		}
-	} else {
+	}
+	else
+	{
 		p = NULL;
 	}
 	flags = rt_spin_lock_irqsave(&mq->lock);
@@ -131,9 +147,12 @@ static int _send(RT_MSGQ *mq, void *msg, int msg_size, int msgpri, int space)
 	msg_ptr->hdr.priority = msgpri;
 	msg_ptr->hdr.malloc = p;
 	msg_ptr->hdr.broadcast = 0;
-	if (space) {
+	if (space)
+	{
 		memcpy(p ? p : msg_ptr->msg, msg, msg_size);
-	} else {
+	}
+	else
+	{
 		rt_copy_from_user(p ? p : msg_ptr->msg, msg, msg_size);
 	}
 	flags = rt_spin_lock_irqsave(&mq->lock);
@@ -151,10 +170,12 @@ RTAI_SYSCALL_MODE int _rt_msg_send(RT_MSGQ *mq, void *msg, int msg_size, int msg
 {
 	int retval;
 
-	if ((retval = rt_sem_wait(&mq->senders)) >= RTE_LOWERR) {
+	if ((retval = rt_sem_wait(&mq->senders)) >= RTE_LOWERR)
+	{
 		return TBX_RET(msg_size, retval);
 	}
-	if (rt_sem_wait(&mq->freslots) >= RTE_LOWERR) {
+	if (rt_sem_wait(&mq->freslots) >= RTE_LOWERR)
+	{
 		rt_sem_signal(&mq->senders);
 		return TBX_RET(msg_size, retval);
 	}
@@ -163,10 +184,12 @@ RTAI_SYSCALL_MODE int _rt_msg_send(RT_MSGQ *mq, void *msg, int msg_size, int msg
 
 RTAI_SYSCALL_MODE int _rt_msg_send_if(RT_MSGQ *mq, void *msg, int msg_size, int msgpri, int space)
 {
-	if (rt_sem_wait_if(&mq->senders) <= 0) {
+	if (rt_sem_wait_if(&mq->senders) <= 0)
+	{
 		return msg_size;
 	}
-	if (rt_sem_wait_if(&mq->freslots) <= 0) {
+	if (rt_sem_wait_if(&mq->freslots) <= 0)
+	{
 		rt_sem_signal(&mq->senders);
 		return msg_size;
 	}
@@ -176,10 +199,12 @@ RTAI_SYSCALL_MODE int _rt_msg_send_if(RT_MSGQ *mq, void *msg, int msg_size, int 
 RTAI_SYSCALL_MODE int _rt_msg_send_until(RT_MSGQ *mq, void *msg, int msg_size, int msgpri, RTIME until, int space)
 {
 	int retval;
-	if ((retval = rt_sem_wait_until(&mq->senders, until)) >= RTE_LOWERR) {
+	if ((retval = rt_sem_wait_until(&mq->senders, until)) >= RTE_LOWERR)
+	{
 		return TBX_RET(msg_size, retval);
 	}
-	if ((retval = rt_sem_wait_until(&mq->freslots, until)) >= RTE_LOWERR) {
+	if ((retval = rt_sem_wait_until(&mq->freslots, until)) >= RTE_LOWERR)
+	{
 		rt_sem_signal(&mq->senders);
 		return TBX_RET(msg_size, retval);
 	}
@@ -198,28 +223,39 @@ static int _receive(RT_MSGQ *mq, void *msg, int msg_size, int *msgpri, int space
 	void *p;
 
 	size = min((msg_ptr = mq->firstmsg)->hdr.size, msg_size);
-	if (space) {
+	if (space)
+	{
 		memcpy(msg, (p = msg_ptr->hdr.malloc) ? p : msg_ptr->msg, size);
-		if (msgpri) {
+		if (msgpri)
+		{
 			*msgpri = msg_ptr->hdr.priority;
 		}
-	} else {
+	}
+	else
+	{
 		rt_copy_to_user(msg, (p = msg_ptr->hdr.malloc) ? p : msg_ptr->msg, size);
-		if (msgpri) {
+		if (msgpri)
+		{
 			rt_put_user(msg_ptr->hdr.priority, msgpri);
 		}
 	}
 
-	if (msg_ptr->hdr.broadcast) {
-		if (!--msg_ptr->hdr.broadcast) {
+	if (msg_ptr->hdr.broadcast)
+	{
+		if (!--msg_ptr->hdr.broadcast)
+		{
 			rt_sem_wait_barrier(&mq->broadcast);
 			goto relslot;
-		} else {
+		}
+		else
+		{
 			rt_sem_signal(&mq->received);
 			rt_sem_signal(&mq->receivers);
 			rt_sem_wait_barrier(&mq->broadcast);
 		}
-	} else {
+	}
+	else
+	{
 		unsigned long flags;
 relslot:	flags = rt_spin_lock_irqsave(&mq->lock);
 		mq->firstmsg = msg_ptr->hdr.next;
@@ -227,7 +263,8 @@ relslot:	flags = rt_spin_lock_irqsave(&mq->lock);
 		rt_spin_unlock_irqrestore(flags, &mq->lock);
 		rt_sem_signal(&mq->freslots);
 		rt_sem_signal(&mq->receivers);
-		if (p) {
+		if (p)
+		{
 			rt_free(p);
 		}
 	}
@@ -237,10 +274,13 @@ relslot:	flags = rt_spin_lock_irqsave(&mq->lock);
 RTAI_SYSCALL_MODE int _rt_msg_receive(RT_MSGQ *mq, void *msg, int msg_size, int *msgpri, int space)
 {
 	int retval;
-	if ((retval = rt_sem_wait(&mq->receivers)) >= RTE_LOWERR) {
+	if ((retval = rt_sem_wait(&mq->receivers)) >= RTE_LOWERR)
+	{
 		return TBX_RET(msg_size, retval);
 	}
-	if ((retval = rt_sem_wait(&mq->received)) >= RTE_LOWERR) { ;
+	if ((retval = rt_sem_wait(&mq->received)) >= RTE_LOWERR)
+	{
+		;
 		rt_sem_signal(&mq->receivers);
 		return TBX_RET(msg_size, retval);
 	}
@@ -249,10 +289,13 @@ RTAI_SYSCALL_MODE int _rt_msg_receive(RT_MSGQ *mq, void *msg, int msg_size, int 
 
 RTAI_SYSCALL_MODE int _rt_msg_receive_if(RT_MSGQ *mq, void *msg, int msg_size, int *msgpri, int space)
 {
-	if (rt_sem_wait_if(&mq->receivers) <= 0) {
+	if (rt_sem_wait_if(&mq->receivers) <= 0)
+	{
 		return msg_size;
 	}
-	if (rt_sem_wait_if(&mq->received) <= 0) { ;
+	if (rt_sem_wait_if(&mq->received) <= 0)
+	{
+		;
 		rt_sem_signal(&mq->receivers);
 		return msg_size;
 	}
@@ -262,10 +305,12 @@ RTAI_SYSCALL_MODE int _rt_msg_receive_if(RT_MSGQ *mq, void *msg, int msg_size, i
 RTAI_SYSCALL_MODE int _rt_msg_receive_until(RT_MSGQ *mq, void *msg, int msg_size, int *msgpri, RTIME until, int space)
 {
 	int retval;
-	if ((retval = rt_sem_wait_until(&mq->receivers, until)) >= RTE_LOWERR) {
+	if ((retval = rt_sem_wait_until(&mq->receivers, until)) >= RTE_LOWERR)
+	{
 		return TBX_RET(msg_size, retval);
 	}
-	if ((retval = rt_sem_wait_until(&mq->received, until)) >= RTE_LOWERR) {
+	if ((retval = rt_sem_wait_until(&mq->received, until)) >= RTE_LOWERR)
+	{
 		rt_sem_signal(&mq->receivers);
 		return TBX_RET(msg_size, retval);
 	}
@@ -284,14 +329,19 @@ RTAI_SYSCALL_MODE int _rt_msg_evdrp(RT_MSGQ *mq, void *msg, int msg_size, int *m
 	void *p;
 
 	size = min((msg_ptr = mq->firstmsg)->hdr.size, msg_size);
-	if (space) {
+	if (space)
+	{
 		memcpy(msg, (p = msg_ptr->hdr.malloc) ? p : msg_ptr->msg, size);
-		if (msgpri) {
+		if (msgpri)
+		{
 			*msgpri = msg_ptr->hdr.priority;
 		}
-	} else {
+	}
+	else
+	{
 		rt_copy_to_user(msg, (p = msg_ptr->hdr.malloc) ? p : msg_ptr->msg, size);
-		if (msgpri) {
+		if (msgpri)
+		{
 			rt_put_user(msg_ptr->hdr.priority, msgpri);
 		}
 	}
@@ -304,13 +354,17 @@ static int _broadcast(RT_MSGQ *mq, void *msg, int msg_size, int msgpri, int broa
 	RT_MSG *msg_ptr;
 	void *p;
 
-	if (msg_size > mq->fastsize) {
-		if (!(p = rt_malloc(msg_size))) {
+	if (msg_size > mq->fastsize)
+	{
+		if (!(p = rt_malloc(msg_size)))
+		{
 			rt_sem_signal(&mq->freslots);
 			rt_sem_signal(&mq->senders);
 			return -ENOMEM;
 		}
-	} else {
+	}
+	else
+	{
 		p = NULL;
 	}
 	flags = rt_spin_lock_irqsave(&mq->lock);
@@ -319,9 +373,12 @@ static int _broadcast(RT_MSGQ *mq, void *msg, int msg_size, int msgpri, int broa
 	msg_ptr->hdr.size = msg_size;
 	msg_ptr->hdr.priority = msgpri;
 	msg_ptr->hdr.malloc = p;
-	if (space) {
+	if (space)
+	{
 		memcpy(p ? p : msg_ptr->msg, msg, msg_size);
-	} else {
+	}
+	else
+	{
 		rt_copy_from_user(p ? p : msg_ptr->msg, msg, msg_size);
 	}
 	rt_typed_sem_init(&mq->broadcast, broadcast + 1, CNT_SEM | PRIO_Q);
@@ -339,14 +396,17 @@ RTAI_SYSCALL_MODE int _rt_msg_broadcast(RT_MSGQ *mq, void *msg, int msg_size, in
 {
 	int retval;
 
-	if ((retval = rt_sem_wait(&mq->senders)) >= RTE_LOWERR) {
+	if ((retval = rt_sem_wait(&mq->senders)) >= RTE_LOWERR)
+	{
 		return TBX_RET(0, retval);
 	}
-	if (mq->received.count >= 0) {
+	if (mq->received.count >= 0)
+	{
 		rt_sem_signal(&mq->senders);
 		return 0;
 	}
-	if ((retval = rt_sem_wait(&mq->freslots)) >= RTE_LOWERR) {
+	if ((retval = rt_sem_wait(&mq->freslots)) >= RTE_LOWERR)
+	{
 		rt_sem_signal(&mq->senders);
 		return TBX_RET(0, retval);
 	}
@@ -355,14 +415,17 @@ RTAI_SYSCALL_MODE int _rt_msg_broadcast(RT_MSGQ *mq, void *msg, int msg_size, in
 
 RTAI_SYSCALL_MODE int _rt_msg_broadcast_if(RT_MSGQ *mq, void *msg, int msg_size, int msgpri, int space)
 {
-	if (rt_sem_wait_if(&mq->senders) <= 0) {
+	if (rt_sem_wait_if(&mq->senders) <= 0)
+	{
 		return 0;
 	}
-	if (mq->received.count >= 0) {
+	if (mq->received.count >= 0)
+	{
 		rt_sem_signal(&mq->senders);
 		return 0;
 	}
-	if (rt_sem_wait_if(&mq->freslots) <= 0) {
+	if (rt_sem_wait_if(&mq->freslots) <= 0)
+	{
 		rt_sem_signal(&mq->senders);
 		return 0;
 	}
@@ -373,14 +436,17 @@ RTAI_SYSCALL_MODE int _rt_msg_broadcast_until(RT_MSGQ *mq, void *msg, int msg_si
 {
 	int retval;
 
-	if ((retval = rt_sem_wait_until(&mq->senders, until)) >= RTE_LOWERR) {
+	if ((retval = rt_sem_wait_until(&mq->senders, until)) >= RTE_LOWERR)
+	{
 		return TBX_RET(0, retval);
 	}
-	if (mq->received.count >= 0) {
+	if (mq->received.count >= 0)
+	{
 		rt_sem_signal(&mq->senders);
 		return 0;
 	}
-	if ((retval = rt_sem_wait_until(&mq->freslots, until)) >= RTE_LOWERR) {
+	if ((retval = rt_sem_wait_until(&mq->freslots, until)) >= RTE_LOWERR)
+	{
 		rt_sem_signal(&mq->senders);
 		return TBX_RET(0, retval);
 	}
@@ -392,7 +458,8 @@ RTAI_SYSCALL_MODE int _rt_msg_broadcast_timed(RT_MSGQ *mq, void *msg, int msg_si
 	return _rt_msg_broadcast_until(mq, msg, msg_size, msgpri, get_time() + delay, space);
 }
 
-struct rt_native_fun_entry rt_msg_queue_entries[] = {
+struct rt_native_fun_entry rt_msg_queue_entries[] =
+{
 	{ { 0, rt_msgq_init },  	       	MSGQ_INIT },
 	{ { 1, rt_msgq_delete },		MSGQ_DELETE },
 	{ { 0, _rt_named_msgq_init },  	       	NAMED_MSGQ_INIT },

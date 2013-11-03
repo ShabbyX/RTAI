@@ -65,8 +65,8 @@ static inline unsigned long long rtai_ullmul(unsigned long m0, unsigned long m1)
 {
 	unsigned long long res;
 	__asm__ __volatile__ ("mulhwu %0, %1, %2"
-			       : "=r" (((unsigned long *)(void *)&res)[0])
-			       : "%r" (m0), "r" (m1));
+			      : "=r" (((unsigned long *)(void *)&res)[0])
+			      : "%r" (m0), "r" (m1));
 	((unsigned long *)(void *)&res)[1] = m0*m1;
 	return res;
 }
@@ -79,7 +79,8 @@ static inline unsigned long long rtai_ulldiv(unsigned long long ull, unsigned lo
 
 	q = 0;
 	rf = (unsigned long long)(0xFFFFFFFF - (qf = 0xFFFFFFFF / uld) * uld) + 1ULL;
-	while (ull >= uld) {
+	while (ull >= uld)
+	{
 		((unsigned long *)(void *)&q)[0] += (qh = ((unsigned long *)(void *)&ull)[0] / uld);
 		rh = ((unsigned long *)(void *)&ull)[0] - qh * uld;
 		q += rh * (unsigned long long)qf + (ql = ((unsigned long *)(void *)&ull)[1] / uld);
@@ -91,7 +92,7 @@ static inline unsigned long long rtai_ulldiv(unsigned long long ull, unsigned lo
 
 static inline int rtai_imuldiv(int i, int mult, int div)
 {
-    /* Returns (int)i = (int)i*(int)(mult)/(int)div. */
+	/* Returns (int)i = (int)i*(int)(mult)/(int)div. */
 	unsigned long q, r;
 	q = rtai_ulldiv(rtai_ullmul(i, mult), div, &r);
 	return (r + r) > div ? q + 1 : q;
@@ -99,7 +100,7 @@ static inline int rtai_imuldiv(int i, int mult, int div)
 
 static inline unsigned long long rtai_llimd(unsigned long long ull, unsigned long mult, unsigned long div)
 {
-    /* Returns (long long)ll = (int)ll*(int)(mult)/(int)div. */
+	/* Returns (long long)ll = (int)ll*(int)(mult)/(int)div. */
 	unsigned long long low;
 	unsigned long q, r;
 
@@ -127,7 +128,8 @@ static inline unsigned long long rtai_llimd(unsigned long long ull, unsigned lon
 #include <asm/rtai_fpu.h>
 #include <rtai_trace.h>
 
-struct rtai_realtime_irq_s {
+struct rtai_realtime_irq_s
+{
 	int (*handler)(unsigned irq, void *cookie);
 	void *cookie;
 	int retmode;
@@ -172,9 +174,11 @@ static inline struct hal_domain_struct *get_domain_pointer(int n)
 	struct list_head *p = hal_pipeline.next;
 	struct hal_domain_struct *d;
 	unsigned long i = 0;
-	while (p != &hal_pipeline) {
+	while (p != &hal_pipeline)
+	{
 		d = list_entry(p, struct hal_domain_struct, p_link);
-		if (++i == n) {
+		if (++i == n)
+		{
 			return d;
 		}
 		p = d->p_link.next;
@@ -231,13 +235,14 @@ typedef int (*rt_irq_handler_t)(unsigned irq, void *cookie);
 #define RTAI_CALIBRATED_CPU_FREQ   0
 #define RTAI_CPU_FREQ              (rtai_tunables.cpu_freq)
 
-struct calibration_data {
-    unsigned long cpu_freq;
-    unsigned long apic_freq;
-    int latency;
-    int setup_time_TIMER_CPUNIT;
-    int setup_time_TIMER_UNIT;
-    int timers_tol[RTAI_NR_CPUS];
+struct calibration_data
+{
+	unsigned long cpu_freq;
+	unsigned long apic_freq;
+	int latency;
+	int setup_time_TIMER_CPUNIT;
+	int setup_time_TIMER_UNIT;
+	int timers_tol[RTAI_NR_CPUS];
 };
 
 extern struct rt_times rt_times;
@@ -249,7 +254,8 @@ extern volatile unsigned long rtai_cpu_lock[];
 #define SET_TASKPRI(cpuid)
 #define CLR_TASKPRI(cpuid)
 
-extern struct rtai_switch_data {
+extern struct rtai_switch_data
+{
 	volatile unsigned long sflags;
 	volatile unsigned long lflags;
 } rtai_linux_context[RTAI_NR_CPUS];
@@ -311,22 +317,22 @@ static inline void rt_spin_unlock_hw_irqrestore(unsigned long flags, spinlock_t 
 
 static inline void rt_spin_lock_irq(spinlock_t *lock)
 {
-    rtai_cli();
-    rt_spin_lock(lock);
+	rtai_cli();
+	rt_spin_lock(lock);
 }
 
 static inline void rt_spin_unlock_irq(spinlock_t *lock)
 {
-    rt_spin_unlock(lock);
-    rtai_sti();
+	rt_spin_unlock(lock);
+	rtai_sti();
 }
 
 static inline unsigned long rt_spin_lock_irqsave(spinlock_t *lock)
 {
-    unsigned long flags;
-    rtai_save_flags_and_cli(flags);
-    rt_spin_lock(lock);
-    return flags;
+	unsigned long flags;
+	rtai_save_flags_and_cli(flags);
+	rt_spin_lock(lock);
+	return flags;
 }
 
 static inline void rt_spin_unlock_irqrestore(unsigned long flags, spinlock_t *lock)
@@ -341,15 +347,19 @@ static inline void rtai_spin_glock(volatile unsigned long *lock)
 {
 	unsigned long val, owner;
 #if 0
-	do {
+	do
+	{
 		val = lock[1];
-	} while (cmpxchg(&lock[1], val, (val + 0x10000) & 0x7FFF7FFF) != val);
+	}
+	while (cmpxchg(&lock[1], val, (val + 0x10000) & 0x7FFF7FFF) != val);
 #else
 	val = atomic_add_return(0x10000, (atomic_t *)&lock[1]) - 0x10000;
 #endif
-	if ((owner = (val & 0x7FFF0000) >> 16) != (val & 0x7FFF)) {
-		while ((lock[1] & 0x7FFF) != owner) {
-			 cpu_relax();
+	if ((owner = (val & 0x7FFF0000) >> 16) != (val & 0x7FFF))
+	{
+		while ((lock[1] & 0x7FFF) != owner)
+		{
+			cpu_relax();
 		}
 	}
 }
@@ -357,17 +367,20 @@ static inline void rtai_spin_glock(volatile unsigned long *lock)
 static inline void rtai_spin_gunlock(volatile unsigned long *lock)
 {
 	unsigned long val;
-	do {
+	do
+	{
 		val = lock[1];
 		cpu_relax();
-	} while (cmpxchg(&lock[1], val, (val + 1) & 0x7FFF7FFF) != val);
+	}
+	while (cmpxchg(&lock[1], val, (val + 1) & 0x7FFF7FFF) != val);
 }
 
 #else
 
 static inline void rtai_spin_glock(volatile unsigned long *lock)
 {
-	while (test_and_set_bit(31, lock)) {
+	while (test_and_set_bit(31, lock))
+	{
 		cpu_relax();
 	}
 	barrier();
@@ -385,7 +398,8 @@ static inline void rt_get_global_lock(void)
 {
 	barrier();
 	rtai_cli();
-	if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0])) {
+	if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0]))
+	{
 		rtai_spin_glock(&rtai_cpu_lock[0]);
 	}
 	barrier();
@@ -395,7 +409,8 @@ static inline void rt_release_global_lock(void)
 {
 	barrier();
 	rtai_cli();
-	if (test_and_clear_bit(hal_processor_id(), &rtai_cpu_lock[0])) {
+	if (test_and_clear_bit(hal_processor_id(), &rtai_cpu_lock[0]))
+	{
 		rtai_spin_gunlock(&rtai_cpu_lock[0]);
 	}
 	barrier();
@@ -415,7 +430,7 @@ static inline void rt_release_global_lock(void)
  */
 static inline void rt_global_cli(void)
 {
-    rt_get_global_lock();
+	rt_get_global_lock();
 }
 
 /**
@@ -426,8 +441,8 @@ static inline void rt_global_cli(void)
  */
 static inline void rt_global_sti(void)
 {
-    rt_release_global_lock();
-    rtai_sti();
+	rt_release_global_lock();
+	rtai_sti();
 }
 
 /**
@@ -442,7 +457,8 @@ static inline int rt_global_save_flags_and_cli(void)
 
 	barrier();
 	flags = rtai_save_flags_irqbit_and_cli();
-	if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0])) {
+	if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0]))
+	{
 		rtai_spin_glock(&rtai_cpu_lock[0]);
 		barrier();
 		return flags | 1;
@@ -463,7 +479,8 @@ static inline void rt_global_save_flags(unsigned long *flags)
 	unsigned long hflags = rtai_save_flags_irqbit_and_cli();
 
 	*flags = test_bit(hal_processor_id(), &rtai_cpu_lock[0]) ? hflags : hflags | 1;
-	if (hflags) {
+	if (hflags)
+	{
 		rtai_sti();
 	}
 }
@@ -478,12 +495,16 @@ static inline void rt_global_save_flags(unsigned long *flags)
 static inline void rt_global_restore_flags(unsigned long flags)
 {
 	barrier();
-	if (test_and_clear_bit(0, &flags)) {
+	if (test_and_clear_bit(0, &flags))
+	{
 		rt_release_global_lock();
-	} else {
+	}
+	else
+	{
 		rt_get_global_lock();
 	}
-	if (flags) {
+	if (flags)
+	{
 		rtai_sti();
 	}
 	barrier();
@@ -561,7 +582,8 @@ do { \
 static inline int rt_save_switch_to_real_time(int cpuid)
 {
 	SET_TASKPRI(cpuid);
-	if (!rtai_linux_context[cpuid].sflags) {
+	if (!rtai_linux_context[cpuid].sflags)
+	{
 		_rt_switch_to_real_time(cpuid);
 		return 0;
 	}
@@ -595,19 +617,21 @@ static inline unsigned long long rtai_rdtsc (void)
 			      "   cmpw %2,%0\n"
 			      "   bne 1b\n"
 			      : "=r" (((unsigned long *)&ts)[0]),
-				"=r" (((unsigned long *)&ts)[1]),
-				"=r" (chk));
+			      "=r" (((unsigned long *)&ts)[1]),
+			      "=r" (chk));
 	return ts;
 }
 
 static inline void rt_set_timer_delay (int delay)
 {
-    /* NOTE: delay MUST be 0 if a periodic timer is being used. */
-	if (delay == 0) {
+	/* NOTE: delay MUST be 0 if a periodic timer is being used. */
+	if (delay == 0)
+	{
 #ifdef CONFIG_40x
 		return;
 #else  /* !CONFIG_40x */
-		while ((delay = rt_times.intr_time - rtai_rdtsc()) <= 0) {
+		while ((delay = rt_times.intr_time - rtai_rdtsc()) <= 0)
+		{
 			rt_times.intr_time += rt_times.periodic_tick;
 		}
 #endif /* CONFIG_40x */
@@ -641,9 +665,10 @@ long rtai_catch_event (struct hal_domain_struct *ipd, unsigned long event, int (
 //                           Public interface                                //
 //---------------------------------------------------------------------------//
 
-struct apic_timer_setup_data {
-    int mode;
-    int count;
+struct apic_timer_setup_data
+{
+	int mode;
+	int count;
 };
 
 #ifdef __KERNEL__
@@ -655,7 +680,7 @@ struct apic_timer_setup_data {
 void *ll2a(long long ll, char *s);
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif /* __cplusplus */
 
 /*
@@ -670,7 +695,8 @@ void rt_set_irq_retmode(unsigned irq, int retmode);
 static inline int rt_request_irq_wack(unsigned irq, int (*handler)(unsigned irq, void *cookie), void *cookie, int retmode, int (*irq_ack)(unsigned int))
 {
 	int retval;
-	if ((retval = rt_request_irq(irq, handler, cookie, retmode)) < 0) {
+	if ((retval = rt_request_irq(irq, handler, cookie, retmode)) < 0)
+	{
 		return retval;
 	}
 	return rt_set_irq_ack(irq, irq_ack);
@@ -740,7 +766,7 @@ int rt_printk(const char *format, ...);
 int rt_sync_printk(const char *format, ...);
 
 #ifdef __cplusplus
- }
+}
 #endif /* __cplusplus */
 
 #endif /* __KERNEL__ */

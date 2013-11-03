@@ -105,16 +105,22 @@ struct task_struct;
 RTAI_SCB_PROTO(void *, rt_scb_init, (unsigned long name, int size, unsigned long suprt))
 {
 	void *scb;
-	if (suprt > 1000) {
+	if (suprt > 1000)
+	{
 		size -=  HDRSIZ + 1;
 		scb = (void *)suprt;
-	} else {
+	}
+	else
+	{
 		scb = rt_shm_alloc(name, size + HDRSIZ + 1, suprt);
 	}
-	if (scb && !atomic_cmpxchg((atomic_t *)scb, 0, name)) {
+	if (scb && !atomic_cmpxchg((atomic_t *)scb, 0, name))
+	{
 		((int *)scb)[1] = ((int *)scb)[2] = 0;
 		((int *)scb)[0] = size + 1;
-	} else {
+	}
+	else
+	{
 		while (!((int *)scb)[0]);
 	}
 	return scb ? scb + HDRSIZ : 0;
@@ -238,12 +244,16 @@ RTAI_SCB_PROTO (int, rt_scb_frbs, (void *scb))
 RTAI_SCB_PROTO(int, rt_scb_get, (void *scb, void *msg, int msg_size))
 {
 	int size = SIZE, fbyte = FBYTE, lbyte = LBYTE;
-	if (msg_size > 0 && ((lbyte -= fbyte) >= 0 ? lbyte : size + lbyte) >= msg_size) {
+	if (msg_size > 0 && ((lbyte -= fbyte) >= 0 ? lbyte : size + lbyte) >= msg_size)
+	{
 		int tocpy;
-		if ((tocpy = size - fbyte) > msg_size) {
+		if ((tocpy = size - fbyte) > msg_size)
+		{
 			memcpy(msg, SCB + fbyte, msg_size);
 			FBYTE = fbyte + msg_size;
-		} else {
+		}
+		else
+		{
 			memcpy(msg, SCB + fbyte, tocpy);
 			memcpy(msg + tocpy, SCB, msg_size -= tocpy);
 			FBYTE = msg_size;
@@ -268,11 +278,15 @@ RTAI_SCB_PROTO(int, rt_scb_get, (void *scb, void *msg, int msg_size))
 RTAI_SCB_PROTO(int, rt_scb_evdrp, (void *scb, void *msg, int msg_size))
 {
 	int size = SIZE, fbyte = FBYTE, lbyte = LBYTE;
-	if (msg_size > 0 && ((lbyte -= fbyte) >= 0 ? lbyte : size + lbyte) >= msg_size) {
+	if (msg_size > 0 && ((lbyte -= fbyte) >= 0 ? lbyte : size + lbyte) >= msg_size)
+	{
 		int tocpy;
-		if ((tocpy = size - fbyte) > msg_size) {
+		if ((tocpy = size - fbyte) > msg_size)
+		{
 			memcpy(msg, SCB + fbyte, msg_size);
-		} else {
+		}
+		else
+		{
 			memcpy(msg, SCB + fbyte, tocpy);
 			memcpy(msg + tocpy, SCB, msg_size - tocpy);
 		}
@@ -296,12 +310,16 @@ RTAI_SCB_PROTO(int, rt_scb_evdrp, (void *scb, void *msg, int msg_size))
 RTAI_SCB_PROTO(int, rt_scb_put, (void *scb, void *msg, int msg_size))
 {
 	int size = SIZE, fbyte = FBYTE, lbyte = LBYTE;
-	if (msg_size > 0 && ((fbyte -= lbyte) <= 0 ? size + fbyte : fbyte) > msg_size) {
+	if (msg_size > 0 && ((fbyte -= lbyte) <= 0 ? size + fbyte : fbyte) > msg_size)
+	{
 		int tocpy;
-		if ((tocpy = size - lbyte) > msg_size) {
+		if ((tocpy = size - lbyte) > msg_size)
+		{
 			memcpy(SCB + lbyte, msg, msg_size);
 			LBYTE = lbyte + msg_size;
-		} else {
+		}
+		else
+		{
 			memcpy(SCB + lbyte, msg, tocpy);
 			memcpy(SCB, msg + tocpy, msg_size -= tocpy);
 			LBYTE = msg_size;
@@ -314,12 +332,16 @@ RTAI_SCB_PROTO(int, rt_scb_put, (void *scb, void *msg, int msg_size))
 RTAI_SCB_PROTO(int, rt_scb_ovrwr, (void *scb, void *msg, int msg_size))
 {
 	int size = SIZE, lbyte = LBYTE;
-	if (msg_size > 0 && msg_size < size) {
+	if (msg_size > 0 && msg_size < size)
+	{
 		int tocpy;
-		if ((tocpy = size - lbyte) > msg_size) {
+		if ((tocpy = size - lbyte) > msg_size)
+		{
 			memcpy(SCB + lbyte, msg, msg_size);
 			LBYTE = lbyte + msg_size;
-		} else {
+		}
+		else
+		{
 			memcpy(SCB + lbyte, msg, tocpy);
 			memcpy(SCB, msg + tocpy, msg_size -= tocpy);
 			LBYTE = msg_size;

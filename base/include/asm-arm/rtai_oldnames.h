@@ -102,13 +102,13 @@
 extern inline int
 rt_request_cpu_own_irq(unsigned irq, rt_irq_handler_t handler)
 {
-    return rt_request_irq(irq, handler, NULL, 0);
+	return rt_request_irq(irq, handler, NULL, 0);
 }
 
 extern inline int
 rt_free_cpu_own_irq(unsigned irq)
 {
-    return rt_release_irq(irq);
+	return rt_release_irq(irq);
 }
 
 #endif /* !__cplusplus */

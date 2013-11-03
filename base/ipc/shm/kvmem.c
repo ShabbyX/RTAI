@@ -40,9 +40,11 @@ void *rvmalloc(unsigned long size)
 	void *mem;
 	unsigned long adr;
 
-	if ((mem = vmalloc(size))) {
+	if ((mem = vmalloc(size)))
+	{
 		adr = (unsigned long)mem;
-		while (size > 0) {
+		while (size > 0)
+		{
 //			mem_map_reserve(virt_to_page(UVIRT_TO_KVA(adr)));
 			SetPageReserved(vmalloc_to_page((void *)adr));
 			adr  += PAGE_SIZE;
@@ -56,8 +58,10 @@ void rvfree(void *mem, unsigned long size)
 {
 	unsigned long adr;
 
-	if ((adr = (unsigned long)mem)) {
-		while (size > 0) {
+	if ((adr = (unsigned long)mem))
+	{
+		while (size > 0)
+		{
 //			mem_map_unreserve(virt_to_page(UVIRT_TO_KVA(adr)));
 			ClearPageReserved(vmalloc_to_page((void *)adr));
 			adr  += PAGE_SIZE;
@@ -75,21 +79,26 @@ int rvmmap(void *mem, unsigned long memsize, struct vm_area_struct *vma)
 
 	/* this is not time critical code, so we check the arguments */
 	/* vma->vm_offset HAS to be checked (and is checked)*/
-	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT)) {
+	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT))
+	{
 		return -EFAULT;
 	}
 	offset = vma->vm_pgoff << PAGE_SHIFT;
 	size = vma->vm_end - start;
-	if ((size + offset) > memsize) {
+	if ((size + offset) > memsize)
+	{
 		return -EFAULT;
 	}
 	pos = (unsigned long)mem + offset;
-	if (pos%PAGE_SIZE || start%PAGE_SIZE || size%PAGE_SIZE) {
+	if (pos%PAGE_SIZE || start%PAGE_SIZE || size%PAGE_SIZE)
+	{
 		return -EFAULT;
 	}
-	while (size > 0) {
+	while (size > 0)
+	{
 //		if (mm_remap_page_range(vma, start, kvirt_to_pa(pos), PAGE_SIZE, PAGE_SHARED)) {
-		if (vm_remap_page_range(vma, start, pos)) {
+		if (vm_remap_page_range(vma, start, pos))
+		{
 			return -EAGAIN;
 		}
 		start += PAGE_SIZE;
@@ -104,15 +113,20 @@ void *rkmalloc(int *msize, int suprt)
 {
 	unsigned long mem, adr, size;
 
-	if (*msize <= KMALLOC_LIMIT) {
+	if (*msize <= KMALLOC_LIMIT)
+	{
 		mem = (unsigned long)kmalloc(*msize, suprt);
-	} else {
+	}
+	else
+	{
 		mem = (unsigned long)__get_free_pages(suprt, get_order(*msize));
 	}
-	if (mem) {
+	if (mem)
+	{
 		adr  = PAGE_ALIGN(mem);
 		size = *msize -= (adr - mem);
-		while (size > 0) {
+		while (size > 0)
+		{
 //			mem_map_reserve(virt_to_page(adr));
 			SetPageReserved(virt_to_page(adr));
 			adr  += PAGE_SIZE;
@@ -126,18 +140,23 @@ void rkfree(void *mem, unsigned long size)
 {
 	unsigned long adr;
 
-	if ((adr = (unsigned long)mem)) {
+	if ((adr = (unsigned long)mem))
+	{
 		unsigned long sz = size;
 		adr  = PAGE_ALIGN((unsigned long)mem);
-		while (size > 0) {
+		while (size > 0)
+		{
 //			mem_map_unreserve(virt_to_page(adr));
 			ClearPageReserved(virt_to_page(adr));
 			adr  += PAGE_SIZE;
 			size -= PAGE_SIZE;
 		}
-		if (sz <= KMALLOC_LIMIT) {
+		if (sz <= KMALLOC_LIMIT)
+		{
 			kfree(mem);
-		} else {
+		}
+		else
+		{
 			free_pages((unsigned long)mem, get_order(sz));
 		}
 	}
@@ -151,20 +170,24 @@ int rkmmap(void *mem, unsigned long memsize, struct vm_area_struct *vma)
 
 	/* this is not time critical code, so we check the arguments */
 	/* vma->vm_offset HAS to be checked (and is checked)*/
-	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT)) {
+	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT))
+	{
 		return -EFAULT;
 	}
 	offset = vma->vm_pgoff << PAGE_SHIFT;
 	size = vma->vm_end - start;
-	if ((size + offset) > memsize) {
+	if ((size + offset) > memsize)
+	{
 		return -EFAULT;
 	}
 	pos = (unsigned long)mem + offset;
-	if (pos%PAGE_SIZE || start%PAGE_SIZE || size%PAGE_SIZE) {
+	if (pos%PAGE_SIZE || start%PAGE_SIZE || size%PAGE_SIZE)
+	{
 		return -EFAULT;
 	}
 //	if (mm_remap_page_range(vma, start, virt_to_phys((void *)pos), size, PAGE_SHARED)) {
-	if (km_remap_page_range(vma, start, pos, size)) {
+	if (km_remap_page_range(vma, start, pos, size))
+	{
 		return -EAGAIN;
 	}
 	return 0;

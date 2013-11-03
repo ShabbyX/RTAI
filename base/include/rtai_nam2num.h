@@ -72,17 +72,26 @@ NAM2NUM_PROTO(unsigned long, nam2num, (const char *name))
 	unsigned long retval = 0;
 	int c, i;
 
-	for (i = 0; i < 6; i++) {
-		if (!(c = name[i])) {
+	for (i = 0; i < 6; i++)
+	{
+		if (!(c = name[i]))
+		{
 			break;
 		}
-		if (islower(c)) {
+		if (islower(c))
+		{
 			c +=  (10 - 'a');
-		} else if (isupper(c)) {
+		}
+		else if (isupper(c))
+		{
 			c += (10 - 'A');
-		} else if (isdigit(c)) {
+		}
+		else if (isdigit(c))
+		{
 			c -= '0';
-		} else {
+		}
+		else
+		{
 			c = c == '_' ? 36 : c == '@' ? 37 : c == '.' ? 38 : 39;
 		}
 		retval = retval*40 + c;
@@ -103,23 +112,29 @@ NAM2NUM_PROTO(unsigned long, nam2num, (const char *name))
 NAM2NUM_PROTO(void, num2nam, (unsigned long num, char *name))
 {
 	int c, i, k, q;
-	if (num >= MAX_NAM2NUM) {
+	if (num >= MAX_NAM2NUM)
+	{
 		strncpy(name, "|null|", 7);
 		return;
 	}
 	i = 5;
 	num -= 2;
-	while (num && i >= 0) {
+	while (num && i >= 0)
+	{
 		q = num/40;
 		c = num - q*40;
 		num = q;
-		if (c < 36) {
+		if (c < 36)
+		{
 			name[i--] = c > 9 ? c + 'A' - 10 : c + '0';
-		} else {
+		}
+		else
+		{
 			name[i--] = c == 36 ? '_' : c == 37 ? '@' : c == 38 ? '.' : '$';
 		}
 	}
-	for (k = 0; i < 5; k++) {
+	for (k = 0; i < 5; k++)
+	{
 		name[k] = name[++i];
 	}
 	name[k] = 0;
