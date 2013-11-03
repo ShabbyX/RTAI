@@ -1383,28 +1383,12 @@ int rtai_calibrate_8254 (void)
 	return rtai_imuldiv(dt, 100000, RTAI_CPU_FREQ);
 }
 
-#if 1
 void rtai_set_linux_task_priority (struct task_struct *task, int policy, int prio)
 {
 	hal_set_linux_task_priority(task, policy, prio);
 	if (task->rt_priority != prio || task->policy != policy)
 	{
 		printk("RTAI[hal]: sched_setscheduler(policy = %d, prio = %d) failed, (%s -- pid = %d)\n", policy, prio, task->comm, task->pid);
-	}
-}
-
-#else /* keep for a while as a memo of what we did */
-void rtai_set_linux_task_priority (struct task_struct *task, int policy, int prio)
-{
-	int rc;
-
-	struct sched_param param = { prio };
-	rc = sched_setscheduler(task, policy, &param);
-#endif
-
-	if (rc)
-	{
-//		printk("RTAI[hal]: sched_setscheduler(policy=%d,prio=%d) failed, code %d (%s -- pid=%d)\n", policy, prio, rc, task->comm, task->pid);
 	}
 }
 
