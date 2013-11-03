@@ -414,6 +414,7 @@
 #define LXRT_SPL_INIT		1029
 #define LXRT_SPL_DELETE 	1030
 #define KERNEL_CALIBRATOR	1031
+#define GET_CPU_FREQ		1032
 
 #define FORCE_SOFT 0x80000000
 
@@ -915,7 +916,7 @@ RTAI_PROTO(int,rt_change_prio,(RT_TASK *task, int priority))
  * the related transition from another process.
  *
  */
-RTAI_PROTO(void,rt_make_soft_real_time,(void))
+RTAI_PROTO(void, rt_make_soft_real_time, (void))
 {
 	struct { unsigned long dummy; } arg;
 	rtai_lxrt(BIDX, SIZARG, MAKE_SOFT_RT, &arg);
@@ -1527,6 +1528,22 @@ RTAI_PROTO(int, kernel_calibrator, (int period, int loops, int Latency))
 {
 	struct { long period, loops, Latency; } arg = { period, loops, Latency };
 	return rtai_lxrt(BIDX, SIZARG, KERNEL_CALIBRATOR, &arg).i[0];
+}
+
+RTAI_PROTO(unsigned int, rt_get_cpu_freq, (void))
+{
+	struct { unsigned long dummy; } arg;
+	return rtai_lxrt(BIDX, SIZARG, GET_CPU_FREQ, &arg).i[0];
+}
+
+static inline RTIME nanos2tscnts(RTIME nanos, unsigned int cpu_freq)
+{
+	return (RTIME)((long double)nanos*((long double)cpu_freq/(long double)1000000000));
+}
+
+static inline RTIME tscnts2nanos(RTIME tscnts, unsigned int cpu_freq)
+{
+	return (RTIME)((long double)tscnts*((long double)1000000000/(long double)cpu_freq));
 }
 
 #ifdef __cplusplus

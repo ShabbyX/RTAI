@@ -688,6 +688,11 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 			return larg->Latency < 0 ? 0 : kernel_calibrator_spv(larg->period, larg->loops, task);
 		}
 
+		case GET_CPU_FREQ: {
+			extern struct calibration_data rtai_tunables;
+			return rtai_tunables.cpu_freq;
+		}
+
 	        default: {
 		    rt_printk("RTAI/LXRT: Unknown srq #%d\n", srq);
 		    arg0.i = -ENOSYS;

@@ -249,3 +249,36 @@ int rtai_calibrate_hard_timer(void)
 	return rtai_imuldiv((dt + CAL_LOOPS/2)/CAL_LOOPS, 1000000000, rtai_tunables.cpu_freq);
 }
 EXPORT_SYMBOL(rtai_calibrate_hard_timer);
+
+extern int rtai_sched_affinity;  // in Linux "kernel/sched/core.c"
+// should we hold a lock for p->cpus_allowed, risky ?
+void free_isolcpus_from_linux(void *IsolCpusMask)
+{
+	struct task_struct *p;
+	struct cpumask mask;
+
+	rtai_sched_affinity = 1;
+	for_each_process(p) {
+		if (p->rtai_tskext(TSKEXT0)) {
+			continue;
+		}
+		cpumask_andnot(&mask, &p->cpus_allowed, (struct cpumask *)IsolCpusMask);
+		if (!cpumask_weight(&mask)) {
+			cpumask_complement(&mask, (struct cpumask *)IsolCpusMask);
+		}
+#if 0 // diagnostic
+		{ 
+			char buf[4*sizeof(struct cpumask)];
+			cpumask_scnprintf(buf, sizeof(buf), &p->cpus_allowed);
+			printk("PID: %d, ORIG: %s ", p->pid, buf);
+			cpulist_scnprintf(buf, sizeof(buf), &p->cpus_allowed);
+			printk("(%s), ", buf);
+			cpumask_scnprintf(buf, sizeof(buf), &mask);
+			printk("NEW: %s ", buf);
+			cpulist_scnprintf(buf, sizeof(buf), &mask);
+			printk("(%s).\n", buf);
+		}
+#endif
+		set_cpus_allowed_ptr(p, &mask);
+	}
+}
