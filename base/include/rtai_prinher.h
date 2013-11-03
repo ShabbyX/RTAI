@@ -47,7 +47,8 @@ static inline int _set_task_prio_from_resq(RT_TASK *resownr)
 	QUEUE *resq, *resqel;
 	hprio = resownr->base_priority;
 	resqel = resq = &resownr->resq;
-	while ((resqel = resqel->next) != resq && (task = RESQEL_TASK) && task->priority < hprio) {
+	while ((resqel = resqel->next) != resq && (task = RESQEL_TASK) && task->priority < hprio)
+	{
 		hprio = task->priority;
 	}
 	return hprio;
@@ -90,7 +91,8 @@ static inline int _set_task_prio_from_resq(RT_TASK *resownr)
 
 static inline int dequeue_resqel_reset_task_priority(QUEUE *resqel, RT_TASK *resownr)
 {
-	if (--resownr->owndres <= 0) {
+	if (--resownr->owndres <= 0)
+	{
 		resownr->owndres = 0;
 		return _set_task_prio_from_resq(resownr);
 	}

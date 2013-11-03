@@ -30,20 +30,22 @@ struct QueueHook;
 
 #ifdef __KERNEL__
 
-typedef struct t_msgcb { /* Message control block structure. */
-    int  cmd;
-    void *sbuf;
-    size_t sbytes;
-    void *rbuf;
-    size_t rbytes;
+typedef struct t_msgcb   /* Message control block structure. */
+{
+	int  cmd;
+	void *sbuf;
+	size_t sbytes;
+	void *rbuf;
+	size_t rbytes;
 } MSGCB;
 
 #define PROXY_MIN_STACK_SIZE 2048
 
-struct proxy_t {
-    struct rt_task_struct *receiver;
-    int nmsgs, nbytes;
-    char *msg;
+struct proxy_t
+{
+	struct rt_task_struct *receiver;
+	int nmsgs, nbytes;
+	char *msg;
 };
 
 #define SYNCMSG          0
@@ -58,146 +60,146 @@ int __rtai_msg_init(void);
 void __rtai_msg_exit(void);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_send(struct rt_task_struct *task,
-			       unsigned long msg);
+		unsigned long msg);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_send_if(struct rt_task_struct *task,
-				  unsigned long msg);
+		unsigned long msg);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_send_until(struct rt_task_struct *task,
-				     unsigned long msg,
-				     RTIME time);
-    
+		unsigned long msg,
+		RTIME time);
+
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_send_timed(struct rt_task_struct *task,
-				     unsigned long msg,
-				     RTIME delay);
+		unsigned long msg,
+		RTIME delay);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_evdrp(struct rt_task_struct *task,
-				void *msg);
+		void *msg);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_receive(struct rt_task_struct *task,
-				  void *msg);
+		void *msg);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_receive_if(struct rt_task_struct *task,
-				     void *msg);
+		void *msg);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_receive_until(struct rt_task_struct *task,
-					void *msg,
-					RTIME time);
+		void *msg,
+		RTIME time);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_receive_timed(struct rt_task_struct *task,
-					void *msg,
-					RTIME delay);
+		void *msg,
+		RTIME delay);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_rpc(struct rt_task_struct *task,
-			      unsigned long to_do,
-			      void *result);
+		unsigned long to_do,
+		void *result);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_rpc_if(struct rt_task_struct *task,
-				 unsigned long to_do,
-				 void *result);
+		unsigned long to_do,
+		void *result);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_rpc_until(struct rt_task_struct *task,
-				    unsigned long to_do,
-				    void *result,
-				    RTIME time);
+		unsigned long to_do,
+		void *result,
+		RTIME time);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_rpc_timed(struct rt_task_struct *task,
-				    unsigned long to_do,
-				    void *result,
-				    RTIME delay);
+		unsigned long to_do,
+		void *result,
+		RTIME delay);
 
 RTAI_SYSCALL_MODE int rt_isrpc(struct rt_task_struct *task);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_return(struct rt_task_struct *task,
-				 unsigned long result);
+		unsigned long result);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_rpcx(struct rt_task_struct *task,
-			       void *smsg,
-			       void *rmsg,
-			       int ssize,
-			       int rsize);
+		void *smsg,
+		void *rmsg,
+		int ssize,
+		int rsize);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_rpcx_if(struct rt_task_struct *task,
-				  void *smsg,
-				  void *rmsg,
-				  int ssize,
-				  int rsize);
+		void *smsg,
+		void *rmsg,
+		int ssize,
+		int rsize);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_rpcx_until(struct rt_task_struct *task,
-				     void *smsg,
-				     void *rmsg,
-				     int ssize,
-				     int rsize,
-				     RTIME time);
+		void *smsg,
+		void *rmsg,
+		int ssize,
+		int rsize,
+		RTIME time);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_rpcx_timed(struct rt_task_struct *task,
-				     void *smsg,
-				     void *rmsg,
-				     int ssize,
-				     int rsize,
-				     RTIME delay);
+		void *smsg,
+		void *rmsg,
+		int ssize,
+		int rsize,
+		RTIME delay);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_sendx(struct rt_task_struct *task,
-				void *msg,
-				int size);
+		void *msg,
+		int size);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_sendx_if(struct rt_task_struct *task,
-				   void *msg,
-				   int size);
+		void *msg,
+		int size);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_sendx_until(struct rt_task_struct *task,
-				      void *msg,
-				      int size,
-				      RTIME time);
+		void *msg,
+		int size,
+		RTIME time);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_sendx_timed(struct rt_task_struct *task,
-				      void *msg,
-				      int size,
-				      RTIME delay);
+		void *msg,
+		int size,
+		RTIME delay);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_returnx(struct rt_task_struct *task,
-				  void *msg,
-				  int size);
+		void *msg,
+		int size);
 
 #define rt_isrpcx(task) rt_isrpc(task)
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_evdrpx(struct rt_task_struct *task,
-				 void *msg,
-				 int size,
-				 long *len);
+		void *msg,
+		int size,
+		long *len);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_receivex(struct rt_task_struct *task,
-				   void *msg,
-				   int size,
-				   long *len);
+		void *msg,
+		int size,
+		long *len);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_receivex_if(struct rt_task_struct *task,
-				      void *msg,
-				      int size,
-				      long *len);
+		void *msg,
+		int size,
+		long *len);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_receivex_until(struct rt_task_struct *task,
-					 void *msg,
-					 int size,
-					 long *len,
-					 RTIME time);
+		void *msg,
+		int size,
+		long *len,
+		RTIME time);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_receivex_timed(struct rt_task_struct *task,
-					 void *msg,
-					 int size,
-					 long *len,
-					 RTIME delay);
+		void *msg,
+		int size,
+		long *len,
+		RTIME delay);
 
 struct rt_task_struct *__rt_proxy_attach(void (*func)(long),
-					 struct rt_task_struct *task,
-					 void *msg,
-					 int nbytes,
-					 int priority);
+		struct rt_task_struct *task,
+		void *msg,
+		int nbytes,
+		int priority);
 
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_proxy_attach(struct rt_task_struct *task,
-				       void *msg,
-				       int nbytes,
-				       int priority);
+		void *msg,
+		int nbytes,
+		int priority);
 
 RTAI_SYSCALL_MODE int rt_proxy_detach(struct rt_task_struct *proxy);
 
@@ -206,30 +208,30 @@ RTAI_SYSCALL_MODE struct rt_task_struct *rt_trigger(struct rt_task_struct *proxy
 #define exist(name)  rt_get_adr(nam2num(name))
 
 RTAI_SYSCALL_MODE int rt_Send(pid_t pid,
-	    void *smsg,
-	    void *rmsg,
-	    size_t ssize,
-	    size_t rsize);
+			      void *smsg,
+			      void *rmsg,
+			      size_t ssize,
+			      size_t rsize);
 
 RTAI_SYSCALL_MODE pid_t rt_Receive(pid_t pid,
-		 void *msg,
-		 size_t maxsize,
-		 size_t *msglen);
+				   void *msg,
+				   size_t maxsize,
+				   size_t *msglen);
 
 RTAI_SYSCALL_MODE pid_t rt_Creceive(pid_t pid,
-		  void *msg,
-		  size_t maxsize,
-		  size_t *msglen,
-		  RTIME delay);
+				    void *msg,
+				    size_t maxsize,
+				    size_t *msglen,
+				    RTIME delay);
 
 RTAI_SYSCALL_MODE int rt_Reply(pid_t pid,
-	     void *msg,
-	     size_t size);
+			       void *msg,
+			       size_t size);
 
 RTAI_SYSCALL_MODE pid_t rt_Proxy_attach(pid_t pid,
-		      void *msg,
-		      int nbytes,
-		      int priority);
+					void *msg,
+					int nbytes,
+					int priority);
 
 RTAI_SYSCALL_MODE int rt_Proxy_detach(pid_t pid);
 
@@ -238,7 +240,7 @@ RTAI_SYSCALL_MODE pid_t rt_Trigger(pid_t pid);
 RTAI_SYSCALL_MODE pid_t rt_Name_attach(const char *name);
 
 RTAI_SYSCALL_MODE pid_t rt_Name_locate(const char *host,
-		     const char *name);
+				       const char *name);
 
 RTAI_SYSCALL_MODE int rt_Name_detach(pid_t pid);
 
@@ -524,7 +526,7 @@ RTAI_PROTO(unsigned long, rt_qDynAlloc,(unsigned long n))
 {
 	struct { unsigned long n; } arg = { n };
 	return (unsigned long) rtai_lxrt(BIDX, SIZARG, RT_QDYNALLOC, &arg).i[LOW];
-} 
+}
 
 RTAI_PROTO(unsigned long, rt_qDynFree,(int n))
 {
@@ -697,8 +699,9 @@ RTAI_PROTO(int, rt_vc_release,(pid_t pid))
 
 #if !defined(__KERNEL__) || defined(__cplusplus)
 
-typedef struct t_msgcb {
-    int opaque;
+typedef struct t_msgcb
+{
+	int opaque;
 } MSGCB;
 
 #endif /* !__KERNEL__ || __cplusplus */

@@ -55,7 +55,7 @@ static inline long long rtai_srq(long srq, unsigned long args)
 {
 	long long retval;
 #ifdef USE_LINUX_SYSCALL
-        syscall(RTAI_SRQ_SYSCALL_NR, srq, args, &retval);
+	syscall(RTAI_SRQ_SYSCALL_NR, srq, args, &retval);
 #else
 #warning "RTAI_DO_SWI is not working yet. Please configure RTAI with --enable-lxrt-use-linux-syscall."
 	retval = RTAI_DO_SWI(RTAI_SYS_VECTOR, (srq), (args));
@@ -65,7 +65,7 @@ static inline long long rtai_srq(long srq, unsigned long args)
 
 static inline int rtai_open_srq(unsigned int label)
 {
-    return (int)rtai_srq(0, label);
+	return (int)rtai_srq(0, label);
 }
 
 #endif /* _RTAI_ASM_ARM_SRQ_H */

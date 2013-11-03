@@ -81,17 +81,18 @@ do { \
 	if (!IS_FUSION_TIMER_RUNNING()) { \
 		hal_pend_uncond(__ipipe_mach_timerint, cpuid); \
 	} \
-} while (0)		
+} while (0)
 
 /* Adeos/ARM calls all event handlers with hw-interrupts enabled (both in threaded
  * and unthreaded mode), so there is no need for RTAI to do it again. */
 #define IN_INTERCEPT_IRQ_ENABLE()	do { /* nop */ } while (0)
 #define IN_INTERCEPT_IRQ_DISABLE()	do { /* nop */ } while (0)
 
-union rtai_lxrt_t {
-    RTIME rt;
-    int i[2];
-    void *v[2];
+union rtai_lxrt_t
+{
+	RTIME rt;
+	int i[2];
+	void *v[2];
 };
 
 #ifdef __cplusplus
@@ -143,7 +144,7 @@ static inline long long _rtai_lxrt(long srq, void *args)
 {
 	long long retval;
 #ifdef USE_LINUX_SYSCALL
-        syscall(RTAI_SRQ_SYSCALL_NR, srq, args, &retval);
+	syscall(RTAI_SRQ_SYSCALL_NR, srq, args, &retval);
 #else
 #warning "RTAI_DO_SWI is not working yet. Please configure RTAI with --enable-lxrt-use-linux-syscall."
 	retval = RTAI_DO_SWI(RTAI_SYS_VECTOR, (srq), (args));
@@ -152,11 +153,11 @@ static inline long long _rtai_lxrt(long srq, void *args)
 }
 
 static inline union rtai_lxrt_t
-rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
+		rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
 {
-    union rtai_lxrt_t retval;
-    retval.rt = _rtai_lxrt(ENCODE_LXRT_REQ(dynx, srq, lsize), arg);
-    return retval;
+	union rtai_lxrt_t retval;
+	retval.rt = _rtai_lxrt(ENCODE_LXRT_REQ(dynx, srq, lsize), arg);
+	return retval;
 }
 
 #define rtai_iopl()  do { /* nop */ } while (0)

@@ -47,14 +47,15 @@ int soft_rt_socket_callback(int s,
 			    int (*func)(int s, void *arg),
 			    void *arg);
 
-struct sock_t { 
-	int sock, opnd; 
-	int tosend, recvd; 
-	struct sockaddr addr; 
-	int addrlen; 
-	int (*callback)(int sock, void *arg); 
-	void *arg; 
-	char msg[MAX_MSG_SIZE]; 
+struct sock_t
+{
+	int sock, opnd;
+	int tosend, recvd;
+	struct sockaddr addr;
+	int addrlen;
+	int (*callback)(int sock, void *arg);
+	void *arg;
+	char msg[MAX_MSG_SIZE];
 };
 
 #ifdef COMPILE_ANYHOW
@@ -63,7 +64,8 @@ struct sock_t {
 
 struct rtdm_dev_context;
 
-struct rtnet_callback {
+struct rtnet_callback
+{
 	void    (*func)(struct rtdm_dev_context *, void *);
 	void    *arg;
 };

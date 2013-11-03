@@ -32,12 +32,17 @@ MODULE_LICENSE("GPL");
 RTAI_SYSCALL_MODE int rt_request_signal_(RT_TASK *sigtask, RT_TASK *task, long signal)
 {
 	int retval;
-	if (signal >= 0 && sigtask && task) {
-		if (!task->rt_signals) {
-			if ((task->rt_signals = rt_malloc((MAXSIGNALS + MAX_PQUEUES)*sizeof(struct rt_signal_t)))) {
+	if (signal >= 0 && sigtask && task)
+	{
+		if (!task->rt_signals)
+		{
+			if ((task->rt_signals = rt_malloc((MAXSIGNALS + MAX_PQUEUES)*sizeof(struct rt_signal_t))))
+			{
 				memset(task->rt_signals, 0, ((MAXSIGNALS + MAX_PQUEUES)*sizeof(struct rt_signal_t)));
 				task->pstate = 0;
-			} else {
+			}
+			else
+			{
 				retval = -ENOMEM;
 				goto ret;
 			}
@@ -46,7 +51,9 @@ RTAI_SYSCALL_MODE int rt_request_signal_(RT_TASK *sigtask, RT_TASK *task, long s
 		sigtask->rt_signals = (void *)1;
 		RT_SIGNALS[signal].sigtask = sigtask;
 		retval = 0;
-	} else {
+	}
+	else
+	{
 		retval = -EINVAL;
 	}
 ret:
@@ -61,10 +68,13 @@ static inline void rt_exec_signal(RT_TASK *sigtask, RT_TASK *task)
 	unsigned long flags;
 
 	flags = rt_global_save_flags_and_cli();
-	if (sigtask->suspdepth > 0 && !(--sigtask->suspdepth)) {
-		if (task) {
-			sigtask->priority = task->priority; 
- 			if (!task->pstate++) {
+	if (sigtask->suspdepth > 0 && !(--sigtask->suspdepth))
+	{
+		if (task)
+		{
+			sigtask->priority = task->priority;
+			if (!task->pstate++)
+			{
 				rem_ready_task(task);
 				task->state |= RT_SCHED_SIGSUSP;
 			}
@@ -84,7 +94,7 @@ static inline void rt_exec_signal(RT_TASK *sigtask, RT_TASK *task)
  *
  * @param task is the task for which the signal was previously requested.
  *
- * A call of this function will release a signal previously requested for 
+ * A call of this function will release a signal previously requested for
  * a task.
  *
  * @retval 0 on success.
@@ -94,10 +104,12 @@ static inline void rt_exec_signal(RT_TASK *sigtask, RT_TASK *task)
 
 RTAI_SYSCALL_MODE int rt_release_signal(long signal, RT_TASK *task)
 {
-	if (task == NULL) {
+	if (task == NULL)
+	{
 		task = RT_CURRENT;
 	}
-	if (signal >= 0 && RT_SIGNALS && RT_SIGNALS[signal].sigtask) {
+	if (signal >= 0 && RT_SIGNALS && RT_SIGNALS[signal].sigtask)
+	{
 		RT_SIGNALS[signal].sigtask->priority = task->priority;
 		RT_SIGNALS[signal].sigtask->rt_signals = NULL;
 		rt_exec_signal(RT_SIGNALS[signal].sigtask, 0);
@@ -109,34 +121,41 @@ RTAI_SYSCALL_MODE int rt_release_signal(long signal, RT_TASK *task)
 EXPORT_SYMBOL(rt_release_signal);
 
 /**
- * Trigger a signal for a task (i.e. send a signal to the task), executing 
+ * Trigger a signal for a task (i.e. send a signal to the task), executing
  * the related handler.
  *
  * @param signal, >= 0, is the signal.
  *
  * @param task is the task to which the signal is sent.
  *
- * A call of this function will stop the task served by signal, if executing, 
- * till the triggered handler has finished its execution, carried out at the 
+ * A call of this function will stop the task served by signal, if executing,
+ * till the triggered handler has finished its execution, carried out at the
  * same priority and on the same CPU of the task it is serving.
  *
  */
 
 RTAI_SYSCALL_MODE void rt_trigger_signal(long signal, RT_TASK *task)
 {
-	if (task == NULL) {
+	if (task == NULL)
+	{
 		task = RT_CURRENT;
 	}
-	if (signal >= 0 && RT_SIGNALS && RT_SIGNALS[signal].sigtask) {
-		do {
-			if (test_and_clear_bit(SIGNAL_ENBIT, &RT_SIGNALS[signal].flags)) {
+	if (signal >= 0 && RT_SIGNALS && RT_SIGNALS[signal].sigtask)
+	{
+		do
+		{
+			if (test_and_clear_bit(SIGNAL_ENBIT, &RT_SIGNALS[signal].flags))
+			{
 				rt_exec_signal(RT_SIGNALS[signal].sigtask, task);
 				test_and_set_bit(SIGNAL_ENBIT, &RT_SIGNALS[signal].flags);
-			} else {
+			}
+			else
+			{
 				test_and_set_bit(SIGNAL_PNDBIT, &RT_SIGNALS[signal].flags);
 				break;
 			}
-		} while (test_and_clear_bit(SIGNAL_PNDBIT, &RT_SIGNALS[signal].flags));
+		}
+		while (test_and_clear_bit(SIGNAL_PNDBIT, &RT_SIGNALS[signal].flags));
 	}
 }
 EXPORT_SYMBOL(rt_trigger_signal);
@@ -155,10 +174,12 @@ EXPORT_SYMBOL(rt_trigger_signal);
 
 RTAI_SYSCALL_MODE void rt_enable_signal(long signal, RT_TASK *task)
 {
-	if (task == NULL) {
+	if (task == NULL)
+	{
 		task = RT_CURRENT;
 	}
-	if (signal >= 0 && RT_SIGNALS) {
+	if (signal >= 0 && RT_SIGNALS)
+	{
 		set_bit(SIGNAL_ENBIT, &RT_SIGNALS[signal].flags);
 	}
 }
@@ -178,10 +199,12 @@ EXPORT_SYMBOL(rt_enable_signal);
 
 RTAI_SYSCALL_MODE void rt_disable_signal(long signal, RT_TASK *task)
 {
-	if (task == NULL) {
+	if (task == NULL)
+	{
 		task = RT_CURRENT;
 	}
-	if (signal >= 0 && RT_SIGNALS) {
+	if (signal >= 0 && RT_SIGNALS)
+	{
 		clear_bit(SIGNAL_ENBIT, &RT_SIGNALS[signal].flags);
 	}
 }
@@ -189,7 +212,8 @@ EXPORT_SYMBOL(rt_disable_signal);
 
 RTAI_SYSCALL_MODE int rt_signal_helper(RT_TASK *task)
 {
-	if (task) {
+	if (task)
+	{
 		rt_task_suspend(task);
 		return task->retval;
 	}
@@ -200,14 +224,17 @@ RTAI_SYSCALL_MODE int rt_wait_signal(RT_TASK *sigtask, RT_TASK *task)
 {
 	unsigned long flags;
 
-	if (sigtask->rt_signals != NULL) {
+	if (sigtask->rt_signals != NULL)
+	{
 		flags = rt_global_save_flags_and_cli();
-		if (!sigtask->suspdepth++) {
+		if (!sigtask->suspdepth++)
+		{
 			sigtask->state |= RT_SCHED_SIGSUSP;
 			rem_ready_current(sigtask);
-			if (task->pstate > 0 && !(--task->pstate) && (task->state &= ~RT_SCHED_SIGSUSP) == RT_SCHED_READY) {
-                	       	enq_ready_task(task);
-	       		}
+			if (task->pstate > 0 && !(--task->pstate) && (task->state &= ~RT_SCHED_SIGSUSP) == RT_SCHED_READY)
+			{
+				enq_ready_task(task);
+			}
 			rt_schedule();
 		}
 		rt_global_restore_flags(flags);
@@ -218,11 +245,13 @@ RTAI_SYSCALL_MODE int rt_wait_signal(RT_TASK *sigtask, RT_TASK *task)
 EXPORT_SYMBOL(rt_wait_signal);
 
 static void signal_suprt_fun(long args)
-{		
+{
 	struct sigsuprt_t arg = *((struct sigsuprt_t *)args);
 
-	if (!rt_request_signal_(arg.sigtask, arg.task, arg.signal)) {
-		while (rt_wait_signal(arg.sigtask, arg.task)) {
+	if (!rt_request_signal_(arg.sigtask, arg.task, arg.signal))
+	{
+		while (rt_wait_signal(arg.sigtask, arg.task))
+		{
 			arg.sighdl(arg.signal, arg.task);
 		}
 	}
@@ -237,10 +266,10 @@ static void signal_suprt_fun(long args)
  * @param sighdl is the handler that will execute upon signal reception.
  *
  * RTAI real time signal handlers are executed within a host hard real time
- * thread, assigned to the same CPU of the receiving task, while the task 
- * receiving the signal is kept stopped. No difference between kernel and 
+ * thread, assigned to the same CPU of the receiving task, while the task
+ * receiving the signal is kept stopped. No difference between kernel and
  * user space, the usual symmetric usage.
- * If the request is succesfull the function will return with signal reception 
+ * If the request is succesfull the function will return with signal reception
  * enabled.
  *
  * @retval 0 on success.
@@ -251,8 +280,10 @@ static void signal_suprt_fun(long args)
 int rt_request_signal(long signal, void (*sighdl)(long, RT_TASK *))
 {
 	struct sigsuprt_t arg = { NULL, RT_CURRENT, signal, sighdl };
-	if (signal >= 0 && sighdl && (arg.sigtask = rt_malloc(sizeof(RT_TASK)))) {
-		if (!rt_task_init_cpuid(arg.sigtask, signal_suprt_fun, (long)&arg, SIGNAL_TASK_STACK_SIZE, arg.task->priority, 0, NULL, arg.task->runnable_on_cpus)) {
+	if (signal >= 0 && sighdl && (arg.sigtask = rt_malloc(sizeof(RT_TASK))))
+	{
+		if (!rt_task_init_cpuid(arg.sigtask, signal_suprt_fun, (long)&arg, SIGNAL_TASK_STACK_SIZE, arg.task->priority, 0, NULL, arg.task->runnable_on_cpus))
+		{
 			rt_task_resume(arg.sigtask);
 			rt_task_suspend(arg.task);
 			return arg.task->retval;

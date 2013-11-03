@@ -22,20 +22,20 @@
 #include <rtai_config.h>
 #include <rtai_wrappers.h>
 
-#define PRIO_Q    0 
-#define FIFO_Q    4 
+#define PRIO_Q    0
+#define FIFO_Q    4
 #define RES_Q     3
 
-#define BIN_SEM   1 
-#define CNT_SEM   2 
+#define BIN_SEM   1
+#define CNT_SEM   2
 #define RES_SEM   3
 
 #define RESEM_RECURS   1
 #define RESEM_BINSEM   0
 #define RESEM_CHEKWT  -1
 
-#define RT_SCHED_FIFO  0 
-#define RT_SCHED_RR    1 
+#define RT_SCHED_FIFO  0
+#define RT_SCHED_RR    1
 
 struct pt_regs;
 
@@ -45,7 +45,8 @@ typedef long long RTIME;
 
 typedef int (*RT_TRAP_HANDLER)(int, int, struct pt_regs *,void *);
 
-struct rt_times {
+struct rt_times
+{
 	int linux_tick;
 	int periodic_tick;
 	RTIME tick_time;

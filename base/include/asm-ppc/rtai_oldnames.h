@@ -1,7 +1,7 @@
 /*
  *   ARTI -- RTAI-compatible Adeos-based Real-Time Interface. Based on
  *   the original RTAI layer for PPC and the RTAI/x86 rewrite over ADEOS.
- *   This file provides user-visible definitions for compatibility purpose 
+ *   This file provides user-visible definitions for compatibility purpose
  *   with the legacy RTHAL. Must be included from rtai_hal.h only.
  *
  *   Original RTAI/PPC layer implementation: \n
@@ -89,28 +89,32 @@
 #define calibrate_8254            rtai_calibrate_8254
 
 static inline int rt_request_global_irq_ext(unsigned irq,
-					    void (*handler)(void),
-					    unsigned long cookie) {
+		void (*handler)(void),
+		unsigned long cookie)
+{
 
-    return rt_request_irq(irq,(int (*)(unsigned,void *))handler,(void *)cookie, 0);
+	return rt_request_irq(irq,(int (*)(unsigned,void *))handler,(void *)cookie, 0);
 }
 
 static inline int rt_request_global_irq(unsigned irq,
-					void (*handler)(void)) {
+					void (*handler)(void))
+{
 
-    return rt_request_irq(irq,(int (*)(unsigned,void *))handler, 0, 0);
+	return rt_request_irq(irq,(int (*)(unsigned,void *))handler, 0, 0);
 }
 
 static inline void rt_set_global_irq_ext(unsigned irq,
-					 int ext,
-					 unsigned long cookie) {
+		int ext,
+		unsigned long cookie)
+{
 
-    rt_set_irq_cookie(irq,(void *)cookie);
+	rt_set_irq_cookie(irq,(void *)cookie);
 }
 
-static inline int rt_free_global_irq(unsigned irq) {
+static inline int rt_free_global_irq(unsigned irq)
+{
 
-    return rt_release_irq(irq);
+	return rt_release_irq(irq);
 }
 
 #undef  rdtsc
@@ -145,133 +149,146 @@ extern struct rt_hal rthal;
 
 #ifdef FIXME
 static inline struct desc_struct rt_set_full_intr_vect (unsigned vector,
-							int type,
-							int dpl,
-							void (*handler)(void)) {
-    struct desc_struct e = idt_table[vector];
-    idt_table[vector].a = (__KERNEL_CS << 16) | ((unsigned)handler & 0x0000FFFF);
-    idt_table[vector].b = ((unsigned)handler & 0xFFFF0000) | (0x8000 + (dpl << 13) + (type << 8));
-    return e;
+		int type,
+		int dpl,
+		void (*handler)(void))
+{
+	struct desc_struct e = idt_table[vector];
+	idt_table[vector].a = (__KERNEL_CS << 16) | ((unsigned)handler & 0x0000FFFF);
+	idt_table[vector].b = ((unsigned)handler & 0xFFFF0000) | (0x8000 + (dpl << 13) + (type << 8));
+	return e;
 }
 
 static inline void rt_reset_full_intr_vect(unsigned vector,
-					   struct desc_struct e) {
-    idt_table[vector] = e;
+		struct desc_struct e)
+{
+	idt_table[vector] = e;
 }
 
 #endif
 
-static const int __ipi2vec[] = {
-    INVALIDATE_TLB_VECTOR,
-    LOCAL_TIMER_VECTOR,
-    RESCHEDULE_VECTOR,
-    CALL_FUNCTION_VECTOR,
-    SPURIOUS_APIC_VECTOR,
-    ERROR_APIC_VECTOR,
-    -1,			/* RTAI_1_VECTOR: reserved */
-    -1,			/* RTAI_2_VECTOR: reserved */
-    RTAI_3_VECTOR,
-    RTAI_4_VECTOR
+static const int __ipi2vec[] =
+{
+	INVALIDATE_TLB_VECTOR,
+	LOCAL_TIMER_VECTOR,
+	RESCHEDULE_VECTOR,
+	CALL_FUNCTION_VECTOR,
+	SPURIOUS_APIC_VECTOR,
+	ERROR_APIC_VECTOR,
+	-1,			/* RTAI_1_VECTOR: reserved */
+	-1,			/* RTAI_2_VECTOR: reserved */
+	RTAI_3_VECTOR,
+	RTAI_4_VECTOR
 };
 
 #define __vec2irq(v) ((v) - FIRST_EXTERNAL_VECTOR)
 
-static const unsigned __ipi2irq[] = {
-    __vec2irq(INVALIDATE_TLB_VECTOR),
-    __vec2irq(LOCAL_TIMER_VECTOR),
-    __vec2irq(RESCHEDULE_VECTOR),
-    __vec2irq(CALL_FUNCTION_VECTOR),
-    __vec2irq(SPURIOUS_APIC_VECTOR),
-    __vec2irq(ERROR_APIC_VECTOR),
-    (unsigned)-1,	/* RTAI_1_IPI: reserved */
-    (unsigned)-1,	/* RTAI_2_IPI: reserved */
-    RTAI_APIC3_IPI,
-    RTAI_APIC4_IPI
+static const unsigned __ipi2irq[] =
+{
+	__vec2irq(INVALIDATE_TLB_VECTOR),
+	__vec2irq(LOCAL_TIMER_VECTOR),
+	__vec2irq(RESCHEDULE_VECTOR),
+	__vec2irq(CALL_FUNCTION_VECTOR),
+	__vec2irq(SPURIOUS_APIC_VECTOR),
+	__vec2irq(ERROR_APIC_VECTOR),
+	(unsigned)-1,	/* RTAI_1_IPI: reserved */
+	(unsigned)-1,	/* RTAI_2_IPI: reserved */
+	RTAI_APIC3_IPI,
+	RTAI_APIC4_IPI
 };
 #endif
 
 /* cpu_own_irq() routines are RTHAL-specific and emulated here for
    compatibility purposes. */
 
-static inline int rt_request_cpu_own_irq (unsigned ipi, void (*handler)(void)) {
+static inline int rt_request_cpu_own_irq (unsigned ipi, void (*handler)(void))
+{
 
 #ifdef FIXME
-    return ipi < 10 ? rt_request_irq(__ipi2irq[ipi],(rt_irq_handler_t)handler,0) : -EINVAL;
+	return ipi < 10 ? rt_request_irq(__ipi2irq[ipi],(rt_irq_handler_t)handler,0) : -EINVAL;
 #else
-    return 0;
+	return 0;
 #endif
 }
 
-static inline int rt_free_cpu_own_irq (unsigned ipi) {
+static inline int rt_free_cpu_own_irq (unsigned ipi)
+{
 
 #ifdef FIXME
-    return ipi < 10 ? rt_release_irq(__ipi2irq[ipi]) : -EINVAL;
+	return ipi < 10 ? rt_release_irq(__ipi2irq[ipi]) : -EINVAL;
 #else
-    return 0;
+	return 0;
 #endif
 }
 
 #ifdef CONFIG_SMP
 
 static inline void send_ipi_shorthand (unsigned shorthand,
-				       int irq) {
-    unsigned long flags;
-    rtai_hw_lock(flags);
-    apic_wait_icr_idle();
-    apic_write_around(APIC_ICR,APIC_DEST_LOGICAL|shorthand|__ipi2vec[irq]);
-    rtai_hw_unlock(flags);
+				       int irq)
+{
+	unsigned long flags;
+	rtai_hw_lock(flags);
+	apic_wait_icr_idle();
+	apic_write_around(APIC_ICR,APIC_DEST_LOGICAL|shorthand|__ipi2vec[irq]);
+	rtai_hw_unlock(flags);
 }
 
 static inline void send_ipi_logical (unsigned long dest,
-				     int irq) {
-    unsigned long flags;
+				     int irq)
+{
+	unsigned long flags;
 
-    if ((dest &= cpu_online_map) != 0)
+	if ((dest &= cpu_online_map) != 0)
 	{
-	rtai_hw_lock(flags);
-	apic_wait_icr_idle();
-	apic_write_around(APIC_ICR2,SET_APIC_DEST_FIELD(dest));
-	apic_write_around(APIC_ICR,APIC_DEST_LOGICAL|__ipi2vec[irq]);
-	rtai_hw_unlock(flags);
+		rtai_hw_lock(flags);
+		apic_wait_icr_idle();
+		apic_write_around(APIC_ICR2,SET_APIC_DEST_FIELD(dest));
+		apic_write_around(APIC_ICR,APIC_DEST_LOGICAL|__ipi2vec[irq]);
+		rtai_hw_unlock(flags);
 	}
 }
 
 #endif /* CONFIG_SMP */
 
 #ifdef FIXME
-static inline void *get_intr_handler (unsigned vector) {
+static inline void *get_intr_handler (unsigned vector)
+{
 
-    return (void *)((idt_table[vector].b & 0xFFFF0000) | 
-		    (idt_table[vector].a & 0x0000FFFF));
+	return (void *)((idt_table[vector].b & 0xFFFF0000) |
+			(idt_table[vector].a & 0x0000FFFF));
 }
 
 static inline void set_intr_vect (unsigned vector,
-				  void (*handler)(void)) {
+				  void (*handler)(void))
+{
 
-    idt_table[vector].a = (idt_table[vector].a & 0xFFFF0000) | 
-	((unsigned)handler & 0x0000FFFF);
-    idt_table[vector].b = ((unsigned)handler & 0xFFFF0000) | 
-	(idt_table[vector].b & 0x0000FFFF);
+	idt_table[vector].a = (idt_table[vector].a & 0xFFFF0000) |
+			      ((unsigned)handler & 0x0000FFFF);
+	idt_table[vector].b = ((unsigned)handler & 0xFFFF0000) |
+			      (idt_table[vector].b & 0x0000FFFF);
 }
 
 static inline void *rt_set_intr_handler (unsigned vector,
-					 void (*handler)(void)) {
+		void (*handler)(void))
+{
 
-    void (*saved_handler)(void) = get_intr_handler(vector);
-    set_intr_vect(vector, handler);
-    return saved_handler;
+	void (*saved_handler)(void) = get_intr_handler(vector);
+	set_intr_vect(vector, handler);
+	return saved_handler;
 }
 
 static inline void rt_reset_intr_handler (unsigned vector,
-					  void (*handler)(void)) {
-    set_intr_vect(vector, handler);
+		void (*handler)(void))
+{
+	set_intr_vect(vector, handler);
 }
 
-static inline unsigned long get_cr2 (void) {
+static inline unsigned long get_cr2 (void)
+{
 
-    unsigned long address;
-    __asm__("movl %%cr2,%0":"=r" (address));
-    return address;
+	unsigned long address;
+	__asm__("movl %%cr2,%0":"=r" (address));
+	return address;
 }
 #endif
 

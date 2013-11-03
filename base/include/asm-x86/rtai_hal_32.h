@@ -59,12 +59,13 @@
 #define RTAI_NR_CPUS  1
 #endif /* CONFIG_SMP */
 
-static __inline__ unsigned long ffnz (unsigned long word) {
-    /* Derived from bitops.h's ffs() */
-    __asm__("bsfl %1, %0"
-	    : "=r" (word)
-	    : "r"  (word));
-    return word;
+static __inline__ unsigned long ffnz (unsigned long word)
+{
+	/* Derived from bitops.h's ffs() */
+	__asm__("bsfl %1, %0"
+		: "=r" (word)
+		: "r"  (word));
+	return word;
 }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
@@ -73,23 +74,24 @@ static __inline__ unsigned long ffnz (unsigned long word) {
 
 static inline unsigned long __ffs(unsigned long word)
 {
-        __asm__("bsfl %1,%0"
-                :"=r" (word)
-                :"rm" (word));
-        return word;
+	__asm__("bsfl %1,%0"
+		:"=r" (word)
+		:"rm" (word));
+	return word;
 }
 
 static inline unsigned __find_first_bit(const unsigned long *addr, unsigned size)
 {
-        unsigned x = 0;
+	unsigned x = 0;
 
-        while (x < size) {
-                unsigned long val = *addr++;
-                if (val)
-                        return __ffs(val) + x;
-                x += (sizeof(*addr)<<3);
-        }
-        return x;
+	while (x < size)
+	{
+		unsigned long val = *addr++;
+		if (val)
+			return __ffs(val) + x;
+		x += (sizeof(*addr)<<3);
+	}
+	return x;
 }
 
 static inline int find_next_bit(const unsigned long *addr, int size, int offset)
@@ -97,7 +99,8 @@ static inline int find_next_bit(const unsigned long *addr, int size, int offset)
 	const unsigned long *p = addr + (offset >> 5);
 	int set = 0, bit = offset & 31, res;
 
-	if (bit) {
+	if (bit)
+	{
 		/*
 		 * Look for nonzero in the first 32 bits:
 		 */
@@ -125,33 +128,35 @@ static inline int find_next_bit(const unsigned long *addr, int size, int offset)
 
 #if 0
 static inline unsigned long long rtai_ulldiv (unsigned long long ull,
-					      unsigned long uld,
-					      unsigned long *r) {
-    /*
-     * Fixed by Marco Morandini <morandini@aero.polimi.it> to work
-     * with the -fnostrict-aliasing and -O2 combination using GCC
-     * 3.x.
-     */
+		unsigned long uld,
+		unsigned long *r)
+{
+	/*
+	 * Fixed by Marco Morandini <morandini@aero.polimi.it> to work
+	 * with the -fnostrict-aliasing and -O2 combination using GCC
+	 * 3.x.
+	 */
 
-    unsigned long long qf, rf;
-    unsigned long tq, rh;
-    union { unsigned long long ull; unsigned long ul[2]; } p, q;
+	unsigned long long qf, rf;
+	unsigned long tq, rh;
+	union { unsigned long long ull; unsigned long ul[2]; } p, q;
 
-    p.ull = ull;
-    q.ull = 0;
-    rf = 0x100000000ULL - (qf = 0xFFFFFFFFUL / uld) * uld;
+	p.ull = ull;
+	q.ull = 0;
+	rf = 0x100000000ULL - (qf = 0xFFFFFFFFUL / uld) * uld;
 
-    while (p.ull >= uld) {
-    	q.ul[1] += (tq = p.ul[1] / uld);
-	rh = p.ul[1] - tq * uld;
-	q.ull  += rh * qf + (tq = p.ul[0] / uld);
-	p.ull   = rh * rf + (p.ul[0] - tq * uld);
-    }
+	while (p.ull >= uld)
+	{
+		q.ul[1] += (tq = p.ul[1] / uld);
+		rh = p.ul[1] - tq * uld;
+		q.ull  += rh * qf + (tq = p.ul[0] / uld);
+		p.ull   = rh * rf + (p.ul[0] - tq * uld);
+	}
 
-    if (r)
-	*r = p.ull;
+	if (r)
+		*r = p.ull;
 
-    return q.ull;
+	return q.ull;
 }
 #else
 
@@ -174,7 +179,8 @@ static inline unsigned long long rtai_ulldiv (unsigned long long ull,
 
 static inline unsigned long long rtai_ulldiv (unsigned long long ull, unsigned long uld, unsigned long *r)
 {
-	if (r) {
+	if (r)
+	{
 		*r = do_div(ull, uld);
 		return ull;
 	}
@@ -183,50 +189,52 @@ static inline unsigned long long rtai_ulldiv (unsigned long long ull, unsigned l
 }
 #endif
 
-static inline int rtai_imuldiv (int i, int mult, int div) {
+static inline int rtai_imuldiv (int i, int mult, int div)
+{
 
-    /* Returns (int)i = (int)i*(int)(mult)/(int)div. */
-    
-    int dummy;
+	/* Returns (int)i = (int)i*(int)(mult)/(int)div. */
 
-    __asm__ __volatile__ ( \
-	"mull %%edx\t\n" \
-	"div %%ecx\t\n" \
-	: "=a" (i), "=d" (dummy)
-       	: "a" (i), "d" (mult), "c" (div));
+	int dummy;
 
-    return i;
+	__asm__ __volatile__ ( \
+			       "mull %%edx\t\n" \
+			       "div %%ecx\t\n" \
+			       : "=a" (i), "=d" (dummy)
+			       : "a" (i), "d" (mult), "c" (div));
+
+	return i;
 }
 
-static inline long long rtai_llimd(long long ll, int mult, int div) {
+static inline long long rtai_llimd(long long ll, int mult, int div)
+{
 
-    /* Returns (long long)ll = (int)ll*(int)(mult)/(int)div. */
+	/* Returns (long long)ll = (int)ll*(int)(mult)/(int)div. */
 
-    __asm__ __volatile ( \
-	"movl %%edx,%%ecx\t\n" \
-	"mull %%esi\t\n" \
-	"movl %%eax,%%ebx\n\t" \
-	"movl %%ecx,%%eax\t\n" \
-        "movl %%edx,%%ecx\t\n" \
-        "mull %%esi\n\t" \
-	"addl %%ecx,%%eax\t\n" \
-	"adcl $0,%%edx\t\n" \
-        "divl %%edi\n\t" \
-        "movl %%eax,%%ecx\t\n" \
-        "movl %%ebx,%%eax\t\n" \
-	"divl %%edi\n\t" \
-	"sal $1,%%edx\t\n" \
-        "cmpl %%edx,%%edi\t\n" \
-        "movl %%ecx,%%edx\n\t" \
-	"jge 1f\t\n" \
-        "addl $1,%%eax\t\n" \
-        "adcl $0,%%edx\t\n" \
-	"1:\t\n" \
-	: "=A" (ll) \
-	: "A" (ll), "S" (mult), "D" (div) \
-	: "%ebx", "%ecx");
+	__asm__ __volatile ( \
+			     "movl %%edx,%%ecx\t\n" \
+			     "mull %%esi\t\n" \
+			     "movl %%eax,%%ebx\n\t" \
+			     "movl %%ecx,%%eax\t\n" \
+			     "movl %%edx,%%ecx\t\n" \
+			     "mull %%esi\n\t" \
+			     "addl %%ecx,%%eax\t\n" \
+			     "adcl $0,%%edx\t\n" \
+			     "divl %%edi\n\t" \
+			     "movl %%eax,%%ecx\t\n" \
+			     "movl %%ebx,%%eax\t\n" \
+			     "divl %%edi\n\t" \
+			     "sal $1,%%edx\t\n" \
+			     "cmpl %%edx,%%edi\t\n" \
+			     "movl %%ecx,%%edx\n\t" \
+			     "jge 1f\t\n" \
+			     "addl $1,%%eax\t\n" \
+			     "adcl $0,%%edx\t\n" \
+			     "1:\t\n" \
+			     : "=A" (ll) \
+			     : "A" (ll), "S" (mult), "D" (div) \
+			     : "%ebx", "%ecx");
 
-    return ll;
+	return ll;
 }
 
 /*
@@ -235,23 +243,24 @@ static inline long long rtai_llimd(long long ll, int mult, int div) {
  */
 
 static inline unsigned long long rtai_u64div32c(unsigned long long a,
-						unsigned long b,
-						int *r) {
+		unsigned long b,
+		int *r)
+{
 
 	union { unsigned long long ull; unsigned long ul[2]; } u;
 	u.ull = a;
 	__asm__ __volatile(
-	"\n        movl    %%eax,%%ebx"
-	"\n        movl    %%edx,%%eax"
-	"\n        xorl    %%edx,%%edx"
-	"\n        divl    %%ecx"
-	"\n        xchgl   %%eax,%%ebx"
-	"\n        divl    %%ecx"
-	"\n        movl    %%edx,%%ecx"
-	"\n        movl    %%ebx,%%edx"
-	: "=a" (u.ul[0]), "=d" (u.ul[1])
-	: "a"  (u.ul[0]), "d"  (u.ul[1]), "c" (b)
-	: "%ebx" );
+		"\n        movl    %%eax,%%ebx"
+		"\n        movl    %%edx,%%eax"
+		"\n        xorl    %%edx,%%edx"
+		"\n        divl    %%ecx"
+		"\n        xchgl   %%eax,%%ebx"
+		"\n        divl    %%ecx"
+		"\n        movl    %%edx,%%ecx"
+		"\n        movl    %%ebx,%%edx"
+		: "=a" (u.ul[0]), "=d" (u.ul[1])
+		: "a"  (u.ul[0]), "d"  (u.ul[1]), "c" (b)
+		: "%ebx" );
 
 	return a;
 }
@@ -274,7 +283,8 @@ static inline unsigned long long rtai_u64div32c(unsigned long long a,
 #define IPIPE_IRQ_DOALL
 #endif
 
-struct rtai_realtime_irq_s {
+struct rtai_realtime_irq_s
+{
 	int retmode;
 	unsigned long cpumask;
 };
@@ -293,7 +303,7 @@ struct rtai_realtime_irq_s {
 #define RTAI_APIC_ICOUNT	  ((RTAI_FREQ_APIC + HZ/2)/HZ)
 #define RTAI_COUNTER_2_LATCH      0xfffe
 #define RTAI_LATENCY_8254         CONFIG_RTAI_SCHED_8254_LATENCY
-#define RTAI_SETUP_TIME_8254      2011 
+#define RTAI_SETUP_TIME_8254      2011
 
 #define RTAI_CALIBRATED_APIC_FREQ 0
 #define RTAI_FREQ_APIC            (rtai_tunables.apic_freq)
@@ -425,10 +435,11 @@ typedef int (*rt_irq_handler_t)(unsigned irq, void *cookie);
 
 #if 0
 
-static inline unsigned long long _rtai_hidden_rdtsc (void) {
-    unsigned long long t;
-    __asm__ __volatile__( "rdtsc" : "=A" (t));
-    return t;
+static inline unsigned long long _rtai_hidden_rdtsc (void)
+{
+	unsigned long long t;
+	__asm__ __volatile__( "rdtsc" : "=A" (t));
+	return t;
 }
 #define rtai_rdtsc() _rtai_hidden_rdtsc()
 
@@ -453,9 +464,10 @@ extern volatile long rtai_tsc_ofst[];
 
 #endif /* CONFIG_X86_TSC */
 
-struct apic_timer_setup_data {
-    int mode;
-    int count;
+struct apic_timer_setup_data
+{
+	int mode;
+	int count;
 };
 
 extern struct rt_times rt_times;
@@ -470,7 +482,8 @@ extern volatile unsigned long rtai_cpu_lock[];
 #define apic_write_around apic_write
 #endif
 
-extern struct rtai_switch_data {
+extern struct rtai_switch_data
+{
 	volatile unsigned long sflags;
 	volatile unsigned long lflags;
 #if defined(CONFIG_X86_LOCAL_APIC) && defined(RTAI_TASKPRI)
@@ -479,8 +492,8 @@ extern struct rtai_switch_data {
 } rtai_linux_context[RTAI_NR_CPUS];
 
 irqreturn_t rtai_broadcast_to_local_timers(int irq,
-					   void *dev_id,
-					   struct pt_regs *regs);
+		void *dev_id,
+		struct pt_regs *regs);
 
 static inline unsigned long rtai_save_flags_irqbit(void)
 {
@@ -547,24 +560,27 @@ static inline void rt_spin_unlock_hw_irqrestore(unsigned long flags, spinlock_t 
 	rtai_hw_restore_flags(flags);
 }
 
-static inline void rt_spin_lock_irq(spinlock_t *lock) {
+static inline void rt_spin_lock_irq(spinlock_t *lock)
+{
 
-    rtai_cli();
-    rt_spin_lock(lock);
+	rtai_cli();
+	rt_spin_lock(lock);
 }
 
-static inline void rt_spin_unlock_irq(spinlock_t *lock) {
+static inline void rt_spin_unlock_irq(spinlock_t *lock)
+{
 
-    rt_spin_unlock(lock);
-    rtai_sti();
+	rt_spin_unlock(lock);
+	rtai_sti();
 }
 
-static inline unsigned long rt_spin_lock_irqsave(spinlock_t *lock) {
+static inline unsigned long rt_spin_lock_irqsave(spinlock_t *lock)
+{
 
-    unsigned long flags;
-    rtai_save_flags_and_cli(flags);
-    rt_spin_lock(lock);
-    return flags;
+	unsigned long flags;
+	rtai_save_flags_and_cli(flags);
+	rt_spin_lock(lock);
+	return flags;
 }
 
 static inline void rt_spin_unlock_irqrestore(unsigned long flags, spinlock_t *lock)
@@ -579,19 +595,19 @@ static inline void rt_spin_unlock_irqrestore(unsigned long flags, spinlock_t *lo
 
 static inline void rtai_spin_glock(volatile unsigned long *lock)
 {
- short inc = 0x0100;
- __asm__ __volatile__ (
- LOCK_PREFIX "xaddw %w0, %1\n"
- "1:\t"
- "cmpb %h0, %b0\n\t"
- "je 2f\n\t"
- "rep; nop\n\t"
- "movb %1, %b0\n\t"
- "jmp 1b\n"
- "2:"
- :"+Q" (inc), "+m" (lock[1])
- :
- :"memory", "cc");
+	short inc = 0x0100;
+	__asm__ __volatile__ (
+		LOCK_PREFIX "xaddw %w0, %1\n"
+		"1:\t"
+		"cmpb %h0, %b0\n\t"
+		"je 2f\n\t"
+		"rep; nop\n\t"
+		"movb %1, %b0\n\t"
+		"jmp 1b\n"
+		"2:"
+		:"+Q" (inc), "+m" (lock[1])
+		:
+		:"memory", "cc");
 }
 
 #if defined(CONFIG_X86_OOSTORE) || defined(CONFIG_X86_PPRO_FENCE)
@@ -602,18 +618,19 @@ static inline void rtai_spin_glock(volatile unsigned long *lock)
 
 static inline void rtai_spin_gunlock(volatile unsigned long *lock)
 {
- __asm__ __volatile__(
- UNLOCK_LOCK_PREFIX "incb %0"
- :"+m" (lock[1])
- :
- :"memory", "cc");
+	__asm__ __volatile__(
+		UNLOCK_LOCK_PREFIX "incb %0"
+		:"+m" (lock[1])
+		:
+		:"memory", "cc");
 }
 
 #else
 
 static inline void rtai_spin_glock(volatile unsigned long *lock)
 {
-	while (test_and_set_bit(31, lock)) {
+	while (test_and_set_bit(31, lock))
+	{
 		cpu_relax();
 	}
 	barrier();
@@ -622,7 +639,7 @@ static inline void rtai_spin_glock(volatile unsigned long *lock)
 static inline void rtai_spin_gunlock(volatile unsigned long *lock)
 {
 	test_and_clear_bit(31, lock);
-	cpu_relax(); 
+	cpu_relax();
 }
 
 #endif
@@ -631,7 +648,8 @@ static inline void rt_get_global_lock(void)
 {
 	barrier();
 	rtai_cli();
-	if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0])) {
+	if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0]))
+	{
 		rtai_spin_glock(&rtai_cpu_lock[0]);
 	}
 	barrier();
@@ -641,7 +659,8 @@ static inline void rt_release_global_lock(void)
 {
 	barrier();
 	rtai_cli();
-	if (test_and_clear_bit(hal_processor_id(), &rtai_cpu_lock[0])) {
+	if (test_and_clear_bit(hal_processor_id(), &rtai_cpu_lock[0]))
+	{
 		rtai_spin_gunlock(&rtai_cpu_lock[0]);
 	}
 	barrier();
@@ -661,7 +680,7 @@ static inline void rt_release_global_lock(void)
  */
 static inline void rt_global_cli(void)
 {
-    rt_get_global_lock();
+	rt_get_global_lock();
 }
 
 /**
@@ -672,8 +691,8 @@ static inline void rt_global_cli(void)
  */
 static inline void rt_global_sti(void)
 {
-    rt_release_global_lock();
-    rtai_sti();
+	rt_release_global_lock();
+	rtai_sti();
 }
 
 /**
@@ -688,7 +707,8 @@ static inline int rt_global_save_flags_and_cli(void)
 
 	barrier();
 	flags = rtai_save_flags_irqbit_and_cli();
-	if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0])) {
+	if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0]))
+	{
 		rtai_spin_glock(&rtai_cpu_lock[0]);
 		barrier();
 		return flags | 1;
@@ -709,7 +729,8 @@ static inline void rt_global_save_flags(unsigned long *flags)
 	unsigned long hflags = rtai_save_flags_irqbit_and_cli();
 
 	*flags = test_bit(hal_processor_id(), &rtai_cpu_lock[0]) ? hflags : hflags | 1;
-	if (hflags) {
+	if (hflags)
+	{
 		rtai_sti();
 	}
 }
@@ -724,12 +745,16 @@ static inline void rt_global_save_flags(unsigned long *flags)
 static inline void rt_global_restore_flags(unsigned long flags)
 {
 	barrier();
-	if (test_and_clear_bit(0, &flags)) {
+	if (test_and_clear_bit(0, &flags))
+	{
 		rt_release_global_lock();
-	} else {
+	}
+	else
+	{
 		rt_get_global_lock();
 	}
-	if (flags) {
+	if (flags)
+	{
 		rtai_sti();
 	}
 	barrier();
@@ -814,10 +839,11 @@ do { \
 
 static inline int rt_save_switch_to_real_time(int cpuid)
 {
-	if (!rtai_linux_context[cpuid].sflags) {
+	if (!rtai_linux_context[cpuid].sflags)
+	{
 		_rt_switch_to_real_time(cpuid);
 		return 0;
-	} 
+	}
 	return 1;
 }
 
@@ -845,22 +871,23 @@ static inline unsigned long save_and_set_taskpri(unsigned long taskpri)
 	do { apic_write_around(APIC_TASKPRI, taskpri); } while (0)
 #endif
 
-static inline void rt_set_timer_delay (int delay) 
+static inline void rt_set_timer_delay (int delay)
 {
-    if (delay) {
-        unsigned long flags;
-        rtai_hw_save_flags_and_cli(flags);
+	if (delay)
+	{
+		unsigned long flags;
+		rtai_hw_save_flags_and_cli(flags);
 #ifdef CONFIG_X86_LOCAL_APIC
-	apic_write_around(APIC_TMICT, delay);
+		apic_write_around(APIC_TMICT, delay);
 #else /* !CONFIG_X86_LOCAL_APIC */
-	outb(delay & 0xff,0x40);
-	outb(delay >> 8,0x40);
+		outb(delay & 0xff,0x40);
+		outb(delay >> 8,0x40);
 #endif /* CONFIG_X86_LOCAL_APIC */
-        rtai_hw_restore_flags(flags);
-    }
+		rtai_hw_restore_flags(flags);
+	}
 }
 
-    /* Private interface -- Internal use only */
+/* Private interface -- Internal use only */
 
 unsigned long rtai_critical_enter(void (*synch)(void));
 
@@ -876,7 +903,7 @@ long rtai_catch_event (struct hal_domain_struct *domain, unsigned long event, in
 
 #endif /* __KERNEL__ && !__cplusplus */
 
-    /* Public interface */
+/* Public interface */
 
 #ifdef __KERNEL__
 
@@ -904,7 +931,8 @@ int rt_set_irq_ack(unsigned int irq, int (*irq_ack)(unsigned int, void *));
 static inline int rt_request_irq_wack(unsigned irq, int (*handler)(unsigned irq, void *cookie), void *cookie, int retmode, int (*irq_ack)(unsigned int, void *))
 {
 	int retval;
-	if ((retval = rt_request_irq(irq, handler, cookie, retmode)) < 0) {
+	if ((retval = rt_request_irq(irq, handler, cookie, retmode)) < 0)
+	{
 		return retval;
 	}
 	return rt_set_irq_ack(irq, irq_ack);

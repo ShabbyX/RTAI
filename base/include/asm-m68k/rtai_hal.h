@@ -59,22 +59,27 @@
 #define FIRST_EXTERNAL_VECTOR 0x40
 
 #ifndef _RTAI_FUSION_H
-static __inline__ unsigned long ffnz (unsigned long word) {
+static __inline__ unsigned long ffnz (unsigned long word)
+{
 	/* Derived from bitops.h's ffs() */
 	int r = 1;
-	if (!(word & 0xff)) {
+	if (!(word & 0xff))
+	{
 		word >>= 8;
 		r += 8;
 	}
-	if (!(word & 0xf)) {
+	if (!(word & 0xf))
+	{
 		word >>= 4;
 		r += 4;
 	}
-	if (!(word & 3)) {
+	if (!(word & 3))
+	{
 		word >>= 2;
 		r += 2;
 	}
-	if (!(word & 1)) {
+	if (!(word & 1))
+	{
 		word >>= 1;
 		r += 1;
 	}
@@ -82,13 +87,15 @@ static __inline__ unsigned long ffnz (unsigned long word) {
 }
 #endif
 
-static inline unsigned long long rtai_ulldiv (unsigned long long ull, unsigned long uld, unsigned long *r) {
+static inline unsigned long long rtai_ulldiv (unsigned long long ull, unsigned long uld, unsigned long *r)
+{
 	unsigned long long qf, rf, q, p;
 	unsigned long tq, rh;
 	p = ull;
 	q = 0;
 	rf = 0x100000000ULL - (qf = 0xFFFFFFFFUL / uld) * uld;
-	while (p >= uld) {
+	while (p >= uld)
+	{
 		q += (((unsigned long long)(tq = ((unsigned long)(p >> 32)) / uld)) << 32);
 		rh = ((unsigned long)(p >> 32)) - tq * uld;
 		q += rh * qf + (tq = (unsigned long)p / uld);
@@ -99,7 +106,8 @@ static inline unsigned long long rtai_ulldiv (unsigned long long ull, unsigned l
 	return q;
 }
 
-static inline int rtai_imuldiv (int i, int mult, int div) {
+static inline int rtai_imuldiv (int i, int mult, int div)
+{
 
 	/* Returns (int)i = (int)i*(int)(mult)/(int)div. */
 	long long temp = i * (long long)mult;
@@ -123,7 +131,8 @@ static inline int rtai_imuldiv (int i, int mult, int div) {
 		return (int)uresult;
 }
 
-static inline unsigned long long rtai_llimd(unsigned long long ll, unsigned int mult, unsigned int div) {
+static inline unsigned long long rtai_llimd(unsigned long long ll, unsigned int mult, unsigned int div)
+{
 	unsigned long long res, tmp;
 	unsigned long r;
 	res = rtai_ulldiv(ll,div,&r) * mult;
@@ -143,15 +152,16 @@ static inline unsigned long long rtai_llimd(unsigned long long ll, unsigned int 
 #include <asm/rtai_fpu.h>
 #include <rtai_trace.h>
 
-struct rtai_realtime_irq_s {
-        int (*handler)(unsigned irq, void *cookie);
-        void *cookie;
-        int retmode;
-        int cpumask;
-        int (*irq_ack)(unsigned int);
+struct rtai_realtime_irq_s
+{
+	int (*handler)(unsigned irq, void *cookie);
+	void *cookie;
+	int retmode;
+	int cpumask;
+	int (*irq_ack)(unsigned int);
 };
 
-/* 
+/*
  * Linux has this information in io_apic.c, but it does not export it;
  * on the other hand it should be fairly stable this way and so we try
  * to avoid putting something else in our patch.
@@ -159,7 +169,8 @@ struct rtai_realtime_irq_s {
 
 static inline int ext_irq_vector(int irq)
 {
-	if (irq != 2) {
+	if (irq != 2)
+	{
 		return (FIRST_EXTERNAL_VECTOR + irq);
 	}
 	return -EINVAL;
@@ -205,9 +216,11 @@ static inline struct hal_domain_struct *get_domain_pointer(int n)
 	struct list_head *p = hal_pipeline.next;
 	struct hal_domain_struct *d;
 	unsigned long i = 0;
-	while (p != &hal_pipeline) {
+	while (p != &hal_pipeline)
+	{
 		d = list_entry(p, struct hal_domain_struct, p_link);
-		if (++i == n) {
+		if (++i == n)
+		{
 			return d;
 		}
 		p = d->p_link.next;
@@ -298,20 +311,22 @@ extern long long rdtsc(void);
 
 #define rtai_rdtsc() rdtsc()
 
-struct calibration_data {
+struct calibration_data
+{
 
-    unsigned long cpu_freq;
-    unsigned long apic_freq;
-    int latency;
-    int setup_time_TIMER_CPUNIT;
-    int setup_time_TIMER_UNIT;
-    int timers_tol[RTAI_NR_CPUS];
+	unsigned long cpu_freq;
+	unsigned long apic_freq;
+	int latency;
+	int setup_time_TIMER_CPUNIT;
+	int setup_time_TIMER_UNIT;
+	int timers_tol[RTAI_NR_CPUS];
 };
 
-struct apic_timer_setup_data {
+struct apic_timer_setup_data
+{
 
-    int mode;
-    int count;
+	int mode;
+	int count;
 };
 
 extern struct rt_times rt_times;
@@ -326,14 +341,15 @@ extern volatile unsigned long rtai_cpu_lock[];
 #define SET_TASKPRI(cpuid)
 #define CLR_TASKPRI(cpuid)
 
-extern struct rtai_switch_data {
+extern struct rtai_switch_data
+{
 	volatile unsigned long sflags;
 	volatile unsigned long lflags;
 } rtai_linux_context[RTAI_NR_CPUS];
 
 irqreturn_t rtai_broadcast_to_local_timers(int irq,
-					   void *dev_id,
-					   struct pt_regs *regs);
+		void *dev_id,
+		struct pt_regs *regs);
 
 static inline unsigned long rtai_save_flags_irqbit(void)
 {
@@ -418,10 +434,11 @@ do { \
 static inline int rt_save_switch_to_real_time(int cpuid)
 {
 	SET_TASKPRI(cpuid);
-	if (!rtai_linux_context[cpuid].sflags) {
+	if (!rtai_linux_context[cpuid].sflags)
+	{
 		_rt_switch_to_real_time(cpuid);
 		return 0;
-	} 
+	}
 	return 1;
 }
 
@@ -471,8 +488,10 @@ do { \
 
 #define TA(a) (MCF_MBAR + MCFTIMER_BASE1 + (a))
 
-static inline void rt_set_timer_delay (int delay) {
-	if (delay) {
+static inline void rt_set_timer_delay (int delay)
+{
+	if (delay)
+	{
 		__raw_writetrr(__raw_readtrr(TA(MCFTIMER_TCN)) + delay, TA(MCFTIMER_TRR));
 		read_timer_cnt();
 	}
@@ -482,7 +501,7 @@ static inline void rt_set_timer_delay (int delay) {
 	}
 }
 
-    /* Private interface -- Internal use only */
+/* Private interface -- Internal use only */
 
 unsigned long rtai_critical_enter(void (*synch)(void));
 
@@ -498,7 +517,7 @@ long rtai_catch_event (struct hal_domain_struct *domain, unsigned long event, in
 
 #endif /* __KERNEL__ && !__cplusplus */
 
-    /* Public interface */
+/* Public interface */
 
 #ifdef __KERNEL__
 
@@ -524,7 +543,8 @@ int rt_set_irq_ack(unsigned int irq, int (*irq_ack)(unsigned int));
 static inline int rt_request_irq_wack(unsigned irq, int (*handler)(unsigned irq, void *cookie), void *cookie, int retmode, int (*irq_ack)(unsigned int))
 {
 	int retval;
-	if ((retval = rt_request_irq(irq, handler, cookie, retmode)) < 0) {
+	if ((retval = rt_request_irq(irq, handler, cookie, retmode)) < 0)
+	{
 		return retval;
 	}
 	return rt_set_irq_ack(irq, irq_ack);
@@ -554,8 +574,9 @@ void rt_ack_irq(unsigned irq);
 
 /*@}*/
 
-struct desc_struct {
-    void *a;
+struct desc_struct
+{
+	void *a;
 };
 
 struct desc_struct rtai_set_gate_vector (unsigned vector, int type, int dpl, void *handler);

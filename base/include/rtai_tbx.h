@@ -46,22 +46,25 @@
 
 #ifdef __KERNEL__
 
-typedef struct rt_msgh {
+typedef struct rt_msgh
+{
 	void *malloc;
 	int broadcast;
 	int size;
 	int priority;
-	void *next;	
+	void *next;
 } RT_MSGH;
 
 #define RT_MSGH_SIZE  (sizeof(RT_MSGH))
 
-typedef struct rt_msg {
+typedef struct rt_msg
+{
 	RT_MSGH hdr;
 	char msg[1];
 } RT_MSG;
 
-typedef struct rt_msgq {
+typedef struct rt_msgq
+{
 	int nmsg;
 	int fastsize;
 	int slot;
@@ -188,7 +191,8 @@ struct rt_msgh;
 extern "C" {
 #endif /* __cplusplus */
 
-typedef struct rt_msgq {
+typedef struct rt_msgq
+{
 	int dummy;
 } RT_MSGQ;
 

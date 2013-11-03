@@ -35,7 +35,8 @@ struct rt_mailbox;
 
 #ifndef __cplusplus
 
-typedef struct rt_mailbox {
+typedef struct rt_mailbox
+{
 	int magic;
 	SEM sndsem, rcvsem;
 	struct rt_task_struct *waiting_task, *owndby;
@@ -143,7 +144,7 @@ static inline struct rt_mailbox *rt_typed_named_mbx_init(const char *mbx_name, i
 RTAI_SYSCALL_MODE int rt_named_mbx_delete(struct rt_mailbox *mbx);
 
 #define rt_named_mbx_init(mbx_name, size)  rt_typed_named_mbx_init(mbx_name, size, FIFO_Q)
-     
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
@@ -165,9 +166,9 @@ RTAI_PROTO(struct rt_mailbox *, rt_typed_mbx_init, (unsigned long name, int size
 /**
  * @ingroup lxrt
  * Initialize mailbox.
- * 
+ *
  * Initializes a mailbox referred to by @a name of size @a size.
- * 
+ *
  * It is important to remark that the returned task pointer cannot be used
  * directly, they are for kernel space data, but just passed as arguments when
  * needed.
@@ -279,8 +280,9 @@ RTAI_PROTO(int, rt_mbx_receive_timed, (struct rt_mailbox *mbx, void *msg, int ms
 
 #if !defined(__KERNEL__) || defined(__cplusplus)
 
-typedef struct rt_mailbox {
-    int opaque;
+typedef struct rt_mailbox
+{
+	int opaque;
 } MBX;
 
 #endif /* !__KERNEL__ || __cplusplus */

@@ -21,9 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 --------------------------------------------------------------------------
 Acknowledgements
 - Paolo Mantegazza	(mantegazza@aero.polimi.it)
-	creator of RTAI 
+	creator of RTAI
 */
-/* 
+/*
 * This file is included from rtai.c to support arch-specific exports
 */
 #ifndef _ASM_ARCH_RTAI_EXPORT_H_

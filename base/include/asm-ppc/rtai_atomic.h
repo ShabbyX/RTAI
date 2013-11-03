@@ -62,14 +62,14 @@ static __inline__ void atomic_inc(atomic_t *v)
 	int t;
 
 	__asm__ __volatile__(
-"1:	lwarx	%0,0,%2		# atomic_inc\n\
+		"1:	lwarx	%0,0,%2		# atomic_inc\n\
 	addic	%0,%0,1\n"
-	PPC405_ERR77(0,%2)
-"	stwcx.	%0,0,%2 \n\
+		PPC405_ERR77(0,%2)
+		"	stwcx.	%0,0,%2 \n\
 	bne-	1b"
-	: "=&r" (t), "=m" (v->counter)
-	: "r" (&v->counter), "m" (v->counter)
-	: "cc");
+		: "=&r" (t), "=m" (v->counter)
+		: "r" (&v->counter), "m" (v->counter)
+		: "cc");
 }
 
 static __inline__ int atomic_dec_return(atomic_t *v)
@@ -77,15 +77,15 @@ static __inline__ int atomic_dec_return(atomic_t *v)
 	int t;
 
 	__asm__ __volatile__(
-"1:	lwarx	%0,0,%1		# atomic_dec_return\n\
+		"1:	lwarx	%0,0,%1		# atomic_dec_return\n\
 	addic	%0,%0,-1\n"
-	PPC405_ERR77(0,%1)
-"	stwcx.	%0,0,%1\n\
+		PPC405_ERR77(0,%1)
+		"	stwcx.	%0,0,%1\n\
 	bne-	1b"
-	SMP_ISYNC
-	: "=&r" (t)
-	: "r" (&v->counter)
-	: "cc", "memory");
+		SMP_ISYNC
+		: "=&r" (t)
+		: "r" (&v->counter)
+		: "cc", "memory");
 
 	return t;
 }
@@ -103,16 +103,16 @@ __cmpxchg_u32(volatile int *p, int old, int new)
 1:	lwarx	%0,0,%2 \n\
 	cmpw	0,%0,%3 \n\
 	bne	2f \n"
-	PPC405_ERR77(0,%2)
-"	stwcx.	%4,0,%2 \n\
+			      PPC405_ERR77(0,%2)
+			      "	stwcx.	%4,0,%2 \n\
 	bne-	1b\n"
 #ifdef CONFIG_SMP
-"	sync\n"
+			      "	sync\n"
 #endif /* CONFIG_SMP */
-"2:"
-	: "=&r" (prev), "=m" (*p)
-	: "r" (p), "r" (old), "r" (new), "m" (*p)
-	: "cc", "memory");
+			      "2:"
+			      : "=&r" (prev), "=m" (*p)
+			      : "r" (p), "r" (old), "r" (new), "m" (*p)
+			      : "cc", "memory");
 
 	return prev;
 }
@@ -120,7 +120,8 @@ __cmpxchg_u32(volatile int *p, int old, int new)
 static __inline__ unsigned long
 __cmpxchg(volatile void *ptr, unsigned long old, unsigned long new, int size)
 {
-	switch (size) {
+	switch (size)
+	{
 	case 4:
 		return __cmpxchg_u32(ptr, old, new);
 #if 0	/* we don't have __cmpxchg_u64 on 32-bit PPC */

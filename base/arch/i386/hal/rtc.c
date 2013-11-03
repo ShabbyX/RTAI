@@ -61,7 +61,8 @@ int _rtai_rtc_timer_handler(void)
 	RTAI_SCHED_ISR_UNLOCK();
 	HAL_UNLOCK_LINUX();
 
-	if (!test_bit(IPIPE_STALL_FLAG, ROOT_STATUS_ADR(cpuid))) {
+	if (!test_bit(IPIPE_STALL_FLAG, ROOT_STATUS_ADR(cpuid)))
+	{
 		rtai_sti();
 		hal_fast_flush_pipeline(cpuid);
 #if defined(CONFIG_SMP) &&  LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,32)
@@ -80,26 +81,28 @@ static struct desc_struct rtai_rtc_timer_sysvec;
 
 #endif /* CONFIG_RTAI_DONT_DISPATCH_CORE_IRQS */
 
-/* 
+/*
  * NOTE FOR USE IN RTAI_TRIOSS.
  * "rtc_freq" must be a power of 2 & (MIN_RTC_FREQ <= rtc_freq <= MAX_RTC_FREQ).
- * So the best thing to do is to load this module and your skin of choice 
+ * So the best thing to do is to load this module and your skin of choice
  * setting "rtc_freq" in this module and "rtc_freq" in the skin specific module
  * to the very same power of 2 that best fits your needs.
- */ 
+ */
 
 static void rtc_handler(int irq, int rtc_freq)
 {
 #ifdef TEST_RTC
 	static int stp, cnt;
-	if (++cnt == rtc_freq) {
+	if (++cnt == rtc_freq)
+	{
 		rt_printk("<> IRQ %d, %d: CNT %d <>\n", irq, ++stp, cnt);
 		cnt = 0;
 	}
 #endif
 	RT_CMOS_READ(RTC_INTR_FLAGS); // CMOS_READ(RTC_INTR_FLAGS);
 	rt_enable_irq(RTC_IRQ);
-	if (usr_rtc_handler) {
+	if (usr_rtc_handler)
+	{
 		usr_rtc_handler();
 	}
 }
@@ -112,13 +115,14 @@ static void fusion_rtc_handler(void)
 #include <asm/apic.h>
 #include <mach_ipi.h>
 	int cpuid;
-	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
+	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++)
+	{
 		hal_pend_domain_uncond(RTAI_APIC_TIMER_VECTOR, fusion_domain, cpuid);
 	}
 #ifdef CONFIG_SMP
-	send_IPI_allbutself(RESCHEDULE_VECTOR);  // any unharmful ipi suffices 
+	send_IPI_allbutself(RESCHEDULE_VECTOR);  // any unharmful ipi suffices
 #endif
-#else 
+#else
 	hal_pend_domain_uncond(RTAI_TIMER_8254_IRQ, fusion_domain, rtai_cpuid());
 #endif
 }
@@ -129,20 +133,27 @@ void rt_request_rtc(long rtc_freq, void *handler)
 {
 	int pwr2;
 
-	if (rtc_freq <= 0) {
+	if (rtc_freq <= 0)
+	{
 		rtc_freq = RTC_FREQ;
 	}
-	if (rtc_freq > MAX_RTC_FREQ) {
+	if (rtc_freq > MAX_RTC_FREQ)
+	{
 		rtc_freq = MAX_RTC_FREQ;
-	} else if (rtc_freq < MIN_RTC_FREQ) {
+	}
+	else if (rtc_freq < MIN_RTC_FREQ)
+	{
 		rtc_freq = MIN_RTC_FREQ;
 	}
 	pwr2 = 1;
-	if (rtc_freq > MIN_RTC_FREQ) {
-		while (rtc_freq > (1 << pwr2)) {
+	if (rtc_freq > MIN_RTC_FREQ)
+	{
+		while (rtc_freq > (1 << pwr2))
+		{
 			pwr2++;
 		}
-		if (rtc_freq <= ((3*(1 << (pwr2 - 1)) + 1)>>1)) {
+		if (rtc_freq <= ((3*(1 << (pwr2 - 1)) + 1)>>1))
+		{
 			pwr2--;
 		}
 	}

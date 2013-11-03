@@ -5,7 +5,7 @@
  * @file
  *
  * Conversion between 6 characters strings and unsigned long identifiers.
- * 
+ *
  * Convert a 6 characters string to un unsigned long, and vice versa, to be used
  * as an dentifier for RTAI services, symmetrically available in user and kernel
  * space, e.g. @ref shm "shared memory" and @ref lxrt "LXRT and LXRT-INFORMED".
@@ -53,36 +53,45 @@
 /**
  * Convert a 6 characters string to an unsigned long.
  *
- * Converts a 6 characters string name containing an alpha numeric identifier 
+ * Converts a 6 characters string name containing an alpha numeric identifier
  * to its corresponding unsigned long identifier.
  *
  * @param name is the name to be converted.
  *
  * Allowed characters are:
- * -  english letters (no difference between upper and lower case, the latter 
+ * -  english letters (no difference between upper and lower case, the latter
  *    will always be translated to upper case);
  * -  decimal digits;
- * -  '_', '@', '.' and another character of your choice, the latter will 
+ * -  '_', '@', '.' and another character of your choice, the latter will
  *    always be treated as a $ and converted back as such by num2nam().
  *
  * @return the unsigned long associated with @a name.
  */
 NAM2NUM_PROTO(unsigned long, nam2num, (const char *name))
 {
-        unsigned long retval = 0;
+	unsigned long retval = 0;
 	int c, i;
 
-	for (i = 0; i < 6; i++) {
-		if (!(c = name[i])) {
+	for (i = 0; i < 6; i++)
+	{
+		if (!(c = name[i]))
+		{
 			break;
 		}
-		if (islower(c)) {
+		if (islower(c))
+		{
 			c +=  (10 - 'a');
-		} else if (isupper(c)) {
+		}
+		else if (isupper(c))
+		{
 			c += (10 - 'A');
-		} else if (isdigit(c)) {
+		}
+		else if (isdigit(c))
+		{
 			c -= '0';
-		} else {
+		}
+		else
+		{
 			c = c == '_' ? 36 : c == '@' ? 37 : c == '.' ? 38 : 39;
 		}
 		retval = retval*40 + c;
@@ -91,35 +100,41 @@ NAM2NUM_PROTO(unsigned long, nam2num, (const char *name))
 }
 
 /**
- * Convert an unsigned long identifier back to its corresponding 6 characters 
+ * Convert an unsigned long identifier back to its corresponding 6 characters
  * string.
  *
  * @param num is the unsigned long identifier whose alphanumeric name string has
  * to be evaluated;
- * 
+ *
  * @param name is a pointer to a 6 characters buffer where the identifier will
  * be returned. Recall to dimension it at least to 7.
  */
 NAM2NUM_PROTO(void, num2nam, (unsigned long num, char *name))
 {
-        int c, i, k, q; 
-	if (num >= MAX_NAM2NUM) {
+	int c, i, k, q;
+	if (num >= MAX_NAM2NUM)
+	{
 		strncpy(name, "|null|", 7);
 		return;
 	}
-        i = 5; 
+	i = 5;
 	num -= 2;
-	while (num && i >= 0) {
+	while (num && i >= 0)
+	{
 		q = num/40;
 		c = num - q*40;
 		num = q;
-		if (c < 36) {
+		if (c < 36)
+		{
 			name[i--] = c > 9 ? c + 'A' - 10 : c + '0';
-		} else {
+		}
+		else
+		{
 			name[i--] = c == 36 ? '_' : c == 37 ? '@' : c == 38 ? '.' : '$';
 		}
 	}
-	for (k = 0; i < 5; k++) {
+	for (k = 0; i < 5; k++)
+	{
 		name[k] = name[++i];
 	}
 	name[k] = 0;

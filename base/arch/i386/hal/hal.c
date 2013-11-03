@@ -86,14 +86,17 @@ static void sync_master(void *arg)
 {
 	unsigned long flags, lflags, i;
 
-	if ((unsigned long)arg != hal_processor_id()) {
+	if ((unsigned long)arg != hal_processor_id())
+	{
 		return;
 	}
 
 	go[MASTER] = 0;
 	local_irq_save(flags);
-	for (i = 0; i < NUM_ITERS; ++i) {
-		while (!go[MASTER]) {
+	for (i = 0; i < NUM_ITERS; ++i)
+	{
+		while (!go[MASTER])
+		{
 			cpu_relax();
 		}
 		go[MASTER] = 0;
@@ -114,11 +117,13 @@ static inline long long get_delta(long long *rt, long long *master, unsigned int
 	unsigned long lflags;
 	long i, done;
 
-	for (done = i = 0; i < NUM_ITERS; ++i) {
+	for (done = i = 0; i < NUM_ITERS; ++i)
+	{
 		t0 = readtsc();
 		go[MASTER] = 1;
 		spin_lock_irqsave(&tsclock, lflags);
-		while (!(tm = go[SLAVE])) {
+		while (!(tm = go[SLAVE]))
+		{
 			spin_unlock_irqrestore(&tsclock, lflags);
 			cpu_relax();
 			spin_lock_irqsave(&tsclock, lflags);
@@ -127,24 +132,29 @@ static inline long long get_delta(long long *rt, long long *master, unsigned int
 		go[SLAVE] = 0;
 		t1 = readtsc();
 		dt = t1 - t0;
-		if (!first_sync_loop_done && dt > worst_tsc_round_trip[slave]) {
+		if (!first_sync_loop_done && dt > worst_tsc_round_trip[slave])
+		{
 			worst_tsc_round_trip[slave] = dt;
 		}
-		if (dt < (best_t1 - best_t0) && (dt <= worst_tsc_round_trip[slave] || !first_sync_loop_done)) {
+		if (dt < (best_t1 - best_t0) && (dt <= worst_tsc_round_trip[slave] || !first_sync_loop_done))
+		{
 			done = 1;
 			best_t0 = t0, best_t1 = t1, best_tm = tm;
 		}
 	}
 
-	if (done) {
+	if (done)
+	{
 		*rt = best_t1 - best_t0;
 		*master = best_tm - best_t0;
 		tcenter = best_t0/2 + best_t1/2;
-		if (best_t0 % 2 + best_t1 % 2 == 2) {
+		if (best_t0 % 2 + best_t1 % 2 == 2)
+		{
 			++tcenter;
 		}
 	}
-	if (!first_sync_loop_done) {
+	if (!first_sync_loop_done)
+	{
 		worst_tsc_round_trip[slave] = (worst_tsc_round_trip[slave]*120)/100;
 		first_sync_loop_done = 1;
 		return done ? rtai_tsc_ofst[slave] = tcenter - best_tm : 0;
@@ -160,13 +170,15 @@ static void sync_tsc(unsigned int master, unsigned int slave)
 	go[MASTER] = 1;
 	if (smp_call_function(sync_master, (void *)master,
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,27)
- 							   1,
+			      1,
 #endif
-							      0) < 0) {
+			      0) < 0)
+	{
 //		printk(KERN_ERR "sync_tsc: slave CPU %u failed to get attention from master CPU %u!\n", slave, master);
 		return;
 	}
-	while (go[MASTER]) {
+	while (go[MASTER])
+	{
 		cpu_relax();	/* wait for master to be ready */
 	}
 	spin_lock_irqsave(&tsc_sync_lock, flags);
@@ -199,7 +211,8 @@ static inline long next_rand(long rand)
 	hi = rand/q;
 	lo = rand - hi*q;
 	rand = a*lo - r*hi;
-	if (rand <= 0) {
+	if (rand <= 0)
+	{
 		rand += m;
 	}
 	return rand;
@@ -216,9 +229,12 @@ static inline long irandu(unsigned long range)
 static void kthread_fun(void *null)
 {
 	int i;
-	while (!end) {
-		for (i = 0; i < num_online_cpus(); i++) {
-			if (i != CONFIG_RTAI_MASTER_TSC_CPU) {
+	while (!end)
+	{
+		for (i = 0; i < num_online_cpus(); i++)
+		{
+			if (i != CONFIG_RTAI_MASTER_TSC_CPU)
+			{
 				set_cpus_allowed(current, cpumask_of_cpu(i));
 				sync_tsc(CONFIG_RTAI_MASTER_TSC_CPU, i);
 			}
@@ -230,9 +246,11 @@ static void kthread_fun(void *null)
 
 void init_tsc_sync(void)
 {
-	if (num_online_cpus() > 1) {
+	if (num_online_cpus() > 1)
+	{
 		kernel_thread((void *)kthread_fun, NULL, 0);
-		while(!first_sync_loop_done) {
+		while(!first_sync_loop_done)
+		{
 			msleep(100);
 		}
 	}
@@ -240,9 +258,11 @@ void init_tsc_sync(void)
 
 void cleanup_tsc_sync(void)
 {
-	if (num_online_cpus() > 1) {
+	if (num_online_cpus() > 1)
+	{
 		end = 1;
-		while(end) {
+		while(end)
+		{
 			msleep(100);
 		}
 	}

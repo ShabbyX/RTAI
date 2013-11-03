@@ -18,7 +18,7 @@
 
 /*
 ACKNOWLEDGMENTS:
-- Steve Papacharalambous (stevep@zentropix.com) has contributed a very 
+- Steve Papacharalambous (stevep@zentropix.com) has contributed a very
   informative proc filesystem procedure.
 - Stefano Picerno (stefanopp@libero.it) for suggesting a simple fix to
   distinguish a timeout from an abnormal retrun in timed sem waits.
@@ -112,7 +112,8 @@ static int lxrt_notify_reboot(struct notifier_block *nb,
 			      unsigned long event,
 			      void *ptr);
 
-static struct notifier_block lxrt_reboot_notifier = {
+static struct notifier_block lxrt_reboot_notifier =
+{
 	.notifier_call	= &lxrt_notify_reboot,
 	.next		= NULL,
 	.priority	= 0
@@ -146,22 +147,23 @@ static void rt_schedule_on_schedule_ipi(void);
 
 static inline int rt_request_sched_ipi(void)
 {
-        int retval;
-        retval = rt_request_irq(SCHED_IPI, (void *)rt_schedule_on_schedule_ipi, NULL, 0);
+	int retval;
+	retval = rt_request_irq(SCHED_IPI, (void *)rt_schedule_on_schedule_ipi, NULL, 0);
 //        rt_set_sched_ipi_gate();
-        return retval;
+	return retval;
 }
 
 static inline void rt_free_sched_ipi(void)
 {
-        rt_release_irq(SCHED_IPI);
+	rt_release_irq(SCHED_IPI);
 // 	rt_reset_sched_ipi_gate();
 }
 
 static inline void sched_get_global_lock(int cpuid)
 {
-	barrier(); 
-	if (!test_and_set_bit(cpuid, &rtai_cpu_lock[0])) { 
+	barrier();
+	if (!test_and_set_bit(cpuid, &rtai_cpu_lock[0]))
+	{
 		rtai_spin_glock(&rtai_cpu_lock[0]);
 	}
 	barrier();
@@ -170,10 +172,11 @@ static inline void sched_get_global_lock(int cpuid)
 static inline void sched_release_global_lock(int cpuid)
 {
 	barrier();
-	if (test_and_clear_bit(cpuid, &rtai_cpu_lock[0])) {
+	if (test_and_clear_bit(cpuid, &rtai_cpu_lock[0]))
+	{
 		rtai_spin_gunlock(&rtai_cpu_lock[0]);
-	} 
-	barrier(); 
+	}
+	barrier();
 }
 
 #else /* !CONFIG_SMP */
@@ -209,8 +212,10 @@ int get_min_tasks_cpuid(void)
 {
 	int i, cpuid, min;
 	min =  tasks_per_cpu[cpuid = 0];
-	for (i = 1; i < num_online_cpus(); i++) {
-		if (tasks_per_cpu[i] < min) {
+	for (i = 1; i < num_online_cpus(); i++)
+	{
+		if (tasks_per_cpu[i] < min)
+		{
 			min = tasks_per_cpu[cpuid = i];
 		}
 	}
@@ -223,12 +228,14 @@ void put_current_on_cpu(int cpuid)
 	struct task_struct *task = current;
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 	task->cpus_allowed = 1 << cpuid;
-	while (cpuid != rtai_cpuid()) {
+	while (cpuid != rtai_cpuid())
+	{
 		task->state = TASK_INTERRUPTIBLE;
 		schedule_timeout(2);
 	}
 #else /* KERNEL_VERSION >= 2.6.0 */
-	if (set_cpus_allowed_ptr(task, cpumask_of(cpuid))) {
+	if (set_cpus_allowed_ptr(task, cpumask_of(cpuid)))
+	{
 		set_cpus_allowed_ptr(current, cpumask_of(((RT_TASK *)(task->rtai_tskext(TSKEXT0)))->runnable_on_cpus = rtai_cpuid()));
 	}
 #endif  /* KERNEL_VERSION < 2.6.0 */
@@ -239,22 +246,25 @@ int set_rtext(RT_TASK *task, int priority, int uses_fpu, void(*signal)(void), un
 {
 	unsigned long flags;
 
-	if (num_online_cpus() <= 1) {
-		 cpuid = 0;
+	if (num_online_cpus() <= 1)
+	{
+		cpuid = 0;
 	}
-	if (task->magic == RT_TASK_MAGIC || cpuid >= NR_RT_CPUS || priority < 0) {
+	if (task->magic == RT_TASK_MAGIC || cpuid >= NR_RT_CPUS || priority < 0)
+	{
 		return -EINVAL;
-	} 
+	}
 	if (lxrt_wdog_task[cpuid] &&
-	    lxrt_wdog_task[cpuid] != task &&
-	    priority == RT_SCHED_HIGHEST_PRIORITY) {
-	    	 rt_printk("Highest priority reserved for RTAI watchdog\n");
-		 return -EBUSY;
+			lxrt_wdog_task[cpuid] != task &&
+			priority == RT_SCHED_HIGHEST_PRIORITY)
+	{
+		rt_printk("Highest priority reserved for RTAI watchdog\n");
+		return -EBUSY;
 	}
 	task->uses_fpu = uses_fpu ? 1 : 0;
 	task->runnable_on_cpus = cpuid;
 	(task->stack_bottom = (long *)&task->fpu_reg)[0] = 0;
-	task->magic = RT_TASK_MAGIC; 
+	task->magic = RT_TASK_MAGIC;
 	task->policy = 0;
 	task->owndres = 0;
 	task->running = 0;
@@ -262,15 +272,15 @@ int set_rtext(RT_TASK *task, int priority, int uses_fpu, void(*signal)(void), un
 	task->period = 0;
 	task->resume_time = RT_TIME_END;
 	task->periodic_resume_time = RT_TIME_END;
-	task->queue.prev = task->queue.next = &(task->queue);      
+	task->queue.prev = task->queue.next = &(task->queue);
 	task->queue.task = task;
-	task->msg_queue.prev = task->msg_queue.next = &(task->msg_queue);      
-	task->msg_queue.task = task;    
-	task->msg = 0;  
+	task->msg_queue.prev = task->msg_queue.next = &(task->msg_queue);
+	task->msg_queue.task = task;
+	task->msg = 0;
 	task->ret_queue.prev = task->ret_queue.next = &(task->ret_queue);
 	task->ret_queue.task = NULL;
 	task->tprev = task->tnext = task->rprev = task->rnext = task;
-	task->blocked_on = NULL;        
+	task->blocked_on = NULL;
 	task->signal = signal;
 	task->unblocked = 0;
 	task->rt_signals = NULL;
@@ -284,13 +294,16 @@ int set_rtext(RT_TASK *task, int priority, int uses_fpu, void(*signal)(void), un
 	task->exectime[0] = task->exectime[1] = 0;
 	task->system_data_ptr = 0;
 	atomic_inc((atomic_t *)(tasks_per_cpu + cpuid));
-	if (0 && relink) {
+	if (0 && relink)
+	{
 		task->priority = task->base_priority = priority;
 		task->suspdepth = task->is_hard = 1;
 		task->state = RT_SCHED_READY | RT_SCHED_SUSPENDED;
 		relink->rtai_tskext(TSKEXT0) = task;
 		task->lnxtsk = relink;
-	} else {
+	}
+	else
+	{
 		task->priority = task->base_priority = BASE_SOFT_PRIORITY + priority;
 		task->suspdepth = task->is_hard = 0;
 		task->state = RT_SCHED_READY;
@@ -313,8 +326,8 @@ int set_rtext(RT_TASK *task, int priority, int uses_fpu, void(*signal)(void), un
 
 
 int rt_kthread_init_cpuid(RT_TASK *task, void (*rt_thread)(long), long data,
-			int stack_size, int priority, int uses_fpu,
-			void(*signal)(void), unsigned int cpuid)
+			  int stack_size, int priority, int uses_fpu,
+			  void(*signal)(void), unsigned int cpuid)
 {
 	return rt_task_init_cpuid(task, rt_thread, data, stack_size, priority, 0, signal, cpuid);
 }
@@ -322,8 +335,8 @@ EXPORT_SYMBOL(rt_kthread_init_cpuid);
 
 
 int rt_kthread_init(RT_TASK *task, void (*rt_thread)(long), long data,
-			int stack_size, int priority, int uses_fpu,
-			void(*signal)(void))
+		    int stack_size, int priority, int uses_fpu,
+		    void(*signal)(void))
 {
 	return rt_task_init_cpuid(task, rt_thread, data, stack_size, priority, uses_fpu, signal, get_min_tasks_cpuid());
 }
@@ -341,7 +354,7 @@ asmlinkage static void rt_startup(void(*rt_thread)(long), long data)
 	((void (*)(long))rt_current->max_msg_size[0])(rt_current->max_msg_size[1]);
 	rt_drg_on_adr(rt_current);
 	rt_task_delete(rt_smp_current[rtai_cpuid()]);
-	rt_printk("LXRT: task %p returned but could not be delated.\n", rt_current); 
+	rt_printk("LXRT: task %p returned but could not be delated.\n", rt_current);
 }
 
 
@@ -361,8 +374,10 @@ EXPORT_SYMBOL(rt_set_task_pid);
 RT_TASK *rt_find_task_by_pid(pid_t pid)
 {
 	RT_TASK *task = &rt_smp_linux_task[pid & 0xF];
-	while ((task = task->next)) {
-		if (task->tid == pid) {
+	while ((task = task->next))
+	{
+		if (task->tid == pid)
+		{
 			return task;
 		}
 	}
@@ -376,19 +391,23 @@ int rt_task_init_cpuid(RT_TASK *task, void (*rt_thread)(long), long data, int st
 	long *st, i;
 	unsigned long flags;
 
-	if (num_online_cpus() <= 1) {
-		 cpuid = 0;
+	if (num_online_cpus() <= 1)
+	{
+		cpuid = 0;
 	}
-	if (task->magic == RT_TASK_MAGIC || cpuid >= NR_RT_CPUS || priority < 0) {
+	if (task->magic == RT_TASK_MAGIC || cpuid >= NR_RT_CPUS || priority < 0)
+	{
 		return -EINVAL;
-	} 
-	if (!(st = (long *)rt_kstack_alloc(stack_size))) {
+	}
+	if (!(st = (long *)rt_kstack_alloc(stack_size)))
+	{
 		return -ENOMEM;
 	}
-	if (lxrt_wdog_task[cpuid] && lxrt_wdog_task[cpuid] != task 
-		             && priority == RT_SCHED_HIGHEST_PRIORITY) {
-	    	 rt_printk("Highest priority reserved for RTAI watchdog\n");
-		 return -EBUSY;
+	if (lxrt_wdog_task[cpuid] && lxrt_wdog_task[cpuid] != task
+			&& priority == RT_SCHED_HIGHEST_PRIORITY)
+	{
+		rt_printk("Highest priority reserved for RTAI watchdog\n");
+		return -EBUSY;
 	}
 
 	task->bstack = task->stack = (long *)(((unsigned long)st + stack_size - 0x10) & ~0xF);
@@ -397,7 +416,7 @@ int rt_task_init_cpuid(RT_TASK *task, void (*rt_thread)(long), long data, int st
 	task->runnable_on_cpus = cpuid;
 	atomic_inc((atomic_t *)(tasks_per_cpu + cpuid));
 	*(task->stack_bottom = st) = 0;
-	task->magic = RT_TASK_MAGIC; 
+	task->magic = RT_TASK_MAGIC;
 	task->policy = 0;
 	task->suspdepth = 1;
 	task->state = (RT_SCHED_SUSPENDED | RT_SCHED_READY);
@@ -410,23 +429,24 @@ int rt_task_init_cpuid(RT_TASK *task, void (*rt_thread)(long), long data, int st
 	task->period = 0;
 	task->resume_time = RT_TIME_END;
 	task->periodic_resume_time = RT_TIME_END;
-	task->queue.prev = &(task->queue);      
-	task->queue.next = &(task->queue);      
+	task->queue.prev = &(task->queue);
+	task->queue.next = &(task->queue);
 	task->queue.task = task;
-	task->msg_queue.prev = &(task->msg_queue);      
-	task->msg_queue.next = &(task->msg_queue);      
-	task->msg_queue.task = task;    
-	task->msg = 0;  
+	task->msg_queue.prev = &(task->msg_queue);
+	task->msg_queue.next = &(task->msg_queue);
+	task->msg_queue.task = task;
+	task->msg = 0;
 	task->ret_queue.prev = &(task->ret_queue);
 	task->ret_queue.next = &(task->ret_queue);
 	task->ret_queue.task = NULL;
 	task->tprev = task->tnext =
-	task->rprev = task->rnext = task;
-	task->blocked_on = NULL;        
+			      task->rprev = task->rnext = task;
+	task->blocked_on = NULL;
 	task->signal = signal;
 	task->unblocked = 0;
 	task->rt_signals = NULL;
-	for (i = 0; i < RTAI_NR_TRAPS; i++) {
+	for (i = 0; i < RTAI_NR_TRAPS; i++)
+	{
 		task->task_trap_handler[i] = NULL;
 	}
 	task->linux_syscall_server = NULL;
@@ -456,11 +476,11 @@ int rt_task_init_cpuid(RT_TASK *task, void (*rt_thread)(long), long data, int st
 }
 
 int rt_task_init(RT_TASK *task, void (*rt_thread)(long), long data,
-			int stack_size, int priority, int uses_fpu,
-			void(*signal)(void))
+		 int stack_size, int priority, int uses_fpu,
+		 void(*signal)(void))
 {
-	return rt_task_init_cpuid(task, rt_thread, data, stack_size, priority, 
-				 uses_fpu, signal, get_min_tasks_cpuid());
+	return rt_task_init_cpuid(task, rt_thread, data, stack_size, priority,
+				  uses_fpu, signal, get_min_tasks_cpuid());
 }
 
 
@@ -469,37 +489,46 @@ RTAI_SYSCALL_MODE void rt_set_runnable_on_cpuid(RT_TASK *task, unsigned int cpui
 	unsigned long flags;
 	RT_TASK *linux_task;
 
-	if (task->lnxtsk) {
+	if (task->lnxtsk)
+	{
 		return;
 	}
 
-	if (cpuid >= NR_RT_CPUS) {
+	if (cpuid >= NR_RT_CPUS)
+	{
 		cpuid = get_min_tasks_cpuid();
-	} 
-	flags = rt_global_save_flags_and_cli();
-	switch (rt_smp_oneshot_timer[task->runnable_on_cpus] | 
-		(rt_smp_oneshot_timer[cpuid] << 1)) {	
-                case 1:
-                        task->period = llimd(task->period, TIMER_FREQ, tuned.cpu_freq);
-                        task->resume_time = llimd(task->resume_time, TIMER_FREQ, tuned.cpu_freq);
-                        task->periodic_resume_time = llimd(task->periodic_resume_time, TIMER_FREQ, tuned.cpu_freq);
-                        break;
-                case 2:
-                        task->period = llimd(task->period, tuned.cpu_freq, TIMER_FREQ);
-                        task->resume_time = llimd(task->resume_time, tuned.cpu_freq, TIMER_FREQ);
-                        task->periodic_resume_time = llimd(task->periodic_resume_time, tuned.cpu_freq, TIMER_FREQ);
-			break;
 	}
-	if (!((task->prev)->next = task->next)) {
+	flags = rt_global_save_flags_and_cli();
+	switch (rt_smp_oneshot_timer[task->runnable_on_cpus] |
+			(rt_smp_oneshot_timer[cpuid] << 1))
+	{
+	case 1:
+		task->period = llimd(task->period, TIMER_FREQ, tuned.cpu_freq);
+		task->resume_time = llimd(task->resume_time, TIMER_FREQ, tuned.cpu_freq);
+		task->periodic_resume_time = llimd(task->periodic_resume_time, TIMER_FREQ, tuned.cpu_freq);
+		break;
+	case 2:
+		task->period = llimd(task->period, tuned.cpu_freq, TIMER_FREQ);
+		task->resume_time = llimd(task->resume_time, tuned.cpu_freq, TIMER_FREQ);
+		task->periodic_resume_time = llimd(task->periodic_resume_time, tuned.cpu_freq, TIMER_FREQ);
+		break;
+	}
+	if (!((task->prev)->next = task->next))
+	{
 		rt_smp_linux_task[task->runnable_on_cpus].prev = task->prev;
-	} else {
+	}
+	else
+	{
 		(task->next)->prev = task->prev;
 	}
-	if ((task->state & RT_SCHED_DELAYED)) {
+	if ((task->state & RT_SCHED_DELAYED))
+	{
 		rem_timed_task(task);
 		task->runnable_on_cpus = cpuid;
 		enq_timed_task(task);
-	} else {
+	}
+	else
+	{
 		task->runnable_on_cpus = cpuid;
 	}
 	task->next = 0;
@@ -514,7 +543,8 @@ RTAI_SYSCALL_MODE void rt_set_runnable_on_cpus(RT_TASK *task, unsigned long run_
 {
 	int cpuid;
 
-	if (task->lnxtsk) {
+	if (task->lnxtsk)
+	{
 		return;
 	}
 
@@ -524,7 +554,8 @@ RTAI_SYSCALL_MODE void rt_set_runnable_on_cpus(RT_TASK *task, unsigned long run_
 	run_on_cpus = 1;
 #endif
 	cpuid = get_min_tasks_cpuid();
-	if (!test_bit(cpuid, &run_on_cpus)) {
+	if (!test_bit(cpuid, &run_on_cpus))
+	{
 		cpuid = ffnz(run_on_cpus);
 	}
 	rt_set_runnable_on_cpuid(task, cpuid);
@@ -537,10 +568,13 @@ int rt_check_current_stack(void)
 	char *sp;
 
 	ASSIGN_RT_CURRENT;
-	if (rt_current != &rt_linux_task) {
+	if (rt_current != &rt_linux_task)
+	{
 		sp = get_stack_pointer();
 		return (sp - (char *)(rt_current->stack_bottom));
-	} else {
+	}
+	else
+	{
 		return RT_RESEM_SUSPDEL;
 	}
 }
@@ -566,7 +600,7 @@ if (CONFIG_RTAI_ALLOW_RR && rt_current->policy > 0) { \
 	} else { \
 		rt_current->rr_remaining = rt_current->yield_time - rt_times.tick_time; \
 	} \
-} 
+}
 
 #define TASK_TO_SCHEDULE() \
 do { \
@@ -603,7 +637,7 @@ do { \
 #define SAVE_LOCK_LINUX_IN_IRQ(cpuid)
 #define RESTORE_UNLOCK_LINUX_IN_IRQ(cpuid)
 #else
-#define SAVE_LOCK_LINUX_IN_IRQ(cpuid)       LOCK_LINUX(cpuid)    
+#define SAVE_LOCK_LINUX_IN_IRQ(cpuid)       LOCK_LINUX(cpuid)
 #define RESTORE_UNLOCK_LINUX_IN_IRQ(cpuid)  UNLOCK_LINUX(cpuid)
 #endif
 
@@ -625,7 +659,7 @@ do { \
 #define RTAI_TASK_SWITCH_SIGNAL()
 
 #endif
-	
+
 #if CONFIG_RTAI_MONITOR_EXECTIME
 
 RTIME switch_time[NR_RT_CPUS];
@@ -657,9 +691,10 @@ RTIME switch_time[NR_RT_CPUS];
 void rt_do_force_soft(RT_TASK *rt_task)
 {
 	rt_global_cli();
-	if (rt_task->state != RT_SCHED_READY) {
+	if (rt_task->state != RT_SCHED_READY)
+	{
 		rt_task->state &= ~RT_SCHED_READY;
-            	enq_ready_task(rt_task);
+		enq_ready_task(rt_task);
 		RT_SCHEDULE(rt_task, rtai_cpuid());
 	}
 	rt_global_sti();
@@ -684,40 +719,47 @@ do { \
 static inline void force_current_soft(RT_TASK *rt_current, int cpuid)
 {
 	struct task_struct *lnxtsk;
-        void rt_schedule(void);
-        rt_current->force_soft = 0;
+	void rt_schedule(void);
+	rt_current->force_soft = 0;
 	rt_current->state &= ~RT_SCHED_READY;;
 	pend_wake_up_hts(lnxtsk = rt_current->lnxtsk, cpuid);
-        (rt_current->rprev)->rnext = rt_current->rnext;
-        (rt_current->rnext)->rprev = rt_current->rprev;
-        rt_schedule();
-        rt_current->is_hard = 0;
-	if (rt_current->priority < BASE_SOFT_PRIORITY) {
-		if (rt_current->priority == rt_current->base_priority) {
+	(rt_current->rprev)->rnext = rt_current->rnext;
+	(rt_current->rnext)->rprev = rt_current->rprev;
+	rt_schedule();
+	rt_current->is_hard = 0;
+	if (rt_current->priority < BASE_SOFT_PRIORITY)
+	{
+		if (rt_current->priority == rt_current->base_priority)
+		{
 			rt_current->priority += BASE_SOFT_PRIORITY;
 		}
 	}
-	if (rt_current->base_priority < BASE_SOFT_PRIORITY) {
+	if (rt_current->base_priority < BASE_SOFT_PRIORITY)
+	{
 		rt_current->base_priority += BASE_SOFT_PRIORITY;
 	}
 	rt_global_sti();
-        hal_schedule_back_root(lnxtsk);
+	hal_schedule_back_root(lnxtsk);
 // now make it as if it was scheduled soft, the tail is cared in sys_lxrt.c
 	rt_global_cli();
 	LOCK_LINUX(cpuid);
 	rt_current->state |= RT_SCHED_READY;
 	rt_smp_current[cpuid] = rt_current;
-        if (rt_current->state != RT_SCHED_READY) {
-        	lnxtsk->state = TASK_SOFTREALTIME;
+	if (rt_current->state != RT_SCHED_READY)
+	{
+		lnxtsk->state = TASK_SOFTREALTIME;
 		rt_schedule();
-	} else {
+	}
+	else
+	{
 		enq_soft_ready_task(rt_current);
 	}
 }
 
 static RT_TASK *switch_rtai_tasks(RT_TASK *rt_current, RT_TASK *new_task, int cpuid)
 {
-	if (rt_current->lnxtsk) {
+	if (rt_current->lnxtsk)
+	{
 		unsigned long sflags;
 #ifdef IPIPE_NOSTACK_FLAG
 		ipipe_set_foreign_stack(&rtai_domain);
@@ -725,7 +767,8 @@ static RT_TASK *switch_rtai_tasks(RT_TASK *rt_current, RT_TASK *new_task, int cp
 		SAVE_LOCK_LINUX(cpuid);
 		rt_linux_task.prevp = rt_current;
 		save_fpcr_and_enable_fpu(linux_cr0);
-		if (new_task->uses_fpu) {
+		if (new_task->uses_fpu)
+		{
 			save_fpenv(rt_linux_task.fpu_reg);
 			fpu_task = new_task;
 			restore_fpenv(fpu_task->fpu_reg);
@@ -738,19 +781,26 @@ static RT_TASK *switch_rtai_tasks(RT_TASK *rt_current, RT_TASK *new_task, int cp
 #ifdef IPIPE_NOSTACK_FLAG
 		ipipe_clear_foreign_stack(&rtai_domain);
 #endif
-		if (rt_linux_task.nextp != rt_current) {
+		if (rt_linux_task.nextp != rt_current)
+		{
 			return rt_linux_task.nextp;
 		}
-	} else {
-		if (new_task->lnxtsk) {
+	}
+	else
+	{
+		if (new_task->lnxtsk)
+		{
 			rt_linux_task.nextp = new_task;
 			new_task = rt_linux_task.prevp;
-			if (fpu_task != &rt_linux_task) {
+			if (fpu_task != &rt_linux_task)
+			{
 				save_fpenv(fpu_task->fpu_reg);
 				fpu_task = &rt_linux_task;
 				restore_fpenv(fpu_task->fpu_reg);
 			}
-		} else if (new_task->uses_fpu && fpu_task != new_task) {
+		}
+		else if (new_task->uses_fpu && fpu_task != new_task)
+		{
 			save_fpenv(fpu_task->fpu_reg);
 			fpu_task = new_task;
 			restore_fpenv(fpu_task->fpu_reg);
@@ -819,7 +869,7 @@ do { \
 			break; \
 		} \
 	} \
-} while (0) 
+} while (0)
 
 #define IF_GOING_TO_LINUX_CHECK_TIMER_SHOT(fire_shot) \
 do { \
@@ -924,7 +974,8 @@ static void rt_schedule_on_schedule_ipi(void)
 
 	sched_get_global_lock(cpuid);
 	RR_YIELD();
-	if (oneshot_running) {
+	if (oneshot_running)
+	{
 		int prio, fire_shot;
 
 		rt_time_h = rtai_rdtsc() + rt_half_tick;
@@ -935,38 +986,51 @@ static void rt_schedule_on_schedule_ipi(void)
 		sched_release_global_lock(cpuid);
 		IF_GOING_TO_LINUX_CHECK_TIMER_SHOT(fire_shot);
 		FIRE_NEXT_TIMER_SHOT(timer_shot_fired);
-	} else {
+	}
+	else
+	{
 		TASK_TO_SCHEDULE();
 		sched_release_global_lock(cpuid);
 	}
 
-	if (new_task != rt_current) {
-		if (rt_scheduling[cpuid].locked) {
+	if (new_task != rt_current)
+	{
+		if (rt_scheduling[cpuid].locked)
+		{
 			rt_scheduling[cpuid].rqsted = 1;
 			goto sched_exit;
 		}
-		if (/*USE_RTAI_TASKS && */ (!new_task->lnxtsk || !rt_current->lnxtsk)) {
-			if (!(new_task = switch_rtai_tasks(rt_current, new_task, cpuid))) {
+		if (/*USE_RTAI_TASKS && */ (!new_task->lnxtsk || !rt_current->lnxtsk))
+		{
+			if (!(new_task = switch_rtai_tasks(rt_current, new_task, cpuid)))
+			{
 				goto sched_exit;
 			}
 		}
-		if (new_task->is_hard > 0 || rt_current->is_hard > 0) {
+		if (new_task->is_hard > 0 || rt_current->is_hard > 0)
+		{
 			struct task_struct *prev;
 			unsigned long sflags;
-			if (rt_current->is_hard <= 0) {
+			if (rt_current->is_hard <= 0)
+			{
 				SAVE_LOCK_LINUX_IN_IRQ(cpuid);
 				rt_linux_task.lnxtsk = prev = current;
 				RST_EXEC_TIME();
-			} else {
+			}
+			else
+			{
 				sflags = rtai_linux_context[cpuid].sflags;
 				prev = rt_current->lnxtsk;
 				SET_EXEC_TIME();
 			}
 			rt_smp_current[cpuid] = new_task;
 			lxrt_context_switch(prev, new_task->lnxtsk, cpuid);
-			if (rt_current->is_hard <= 0) {
+			if (rt_current->is_hard <= 0)
+			{
 				RESTORE_UNLOCK_LINUX_IN_IRQ(cpuid);
-			} else if (lnxtsk_uses_fpu(prev)) {
+			}
+			else if (lnxtsk_uses_fpu(prev))
+			{
 				restore_fpu(prev);
 			}
 		}
@@ -984,7 +1048,8 @@ void rt_schedule(void)
 	rt_current = rt_smp_current[cpuid = rtai_cpuid()];
 
 	RR_YIELD();
-	if (oneshot_running) {
+	if (oneshot_running)
+	{
 		int prio, fire_shot;
 
 		rt_time_h = rtai_rdtsc() + rt_half_tick;
@@ -995,71 +1060,94 @@ void rt_schedule(void)
 		sched_release_global_lock(cpuid);
 		IF_GOING_TO_LINUX_CHECK_TIMER_SHOT(fire_shot);
 		FIRE_NEXT_TIMER_SHOT(timer_shot_fired);
-	} else {
+	}
+	else
+	{
 		TASK_TO_SCHEDULE();
 		sched_release_global_lock(cpuid);
 	}
 
-	if (new_task != rt_current) {
-		if (rt_scheduling[cpuid].locked) {
+	if (new_task != rt_current)
+	{
+		if (rt_scheduling[cpuid].locked)
+		{
 			rt_scheduling[cpuid].rqsted = 1;
 			goto sched_exit;
 		}
-		if (/*USE_RTAI_TASKS && */(!new_task->lnxtsk || !rt_current->lnxtsk)) {
-			if (!(new_task = switch_rtai_tasks(rt_current, new_task, cpuid))) {
+		if (/*USE_RTAI_TASKS && */(!new_task->lnxtsk || !rt_current->lnxtsk))
+		{
+			if (!(new_task = switch_rtai_tasks(rt_current, new_task, cpuid)))
+			{
 #if CONFIG_RTAI_BUSY_TIME_ALIGN && (RTAI_KERN_BUSY_ALIGN_RET_DELAY > 0)
-			if (rt_current->busy_time_align) {
-				RTIME resume_time = rt_current->resume_time - tuned.kern_latency_busy_align_ret_delay;
-				rt_current->busy_time_align = 0;
-				while(rtai_rdtsc() < resume_time);
-			}
+				if (rt_current->busy_time_align)
+				{
+					RTIME resume_time = rt_current->resume_time - tuned.kern_latency_busy_align_ret_delay;
+					rt_current->busy_time_align = 0;
+					while(rtai_rdtsc() < resume_time);
+				}
 #endif
 				goto ksched_exit;
 			}
 		}
 		rt_smp_current[cpuid] = new_task;
-		if (new_task->is_hard > 0 || rt_current->is_hard > 0) {
+		if (new_task->is_hard > 0 || rt_current->is_hard > 0)
+		{
 			struct task_struct *prev;
 			unsigned long sflags;
-			if (rt_current->is_hard <= 0) {
+			if (rt_current->is_hard <= 0)
+			{
 				SAVE_LOCK_LINUX(cpuid);
 				rt_linux_task.lnxtsk = prev = current;
 				RST_EXEC_TIME();
-			} else {
+			}
+			else
+			{
 				sflags = rtai_linux_context[cpuid].sflags;
 				prev = rt_current->lnxtsk;
 				SET_EXEC_TIME();
 			}
 			lxrt_context_switch(prev, new_task->lnxtsk, cpuid);
-			if (rt_current->is_hard <= 0) {
+			if (rt_current->is_hard <= 0)
+			{
 				RESTORE_UNLOCK_LINUX(cpuid);
-				if (rt_current->state != RT_SCHED_READY) {
+				if (rt_current->state != RT_SCHED_READY)
+				{
 					goto sched_soft;
 				}
-			} else {
-				if (lnxtsk_uses_fpu(prev)) {
+			}
+			else
+			{
+				if (lnxtsk_uses_fpu(prev))
+				{
 					restore_fpu(prev);
 				}
-				if (rt_current->force_soft) {
+				if (rt_current->force_soft)
+				{
 					force_current_soft(rt_current, cpuid);
 				}
 			}
-		} else {
+		}
+		else
+		{
 sched_soft:
 			CALL_TIMER_HANDLER();
 			UNLOCK_LINUX(cpuid);
 			rtai_sti();
 
 #ifdef CONFIG_RTAI_ALIGN_LINUX_PRIORITY
-			if (current->rtai_tskext(TSKEXT0) && (current->policy == SCHED_FIFO || current->policy == SCHED_RR)) {
+			if (current->rtai_tskext(TSKEXT0) && (current->policy == SCHED_FIFO || current->policy == SCHED_RR))
+			{
 				int rt_priority;
-				if ((rt_priority = ((RT_TASK *)current->rtai_tskext(TSKEXT0))->priority) >= BASE_SOFT_PRIORITY) {
+				if ((rt_priority = ((RT_TASK *)current->rtai_tskext(TSKEXT0))->priority) >= BASE_SOFT_PRIORITY)
+				{
 					rt_priority -= BASE_SOFT_PRIORITY;
 				}
-				if ((rt_priority = (MAX_LINUX_RTPRIO - rt_priority)) < 1) {
+				if ((rt_priority = (MAX_LINUX_RTPRIO - rt_priority)) < 1)
+				{
 					rt_priority = 1;
 				}
-				if (rt_priority != current->rt_priority) {
+				if (rt_priority != current->rt_priority)
+				{
 					rtai_set_linux_task_priority(current, current->policy, rt_priority);
 				}
 			}
@@ -1077,7 +1165,8 @@ sched_soft:
 	}
 sched_exit:
 #if CONFIG_RTAI_BUSY_TIME_ALIGN && (RTAI_USER_BUSY_ALIGN_RET_DELAY > 0)
-	if (rt_current->busy_time_align) {
+	if (rt_current->busy_time_align)
+	{
 		RTIME resume_time = rt_current->resume_time - tuned.user_latency_busy_align_ret_delay;
 		rt_current->busy_time_align = 0;
 		while(rtai_rdtsc() < resume_time);
@@ -1092,32 +1181,41 @@ RTAI_SYSCALL_MODE void rt_spv_RMS(int cpuid)
 {
 	RT_TASK *task;
 	int prio;
-	if (cpuid < 0 || cpuid >= num_online_cpus()) {
+	if (cpuid < 0 || cpuid >= num_online_cpus())
+	{
 		cpuid = rtai_cpuid();
 	}
 	prio = 0;
 	task = &rt_linux_task;
-	while ((task = task->next)) {
+	while ((task = task->next))
+	{
 		RT_TASK *task, *htask;
 		RTIME period;
 		htask = 0;
 		task = &rt_linux_task;
 		period = RT_TIME_END;
-		while ((task = task->next)) {
-			if (task->priority >= 0 && task->policy >= 0 && task->period && task->period < period) {
+		while ((task = task->next))
+		{
+			if (task->priority >= 0 && task->policy >= 0 && task->period && task->period < period)
+			{
 				period = (htask = task)->period;
 			}
 		}
-		if (htask) {
+		if (htask)
+		{
 			htask->priority = -1;
 			htask->base_priority = prio++;
-		} else {
+		}
+		else
+		{
 			goto ret;
 		}
 	}
 ret:	task = &rt_linux_task;
-	while ((task = task->next)) {
-		if (task->priority < 0) {
+	while ((task = task->next))
+	{
+		if (task->priority < 0)
+		{
 			task->priority = task->base_priority;
 		}
 	}
@@ -1131,7 +1229,8 @@ void rt_sched_lock(void)
 	int cpuid;
 
 	rtai_save_flags_and_cli(flags);
-	if (!rt_scheduling[cpuid = rtai_cpuid()].locked++) {
+	if (!rt_scheduling[cpuid = rtai_cpuid()].locked++)
+	{
 		rt_scheduling[cpuid].rqsted = 0;
 	}
 	rtai_restore_flags(flags);
@@ -1152,11 +1251,15 @@ void rt_sched_unlock(void)
 	int cpuid;
 
 	rtai_save_flags_and_cli(flags);
-	if (rt_scheduling[cpuid = rtai_cpuid()].locked && !(--rt_scheduling[cpuid].locked)) {
-		if (rt_scheduling[cpuid].rqsted > 0) {
+	if (rt_scheduling[cpuid = rtai_cpuid()].locked && !(--rt_scheduling[cpuid].locked))
+	{
+		if (rt_scheduling[cpuid].rqsted > 0)
+		{
 			SCHED_UNLOCK_SCHEDULE(cpuid);
 		}
-	} else {
+	}
+	else
+	{
 //		rt_printk("*** TOO MANY SCHED_UNLOCK ***\n");
 	}
 	rtai_restore_flags(flags);
@@ -1177,56 +1280,73 @@ int clr_rtext(RT_TASK *task)
 	unsigned long flags;
 	QUEUE *q;
 
-	if (task->magic != RT_TASK_MAGIC || task->priority == RT_SCHED_LINUX_PRIORITY) {
+	if (task->magic != RT_TASK_MAGIC || task->priority == RT_SCHED_LINUX_PRIORITY)
+	{
 		return -EINVAL;
 	}
 
 	flags = rt_global_save_flags_and_cli();
 	ASSIGN_RT_CURRENT;
-	if (!task_owns_sems(task) || task == rt_current || rt_current->priority == RT_SCHED_LINUX_PRIORITY) {
+	if (!task_owns_sems(task) || task == rt_current || rt_current->priority == RT_SCHED_LINUX_PRIORITY)
+	{
 		call_exit_handlers(task);
 		rem_timed_task(task);
-		if (task->blocked_on) {
-			if (task->state & (RT_SCHED_SEMAPHORE | RT_SCHED_SEND | RT_SCHED_RPC | RT_SCHED_RETURN)) {
+		if (task->blocked_on)
+		{
+			if (task->state & (RT_SCHED_SEMAPHORE | RT_SCHED_SEND | RT_SCHED_RPC | RT_SCHED_RETURN))
+			{
 				(task->queue.prev)->next = task->queue.next;
 				(task->queue.next)->prev = task->queue.prev;
-				if (task->state & RT_SCHED_SEMAPHORE) {
+				if (task->state & RT_SCHED_SEMAPHORE)
+				{
 					SEM *sem = (SEM *)(task->blocked_on);
-					if (++sem->count > 1 && sem->type) {
+					if (++sem->count > 1 && sem->type)
+					{
 						sem->count = 1;
 					}
 				}
-			} else if (task->state & RT_SCHED_MBXSUSP) {
+			}
+			else if (task->state & RT_SCHED_MBXSUSP)
+			{
 				MBX *mbx = (MBX *)task->blocked_on;
 				mbx->waiting_task = NULL;
 				sched_sem_signal(!mbx->frbs ? &mbx->sndsem : &mbx->rcvsem);
 			}
 		}
 		q = &(task->msg_queue);
-		while ((q = q->next) != &(task->msg_queue)) {
+		while ((q = q->next) != &(task->msg_queue))
+		{
 			rem_timed_task(q->task);
-			if ((q->task)->state != RT_SCHED_READY && ((q->task)->state &= ~(RT_SCHED_SEND | RT_SCHED_RPC | RT_SCHED_DELAYED)) == RT_SCHED_READY) {
+			if ((q->task)->state != RT_SCHED_READY && ((q->task)->state &= ~(RT_SCHED_SEND | RT_SCHED_RPC | RT_SCHED_DELAYED)) == RT_SCHED_READY)
+			{
 				enq_ready_task(q->task);
-			}       
+			}
 			(q->task)->blocked_on = RTP_OBJREM;
-		}       
-                q = &(task->ret_queue);
-                while ((q = q->next) != &(task->ret_queue)) {
+		}
+		q = &(task->ret_queue);
+		while ((q = q->next) != &(task->ret_queue))
+		{
 			rem_timed_task(q->task);
-                       	if ((q->task)->state != RT_SCHED_READY && ((q->task)->state &= ~(RT_SCHED_RETURN | RT_SCHED_DELAYED)) == RT_SCHED_READY) {
+			if ((q->task)->state != RT_SCHED_READY && ((q->task)->state &= ~(RT_SCHED_RETURN | RT_SCHED_DELAYED)) == RT_SCHED_READY)
+			{
 				enq_ready_task(q->task);
-			}       
+			}
 			(q->task)->blocked_on = RTP_OBJREM;
-               	}
-		if (!((task->prev)->next = task->next)) {
+		}
+		if (!((task->prev)->next = task->next))
+		{
 			rt_smp_linux_task[task->runnable_on_cpus].prev = task->prev;
-		} else {
+		}
+		else
+		{
 			(task->next)->prev = task->prev;
 		}
-		if (rt_smp_fpu_task[task->runnable_on_cpus] == task) {
+		if (rt_smp_fpu_task[task->runnable_on_cpus] == task)
+		{
 			rt_smp_fpu_task[task->runnable_on_cpus] = rt_smp_linux_task + task->runnable_on_cpus;;
 		}
-		if (!task->lnxtsk) {
+		if (!task->lnxtsk)
+		{
 			frstk_srq.mp[frstk_srq.in++ & (MAX_FRESTK_SRQ - 1)] = task->stack_bottom;
 			rt_pend_linux_srq(frstk_srq.srq);
 		}
@@ -1234,10 +1354,13 @@ int clr_rtext(RT_TASK *task)
 		rem_ready_task(task);
 		task->state = 0;
 		atomic_dec((void *)(tasks_per_cpu + task->runnable_on_cpus));
-		if (task == rt_current) {
+		if (task == rt_current)
+		{
 			rt_schedule();
 		}
-	} else {
+	}
+	else
+	{
 		task->suspdepth = -0x7FFFFFFF;
 	}
 	rt_global_restore_flags(flags);
@@ -1277,7 +1400,8 @@ redo_timer_handler:
 	wake_up_timed_tasks(cpuid);
 	TASK_TO_SCHEDULE();
 
-	if (oneshot_timer) {
+	if (oneshot_timer)
+	{
 		int prio, fire_shot;
 
 		timer_shot_fired = 0;
@@ -1287,43 +1411,56 @@ redo_timer_handler:
 		sched_release_global_lock(cpuid);
 		IF_GOING_TO_LINUX_CHECK_TIMER_SHOT(fire_shot);
 		FIRE_NEXT_TIMER_SHOT(0);
-	} else {
+	}
+	else
+	{
 		sched_release_global_lock(cpuid);
 		rt_times.intr_time += rt_times.periodic_tick;
-                rt_set_timer_delay(0);
+		rt_set_timer_delay(0);
 	}
 
-	if (new_task != rt_current) {
-		if (rt_scheduling[cpuid].locked) {
+	if (new_task != rt_current)
+	{
+		if (rt_scheduling[cpuid].locked)
+		{
 			rt_scheduling[cpuid].rqsted = 1;
 			goto sched_exit;
 		}
-		if (/*USE_RTAI_TASKS && */ (!new_task->lnxtsk || !rt_current->lnxtsk)) {
-			if (!(new_task = switch_rtai_tasks(rt_current, new_task, cpuid))) {
+		if (/*USE_RTAI_TASKS && */ (!new_task->lnxtsk || !rt_current->lnxtsk))
+		{
+			if (!(new_task = switch_rtai_tasks(rt_current, new_task, cpuid)))
+			{
 				goto sched_exit;
 			}
 		}
-		if (new_task->is_hard > 0 || rt_current->is_hard > 0) {
+		if (new_task->is_hard > 0 || rt_current->is_hard > 0)
+		{
 			struct task_struct *prev;
 			unsigned long sflags;
-			if (rt_current->is_hard <= 0) {
+			if (rt_current->is_hard <= 0)
+			{
 				SAVE_LOCK_LINUX_IN_IRQ(cpuid);
 				rt_linux_task.lnxtsk = prev = current;
 				RST_EXEC_TIME();
-			} else {
+			}
+			else
+			{
 				sflags = rtai_linux_context[cpuid].sflags;
 				prev = rt_current->lnxtsk;
 				SET_EXEC_TIME();
 			}
 			rt_smp_current[cpuid] = new_task;
 			lxrt_context_switch(prev, new_task->lnxtsk, cpuid);
-			if (rt_current->is_hard <= 0) {
+			if (rt_current->is_hard <= 0)
+			{
 				RESTORE_UNLOCK_LINUX_IN_IRQ(cpuid);
-			} else if (lnxtsk_uses_fpu(prev)) {
+			}
+			else if (lnxtsk_uses_fpu(prev))
+			{
 				restore_fpu(prev);
 			}
 		}
-        }
+	}
 sched_exit:
 	REDO_TIMER_HANDLER();
 	return;
@@ -1333,22 +1470,23 @@ sched_exit:
 
 #if defined(USE_LINUX_TIMER) && !defined(CONFIG_GENERIC_CLOCKEVENTS)
 
-static irqreturn_t recover_jiffies(int irq, void *dev_id, struct pt_regs *regs) 
+static irqreturn_t recover_jiffies(int irq, void *dev_id, struct pt_regs *regs)
 {
 	rt_global_cli();
-	if (linux_times->tick_time >= linux_times->linux_time) {
+	if (linux_times->tick_time >= linux_times->linux_time)
+	{
 		linux_times->linux_time += linux_times->linux_tick;
 		update_linux_timer(rtai_cpuid());
 	}
 	rt_global_sti();
 	return RTAI_LINUX_IRQ_HANDLED;
-} 
+}
 
 #define REQUEST_RECOVER_JIFFIES()  rt_request_linux_irq(TIMER_8254_IRQ, recover_jiffies, "rtai_jif_chk", recover_jiffies)
 
 #define RELEASE_RECOVER_JIFFIES(timer)  rt_free_linux_irq(TIMER_8254_IRQ, recover_jiffies)
 
-#else 
+#else
 
 #define REQUEST_RECOVER_JIFFIES()
 
@@ -1357,27 +1495,29 @@ static irqreturn_t recover_jiffies(int irq, void *dev_id, struct pt_regs *regs)
 #endif
 
 
-int rt_is_hard_timer_running(void) 
-{ 
+int rt_is_hard_timer_running(void)
+{
 	return rt_sched_timed;
 }
 
 
-void rt_set_periodic_mode(void) 
-{ 
+void rt_set_periodic_mode(void)
+{
 	int cpuid;
 	stop_rt_timer();
-	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {
+	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++)
+	{
 		oneshot_timer = oneshot_running = 0;
 	}
 }
 
 
 void rt_set_oneshot_mode(void)
-{ 
+{
 	int cpuid;
 	stop_rt_timer();
-	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {
+	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++)
+	{
 		oneshot_timer = 1;
 	}
 }
@@ -1395,9 +1535,12 @@ static void _rt_linux_hrt_set_mode(enum clock_event_mode mode, void * hrt_dev) /
 {
 	int cpuid = rtai_cpuid();
 
-	if (mode == CLOCK_EVT_MODE_ONESHOT || mode == CLOCK_EVT_MODE_SHUTDOWN) {
+	if (mode == CLOCK_EVT_MODE_ONESHOT || mode == CLOCK_EVT_MODE_SHUTDOWN)
+	{
 		rt_times.linux_tick = 0;
-	} else if (mode == CLOCK_EVT_MODE_PERIODIC) {
+	}
+	else if (mode == CLOCK_EVT_MODE_PERIODIC)
+	{
 		rt_times.linux_tick = nano2count_cpuid((1000000000 + HZ/2)/HZ, cpuid);
 	}
 }
@@ -1413,15 +1556,20 @@ static int _rt_linux_hrt_next_shot(unsigned long deltat, void *hrt_dev) // ??? s
 
 	rtai_cli();
 	rt_times.linux_time = linux_time = rt_get_time_cpuid(cpuid) + deltat;
-	if (oneshot_running) {
-		if (linux_time < rt_times.intr_time) {
-			if (deltas > 0) {
+	if (oneshot_running)
+	{
+		if (linux_time < rt_times.intr_time)
+		{
+			if (deltas > 0)
+			{
 				rt_times.intr_time = linux_time;
 				rt_set_timer_delay(deltas);
 				timer_shot_fired = 1;
-			} else {
+			}
+			else
+			{
 				rt_times.linux_time = RT_TIME_END;
-                		update_linux_timer(cpuid);
+				update_linux_timer(cpuid);
 			}
 		}
 	}
@@ -1439,11 +1587,15 @@ RTAI_SYSCALL_MODE void start_rt_apic_timers(struct apic_timer_setup_data *setup_
 
 	rt_request_apic_timers(rt_timer_handler, setup_data);
 	flags = rt_global_save_flags_and_cli();
-	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {
-		if (setup_data[cpuid].mode > 0) {
+	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++)
+	{
+		if (setup_data[cpuid].mode > 0)
+		{
 			oneshot_timer = oneshot_running = 0;
 			tuned.timers_tol[cpuid] = rt_half_tick = (rt_times.periodic_tick + 1)>>1;
-		} else {
+		}
+		else
+		{
 			oneshot_timer = oneshot_running = 1;
 			tuned.timers_tol[cpuid] = rt_half_tick = (tuned.latency + 1)>>1;
 		}
@@ -1460,11 +1612,13 @@ RTAI_SYSCALL_MODE RTIME start_rt_timer(int period)
 {
 	int cpuid;
 	struct apic_timer_setup_data setup_data[NR_RT_CPUS];
-	if (period <= 0) {
+	if (period <= 0)
+	{
 		period = 0;
 		rt_set_oneshot_mode();
 	}
-	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {
+	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++)
+	{
 		setup_data[cpuid].mode = oneshot_timer ? 0 : 1;
 		setup_data[cpuid].count = count2nano(period);
 	}
@@ -1476,11 +1630,13 @@ RTAI_SYSCALL_MODE RTIME start_rt_timer(int period)
 
 void stop_rt_timer(void)
 {
-	if (rt_sched_timed) {
-		int cpuid; 
+	if (rt_sched_timed)
+	{
+		int cpuid;
 		rt_sched_timed = 0;
 		rt_free_apic_timers();
-		for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {
+		for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++)
+		{
 			rt_time_h = RT_TIME_END;
 			oneshot_running = 0;
 		}
@@ -1498,32 +1654,36 @@ RTAI_SYSCALL_MODE RTIME start_rt_timer(int period)
 #define cpuid 0
 #undef rt_times
 
-        unsigned long flags;
-	if (period <= 0) {
+	unsigned long flags;
+	if (period <= 0)
+	{
 		period = 0;
 		rt_set_oneshot_mode();
 	}
-        flags = rt_global_save_flags_and_cli();
-        if (oneshot_timer) {
+	flags = rt_global_save_flags_and_cli();
+	if (oneshot_timer)
+	{
 		rt_request_timer(rt_timer_handler, 0, TIMER_TYPE);
-                tuned.timers_tol[0] = rt_half_tick = (tuned.latency + 1)>>1;
-                oneshot_running = timer_shot_fired = 1;
-        } else {
+		tuned.timers_tol[0] = rt_half_tick = (tuned.latency + 1)>>1;
+		oneshot_running = timer_shot_fired = 1;
+	}
+	else
+	{
 		rt_request_timer(rt_timer_handler, !TIMER_TYPE && period > LATCH ? LATCH: period, TIMER_TYPE);
-                tuned.timers_tol[0] = rt_half_tick = (rt_times.periodic_tick + 1)>>1;
-        }
+		tuned.timers_tol[0] = rt_half_tick = (rt_times.periodic_tick + 1)>>1;
+	}
 	rt_sched_timed = 1;
 	rt_smp_times[cpuid].linux_tick    = rt_times.linux_tick;
 	rt_smp_times[cpuid].tick_time     = rt_times.tick_time;
 	rt_smp_times[cpuid].intr_time     = rt_times.intr_time;
 	rt_smp_times[cpuid].linux_time    = rt_times.linux_time;
 	rt_smp_times[cpuid].periodic_tick = rt_times.periodic_tick;
-        rt_time_h = rt_times.tick_time + rt_half_tick;
+	rt_time_h = rt_times.tick_time + rt_half_tick;
 	linux_times = rt_smp_times;
-        rt_global_restore_flags(flags);
+	rt_global_restore_flags(flags);
 	REQUEST_RECOVER_JIFFIES();
 	rt_gettimeorig(NULL);
-        return period;
+	return period;
 
 #undef cpuid
 #define rt_times (rt_smp_times[cpuid])
@@ -1535,18 +1695,24 @@ RTAI_SYSCALL_MODE void start_rt_apic_timers(struct apic_timer_setup_data *setup_
 	int cpuid, period;
 
 	period = 0;
-	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {
+	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++)
+	{
 		period += setup_mode[cpuid].mode;
 	}
-	if (period == NR_RT_CPUS) {
+	if (period == NR_RT_CPUS)
+	{
 		period = 2000000000;
-		for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {
-			if (setup_mode[cpuid].count < period) {
+		for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++)
+		{
+			if (setup_mode[cpuid].count < period)
+			{
 				period = setup_mode[cpuid].count;
 			}
 		}
 		start_rt_timer(nano2count(period));
-	} else {
+	}
+	else
+	{
 		rt_set_oneshot_mode();
 		start_rt_timer(0);
 	}
@@ -1555,7 +1721,8 @@ RTAI_SYSCALL_MODE void start_rt_apic_timers(struct apic_timer_setup_data *setup_
 
 void stop_rt_timer(void)
 {
-	if (rt_sched_timed) {
+	if (rt_sched_timed)
+	{
 		rt_sched_timed = 0;
 		RELEASE_RECOVER_JIFFIES();
 		rt_free_timer();
@@ -1570,7 +1737,8 @@ void stop_rt_timer(void)
 RTAI_SYSCALL_MODE int rt_hard_timer_tick_count(void)
 {
 	int cpuid = rtai_cpuid();
-	if (rt_sched_timed) {
+	if (rt_sched_timed)
+	{
 		return oneshot_timer ? 0 : rt_smp_times[cpuid].periodic_tick;
 	}
 	return -1;
@@ -1579,7 +1747,8 @@ RTAI_SYSCALL_MODE int rt_hard_timer_tick_count(void)
 
 RTAI_SYSCALL_MODE int rt_hard_timer_tick_count_cpuid(int cpuid)
 {
-	if (rt_sched_timed) {
+	if (rt_sched_timed)
+	{
 		return oneshot_timer ? 0 : rt_smp_times[cpuid].periodic_tick;
 	}
 	return -1;
@@ -1590,7 +1759,8 @@ RT_TRAP_HANDLER rt_set_task_trap_handler( RT_TASK *task, unsigned int vec, RT_TR
 {
 	RT_TRAP_HANDLER old_handler;
 
-	if (!task || (vec >= RTAI_NR_TRAPS)) {
+	if (!task || (vec >= RTAI_NR_TRAPS))
+	{
 		return (RT_TRAP_HANDLER) -EINVAL;
 	}
 	old_handler = task->task_trap_handler[vec];
@@ -1611,7 +1781,8 @@ extern void krtai_objects_release(void);
 
 static void frstk_srq_handler(void)
 {
-        while (frstk_srq.out != frstk_srq.in) {
+	while (frstk_srq.out != frstk_srq.in)
+	{
 		rt_kstack_free(frstk_srq.mp[frstk_srq.out++ & (MAX_FRESTK_SRQ - 1)]);
 	}
 }
@@ -1621,49 +1792,63 @@ struct rt_fun_entry rt_fun_lxrt[MAX_LXRT_FUN];
 
 void reset_rt_fun_entries(struct rt_native_fun_entry *entry)
 {
-	while (entry->fun.fun) {
-		if (entry->index >= MAX_LXRT_FUN) {
+	while (entry->fun.fun)
+	{
+		if (entry->index >= MAX_LXRT_FUN)
+		{
 			rt_printk("*** RESET ENTRY %d FOR USER SPACE CALLS EXCEEDS ALLOWD TABLE SIZE %d, NOT USED ***\n", entry->index, MAX_LXRT_FUN);
-		} else {
-			rt_fun_lxrt[entry->index] = (struct rt_fun_entry){ 1, nihil };
+		}
+		else
+		{
+			rt_fun_lxrt[entry->index] = (struct rt_fun_entry) { 1, nihil };
 		}
 		entry++;
-        }
+	}
 }
 
 int set_rt_fun_entries(struct rt_native_fun_entry *entry)
 {
 	int error;
 	error = 0;
-	while (entry->fun.fun) {
-		if (rt_fun_lxrt[entry->index].fun != nihil) {
+	while (entry->fun.fun)
+	{
+		if (rt_fun_lxrt[entry->index].fun != nihil)
+		{
 			rt_printk("*** SUSPICIOUS ENTRY ASSIGNEMENT FOR USER SPACE CALL AT %d, DUPLICATED INDEX OR REPEATED INITIALIZATION ***\n", entry->index);
 			error = -1;
-		} else if (entry->index >= MAX_LXRT_FUN) {
+		}
+		else if (entry->index >= MAX_LXRT_FUN)
+		{
 			rt_printk("*** ASSIGNEMENT ENTRY %d FOR USER SPACE CALLS EXCEEDS ALLOWED TABLE SIZE %d, NOT USED ***\n", entry->index, MAX_LXRT_FUN);
 			error = -1;
-		} else {
+		}
+		else
+		{
 			rt_fun_lxrt[entry->index] = entry->fun;
 		}
 		entry++;
-        }
-	if (error) {
+	}
+	if (error)
+	{
 		reset_rt_fun_entries(entry);
 	}
 	return 0;
 }
 
-void *rt_get_lxrt_fun_entry(int index) {
+void *rt_get_lxrt_fun_entry(int index)
+{
 	return rt_fun_lxrt[index].fun;
 }
 
 static void lxrt_killall (void)
 {
 	int cpuid;
-	
+
 	stop_rt_timer();
-	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {
-		while (rt_linux_task.next) {
+	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++)
+	{
+		while (rt_linux_task.next)
+		{
 			rt_task_delete(rt_linux_task.next);
 		}
 	}
@@ -1671,10 +1856,11 @@ static void lxrt_killall (void)
 
 static int lxrt_notify_reboot (struct notifier_block *nb, unsigned long event, void *p)
 {
-	switch (event) {
-		case SYS_DOWN:
-		case SYS_HALT:
-		case SYS_POWER_OFF:
+	switch (event)
+	{
+	case SYS_DOWN:
+	case SYS_HALT:
+	case SYS_POWER_OFF:
 		/* FIXME: this is far too late. */
 		printk("LXRT: REBOOT NOTIFIED -- KILLING TASKS\n");
 		lxrt_killall();
@@ -1688,9 +1874,12 @@ RTAI_SYSCALL_MODE RTIME count2nano(RTIME counts)
 {
 	int sign;
 
-	if (counts >= 0) {
+	if (counts >= 0)
+	{
 		sign = 1;
-	} else {
+	}
+	else
+	{
 		sign = 0;
 		counts = - counts;
 	}
@@ -1705,9 +1894,12 @@ RTAI_SYSCALL_MODE RTIME nano2count(RTIME ns)
 {
 	int sign;
 
-	if (ns >= 0) {
+	if (ns >= 0)
+	{
 		sign = 1;
-	} else {
+	}
+	else
+	{
 		sign = 0;
 		ns = - ns;
 	}
@@ -1721,9 +1913,12 @@ RTAI_SYSCALL_MODE RTIME count2nano_cpuid(RTIME counts, unsigned int cpuid)
 {
 	int sign;
 
-	if (counts >= 0) {
+	if (counts >= 0)
+	{
 		sign = 1;
-	} else {
+	}
+	else
+	{
 		sign = 0;
 		counts = - counts;
 	}
@@ -1738,9 +1933,12 @@ RTAI_SYSCALL_MODE RTIME nano2count_cpuid(RTIME ns, unsigned int cpuid)
 {
 	int sign;
 
-	if (ns >= 0) {
+	if (ns >= 0)
+	{
 		sign = 1;
-	} else {
+	}
+	else
+	{
 		sign = 0;
 		ns = - ns;
 	}
@@ -1767,13 +1965,13 @@ RTIME rt_get_time_ns(void)
 {
 	int cpuid = rtai_cpuid();
 	return oneshot_timer ? llimd(rtai_rdtsc(), 1000000000, tuned.cpu_freq) :
-	    		       llimd(rt_times.tick_time, 1000000000, TIMER_FREQ);
+	       llimd(rt_times.tick_time, 1000000000, TIMER_FREQ);
 }
 
 RTAI_SYSCALL_MODE RTIME rt_get_time_ns_cpuid(unsigned int cpuid)
 {
 	return oneshot_timer ? llimd(rtai_rdtsc(), 1000000000, tuned.cpu_freq) :
-			       llimd(rt_times.tick_time, 1000000000, TIMER_FREQ);
+	       llimd(rt_times.tick_time, 1000000000, TIMER_FREQ);
 }
 
 RTIME rt_get_cpu_time_ns(void)
@@ -1797,17 +1995,18 @@ RTIME rt_get_real_time_ns(void)
 
 RT_TASK *rt_get_base_linux_task(RT_TASK **base_linux_tasks)
 {
-        int cpuid;
-        for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
-                base_linux_tasks[cpuid] = rt_smp_linux_task + cpuid;
-        }
-        return rt_smp_linux_task;
+	int cpuid;
+	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++)
+	{
+		base_linux_tasks[cpuid] = rt_smp_linux_task + cpuid;
+	}
+	return rt_smp_linux_task;
 }
 
 RT_TASK *rt_alloc_dynamic_task(void)
 {
 #ifdef CONFIG_RTAI_MALLOC
-        return rt_malloc(sizeof(RT_TASK)); // For VC's, proxies and C++ support.
+	return rt_malloc(sizeof(RT_TASK)); // For VC's, proxies and C++ support.
 #else
 	return NULL;
 #endif
@@ -1817,12 +2016,14 @@ RT_TASK *rt_alloc_dynamic_task(void)
 
 RT_TASK **rt_register_watchdog(RT_TASK *wd, int cpuid)
 {
-    	RT_TASK *task;
+	RT_TASK *task;
 
 	if (lxrt_wdog_task[cpuid]) return (RT_TASK**) -EBUSY;
 	task = &rt_linux_task;
-	while ((task = task->next)) {
-		if (task != wd && task->priority == RT_SCHED_HIGHEST_PRIORITY) {
+	while ((task = task->next))
+	{
+		if (task != wd && task->priority == RT_SCHED_HIGHEST_PRIORITY)
+		{
 			return (RT_TASK**) -EBUSY;
 		}
 	}
@@ -1832,7 +2033,7 @@ RT_TASK **rt_register_watchdog(RT_TASK *wd, int cpuid)
 
 void rt_deregister_watchdog(RT_TASK *wd, int cpuid)
 {
-    	if (lxrt_wdog_task[cpuid] != wd) return;
+	if (lxrt_wdog_task[cpuid] != wd) return;
 	lxrt_wdog_task[cpuid] = NULL;
 }
 
@@ -1859,22 +2060,28 @@ static inline void _rt_schedule_soft_tail(RT_TASK *rt_task, int cpuid)
 	rt_global_sti();
 
 #ifdef CONFIG_RTAI_ALIGN_LINUX_PRIORITY
-do {
-	int rt_priority;
-	struct task_struct *lnxtsk;
+	do
+	{
+		int rt_priority;
+		struct task_struct *lnxtsk;
 
-	if ((lnxtsk = rt_task->lnxtsk)->policy == SCHED_FIFO || lnxtsk->policy == SCHED_RR) {
-		if ((rt_priority = rt_task->priority) >= BASE_SOFT_PRIORITY) {
-			rt_priority -= BASE_SOFT_PRIORITY;
-		}
-		if ((rt_priority = (MAX_LINUX_RTPRIO - rt_priority)) < 1) {
-			rt_priority = 1;
-		}
-		if (rt_priority != lnxtsk->rt_priority) {
-			rtai_set_linux_task_priority(lnxtsk, lnxtsk->policy, rt_priority);
+		if ((lnxtsk = rt_task->lnxtsk)->policy == SCHED_FIFO || lnxtsk->policy == SCHED_RR)
+		{
+			if ((rt_priority = rt_task->priority) >= BASE_SOFT_PRIORITY)
+			{
+				rt_priority -= BASE_SOFT_PRIORITY;
+			}
+			if ((rt_priority = (MAX_LINUX_RTPRIO - rt_priority)) < 1)
+			{
+				rt_priority = 1;
+			}
+			if (rt_priority != lnxtsk->rt_priority)
+			{
+				rtai_set_linux_task_priority(lnxtsk, lnxtsk->policy, rt_priority);
+			}
 		}
 	}
-} while (0);
+	while (0);
 #endif
 }
 
@@ -1885,7 +2092,8 @@ void rt_schedule_soft(RT_TASK *rt_task)
 
 	rt_global_cli();
 	rt_task->state |= RT_SCHED_READY;
-	while (rt_task->state != RT_SCHED_READY) {
+	while (rt_task->state != RT_SCHED_READY)
+	{
 		current->state = TASK_SOFTREALTIME;
 		rt_global_sti();
 		schedule();
@@ -1926,7 +2134,7 @@ static inline void fast_schedule(RT_TASK *new_task, struct task_struct *lnxtsk, 
 
 
 /* detach the kernel thread from user space; not fully, only:
-   session, process-group, tty. */ 
+   session, process-group, tty. */
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)
 
@@ -1983,17 +2191,20 @@ void steal_from_linux(RT_TASK *rt_task)
 	struct klist_t *klistp;
 	struct task_struct *lnxtsk;
 
-	if (signal_pending(rt_task->lnxtsk)) {
+	if (signal_pending(rt_task->lnxtsk))
+	{
 		rt_task->is_hard = -1;
 		return;
 	}
 	klistp = &wake_up_sth[rt_task->runnable_on_cpus];
 	rtai_cli();
 	klistp->task[klistp->in++ & (MAX_WAKEUP_SRQ - 1)] = rt_task;
-	if (rt_task->base_priority >= BASE_SOFT_PRIORITY) {
+	if (rt_task->base_priority >= BASE_SOFT_PRIORITY)
+	{
 		rt_task->base_priority -= BASE_SOFT_PRIORITY;
 	}
-	if (rt_task->priority >= BASE_SOFT_PRIORITY) {
+	if (rt_task->priority >= BASE_SOFT_PRIORITY)
+	{
 		rt_task->priority -= BASE_SOFT_PRIORITY;
 	}
 	rt_task->is_hard = 1;
@@ -2004,15 +2215,19 @@ void steal_from_linux(RT_TASK *rt_task)
 #else
 	(lnxtsk = rt_task->lnxtsk)->state = TASK_HARDREALTIME;
 #endif
-	do {
+	do
+	{
 		schedule();
-	} while (rt_task->state != RT_SCHED_READY);
+	}
+	while (rt_task->state != RT_SCHED_READY);
 #if CONFIG_RTAI_MONITOR_EXECTIME
-	if (!rt_task->exectime[1]) {
+	if (!rt_task->exectime[1])
+	{
 		rt_task->exectime[1] = rtai_rdtsc();
 	}
 #endif
-	if (lnxtsk_uses_fpu(lnxtsk)) {
+	if (lnxtsk_uses_fpu(lnxtsk))
+	{
 		rtai_cli();
 		restore_fpu(lnxtsk);
 	}
@@ -2033,22 +2248,33 @@ void give_back_to_linux(RT_TASK *rt_task, int keeprio)
 	set_task_state(lnxtsk, lnxtsk->state & ~TASK_NOWAKEUP);
 #endif
 	rt_schedule();
-	if (!(rt_task->is_hard = keeprio)) {
-		if (rt_task->priority < BASE_SOFT_PRIORITY) {
+	if (!(rt_task->is_hard = keeprio))
+	{
+		if (rt_task->priority < BASE_SOFT_PRIORITY)
+		{
 			rt_priority = rt_task->priority;
-			if (rt_task->priority == rt_task->base_priority) {
+			if (rt_task->priority == rt_task->base_priority)
+			{
 				rt_task->priority += BASE_SOFT_PRIORITY;
 			}
-		} else {
+		}
+		else
+		{
 			rt_priority = rt_task->priority - BASE_SOFT_PRIORITY;
 		}
-		if (rt_task->base_priority < BASE_SOFT_PRIORITY) {
+		if (rt_task->base_priority < BASE_SOFT_PRIORITY)
+		{
 			rt_task->base_priority += BASE_SOFT_PRIORITY;
 		}
-	} else {
-		if (rt_task->priority < BASE_SOFT_PRIORITY) {
+	}
+	else
+	{
+		if (rt_task->priority < BASE_SOFT_PRIORITY)
+		{
 			rt_priority = rt_task->priority;
-		} else {
+		}
+		else
+		{
 			rt_priority = rt_task->priority - BASE_SOFT_PRIORITY;
 		}
 	}
@@ -2058,11 +2284,14 @@ void give_back_to_linux(RT_TASK *rt_task, int keeprio)
 	hal_schedule_back_root(lnxtsk);
 
 #ifdef CONFIG_RTAI_ALIGN_LINUX_PRIORITY
-	if (lnxtsk->policy == SCHED_FIFO || lnxtsk->policy == SCHED_RR) {
-		if ((rt_priority = (MAX_LINUX_RTPRIO - rt_priority)) < 1) {
+	if (lnxtsk->policy == SCHED_FIFO || lnxtsk->policy == SCHED_RR)
+	{
+		if ((rt_priority = (MAX_LINUX_RTPRIO - rt_priority)) < 1)
+		{
 			rt_priority = 1;
 		}
-		if (rt_priority != lnxtsk->rt_priority) {
+		if (rt_priority != lnxtsk->rt_priority)
+		{
 			rtai_set_linux_task_priority(lnxtsk, lnxtsk->policy, rt_priority);
 		}
 	}
@@ -2094,8 +2323,10 @@ static int lxrt_handle_trap(int vec, int signo, struct pt_regs *regs, void *dumm
 	RT_TASK *rt_task;
 
 	rt_task = rt_smp_current[rtai_cpuid()];
-	if ((/*USE_RTAI_TASKS && */!rt_task->lnxtsk) /*|| (rt_task->lnxtsk)->comm[0] == HARD_KTHREAD_IN_USE*/) {
-		if (rt_task->task_trap_handler[vec]) {
+	if ((/*USE_RTAI_TASKS && */!rt_task->lnxtsk) /*|| (rt_task->lnxtsk)->comm[0] == HARD_KTHREAD_IN_USE*/)
+	{
+		if (rt_task->task_trap_handler[vec])
+		{
 			return rt_task->task_trap_handler[vec](vec, signo, regs, rt_task);
 		}
 		rt_printk("Default Trap Handler: vector %d: Suspend RT task %p\n", vec, rt_task);
@@ -2103,8 +2334,10 @@ static int lxrt_handle_trap(int vec, int signo, struct pt_regs *regs, void *dumm
 		return 1;
 	}
 
-	if (rt_task->is_hard > 0) {
-		if (!traptrans++) {
+	if (rt_task->is_hard > 0)
+	{
+		if (!traptrans++)
+		{
 			rt_printk("\nLXRT CHANGED MODE (TRAP), PID = %d, VEC = %d, SIGNO = %d.\n", (rt_task->lnxtsk)->pid, vec, signo);
 		}
 		SYSW_DIAG_MSG(rt_printk("\nFORCING IT SOFT (TRAP), PID = %d, VEC = %d, SIGNO = %d.\n", (rt_task->lnxtsk)->pid, vec, signo););
@@ -2118,10 +2351,13 @@ static int lxrt_handle_trap(int vec, int signo, struct pt_regs *regs, void *dumm
 static inline void rt_signal_wake_up(RT_TASK *task)
 {
 	struct task_struct *lnxtsk;
-	if ((lnxtsk = task->lnxtsk) && task->state && task->state != RT_SCHED_READY && lnxtsk->state & TASK_HARDREALTIME) {
+	if ((lnxtsk = task->lnxtsk) && task->state && task->state != RT_SCHED_READY && lnxtsk->state & TASK_HARDREALTIME)
+	{
 		task->unblocked = 1;
 		rt_task_masked_unblock(task, ~RT_SCHED_READY);
-	} else {
+	}
+	else
+	{
 		task->unblocked = -1;
 	}
 }
@@ -2131,13 +2367,16 @@ static int lxrt_intercept_schedule_tail (unsigned event, void *nothing)
 {
 	int cpuid = rtai_cpuid();
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-	if (in_hrt_mode(cpuid)) {
+	if (in_hrt_mode(cpuid))
+	{
 		return 1;
-	} else 
+	}
+	else
 #endif
 	{
 		struct klist_t *klistp = &wake_up_sth[cpuid];
-		while (klistp->out != klistp->in) {
+		while (klistp->out != klistp->in)
+		{
 			fast_schedule(klistp->task[klistp->out++ & (MAX_WAKEUP_SRQ - 1)], current, cpuid);
 		}
 	}
@@ -2148,7 +2387,8 @@ struct sig_wakeup_t { struct task_struct *task; };
 static int lxrt_intercept_sig_wakeup (long event, void *data)
 {
 	RT_TASK *task;
-	if ((task = INTERCEPT_WAKE_UP_TASK(data)->rtai_tskext(TSKEXT0))) {
+	if ((task = INTERCEPT_WAKE_UP_TASK(data)->rtai_tskext(TSKEXT0)))
+	{
 		rt_signal_wake_up(task);
 		return 1;
 	}
@@ -2159,8 +2399,10 @@ static int lxrt_intercept_exit (unsigned long event, struct task_struct *lnx_tas
 {
 	extern void linux_process_termination(void);
 	RT_TASK *task;
-	if ((task = lnx_task->rtai_tskext(TSKEXT0))) {
-		if (task->is_hard > 0) {
+	if ((task = lnx_task->rtai_tskext(TSKEXT0)))
+	{
+		if (task->is_hard > 0)
+		{
 			give_back_to_linux(task, 0);
 		}
 		linux_process_termination();
@@ -2176,13 +2418,17 @@ static int lxrt_intercept_syscall_prologue(struct pt_regs *regs)
 {
 	RT_TASK *task;
 
-	if ((task = current->rtai_tskext(TSKEXT0))) { // ???	if (regs->LINUX_SYSCALL_NR < NR_syscalls && (task = current->rtai_tskext(TSKEXT0))) {
-		if (task->is_hard > 0) {
-			if (task->linux_syscall_server) {
+	if ((task = current->rtai_tskext(TSKEXT0)))   // ???	if (regs->LINUX_SYSCALL_NR < NR_syscalls && (task = current->rtai_tskext(TSKEXT0))) {
+	{
+		if (task->is_hard > 0)
+		{
+			if (task->linux_syscall_server)
+			{
 				rt_exec_linux_syscall(task, ((RT_TASK *)task->linux_syscall_server)->linux_syscall_server, regs);
 				return 1;
 			}
-			if (!systrans++) {
+			if (!systrans++)
+			{
 				rt_printk("\nLXRT CHANGED MODE (SYSCALL), PID = %d, SYSCALL = %lu.\n", (task->lnxtsk)->pid, regs->LINUX_SYSCALL_NR);
 			}
 			SYSW_DIAG_MSG(rt_printk("\nFORCING IT SOFT (SYSCALL), PID = %d, SYSCALL = %d.\n", (task->lnxtsk)->pid, regs->LINUX_SYSCALL_NR););
@@ -2196,12 +2442,15 @@ static int lxrt_intercept_syscall_prologue(struct pt_regs *regs)
 
 extern long long rtai_usrq_dispatcher (unsigned long, unsigned long);
 
-static int lxrt_intercept_syscall(unsigned long event, struct pt_regs *regs){
-	if (likely(regs->LINUX_SYSCALL_NR >= RTAI_SYSCALL_NR)) {
+static int lxrt_intercept_syscall(unsigned long event, struct pt_regs *regs)
+{
+	if (likely(regs->LINUX_SYSCALL_NR >= RTAI_SYSCALL_NR))
+	{
 		unsigned long srq  = regs->LINUX_SYSCALL_REG1;
 		IF_IS_A_USI_SRQ_CALL_IT(srq, regs->LINUX_SYSCALL_REG2, (long long *)regs->LINUX_SYSCALL_REG3, regs->LINUX_SYSCALL_FLAGS, 1);
 		*((long long *)regs->LINUX_SYSCALL_REG3) = srq > RTAI_NR_SRQS ?  rtai_lxrt_invoke(srq, (void *)regs->LINUX_SYSCALL_REG2) : rtai_usrq_dispatcher(srq, regs->LINUX_SYSCALL_REG2);
-		if (!in_hrt_mode(srq = rtai_cpuid())) {
+		if (!in_hrt_mode(srq = rtai_cpuid()))
+		{
 			hal_test_and_fast_flush_pipeline(srq);
 			return 0;
 		}
@@ -2213,13 +2462,17 @@ static int lxrt_intercept_syscall(unsigned long event, struct pt_regs *regs){
 static int lxrt_intercept_syscall_epilogue(unsigned long event, void *nothing)
 {
 	RT_TASK *task;
-	if ((task = (RT_TASK *)current->rtai_tskext(TSKEXT0))) {
-		if (task->system_data_ptr) {
+	if ((task = (RT_TASK *)current->rtai_tskext(TSKEXT0)))
+	{
+		if (task->system_data_ptr)
+		{
 			struct pt_regs *r = task->system_data_ptr;
 			r->LINUX_SYSCALL_RETREG = -ERESTARTSYS;
 			r->LINUX_SYSCALL_NR = RTAI_SYSCALL_NR;
 			task->system_data_ptr = NULL;
-		} else if (task->is_hard < 0) {
+		}
+		else if (task->is_hard < 0)
+		{
 			SYSW_DIAG_MSG(rt_printk("GOING BACK TO HARD (SYSLXRT), PID = %d.\n", current->pid););
 			steal_from_linux(task);
 			SYSW_DIAG_MSG(rt_printk("GONE BACK TO HARD (SYSLXRT),  PID = %d.\n", current->pid););
@@ -2246,10 +2499,10 @@ extern unsigned long tlsf_get_used_size(rtheap_t *);
 #endif
 
 static int rtai_read_sched(char *page, char **start, off_t off, int count,
-                           int *eof, void *data)
+			   int *eof, void *data)
 {
 	PROC_PRINT_VARS;
-        int cpuid, i = 1;
+	int cpuid, i = 1;
 	unsigned long t;
 	RT_TASK *task;
 
@@ -2257,9 +2510,9 @@ static int rtai_read_sched(char *page, char **start, off_t off, int count,
 	PROC_PRINT("    Calibrated Time Base Frequency: %lu Hz\n", tuned.cpu_freq);
 	PROC_PRINT("    Calibrated interrupt to scheduler latency: %d ns\n", (int)imuldiv(tuned.latency - tuned.setup_time_TIMER_CPUNIT, 1000000000, tuned.cpu_freq));
 	PROC_PRINT("    Calibrated oneshot timer setup_to_firing time: %d ns\n\n",
-                  (int)imuldiv(tuned.setup_time_TIMER_CPUNIT, 1000000000, tuned.cpu_freq));
+		   (int)imuldiv(tuned.setup_time_TIMER_CPUNIT, 1000000000, tuned.cpu_freq));
 	PROC_PRINT("Number of RT CPUs in system: %d (sized for %d)\n\n", num_online_cpus(), NR_RT_CPUS);
- 
+
 	PROC_PRINT("\n\n");
 
 	PROC_PRINT("Global heap: size = %10d, used = %10lu; <%s>.\n", rtai_global_heap_size, rt_get_heap_mem_used(&rtai_global_heap), RTAI_USES_TLSF ? "TLSF" : "BSD");
@@ -2270,78 +2523,85 @@ static int rtai_read_sched(char *page, char **start, off_t off, int count,
 
 	PROC_PRINT("Priority  Period(ns)  FPU  Sig  State  CPU  Task  HD/SF  PID  RT_TASK *  TIME\n" );
 	PROC_PRINT("------------------------------------------------------------------------------\n" );
-        for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
-                task = &rt_linux_task;
-/*
-* Display all the active RT tasks and their state.
-*
-* Note: As a temporary hack the tasks are given an id which is
-*       the order they appear in the task list, needs fixing!
-*/
-		while ((task = task->next)) {
-/*
-* The display for the task period is set to an integer (%d) as 64 bit
-* numbers are not currently handled correctly by the kernel routines.
-* Hence the period display will be wrong for time periods > ~4 secs.
-*/
+	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++)
+	{
+		task = &rt_linux_task;
+		/*
+		* Display all the active RT tasks and their state.
+		*
+		* Note: As a temporary hack the tasks are given an id which is
+		*       the order they appear in the task list, needs fixing!
+		*/
+		while ((task = task->next))
+		{
+			/*
+			* The display for the task period is set to an integer (%d) as 64 bit
+			* numbers are not currently handled correctly by the kernel routines.
+			* Hence the period display will be wrong for time periods > ~4 secs.
+			*/
 			t = 0;
-			if ((!task->lnxtsk || task->is_hard) && task->exectime[1]) {
+			if ((!task->lnxtsk || task->is_hard) && task->exectime[1])
+			{
 				unsigned long den = (unsigned long)llimd(rtai_rdtsc() - task->exectime[1], 10, tuned.cpu_freq);
-				if (den) {
+				if (den)
+				{
 					t = 1000UL*(unsigned long)llimd(task->exectime[0], 10, tuned.cpu_freq)/den;
-				}				
+				}
 			}
 			PROC_PRINT("%-10d %-11lu %-4s %-3s 0x%-3x  %1lu:%1lu   %-4d   %-4d %-4d  %p   %-lu\n",
-                               task->priority,
-                               (unsigned long)count2nano_cpuid(task->period, task->runnable_on_cpus),
-                               task->uses_fpu || task->lnxtsk ? "Yes" : "No",
-                               task->signal ? "Yes" : "No",
-                               task->state,
-			       task->runnable_on_cpus, // cpuid,
-			       task->lnxtsk ? CPUMASK((task->lnxtsk)->cpus_allowed) : (1 << task->runnable_on_cpus),
-                               i,
-			       task->is_hard,
-			       task->lnxtsk ? task->lnxtsk->pid : 0,
-			       task, t);
+				   task->priority,
+				   (unsigned long)count2nano_cpuid(task->period, task->runnable_on_cpus),
+				   task->uses_fpu || task->lnxtsk ? "Yes" : "No",
+				   task->signal ? "Yes" : "No",
+				   task->state,
+				   task->runnable_on_cpus, // cpuid,
+				   task->lnxtsk ? CPUMASK((task->lnxtsk)->cpus_allowed) : (1 << task->runnable_on_cpus),
+				   i,
+				   task->is_hard,
+				   task->lnxtsk ? task->lnxtsk->pid : 0,
+				   task, t);
 			i++;
-                } /* End while loop - display all RT tasks on a CPU. */
+		} /* End while loop - display all RT tasks on a CPU. */
 
 		PROC_PRINT("TIMED\n");
 		task = &rt_linux_task;
-		while ((task = task->tnext) != &rt_linux_task) {
+		while ((task = task->tnext) != &rt_linux_task)
+		{
 			PROC_PRINT("> %p ", task);
 		}
 		PROC_PRINT("\nREADY\n");
 		task = &rt_linux_task;
-		while ((task = task->rnext) != &rt_linux_task) {
+		while ((task = task->rnext) != &rt_linux_task)
+		{
 			PROC_PRINT("> %p ", task);
 		}
 
-        }  /* End for loop - display RT tasks on all CPUs. */
+	}  /* End for loop - display RT tasks on all CPUs. */
 
 	PROC_PRINT_DONE;
 
 }  /* End function - rtai_read_sched */
 
 
-static int rtai_proc_sched_register(void) 
+static int rtai_proc_sched_register(void)
 {
-        struct proc_dir_entry *proc_sched_ent;
+	struct proc_dir_entry *proc_sched_ent;
 
 
-        proc_sched_ent = create_proc_entry("scheduler", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root);
-        if (!proc_sched_ent) {
-                printk("Unable to initialize /proc/rtai/scheduler\n");
-                return(-1);
-        }
-        proc_sched_ent->read_proc = rtai_read_sched;
-        return(0);
+	proc_sched_ent = create_proc_entry("scheduler", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root);
+	if (!proc_sched_ent)
+	{
+		printk("Unable to initialize /proc/rtai/scheduler\n");
+		return(-1);
+	}
+	proc_sched_ent->read_proc = rtai_read_sched;
+	return(0);
 }  /* End function - rtai_proc_sched_register */
 
 
-static void rtai_proc_sched_unregister(void) 
+static void rtai_proc_sched_unregister(void)
 {
-        remove_proc_entry("scheduler", rtai_proc_root);
+	remove_proc_entry("scheduler", rtai_proc_root);
 }  /* End function - rtai_proc_sched_unregister */
 
 /* --------------------< end of proc filesystem section >---------------------*/
@@ -2354,7 +2614,8 @@ static int rt_gettid(void)
 	return current->pid;
 }
 
-static struct rt_native_fun_entry rt_sched_entries[] = {
+static struct rt_native_fun_entry rt_sched_entries[] =
+{
 	{ { 0, rt_set_runnable_on_cpus },	    SET_RUNNABLE_ON_CPUS },
 	{ { 0, rt_set_runnable_on_cpuid },	    SET_RUNNABLE_ON_CPUID },
 	{ { 0, rt_set_sched_policy },		    SET_SCHED_POLICY },
@@ -2383,7 +2644,7 @@ static struct rt_native_fun_entry rt_sched_entries[] = {
 	{ { 1, rt_change_prio },		    CHANGE_TASK_PRIO },
 	{ { 0, rt_sched_lock },			    SCHED_LOCK },
 	{ { 0, rt_sched_unlock },		    SCHED_UNLOCK },
-	{ { 1, rt_task_yield },			    YIELD },  
+	{ { 1, rt_task_yield },			    YIELD },
 	{ { 1, rt_task_suspend },		    SUSPEND },
 	{ { 1, rt_task_suspend_if },		    SUSPEND_IF },
 	{ { 1, rt_task_suspend_until },		    SUSPEND_UNTIL },
@@ -2409,9 +2670,9 @@ static struct rt_native_fun_entry rt_sched_entries[] = {
 	{ { 1, rt_sleep },			    SLEEP },
 	{ { 1, rt_sleep_until },		    SLEEP_UNTIL },
 	{ { 0, rt_task_masked_unblock },	    WAKEUP_SLEEPING },
-	{ { 0, rt_named_task_init },		    NAMED_TASK_INIT },  
-	{ { 0, rt_named_task_init_cpuid },	    NAMED_TASK_INIT_CPUID },  
-	{ { 0, rt_named_task_delete },	 	    NAMED_TASK_DELETE },  
+	{ { 0, rt_named_task_init },		    NAMED_TASK_INIT },
+	{ { 0, rt_named_task_init_cpuid },	    NAMED_TASK_INIT_CPUID },
+	{ { 0, rt_named_task_delete },	 	    NAMED_TASK_DELETE },
 	{ { 0, rt_get_name },			    GET_NAME },
 	{ { 0, rt_get_adr },			    GET_ADR },
 	{ { 0, usr_rt_pend_linux_irq },		    PEND_LINUX_IRQ },
@@ -2448,11 +2709,12 @@ static int lxrt_init(void)
 
 	REQUEST_RESUME_SRQs_STUFF();
 
-	for (cpuid = 0; cpuid < MAX_LXRT_FUN; cpuid++) {
+	for (cpuid = 0; cpuid < MAX_LXRT_FUN; cpuid++)
+	{
 		rt_fun_lxrt[cpuid].type = 1;
 		rt_fun_lxrt[cpuid].fun  = nihil;
 	}
-	
+
 	set_rt_fun_entries(rt_sched_entries);
 
 	lxrt_old_trap_handler = rt_set_rtai_trap_handler(lxrt_handle_trap);
@@ -2485,7 +2747,7 @@ static void lxrt_exit(void)
 	rtai_catch_event(hal_root_domain, HAL_SYSCALL_EPILOGUE, NULL);
 	rtai_catch_event(hal_root_domain, HAL_EXIT_PROCESS, NULL);
 	rtai_catch_event(hal_root_domain, HAL_KICK_PROCESS, NULL);
-    
+
 	reset_rt_fun_entries(rt_sched_entries);
 }
 
@@ -2506,14 +2768,15 @@ extern void rt_registry_free(void);
 static int __rtai_lxrt_init(void)
 {
 	int cpuid, retval;
-	
+
 #ifdef IPIPE_NOSTACK_FLAG
 //	ipipe_set_foreign_stack(&rtai_domain);
 #endif
 
 #ifdef CONFIG_RTAI_MALLOC
 	rtai_kstack_heap_size = (rtai_kstack_heap_size + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1);
-	if (rtheap_init(&rtai_kstack_heap, NULL, rtai_kstack_heap_size, PAGE_SIZE, GFP_KERNEL)) {
+	if (rtheap_init(&rtai_kstack_heap, NULL, rtai_kstack_heap_size, PAGE_SIZE, GFP_KERNEL))
+	{
 		printk(KERN_INFO "RTAI[malloc]: failed to initialize the kernel stacks heap (size=%d bytes).\n", rtai_kstack_heap_size);
 		return 1;
 	}
@@ -2522,16 +2785,17 @@ static int __rtai_lxrt_init(void)
 
 	rt_registry_alloc();
 
-	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {
+	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++)
+	{
 		rt_linux_task.uses_fpu = 1;
 		rt_linux_task.magic = 0;
 		rt_linux_task.policy = rt_linux_task.is_hard = 0;
 		rt_linux_task.runnable_on_cpus = cpuid;
 		rt_linux_task.state = RT_SCHED_READY;
-		rt_linux_task.msg_queue.prev = &(rt_linux_task.msg_queue);      
-		rt_linux_task.msg_queue.next = &(rt_linux_task.msg_queue);      
-		rt_linux_task.msg_queue.task = &rt_linux_task;    
-		rt_linux_task.msg = 0;  
+		rt_linux_task.msg_queue.prev = &(rt_linux_task.msg_queue);
+		rt_linux_task.msg_queue.next = &(rt_linux_task.msg_queue);
+		rt_linux_task.msg_queue.task = &rt_linux_task;
+		rt_linux_task.msg = 0;
 		rt_linux_task.ret_queue.prev = &(rt_linux_task.ret_queue);
 		rt_linux_task.ret_queue.next = &(rt_linux_task.ret_queue);
 		rt_linux_task.ret_queue.task = NULL;
@@ -2539,10 +2803,10 @@ static int __rtai_lxrt_init(void)
 		rt_linux_task.base_priority = RT_SCHED_LINUX_PRIORITY;
 		rt_linux_task.signal = 0;
 		rt_linux_task.prev = &rt_linux_task;
-                rt_linux_task.resume_time = RT_TIME_END;
-                rt_linux_task.periodic_resume_time = RT_TIME_END;
-                rt_linux_task.tprev = rt_linux_task.tnext =
-                rt_linux_task.rprev = rt_linux_task.rnext = &rt_linux_task;
+		rt_linux_task.resume_time = RT_TIME_END;
+		rt_linux_task.periodic_resume_time = RT_TIME_END;
+		rt_linux_task.tprev = rt_linux_task.tnext =
+					      rt_linux_task.rprev = rt_linux_task.rnext = &rt_linux_task;
 #ifdef CONFIG_RTAI_LONG_TIMED_LIST
 		rt_linux_task.rbr.rb_node = NULL;
 #endif
@@ -2561,27 +2825,33 @@ static int __rtai_lxrt_init(void)
 	tuned.user_latency_busy_align_ret_delay = imuldiv(RTAI_USER_BUSY_ALIGN_RET_DELAY, tuned.cpu_freq, 1000000000);
 	SetupTimeTIMER = rtai_calibrate_hard_timer();
 	tuned.setup_time_TIMER_UNIT = imuldiv(SetupTimeTIMER, TIMER_FREQ, 1000000000);
-	if (tuned.setup_time_TIMER_UNIT < 1) {
+	if (tuned.setup_time_TIMER_UNIT < 1)
+	{
 		tuned.setup_time_TIMER_UNIT = 1;
 		tuned.setup_time_TIMER_CPUNIT = (tuned.cpu_freq + TIMER_FREQ/2)/TIMER_FREQ;
-	} else {
+	}
+	else
+	{
 		tuned.setup_time_TIMER_CPUNIT = imuldiv(SetupTimeTIMER, tuned.cpu_freq, 1000000000);
 	}
-	if (tuned.latency < tuned.setup_time_TIMER_CPUNIT) {
+	if (tuned.latency < tuned.setup_time_TIMER_CPUNIT)
+	{
 		tuned.latency = tuned.setup_time_TIMER_CPUNIT;
 	}
 	tuned.timers_tol[0] = 0;
 	oneshot_span = ONESHOT_SPAN;
 	satdlay = oneshot_span - tuned.latency;
 #ifdef CONFIG_PROC_FS
-	if (rtai_proc_sched_register()) {
+	if (rtai_proc_sched_register())
+	{
 		retval = 1;
 		goto mem_end;
 	}
 #endif
 
 // 0x7dd763ad == nam2num("MEMSRQ").
-	if ((frstk_srq.srq = rt_request_srq(0x7dd763ad, frstk_srq_handler, 0)) < 0) {
+	if ((frstk_srq.srq = rt_request_srq(0x7dd763ad, frstk_srq_handler, 0)) < 0)
+	{
 		printk("MEM SRQ: no sysrq available.\n");
 		retval = frstk_srq.srq;
 		goto proc_unregister;
@@ -2663,10 +2933,11 @@ static void __rtai_lxrt_exit(void)
 	rtai_cleanup_features();
 
 #ifdef CONFIG_PROC_FS
-        rtai_proc_sched_unregister();
+	rtai_proc_sched_unregister();
 #endif
 	while (frstk_srq.out != frstk_srq.in);
-	if (rt_free_srq(frstk_srq.srq) < 0) {
+	if (rt_free_srq(frstk_srq.srq) < 0)
+	{
 		printk("MEM SRQ: frstk_srq %d illegal or already free.\n", frstk_srq.srq);
 	}
 	rt_free_sched_ipi();

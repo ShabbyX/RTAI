@@ -16,10 +16,12 @@
 #define FIFOBUFSIZE   1000
 #define INILOOPS      100
 
-struct params_t { unsigned long 
+struct params_t
+{
+	unsigned long
 	mp,
-	setup_time_8254, 
-	latency_8254,  
+	setup_time_8254,
+	latency_8254,
 	freq_apic,
 	latency_apic,
 	setup_time_apic,
@@ -30,7 +32,8 @@ struct params_t { unsigned long
 	latch;
 };
 
-struct times_t { 
+struct times_t
+{
 	unsigned long long cpu_time;
 	unsigned long apic_time;
 	int intrs;

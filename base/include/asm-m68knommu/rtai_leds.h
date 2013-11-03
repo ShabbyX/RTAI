@@ -23,8 +23,9 @@
 
 #include <asm/io.h>
 
-static inline void leds_parport_func(unsigned long port, unsigned leds) {
-    outb(~leds,port);
+static inline void leds_parport_func(unsigned long port, unsigned leds)
+{
+	outb(~leds,port);
 }
 
 #define LEDS_DEFAULT_FUNC leds_parport_func

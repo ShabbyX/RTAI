@@ -79,10 +79,11 @@
 #define update_linux_timer(cpuid) \
 	do { rtai_disarm_decr(cpuid, 1); hal_pend_uncond(TIMER_8254_IRQ, cpuid); } while (0)
 
-union rtai_lxrt_t {
-    RTIME rt;
-    long i[2];
-    void *v[2];
+union rtai_lxrt_t
+{
+	RTIME rt;
+	long i[2];
+	void *v[2];
 };
 
 #ifndef THREAD_SIZE
@@ -104,16 +105,17 @@ static inline void _lxrt_context_switch (struct task_struct *prev, struct task_s
 	extern void context_switch(void *, void *);
 	struct mm_struct *oldmm = prev->active_mm;
 	switch_mm(oldmm, next->active_mm, next, cpuid);
-	if (!next->mm) {
+	if (!next->mm)
+	{
 		enter_lazy_tlb(oldmm, next, cpuid);
 	}
 	context_switch(prev, next);
 #else /* >= 2.6.0 */
-        extern void *context_switch(void *, void *, void *);
+	extern void *context_switch(void *, void *, void *);
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,18)
-        prev->fpu_counter = 0;
+	prev->fpu_counter = 0;
 #endif
-        context_switch(NULL, prev, next);
+	context_switch(NULL, prev, next);
 #endif /* < 2.6.0 */
 }
 
@@ -123,14 +125,14 @@ static inline void _lxrt_context_switch (struct task_struct *prev, struct task_s
 static inline void kthread_fun_set_jump(struct task_struct *lnxtsk)
 {
 	lnxtsk->rtai_tskext(TSKEXT2) = kmalloc(sizeof(struct thread_struct) + (lnxtsk->thread.ksp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.ksp, GFP_KERNEL);
-        *((struct thread_struct *)lnxtsk->rtai_tskext(TSKEXT2)) = lnxtsk->thread;
+	*((struct thread_struct *)lnxtsk->rtai_tskext(TSKEXT2)) = lnxtsk->thread;
 	memcpy(lnxtsk->rtai_tskext(TSKEXT2) + sizeof(struct thread_struct), (void *)(lnxtsk->thread.ksp), (lnxtsk->thread.ksp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.ksp);
 }
 
 static inline void kthread_fun_long_jump(struct task_struct *lnxtsk)
 {
 	lnxtsk->thread = *((struct thread_struct *)lnxtsk->rtai_tskext(TSKEXT2));
-        memcpy((void *)lnxtsk->thread.ksp, lnxtsk->rtai_tskext(TSKEXT2) + sizeof(struct thread_struct)/* + sizeof(struct thread_info)*/, (lnxtsk->thread.ksp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.ksp);
+	memcpy((void *)lnxtsk->thread.ksp, lnxtsk->rtai_tskext(TSKEXT2) + sizeof(struct thread_struct)/* + sizeof(struct thread_info)*/, (lnxtsk->thread.ksp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.ksp);
 }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
@@ -167,25 +169,25 @@ static inline void kthread_fun_long_jump(struct task_struct *lnxtsk)
 #include <unistd.h>
 
 static inline union rtai_lxrt_t __rtai_lxrt(unsigned long arg0, unsigned long arg1, unsigned long arg2)
-{ 
+{
 	union rtai_lxrt_t __sc_ret;
 	{
 		register unsigned long __sc_0  __asm__ ("r0");
 		register unsigned long __sc_3  __asm__ ("r3");
 		register unsigned long __sc_4  __asm__ ("r4");
-		
+
 		__sc_0 = arg0;
 		__sc_3 = arg1;
 		__sc_4 = arg2;
 
 		__asm__ __volatile__
-			("sc           \n\t"
-			: "=&r" (__sc_0),
-			  "=&r" (__sc_3),  "=&r" (__sc_4)
-			: "0" (__sc_0), 
-			  "1" (__sc_3), "2" (__sc_4)
-			: "cr0", "ctr", "memory",
-			  "r9", "r10","r11", "r12");
+		("sc           \n\t"
+		 : "=&r" (__sc_0),
+		 "=&r" (__sc_3),  "=&r" (__sc_4)
+		 : "0" (__sc_0),
+		 "1" (__sc_3), "2" (__sc_4)
+		 : "cr0", "ctr", "memory",
+		 "r9", "r10","r11", "r12");
 
 		__sc_ret.i[0] = __sc_3;
 		__sc_ret.i[1] = __sc_4;
@@ -226,20 +228,20 @@ static inline union rtai_lxrt_t rtai_lxrt(long dynx, long lsize, long srq, void 
 static inline void kthread_fun_set_jump(struct task_struct *lnxtsk)
 {
 	lnxtsk->rtai_tskext(TSKEXT2) =
-		 kmalloc(sizeof(struct thread_struct) + (lnxtsk->thread.esp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.esp,
-		 GFP_KERNEL);
+		kmalloc(sizeof(struct thread_struct) + (lnxtsk->thread.esp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.esp,
+			GFP_KERNEL);
 	*((struct thread_struct *)lnxtsk->rtai_tskext(TSKEXT2)) = lnxtsk->thread;
 	memcpy(lnxtsk->rtai_tskext(TSKEXT2) + sizeof(struct thread_struct)/* + sizeof(struct thread_info)*/,
-		(void *)(lnxtsk->thread.esp),
-		(lnxtsk->thread.esp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.esp);
+	       (void *)(lnxtsk->thread.esp),
+	       (lnxtsk->thread.esp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.esp);
 }
 
 static inline void kthread_fun_long_jump(struct task_struct *lnxtsk)
 {
 	lnxtsk->thread = *((struct thread_struct *)lnxtsk->rtai_tskext(TSKEXT2));
 	memcpy((void *)lnxtsk->thread.esp,
-		lnxtsk->rtai_tskext(TSKEXT2) + sizeof(struct thread_struct)/* + sizeof(struct thread_info)*/,
-		(lnxtsk->thread.esp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.esp);
+	       lnxtsk->rtai_tskext(TSKEXT2) + sizeof(struct thread_struct)/* + sizeof(struct thread_info)*/,
+	       (lnxtsk->thread.esp & ~(THREAD_SIZE - 1)) + THREAD_SIZE - lnxtsk->thread.esp);
 }
 #else  // brute force
 #include <asm/thread_info.h>

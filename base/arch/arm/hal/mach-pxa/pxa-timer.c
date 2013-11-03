@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 --------------------------------------------------------------------------
 Acknowledgements
 - Paolo Mantegazza	(mantegazza@aero.polimi.it)
-	creator of RTAI 
+	creator of RTAI
 */
 
 #include <linux/sched.h>
@@ -56,7 +56,8 @@ void rtai_pxa_GPIO_2_80_demux( int irq, void *dev_id, struct pt_regs *regs )
 
 volatile union rtai_tsc lx_timer;
 
-unsigned long split_timer (void) {
+unsigned long split_timer (void)
+{
 	lx_timer.tsc = rt_times.linux_time;
 	return lx_timer.hltsc[0];
 }
@@ -85,16 +86,18 @@ int	rt_request_timer(rt_timer_irq_handler_t handler, unsigned tick, int use_apic
 	TRACE_RTAI_TIMER(TRACE_RTAI_EV_TIMER_REQUEST, handler, tick);
 	flags = rtai_critical_enter(NULL);
 
-/*
- * sync w/jiffie, wait for a OS timer 0 match and clear the match bit
- */
+	/*
+	 * sync w/jiffie, wait for a OS timer 0 match and clear the match bit
+	 */
 	rtai_tsc.tsc = 0;
 	/* wait for a timer match 0 and clear the match bit */
 
-	do {
+	do
+	{
 //		t = rdtsc();
- } while ( (signed long)(OSMR0 - OSCR) >= 0 );
-        OSSR = OSSR_M0;
+	}
+	while ( (signed long)(OSMR0 - OSCR) >= 0 );
+	OSSR = OSSR_M0;
 
 	/* set up rt_times structure */
 	rt_times.linux_tick = LATCH;
@@ -115,10 +118,10 @@ int	rt_request_timer(rt_timer_irq_handler_t handler, unsigned tick, int use_apic
 
 	rt_request_global_irq(TIMER_8254_IRQ, handler);
 
-/*
- * pend linux timer irq to handle current jiffie
- */
- 	rt_pend_linux_irq(TIMER_8254_IRQ);
+	/*
+	 * pend linux timer irq to handle current jiffie
+	 */
+	rt_pend_linux_irq(TIMER_8254_IRQ);
 	rtai_critical_exit(flags);
 
 	return 0;

@@ -89,7 +89,8 @@ static inline void arch_umount_rtai( void )
 extern inline void
 rtai_archdep_init(void)
 {
-	if (rtai_cpufreq_arg == 0) {
+	if (rtai_cpufreq_arg == 0)
+	{
 		adsysinfo_t sysinfo;
 		adeos_get_sysinfo(&sysinfo);
 		rtai_cpufreq_arg = (unsigned long)sysinfo.cpufreq;
@@ -99,7 +100,7 @@ rtai_archdep_init(void)
 extern inline void
 rtai_archdep_exit(void)
 {
-    /* nothing to do */
+	/* nothing to do */
 }
 
 /* Check, if this is a demultiplexed irq */

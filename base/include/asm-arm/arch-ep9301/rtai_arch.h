@@ -4,7 +4,7 @@
  * Copyright (c) 2004-2005 Michael Neuhauser, Firmix Software GmbH (mike@firmix.at)
  *
  * Acknowledgements:
- *	Paolo Mantegazza <mantegazza@aero.polimi.it>, creator of RTAI 
+ *	Paolo Mantegazza <mantegazza@aero.polimi.it>, creator of RTAI
  *
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -69,13 +69,13 @@
 extern inline void
 rtai_archdep_init(void)
 {
-    /* nothing to do */
+	/* nothing to do */
 }
 
 extern inline void
 rtai_archdep_exit(void)
 {
-    /* nothing to do */
+	/* nothing to do */
 }
 
 #endif /* _ASM_ARCH_RTAI_ARCH_H_ */

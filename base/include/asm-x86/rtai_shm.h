@@ -47,14 +47,16 @@ static inline long long rtai_shmrq(int srq, unsigned long args)
 
 static inline unsigned long uvirt_to_kva(pgd_t *pgd, unsigned long adr)
 {
-	if (!pgd_none(*pgd) && !pgd_bad(*pgd)) {
+	if (!pgd_none(*pgd) && !pgd_bad(*pgd))
+	{
 		pmd_t *pmd;
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
 		pmd = pmd_offset(pgd, adr);
 #else /* >= 2.6.11 */
 		pmd = pmd_offset(pud_offset(pgd, adr), adr);
 #endif /* < 2.6.11 */
-		if (!pmd_none(*pmd)) {
+		if (!pmd_none(*pmd))
+		{
 			pte_t *ptep, pte;
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 			ptep = pte_offset(pmd, adr);
@@ -62,7 +64,8 @@ static inline unsigned long uvirt_to_kva(pgd_t *pgd, unsigned long adr)
 			ptep = pte_offset_kernel(pmd, adr);
 #endif /* < 2.6.0 */
 			pte = *ptep;
-			if (pte_present(pte)) {
+			if (pte_present(pte))
+			{
 				return (((unsigned long)page_address(pte_page(pte))) | (adr & (PAGE_SIZE - 1)));
 			}
 		}

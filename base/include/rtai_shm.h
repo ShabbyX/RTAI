@@ -43,20 +43,20 @@ ACKNOWLEDGMENTS:
 #define USE_GFP_DMA     3
 
 /**
- * Allocate a chunk of memory to be shared inter-intra kernel modules and 
+ * Allocate a chunk of memory to be shared inter-intra kernel modules and
  * Linux processes.
  *
  * @internal
- * 
+ *
  * rtai_kalloc is used to allocate shared memory from kernel space.
- * 
+ *
  * @param name is an unsigned long identifier;
- * 
+ *
  * @param size is the amount of required shared memory;
- * 
+ *
  * rtai_kmalloc is a legacy helper macro, the real job is carried out by a
  * call to rt_shm_alloc() with the same name, size and with vmalloc support.
- * This function should not be used in newly developed applications. See 
+ * This function should not be used in newly developed applications. See
  * rt_shm_alloc for more details.
  *
  * @returns a valid address on succes, 0 on failure.
@@ -67,7 +67,7 @@ ACKNOWLEDGMENTS:
 	rt_shm_alloc(name, size, USE_VMALLOC)  // legacy
 
 /**
- * Free a chunk of shared memory being shared inter-intra kernel modules and 
+ * Free a chunk of shared memory being shared inter-intra kernel modules and
  * Linux processes.
  *
  * rtai_kfree is used to free a shared memory chunk from kernel space.
@@ -76,7 +76,7 @@ ACKNOWLEDGMENTS:
  * allocated;
  *
  * rtai_kfree is a legacy helper macro, the real job is carried out by a
- * call to rt_shm_free with the same name. This function should not be used 
+ * call to rt_shm_free with the same name. This function should not be used
  * in newly developed applications. See rt_shm_free for more details.
  *
  * @returns the size of the succesfully freed memory, 0 on failure.
@@ -128,14 +128,16 @@ static inline unsigned long uvirt_to_kva(pgd_t *pgd, unsigned long adr)
 
 static inline unsigned long uvirt_to_kva(pgd_t *pgd, unsigned long adr)
 {
-	if (!pgd_none(*pgd) && !pgd_bad(*pgd)) {
+	if (!pgd_none(*pgd) && !pgd_bad(*pgd))
+	{
 		pmd_t *pmd;
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
 		pmd = pmd_offset(pgd, adr);
 #else /* >= 2.6.11 */
 		pmd = pmd_offset(pud_offset(pgd, adr), adr);
 #endif /* < 2.6.11 */
-		if (!pmd_none(*pmd)) {
+		if (!pmd_none(*pmd))
+		{
 			pte_t *ptep, pte;
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 			ptep = pte_offset(pmd, adr);
@@ -143,7 +145,8 @@ static inline unsigned long uvirt_to_kva(pgd_t *pgd, unsigned long adr)
 			ptep = pte_offset_kernel(pmd, adr);
 #endif /* < 2.6.0 */
 			pte = *ptep;
-			if (pte_present(pte)) {
+			if (pte_present(pte))
+			{
 				return (((unsigned long)page_address(pte_page(pte))) | (adr & (PAGE_SIZE - 1)));
 			}
 		}
@@ -235,22 +238,31 @@ RTAI_PROTO (void *, _rt_shm_alloc, (void *start, unsigned long name, int size, i
 	int hook;
 	void *adr = NULL;
 
-	if ((hook = open(RTAI_SHM_DEV, O_RDWR)) <= 0) {
+	if ((hook = open(RTAI_SHM_DEV, O_RDWR)) <= 0)
+	{
 		return NULL;
-	} else {
+	}
+	else
+	{
 		struct { unsigned long name, arg, suprt; } arg = { name, size, suprt };
 #ifdef SHM_USE_LXRT
-		if ((size = rtai_lxrt(BIDX, SIZARG, SHM_ALLOC, &arg).i[LOW])) {
+		if ((size = rtai_lxrt(BIDX, SIZARG, SHM_ALLOC, &arg).i[LOW]))
+		{
 #else
-		if ((size = ioctl(hook, SHM_ALLOC, (unsigned long)(&arg)))) {
+		if ((size = ioctl(hook, SHM_ALLOC, (unsigned long)(&arg))))
+		{
 #endif
-			if ((adr = mmap(start, size, PROT_WRITE | PROT_READ, MAP_SHARED | MAP_LOCKED, hook, 0)) == MAP_FAILED) {;
+			if ((adr = mmap(start, size, PROT_WRITE | PROT_READ, MAP_SHARED | MAP_LOCKED, hook, 0)) == MAP_FAILED)
+			{
+				;
 #ifdef SHM_USE_LXRT
 				rtai_lxrt(BIDX, sizeof(name), SHM_FREE, &name);
 #else
 				ioctl(hook, SHM_FREE, &name);
 #endif
-			} else if (isheap) {
+			}
+			else if (isheap)
+			{
 				arg.arg = (unsigned long)adr;
 #ifdef SHM_USE_LXRT
 				rtai_lxrt(BIDX, SIZARG, HEAP_SET, &arg);
@@ -271,23 +283,23 @@ RTAI_PROTO (void *, _rt_shm_alloc, (void *start, unsigned long name, int size, i
 	_rt_shm_alloc(0, name, size, suprt, 1)
 
 /**
- * Allocate a chunk of memory to be shared inter-intra kernel modules and 
+ * Allocate a chunk of memory to be shared inter-intra kernel modules and
  * Linux processes.
  *
  * @internal
- * 
+ *
  * rtai_malloc is used to allocate shared memory from user space.
- * 
+ *
  * @param name is an unsigned long identifier;
- * 
+ *
  * @param size is the amount of required shared memory;
- * 
+ *
  * rtai_malloc is a legacy helper macro, the real job is carried out by a
  * call to rt_shm_alloc() with the same name, size and with vmalloc support.
  * This function should not be used in newly developed applications. See
  * rt_shm_alloc fro more details.
  *
- * @returns a valid address on succes, on failure: 0 if it was unable to 
+ * @returns a valid address on succes, on failure: 0 if it was unable to
  * allocate any memory, MAP_FAILED if it was possible to allocate the
  * required memory but failed to mmap it to user space, in which case the
  * allocated memory is freed anyhow.
@@ -307,7 +319,7 @@ RTAI_PROTO (void *, _rt_shm_alloc, (void *start, unsigned long name, int size, i
  * should be mapped in user space;
  *
  * @param name is an unsigned long identifier;
- * 
+ *
  * @param size is the amount of required shared memory.
  *
  * @param suprt is the kernel allocation method to be used, it can be:
@@ -321,13 +333,13 @@ RTAI_PROTO (void *, _rt_shm_alloc, (void *start, unsigned long name, int size, i
  *
  * @see the functions nam2num() and num2nam().
  *
- * It must be remarked that only the very first call does a real allocation, 
+ * It must be remarked that only the very first call does a real allocation,
  * any subsequent call to allocate with the same name from anywhere will just
  * increase the usage count and map the area to user space, or return the
- * related pointer to the already allocated space in kernel space. The function 
+ * related pointer to the already allocated space in kernel space. The function
  * returns a pointer to the allocated memory, appropriately mapped to the memory
- * space in use. So if one is really sure that the named shared memory has been 
- * allocated already parameters size and suprt are not used and can be 
+ * space in use. So if one is really sure that the named shared memory has been
+ * allocated already parameters size and suprt are not used and can be
  * assigned any value.
  *
  * @note If the same process calls rtai_malloc_adr and rtai_malloc() twice in
@@ -347,19 +359,19 @@ RTAI_PROTO (void *, _rt_shm_alloc, (void *start, unsigned long name, int size, i
 	_rt_shm_alloc(start, name, size, suprt, 1)
 
 /**
- * Allocate a chunk of memory to be shared inter-intra kernel modules and 
+ * Allocate a chunk of memory to be shared inter-intra kernel modules and
  * Linux processes.
  *
  * @internal
- * 
+ *
  * rtai_malloc_adr is used to allocate shared memory from user space.
  *
  * @param start_address is the adr were the shared memory should be mapped.
- * 
+ *
  * @param name is an unsigned long identifier;
- * 
+ *
  * @param size is the amount of required shared memory;
- * 
+ *
  * rtai_malloc_adr is a legacy helper macro, the real job is carried out by a
  * call to rt_shm_alloc_adr() with the same name, size and with vmalloc support.
  * This function should not be used in newly developed applications. See
@@ -376,17 +388,21 @@ RTAI_PROTO(int, rt_shm_free, (unsigned long name))
 {
 	int hook, size;
 	struct { void *nameadr; } arg = { &name };
-	if ((hook = open(RTAI_SHM_DEV, O_RDWR)) <= 0) {
+	if ((hook = open(RTAI_SHM_DEV, O_RDWR)) <= 0)
+	{
 		return 0;
 	}
-// no SHM_FREE needed, we release it all and munmap will do it through 
+// no SHM_FREE needed, we release it all and munmap will do it through
 // the vma close operation provided by shm.c
 #ifdef SHM_USE_LXRT
-	if ((size = rtai_lxrt(BIDX, SIZARG, SHM_SIZE, &arg).i[LOW])) {
+	if ((size = rtai_lxrt(BIDX, SIZARG, SHM_SIZE, &arg).i[LOW]))
+	{
 #else
-	if ((size = ioctl(hook, SHM_SIZE, (unsigned long)&arg))) {
+	if ((size = ioctl(hook, SHM_SIZE, (unsigned long)&arg)))
+	{
 #endif
-		if (munmap((void *)name, size)) {
+		if (munmap((void *)name, size))
+		{
 			size = 0;
 		}
 	}
@@ -395,7 +411,7 @@ RTAI_PROTO(int, rt_shm_free, (unsigned long name))
 }
 
 /**
- * Free a chunk of shared memory being shared inter-intra 
+ * Free a chunk of shared memory being shared inter-intra
  * kernel modules and Linux processes.
  *
  * rtai_free is used to free a shared memory chunk from user space.
@@ -406,7 +422,7 @@ RTAI_PROTO(int, rt_shm_free, (unsigned long name))
  * @param adr is not used.
  *
  * rtai_free is a legacy helper macro, the real job is carried out by a
- * call to rt_shm_free with the same name. This function should not be used 
+ * call to rt_shm_free with the same name. This function should not be used
  * in newly developed applications. See rt_shm_alloc_adr for more details.
  *
  * @returns the size of the succesfully freed memory, 0 on failure.
@@ -471,7 +487,7 @@ RTAI_PROTO(void, rt_named_free, (void *addr))
  * Linux processes.
  *
  * @internal
- * 
+ *
  * rt_heap_close is used to close a previously opened real time group heap.
  *
  * @param name is the unsigned long identifier used to identify the heap.
@@ -479,8 +495,8 @@ RTAI_PROTO(void, rt_named_free, (void *addr))
  * @param adr is not used.
  *
  * Analogously to what done by any allocation function this group real time
- * heap closing call have just the effect of decrementing a usage count, 
- * unmapping any user space heap being closed, till the last is done, as that 
+ * heap closing call have just the effect of decrementing a usage count,
+ * unmapping any user space heap being closed, till the last is done, as that
  * is the one the really closes the group heap, freeing any allocated memory.
  *
  * @returns the size of the succesfully freed heap, 0 on failure.
@@ -504,13 +520,13 @@ RTAI_PROTO(void, rt_named_free, (void *addr))
 // these have no aliases, and never will
 
 /**
- * Open the global real time heap to be shared inter-intra kernel modules and 
+ * Open the global real time heap to be shared inter-intra kernel modules and
  * Linux processes.
  *
  * @internal
- * 
+ *
  * rt_global_heap_open is used to open the global real time heap.
- * 
+ *
  * The global heap is created by the shared memory module and its opening is
  * needed in user space to map it to the process address space. In kernel
  * space opening the global heap in a task is not required but should be done
@@ -521,13 +537,13 @@ RTAI_PROTO(void, rt_named_free, (void *addr))
 #define rt_global_heap_open()  rt_heap_open(GLOBAL_HEAP_ID, 0, 0)
 
 /**
- * Close the global real time heap being shared inter-intra kernel modules and 
+ * Close the global real time heap being shared inter-intra kernel modules and
  * Linux processes.
  *
  * @internal
- * 
+ *
  * rt_global_heap_close is used to close the global real time heap.
- * 
+ *
  * Closing a global heap in user space has just the effect of deregistering
  * its use and unmapping the related memory from a process address space.
  * In kernel tasks just the deregistration is performed.

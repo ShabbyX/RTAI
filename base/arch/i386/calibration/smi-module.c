@@ -52,31 +52,32 @@
 #define PCI_DEVICE_ID_INTEL_ICH8_4  0x2815
 #endif
 #ifndef PCI_DEVICE_ID_INTEL_ICH10_1
-#define #define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16 
+#define #define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16
 #endif
 
 
-static struct pci_device_id hal_smi_pci_tbl[] = {
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AA_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AB_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801BA_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801BA_10) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801E_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801CA_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801CA_12) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801DB_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801DB_12) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801EB_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH6_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH6_1) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH6_2) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH7_0) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH7_1) },
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH8_4) },
+static struct pci_device_id hal_smi_pci_tbl[] =
+{
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AA_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AB_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801BA_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801BA_10) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801E_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801CA_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801CA_12) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801DB_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801DB_12) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801EB_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH6_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH6_1) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH6_2) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH7_0) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH7_1) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH8_4) },
 #ifdef PCI_DEVICE_ID_INTEL_ICH10_1
-{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH10_1) },
+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH10_1) },
 #endif
-{ 0, },
+	{ 0, },
 };
 
 /* FIXME: Probably crippled too, need to be checked :
@@ -88,7 +89,7 @@ pci.ids database, ICH5-M ?)
 */
 
 #define DEVFN        0xf8 /* device 31, function 0 */
-    
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 #define pci_get_device(a, b, c)  pci_find_device(a, b, c)
 #define pci_dev_put(a)           do { /*nothing*/ } while(0)
@@ -116,34 +117,34 @@ pci.ids database, ICH5-M ?)
 
 unsigned long hal_smi_masked_bits = 0
 #if CONFIG_RTAI_HW_SMI_ALL
-    | GBL_SMI_EN_BIT
+				    | GBL_SMI_EN_BIT
 #else
 #if CONFIG_RTAI_HW_SMI_INTEL_USB2
-    | INTEL_USB2_EN_BIT
+				    | INTEL_USB2_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_LEGACY_USB2
-    | LEGACY_USB2_EN_BIT
+				    | LEGACY_USB2_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_PERIODIC
-    | PERIODIC_EN_BIT
+				    | PERIODIC_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_TCO
-    | TCO_EN_BIT
+				    | TCO_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_MC
-    | MCSMI_EN_BIT
+				    | MCSMI_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_APMC
-    | APMC_EN_BIT
+				    | APMC_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_LEGACY_USB
-    | LEGACY_USB_EN_BIT
+				    | LEGACY_USB_EN_BIT
 #endif
 #if CONFIG_RTAI_HW_SMI_BIOS
-    | BIOS_EN_BIT
+				    | BIOS_EN_BIT
 #endif
 #endif
-;
+				    ;
 
 RTAI_MODULE_PARM(hal_smi_masked_bits, ulong);
 
@@ -156,26 +157,30 @@ static struct pci_dev *smi_dev;
 
 static int rtai_smi_notify_reboot(struct notifier_block *nb, unsigned long event, void *p)
 {
-	switch (event) {
-		case SYS_DOWN:
-		case SYS_HALT:
-		case SYS_POWER_OFF:
-		if (hal_smi_en_addr) {
+	switch (event)
+	{
+	case SYS_DOWN:
+	case SYS_HALT:
+	case SYS_POWER_OFF:
+		if (hal_smi_en_addr)
+		{
 			set_bits(hal_smi_saved_bits, hal_smi_en_addr);
 		}
 	}
 	return NOTIFY_DONE;
 }
 
-static struct notifier_block rtai_smi_reboot_notifier = {
-        .notifier_call  = &rtai_smi_notify_reboot,
-        .next           = NULL,
-        .priority       = 0
+static struct notifier_block rtai_smi_reboot_notifier =
+{
+	.notifier_call  = &rtai_smi_notify_reboot,
+	.next           = NULL,
+	.priority       = 0
 };
 
 static void hal_smi_restore(void)
 {
-	if (hal_smi_en_addr) {
+	if (hal_smi_en_addr)
+	{
 		set_bits(hal_smi_saved_bits, hal_smi_en_addr);
 		pci_dev_put(smi_dev);
 		unregister_reboot_notifier(&rtai_smi_reboot_notifier);
@@ -184,7 +189,8 @@ static void hal_smi_restore(void)
 
 static void hal_smi_disable(void)
 {
- 	if (hal_smi_en_addr) {
+	if (hal_smi_en_addr)
+	{
 		hal_smi_saved_bits = inl(hal_smi_en_addr) & hal_smi_masked_bits;
 		mask_bits(hal_smi_masked_bits, hal_smi_en_addr);
 		register_reboot_notifier(&rtai_smi_reboot_notifier);
@@ -205,25 +211,27 @@ static int __devinit hal_smi_init(void)
 	struct pci_dev *dev = NULL;
 	struct pci_device_id *id;
 
-/*
- * Do not use pci_register_driver, pci_enable_device, ...
- * Just register the used ports.
- */
-	for (id = &hal_smi_pci_tbl[0]; dev == NULL && id->vendor != 0; id++) {
-	        dev = pci_get_device(id->vendor, id->device, NULL);
+	/*
+	 * Do not use pci_register_driver, pci_enable_device, ...
+	 * Just register the used ports.
+	 */
+	for (id = &hal_smi_pci_tbl[0]; dev == NULL && id->vendor != 0; id++)
+	{
+		dev = pci_get_device(id->vendor, id->device, NULL);
 	}
 
-	if (dev == NULL || dev->bus->number || dev->devfn != DEVFN) {
+	if (dev == NULL || dev->bus->number || dev->devfn != DEVFN)
+	{
 		pci_dev_put(dev);
 		printk("RTAI: Intel chipset not found.\n");
-  		return -ENODEV;
-        }
+		return -ENODEV;
+	}
 
 	printk("RTAI: Intel chipset found, enabling SMI workaround.\n");
 	hal_smi_en_addr = get_smi_en_addr(dev);
 	smi_dev = dev;
 	hal_smi_disable();
-  	return 0;
+	return 0;
 }
 
 /************************************************************************/
@@ -231,13 +239,14 @@ static int __devinit hal_smi_init(void)
 int init_module(void)
 {
 	int retval;
-	if (!(retval = hal_smi_init())) {
+	if (!(retval = hal_smi_init()))
+	{
 		printk("SMI configuration has been cleared, mask used = %lx (saved mask setting %lx).\n", hal_smi_masked_bits, hal_smi_saved_bits);
 	}
 	return retval;
 }
 
-void cleanup_module(void)         
+void cleanup_module(void)
 {
 	hal_smi_restore();
 	printk("SMI configuration has been reset, saved mask used = %lx.\n", hal_smi_saved_bits);
@@ -286,7 +295,7 @@ MODULE_LICENSE("GPL");
 
    page 492, 493: USB EHCI legacy support and SPECIAL SMI, i.e Intel Specific
        USB 2.0 SMI register.
-       
+
    page 520, SMBus
        may be disabled by clearing register HOSTC, bit SMB_SMI_EN
        register used by Linux driver drivers/i2c/busses/i2c-i801.c

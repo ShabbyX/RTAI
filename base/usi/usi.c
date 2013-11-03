@@ -39,8 +39,9 @@ MODULE_LICENSE("GPL");
 static void *rt_spin_lock_init(void)
 {
 	spinlock_t *lock;
- 
-	if ((lock = rt_malloc(sizeof(spinlock_t)))) {
+
+	if ((lock = rt_malloc(sizeof(spinlock_t))))
+	{
 		spin_lock_init(lock);
 		return lock;
 	}
@@ -52,18 +53,18 @@ static inline int rt_spin_lock_delete(void *lock)
 	rt_free(lock);
 	return 0;
 }
-                                                                               
-static void usi_spin_lock(spinlock_t *lock)          
+
+static void usi_spin_lock(spinlock_t *lock)
 {
 	rt_spin_lock(lock);
 }
 
-static void usi_spin_unlock(spinlock_t *lock)          
+static void usi_spin_unlock(spinlock_t *lock)
 {
 	rt_spin_unlock(lock);
 }
 
-static void usi_spin_lock_irq(spinlock_t *lock)          
+static void usi_spin_lock_irq(spinlock_t *lock)
 {
 	rt_spin_lock_irq(lock);
 }
@@ -73,7 +74,7 @@ static void usi_spin_unlock_irq(spinlock_t *lock)
 	rt_spin_unlock_irq(lock);
 }
 
-static unsigned long usi_spin_lock_irqsave(spinlock_t *lock)          
+static unsigned long usi_spin_lock_irqsave(spinlock_t *lock)
 {
 	return rt_spin_lock_irqsave(lock);
 }
@@ -139,7 +140,8 @@ static void usi_restore_flags(unsigned long flags)
 	rtai_restore_flags(flags);
 }
 
-static struct rt_fun_entry rtai_usi_fun[] = {
+static struct rt_fun_entry rtai_usi_fun[] =
+{
 	[_STARTUP_IRQ]		= { 0, rt_startup_irq },
 	[_SHUTDOWN_IRQ]		= { 0, rt_shutdown_irq },
 	[_ENABLE_IRQ]		= { 0, rt_enable_irq },
@@ -168,7 +170,8 @@ static struct rt_fun_entry rtai_usi_fun[] = {
 
 static int register_lxrt_usi_support(void)
 {
-	if(set_rt_fun_ext_index(rtai_usi_fun, FUN_USI_LXRT_INDX)) {
+	if(set_rt_fun_ext_index(rtai_usi_fun, FUN_USI_LXRT_INDX))
+	{
 		printk("LXRT EXTENSION SLOT FOR USI (%d) ALREADY USED\n", FUN_USI_LXRT_INDX);
 		return -EACCES;
 	}
@@ -182,7 +185,8 @@ static void unregister_lxrt_usi_support(void)
 
 int __rtai_usi_init(void)
 {
-	if (!register_lxrt_usi_support()) {
+	if (!register_lxrt_usi_support())
+	{
 		printk(KERN_INFO "RTAI[usi]: loaded.\n");
 		return 0;
 	}

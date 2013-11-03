@@ -47,14 +47,16 @@ static void rtc_handler(int irq, int rtc_freq)
 {
 #ifdef TEST_RTC
 	static int stp, cnt;
-	if (++cnt == rtc_freq) {
+	if (++cnt == rtc_freq)
+	{
 		rt_printk("<> IRQ %d, %d: CNT %d <>\n", irq, ++stp, cnt);
 		cnt = 0;
 	}
 #endif
- 	RT_CMOS_READ(RTC_INTR_FLAGS); // CMOS_READ(RTC_INTR_FLAGS);
+	RT_CMOS_READ(RTC_INTR_FLAGS); // CMOS_READ(RTC_INTR_FLAGS);
 	rt_enable_irq(RTC_IRQ);
-	if (usr_rtc_handler) {
+	if (usr_rtc_handler)
+	{
 		usr_rtc_handler();
 	}
 }
@@ -63,20 +65,27 @@ void rt_request_rtc(long rtc_freq, void *handler)
 {
 	int pwr2;
 
-	if (rtc_freq <= 0) {
+	if (rtc_freq <= 0)
+	{
 		rtc_freq = RTC_FREQ;
 	}
-	if (rtc_freq > MAX_RTC_FREQ) {
+	if (rtc_freq > MAX_RTC_FREQ)
+	{
 		rtc_freq = MAX_RTC_FREQ;
-	} else if (rtc_freq < MIN_RTC_FREQ) {
+	}
+	else if (rtc_freq < MIN_RTC_FREQ)
+	{
 		rtc_freq = MIN_RTC_FREQ;
 	}
 	pwr2 = 1;
-	if (rtc_freq > MIN_RTC_FREQ) {
-		while (rtc_freq > (1 << pwr2)) {
+	if (rtc_freq > MIN_RTC_FREQ)
+	{
+		while (rtc_freq > (1 << pwr2))
+		{
 			pwr2++;
 		}
-		if (rtc_freq <= ((3*(1 << (pwr2 - 1)) + 1)>>1)) {
+		if (rtc_freq <= ((3*(1 << (pwr2 - 1)) + 1)>>1))
+		{
 			pwr2--;
 		}
 	}

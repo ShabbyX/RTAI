@@ -51,20 +51,23 @@ static inline unsigned long uvirt_to_kva(pgd_t *pgd, unsigned long adr)
 	pmd_t *pmd;
 	pte_t *ptep, pte;
 
-	if(!pgd_none(*pgd)) {
+	if(!pgd_none(*pgd))
+	{
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-                pmd = pmd_offset(pgd, adr);
+		pmd = pmd_offset(pgd, adr);
 #else /* >= 2.6.11 */
-                pmd = pmd_offset(pud_offset(pgd, adr), adr);
+		pmd = pmd_offset(pud_offset(pgd, adr), adr);
 #endif /* < 2.6.11 */
-		if (!pmd_none(*pmd)) {
+		if (!pmd_none(*pmd))
+		{
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 			ptep = pte_offset(pmd, adr);
 #else /* >= 2.6.0 */
 			ptep = pte_offset_kernel(pmd, adr);
 #endif /* < 2.6.0 */
 			pte = *ptep;
-			if(pte_present(pte)){
+			if(pte_present(pte))
+			{
 				ret = (unsigned long) page_address(pte_page(pte));
 				ret |= (adr&(PAGE_SIZE-1));
 			}

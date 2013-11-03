@@ -88,10 +88,11 @@ do { \
 
 #endif /* CONFIG_RTAI_RTC_FREQ != 0 */
 
-union rtai_lxrt_t {
-    RTIME rt;
-    int i[2];
-    void *v[2];
+union rtai_lxrt_t
+{
+	RTIME rt;
+	int i[2];
+	void *v[2];
 };
 
 #ifdef __cplusplus
@@ -190,7 +191,7 @@ static union rtai_lxrt_t _rtai_lxrt(int srq, void *arg)
 	union rtai_lxrt_t retval;
 #ifdef USE_LINUX_SYSCALL
 	syscall(RTAI_SYSCALL_NR, srq, arg, &retval);
-#else 
+#else
 	RTAI_DO_TRAP_SYS(&retval.rt, srq, (unsigned long)arg);
 #endif
 	return retval;

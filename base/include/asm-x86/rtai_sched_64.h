@@ -128,7 +128,7 @@
 #endif
 
 #if 0
-// with push and pop 
+// with push and pop
 #define rt_exchange_tasks(oldtask, newtask) \
 	__asm__ __volatile__( \
 	"pushq %%rdi\n\t" \

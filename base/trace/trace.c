@@ -48,18 +48,18 @@ tracer_call       rt_tracer = NULL;           /* The registered tracer */
  ****************************************************/
 int rt_register_tracer(tracer_call pmTraceFunction)
 {
-  /* Is there a tracer already registered */
-  if(rt_tracer_registered == 1)
-    return -1;
+	/* Is there a tracer already registered */
+	if(rt_tracer_registered == 1)
+		return -1;
 
-  /* Set the tracer to the one being passed by the caller */
-  rt_tracer = pmTraceFunction;
+	/* Set the tracer to the one being passed by the caller */
+	rt_tracer = pmTraceFunction;
 
-  /* Remember that a tracer is now registered */
-  rt_tracer_registered = 1;
+	/* Remember that a tracer is now registered */
+	rt_tracer_registered = 1;
 
-  /* Tell the caller that everything went fine */
-  return 0;
+	/* Tell the caller that everything went fine */
+	return 0;
 }
 
 /***************************************************
@@ -73,26 +73,26 @@ int rt_register_tracer(tracer_call pmTraceFunction)
  ***************************************************/
 int rt_unregister_tracer(tracer_call pmTraceFunction)
 {
-  /* Is there a tracer already registered */
-  if(rt_tracer_registered == 0)
-    /* Nothing to unregister */
-    return -ENOMEDIUM;
+	/* Is there a tracer already registered */
+	if(rt_tracer_registered == 0)
+		/* Nothing to unregister */
+		return -ENOMEDIUM;
 
-  /* Is it the tracer that was registered */
-  if(rt_tracer == pmTraceFunction)
-    /* There isn't any tracer in here */
-    rt_tracer_registered = 0;
-  else
-    return -ENXIO;
+	/* Is it the tracer that was registered */
+	if(rt_tracer == pmTraceFunction)
+		/* There isn't any tracer in here */
+		rt_tracer_registered = 0;
+	else
+		return -ENXIO;
 
-  /* Reset tracer function */
-  rt_tracer = NULL;
+	/* Reset tracer function */
+	rt_tracer = NULL;
 
-  /* Reset the registered flag */
-  rt_tracer_registered = 0;
+	/* Reset the registered flag */
+	rt_tracer_registered = 0;
 
-  /* Tell the caller that everything went OK */
-  return 0;
+	/* Tell the caller that everything went OK */
+	return 0;
 }
 
 /*******************************************************
@@ -107,15 +107,15 @@ int rt_unregister_tracer(tracer_call pmTraceFunction)
  *   -ENOMEDIUM, there isn't a registered tracer
  *   -EBUSY, tracing hasn't started yet
  *******************************************************/
-int rt_trace_event(uint8_t  pmEventID, 
+int rt_trace_event(uint8_t  pmEventID,
 		   void*    pmEventStruct)
 {
-  /* Is there a tracer registered */
-  if(rt_tracer_registered != 1)
-    return -ENOMEDIUM;
+	/* Is there a tracer registered */
+	if(rt_tracer_registered != 1)
+		return -ENOMEDIUM;
 
-  /* Call the tracer */
-  return (rt_tracer(pmEventID, pmEventStruct));
+	/* Call the tracer */
+	return (rt_tracer(pmEventID, pmEventStruct));
 }
 
 /*******************************************************
@@ -129,7 +129,7 @@ int rt_trace_event(uint8_t  pmEventID,
  *******************************************************/
 int __rtai_trace_init(void)
 {
-  return 0;
+	return 0;
 }
 
 /*******************************************************

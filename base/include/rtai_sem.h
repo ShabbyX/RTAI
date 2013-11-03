@@ -48,7 +48,8 @@ struct rt_poll_ql { QUEUE pollq; spinlock_t pollock; };
 struct rt_poll_enc { unsigned long offset; int (*topoll)(void *); };
 extern struct rt_poll_enc rt_poll_ofstfun[];
 
-typedef struct rt_semaphore {
+typedef struct rt_semaphore
+{
 	struct rt_queue queue; /* <= Must be first in struct. */
 	int magic;
 	int type, restype;
@@ -85,8 +86,9 @@ static inline int rt_poll(struct rt_poll_s *pdsa, unsigned long nr, RTIME timeou
 
 #else /* !__KERNEL__ || __cplusplus */
 
-typedef struct rt_semaphore {
-    int opaque;
+typedef struct rt_semaphore
+{
+	int opaque;
 } SEM;
 
 #endif /* __KERNEL__ && !__cplusplus */
@@ -110,20 +112,21 @@ int __rtai_sem_init(void);
 void __rtai_sem_exit(void);
 
 RTAI_SYSCALL_MODE void rt_typed_sem_init(SEM *sem,
-		       int value,
-		       int type);
+		int value,
+		int type);
 
 RTAI_SYSCALL_MODE int rt_sem_delete(SEM *sem);
 
 RTAI_SYSCALL_MODE SEM *_rt_typed_named_sem_init(unsigned long sem_name,
-			     int value,
-			     int type,
-			     unsigned long *handle);
+		int value,
+		int type,
+		unsigned long *handle);
 
 static inline SEM *rt_typed_named_sem_init(const char *sem_name,
-					   int value,
-					   int type) {
-    return _rt_typed_named_sem_init(nam2num(sem_name), value, type, NULL);
+		int value,
+		int type)
+{
+	return _rt_typed_named_sem_init(nam2num(sem_name), value, type, NULL);
 }
 
 RTAI_SYSCALL_MODE int rt_named_sem_delete(SEM *sem);
@@ -142,10 +145,10 @@ RTAI_SYSCALL_MODE int rt_sem_wait_if(SEM *sem);
 int rt_cntsem_wait_if_and_lock(SEM *sem);
 
 RTAI_SYSCALL_MODE int rt_sem_wait_until(SEM *sem,
-		      RTIME time);
+					RTIME time);
 
 RTAI_SYSCALL_MODE int rt_sem_wait_timed(SEM *sem,
-		      RTIME delay);
+					RTIME delay);
 
 RTAI_SYSCALL_MODE int rt_sem_wait_barrier(SEM *sem);
 
@@ -154,21 +157,22 @@ RTAI_SYSCALL_MODE int rt_sem_count(SEM *sem);
 RTAI_SYSCALL_MODE int rt_cond_signal(CND *cnd);
 
 RTAI_SYSCALL_MODE int rt_cond_wait(CND *cnd,
-		 SEM *mtx);
+				   SEM *mtx);
 
 RTAI_SYSCALL_MODE int rt_cond_wait_until(CND *cnd,
-		       SEM *mtx,
-		       RTIME time);
+		SEM *mtx,
+		RTIME time);
 
 RTAI_SYSCALL_MODE int rt_cond_wait_timed(CND *cnd,
-		       SEM *mtx,
-		       RTIME delay);
+		SEM *mtx,
+		RTIME delay);
 
 #define rt_named_sem_init(sem_name, value)  rt_typed_named_sem_init(sem_name, value, CNT_SEM)
 
 static inline int rt_psem_init(psem_t *sem, int pshared, unsigned int value)
 {
-	if (value < SEM_TIMOUT) {
+	if (value < SEM_TIMOUT)
+	{
 		rt_typed_sem_init(sem, value, pshared | PRIO_Q);
 		return 0;
 	}
@@ -177,32 +181,38 @@ static inline int rt_psem_init(psem_t *sem, int pshared, unsigned int value)
 
 static inline int rt_psem_destroy(psem_t *sem)
 {
-	if (rt_sem_wait_if(sem) >= 0) {
+	if (rt_sem_wait_if(sem) >= 0)
+	{
 		rt_sem_signal(sem);
 		return rt_sem_delete(sem);
 	}
 	return -EBUSY;
 }
 
-static inline int rt_psem_wait(psem_t *sem) {
-    return rt_sem_wait(sem) < SEM_TIMOUT ? 0 : -1;
+static inline int rt_psem_wait(psem_t *sem)
+{
+	return rt_sem_wait(sem) < SEM_TIMOUT ? 0 : -1;
 }
 
-static inline int rt_psem_timedwait(psem_t *sem, struct timespec *abstime) {
-    return rt_sem_wait_until(sem, timespec2count(abstime)) < SEM_TIMOUT ? 0 : -1;
+static inline int rt_psem_timedwait(psem_t *sem, struct timespec *abstime)
+{
+	return rt_sem_wait_until(sem, timespec2count(abstime)) < SEM_TIMOUT ? 0 : -1;
 }
 
-static inline int rt_psem_trywait(psem_t *sem) {
-    return rt_sem_wait_if(sem) > 0 ? 0 : -EAGAIN;
+static inline int rt_psem_trywait(psem_t *sem)
+{
+	return rt_sem_wait_if(sem) > 0 ? 0 : -EAGAIN;
 }
 
-static inline int rt_psem_post(psem_t *sem) {
-    return rt_sem_signal(sem);
+static inline int rt_psem_post(psem_t *sem)
+{
+	return rt_sem_signal(sem);
 }
 
 static inline int rt_psem_getvalue(psem_t *sem, int *sval)
 {
-	if ((*sval = rt_sem_wait_if(sem)) > 0) {
+	if ((*sval = rt_sem_wait_if(sem)) > 0)
+	{
 		rt_sem_signal(sem);
 	}
 	return 0;
@@ -216,27 +226,32 @@ static inline int rt_pmutex_init(pmutex_t *mutex, void *mutexattr)
 
 static inline int rt_pmutex_destroy(pmutex_t *mutex)
 {
-	if (rt_sem_wait_if(mutex) > 0) {
+	if (rt_sem_wait_if(mutex) > 0)
+	{
 		rt_sem_signal(mutex);
 		return rt_sem_delete(mutex);
 	}
 	return -EBUSY;
 }
 
-static inline int rt_pmutex_lock(pmutex_t *mutex) {
-    return rt_sem_wait(mutex) < SEM_TIMOUT ? 0 : -EINVAL;
+static inline int rt_pmutex_lock(pmutex_t *mutex)
+{
+	return rt_sem_wait(mutex) < SEM_TIMOUT ? 0 : -EINVAL;
 }
 
-static inline int rt_pmutex_trylock(pmutex_t *mutex) {
-    return rt_sem_wait_if(mutex) > 0 ? 0 : -EBUSY;
+static inline int rt_pmutex_trylock(pmutex_t *mutex)
+{
+	return rt_sem_wait_if(mutex) > 0 ? 0 : -EBUSY;
 }
 
-static inline int rt_pmutex_timedlock(pmutex_t *sem, struct timespec *abstime) {
-    return rt_sem_wait_until(sem, timespec2count(abstime)) < SEM_TIMOUT ? 0 : -1;
+static inline int rt_pmutex_timedlock(pmutex_t *sem, struct timespec *abstime)
+{
+	return rt_sem_wait_until(sem, timespec2count(abstime)) < SEM_TIMOUT ? 0 : -1;
 }
 
-static inline int rt_pmutex_unlock(pmutex_t *mutex) {
-    return rt_sem_signal(mutex);
+static inline int rt_pmutex_unlock(pmutex_t *mutex)
+{
+	return rt_sem_signal(mutex);
 }
 
 #undef rt_mutex_init
@@ -253,8 +268,9 @@ static inline int rt_pmutex_unlock(pmutex_t *mutex) {
 #define rt_cond_destroy(cnd)               rt_sem_delete(cnd)
 #define rt_cond_broadcast(cnd)             rt_sem_broadcast(cnd)
 
-static inline int rt_cond_timedwait(CND *cnd, SEM *mtx, RTIME time) {
-    return rt_cond_wait_until(cnd, mtx, time) < SEM_TIMOUT ? 0 : -1;
+static inline int rt_cond_timedwait(CND *cnd, SEM *mtx, RTIME time)
+{
+	return rt_cond_wait_until(cnd, mtx, time) < SEM_TIMOUT ? 0 : -1;
 }
 
 #ifdef __cplusplus
@@ -291,7 +307,7 @@ RTAI_PROTO(SEM *, rt_typed_sem_init,(unsigned long name, int value, int type))
  *
  * @return a pointer to the semaphore to be used in related calls or 0 if an
  * error has occured.
- */ 
+ */
 #define rt_sem_init(name, value) rt_typed_sem_init(name, value, CNT_SEM)
 
 #define rt_named_sem_init(sem_name, value) \
@@ -377,7 +393,7 @@ RTAI_PROTO(int, rt_sem_count,(SEM *sem))
  *
  * @return a pointer to the condition variable to be used in related calls or 0
  * if an error has occured.
- */ 
+ */
 #define rt_cond_init(name)                 rt_typed_sem_init(name, 0, BIN_SEM)
 #define rt_cond_delete(cnd)                rt_sem_delete(cnd)
 #define rt_cond_destroy(cnd)               rt_sem_delete(cnd)

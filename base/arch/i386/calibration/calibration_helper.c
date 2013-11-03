@@ -32,11 +32,13 @@ int main(int argc, char *argv[])
 	RT_TASK *task;
 	RTIME expected;
 
-        if ((fifo = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_WRONLY)) < 0) {
-                printf("Error opening %s in calibration helper\n",nm);
-                exit(1);
-        }
- 	if (!(task = rt_task_init_schmod(nam2num("UCAL"), 0, 0, 0, SCHED_FIFO, 0xF))) {
+	if ((fifo = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_WRONLY)) < 0)
+	{
+		printf("Error opening %s in calibration helper\n",nm);
+		exit(1);
+	}
+	if (!(task = rt_task_init_schmod(nam2num("UCAL"), 0, 0, 0, SCHED_FIFO, 0xF)))
+	{
 		printf("Cannot init calibration helper\n");
 		exit(1);
 	}
@@ -47,13 +49,14 @@ int main(int argc, char *argv[])
 	rt_make_hard_real_time();
 	expected = rt_get_time() + 100*period;
 	rt_task_make_periodic(task, expected, period);
-	for (skip = 0; skip < atoi(argv[2]); skip++) {
+	for (skip = 0; skip < atoi(argv[2]); skip++)
+	{
 		expected += period;
 		rt_task_wait_period();
 		average += (int)count2nano(rt_get_time() - expected);
 	}
 	rt_make_soft_real_time();
-	stop_rt_timer();	
+	stop_rt_timer();
 	rt_task_delete(task);
 	write(fifo, &average, sizeof(average));
 	close(fifo);

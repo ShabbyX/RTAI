@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 --------------------------------------------------------------------------
 Acknowledgements
 - Paolo Mantegazza	(mantegazza@aero.polimi.it)
-	creator of RTAI 
+	creator of RTAI
 */
 
 #include <linux/sched.h>
@@ -54,12 +54,14 @@ int rt_request_timer (void (*handler)(void), unsigned tick, int use_apic)
 
 	rt_times.tick_time = rtai_rdtsc();
 	rt_times.linux_tick = __ipipe_mach_ticks_per_jiffy;
-	if (tick > 0) {
+	if (tick > 0)
+	{
 		rt_periodic = 1;
 
 		/* Periodic setup --
 		Use the built-in Adeos service directly. */
-		if (tick > __ipipe_mach_ticks_per_jiffy) {
+		if (tick > __ipipe_mach_ticks_per_jiffy)
+		{
 			tick = __ipipe_mach_ticks_per_jiffy;
 		}
 		rt_times.intr_time = rt_times.tick_time + tick;
@@ -71,7 +73,9 @@ int rt_request_timer (void (*handler)(void), unsigned tick, int use_apic)
 		at91_tc_write(AT91_TC_CMR, AT91_TC_TIMER_CLOCK3 | AT91_TC_WAVESEL_UP_AUTO | AT91_TC_WAVE);
 		at91_tc_write(AT91_TC_RC, rt_times.periodic_tick);
 		at91_tc_write(AT91_TC_CCR, AT91_TC_CLKEN | AT91_TC_SWTRG);
-	} else {
+	}
+	else
+	{
 		rt_periodic = 0;
 
 		/* Oneshot setup. */
@@ -84,14 +88,14 @@ int rt_request_timer (void (*handler)(void), unsigned tick, int use_apic)
 		rt_set_timer_delay(rt_times.periodic_tick);
 	}
 
-        rt_release_irq(RTAI_TIMER_IRQ);
+	rt_release_irq(RTAI_TIMER_IRQ);
 
 	rt_request_irq(RTAI_TIMER_IRQ, (rt_irq_handler_t)handler, NULL, 0);
 	extern_timer_isr = rtai_timer_handler;	// shunt for ipipe.c __ipipe_grab_irq
 
 	rtai_critical_exit(flags);
 
-        return 0;
+	return 0;
 }
 
 void rt_free_timer (void)
@@ -117,7 +121,8 @@ int rtai_calibrate_TC (void)
 	flags = rtai_critical_enter(NULL);
 	rt_set_timer_delay(LATCH);
 	t = rtai_rdtsc();
-	for (i = 0; i < 10000; i++) { 
+	for (i = 0; i < 10000; i++)
+	{
 		rt_set_timer_delay(LATCH);
 	}
 	dt = rtai_rdtsc() - t;

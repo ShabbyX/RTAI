@@ -114,9 +114,9 @@
 extern inline unsigned long
 current_domain_access_control(void)
 {
-    unsigned long domain_access_control;
-    asm("mrc p15, 0, %0, c3, c0" : "=r" (domain_access_control));
-    return domain_access_control;
+	unsigned long domain_access_control;
+	asm("mrc p15, 0, %0, c3, c0" : "=r" (domain_access_control));
+	return domain_access_control;
 }
 
 /*
@@ -151,7 +151,7 @@ do { \
       memset(&task->fpu_reg, 0, sizeof(task->fpu_reg)); \
 }while(0)
 #else
-#define init_fp_env() 
+#define init_fp_env()
 #endif
 
 #define init_task_fpenv(task)  do { init_fpenv((task)->fpu_reg); } while(0)
@@ -159,9 +159,9 @@ do { \
 extern inline void *
 get_stack_pointer(void)
 {
-    void *sp;
-    asm("mov %0, sp" : "=r" (sp));
-    return sp;
+	void *sp;
+	asm("mov %0, sp" : "=r" (sp));
+	return sp;
 }
 
 /* acknowledge timer interrupt in scheduler's timer-handler (using the

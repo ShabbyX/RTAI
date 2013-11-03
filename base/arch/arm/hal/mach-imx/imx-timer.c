@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 --------------------------------------------------------------------------
 Acknowledgements
 - Paolo Mantegazza	(mantegazza@aero.polimi.it)
-	creator of RTAI 
+	creator of RTAI
 - port to imx architecture using both pxa-timer.c and ep9301-timer.c
   20060613: Torsten Koschorrek (koschorrek@synertronixx.de)
 */
@@ -45,7 +45,8 @@ static int (*saved_adeos_timer_handler)(int irq, void *dev_id, struct pt_regs *r
 
 volatile union rtai_tsc lx_timer;
 
-unsigned long split_timer (void) {
+unsigned long split_timer (void)
+{
 	lx_timer.tsc = rt_times.linux_time;
 	return lx_timer.hltsc[0];
 }
@@ -77,7 +78,8 @@ int rt_request_timer(rt_timer_irq_handler_t handler, unsigned tick, int use_apic
 
 	/* sync w/jiffie, wait for a timer match 0 and clear the match bit */
 	rtai_tsc.tsc = 0;
-	do {} while ((signed long)(IMX_TCMP(0) - IMX_TCN(0)) > 0);
+	do {}
+	while ((signed long)(IMX_TCMP(0) - IMX_TCN(0)) > 0);
 
 	/* set up rt_times structure */
 	rt_times.linux_tick     = LATCH;
@@ -99,7 +101,7 @@ int rt_request_timer(rt_timer_irq_handler_t handler, unsigned tick, int use_apic
 	rt_request_global_irq(TIMER_8254_IRQ, handler);
 
 	/* pend linux timer irq to handle current jiffie */
- 	rt_pend_linux_irq(TIMER_8254_IRQ);
+	rt_pend_linux_irq(TIMER_8254_IRQ);
 	rtai_critical_exit(flags);
 
 	return 0;
@@ -110,7 +112,7 @@ void rt_free_timer(void)
 	unsigned long flags;
 
 	if(saved_adeos_timer_handler == NULL)
-	    return;
+		return;
 
 	TRACE_RTAI_TIMER(TRACE_RTAI_EV_TIMER_FREE, 0, 0);
 

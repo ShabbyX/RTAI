@@ -67,16 +67,19 @@ RTAI_SYSCALL_MODE int rt_wait_signal(RT_TASK *sigtask, RT_TASK *task);
 #define __SIGNAL_SUPPORT_FUN__
 
 static void signal_suprt_fun(struct sigsuprt_t *funarg)
-{		
+{
 	struct sigtsk_t { RT_TASK *sigtask; RT_TASK *task; };
 	struct sigreq_t { RT_TASK *sigtask; RT_TASK *task; long signal; void (*sighdl)(int, RT_TASK *); };
 	struct sigsuprt_t arg = *funarg;
 
-	if ((arg.sigtask = rt_thread_init(rt_get_name(0), SIGNAL_TASK_INIPRIO, 0, SCHED_FIFO, 1 << arg.cpuid))) {
-		if (!rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(struct sigreq_t), RT_SIGNAL_REQUEST, &arg).i[LOW]) {
+	if ((arg.sigtask = rt_thread_init(rt_get_name(0), SIGNAL_TASK_INIPRIO, 0, SCHED_FIFO, 1 << arg.cpuid)))
+	{
+		if (!rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(struct sigreq_t), RT_SIGNAL_REQUEST, &arg).i[LOW])
+		{
 			rt_grow_and_lock_stack(SIGNAL_TASK_STACK_SIZE/2);
 			rt_make_hard_real_time();
-			while (rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(struct sigtsk_t), RT_SIGNAL_WAITSIG, &arg).i[LOW]) {
+			while (rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(struct sigtsk_t), RT_SIGNAL_WAITSIG, &arg).i[LOW])
+			{
 				arg.sighdl(arg.signal, arg.task);
 			}
 			rt_make_soft_real_time();
@@ -89,10 +92,12 @@ static void signal_suprt_fun(struct sigsuprt_t *funarg)
 
 RTAI_PROTO(int, rt_request_signal, (long signal, void (*sighdl)(long, RT_TASK *)))
 {
-	if (signal >= 0 && sighdl) {
+	if (signal >= 0 && sighdl)
+	{
 		struct sigsuprt_t arg = { NULL, rt_buddy(), signal, sighdl };
 		arg.cpuid = rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(void *), RT_SIGNAL_HELPER, &arg.sigtask).i[LOW];
-		if (rt_thread_create((void *)signal_suprt_fun, &arg, SIGNAL_TASK_STACK_SIZE)) {
+		if (rt_thread_create((void *)signal_suprt_fun, &arg, SIGNAL_TASK_STACK_SIZE))
+		{
 			return rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(RT_TASK *), RT_SIGNAL_HELPER, &arg.task).i[LOW];
 		}
 	}

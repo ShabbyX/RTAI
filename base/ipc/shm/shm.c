@@ -26,7 +26,7 @@
 
 /**
  * @defgroup shm Unified RTAI real-time memory management.
- * 
+ *
  *@{*/
 
 #define RTAI_SHM_MISC_MINOR  254 // The same minor used to mknod for major 10.
@@ -55,15 +55,21 @@ static inline void *_rt_shm_alloc(unsigned long name, int size, int suprt)
 	void *adr;
 
 //	suprt = USE_GFP_ATOMIC; // to force some testing
-	if (!(adr = rt_get_adr_cnt(name)) && size > 0 && suprt >= 0 && RT_SHM_OP_PERM()) {
+	if (!(adr = rt_get_adr_cnt(name)) && size > 0 && suprt >= 0 && RT_SHM_OP_PERM())
+	{
 		size = ((size - 1) & PAGE_MASK) + PAGE_SIZE;
-		if ((adr = suprt ? rkmalloc(&size, SUPRT[suprt]) : rvmalloc(size))) {
-			if (!rt_register(name, adr, suprt ? -size : size, 0)) {
-				if (suprt) {
-                                        rkfree(adr, size);
-                                } else {
-                                        rvfree(adr, size);
-                                }
+		if ((adr = suprt ? rkmalloc(&size, SUPRT[suprt]) : rvmalloc(size)))
+		{
+			if (!rt_register(name, adr, suprt ? -size : size, 0))
+			{
+				if (suprt)
+				{
+					rkfree(adr, size);
+				}
+				else
+				{
+					rvfree(adr, size);
+				}
 				return 0;
 			}
 			memset(ALIGN2PAGE(adr), 0, size);
@@ -76,12 +82,18 @@ static inline int _rt_shm_free(unsigned long name, int size)
 {
 	void *adr;
 
-	if (size && (adr = rt_get_adr(name))) {
-		if (RT_SHM_OP_PERM()) {
-			if (!rt_drg_on_name_cnt(name) && name != GLOBAL_HEAP_ID) {
-				if (size < 0) {
+	if (size && (adr = rt_get_adr(name)))
+	{
+		if (RT_SHM_OP_PERM())
+		{
+			if (!rt_drg_on_name_cnt(name) && name != GLOBAL_HEAP_ID)
+			{
+				if (size < 0)
+				{
 					rkfree(adr, -size);
-				} else {
+				}
+				else
+				{
 					rvfree(adr, size);
 				}
 			}
@@ -96,31 +108,31 @@ static inline int _rt_shm_free(unsigned long name, int size)
  * processes.
  *
  * @internal
- * 
+ *
  * rt_shm_alloc is used to allocate shared memory.
- * 
+ *
  * @param name is an unsigned long identifier;
- * 
+ *
  * @param size is the amount of required shared memory;
- * 
+ *
  * @param suprt is the kernel allocation method to be used, it can be:
  * - USE_VMALLOC, use vmalloc;
  * - USE_GFP_KERNEL, use kmalloc with GFP_KERNEL;
  * - USE_GFP_ATOMIC, use kmalloc with GFP_ATOMIC;
  * - USE_GFP_DMA, use kmalloc with GFP_DMA.
- * 
+ *
  * Since @a name can be a clumsy identifier, services are provided to
  * convert 6 characters identifiers to unsigned long, and vice versa.
- * 
+ *
  * @see nam2num() and num2nam().
- * 
- * It must be remarked that only the very first call does a real allocation, 
- * any following call to allocate with the same name from anywhere will just 
- * increase the usage count and maps the area to the user space, or return 
- * the related pointer to the already allocated space in kernel space. 
- * In any case the functions return a pointer to the allocated memory, 
+ *
+ * It must be remarked that only the very first call does a real allocation,
+ * any following call to allocate with the same name from anywhere will just
+ * increase the usage count and maps the area to the user space, or return
+ * the related pointer to the already allocated space in kernel space.
+ * In any case the functions return a pointer to the allocated memory,
  * appropriately mapped to the memory space in use. So if one is really sure
- * that the named shared memory has been allocated already parameters size 
+ * that the named shared memory has been allocated already parameters size
  * and suprt are not used and can be assigned any value.
  *
  * @returns a valid address on succes, 0 on failure.
@@ -137,7 +149,8 @@ static RTAI_SYSCALL_MODE int rt_shm_alloc_usp(unsigned long name, int size, int 
 {
 	TRACE_RTAI_SHM(TRACE_RTAI_EV_SHM_MALLOC, name, size, current->pid);
 
-	if (_rt_shm_alloc(name, size, suprt)) {
+	if (_rt_shm_alloc(name, size, suprt))
+	{
 		current->rtai_tskext(TSKEXT1) = (void *)name;
 		return abs(rt_get_type(name));
 	}
@@ -149,15 +162,15 @@ static RTAI_SYSCALL_MODE int rt_shm_alloc_usp(unsigned long name, int size, int 
  * Linux processes.
  *
  * @internal
- * 
+ *
  * rt_shm_free is used to free a previously allocated shared memory.
  *
  * @param name is the unsigned long identifier used when the memory was
  * allocated;
  *
- * Analogously to what done by all the named allocation functions the freeing 
- * calls have just the effect of decrementing a usage count, unmapping any 
- * user space shared memory being freed, till the last is done, as that is the 
+ * Analogously to what done by all the named allocation functions the freeing
+ * calls have just the effect of decrementing a usage count, unmapping any
+ * user space shared memory being freed, till the last is done, as that is the
  * one the really frees any allocated memory.
  *
  * @returns the size of the succesfully freed memory, 0 on failure.
@@ -176,8 +189,10 @@ static RTAI_SYSCALL_MODE int rt_shm_size(unsigned long *arg)
 	struct vm_area_struct *vma;
 
 	size = abs(rt_get_type(*arg));
-	for (vma = (current->mm)->mmap; vma; vma = vma->vm_next) {
-		if (vma->vm_private_data == (void *)*arg && (vma->vm_end - vma->vm_start) == size) {
+	for (vma = (current->mm)->mmap; vma; vma = vma->vm_next)
+	{
+		if (vma->vm_private_data == (void *)*arg && (vma->vm_end - vma->vm_start) == size)
+		{
 			*arg = vma->vm_start;
 			return size;
 		}
@@ -195,9 +210,10 @@ static void rtai_shm_vm_close(struct vm_area_struct *vma)
 	_rt_shm_free((unsigned long)vma->vm_private_data, rt_get_type((unsigned long)vma->vm_private_data));
 }
 
-static struct vm_operations_struct rtai_shm_vm_ops = {
-	open:  	rtai_shm_vm_open,
-	close: 	rtai_shm_vm_close
+static struct vm_operations_struct rtai_shm_vm_ops =
+{
+open:  	rtai_shm_vm_open,
+close: 	rtai_shm_vm_close
 };
 
 #ifdef CONFIG_RTAI_MALLOC
@@ -210,24 +226,29 @@ static long rtai_shm_f_ioctl(struct file *file, unsigned int cmd, unsigned long 
 static int rtai_shm_f_ioctl(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg)
 #endif
 {
-	switch (cmd) {
-		case SHM_ALLOC: {
-			TRACE_RTAI_SHM(TRACE_RTAI_EV_SHM_MALLOC, ((unsigned long *)arg)[0], cmd, current->pid);
-			return rt_shm_alloc_usp(((unsigned long *)arg)[0], ((long *)arg)[1], ((long *)arg)[2]);
-		}
-		case SHM_FREE: {
-			TRACE_RTAI_SHM(TRACE_RTAI_EV_SHM_FREE, arg, cmd, current->pid);
-			return _rt_shm_free(arg, rt_get_type(arg));	
-		}
-		case SHM_SIZE: {
-			TRACE_RTAI_SHM(TRACE_RTAI_EV_SHM_GET_SIZE, arg, cmd, current->pid);
-			return rt_shm_size((unsigned long *)((unsigned long *)arg)[0]);
-		}
+	switch (cmd)
+	{
+	case SHM_ALLOC:
+	{
+		TRACE_RTAI_SHM(TRACE_RTAI_EV_SHM_MALLOC, ((unsigned long *)arg)[0], cmd, current->pid);
+		return rt_shm_alloc_usp(((unsigned long *)arg)[0], ((long *)arg)[1], ((long *)arg)[2]);
+	}
+	case SHM_FREE:
+	{
+		TRACE_RTAI_SHM(TRACE_RTAI_EV_SHM_FREE, arg, cmd, current->pid);
+		return _rt_shm_free(arg, rt_get_type(arg));
+	}
+	case SHM_SIZE:
+	{
+		TRACE_RTAI_SHM(TRACE_RTAI_EV_SHM_GET_SIZE, arg, cmd, current->pid);
+		return rt_shm_size((unsigned long *)((unsigned long *)arg)[0]);
+	}
 #ifdef CONFIG_RTAI_MALLOC
-		case HEAP_SET: {
-			rt_set_heap(((unsigned long *)arg)[0], (void *)((unsigned long *)arg)[1]);
-			return 0;
-		}
+	case HEAP_SET:
+	{
+		rt_set_heap(((unsigned long *)arg)[0], (void *)((unsigned long *)arg)[1]);
+		return 0;
+	}
 #endif
 	}
 	return 0;
@@ -237,7 +258,8 @@ static int rtai_shm_f_mmap(struct file *file, struct vm_area_struct *vma)
 {
 	unsigned long name;
 	int size;
-	if (!vma->vm_ops) {
+	if (!vma->vm_ops)
+	{
 		vma->vm_ops = &rtai_shm_vm_ops;
 		vma->vm_flags |= VM_LOCKED;
 		name = (unsigned long)(vma->vm_private_data = current->rtai_tskext(TSKEXT1));
@@ -247,17 +269,18 @@ static int rtai_shm_f_mmap(struct file *file, struct vm_area_struct *vma)
 	return -EFAULT;
 }
 
-static struct file_operations rtai_shm_fops = {
+static struct file_operations rtai_shm_fops =
+{
 #ifdef HAVE_UNLOCKED_IOCTL
-	unlocked_ioctl:	rtai_shm_f_ioctl,
+unlocked_ioctl:	rtai_shm_f_ioctl,
 #else
-	ioctl:		rtai_shm_f_ioctl,
+ioctl:		rtai_shm_f_ioctl,
 #endif
-	mmap:		rtai_shm_f_mmap
+mmap:		rtai_shm_f_mmap
 };
 
-static struct miscdevice rtai_shm_dev = 
-	{ RTAI_SHM_MISC_MINOR, "rtai_shm", &rtai_shm_fops };
+static struct miscdevice rtai_shm_dev =
+{ RTAI_SHM_MISC_MINOR, "rtai_shm", &rtai_shm_fops };
 
 #ifdef CONFIG_RTAI_MALLOC
 
@@ -265,7 +288,8 @@ static inline void *_rt_halloc(int size, struct rt_heap_t *heap)
 {
 	void *mem_ptr = NULL;
 
-	if ((mem_ptr = rtheap_alloc(heap->heap, size, 0))) {
+	if ((mem_ptr = rtheap_alloc(heap->heap, size, 0)))
+	{
 		mem_ptr = heap->uadr + (mem_ptr - heap->kadr);
 	}
 	return mem_ptr;
@@ -280,12 +304,12 @@ static inline void _rt_hfree(void *addr, struct rt_heap_t *heap)
 #define SPECIFIC  1
 
 /**
- * Allocate a chunk of the global real time heap in kernel/user space. Since 
+ * Allocate a chunk of the global real time heap in kernel/user space. Since
  * it is not named there is no chance of retrieving and sharing it elsewhere.
  *
  * @internal
- * 
- * rt_malloc is used to allocate a non sharable piece of the global real time 
+ *
+ * rt_malloc is used to allocate a non sharable piece of the global real time
  * heap.
  *
  * @param size is the size of the requested memory in bytes;
@@ -298,8 +322,8 @@ static inline void _rt_hfree(void *addr, struct rt_heap_t *heap)
  * Free a chunk of the global real time heap.
  *
  * @internal
- * 
- * rt_free is used to free a previously allocated chunck of the global real 
+ *
+ * rt_free is used to free a previously allocated chunck of the global real
  * time heap.
  *
  * @param addr is the addr of the memory to be freed.
@@ -307,28 +331,28 @@ static inline void _rt_hfree(void *addr, struct rt_heap_t *heap)
  */
 
 /**
- * Allocate a chunk of the global real time heap in kernel/user space. Since 
+ * Allocate a chunk of the global real time heap in kernel/user space. Since
  * it is named it can be retrieved and shared everywhere.
  *
  * @internal
- * 
- * rt_named_malloc is used to allocate a sharable piece of the global real 
+ *
+ * rt_named_malloc is used to allocate a sharable piece of the global real
  * time heap.
  *
  * @param name is an unsigned long identifier;
- * 
+ *
  * @param size is the amount of required shared memory;
- * 
+ *
  * Since @a name can be a clumsy identifier, services are provided to
  * convert 6 characters identifiers to unsigned long, and vice versa.
- * 
+ *
  * @see nam2num() and num2nam().
- * 
+ *
  * It must be remarked that only the very first call does a real allocation,
  * any subsequent call to allocate with the same name will just increase the
- * usage count and return the appropriate pointer to the already allocated 
- * memory having the same name. So if one is really sure that the named chunk 
- * has been allocated already the size parameter is not used and can be 
+ * usage count and return the appropriate pointer to the already allocated
+ * memory having the same name. So if one is really sure that the named chunk
+ * has been allocated already the size parameter is not used and can be
  * assigned any value.
  *
  * @returns a valid address on succes, 0 on failure.
@@ -339,33 +363,36 @@ void *rt_named_malloc(unsigned long name, int size)
 {
 	void *mem_ptr;
 
-	if ((mem_ptr = rt_get_adr_cnt(name))) {
+	if ((mem_ptr = rt_get_adr_cnt(name)))
+	{
 		return mem_ptr;
 	}
-	if ((mem_ptr = _rt_halloc(size, &rt_smp_linux_task->heap[GLOBAL]))) {
-		if (rt_register(name, mem_ptr, IS_HPCK, 0)) {
-                        return mem_ptr;
-                }
-                rt_hfree(mem_ptr);
+	if ((mem_ptr = _rt_halloc(size, &rt_smp_linux_task->heap[GLOBAL])))
+	{
+		if (rt_register(name, mem_ptr, IS_HPCK, 0))
+		{
+			return mem_ptr;
+		}
+		rt_hfree(mem_ptr);
 	}
 	return NULL;
 }
 
 /**
- * Free a named chunk of the global real time heap. 
+ * Free a named chunk of the global real time heap.
  *
  * @internal
- * 
+ *
  * rt_named_free is used to free a previously allocated chunk of the global
  * real time heap.
  *
  * @param adr is the addr of the memory to be freed.
  *
- * Analogously to what done by all the named allocation functions the freeing 
+ * Analogously to what done by all the named allocation functions the freeing
  * calls of named memory chunks have just the effect of decrementing its usage
- * count, any shared piece of the global heap being freed only when the last 
+ * count, any shared piece of the global heap being freed only when the last
  * is done, as that is the one the really frees any allocated memory.
- * So one must be carefull not to use rt_free on a named global heap chunk, 
+ * So one must be carefull not to use rt_free on a named global heap chunk,
  * since it will force its unconditional immediate freeing.
  *
  */
@@ -375,13 +402,14 @@ void rt_named_free(void *adr)
 	unsigned long name;
 
 	name = rt_get_name(adr);
-	if (!rt_drg_on_name_cnt(name)) {
+	if (!rt_drg_on_name_cnt(name))
+	{
 		_rt_hfree(adr, &rt_smp_linux_task->heap[GLOBAL]);
 	}
 }
 
-/* 
- * we must care of this because LXRT callable functions are set as non 
+/*
+ * we must care of this because LXRT callable functions are set as non
  * blocking, so they are called directly.
  */
 #define RTAI_TASK(return_instr) \
@@ -415,13 +443,16 @@ static inline void *rt_named_halloc_typed(unsigned long name, int size, int htyp
 	void *mem_ptr;
 
 	RTAI_TASK(return NULL);
-	if ((mem_ptr = rt_get_adr_cnt(name))) {
+	if ((mem_ptr = rt_get_adr_cnt(name)))
+	{
 		return task->heap[htype].uadr + (mem_ptr - task->heap[htype].kadr);
 	}
-	if ((mem_ptr = _rt_halloc(size, &task->heap[htype]))) {
-		if (rt_register(name, task->heap[htype].kadr + (mem_ptr - task->heap[htype].uadr), IS_HPCK, 0)) {
-                        return mem_ptr;
-                }
+	if ((mem_ptr = _rt_halloc(size, &task->heap[htype])))
+	{
+		if (rt_register(name, task->heap[htype].kadr + (mem_ptr - task->heap[htype].uadr), IS_HPCK, 0))
+		{
+			return mem_ptr;
+		}
 		_rt_hfree(mem_ptr, &task->heap[htype]);
 	}
 	return NULL;
@@ -434,25 +465,26 @@ static inline void rt_named_hfree_typed(void *adr, int htype)
 
 	RTAI_TASK(return);
 	name = rt_get_name(task->heap[htype].kadr + (adr - task->heap[htype].uadr));
-	if (!rt_drg_on_name_cnt(name)) {
+	if (!rt_drg_on_name_cnt(name))
+	{
 		_rt_hfree(adr, &task->heap[htype]);
 	}
 }
 
 /**
- * Allocate a chunk of a group real time heap in kernel/user space. Since 
+ * Allocate a chunk of a group real time heap in kernel/user space. Since
  * it is not named there is no chance to retrieve and share it elsewhere.
  *
  * @internal
- * 
- * rt_halloc is used to allocate a non sharable piece of a group real time 
+ *
+ * rt_halloc is used to allocate a non sharable piece of a group real time
  * heap.
  *
  * @param size is the size of the requested memory in bytes;
  *
  * A process/task must have opened the real time group heap to use and can use
- * just one real time group heap. Be careful and avoid opening more than one 
- * group real time heap per process/task. If more than one is opened then just 
+ * just one real time group heap. Be careful and avoid opening more than one
+ * group real time heap per process/task. If more than one is opened then just
  * the last will used.
  *
  * @returns the pointer to the allocated memory, 0 on failure.
@@ -468,8 +500,8 @@ RTAI_SYSCALL_MODE void *rt_halloc(int size)
  * Free a chunk of a group real time heap.
  *
  * @internal
- * 
- * rt_hfree is used to free a previously allocated chunck of a group real 
+ *
+ * rt_hfree is used to free a previously allocated chunck of a group real
  * time heap.
  *
  * @param adr is the addr of the memory to be freed.
@@ -482,29 +514,29 @@ RTAI_SYSCALL_MODE void rt_hfree(void *adr)
 }
 
 /**
- * Allocate a chunk of a group real time heap in kernel/user space. Since 
- * it is named it can be retrieved and shared everywhere among the group 
+ * Allocate a chunk of a group real time heap in kernel/user space. Since
+ * it is named it can be retrieved and shared everywhere among the group
  * peers, i.e all processes/tasks that have opened the same group heap.
  *
  * @internal
- * 
- * rt_named_halloc is used to allocate a sharable piece of a group real 
+ *
+ * rt_named_halloc is used to allocate a sharable piece of a group real
  * time heap.
  *
  * @param name is an unsigned long identifier;
- * 
+ *
  * @param size is the amount of required shared memory;
- * 
+ *
  * Since @a name can be a clumsy identifier, services are provided to
  * convert 6 characters identifiers to unsigned long, and vice versa.
- * 
+ *
  * @see nam2num() and num2nam().
- * 
+ *
  * A process/task must have opened the real time group heap to use and can use
  * just one real time group heap. Be careful and avoid opening more than one
  * group real time heap per process/task. If more than one is opened then just
- * the last will used. It must be remarked that only the very first call does 
- * a real allocation, any subsequent call with the same name will just 
+ * the last will used. It must be remarked that only the very first call does
+ * a real allocation, any subsequent call with the same name will just
  * increase the usage count and receive the appropriate pointer to the already
  * allocated memory having the same name.
  *
@@ -518,20 +550,20 @@ RTAI_SYSCALL_MODE void *rt_named_halloc(unsigned long name, int size)
 }
 
 /**
- * Free a chunk of a group real time heap. 
+ * Free a chunk of a group real time heap.
  *
  * @internal
- * 
+ *
  * rt_named_hfree is used to free a previously allocated chunk of the global
  * real time heap.
  *
  * @param adr is the address of the memory to be freed.
  *
- * Analogously to what done by all the named allocation functions the freeing 
+ * Analogously to what done by all the named allocation functions the freeing
  * calls of named memory chunks have just the effect of decrementing a usage
- * count, any shared piece of the global heap being freed only when the last 
+ * count, any shared piece of the global heap being freed only when the last
  * is done, as that is the one the really frees any allocated memory.
- * So one must be carefull not to use rt_hfree on a named global heap chunk, 
+ * So one must be carefull not to use rt_hfree on a named global heap chunk,
  * since it will force its unconditional immediate freeing.
  *
  */
@@ -552,7 +584,8 @@ static RTAI_SYSCALL_MODE void *rt_malloc_usp(int size)
 
 static RTAI_SYSCALL_MODE void rt_free_usp(void *adr)
 {
-	if (rtai_global_heap_adr) {
+	if (rtai_global_heap_adr)
+	{
 		rt_hfree_typed(adr, GLOBAL);
 	}
 }
@@ -564,7 +597,8 @@ static RTAI_SYSCALL_MODE void *rt_named_malloc_usp(unsigned long name, int size)
 
 static RTAI_SYSCALL_MODE void rt_named_free_usp(void *adr)
 {
-	if (rtai_global_heap_adr) {
+	if (rtai_global_heap_adr)
+	{
 		rt_named_hfree_typed(adr, GLOBAL);
 	}
 }
@@ -579,15 +613,19 @@ static RTAI_SYSCALL_MODE void rt_set_heap(unsigned long name, void *adr)
 	hptr = ALIGN2PAGE(heap);
 	size = ((abs(rt_get_type(name)) - sizeof(rtheap_t) - (hptr - heap)) & PAGE_MASK);
 	heap = hptr + size;
-	if (!atomic_cmpxchg((atomic_t *)hptr, 0, name)) {
+	if (!atomic_cmpxchg((atomic_t *)hptr, 0, name))
+	{
 		rtheap_init(heap, hptr, size, PAGE_SIZE, 0);
 	}
 	RTAI_TASK(return);
-	if (name == GLOBAL_HEAP_ID) {
+	if (name == GLOBAL_HEAP_ID)
+	{
 		task->heap[GLOBAL].heap = &rtai_global_heap;
 		task->heap[GLOBAL].kadr = rtai_global_heap_adr;
 		task->heap[GLOBAL].uadr = adr;
-	} else {
+	}
+	else
+	{
 		task->heap[SPECIFIC].heap = heap;
 		task->heap[SPECIFIC].kadr = hptr;
 		task->heap[SPECIFIC].uadr = adr;
@@ -595,17 +633,17 @@ static RTAI_SYSCALL_MODE void rt_set_heap(unsigned long name, void *adr)
 }
 
 /**
- * Open/create a named group real time heap to be shared inter-intra kernel 
+ * Open/create a named group real time heap to be shared inter-intra kernel
  * modules and Linux processes.
  *
  * @internal
- * 
+ *
  * rt_heap_open is used to allocate open/create a shared real time heap.
- * 
+ *
  * @param name is an unsigned long identifier;
- * 
+ *
  * @param size is the amount of required shared memory;
- * 
+ *
  * @param suprt is the kernel allocation method to be used, it can be:
  * - USE_VMALLOC, use vmalloc;
  * - USE_GFP_KERNEL, use kmalloc with GFP_KERNEL;
@@ -614,15 +652,15 @@ static RTAI_SYSCALL_MODE void rt_set_heap(unsigned long name, void *adr)
  *
  * Since @a name can be a clumsy identifier, services are provided to
  * convert 6 characters identifiers to unsigned long, and vice versa.
- * 
+ *
  * @see nam2num() and num2nam().
- * 
- * It must be remarked that only the very first open does a real allocation, 
- * any subsequent one with the same name from anywhere will just map the area 
- * to the user space, or return the related pointer to the already allocated 
- * memory in kernel space. In any case the functions return a pointer to the 
+ *
+ * It must be remarked that only the very first open does a real allocation,
+ * any subsequent one with the same name from anywhere will just map the area
+ * to the user space, or return the related pointer to the already allocated
+ * memory in kernel space. In any case the functions return a pointer to the
  * allocated memory, appropriately mapped to the memory space in use.
- * Be careful and avoid opening more than one group heap per process/task, if 
+ * Be careful and avoid opening more than one group heap per process/task, if
  * more than one is opened then just the last will used.
  *
  * @returns a valid address on succes, 0 on failure.
@@ -632,7 +670,8 @@ static RTAI_SYSCALL_MODE void rt_set_heap(unsigned long name, void *adr)
 void *rt_heap_open(unsigned long name, int size, int suprt)
 {
 	void *adr;
-	if ((adr = rt_shm_alloc(name, ((size - 1) & PAGE_MASK) + PAGE_SIZE + sizeof(rtheap_t), suprt))) {
+	if ((adr = rt_shm_alloc(name, ((size - 1) & PAGE_MASK) + PAGE_SIZE + sizeof(rtheap_t), suprt)))
+	{
 		rt_set_heap(name, adr);
 		return adr;
 	}
@@ -641,22 +680,23 @@ void *rt_heap_open(unsigned long name, int size, int suprt)
 
 #endif
 
-struct rt_native_fun_entry rt_shm_entries[] = {
-        { { 0, rt_shm_alloc_usp },		SHM_ALLOC },
-        { { 0, rt_shm_free },			SHM_FREE },
-        { { 0, rt_shm_size },			SHM_SIZE },
+struct rt_native_fun_entry rt_shm_entries[] =
+{
+	{ { 0, rt_shm_alloc_usp },		SHM_ALLOC },
+	{ { 0, rt_shm_free },			SHM_FREE },
+	{ { 0, rt_shm_size },			SHM_SIZE },
 #ifdef CONFIG_RTAI_MALLOC
-        { { 0, rt_set_heap },			HEAP_SET},
-        { { 0, rt_halloc },			HEAP_ALLOC },
-        { { 0, rt_hfree },			HEAP_FREE },
-        { { 0, rt_named_halloc },		HEAP_NAMED_ALLOC },
-        { { 0, rt_named_hfree },		HEAP_NAMED_FREE },
-        { { 0, rt_malloc_usp },			MALLOC },
-        { { 0, rt_free_usp },			FREE },
-        { { 0, rt_named_malloc_usp },		NAMED_MALLOC },
-        { { 0, rt_named_free_usp },		NAMED_FREE },
+	{ { 0, rt_set_heap },			HEAP_SET},
+	{ { 0, rt_halloc },			HEAP_ALLOC },
+	{ { 0, rt_hfree },			HEAP_FREE },
+	{ { 0, rt_named_halloc },		HEAP_NAMED_ALLOC },
+	{ { 0, rt_named_hfree },		HEAP_NAMED_FREE },
+	{ { 0, rt_malloc_usp },			MALLOC },
+	{ { 0, rt_free_usp },			FREE },
+	{ { 0, rt_named_malloc_usp },		NAMED_MALLOC },
+	{ { 0, rt_named_free_usp },		NAMED_FREE },
 #endif
-        { { 0, 0 },				000 }
+	{ { 0, 0 },				000 }
 };
 
 extern int set_rt_fun_entries(struct rt_native_fun_entry *entry);
@@ -671,18 +711,21 @@ static class_t *shm_class = NULL;
 int __rtai_shm_init (void)
 {
 #if USE_UDEV_CLASS
-	if ((shm_class = class_create(THIS_MODULE, "rtai_shm")) == NULL) {
+	if ((shm_class = class_create(THIS_MODULE, "rtai_shm")) == NULL)
+	{
 		printk("RTAI-SHM: cannot create class.\n");
 		return -EBUSY;
 	}
-	if (CLASS_DEVICE_CREATE(shm_class, MKDEV(MISC_MAJOR, RTAI_SHM_MISC_MINOR), NULL, "rtai_shm") == NULL) {
+	if (CLASS_DEVICE_CREATE(shm_class, MKDEV(MISC_MAJOR, RTAI_SHM_MISC_MINOR), NULL, "rtai_shm") == NULL)
+	{
 		printk("RTAI-SHM: cannot attach class.\n");
 		class_destroy(shm_class);
 		return -EBUSY;
 	}
 #endif
 
-	if (misc_register(&rtai_shm_dev) < 0) {
+	if (misc_register(&rtai_shm_dev) < 0)
+	{
 		printk("***** UNABLE TO REGISTER THE SHARED MEMORY DEVICE (miscdev minor: %d) *****\n", RTAI_SHM_MISC_MINOR);
 		return -EBUSY;
 	}
@@ -691,7 +734,7 @@ int __rtai_shm_init (void)
 	rt_register(GLOBAL_HEAP_ID, rtai_global_heap_adr, rtai_global_heap_size, 0);
 	rt_smp_linux_task->heap[GLOBAL].heap = &rtai_global_heap;
 	rt_smp_linux_task->heap[GLOBAL].kadr =
-	rt_smp_linux_task->heap[GLOBAL].uadr = rtai_global_heap_adr;
+		rt_smp_linux_task->heap[GLOBAL].uadr = rtai_global_heap_adr;
 #else
 	printk("***** WARNING: GLOBAL HEAP NEITHER SHARABLE NOR USABLE FROM USER SPACE (use the vmalloc option for RTAI malloc) *****\n");
 #endif
@@ -702,20 +745,23 @@ int __rtai_shm_init (void)
 void __rtai_shm_exit (void)
 {
 	extern int max_slots;
-        int slot;
-        struct rt_registry_entry entry;
+	int slot;
+	struct rt_registry_entry entry;
 
 #ifdef CONFIG_RTAI_MALLOC_VMALLOC
 	rt_drg_on_name_cnt(GLOBAL_HEAP_ID);
 #endif
-	for (slot = 1; slot <= max_slots; slot++) {
-		if (rt_get_registry_slot(slot, &entry)) {
-			if (abs(entry.type) >= PAGE_SIZE) {
-        			char name[8];
+	for (slot = 1; slot <= max_slots; slot++)
+	{
+		if (rt_get_registry_slot(slot, &entry))
+		{
+			if (abs(entry.type) >= PAGE_SIZE)
+			{
+				char name[8];
 				while (_rt_shm_free(entry.name, entry.type));
-                        	num2nam(entry.name, name);
-	                        rt_printk("\nSHM_CLEANUP_MODULE releases: '%s':0x%lx:%lu (%d).\n", name, entry.name, entry.name, entry.type);
-                        }
+				num2nam(entry.name, name);
+				rt_printk("\nSHM_CLEANUP_MODULE releases: '%s':0x%lx:%lu (%d).\n", name, entry.name, entry.name, entry.type);
+			}
 		}
 	}
 	reset_rt_fun_entries(rt_shm_entries);
