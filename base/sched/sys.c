@@ -400,7 +400,7 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 		 * The next two lines of code do a lot. It makes possible to extend the use of
 		 * USP to any other real time module service in user space, both for soft and
 		 * hard real time. Concept contributed and copyrighted by: Giuseppe Renoldi
-		 * <giuseppe@renoldi.org>.
+		 * (giuseppe@renoldi.org).
 		 */
 		if (unlikely(!(funcm = rt_fun_ext[INDX(lxsrq)])))
 		{
@@ -620,6 +620,12 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 		}
 		return 0;
 	}
+	case PRINT_TO_SCREEN:
+	{
+		struct arg { char *display; long nch; };
+		arg0.i = rtai_print_to_screen("%s", larg->display);
+		return arg0.ll;
+	}
 
 	case PRINTK:
 	{
@@ -772,16 +778,26 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 	case KERNEL_CALIBRATOR:
 	{
 		struct arg { long period, loops, Latency; };
-		stop_rt_timer();
 #if !CONFIG_RTAI_BUSY_TIME_ALIGN
+		extern int rt_smp_half_tick[];
+		int cpu;
 		tuned.latency = imuldiv(abs((int)larg->Latency), tuned.cpu_freq, 1000000000);
 		if (tuned.latency < tuned.setup_time_TIMER_CPUNIT)
 		{
 			tuned.latency = tuned.setup_time_TIMER_CPUNIT;
 		}
+		for (cpu = 0; cpu < NR_RT_CPUS; cpu++)
+		{
+			rt_smp_half_tick[cpu] = tuned.latency/2;
+		}
 #endif
-		start_rt_timer(0);
 		return larg->Latency < 0 ? 0 : kernel_calibrator_spv(larg->period, larg->loops, task);
+	}
+
+	case GET_CPU_FREQ:
+	{
+		extern struct calibration_data rtai_tunables;
+		return rtai_tunables.cpu_freq;
 	}
 
 	default:

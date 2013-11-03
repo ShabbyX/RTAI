@@ -2,11 +2,11 @@ dnl Process this file with autoconf to create configure
 
 AC_PREREQ(2.68)
 
-AC_INIT([RTAI], [3.9.1-unofficial], [rtai@rtai.org])
+AC_INIT([RTAI], [4.0.0-unofficial], [rtai@rtai.org])
 
-CONFIG_RTAI_VERSION_MAJOR=3
-CONFIG_RTAI_VERSION_MINOR=9
-CONFIG_RTAI_REVISION_LEVEL=1
+CONFIG_RTAI_VERSION_MAJOR=4
+CONFIG_RTAI_VERSION_MINOR=0
+CONFIG_RTAI_REVISION_LEVEL=0
 
 AC_CONFIG_HEADERS(rtai_config.h)
 AC_CONFIG_AUX_DIR([bin])
@@ -668,6 +668,36 @@ if test x$CONFIG_RTAI_SCHED_APIC_LATENCY = x ; then
 fi
 AC_MSG_RESULT($CONFIG_RTAI_SCHED_APIC_LATENCY)
 
+AC_MSG_CHECKING(for user busy align ret delay)
+AC_ARG_ENABLE(user-busy-align-ret-delay,
+	[ --user-busy-align-ret-delay	Set user busy align ret delay],
+	[case "$enableval" in
+ changequote(,)dnl
+	[0-9]*) CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY=$enableval ;;
+ changequote([,])dnl
+	*) AC_MSG_ERROR([Bad argument to option: --user-busy-align-ret-delay=<nanoseconds>]) ;;
+	esac])
+if test x$CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY = x ; then
+  # Use a reasonable default if unset
+  CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY=0
+fi
+AC_MSG_RESULT($CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY)
+
+AC_MSG_CHECKING(for kernel busy align ret delay)
+AC_ARG_ENABLE(kernel-busy-align-ret-delay,
+	[ --kernel-busy-align-ret-delay	Set kernel busy align ret delay],
+	[case "$enableval" in
+ changequote(,)dnl
+	[0-9]*) CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY=$enableval ;;
+ changequote([,])dnl
+	*) AC_MSG_ERROR([Bad argument to option: --kernel-busy-align-ret-delay=<nanoseconds>]) ;;
+	esac])
+if test x$CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY = x ; then
+  # Use a reasonable default if unset
+  CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY=0
+fi
+AC_MSG_RESULT($CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY)
+
 AC_MSG_CHECKING(for maximum number of LXRT slots)
 AC_ARG_ENABLE(sched-lxrt-numslots,
 	[ --enable-sched-lxrt-numslots	Set maximum number of LXRT slots],
@@ -1000,6 +1030,11 @@ AC_ARG_ENABLE(tune-tsc-sync,
 	*) unset CONFIG_RTAI_TUNE_TSC_SYNC ;;
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_TUNE_TSC_SYNC:-no})
+
+dnl add arch specific tests
+if test x$CONFIG_X86_TSC = xy ; then
+	AC_DEFINE(CONFIG_RTAI_TSC,1,[Use TSC in user space])
+fi
 
 dnl
 dnl Check for additional build options.
@@ -1407,6 +1442,8 @@ case $CONFIG_RTAI_BUSY_TIME_ALIGN in
 	n|*) CONFIG_RTAI_BUSY_TIME_ALIGN=0 ;;
 esac
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_BUSY_TIME_ALIGN,$CONFIG_RTAI_BUSY_TIME_ALIGN,[Kconfig])
+AC_DEFINE_UNQUOTED(CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY,$CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY,[Kconfig])
+AC_DEFINE_UNQUOTED(CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY,$CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY,[Kconfig])
 
 case $CONFIG_RTAI_DONT_DISPATCH_CORE_IRQS in
 	y) CONFIG_RTAI_DONT_DISPATCH_CORE_IRQS=1 ;;

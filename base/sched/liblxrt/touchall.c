@@ -135,7 +135,7 @@ int lock_all(int stk, int heap)
 void dump_malloc_stats(void)
 {
 	struct mallinfo mi;
-	extern int rt_printk(const char *fmt, ...);
+	extern int rtai_print_to_screen(const char *fmt, ...);
 //	memset(&mi, 0, sizeof(mi));
 	mi = mallinfo();
 

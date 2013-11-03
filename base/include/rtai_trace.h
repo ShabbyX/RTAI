@@ -220,12 +220,12 @@ typedef struct _trace_rtai_switchto_rt
 	uint8_t   cpu_id;         /* The CPUID being switched to RT */
 } LTT_PACKED_STRUCT trace_rtai_switchto_rt;
 #define TRACE_RTAI_SWITCHTO_RT(ID) \
-	   do \
-	   {\
-	   trace_rtai_switchto_rt switch_event; \
-	   switch_event.cpu_id = (uint8_t) ID; \
-	   rt_trace_event(TRACE_RTAI_EV_SWITCHTO_RT, &switch_event); \
-	   } while(0)
+           do \
+           {\
+           trace_rtai_switchto_rt switch_event; \
+           switch_event.cpu_id = (uint8_t) ID; \
+           rt_trace_event(TRACE_RTAI_EV_SWITCHTO_RT, &switch_event); \
+           } while(0)
 
 /*  TRACE_RTAI_SCHED_CHANGE */
 typedef struct _trace_rtai_sched_change

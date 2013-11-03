@@ -206,6 +206,8 @@ RTAI_SYSCALL_MODE int rtf_put(unsigned int fifo,	/* RT-FIFO */
 			      void * buf,		/* buffer address */
 			      int count		/* number of bytes to write */);
 
+
+
 /* Write to an RT-FIFO, over writing if there is not enough space.
  *
  * Try to write count bytes to an FIFO. Returns 0.
@@ -214,6 +216,7 @@ RTAI_SYSCALL_MODE int rtf_put(unsigned int fifo,	/* RT-FIFO */
 RTAI_SYSCALL_MODE int rtf_ovrwr_put(unsigned int fifo,	/* RT-FIFO */
 				    void * buf,		/* buffer address */
 				    int count		/* number of bytes to write */);
+
 
 /* Write atomically to an RT-FIFO.
  *
@@ -234,6 +237,7 @@ RTAI_SYSCALL_MODE int rtf_get(unsigned int fifo,	/* RT-FIFO */
 			      void * buf, 		/* buffer address */
 			      int count		/* number of bytes to read */);
 
+
 /* Atomically read from an RT-FIFO.
  *
  * Try to read count bytes in a block from an FIFO. Returns the number of bytes read.
@@ -242,6 +246,7 @@ RTAI_SYSCALL_MODE int rtf_get(unsigned int fifo,	/* RT-FIFO */
 RTAI_SYSCALL_MODE int rtf_get_if(unsigned int fifo,	/* RT-FIFO */
 				 void * buf, 		/* buffer address */
 				 int count		/* number of bytes to read */);
+
 
 /*
  * Preview the an RT-FIFO content.
@@ -257,6 +262,7 @@ int rtf_evdrp(unsigned int fifo,	/* RT-FIFO */
 
 RTAI_SYSCALL_MODE int rtf_sem_init(unsigned int fifo,	/* RT-FIFO */
 				   int value			/* initial semaphore value */);
+
 
 /* Post to an RT-FIFO semaphore.
  *

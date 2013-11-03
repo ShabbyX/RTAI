@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2008 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright (C) 1999-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -95,7 +95,7 @@ static unsigned long rt_smp_linux_cr0[NR_RT_CPUS];
 
 static RT_TASK *rt_smp_fpu_task[NR_RT_CPUS];
 
-static int rt_smp_half_tick[NR_RT_CPUS];
+int rt_smp_half_tick[NR_RT_CPUS];
 
 static int rt_smp_oneshot_running[NR_RT_CPUS];
 
@@ -692,7 +692,7 @@ do { \
 #define pend_wake_up_hts(lnxtsk, cpuid) \
 do { \
 	wake_up_hts[cpuid].task[wake_up_hts[cpuid].in++ & (MAX_WAKEUP_SRQ - 1)] = lnxtsk; \
-	hal_pend_uncond(wake_up_srq[cpuid].srq, cpuid); \
+	hal_pend_uncond(wake_up_srq[0].srq, cpuid); \
 } while (0)
 
 static inline void force_current_soft(RT_TASK *rt_current, int cpuid)
@@ -886,20 +886,30 @@ if (fire_shot) { \
 	int delay; \
 	ONESHOT_DELAY(SHOT_FIRED); \
 	if (delay > tuned.setup_time_TIMER_CPUNIT) { \
-		rt_set_timer_delay(imuldiv(delay, TIMER_FREQ, tuned.cpu_freq));\
 		timer_shot_fired = 1; \
+		rt_set_timer_delay(imuldiv(delay, TIMER_FREQ, tuned.cpu_freq));\
 	} else { \
-		rt_times.intr_time = rt_time_h + tuned.setup_time_TIMER_CPUNIT;\
 		timer_shot_fired = -1;\
+		rt_times.intr_time = rt_time_h + tuned.setup_time_TIMER_CPUNIT;\
 	} \
 } \
 } while (0)
 
 #define CALL_TIMER_HANDLER() \
-	do { if (timer_shot_fired < 0) rt_timer_handler(); } while (0)
+	do { \
+		if (timer_shot_fired < 0) { \
+			timer_shot_fired = 1; \
+			rt_timer_handler(); \
+		} \
+	} while (0)
 
 #define REDO_TIMER_HANDLER() \
-	do { if (timer_shot_fired < 0) goto redo_timer_handler; } while (0)
+	do { \
+		if (timer_shot_fired < 0) { \
+			timer_shot_fired = 1; \
+			goto redo_timer_handler; \
+		} \
+	} while (0)
 
 #define FIRE_IMMEDIATE_LINUX_TIMER_SHOT() \
 do { \
@@ -1045,7 +1055,15 @@ void rt_schedule(void)
 		{
 			if (!(new_task = switch_rtai_tasks(rt_current, new_task, cpuid)))
 			{
-				goto sched_exit;
+#if CONFIG_RTAI_BUSY_TIME_ALIGN && (RTAI_KERN_BUSY_ALIGN_RET_DELAY > 0)
+				if (rt_current->busy_time_align)
+				{
+					RTIME resume_time = rt_current->resume_time - tuned.kern_latency_busy_align_ret_delay;
+					rt_current->busy_time_align = 0;
+					while(rtai_rdtsc() < resume_time);
+				}
+#endif
+				goto ksched_exit;
 			}
 		}
 		rt_smp_current[cpuid] = new_task;
@@ -1123,15 +1141,16 @@ sched_soft:
 		}
 	}
 sched_exit:
-	CALL_TIMER_HANDLER();
-#if CONFIG_RTAI_BUSY_TIME_ALIGN
+#if CONFIG_RTAI_BUSY_TIME_ALIGN && (RTAI_USER_BUSY_ALIGN_RET_DELAY > 0)
 	if (rt_current->busy_time_align)
 	{
-		RTIME resume_time = rt_current->resume_time - tuned.latency_busy_align_ret_delay;
+		RTIME resume_time = rt_current->resume_time - tuned.user_latency_busy_align_ret_delay;
 		rt_current->busy_time_align = 0;
 		while(rtai_rdtsc() < resume_time);
 	}
 #endif
+ksched_exit:
+	CALL_TIMER_HANDLER();
 	sched_get_global_lock(cpuid);
 }
 
@@ -1443,10 +1462,12 @@ static irqreturn_t recover_jiffies(int irq, void *dev_id, struct pt_regs *regs)
 
 #endif
 
+
 int rt_is_hard_timer_running(void)
 {
 	return rt_sched_timed;
 }
+
 
 void rt_set_periodic_mode(void)
 {
@@ -2097,16 +2118,7 @@ static inline void fast_schedule(RT_TASK *new_task, struct task_struct *lnxtsk, 
    session, process-group, tty. */
 
 void rt_daemonize(void) { }
-
-#define WAKE_UP_TASKs(klist) \
-do { \
-	struct klist_t *p = &klist[cpuid]; \
-	struct task_struct *task; \
-	while (p->out != p->in) { \
-		task = p->task[p->out++ & (MAX_WAKEUP_SRQ - 1)]; \
-		wake_up_process(task); \
-	} \
-} while (0)
+EXPORT_SYMBOL(rt_daemonize);
 
 void steal_from_linux(RT_TASK *rt_task)
 {
@@ -2222,6 +2234,14 @@ void give_back_to_linux(RT_TASK *rt_task, int keeprio)
 	return;
 }
 
+#define WAKE_UP_TASKs(klist) \
+do { \
+	struct klist_t *p = &klist[cpuid]; \
+	while (p->out != p->in) { \
+		wake_up_process(p->task[p->out++ & (MAX_WAKEUP_SRQ - 1)]); \
+	} \
+} while (0)
+
 static void wake_up_srq_handler(unsigned srq)
 {
 	int cpuid = rtai_cpuid();
@@ -2279,10 +2299,12 @@ static inline void rt_signal_wake_up(RT_TASK *task)
 static int lxrt_intercept_schedule_tail (unsigned event, void *nothing)
 {
 	int cpuid = rtai_cpuid();
-	struct klist_t *klistp = &wake_up_sth[cpuid];
-	while (klistp->out != klistp->in)
 	{
-		fast_schedule(klistp->task[klistp->out++ & (MAX_WAKEUP_SRQ - 1)], current, cpuid);
+		struct klist_t *klistp = &wake_up_sth[cpuid];
+		while (klistp->out != klistp->in)
+		{
+			fast_schedule(klistp->task[klistp->out++ & (MAX_WAKEUP_SRQ - 1)], current, cpuid);
+		}
 	}
 	return 0;
 }
@@ -2485,6 +2507,7 @@ static int rtai_read_sched(char *page, char **start, off_t off, int count,
 
 }  /* End function - rtai_read_sched */
 
+
 static int rtai_proc_sched_register(void)
 {
 	struct proc_dir_entry *proc_sched_ent;
@@ -2498,6 +2521,7 @@ static int rtai_proc_sched_register(void)
 	proc_sched_ent->read_proc = rtai_read_sched;
 	return(0);
 }  /* End function - rtai_proc_sched_register */
+
 
 static void rtai_proc_sched_unregister(void)
 {
@@ -2721,6 +2745,23 @@ static int __rtai_lxrt_init(void)
 		rt_linux_task.resq.task = NULL;
 	}
 	tuned.latency = imuldiv(Latency, tuned.cpu_freq, 1000000000);
+	tuned.kern_latency_busy_align_ret_delay = imuldiv(RTAI_KERN_BUSY_ALIGN_RET_DELAY, tuned.cpu_freq, 1000000000);
+	tuned.user_latency_busy_align_ret_delay = imuldiv(RTAI_USER_BUSY_ALIGN_RET_DELAY, tuned.cpu_freq, 1000000000);
+	SetupTimeTIMER = rtai_calibrate_hard_timer();
+	tuned.setup_time_TIMER_UNIT = imuldiv(SetupTimeTIMER, TIMER_FREQ, 1000000000);
+	if (tuned.setup_time_TIMER_UNIT < 1)
+	{
+		tuned.setup_time_TIMER_UNIT = 1;
+		tuned.setup_time_TIMER_CPUNIT = (tuned.cpu_freq + TIMER_FREQ/2)/TIMER_FREQ;
+	}
+	else
+	{
+		tuned.setup_time_TIMER_CPUNIT = imuldiv(SetupTimeTIMER, tuned.cpu_freq, 1000000000);
+	}
+	if (tuned.latency < tuned.setup_time_TIMER_CPUNIT)
+	{
+		tuned.latency = tuned.setup_time_TIMER_CPUNIT;
+	}
 	tuned.timers_tol[0] = 0;
 	oneshot_span = ONESHOT_SPAN;
 	satdlay = oneshot_span - tuned.latency;

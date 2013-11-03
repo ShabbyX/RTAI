@@ -1,5 +1,11 @@
 		      <*> RTAI_KCOMEDI IN USER SPACE <*>
 
+This release of RTAI is intended to be mated to the latest COMEDI git
+repository, as found at: www.comedi.org. Warm thanks are due to Frank Mori Hess
+<fmhess@users.sourceforge.net> and Ian Abbott <abbotti@mev.co.uk>, for their
+help and suggestions about stabilizing on such a choice, taking the chance
+of these thanks to recall also the one who initiated it all: David Schleef.
+
 This porting of KCOMEDI to user space is done using the standard extension
 feature of LXRT and makes KCOMEDI symmetrically usable in kernel and user
 space within RTAI, in soft/hard real time. To use KCOMEDI in user space you
@@ -171,7 +177,8 @@ arguments and return values being the same of rt_comedi_command_data_read.
 
 Another useful service is:
 int rt_comedi_trigger(void *dev, unsigned int subdev);
-It is based on an easy set up of a wrapper, using the appropriate comedi_do_insnfor the actual triggering action.
+It is based on an easy set up of a wrapper, using the appropriate
+comedi_do_insn for the actual triggering action.
 
 Finally the function:
 int rt_comedi_do_insnlist(void *dev, comedi_insnlist *ilist);
@@ -232,48 +239,5 @@ must have insmoded: all of the modules needed for COMEDI, rtai_netrpc and
 rtai_comedi.
 There are examples in RTAI "showroom" CVS, "user/comedi" that should help
 in depicting the use of the above explained extensions.
-
-
-		 <*> USING LINUX NATIVE COMEDI DISTRIBUTION <*>
-
-Starting circa linux-2.6.29 a native COMEDI distribution can be found in
-Linux own subdirectory "drivers/staging/comedi". So there is no need to
-install COMEDI, as found at www.comedi.org, anew anymore. Moreover its use
-will likely make one surer to have the latest COMEDI update available.
-What follows explains a prompt, likely provisional, way to exploit such a
-possibility. One can expect it will stabilize in RTAI hal patches eventually.
-At the moment it is supported up to Linux-2.6.34, as the latest Linux releases
-have change the basic COMEDI infrastructure a lot and need further work on the
-RTAI side.
-Notice that it must be applied to a kernel patched for RTAI already.
-
-			      - WHAT TO DO -
-
-In Linux:
-
-1 - cd mylinux/drivers/staging/comedi/, where "mylinux" is the path to the
-    elected Linux installation directory. Linux version should be >= 2.6.29
-    and <= 2.6.34.
-2 - sh /rtaidir/addons/comedi/patchlinuxcomedi, where "rtaidir" is the path
-    to the elected RTAI home directory, not the one you'll install it
-3 - Go to the elected Linux installation directory, e.g. cd ../../..
-4 - Configure Linux to prepare COMEDI modules; they are in the staging part
-    of Linux drivers configuration
-5 - Make
-
-
-In RTAI:
-
-1  - Nothing special, simply configure RTAI by setting the COMEDI installation
-     directory to "mylinux/drivers/staging/comedi/" and make it as usual
-2 -  Basic COMEDI modules (comedi.ko, kcomedilib.ko, comedi_fc.ko) must be i
-     installed first, followed by all of the needed RTAI modules, including
-     rtai_netrpc.ko if the distributed COMEDI support has to be used,
-     rtai_comedi.ko being the very last to install. Then specific drivers
-     modules follows.
-     Alternative modules installation orders are possible, but the one above
-     should be the best. Beware using depmode, because it does not know RTAI
-     will use dynamic linking through pointers. So it might work but module
-     removal can create problems by cutting still needed links.
 
 Paolo Mantegazza

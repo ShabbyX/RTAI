@@ -131,9 +131,9 @@ RTAI_SYSCALL_MODE int rt_set_tasklet_handler(struct rt_tasklet_struct *tasklet, 
 RTAI_SYSCALL_MODE void rt_set_tasklet_data(struct rt_tasklet_struct *tasklet, unsigned long data);
 
 #define rt_fast_set_tasklet_data(t, d) \
-do { \
-   (t)->data = (d); \
-} while (0)
+	do { \
+	   (t)->data = (d); \
+	} while (0)
 
 /**
  * Notify the use of floating point operations within any tasklet/timer.
@@ -220,9 +220,9 @@ RTAI_SYSCALL_MODE int rt_ptimer_delete(timer_t timer, long space);
 /* End Posix timers support */
 
 #define rt_fast_set_timer_period(t, p) \
-do { \
-   (t)->period = (p); \
-} while (0)
+	do { \
+	   (t)->period = (p); \
+	} while (0)
 
 /**
  * Change the timer handler.

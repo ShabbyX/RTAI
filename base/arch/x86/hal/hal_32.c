@@ -347,6 +347,9 @@ static inline void _rt_enable_irq (unsigned irq)
 	}
 }
 
+/**
+ * Enable an IRQ source.
+ */
 void rt_enable_irq (unsigned irq)
 {
 	_rt_enable_irq(irq);
@@ -817,7 +820,7 @@ void rt_free_apic_timers(void)
  * to the CPUs of an assigned mask.
  *
  * @the mask of the interrupts routing before its call.
- * @-EINVAL if @a irq is not a valid IRQ number or some internal data
+ * @0 if @a irq is not a valid IRQ number or some internal data
  * inconsistency is found.
  *
  * @note This functions has effect only on multiprocessors systems.
@@ -830,9 +833,9 @@ void rt_free_apic_timers(void)
  */
 unsigned long rt_assign_irq_to_cpu (int irq, unsigned long cpumask)
 {
-	if (irq >= IPIPE_NR_XIRQS)
+	if (irq >= IPIPE_NR_XIRQS || &rtai_irq_desc(irq) == NULL || rtai_irq_desc_chip(irq) == NULL || rtai_irq_desc_chip(irq)->irq_set_affinity == NULL)
 	{
-		return -EINVAL;
+		return 0;
 	}
 	else
 	{
@@ -861,7 +864,7 @@ unsigned long rt_assign_irq_to_cpu (int irq, unsigned long cpumask)
  * rt_assign_irq_to_cpu. This function applies to external interrupts only.
  *
  * @the mask of the interrupts routing before its call.
- * @-EINVAL if @a irq is not a valid IRQ number or some internal data
+ * @0 if @a irq is not a valid IRQ number or some internal data
  * inconsistency is found.
  *
  * @note This function has effect only on multiprocessors systems.
@@ -878,7 +881,7 @@ unsigned long rt_reset_irq_to_sym_mode (int irq)
 
 	if (irq >= IPIPE_NR_XIRQS)
 	{
-		return -EINVAL;
+		return 0;
 	}
 	else
 	{
@@ -1253,6 +1256,7 @@ static int rtai_trap_fault (unsigned event, void *evdata)
 		goto endtrap;
 	}
 
+
 	if (rtai_trap_handler && rtai_trap_handler(event, trap2sig[event], (struct pt_regs *)evdata, NULL))
 	{
 		goto endtrap;
@@ -1398,9 +1402,10 @@ void rtai_set_linux_task_priority (struct task_struct *task, int policy, int pri
 	rc = sched_setscheduler(task, policy, &param);
 #endif
 
-if (rc)
-{
-}
+	if (rc)
+	{
+//		printk("RTAI[hal]: sched_setscheduler(policy=%d,prio=%d) failed, code %d (%s -- pid=%d)\n", policy, prio, rc, task->comm, task->pid);
+	}
 }
 
 #ifdef CONFIG_PROC_FS
@@ -1419,11 +1424,10 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	int i, none;
 
 	PROC_PRINT("\n** RTAI/x86:\n\n");
-#ifdef CONFIG_X86_LOCAL_APIC
-	PROC_PRINT("    APIC Frequency: %lu\n",rtai_tunables.apic_freq);
-	PROC_PRINT("    APIC Latency: %d ns\n",RTAI_LATENCY_APIC);
-	PROC_PRINT("    APIC Setup: %d ns\n",RTAI_SETUP_TIME_APIC);
-#endif /* CONFIG_X86_LOCAL_APIC */
+	PROC_PRINT("    CPU   Frequency: %lu (Hz)\n", rtai_tunables.cpu_freq);
+	PROC_PRINT("    TIMER Frequency: %lu (Hz)\n", TIMER_FREQ);
+	PROC_PRINT("    TIMER Latency: %d (ns)\n", rtai_imuldiv(rtai_tunables.latency, 1000000000, rtai_tunables.cpu_freq));
+	PROC_PRINT("    TIMER Setup: %d (ns)\n", rtai_imuldiv(rtai_tunables.setup_time_TIMER_CPUNIT, 1000000000, rtai_tunables.cpu_freq));
 
 	none = 1;
 	PROC_PRINT("\n** Real-time IRQs used by RTAI: ");
@@ -1463,12 +1467,16 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	}
 	PROC_PRINT("\n\n");
 
-#if defined(CONFIG_SMP) && defined(CONFIG_RTAI_DIAG_TSC_SYNC)
+#ifdef CONFIG_SMP
+#ifdef CONFIG_RTAI_DIAG_TSC_SYNC
 	PROC_PRINT("** RTAI TSC OFFSETs (TSC units, 0 ref. CPU): ");
 	for (i = 0; i < num_online_cpus(); i++)
 	{
 		PROC_PRINT("CPU#%d: %ld; ", i, rtai_tsc_ofst[i]);
 	}
+	PROC_PRINT("\n\n");
+#endif
+	PROC_PRINT("** MASK OF CPUs ISOLATED FOR RTAI: 0x%lx.", IsolCpusMask);
 	PROC_PRINT("\n\n");
 #endif
 
@@ -1534,6 +1542,7 @@ void ack_bad_irq(unsigned int irq)
 }
 
 extern struct ipipe_domain ipipe_root;
+void free_isolcpus_from_linux(void *);
 
 int __rtai_hal_init (void)
 {
@@ -1620,6 +1629,7 @@ int __rtai_hal_init (void)
 		{
 			rtai_orig_irq_affinity[trapnr] = rt_assign_irq_to_cpu(trapnr, ~IsolCpusMask);
 		}
+		free_isolcpus_from_linux(&IsolCpusMask);
 	}
 #else
 	IsolCpusMask = 0;

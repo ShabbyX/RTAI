@@ -77,9 +77,7 @@ static struct pci_device_id hal_smi_pci_tbl[] =
 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH7_0) },
 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH7_1) },
 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH8_4) },
-#ifdef PCI_DEVICE_ID_INTEL_ICH10_1
 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_ICH10_1) },
-#endif
 	{ 0, },
 };
 
@@ -255,47 +253,46 @@ MODULE_LICENSE("GPL");
 
 /**************************************************************************/
 /*
+   FIXME: there are many more SMI sources than those of the SMI_EN
+   register. From http://www.intel.com/design/chipsets/datashts/252516.htm
+   there are at least the following other sources :
 
-FIXME: there are many more SMI sources than those of the SMI_EN
-register. From http://www.intel.com/design/chipsets/datashts/252516.htm
-there are at least the following other sources :
+   pages 377, 386, 388, 389; Power management
+       register GEN_PMCON1, bit SMI_LOCK, locks GLB_SMI_EN
+       bits PER_SMI_SEL, allow selection of the periodic SMI
+       registers PM1_STS, PM1_EN, PM1_CNT bit SCI_EN, if cleared generates SMI
+       for power management events.
 
-pages 377, 386, 388, 389; Power management
-register GEN_PMCON1, bit SMI_LOCK, locks GLB_SMI_EN
-bits PER_SMI_SEL, allow selection of the periodic SMI
-registers PM1_STS, PM1_EN, PM1_CNT bit SCI_EN, if cleared generates SMI
-for power management events.
+   pages 173, 381, 400; GPIOs
+       register GPI[0-15]_ROUT allow routing each GPIO to SMI or SCI
+       register ALT_GP_SMI_EN, ALT_GP_SMI_STS, allow masking SMIs for GPIOs
 
-pages 173, 381, 400; GPIOs
-register GPI[0-15]_ROUT allow routing each GPIO to SMI or SCI
-register ALT_GP_SMI_EN, ALT_GP_SMI_STS, allow masking SMIs for GPIOs
+   pages 184, 188, 402; legacy devices emulation (ATA, floppy, parallel, UARTs,
+       keyboard). I/O to specified ports may cause events, which can generate an
+       SMI, depending on registers configuration :
+       register DEVTRAP_EN, DEVTRAP_STS
+       BIG FAT WARNING : globally disabling SMI on a box with SATA disks and
+           SATA controller in "legacy" mode, probably prevents disks from
+           working.
 
-pages 184, 188, 402; legacy devices emulation (ATA, floppy, parallel, UARTs,
-keyboard). I/O to specified ports may cause events, which can generate an
-SMI, depending on registers configuration :
-register DEVTRAP_EN, DEVTRAP_STS
-BIG FAT WARNING : globally disabling SMI on a box with SATA disks and
-SATA controller in "legacy" mode, probably prevents disks from
-working.
+   pages 382, 383, 400; Monitors ?
+       seem to be a generic legacy device emulation (like previous), registers
+       MON[4-7]_FWD_EN, enables forwarding of I/O to LPC
+       MON[4-7]_TRP_RNG, address of the emulated devices
+       MON[4-7]_TRP_MSK and MON_SMI (registers MON[4-7]_TRAP_EN and
+                                     MON[4-7]_TRAP_STS)
 
-pages 382, 383, 400; Monitors ?
-seem to be a generic legacy device emulation (like previous), registers
-MON[4-7]_FWD_EN, enables forwarding of I/O to LPC
-MON[4-7]_TRP_RNG, address of the emulated devices
-MON[4-7]_TRP_MSK and MON_SMI (registers MON[4-7]_TRAP_EN and
-MON[4-7]_TRAP_STS)
+   page 407: TCO
+       register TCO1_CNT, bit NMI2SMI_EN, enables TCO to use SMI instead of NMI,
+       bit TCO_TMR_HLT, should be cleared to avoid being rebooted when the TCO
+       timer expires. Dangerous bit: TCO_LOCK locks the TCO timer until reboot.
+       register used by Linux drivers/char/watchdog/i8xx_tco.c
 
-page 407: TCO
-register TCO1_CNT, bit NMI2SMI_EN, enables TCO to use SMI instead of NMI,
-bit TCO_TMR_HLT, should be cleared to avoid being rebooted when the TCO
-timer expires. Dangerous bit: TCO_LOCK locks the TCO timer until reboot.
-register used by Linux drivers/char/watchdog/i8xx_tco.c
+   page 492, 493: USB EHCI legacy support and SPECIAL SMI, i.e Intel Specific
+       USB 2.0 SMI register.
 
-page 492, 493: USB EHCI legacy support and SPECIAL SMI, i.e Intel Specific
-USB 2.0 SMI register.
-
-page 520, SMBus
-may be disabled by clearing register HOSTC, bit SMB_SMI_EN
-register used by Linux driver drivers/i2c/busses/i2c-i801.c
+   page 520, SMBus
+       may be disabled by clearing register HOSTC, bit SMB_SMI_EN
+       register used by Linux driver drivers/i2c/busses/i2c-i801.c
 
 */
