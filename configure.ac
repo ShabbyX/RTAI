@@ -1611,7 +1611,12 @@ RTAI_KBUILD_CMD="for src in \$^; do if test \\! -r \`basename \$\$src\`; then \$
 		\$(MAKE) -C $RTAI_LINUX_DIR CC=$CC ARCH=$RTAI_TARGET_ARCH_NAME \
 		SUBDIRS=\$\$PWD M=\$\$PWD rtai_srctree=\`cd \$(top_srcdir) && pwd\` rtai_srcdir=\`cd \$(srcdir) && pwd\` V=\$(V) modules \
 		rtai_objs='\$(call src2obj,c,\$^) \$(call src2obj,S,\$^) \$(call src2obj,cc,\$^) \$(call src2obj,cpp,\$^)' rtai_target=\$(basename \$@)"
-RTAI_KBUILD_CLEAN='rm -f *.ko *.mod.c .*.cmd *.o Module.symvers Module.markers modules.order && rm -Rf .tmp_versions'
+RTAI_KBUILD_CLEAN="\$(MAKE) -C $RTAI_LINUX_DIR CC=$CC ARCH=$RTAI_TARGET_ARCH_NAME \
+		SUBDIRS=\$\$PWD M=\$\$PWD rtai_srctree=\`cd \$(top_srcdir) && pwd\` rtai_srcdir=\`cd \$(srcdir) && pwd\` V=\$(V) clean \
+		rtai_objs='\$(call src2obj,c,\$^) \$(call src2obj,S,\$^) \$(call src2obj,cc,\$^) \$(call src2obj,cpp,\$^)' rtai_target=\$(basename \$@)"
+if test x$CONFIG_RTAI_QUIET = xquiet_ ; then
+   RTAI_KBUILD_CLEAN="@$RTAI_KBUILD_CLEAN"
+fi
 RTAI_KBUILD_DISTCLEAN=""
 
 AC_MSG_CHECKING([for kernel module extension])
@@ -1672,6 +1677,7 @@ if [[ $ac_cv_needs_include_for_math = yes ]]; then
       RTAI_MATH_KMOD_CFLAGS="-I${BITS_INCLUDE_DIR%/bits}"
    fi
 fi
+RTAI_MATH_KMOD_CFLAGS+=" -Wno-undef"
 
 AC_MSG_CHECKING([for RTAI target architecture])
 
