@@ -73,8 +73,8 @@ static __inline__ int atomic_dec_and_test(atomic_t *v)
 
 	__asm__ __volatile__(
 		LOCK_PREFIX "decl %0; sete %1"
-		:"=m" (v->counter), "=qm" (c)
-		:"m" (v->counter) : "memory");
+		:"=m" (*__rtai_xg(v)), "=qm" (c)
+		:"m" (*__rtai_xg(v)) : "memory");
 	return c != 0;
 }
 
@@ -82,8 +82,8 @@ static __inline__ void atomic_inc(atomic_t *v)
 {
 	__asm__ __volatile__(
 		LOCK_PREFIX "incl %0"
-		:"=m" (v->counter)
-		:"m" (v->counter));
+		:"=m" (*__rtai_xg(v))
+		:"m" (*__rtai_xg(v)));
 }
 
 /* Depollute the namespace a bit. */
