@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Paolo Mantegazza <mantegazza@aero.polimi.it>.
- * Copyright (C) 2003 Philippe Gerum <rpm@xenomai.org>
+ * Copyright (C) 2003 Philippe Gerum <rpm@xenomai.org>.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -27,21 +27,13 @@
 
 #else /* !__KERNEL__ */
 
-#ifndef likely
-#if __GNUC__ == 2 && __GNUC_MINOR__ < 96
-#define __builtin_expect(x, expected_value) (x)
-#endif
-#define likely(x)	__builtin_expect(!!(x), 1)
-#define unlikely(x)	__builtin_expect(!!(x), 0)
-#endif /* !likely */
-
 #ifdef CONFIG_SMP
 #define LOCK_PREFIX "lock ; "
 #else
 #define LOCK_PREFIX ""
 #endif
 
-#define atomic_t long
+typedef struct { volatile int counter; } atomic_t;
 
 struct __rtai_xchg_dummy { unsigned long a[100]; };
 #define __rtai_xg(x) ((struct __rtai_xchg_dummy *)(x))
@@ -73,8 +65,8 @@ static __inline__ int atomic_dec_and_test(atomic_t *v)
 
 	__asm__ __volatile__(
 		LOCK_PREFIX "decl %0; sete %1"
-		:"=m" (*__rtai_xg(v)), "=qm" (c)
-		:"m" (*__rtai_xg(v)) : "memory");
+		:"=m" (v->counter), "=qm" (c)
+		:"m" (v->counter) : "memory");
 	return c != 0;
 }
 
@@ -82,8 +74,8 @@ static __inline__ void atomic_inc(atomic_t *v)
 {
 	__asm__ __volatile__(
 		LOCK_PREFIX "incl %0"
-		:"=m" (*__rtai_xg(v))
-		:"m" (*__rtai_xg(v)));
+		:"=m" (v->counter)
+		:"m" (v->counter));
 }
 
 /* Depollute the namespace a bit. */
