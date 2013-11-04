@@ -1477,8 +1477,8 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	PROC_PRINT("\n** RTAI/x86:\n\n");
 	PROC_PRINT("    CPU   Frequency: %lu (Hz)\n", rtai_tunables.cpu_freq);
 	PROC_PRINT("    TIMER Frequency: %lu (Hz)\n", TIMER_FREQ);
-	PROC_PRINT("    TIMER Latency: %d (ns)\n", rtai_imuldiv(rtai_tunables.latency, 1000000000, rtai_tunables.cpu_freq));
-	PROC_PRINT("    TIMER Setup: %d (ns)\n", rtai_imuldiv(rtai_tunables.setup_time_TIMER_CPUNIT, 1000000000, rtai_tunables.cpu_freq));
+	PROC_PRINT("    TIMER Latency: %ld (ns)\n", rtai_imuldiv(rtai_tunables.latency, 1000000000, rtai_tunables.cpu_freq));
+	PROC_PRINT("    TIMER Setup: %ld (ns)\n", rtai_imuldiv(rtai_tunables.setup_time_TIMER_CPUNIT, 1000000000, rtai_tunables.cpu_freq));
     
 	none = 1;
 	PROC_PRINT("\n** Real-time IRQs used by RTAI: ");
