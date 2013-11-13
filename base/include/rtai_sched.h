@@ -223,7 +223,7 @@ typedef struct rt_task_struct {
 	/* For use by exit handler functions. */
 	XHDL *ExitHook;
 
-	RTIME exectime[2];
+	RTIME exectime[2];	/* [0] = time spent in thread, [1] = start time of thread */
 	struct mcb_t mcb;
 
 	/* Real time heaps. */
@@ -347,6 +347,8 @@ RTIME rt_get_cpu_time_ns(void);
 RTIME rt_get_real_time(void);
 
 RTIME rt_get_real_time_ns(void);
+
+void rt_get_exectime(struct rt_task_struct *task, RTIME *exectime);
 
 int rt_get_prio(struct rt_task_struct *task);
 

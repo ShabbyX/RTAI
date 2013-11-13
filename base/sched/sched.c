@@ -1793,6 +1793,31 @@ RTIME rt_get_real_time_ns(void)
 	return boot_epoch.time[boot_epoch.touse][1] + llimd(rtai_rdtsc(), 1000000000, tuned.cpu_freq);
 }
 
+void rt_get_exectime(RT_TASK *task, RTIME *exectime)
+{
+#if CONFIG_RTAI_MONITOR_EXECTIME
+	/* FIXME: Any locking with rt_schedule needed? */
+	int cpuid = rtai_cpuid();
+
+	if (!task)
+		task = rt_smp_current[cpuid];
+
+	/* adopted from old GET_EXECTIME case of handle_lxrt_request: */
+	if (!task->exectime[0] || !task->exectime[1])
+		return;
+
+	exectime[0] = task->exectime[0];
+	exectime[1] = task->exectime[1];
+	exectime[2] = rtai_rdtsc();
+
+	/* if task is running, adjust exectime[0] by adding the runtime since its context switch */
+	if (task == rt_smp_current[cpuid])
+		exectime[0] += exectime[2] - switch_time[cpuid];
+#else
+	exectime[0] = exectime[1] = exectime[2] = 0;
+#endif
+}
+
 /* +++++++++++++++++++++++++++ SECRET BACK DOORS ++++++++++++++++++++++++++++ */
 
 RT_TASK *rt_get_base_linux_task(RT_TASK **base_linux_tasks)
@@ -2507,6 +2532,13 @@ static int __rtai_lxrt_init(void)
 {
 	int cpuid, retval;
 	
+	if (tuned.cpu_freq == 0)
+	{
+		retval = -EINVAL;
+		printk(KERN_INFO "RTAI[sched]: TimeBase freq \"0\" is invalid\n");
+		goto exit;
+	}
+
 #ifdef IPIPE_NOSTACK_FLAG
 //	ipipe_set_foreign_stack(&rtai_domain);
 #endif
