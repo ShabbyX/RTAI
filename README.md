@@ -1,13 +1,16 @@
 RTAI
 ====
 
-This is a clone of RTAI from https://www.rtai.org.  **The master branch of this
-repository may have additional features or bug fixes and may not be supported
-by Paolo Mantegazza (the main developer and owner of RTAI).**  However, I try
-to keep branches named after the RTAI modules up-to-date with their development
-in the original CVS repository at https://gna.org/cvs/?group=rtai.
+Welcome to the `master` branch of the RTAI repository!
 
-This is magma branch, keeping track of RTAI's magma repository. The showroom
-module has also been added to provide tests and examples for users and developers.
+This branch has many additional features, bug fixes,
+performance enhancements, and many other things that
+are NOT supported by the official RTAI developers.
 
-Latest update: October 4 2013
+This repository does not keep track of RTAI's history before
+version 3.9, which is the initial commit of this repository.
+
+Branches `magma` and `vulcano` track the official CVS
+branches of the upstream RTAI repository.
+
+Please refer to the README.INSTALL file for building instructions.
