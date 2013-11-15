@@ -41,6 +41,11 @@ fi
 run_info_file=$target_dir/.runinfo
 
 if test \! -r $run_info_file; then
+   # try without .
+   run_info_file=$target_dir/runinfo
+fi
+
+if test \! -r $run_info_file; then
    echo "rtai-load: cannot find run info: $run_info_file"
    exit 2
 fi
