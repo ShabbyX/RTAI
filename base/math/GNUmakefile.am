@@ -10,7 +10,7 @@ if CONFIG_KBUILD
 rtai_math.ko: @RTAI_KBUILD_ENV@
 rtai_math.ko: $(libmath_a_SOURCES)
 	@RTAI_KBUILD_TOP@ \
-	@RTAI_KBUILD_CMD@ rtai_extradef="@RTAI_FP_CFLAGS@ @RTAI_MATH_KMOD_CFLAGS@" rtai_extraopt="@RTAI_TARGET_ARCH_OPTS@" \
+	@RTAI_KBUILD_CMD@ rtai_extradef="@RTAI_FP_CFLAGS@" rtai_extraopt="@RTAI_TARGET_ARCH_OPTS@" \
 	@RTAI_KBUILD_BOTTOM@
 	mv $@ $@.tmp
 	$(CROSS_COMPILE)$(LD) -r -static -o $@ $@.tmp @RTAI_MATH_LIBM@
@@ -28,7 +28,6 @@ libmath_a_AR = $(CROSS_COMPILE)ar cru
 AM_CPPFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
 	@RTAI_FP_CFLAGS@ \
-	@RTAI_MATH_KMOD_CFLAGS@ \
 	-D_IEEE_LIBM -D_ISOC99_SOURCE -D_SVID_SOURCE \
 	-I$(top_srcdir)/base/include \
 	-I../include
