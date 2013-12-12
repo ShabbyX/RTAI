@@ -189,6 +189,7 @@ RTAI_MAYBE_SIMDIR = @RTAI_MAYBE_SIMDIR@
 RTAI_MODULE_DIR = @RTAI_MODULE_DIR@
 RTAI_MODULE_EXT = @RTAI_MODULE_EXT@
 RTAI_POSIX_WRAP = @RTAI_POSIX_WRAP@
+RTAI_REAL_USER_CFLAGS = @RTAI_REAL_USER_CFLAGS@
 RTAI_TARGET_ARCH = @RTAI_TARGET_ARCH@
 RTAI_TARGET_ARCH_OPTS = @RTAI_TARGET_ARCH_OPTS@
 RTAI_TARGET_SUBARCH = @RTAI_TARGET_SUBARCH@
@@ -258,7 +259,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-moduledir = $(DESTDIR)@RTAI_MODULE_DIR@
+moduledir = @RTAI_MODULE_DIR@
 modext = @RTAI_MODULE_EXT@
 libhal_a_SOURCES = hal.c $(am__append_1) $(am__append_2) \
 	$(am__append_3) $(am__append_4)
@@ -626,8 +627,8 @@ all-local: rtai_hal$(modext)
 @CONFIG_RTAI_OLD_FASHIONED_BUILD_TRUE@	$(INSTALL_DATA) $^ $(top_srcdir)/modules
 
 install-exec-local: rtai_hal$(modext)
-	$(mkinstalldirs) $(moduledir)
-	$(INSTALL_DATA) $< $(moduledir)
+	$(mkinstalldirs) $(DESTDIR)$(moduledir)
+	$(INSTALL_DATA) $< $(DESTDIR)$(moduledir)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

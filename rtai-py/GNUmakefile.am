@@ -12,10 +12,10 @@ rtai_def.py \
 rtai_lxrt.py \
 rtai_mbx.py \
 rtai_msg.py \
-rtai.py \
 rtai_rwl.py \
 rtai_scb.py \
 rtai_sem.py \
 rtai_shm.py \
 rtai_spl.py \
-rtai_wd.py
+rtai_wd.py \
+rtai_ser.py

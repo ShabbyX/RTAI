@@ -232,7 +232,8 @@ static inline void xnlock_put_irqrestore(xnlock_t *lock, spl_t flags)
 
 #if !defined CONFIG_M68K || defined CONFIG_MMU
 #define __xn_strncpy_from_user(task, dstP, srcP, n) \
-	({ long err = __strncpy_from_user(dstP, srcP, n); err; })
+	({ long err = rt_strncpy_from_user(dstP, srcP, n); err; })
+/*	({ long err = __strncpy_from_user(dstP, srcP, n); err; }) */
 #else
 #define __xn_strncpy_from_user(task, dstP, srcP, n) \
 	({ long err = strncpy_from_user(dstP, srcP, n); err; })
@@ -298,6 +299,10 @@ static inline int xnarch_remap_vm_page(struct vm_area_struct *vma, unsigned long
 	return remap_page_range(from, virt_to_phys((void *)__va_to_kva(to)), PAGE_SIZE, PAGE_SHARED);
 
 #else /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) */
+
+#ifndef VM_RESERVED
+#define VM_RESERVED (VM_DONTEXPAND | VM_DONTDUMP)
+#endif
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,15) && defined(CONFIG_MMU)
 	vma->vm_flags |= VM_RESERVED;
@@ -419,7 +424,8 @@ int xnintr_disable (xnintr_t *intr);
 	rt_release_irq(irq);
 
 extern struct rtai_realtime_irq_s rtai_realtime_irq[];
-#define xnarch_get_irq_cookie(irq)  (rtai_realtime_irq[irq].cookie)
+//#define xnarch_get_irq_cookie(irq)  (rtai_realtime_irq[irq].cookie)
+#define xnarch_get_irq_cookie(irq)  (rtai_domain.irqs[irq].cookie)
 
 extern unsigned long IsolCpusMask;
 #define xnarch_set_irq_affinity(irq, nkaffinity) \
@@ -582,6 +588,9 @@ static inline void xnsynch_sleep_on(void *synch, xnticks_t timeout, xntmode_t ti
 #define rthal_apc_free(apc) \
 	rt_free_srq((apc))
 
+#define __rthal_apc_schedule(apc) \
+	hal_pend_uncond(apc, rtai_cpuid())
+
 #define rthal_apc_schedule(apc) \
 	rt_pend_linux_srq((apc))
 
@@ -605,14 +614,12 @@ do { \
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 
-#if 1
 #define __WORK_INITIALIZER(n,f,d) {                             \
         .list   = { &(n).list, &(n).list },                     \
         .sync = 0,                                              \
         .routine = (f),                                         \
         .data = (d),                                            \
 }
-#endif
 
 #define DECLARE_WORK(n,f,d)             struct tq_struct n = __WORK_INITIALIZER(n, f, d)
 #define DECLARE_WORK_NODATA(n, f)       DECLARE_WORK(n, f, NULL)

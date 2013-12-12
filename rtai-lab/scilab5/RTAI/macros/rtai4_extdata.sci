@@ -17,7 +17,7 @@ function [x,y,typ] = rtai4_extdata(job,arg1,arg2)
     exprs=graphics.exprs;
     while %t do
       [ok,filename,npts,exprs]=..
-      getvalue('Set extdata data block parameters',..
+      scicos_getvalue('Set extdata data block parameters',..
       ['Filename (max 29 chars) :';
        'Nr. of Points:'],..
       list('str',1,'vec',-1),exprs)
@@ -45,7 +45,7 @@ function [x,y,typ] = rtai4_extdata(job,arg1,arg2)
     model.dstate=[];
     model.blocktype='d'
     model.dep_ut=[%t %f]
-    exprs=[filename,sci2exp(npts)]
+    exprs=[filename;sci2exp(npts)]
     gr_i=['xstringb(orig(1),orig(2),[''extdata'';filename],sz(1),sz(2),''fill'');']
     x=standard_define([3 2],model,exprs,gr_i)
   end

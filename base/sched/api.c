@@ -6,7 +6,7 @@
  *
  * This file is part of the RTAI project.
  *
- * @note Copyright &copy; 1999-2003 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * @note Copyright &copy; 1999-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -640,7 +640,7 @@ RTAI_SYSCALL_MODE int rt_task_signal_handler(RT_TASK *task, void (*handler)(void
 
 /* ++++++++++++++++++++++++++++ MEASURING TIME ++++++++++++++++++++++++++++++ */
 
-struct epoch_struct boot_epoch = { SPIN_LOCK_UNLOCKED, 0, };
+struct epoch_struct boot_epoch = { __SPIN_LOCK_UNLOCKED(boot_epoch.lock), 0, };
 EXPORT_SYMBOL(boot_epoch);
 
 static inline void _rt_get_boot_epoch(volatile RTIME time_orig[])
@@ -1205,7 +1205,7 @@ RTAI_SYSCALL_MODE int rt_named_task_delete(RT_TASK *task)
 
 int max_slots;
 static struct rt_registry_entry *lxrt_list;
-static spinlock_t list_lock = SPIN_LOCK_UNLOCKED;
+static DEFINE_SPINLOCK(list_lock);
 
 #define COLLISION_COUNT() do { col++; } while(0)
 static unsigned long long col;
@@ -1467,16 +1467,26 @@ static inline int drg_on_adr_cnt(void *adr)
 
 static inline unsigned long get_name(void *adr)
 {
-	static unsigned long nameseed = 3518743764UL;
 	if (!adr) {
-		unsigned long flags;
-		unsigned long name;
-		flags = rt_spin_lock_irqsave(&list_lock);
-		if ((name = ++nameseed) == 0xFFFFFFFFUL) {
-			nameseed = 3518743764UL;
+		unsigned long flags, name;
+		int i;
+		for (i = 0; i < 10; i++) {
+#if 0
+			static unsigned long nameseed = MAX_NAM2NUM;
+			flags = rt_spin_lock_irqsave(&list_lock);
+			if ((name = ++nameseed) == 0xFFFFFFFFUL) {
+				name = nameseed = MAX_NAM2NUM;
+			}
+#else
+			flags = rt_spin_lock_irqsave(&list_lock);
+			name = MAX_NAM2NUM + irandu(0xFFFFFFFFUL - MAX_NAM2NUM - 2);
+#endif
+			rt_spin_unlock_irqrestore(flags, &list_lock);
+			if (!hash_find_name(name, lxrt_list, max_slots, 0, NULL)) {
+				return name;
+			}
 		}
-		rt_spin_unlock_irqrestore(flags, &list_lock);
-		return name;
+		return 0;
 	} else {
 		return hash_find_adr(adr, lxrt_list, max_slots, 0);
 	}
@@ -1547,7 +1557,7 @@ void rt_registry_free(void)
 #else
 volatile int max_slots;
 static struct rt_registry_entry *lxrt_list;
-static spinlock_t list_lock = SPIN_LOCK_UNLOCKED;
+static DEFINE_SPINLOCK(list_lock);
 
 int rt_registry_alloc(void)
 {
@@ -1911,21 +1921,21 @@ RTAI_SYSCALL_MODE int rt_irq_wait(unsigned irq)
 {	
 	int retval;
 	retval = rt_task_suspend(0);
-	return rtai_realtime_irq[irq].handler ? -retval : RT_IRQ_TASK_ERR;
+	return rtai_domain.irqs[irq].handler ? -retval : RT_IRQ_TASK_ERR;
 }
 
 RTAI_SYSCALL_MODE int rt_irq_wait_if(unsigned irq)
 {
 	int retval;
 	retval = rt_task_suspend_if(0);
-	return rtai_realtime_irq[irq].handler ? -retval : RT_IRQ_TASK_ERR;
+	return rtai_domain.irqs[irq].handler ? -retval : RT_IRQ_TASK_ERR;
 }
 
 RTAI_SYSCALL_MODE int rt_irq_wait_until(unsigned irq, RTIME time)
 {
 	int retval;
 	retval = rt_task_suspend_until(0, time);
-	return rtai_realtime_irq[irq].handler ? -retval : RT_IRQ_TASK_ERR;
+	return rtai_domain.irqs[irq].handler ? -retval : RT_IRQ_TASK_ERR;
 }
 
 RTAI_SYSCALL_MODE int rt_irq_wait_timed(unsigned irq, RTIME delay)
@@ -1935,8 +1945,8 @@ RTAI_SYSCALL_MODE int rt_irq_wait_timed(unsigned irq, RTIME delay)
 
 RTAI_SYSCALL_MODE void rt_irq_signal(unsigned irq)
 {
-	if (rtai_realtime_irq[irq].handler) {
-		rt_task_resume((void *)rtai_realtime_irq[irq].cookie);
+	if (rtai_domain.irqs[irq].handler) {
+		rt_task_resume((void *)rtai_domain.irqs[irq].cookie);
 	}
 }
 
@@ -1964,19 +1974,12 @@ RTAI_SYSCALL_MODE int rt_release_irq_task (unsigned irq)
 {
 	int retval;
 	RT_TASK *task;
-	task = (void *)rtai_realtime_irq[irq].cookie;
+	task = (void *)rtai_domain.irqs[irq].cookie;
 	if (!(retval = rt_release_irq(irq))) {
 		rt_task_resume(task);
 		rt_reset_irq_to_sym_mode(irq);
 	}
 	return retval;
-}
-
-//extern void usp_request_rtc(int, void *);
-RTAI_SYSCALL_MODE void usp_request_rtc(int rtc_freq, void *handler)
-{
-	rt_request_rtc(rtc_freq, !handler || (handler && handler == (void *)1) ? handler : rt_irq_signal);
-		
 }
 
 #endif
@@ -2200,7 +2203,6 @@ EXPORT_SYMBOL(rt_get_timer_cpu);
 EXPORT_SYMBOL(start_rt_timer);
 EXPORT_SYMBOL(stop_rt_timer);
 EXPORT_SYMBOL(start_rt_apic_timers);
-EXPORT_SYMBOL(rt_sched_type);
 EXPORT_SYMBOL(rt_hard_timer_tick_count);
 EXPORT_SYMBOL(rt_hard_timer_tick_count_cpuid);
 EXPORT_SYMBOL(rt_set_task_trap_handler);
@@ -2220,8 +2222,6 @@ EXPORT_SYMBOL(nano2count);
 EXPORT_SYMBOL(count2nano_cpuid);
 EXPORT_SYMBOL(nano2count_cpuid);
 
-EXPORT_SYMBOL(rt_kthread_init);
-EXPORT_SYMBOL(rt_kthread_init_cpuid);
 EXPORT_SYMBOL(rt_smp_linux_task);
 EXPORT_SYMBOL(rt_smp_current);
 EXPORT_SYMBOL(rt_smp_time_h);

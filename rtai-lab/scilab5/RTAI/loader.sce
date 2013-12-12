@@ -5,7 +5,7 @@
 try
  getversion('scilab');
 catch
- warning('Scilab 5.0 or more is required.');
+ warning('Scilab 5.3 or more is required.');
  return;
 end;
 // ====================================================================

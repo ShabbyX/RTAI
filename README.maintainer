@@ -1,7 +1,7 @@
 - change version in:
 	- configure.in
-	- base/arch/*/defconfig
-	- base/arch/*/Kconfig
+	- base/arch/*/defconfig (no more)
+	- base/arch/*/Kconfig (no more)
 
 - cvs tag -F RTAI_X_Y
 

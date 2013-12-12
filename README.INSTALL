@@ -11,7 +11,7 @@ internal timers and interprocessor scheduling interrupts by vectoring them
 directly to their handlers. Such an option strongly enhances performances
 on low end machines and comes by default. You can disable it while configuring 
 RTAI though. See the related configuration helper.
-What above requires you to patch Linux just with patches found within this 
+What above requires you to patch Linux just with patches found wihin this 
 distribution. 
 Notice also that this release is for use with:
 - i386,
@@ -20,7 +20,7 @@ Notice also that this release is for use with:
 
 On recent distributions, managing udev/sysfs, devices created by following 
 this installation procedure will disappear at each machine halting. Then they 
-will be available no more at the next reboot. RTAI should manage udev/sysfs 
+will be available nomore at the next reboot. RTAI should manage udev/sysfs 
 support but in case something weird will impede it you can solve your problem
 quickly by restoring RTAI devices before running your application. For that
 the following short script containing:

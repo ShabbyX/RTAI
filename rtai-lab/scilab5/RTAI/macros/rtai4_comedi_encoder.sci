@@ -19,7 +19,7 @@ function [x,y,typ] = rtai4_comedi_encoder(job,arg1,arg2)
     exprs=graphics.exprs;
     while %t do
       [ok, number, name, chA, chB, chZ, initval, index, cmode, map, exprs]=..
-      getvalue(['Set RTAI-COMEDI Encoder block parameters';
+      scicos_getvalue(['Set RTAI-COMEDI Encoder block parameters';
                 'For NI cards in up/down mode, set B to -1';
                 'to input the up/down signal on P0.6 or P0.7'],..
       ['Counter No';
@@ -80,7 +80,7 @@ function [x,y,typ] = rtai4_comedi_encoder(job,arg1,arg2)
     model.dstate=[];
     model.blocktype='d'
     model.dep_ut=[%t %f]
-    exprs=[sci2exp(number),name,sci2exp(chA),sci2exp(chB),sci2exp(chZ),sci2exp(initval),sci2exp(index),sci2exp(cmode),sci2exp(map)]
+    exprs=[sci2exp(number);name;sci2exp(chA);sci2exp(chB);sci2exp(chZ);sci2exp(initval);sci2exp(index);sci2exp(cmode);sci2exp(map)]
     gr_i=['xstringb(orig(1),orig(2),[''COMEDI Encoder'';name+'' CTR-''+string(number)],sz(1),sz(2),''fill'');']
     x=standard_define([3 2],model,exprs,gr_i)
   end

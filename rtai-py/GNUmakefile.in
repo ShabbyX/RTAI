@@ -156,6 +156,7 @@ RTAI_MAYBE_SIMDIR = @RTAI_MAYBE_SIMDIR@
 RTAI_MODULE_DIR = @RTAI_MODULE_DIR@
 RTAI_MODULE_EXT = @RTAI_MODULE_EXT@
 RTAI_POSIX_WRAP = @RTAI_POSIX_WRAP@
+RTAI_REAL_USER_CFLAGS = @RTAI_REAL_USER_CFLAGS@
 RTAI_TARGET_ARCH = @RTAI_TARGET_ARCH@
 RTAI_TARGET_ARCH_OPTS = @RTAI_TARGET_ARCH_OPTS@
 RTAI_TARGET_SUBARCH = @RTAI_TARGET_SUBARCH@
@@ -232,13 +233,13 @@ rtai_def.py \
 rtai_lxrt.py \
 rtai_mbx.py \
 rtai_msg.py \
-rtai.py \
 rtai_rwl.py \
 rtai_scb.py \
 rtai_sem.py \
 rtai_shm.py \
 rtai_spl.py \
-rtai_wd.py
+rtai_wd.py \
+rtai_ser.py
 
 all: all-am
 

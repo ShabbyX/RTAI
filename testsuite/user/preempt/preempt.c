@@ -71,7 +71,7 @@ static void *slow_fun(void *arg)
 	expected = start + 9*nano2count(TICK_TIME);
 	rt_task_make_periodic(Slow_Task, expected, period);
 	while (!end) {  
-		jit = abs(count2nano(rt_get_time() - expected));
+		jit = abs(count2nano(rt_get_tscnt() - expected));
 		if (jit > slowjit) {
 			slowjit = jit;
 		}
@@ -102,7 +102,7 @@ static void *fast_fun(void *arg)
 	expected = start + 6*nano2count(TICK_TIME);
 	rt_task_make_periodic(Fast_Task, expected, period);
 	while (!end) {  
-		jit = abs(count2nano(rt_get_time() - expected));
+		jit = abs(count2nano(rt_get_tscnt() - expected));
 		if (jit > fastjit) {
 			fastjit = jit;
 		}
@@ -145,7 +145,7 @@ static void *latency_fun(void *arg)
 		for (skip = 0; skip < NAVRG && !end; skip++) {
 			expected += period;
 			rt_task_wait_period();
-			diff = (int)count2nano(rt_get_time() - expected);
+			diff = (int)count2nano(rt_get_tscnt() - expected);
 			if (diff < min_diff) {
 				min_diff = diff;
 			}
@@ -194,7 +194,7 @@ int main(void)
 	latency_thread = rt_thread_create(latency_fun, NULL, 0);
 	fast_thread    = rt_thread_create(fast_fun, NULL, 0);
 	slow_thread    = rt_thread_create(slow_fun, NULL, 0);
-	start = rt_get_time() + nano2count(200000000);
+	start = rt_get_tscnt() + nano2count(200000000);
 	rt_sem_wait_barrier(barrier);
 	pause();
 	end = 1;

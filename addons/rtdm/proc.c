@@ -264,6 +264,12 @@ int rtdm_proc_register_device(struct rtdm_device *device)
 	return -EAGAIN;
 }
 
+void rtdm_proc_unregister_device(struct rtdm_device *device)
+{
+        remove_proc_entry("information", device->proc_entry);
+        remove_proc_entry(device->proc_name, rtdm_proc_root);
+}
+
 int __init rtdm_proc_init(void)
 {
 	struct proc_dir_entry *proc_entry;

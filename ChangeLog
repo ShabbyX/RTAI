@@ -1,254 +1,693 @@
-2013-04-08 Pierangelo Masarati <masarati@aero.polimi.it>
+2013-12-06 Pierangelo Masarati <masarati@aero.polimi.it>
 
-	* RTAI 3.9.1
+	* RTAI 4.0
 
-2013-04-07 Paolo Mantegazza <mantegazza@aero.polimi.it>
+2013-11-14 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-        * base/isched/sched.c: make the setting of linux shot atomic a bit 
-	  more, so to avoid undue hard timers shots.
+	* base/arch/x86/hal/hal.c: do not make available rtai_sched_affinity 
+	  and free_isolcpus_from_linux under UP.
+
+2013-11-05 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* RTAI 4.0-test2
+
+2013-11-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/rtai_lxrt.h: added rt_get_cpu_freq and static
+	  inlines for an easier converion of tsc counts from/to nanos, 
+	  directly in user space; simple inlined conversion functions 
+	  provided in rtai_lxrt.h.
+	* base/sched/sys.c: implemented the above rt_get_cpu_freq.
+	* base/arch/x86/hal/hal.c: added a function to be called for ensuring
+	  that no Linux task will be on the CPUs isolated for RTAI.
+	* base/arch/x86/hal/hal_32.c and hal_64.c: when initting RTAI hal call
+	  the function removing Linux tasks from the CPUs isolated for RTAI.
+	* README.ISOLCPUS: add a short explanation of what newly added above.
+
+2013-11-02 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal_32.c and hal_64.c: check irq_set_affinity
+	  in desc, to avoid an unharmful but annoying Linux WARN_ONCE.
+
+2013-10-28 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* RTAI 4.0-test1
+
+2013-10-27 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-x86/hal/hal_32.c and hal_64.c: let hal proc file
+	  display IsolCpusMask.
+
+2013-10-26 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-x86/rtai_hal.h: make available an inlined support
+	  for reading the tsc directly from user space.
+	* base/include/asm-x86/hal/hal_32.c and hal_64.c: echo more proper 
+	  informations about system frequencies and timings.
+	* base/include/rtai_lxrt.h: rt_get_time can read the tsc directly.
+	* base/include/rtai_posix.h: read the tsc directly from user space.
+	* testsuite/user/ latency/latency.c and latency/latency.c: use tsc
+	  reading from user space, so to be more consistent with the 
+	  calibration-helper results.
+
+2013-10-25 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* configure.in, configure: propagate TSC detection to user space
+
+2013-10-25 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/rtai_schedcore.h: assign and use only 
+          wake_up_srq[0].srq.
+	* base/sched/sched.c: pend hard to soft task transitions to 
+          wake_up_srq[0].srq.
+
+2013-10-15 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* RTAI 3.9.2
+
+2013-10-15 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: make rt_smp_half_tick available to the whole 
+	  module files, have wake_up_srq_handler loop over all pending 
+	  cpu task lists.
+	* base/sched/sys.c: avoid stopping/starting the hard oneshot timer by
+	  setting rt_smp_haf_tick accordingly to the just update latency.
+
+2013-10-05 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/calibration/calibration_helper.c: restructured in a, 
+	  hopefully, better way, with respect to its first commit.
+	* base/arch/x86/calibration/README: rewritten according to the new 
+	  calibration way.
+	* base/arch/x86/Kconfig: added BUSY_ALIGN_RET_DELAY parameters for 
+	  kernel and user space.
+	* base/include/rtai_posix.h: fixed the return values of user space 
+	  to better comply with the related specs.
+	* base/include/asm-x86/rtai_hal.h: added various definition related to 
+	  the setting and declaration of busy aligns in the calibrate struct.
+	* base/sched/sched.c: reordered the one shot firing macros and enabled
+	  the newest busy wait align stuff.
+	* base/arch/i386/hal/hal.immed and base/arch/x86_646/hal/hal.immed:
+	  check irq desc and chip addr to avoid invalid pointers when used
+	  in a brute mode to divert all Linux interrupts belonging to 
+	  IsolCpuMask; return a null cpumask in case of failure an irq 
+	  affinity assignment.
+
+2013-10-04 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* configure.in, base/arch/x86/Kconfig: add support for 
+	  configurable user/kernel busy align delay
+	* base/arch/x86/calibration/calibration_helper.c, GNUmakefile.am:
+	  insert/remove modules directly from within helper
+
+2013-09-30 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: take into account the newly settable return
+	  delay in busy wait alignment.
+	* base/sched/sys.c: added floating point operations to the kernel
+	  calibrator.
+	* base/include/asm-x86/rtai_hal.h, rtai_hal_32.h, rtai_hal_64.h: 
+	  remove struct calibration_data the 32/64 bits hal parts and define 
+	  a unique one in the common hal.
+	* base/include/rtai_lxrt.h: add the call to the kernel calibrator.
+	* base/arch/x86/Kconfig: fixed a few spelling errors and added a new 
+	  configuration option.
+	* base/arch/x86/calibration/calibration_helper.c: added floating point
+	  operations to the user calibrator.
+	* base/arch/x86/calibration/runinfo: added the command line to launch 
+	  the new calibration way.
+
+2013-09-29 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: calibrate the hard timers at the scheduler 
+	  insmoding, care of avoiding null timer delays programming.
+	* base/sched/sys.c: add the support for an easier determination of 
+	  the scheduling latencies of RTAI own kernel tasks.
+	* base/arch/x86/hal/hal.c: put the determination of the hardtimers 
+	  programming delay in the common hal part.
+	* base/arch/x86/calibration/calibration_helper.c: simplify the 
+	  calibration of user and kernel space scheduling latencies.
+
+2013-09-24 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/rtai_schedcore.h: use just one wake up srq handler, 
+	  keeping a per cpu list of tasks to be woken up.
+	* base/sched/sched.c: omit the CONFIG_SMP ifdef in wake up srq 
+          handler.
+	* base/arch/x86/hal/hal_32.c, hal_64.c: use cpu_active_mask in 
+	  selecting hard timers.
+
+2013-09-13 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: provide a do nothing rt_daemonize for 
+	  linux > 3.0.
+
+2013-08-31 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* addons/rtdm/module.c: aligned the intr part to its latest sibling.
+
+2013-08-30 Pierangelo Masarati <masarati@aero.polimi.it>
+           Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* addons/comedi/GNUmakefile.am: no kernel headers in user space
+	* addons/comedi/rtai_comedi.h: do not include linux/compiler.h
+	  in user space
+
+2013-08-28 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal_64.c: aligned to work with Linux-3.x,
+	  it is much as its hal_32.c counterpart.
+
+2013-08-27 Pierangelo Masarati <masarati@aero.polimi.it>
+           Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* configure.in, base/arch/x86/Kconfig: enable hard-soft toggling,
+	  by automatically installing a SIGUSR1 Linux signal & handler,
+	  using standard Linux KILL support
+
+2013-08-26 Ian Abbott <abbotti@mev.co.uk>
+
+	* configure.in: Some AC_CONFIG_LINKS() go wrong when building
+	  outside the source tree.
+
+2013-08-25 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal_32.c: return to requesting the 8254-PIT 
+	  interrupt in rt_timer_request, we care of the related issue,
+	  alrady solved in the way of the explanation below, by modifying 
+	  the patch.
+	* base/arch/x86/hal/hal_64.c: same as above, but, once more, since 
+	  X86_64 has an APIC always, it is likely non an issue in this case.
+
+2013-08-22 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal_32.c: do not request the 8254-PIT interrupt 
+	  in rt_timer_request, it is done by the patch already; so if the 
+	  related timer handler is installed in advance the following 
+	  rtai_request_tickdev will get an error and the related 8254 stuff 
+	  will not be initialized.
+	* base/arch/x86/hal/hal_64.c: same as above, since X86_64 has an APIC
+	  always, it is likely non an issue in this case.
+
+2013-08-20 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal_32.c: use the irq desc eoi in rt_eoi_irq.
+	* base/arch/x86/hal/hal_64.c: same as above.
+
+2013-08-19 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/Kconfig: ask for RTNet installation directory if 
+	  NETRPC has to use it.
+
+2013-08-19 Roberto Bucher <roberto.bucher@supsi.ch>
+
+	* rtai-lab/xrtailab.cpp: few blank lines for better read code
+	* rtai-lab/scicoslab/devices/scicos_block4.h: new version from 
+	  scicoslab-4.4.1
+	* rtai-lab/scicoslab/macros/Makefile: fitted to scicoslab-4.4.1
+	* rtai-lab/scicoslab/macros/RTAICodeGen_.sci: new version for
+	  scicoslab-4.4.1
+	* rtai-lab/scicoslab/macros/SetTarget_.sci: new version for
+	  scicoslab-4.4.1
+	* rtai-lab/scicoslab/macros/RT_templates/rtai.mak: added blas, 
+	  lapack and gfortran libs for the linker
+	
+2013-08-18 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-x86/rtai_lxrt.h: set appropriate use of the 
+	  32-64 specific versions; GNUmakefile.am GNUmakefile.in also 
+	  modified accordingly.
+
+2013-08-17 Mark Fortescue <mark@mtfhpc.demon.co.uk>
+
+	* base/addons/rtdm/module.c: split the loop initializing the timers
+	  into two parts, fixes possible SMP preemption issues.
+	* base/addons/rtdm/xn.h: add missing list pointers at timers
+	  initialization.
+	  (N.B. a forgotten due recovery of a year old, 2012-08-03, fix 
+	  existing in VULCANO CVS already.) 
+
+2013-08-07 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/include/rtai_lxrt.h: modified the support and declarations for 
+ 	  externally forcing a task to soft, so to make it possible toggling 
+	  hard_soft by enforcing a signal handler for SIGUSR1, at task init, 
+	  providing also a support function to get the pid of the RTAI task 
+	  to be toggled using Linux kill.
+        * base/sched/sys.c: provided the toggling support handler, adding 
+	  a function to return the pid of any RTAI task; notice that the new
+	  way wholly substitute the old forcing of a task to soft only. Yet 
+	  to be made optionally configurable at RTAI making.
+
+2013-08-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/arch/x86/hal/hal_32.c: check if irq disable-enable are NULL 
+	  and divert to mask_unmask if so, add rt_irq_mask.
+        * base/include/rtai_usi.h: #if 0 ...  #endif the request of an srq for 
+	  USI, see comment in the file.
+
+2013-08-02 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/include/rtai_lxrt.h: fixed wrong arg list struct setup in all 
+	  USI support functions.
+
+2013-08-01 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/include/asm-x86/rtai_sched_32.h, rtai_sched_64.h and 
+	  rtai_sched.h: removed and gathered code common to 64 and 32 into 
+	  rtai_sched.h.
+
+2013-07-30 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/ipc/msg/msg.c: tightened task and message copying pointer
+	  checks.
+
+2013-07-29 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/ipc/netrpc/netrpc.c added a missing kclose for x86_64.
+
+2013-07-26 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* change the making of the schedulers, finally we got rid of a useless
+	  double creation of the same scheduler; now the only real scheduler
+	  is rtai_sched, legacy is saved by linking lxrt, ksched, up, mup and
+	  smp to it.
+
+2013-07-26 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/arch/x86/hal/hal.c and hal_32.c: fixed TSC sync support, broken
+	  because of both the new x86 unified making and the need to avoid 
+	  using kernel_thread(...) directly.
+
+2013-07-25 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* change making configuration so to not include Linux headers for user 
+	  space code; it made GCC >= 4.7.2 yell for conflicting definitions 
+	  within the same headers; it does not break under older GCCs, which
+	  did not yell.
+
+2013-07-25 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * addons/rtdm/module.c: fix the changed name of the isr scheduler lock.
+        * base/sched/api.c: opt for a randomization in generating names for 
+	  NULL adr requests (pevious nameseed way kept under #if #else #endif).
+        * base/sched/sched.c: make rtai_isr_sched_handle available and
+	  exported always.
+        * base/arch/x86/hal/hal.c: moved random number generator to 
+	  base/include/rtai.h, so to have it available anywhere.
+        * base/include/rtai.h: put the random number generator here, so to 
+	  have it available anywhere.
+        * base/include/rtai_nam2num.h: echo a "|null|" for names that are 
+	  either 0 or generated through rt_get_name(NULL).
+
+2013-07-24 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/sched/api.c: make getting a unique name from registry safer
+	  against duplications.
+        * base/include/rtai_nam2num.h: embellished the coding and added a 
+	  couple of usable characters more.
+
+2013-07-21 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/ipc/mq/mq.c: trivial changes to avoid annoying compiler
+	  warnings.
+        * base/include/rtai_mq.h: fixed a few wrong working space indicators.
+        * base/sched/sys.c: added test to avoid copying from null user space
+	  pointers into the kernel space task specific buffer.
+
+2013-07-20 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/ipc/netrpc/netrpc.c: aligned to the latest kthreads Linux 
+	  support.
+        * base/sched/sched.c: rt_signal_wake_up reverted to wake up on 
+	  Linux signals hanyhow.
+
+2013-07-18 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/sched/sched.c: rt_signal_wake_up will allow hard real time 
+	  tasks to receive signals only if the user has indicated to be 
+	  willing to accept them by installing a signal handler for SIGTERM.
+
+2013-07-17 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/sched/sched.c and sys.c: use RTAI own task pid for Pierre's 
+	  intertask messaging stuff.
+        * base/include/rtai_lxrt.h: return pid<->task stuff back here, it is 
+	  used also elsewhere than in Pierre's intertask messaging stuff.
+        * base/ipc/msg/msg.c: use unified rtai own task pids in Pierre's 
+	  intertask messaging stuff.
+
+2013-07-16 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/include/rtai_lxrt.h: removed call to rt_kthread_init and moved 
+	  pid<->rttask stuff into msg.c
+
+2013-07-15 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/sched/sched.c: keep formal kthread_init for compatibility, with 
+	  task_init behind it, used by msg.c.
+        * base/ipc/msg/msg.c: brounght here pid<->rttask inlines from rtai_lxrt 
+	  and reworked proxy support.
+
+2013-07-10 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/include/rtai_lxrt.h: rtai_print_to_screen is rt_printk now, 
+	  added call rt_kthread_init.
+
+2013-07-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/sched/liblxrt/init.c: used nomore, just an empty code.
+        * base/sched/liblxrt/services.c: include RTAI services to be libbed 
+	  from the LXRT user space part of header files directly and not 
+	  through the inclusion of rtai_schedcore.h.
+
+2013-07-02 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/include/rtai_lxrt.h: remove unused rt_clone and lower 
+	  RT_THREAD_STACK_MIN.
+
+2013-06-09 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * addons/rtdm/xn.h and base/ipc/shm/kvmem.c: define VM_RESERVED if it
+	  does not exist.
+        * base/arch/x86/calibration/smi-module.c: discard __devinit in function
+	  definitions, found no more in Linux.
+        * base/include/rtai_schedcore.h: add e new Linux version dependenc for 
+	  OOM_DISABLE.
+        * base/sched/sys.c:just a first fix to have it compile against the
+	  gone for ever Linux kernel_thread, to be fixed, it is just for 
+	  having it compile at the moment.
+
+2013-03-14 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+        * base/arch/x86/hal/hal_32.c: use CPU_MASK_ALL to fix a quick and
+	  dirty, but very very bad hack, in selecting Linux timers for RTAI.
+
+2013-02-28 John Morris <john@zultron.com>
+
+	* base/sched/sched.c: changed set_cpu_allowed to set_cpu_allowed_ptr 
+ 	  and to cpumask_of_cpu to cpumask_of, to allow compilation against 
+	  kernels that have CONFIG_CPUMASK_OFFSTACK=y
 
 2013-02-28 Shahbaz Youssefi <ShabbyX@gmail.com>
 
 	* base/include/rtai_rwl.h: fixed a missing nam2num in rt_named_rwl_init.
 	* base/include/rtai_spl.h: fixed a missing nam2num in rt_named_spl_init.
 
-2012-08-03 Mark Fortescue <mark@mtfhpc.demon.co.uk>
+2013-02-28 Sebastian Kuzminsky <seb@highlab.com\> 
 
-        * base/addons/rtdm/module.c: split the loop initializing the timers 
-	  into two parts, fixes possible SMP preemption issues.
-        * base/addons/rtdm/xn.h: add missing list pointers at timers 
-	  initialization.
+	* base/arch/x86/patches/hal-linux-3.5.7-x86-3.patch: fix to help
+	  DEBIAN packaging.
 
-2012-07-16 Pierangelo Masarati <masarati@aero.polimi.it>
+2013-02-28 Paolo Mantegazza <mantegazza@aero.polimi.it> 
+	   Pierangelo Masarati <masarati@aero.polimi.it>
 
-	* RTAI 3.9
+	* Completed the initial tructuring for a unified X86 arch, making
+	  it work for X86_32-i386. X86_64 still in progress.
 
-2012-02-14 Paolo Mantegazza <mantegazza@aero.polimi.it>
+2013-02-10 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-        * base/addons/rtdm/xn.h: move WORK stuff out of a wrong embedding 
-	  within an ifdef CONFIG_SMP.
-        * base/arch/i386/hal/hal.immed: review and fix a few bugs of the 
-	  reworked stuff related to enabling/disabling. 
-        * base/arch/x86_64/hal/hal.immed: review and fix a few bugs of the 
-	  reworked stuff related to enabling/disabling. 
-
-2012-02-07 Pierangelo Masarati <masarati@aero.polimi.it>
-
-	* RTAI 3.9-test2
-
-2012-01-13 Roberto Bucher <roberto.bucher@supsi.ch>
-
-	* rtai-lab/scicoslab/macros/Makefile: Installation for Scicoslab-4.4.1
-	
-2012-01-12 Paolo Mantegazza <mantegazza@aero.polimi.it>
-
-        * base/arch/x86_64/hal/hal.immed: reworked all the enabling/disabling 
-	  interrupt controllers functions as already done for i386.
-
-2012-01-10 Paolo Mantegazza <mantegazza@aero.polimi.it>
-
-        * base/i386/hal/hal.immed: reworked all the enabling/disabling 
-	  interrupt controllers functions to hopefully work from 2.4.36
-	  to 2.6.38; added a check for possible NULL pointers also.
-
-2012-01-09 Pierangelo Masarati <masarati@aero.polimi.it>
-
-	* RTAI 3.9-test1
-
-2012-01-09 Pierangelo Masarati <masarati@aero.polimi.it>
-
-	* configure configure.in: fix build out of source dir
-
-2012-01-07 Paolo Mantegazza <mantegazza@aero.polimi.it>
-
-        * base/x86_64/hal/hal.immed and base/i386/hal/hal.immed: use 
-	  IPIPE_HEAD_PRIORITY for the RTAI domain.
-
-2012-01-04 Pierangelo Masarati <masarati@aero.polimi.it>
-
-	* configure.in, rtai_config.h: add support for Linux COMEDI.
-        * configure.in, rtai_config.h: add support for setting COMEDI locks
-          by default.
-	* configure, rtai_config.h, [*/]GNUmakefile.in: regenerate with
-	  different autotools (automake 1.11.1, libtoolize 2.2.6b, 
-	  autoconf 2.67).
+        * base/sched/sched.c, api.c, sys.c: made compatible with Linux-3.x.
+        * base/include/rtai_lxrt.h: specialized NARG macro into LXRT_NARG, to
+	  avoid warning with the same name appearing in Linux.
+        * base/include/rtai_wrappers.h: modified to be made compatible with
+          Linux-3.x.
+        * base/include/asm/rtai_fpu.h: modified to be made compatible with 
+	  Linux-3.x. 
 
 2012-01-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-        * base/x86_64/hal/hal.immed: updated to work with Linux up to 
-	  2.6.38.
-        * base/x86_64/hal/rtai_fpu.h: add FPU_ENV compatibility for 
-          Linux > 2.6.34.
-        * base/x86_64/hal/rtai_hal.h: upgraded macros definition to support 
-	  Linux > 2.6.34.
- 
-2012-01-02 Paolo Mantegazza <mantegazza@aero.polimi.it>
+        * base/x86_64/hal/hal.immed: updated to work with Linux up to
+          2.6.38.
 
-        * addons/comedi/README: add explanations about using native LINUX
-	  COMEDI and remote/distributed COMEDI.
-        * addons/comedi/patchlinuxcomedi: shell script for patching native 
-	  Linux COMEDI.
-        * addons/comedi/rtai_comedi.h: rework and reorder previous layout
-          setup make it possible to use COMEDI as found in Linux kernels;
-	  add netrpc based support for remote/distributed COMEDI usage.
-        * addons/comedi/kcomedi-module.c: set the interface to native Linux 
-	  COMEDI within this module, to avoid touching RTAI hal module and 
-	  to be usable on any arch; set safe pointers at module cleanup to 
-	  avoid oopses in between rtai_comedi module removal and the full 
-	  closure of an application; add specific functions to support
-          remote/distributed COMEDI commands and instructions.
-	* base/arch/i386/Kconfig: make default use of COMEDI lock configurable.
-
-2012-01-01 Paolo Mantegazza <mantegazza@aero.polimi.it>
-
-        * base/ipc/msg/msg.c: revised sendx, previous implementation could
-	  overwrite previous sends, made rt_sendx_if safer for in interrupt 
-	  handlers usage, strengthened correctness check of task args and 
-	  copying into pointed variables, receivex-es should have more 
-	  appropriate returns now.
-
-2011-12-31 Roberto Bucher <roberto.bucher@supsi.ch>
-
-	* rtai-lab/scicoslab/macros/RTAI/RTAICodeGen_.sci: if state are not
-	  present, code for state update is not generated.
-	* rtai-lab/scicoslab/macros/RTAI/RTAICodeGen_.sci: scicosim is not
-	  started by creating code, avoiding problems with blocks used for
-	  HIL (thanks to Klaus Weichinger).
-	
 2011-12-31 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/sched/sched.c and sys.c: if PF_EVNOTIFY is defined use the
 	  related Linux patch service, instead of or-ring the related flag
 	  directly.
-	* addons/rtdm/device.c: avoid DECLARE_MUTEX, use the related struct
+	* addons/rtdm/device.c: avoid DECLARE_MUTEX, use the related struct 
 	  declaration and initialize it explicitly at module init.
+
+2011-12-30 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c and sys.c: update PF_EVNOTIFY flag assignement
+	  according to Linux version.
 	* base/arch/i386/hal/hal.immed: upgraded to work up to Linux 2.6.38.8.
-
-2011-12-29 Paolo Mantegazza <mantegazza@aero.polimi.it>
-
-	* base/arch/i386/hal/hal.c: put diag for APIC timers sync under ifdef.
-	* base/include/asm-i386/rtai_fpu.h: upgrade to support 2.6.35.
-	* base/include/asm-i386/rtai_hal.h: upgrade to support 2.6.35.
-	* addons/drivers/serial/rtai_serial.h: make all declared prototypes
-	  compilable in a lib.
-	* rtai-py/rtai_ser.py: add RTAI serial support for python.
-	* base/include/rtai_wrappers.h: define init_MUTEX_LOCKED if not
-	  defined in Linux.
-	* base/ipc/fifos/fifos.c: define iopl according to
-	  HAVE_UNLOCKED_IOCTL.
-	* base/ipc/shm/shm.c: define iopl according to
-	  HAVE_UNLOCKED_IOCTL.
-	* base/include/rtai_schedcore.h: resume a timed out, suspended task,
-	  unconditionally, zeroing suspdepth if it is > 0: this choice allows
-	  a uniform resumption mechanism both for self and externally
-	  suspended tasks.
-	* base/sched/api.c: resume a suspended task forced to unblock
-	  unconditionally by zeroing suspdepth if it is > 0: this choice
-	  allows a uniform resumption mechanism both for self and externally
-	  suspended tasks; use both of the previous resulting modifications
-	  for all rt_task_suspend flavours.
-	* base/sched/sys.c: export rt_fun_ext for direct use in netrpc.c.
-	* base/ipc/netrpc/netrpc.c: use rt_fun_ext directly, in place of
-	  rt_net_rpc_fun_ext.
-	* base/include/rtai_posix.h: fixed return value of pthread_cond_wait.
-	* addons/rtdm/* and addons/drivers/16559A/*: upgraded to more recent 
-	  rtdm changes.
-	* base/ipc/sem/sem.c: a higher prio task can grab a resem that is
-	  owned by a task that has not been scheduled yet, "ubi maior minor
-	  cessat"; mimicking Linux rt-mutexes.
-	* base/sched/sched.c: use RT_TASK "running" variable to mark a truly
-	  owned resource semaphores when scheduling.
-
-2011-06-27 Roberto Bucher <roberto.bucher@supsi.ch>
-
-	* rtai-lab/scicoslab/macros/RTAI/RTAICodeGen_.sci: Removed
-	  bug on creating opar structure (thanks to Matteo Morelli)
 
 2011-05-09 Pierangelo Masarati <masarati@aero.polimi.it>
 
 	* configure.in, configure: avoid potential shell syntax error,
 	  allow separate src and build dirs for Linux, from Ian Abbott
+	* configure.in, configure: create/install setsmi for x86_64,
+	  from Ian Abbott
 
 2011-03-04 Pierangelo Masarati <masarati@aero.polimi.it>
 
 	* makefile: remove erroneous '%' in 'all ::' rule
 
-2011-01-17 Roberto Bucher <roberto.bucher@supsi.ch>
+2011-02-15 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* rtai-lab/scicoslab/macros/RTAI/RTAICodeGen_.sci: Modifications
-	  from INRIA
-	* rtai-lab/scicoslab/devices/scicos_block4.h: Modifications from
-	  INRIA
+	* base/include/rtai_wrappers.h: define init_MUTEX_LOCKED if not 
+	  defined in Linux.
+	* base/ipc/fifos/fifos.c: define iopl according to
+	  HAVE_UNLOCKED_IOCTL.
+	* base/ipc/shm/shm.c: define iopl according to HAVE_UNLOCKED_IOCTL.
+
+2011-01-11 Holger Nahrstaedt <nahrstaedt@control.tu-berlin.de>
+
+	* rtai-lab/scilab5/RTAI/macros/gif_icons: add icons for each block
+	* rtai-lab/scilab5/RTAI/macros/svg_icons: add svg-icons for each block
+	* rtai-lab/scilab5/RTAI/macros/h5: add directory for xcos-block generation
+	* rtai-lab/scilab5/RTAI/macros/do_compile_superblock_rt.sci: code generation (same function as for scilab 4.1.2)
+	* rtai-lab/scilab5/RTAI/macros/RTCodeGen.sci: code generation for scilab 5.3 (replaced  RTAICodeGen_.sci)
+	* rtai-lab/scilab5/RTAI/macros/buildmacros.sce
+	* rtai-lab/scilab5/RTAI/macros/*.sci: replace getvalue by scicos_getvalue and change exprs from a column vector to a row vector.
+	* rtai-lab/scilab5/RTAI/license.txt	
+	* rtai-lab/scilab5/RTAI/builder.sce
+	* rtai-lab/scilab5/RTAI/loader.sce
+	* rtai-lab/scilab5/RTAI/readme.txt
+	* rtai-lab/scilab5/RTAI/src/c/builder_c.sce
+	* rtai-lab/scilab5/RTAI/src/c/rtai_sinus.sce
+	* rtai-lab/scilab5/RTAI/src/c/rtai_square.sce	
+	* rtai-lab/scilab5/RTAI/src/c/rtai_step.sce
+	* rtai-lab/scilab5/RTAI/RT_templates/rtai.mak
+	* rtai-lab/scilab5/RTAI/RT_templates/rtai_sh.mak
+	* rtai-lab/scilab5/RTAI/etc/RTAI.start
+	* rtai-lab/scilab5/libs/scicoslibs.tgz
+	* rtai-lab/scilab5/examples/test.xcos:	
+	* rtai-lab/scilab5/Makefile:
+	* rtai-lab/scilab5/scilab 
+	* rtai-lab/scilab5/devices/Makefile:
+	* rtai-lab/scila5/devices/scicos_block4.h:  modifications for scilab 5.3.0
 
 2010-11-27 Fernando Augusto <fernando_aug@yahoo.com.
 
-	* base/ipc/sem/sem.c: fixed a possible nasty locking loop in 
-	  rt_sem_broadcast.
+	* base/ipc/sem/sem.c: fixed a possible nasty locking loop in
+	 rt_sem_broadcast.
 
-2010-09-01 Roberto Bucher <roberto.bucher@supsi.ch>
+2010-11-16 Holger Nahrstaedt <nahrstaedt@control.tu-berlin.de>
 
-	* rtai-lab/scicoslab/macros/RTAI/RTAICodeGen_.sci: Modifications
-	  from INRIA
-	* rtai-lab/scicoslab/devices/scicos_block4.h: Modifications from
-	  INRIA
+	* rtai-lab/scilab/rtmain.c: 
+	* rtai-lab/scilab5/devices/rtmain.h:
+	* rtai-lab/scilab/devices/rtmain.h: rtRegisterLogData should not be static (otherwise there is a problem with shared libraries)
+
+2010-11-11 Holger Nahrstaedt <nahrstaedt@control.tu-berlin.de>
+
+	* rtai-lab/scilab/loader.sce: 
+	* rtai-lab/scilab/macros/RTAI/loadmacros.sce:
+	* rtai-lab/scilab/macros/Makefile:
+	* rtai-lab/scilab/macros/scilab: New approach in including RTAI files
+	  in scilab (same approach as for scicoslab).
+
+2010-10-12 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/ipc/msg/msg.c: make rt_sendx_if usable form interrupt handlers.
+ 
+2010-10-08 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-x86_64/rtai_fpu.h: upgrade to new FP link in thread
+	  struct definition for > 2.6.34.
+
+2010-10-06 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-i386/rtai_fpu.h: upgrade to new FP link in thread
+	  struct definition for > 2.6.34.
+
+2010-09-15 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* addons/drivers/serial/rtai_serial.h: make all declared prototypes 
+          compilible in a lib.
+	* rtai-py/rtai_ser.py: add RTAI serial support for python.
+
+2010-09-09 Pierangelo Masarati <masarati@aero.polimi.it>
+	* base/arch/x86_64/calibration/GNUmakefile.am,
+	  base/arch/x86_64/calibration/GNUmakefile.in,
+	  base/arch/x86_64/calibration/Makefile.kbuild:
+	  sync'ed with i386
+	* rtai-lab/scicoslab/GNUmakefile.am, rtai-lab/scicoslab/GNUmakefile.in:
+	  sync'ed with vulcano
+	* base/arch/i386/calibration/smi-module.c,
+	  base/arch/x86_64/calibration/smi-module.c,::
+	  #ifndef PCI_DEVICE_ID_INTEL_ICH10_1, for older kernel without it.
+
+2010-08-23 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-i386/rtai_hal.h, base/include/asm-x86_64/rtai_hal.h: 
+	  define a blank IPIPE_IRQ_DOALL when not defined yet.
 
 2010-08-15 Paolo Mantegazza <mantegazza@aero.polimi.it>
-           suggested by Tommaso Falchi Delitala <volalto86@gmail.com>
+	   suggested by Tommaso Falchi Delitala <volalto86@gmail.com>
 
-	* addons/rtdm/rtdm.h: change RTAI_LXRT into RTDM_RTAI_LXRT
-	  to avoid naming conflicts
+	* addons/rtdm/rtdm.h: change RTAI_LXRT into RTDM_RTAI_LXRT to avoid 
+	  naming conflicts
 
-2010-05-07 Pierangelo Masarati <masarati@aero.polimi.it>
+2010-06-29 Roberto Bucher <roberto.bucher@supsi.ch>
 
-	* RTAI 3.8.1
+	* rtai-lab/scicoslab/macros/RTAI/RTAICodeGen_.sci:
+	* rtai-lab/scicoslab/macros/RTAI/gif_icons: Patches
+	  from Rafael Campos (thanks!!!)+modification from INRIA.
+
+2010-06-09 Rafael Campos <rafael@freedom.ind.br>
+
+	* addons/comedi/rtai_comedi.h: fix a macro to keep it compatible for 
+	  both COMEDI site and Linux staging drivers versions.
+
+2010-05-17 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* addons/rtdm/* and addons/drivers/16559A/*: upgraded to the latest
+	  rtdm changes.
+
+2010-05-16 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: use RT_TASK "running" variable to mark a truly
+	  owned resource semaphores when scheduling.
+	* base/ipc/sem/sem.c: modify "ubi maior minor cessat" basing it on 
+	  the "running" variable of RT_TASK; add the feature also to mutex 
+	  signal specific to conds.
+	* base/include/rtai_sem.h: the use of RT_TASK "running" in "ubi maior
+	  minor cessat" allows reverting to previous sem structure declaration.
+
+2010-05-15 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/rtai_posix.h: fixed return value of pthread_cond_wait.
+
+2010-05-14 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/ipc/sem/sem.c: a higher prio task can grab a resem that is
+	  owned by a task that has not been scheduled yet "ubi maior minor 
+	  cessat"; mimicking Linux rt-mutexes.
+	* base/include/rtai_sem.h: add a variable to the sem struct to allow
+	  checking if a resem is truly owned already.
 
 2010-05-07 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* rtai-py/rtai_lxrt.py: fix rt_task_delete and rt_thread_delete, to
-	  match changes in rtai_lxrt.h (thanks to Chris Cole).  
-
-2010-05-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
-
-	* arch/i386/hal/hal.immed, include/asm-i386/rtai_hal.h, 
-	  arch/x86/hal/hail.immed, include/asm-x86/rtai_hal.h: aligned to use 
-	  the latest 2.6.32.11 patch support.
+	  match changes in rtai_lxrt.h (thanks to Chris Cole).
 
 2010-05-01 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* addons/rtdm/drvlib.c: fix wrong return value in sems support
+	* addons/rtdm/drvlib.c: fix wrong return value in sems support 
 	  functions _sem_wait and _sem_wait_timed.
+
+2010-04-28 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* addons/rtdm/module.c: allocate selector on the real time heap as
+	  its deletion is now delayed to an srq service. 
+
+2010-04-25 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/ipc/msg/msg.c: strengthened correctness check of task args,
+	  used a more appropriate unsigned long as return arg of rpcs, revised
+	  sendx, previous implementation could overwrite previous sends,
+	  receivexes have more appropriate returns now.
 
 2010-04-21 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* addons/comedi/rtai_comedi.h: in rt_comedi_do_insnlist put the right
-	  pointer to data in the passed insnlist arg.
+          pointer to data in the passed insnlist arg.
 
-2010-04-16 Paolo Mantegazza <mantegazza@aero.polimi.it>
-
-	* addons/comedi/rtai_comedi.h: grant more appropriate and consistent
-	  returns for insn and insnlist executions.
-
-2010-04-13 Roberto Bucher <roberto.bucher@supsi.ch>
+2010-04-18 Roberto Bucher <roberto.bucher@supsi.ch>
 
 	* rtai-lab/scicoslab/macros/RTAI/RTAICodeGen_.sci:
 	* rtai-lab/scicoslab/macros/RTAI/SetTarget_.sci: TARGET_DIR
 	  set to SCI/contrib/RT_templates.
 
-2010-04-08 Roberto Bucher <roberto.bucher@supsi.ch>
+2010-04-18 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* rtai-lab/matlab/rtmain.c: Variable Len for rt_receicex changed to
-	  long.
-	* configure.in: Added folder scicoslab.
-	* rtai-lab/scicoslab/devices/scicos_block4.h:
-	* rtai-lab/scicoslab/macros/Makefile:  
-	* rtai-lab/scicoslab/macros/RTAI/RTAICodeGen_.sci:
-	* rtai-lab/scicoslab/macros/RTAI/RT_templates/rtai.mak:
-	* rtai-lab/scicoslab/macros/RTAI/RT_templates/standalone.cmd: 
-          Modifications for Scicoslab-4.4.
+	* addons/comedi/rtai_comedi.h: comply to the usage of nanos for
+	  timings in netrpc, by automatically converting to internal counts
+	  when a local service is called, i.e. (node == 0). REMARK: better
+	  to check it for long time estabilished netrpc services also.
+
+2010-04-08 Roberto Bucher <roberto.bucher@supsi.ch>
+        * rtai-lab/matlab/rtmain.c: Variable Len for rt_receicex changed to
+        long.
+        * configure.in: Added folder scicoslab.
+        * rtai-lab/scicoslab/devices/scicos_block4.h:
+        * rtai-lab/scicoslab/macros/Makefile:  
+        * rtai-lab/scicoslab/macros/RTAI/RTAICodeGen_.sci:
+        * rtai-lab/scicoslab/macros/RTAI/RT_templates/rtai.mak:
+        * rtai-lab/scicoslab/macros/RTAI/RT_templates/standalone.cmd: 
+	  Modifications for Scicoslab-4.4.
+
+2010-04-08 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sys.c: export rt_fun_ext for direct use in netrpc.c.
+	* base/ipc/netrpc/netrpc.c: use rt_fun_ext directly, in place of 
+          rt_net_rpc_fun_ext.
+
+2010-04-06 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* addons/comedi/rtai_comedi.h: add netrpc based support for 
+	  remote/distributed COMEDI usage.
+	* addons/comedi/kcomedi-module.c: add specific functions to support
+	  remote/distributed COMEDI commands and instructions.
+	* addons/comedi/README: add explanation on how to use 
+	  remote/distributed COMEDI.
+
+2009-04-02 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* configure.in, rtai_config.h: add support for setting COMEDI locks
+	  by default.
+
+2009-03-31 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* configure.in, rtai_config.h: add support for use of COMEDI as 
+	  distributed within Linux (in: drivers/staging/comedi).
+
+2010-03-28 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* addons/comedi/rtai_comedi.h: rework and reorder previous layout
+	  setup, for making it possible to use COMEDI as found in Linux 
+	  kernels.
+	* addons/comedi/patchlinuxcomed: add shell script for patching Linux
+	  COMEDI.
+	* addons/comedi/kcomedi-module.c: set interface to Linux COMEDI within
+	  this module, to avoid touching RTAI hal module and to be usable on
+	  any arch; set safe pointers at module cleanup, to avoid oopses in 
+	  betweem rtai_comedi module removal and the full closure of an 
+	  application.
+
+2010-03-22 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* addons/comedi/rtai_comedi.h: make it possible to use COMEDI as found
+	  in Linux kernels.
+
+2010-03-21 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/rtai_schedcore.h: resume a timed out, suspended task,
+	  unconditionally, zeroing suspdepth if it is > 0: this choice allows 
+	  a uniform resumption mechanism both for self and externally 
+	  suspended tasks.
+	* base/sched/api.c: resume a suspended task forced to unblock 
+	  unconditionally by zeroing suspdepth if it is > 0: this choice allows 
+	  a uniform resumption mechanism both for self and externally 
+	  suspended tasks; use both of the previous resulting modifications
+	  for all rt_task_suspend flavours.
 
 2010-03-19 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/sched/api.c: fixed a never ending loop and a missing unlock
+	* base/sched/api.c: fixed a never ending loop and a missing unlock 
 	  in rt_task_suspend_until.
 
 2010-03-18 Paolo Mantegazza <mantegazza@aero.polimi.it>
@@ -257,13 +696,33 @@
 	  table of waiting functions, to have them work correctly when called
 	  in soft mode.
 
-2010-02-16 Pierangelo Masarati <masarati@aero.polimi.it>
+2009-03-12 Roberto Bucher <roberto.bucher@supsi.ch>
 
-	* RTAI 3.8
+	* rtai-lab/scicoslab/macros/RTAI/rtai4_scope.sci:
+	* rtai-lab/scicoslab/macros/RTAI/rtai_generic_out.sci:
+	* rtai-lab/scilab/devices/rtai_fifoin.c:
+	* rtai-lab/scilab/devices/rtai_fifoout.c:
+	* rtai-lab/scilab/macros/RTAI/rtai4_scope.sci:
+	* rtai-lab/scilab/macros/RTAI/rtai_generic_out.sci:
+	* rtai-lab/scilab5/RTAI/macros/rtai4_scope.sci:
+	* rtai-lab/scilab5/RTAI/macros/rtai_generic_out.sci:
+	* rtai-lab/scilab5/devices/rtai_fifoin.c:
+	* rtai-lab/scilab5/devices/rtai_fifoout.c: ported the vulcano
+	  modifications to magma
 
-2010-02-15 Pierangelo Masarati <masarati@aero.polimi.it>
+2010-02-24 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* RTAI 3.8-test2
+	* base/include/asm-x86_64/rtai_hal.h: upgrade to the latest patches
+	  supporting Linux CONFIG_SPARSE_IRQ.
+	* base/arch/asm-x86_64/hal/hal.immed: upgrade to the latest patches
+	  supporting Linux CONFIG_SPARSE_IRQ.
+
+2010-02-21 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-i386/rtai_hal.h: upgrade to the latest patches
+	  supporting Linux CONFIG_SPARSE_IRQ.
+	* base/arch/i386/hal/hal.immed: upgrade to the latest patches
+	  supporting Linux CONFIG_SPARSE_IRQ.
 
 2010-01-25 Joe Brandt <jbrandt@nrao.edu>
 
@@ -295,37 +754,18 @@
 	* base/ipc/msg/msg.c: fixed a bug related to returnx trying to reply
 	  to a timed out rpcing task, without checking its state.
 
-2009-12-01 Pierangelo Masarati <masarati@aero.polimi.it>
+2009-11-04 Pierangelo Masarati <masarati@aero.polimi.it>
 
-	* RTAI 3.8-test1
+	* makefile: fix path of kconfig file (thanks to suggestion from
+	  Kevin Kemper kemperke at engr.oregonstate.edu)
 
-2009-11-05 Roberto Bucher <roberto.bucher@supsi.ch>
-	* rtai-lab/matlab/rtmain.c:
-	* rtai-lab/matlab/rtmain.h:
+2009-10-16 Roberto Bucher <roberto.bucher@supsi.ch>
+
 	* rtai-lab/scicoslab/macros/RTAI/rtai_ext_clock.sci:
 	* rtai-lab/scicoslab/macros/RTAI/gif_icons/rtai_ext_clock.gif:
 	* rtai-lab/scilab/macros/RTAI/rtai_ext_clock.sci:
 	* rtai-lab/scila5/macros/RTAI/rtai_ext_clock.sci: Modifications for
 	  external synchronization (thanks to Henrik Slotholt).
-	* rtai-lab/xrtailab.cpp: 
-	* rtai-lab/xrtailab.h: 
-	* rtai-lab/Fl_Scopes_Manager.cpp:
-	* rtai-lab/matlab/devices/sfun_rtai_scope.c:
-	* rtai-lab/scilab5/RTAI/macros/RTAICodeGen_.sci:
-	* rtai-lab/scilab/macros/RTAI/RTAICodeGen_.sci:
-	* rtai-lab/scicoslab/macros/RTAI/RTAICodeGen_.sci:
-	* rtai-lab/sci*/macros/RTAI/rtai4_scope.sci:
-	* rtai-lab/sci*/macros/RTAI/rtai4_scope.sci:
-	* rtai-lab/scila5/macros/RTAI/rtai4_scope.sci: Modifications for
-	  scopes with signal names and double type (thanks to Henrik Slotholt).
-	* rtai-lab/sci*/devices/rtai_fifoin.c:
-	* rtai-lab/sci*/devices/rtai_fifoout.c: Buffer length set to multiplexed
-          of signal size.
-
-2009-11-04 Pierangelo Masarati <masarati@aero.polimi.it>
-
-	* makefile: fix path of kconfig file (thanks to suggestion from
-	  Kevin Kemper kemperke at engr.oregonstate.edu)
 
 2009-10-07 Pierangelo Masarati <masarati@aero.polimi.it>
 	* addons/drivers/16550A/GNUmakefile.am:
@@ -335,24 +775,19 @@
 
 	* base/include/rtai_lxrt.h: Modified for C++ support.
 
-2009-10-06 Paolo Mantegazza <mantegazza@aero.polimi.it>
+2009-10-04 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/include/rtai_lxrt.h: a few functions for async Linux syscalls
-	  renamed, legacy compatibilty maintained, added a few checks more
-	  and rt_destroy_linux_syscalls_server.
-	* base/include/rtai_sched.h: modified type of the Linux server in 
-	  rt_task structure.
-	* base/sched/api.c: reworked to check for overruns.
-	* base/sched/sched.c: modified call to the Linux async syscalls
- 	  server, reworked suspend-resume services.
-	* base/sched/sys.c: reworked Linux sycalls server entry, added server
-	  cancellation, modified __task_delete to ensure server cancellation.
-	* base/include/rtai_lxrt.h: linux server reworked to need no info
-	  about registers structure and to support syscalls status inquiries
-	  and cancellations.
-	* base/schede/api.c: linux server reworked to allow server task
-	  working with no info about registers structure and to support 
-	  syscalls status inquiries and cancellations.
+	* base/sched/api.c: revised all suspend functions.
+
+2009-10-04 Roberto Bucher <roberto.bucher@supsi.ch>
+
+	* rtai-lab/xrtailab.cpp: 
+	* rtai-lab/xrtailab.h: 
+	* rtai-lab/Fl_Scopes_Manager.cpp: 
+	* rtai-lab/scicoslab/macros/RTAI/rtai4_scope.sci:
+	* rtai-lab/scilab/macros/RTAI/rtai4_scope.sci:
+	* rtai-lab/scila5/macros/RTAI/rtai4_scope.sci: Modifications for
+	  scopes with signal names and double type (thanks to Henrik Slotholt).
 
 2009-09-29 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
@@ -390,33 +825,6 @@
 	  smp_call_function, pointed at by Rodrigo Amestica
 	  <ramestica@nrao.edu>
 
-2009-06-19 Roberto Bucher <roberto.bucher@supsi.ch>
-
-	* rtai-lab/scilab5/RTAI/RT_templates/rtai.mak: Substitute the
-          previous wrong file.
-
-2009-06-15 Pierangelo Masarati <masarati@aero.polimi.it>
-
-	* RTAI 3.7.1
-
-2009-06-10 Roberto Bucher <roberto.bucher@supsi.ch>
-
-	* rtai-lab/scilab/macros/RTAI/RT_templates/rtai.mak: 
-	* rtai-lab/scicoslab/macros/RTAI/RT_templates/rtai.mak: 
-	* rtai-lab/scilab5/RTAI_RT_templates/rtai.mak: Template makefile
-	  different for systems with and without COMEDI support.
-
-2009-06-06 Paolo Mantegazza <mantegazza@aero.polimi.it>
-
-	* base/iarch/i386/hal/hal.c: care of Linux version in calling
-	  smp_call_function, pointed at by Rodrigo Amestica
-	  <ramestica@nrao.edu>
-
-2009-06-05 Roberto Bucher <roberto.bucher@supsi.ch>
-
-	* rtai-lab/matlab/devices/sfun_comedi*: Some modifications from
-	  Guillaume Millet (from scicos equivalent files).
-
 2009-06-05 Roberto Bucher <roberto.bucher@supsi.ch>
 
 	* rtai-lab/scilab/macros/RTAI/*: 
@@ -434,11 +842,7 @@
 	* rtai-lab/scicoslab/macros/RTAI/rtai4_comedi*: 
 	* rtai-lab/scicoslab/devices/rtai_comedi*: Little bugs correction.
 
-2009-06-02 Guillaume Millet <millet@isir.fr>
-
-	* addons/comedi/rtai_comedi.h: added comedi_get_subdevice_flags.
-
-2009-05-30 Roberto Bucher <roberto.bucher@supsi.ch>
+2009-06-03 Roberto Bucher <roberto.bucher@supsi.ch>
 
 	* rtai-lab/scicoslab/macros/rtai4_comedi_encoder.sci:
 	* rtai-lab/scilab/macros/rtai4_comedi_encoder.sci:
@@ -451,18 +855,22 @@
 	* rtai-lab/scilab5/devices/rtai_comedi_encoder.c: Added subdevices
 	  to handle more encoders (many thanks to Guillaume Millet).
 
-2009-05-29 Roberto Bucher <roberto.bucher@supsi.ch>
+2009-06-03 Roberto Bucher <roberto.bucher@supsi.ch>
 
 	* rtai-lab/scicoslab/macros/Makefile: Addesd *.sce to sources to be 
 	  copied.
 	* rtai-lab/scilab/macros/Makefile: Added *.sce to sources to be copied.
+
+2009-06-02 Guillaume Millet <millet@isir.fr>
+
+	* addons/comedi/rtai_comedi.h: added comedi_get_subdevice_flags.
 
 2009-05-20 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/include/rtai_sched.h: declare rt_make_hard/soft_real_time for
 	  use in kernel space also.
 	* base/sched/sys.c: make available rt_make_hard/soft_real_time for
-          use in kernel space also, for use in Linux hardened kernel threads.
+	  use in kernel space also, for use in Linux hardened kernel threads.
 
 2009-05-14 Roberto Bucher <roberto.bucher@supsi.ch>
 
@@ -510,20 +918,25 @@
 
 2009-05-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/include/rtai_lxrt.h: syscalls list reordered to allow 
-	  overruns checks server call function, renamed server create, 
-	  legacy maintained, delete RTAI task extension when exiting the 
-	  Linux syscall server.
-	* base/schede/sys.c: ensure the linux syscall server is forced to 
-	  exit when deleting its parent RTAI extension.
-	* base/schede/api.c: checks Linux async syscalls overruns.
+	* base/include/rtai_lxrt.h: a few functions for async Linux syscalls
+	  renamed, legacy compatibilty maintained, added a few checks more
+	  and rt_destroy_linux_syscalls_server.
+	* base/include/rtai_sched.h: modified type of the Linux server in 
+	  rt_task structure.
+	* base/sched/api.c: reworked to check for overruns.
+	* base/sched/sched.c: modified call to the Linux async syscalls
+ 	  server.
+	* base/sched/sys.c: reworked Linux sycalls server entry, added server
+	  cancellation, modified __task_delete to ensure server cancellation.
 
-2009-04-30 Paolo Mantegazza <mantegazza@aero.polimi.it>
+2009-05-01 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/include/rtai_lxrt.h: linux server reworked to need no info 
-	  about registers structure.
-	* base/schede/api.c: linux server reworked to allow server task 
-	  working with no info about registers structure.
+	* base/include/rtai_lxrt.h: linux server reworked to need no info
+	  about registers structure and to support syscalls status inquiries
+	  and cancellations.
+	* base/schede/api.c: linux server reworked to allow server task
+	  working with no info about registers structure and to support 
+	  syscalls status inquiries and cancellations.
 
 2009-04-28 Roberto Bucher <roberto.bucher@supsi.ch>
 
@@ -551,7 +964,7 @@
 
 2009-04-24 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/sched/api.c: reschedule immediatly if the caller of
+	* base/sched/api.c: reschedule immediatly if the caller of 
 	  rt_task_yield if not at the highest priority.
 
 2009-04-21 Roberto Bucher <roberto.bucher@supsi.ch>
@@ -573,21 +986,30 @@
 2009-04-21 Roberto Bucher <roberto.bucher@supsi.ch>
 
 	* rtai-lab/scilab5/Makefile: Modified for installing static libraries.
-	* rtai-lab/scilab5/libs/scicoslibs.tgz: tarball with static libraries.
-	* rtai-lab/scilab5/RTAI/RT_templates/rtai_sh.mak: Additional shared
-	  library for Scilab-5.1.1 (thanks to Holger Nahrstaedt).
+        * rtai-lab/scilab5/libs/scicoslibs.tgz: tarball with static libraries.
+        * rtai-lab/scilab5/RTAI/RT_templates/rtai_sh.mak: Added new lib for 
+          Scilab-5.1.1 (thanks to Holger Nahrstaedt).
+
+2009-04-20 Roberto Bucher <roberto.bucher@supsi.ch>
+
+	* rtai-lab/GNUmakefile.am: Added scilab5 into
+        EXTRA_DIST.
 
 2009-04-20 Roberto Bucher <roberto.bucher@supsi.ch>
 
 	* rtai-lab/xrtailab.c, rtai-lab/xrtailab.h: Added some 
-	  lock/unlock commands (many tanks to Robert Dye).
+          lock/unlock commands (many tanks to Robert Dye).
 
 2009-04-20 Roberto Bucher <roberto.bucher@supsi.ch>
 
 	* rtai-lab/scilab5/Makefile, 
-	  rtai-lab/scilab5/RTAI/RT_templates/rtai_sh.mak: Choice between
-	  generated code with static (default) or shared libraries (thanks to
-	  Holger Nahrstaedt).
+          rtai-lab/scilab5/RTAI/RT_templates/rtai_sh.mak: Choice between
+          generated code with static (default) or shared libraries (thanks to
+          Holger Nahrstaedt).
+
+2009-04-20 Roberto Bucher <roberto.bucher@supsi.ch>
+
+	* rtai-lab/scilab*/RTAICodeGen_.sci: Copyright info updated
 
 2009-04-11 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
@@ -602,18 +1024,18 @@
 
 2009-04-09 Pierangelo Masarati <masarati@aero.polimi.it>
 
-	* RTAI 3.7
+        * RTAI 3.7
 
 2009-04-09 Valentin Pavlyuchenko <TheValik@gmail.com>
-           Paolo Mantegazza <mantegazza@aero.polimi.it>
+	   Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-        * base/ipc/netrpc/netrpc.c: use down_interruptible in send server
-	  thread to fix annoying warnings when softlock debugging is 
+	* base/ipc/netrpc/netrpc.c: use down_interruptible in send server
+	  thread to fix annoying warnings when softlock debugging is
 	  configured in Linux.
 
 2009-04-04 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/ipc/netrpc/netrpc.c: rework macro RETURN_ERR to work with 
+	* base/ipc/netrpc/netrpc.c: rework macro RETURN_ERR to work with
 	  any endianess.
 
 2009-04-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
@@ -624,11 +1046,6 @@
 2009-04-02 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/arch/ppc/hal/hal.c: rework rt_printk and rt_sync_printk.
-
-2009-04-01 Pierangelo Masarati <masarati@aero.polimi.it>
-
-	* configure.in: import from magma support for arm stuff
-	  (thanks to Torsten Koschorrek)
 
 2009-03-29 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
@@ -646,13 +1063,20 @@
 2009-03-27 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/arch/i386/hal/hal.immed and base/arch/x86_64/hal/hal.immed,
-	* base/include/asm-i386/rtai_lxrt.h and 
-	* base/include/asm-x86_64/rtai_lxrt.h: change REG definition macros 
-	  to avoid annoying compiler warnings, conflicting with Linux
+	* base/include/asm-i386/rtai_lxrt.h and
+	* base/include/asm-x86_64/rtai_lxrt.h: change REG definition macros
+	  to avoid annoying compiler warnings, conflicting with Linux 
 	  headers.
-	* base/include/rtai_scb.h: force RTAI_PROTO to a static inline in 
-	  kernel space, otherwise we'll miss scb when RTAI_PROTO is set to 
+	* base/include/rtai_scb.h: force RTAI_PROTO to a static inline in
+	  kernel space, otherwise we'll miss scb when RTAI_PROTO is set to
 	  no inline.
+
+2009-03-25 Roberto Bucher <roberto.bucher@supsi.ch>
+
+	* rtai-lab/scilab*/RTAICodeGen_.sci: Modifications for
+	  compatibility scilab-4.1.2 and scicoslab-4.3.
+	* rtai-lab/scilab/macros/RTAI/RT_templates/rtai.mak: 
+	  Modifications for compatibility scilab-4.1.2 and scicoslab-4.3.
 
 2009-03-25 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
@@ -663,7 +1087,7 @@
 
 2009-03-23 Pierangelo Masarati <masarati@aero.polimi.it>
 
-	* RTAI 3.7-test3
+        * RTAI 3.7-test3
 
 2009-03-23 Pierangelo Masarati <masarati@aero.polimi.it>
 
@@ -674,29 +1098,22 @@
 
 2009-03-22 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/ipc/netrpc/netrpc.c: do the final cleanup of soft servers by
+        * base/ipc/netrpc/netrpc.c: do the final cleanup of soft servers by
 	  letting them die autonomously on unblock returns.
 	* base/sched/sched.c: export rt_daemonize for Linux < 2.6.24, used by
 	  netrpc.c.
 
 2009-03-21 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/include/rtai_sched.h: define type RT_TASK_INFO and added 
+	* base/include/rtai_sched.h: define type RT_TASK_INFO and added
 	  declaration of rt_task_get_info.
-	* base/include/rtai_lxrt.h: added rt_task_get_info and based 
+	* base/include/rtai_lxrt.h: added rt_task_get_info and based
 	  rt_get_priorities onto it.
 	* base/sched/api.c: added rt_task_get_info.
-	* base/sched/sched.c: reuse rt_get_priorities syscall slot for 
+	* base/sched/sched.c: reuse rt_get_priorities syscall slot for
 	  rt_task_get_info, add int oneshot_span and initialize it at module
 	  init, add macro ONESHOT_DELAY to avoid having the same code twice
 	  in the following #if conditioned FIRE_NEXT_TIMER_SHOT macros.
-
-2009-03-20 Roberto Bucher <roberto.bucher@supsi.ch>
-
-	* rtai-lab/scilab*/RTAICodeGen_.sci: Modifications for
-	  compatibility scilab-4.1.2 and scicoslab-4.3.
-	* rtai-lab/scilab/macros/RTAI/RT_templates/rtai.mak: 
-	  Modifications for compatibility scilab-4.1.2 and scicoslab-4.3.
 
 2009-03-18 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
@@ -712,7 +1129,7 @@
 
 2009-03-16 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/addons/drivers/serial/serial.c: save and null callback task 
+	* base/addons/drivers/serial/serial.c: save and null callback task
 	  prior to awakening it up in spclose.
 
 2009-03-16 Kenneth Jacker   <khj@cs.appstate.edu>
@@ -722,7 +1139,7 @@
 
 2009-03-15 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/addons/comedi/rtai_comedi.h: fixed user space trigger,
+        * base/addons/comedi/rtai_comedi.h: fixed user space trigger,
 	  added helper macro for trigger instruction.
 
 2009-03-14 Paolo Mantegazza <mantegazza@aero.polimi.it>
@@ -732,12 +1149,12 @@
 2009-03-13 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* addons/comedi/rtai_comedi.h: add macros to help setting insn up for
-	  AI/AO/DIO.
+	  AI/AO/DIO.  
 
 2009-03-12 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* addons/comedi/kcomedi-module.c: fix rt_comedi_wait insertions in 
-          the user space call table as data passing is supported internally
+	* addons/comedi/kcomedi-module.c: fix rt_comedi_wait insertions in
+	  the user space call table as data passing is supported internally
 	  and not with the use of the general messaging framework.
 
 2009-03-11 Roberto Bucher <roberto.bucher@supsi.ch>
@@ -758,8 +1175,8 @@
 
 2009-03-10 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/include/rtai_posix.h and rtai_signal.h: force a few strict 
-	  casts to avoid problems with C++; remove a useless casting 
+	* base/include/rtai_posix.h and rtai_signal.h: force a few strict
+	  casts to avoid problems with C++; remove a useless casting
 	  conflicting with C++ when calling a tasklet handler.
 
 2009-03-09 Paolo Mantegazza <mantegazza@aero.polimi.it>
@@ -771,11 +1188,11 @@
 
 2009-03-09 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* addons/comedi/kcomedi-module.c: added rt_comedi_do_insnlist and all 
-	  forgotten EXPORT_SYMBOLs; added configurable use of comedi_lock-
-	  comedi_unlock for functions that might need it.
-	* addons/comedi/rtai_comedi.h: restyled a few lines, fixed 
-	  comedi_do_insn and added rt_comedi_do_insnlist.
+        * addons/comedi/kcomedi-module.c: added rt_comedi_do_insnlist and all
+          forgotten EXPORT_SYMBOLs; added configurable use of comedi_lock-
+          comedi_unlock for functions that might need it.
+        * addons/comedi/rtai_comedi.h: restyled a few lines, fixed
+          comedi_do_insn and added rt_comedi_do_insnlist.
 	* addons/comedi/README: added explanation for what added above.
 
 2009-03-07 Andy Hirsh" <andhirsh@gmail.com>
@@ -783,31 +1200,27 @@
 	* base/include/rtai_fifos.h: add missing declaration of rtf_get_frbs.
 
 2009-03-06 Edoardo Vigoni   <vigoni@aero.polimi.it>
-	   Paolo Mantegazza <mantegazza@aero.polimi.it>
+           Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* addons/comedi/kcomedi-module.c, rtai_comedi.h and README: newly 
+	* addons/comedi/kcomedi-module.c, rtai_comedi.h and README: newly
 	  reworked using rt_task_suspend/resumes to allow checking for
 	  overruns; new comedi command read functions embedding callbacks
 	  waits and data reading in a single call; updated README.
 
 2009-03-05 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/include/rtai_lxrt.h: fix macro rt_task_wakeup_sleeping
+	* base/include/rtai_lxrt.h: fix macro rt_task_wakeup_sleeping 
 	  inconsistency, mask argument not needed.
 
 2009-03-04 Pierangelo Masarati <masarati@aero.polimi.it>
 
 	* RTAI 3.7-test2
 
-2009-03-04 Pierangelo Masarati <masarati@aero.polimi.it>
-
-	* rtai-lab/GNUMakefile.*: only distribute scilab5 stuff by now
-
 2009-03-04 Edoardo Vigoni   <vigoni@aero.polimi.it>
 	   Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* addons/comedi/kcomedi-module.c, rtai_comedi.h and README: upgraded
-	  to include async operations from user space, working but to be 
+	  to include async operations from user space, working but to be
 	  refined.
 
 2009-03-04 Paolo Mantegazza <mantegazza@aero.polimi.it>
@@ -817,8 +1230,8 @@
 2009-03-03 Valentin Pavlyuchenko <TheValik@gmail.com>
            Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-        * base/sched/sched.c and base/include/rtai_schedcore.h: fix annoying
-          warnings when softlock debugging is configured in Linux, using
+	* base/sched/sched.c and base/include/rtai_schedcore.h: fix annoying
+	  warnings when softlock debugging is configured in Linux. using
 	  (TASK_INTERRUPTIBLE | TASK_NOWAKEUP) instead of TASK_INTERRUPTIBLE
 	  only.
 
@@ -830,10 +1243,16 @@
 	* rtai-lab/xrtailab.cpp: Some patches. Thanks to Marco Morandini.
 	* rtai-lab/scilab5/*: Added support for Scilab-5.x
 	* rtai-lab/scilab/*: Changed some files to increase the name size.
+	* rtai-lab/scilab/rtmain.c: Support for multithreading code 
+	  generation.
+	* rtai-lab/scilab/macros/RTAI/RTAICodeGen_.sci: Multithread code
+	  generation.
+	* rtai-lab/scilab/macros/RTAI/RT_templates/*: Multithread code
+	  generation.
 
 2009-02-27 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/include/rtai_signal.h: use RTAI_PROTO in place of static 
+	* base/include/rtai_signal.h: use RTAI_PROTO in place of static
 	  inlines to allow its inclusion in libs.
 	* base/sched/liblxrt/services.c: include rtai_signal.h in the lib.
 
@@ -845,13 +1264,13 @@
 
 2009-02-22 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/ipc/shm/shm.c: use "rtai_shm" in place of "RTAI_SHM" in 
-	  struct miscdevice, it avoids a long standing inconsistency with 
+	* base/ipc/shm/shm.c: use "rtai_shm" in place of "RTAI_SHM" in
+	  struct miscdevice, it avoids a long standing inconsistency with
 	  what used for udev.
 
 2009-02-21 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/arch/i386/calibration/smi-module.c: changes for far back 
+	* base/arch/i386/calibration/smi-module.c: changes for far back
 	  2.6.xx compatibilty, added reboot notification support.
 
 2009-02-20 Pierangelo Masarati <masarati@aero.polimi.it>
@@ -861,7 +1280,7 @@
 
 2009-02-20 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/include/rtai_names.h, rtai_msg.h: remove define of 
+	* base/include/rtai_names.h, rtai_msg.h: remove define of
 	  RTAI_MAX_NAME_LENGTH.
 	* base/include/rtai_sched.h: put define of RTAI_MAX_NAME_LENGTH here.
 	* base/arch/i386-x86_64/Kconfig: no more conditional inlining.
@@ -878,22 +1297,24 @@
 2009-02-12 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/arch/x86_64/hal/hal.immed,
-	* base/include/asm-x86_646/rtai_hal.h: commit forgotten changes 
+	* base/include/asm-x86_646/rtai_hal.h: commit forgotten changes
 	  to irq_ack to work both with > 2.6.26 and previous releases.
 
 2009-02-12 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
-	* base/arch/i386/hal/hal.immed: adapt irq definition in
+	* base/arch/i386/hal/hal.immed: adapt irq definition in 
 	  hirq_dispatcher to patches > 2.6.27.
 
 2009-02-10 Pierangelo Masarati <masarati@aero.polimi.it>
 
-	* base/scripts/rtai-load.in: first look for modules in the
+	* base/scripts/rtai-load.in: first look for modules in the 
 	  module dir (patch submitted by Paul, <paul_c@tuxcnc.org>)
 
-2009-02-02 Pierangelo Masarati <masarati@aero.polimi.it>
+2009-02-04 Pierangelo Masarati <masarati@aero.polimi.it>
 
-	* configure.in: only set CROSS_COMPILE if not defined yet
+	* configure.in: fix arm-related conditionals
+	* */GNUmakefile.am: install modules in moduledir;
+	  consistently use bindir
 
 2009-01-29 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
@@ -930,6 +1351,18 @@
 	* base/sched/sys.c: make RTAI tasks not OOM killable, if an rt_fun_ext
 	  is missing hint to a possible missing module.
 
+2008-12-27 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* configure.in: only set CROSS_COMPILE when unset
+
+2008-12-23 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* configure.in: revert previous commit
+
+2008-12-19 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* configure.in: CONFIG_KBUILD always defined (hack)
+
 2008-12-18 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/include/rtai_wrappers.h and base/include/asm-i386/rtai_hal.h:
@@ -955,14 +1388,6 @@
 
 	* base/include/rtai_scb.h: added function rt_scb_reset, rt_scb_avbs,
 	  rt_scb_frbs.
-
-2008-12-11 Roberto Bucher <roberto.bucher@supsi.ch>
-
-	* rtai-lab/scilab/macros/RTAI/RTAICodeGen_.sci: Modification for
-	  future multithread code generation
-	* rtai-lab/scilab/macros/RTAI/RT_templates*: New templates fitted
-	  for the new Code generator
-	* rtai-lab/scilab/rt_main.c: Modified to fit the new Code generator
 
 2008-12-10 Pierangelo Masarati <masarati@aero.polimi.it>
 
@@ -1016,7 +1441,7 @@
 2008-11-14 Valentin Pavlyuchenko <TheValik@gmail.com>
 
 	* addons/rtdm/xn.h: care if it is either MMU or not in 
-	  strncpy_from_useri and xnarch_remap_vm_page.
+	  strncpy_from_user and xnarch_remap_vm_page.
 	* base/sched/sys.c: VM_PINNED just for the MMU case, care of Linux 
 	  version in extending nonroot capabilities.
 	* base/include/rtai_lxrt.h: care of growing and locking the stack 

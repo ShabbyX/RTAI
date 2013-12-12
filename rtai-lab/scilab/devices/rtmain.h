@@ -22,6 +22,7 @@ void *get_a_name(const char *root, char *name);
 int rtRegisterScope(char *name, char **traceNames, int n);
 int rtRegisterLed(const char *name, int n);
 int rtRegisterMeter(const char *name, int n);
+int rtRegisterLogData(const char *name, int nrow, int ncol);
 void exit_on_error(void);
 
 

@@ -26,6 +26,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  * Note that they are not really push/pop as we do not update the stack pointer, it is not needed and saves an instruction :-).
  */
 
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
 #include <asm/processor.h>
 
 	.globl up_task_sw

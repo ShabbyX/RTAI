@@ -36,9 +36,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = addons/rtdm
-DIST_COMMON = $(include_HEADERS) $(noinst_HEADERS) \
-	$(srcdir)/GNUmakefile.am $(srcdir)/GNUmakefile.in \
-	$(srcdir)/Makefile.kbuild
+DIST_COMMON = $(include_HEADERS) $(srcdir)/GNUmakefile.am \
+	$(srcdir)/GNUmakefile.in $(srcdir)/Makefile.kbuild
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/base/config/autoconf/acinclude.m4 \
 	$(top_srcdir)/base/config/autoconf/docbook.m4 \
@@ -101,7 +100,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(includedir)"
-HEADERS = $(include_HEADERS) $(noinst_HEADERS)
+HEADERS = $(include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -243,6 +242,7 @@ RTAI_MAYBE_SIMDIR = @RTAI_MAYBE_SIMDIR@
 RTAI_MODULE_DIR = @RTAI_MODULE_DIR@
 RTAI_MODULE_EXT = @RTAI_MODULE_EXT@
 RTAI_POSIX_WRAP = @RTAI_POSIX_WRAP@
+RTAI_REAL_USER_CFLAGS = @RTAI_REAL_USER_CFLAGS@
 RTAI_TARGET_ARCH = @RTAI_TARGET_ARCH@
 RTAI_TARGET_ARCH_OPTS = @RTAI_TARGET_ARCH_OPTS@
 RTAI_TARGET_SUBARCH = @RTAI_TARGET_SUBARCH@
@@ -330,11 +330,6 @@ include_HEADERS = \
 	xn.h \
 	rtai_taskq.h \
 	select.h
-
-noinst_HEADERS = \
-	core.h \
-	device.h \
-	proc.h
 
 @CONFIG_KBUILD_FALSE@noinst_LIBRARIES = librtdm.a
 @CONFIG_KBUILD_FALSE@librtdm_a_AR = $(CROSS_COMPILE)ar cru

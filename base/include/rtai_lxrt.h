@@ -334,7 +334,9 @@
 #define SEM_RT_POLL 		       228
 #define RT_POLL_NETRPC		       229
 
-#define MAX_LXRT_FUN		       230
+#define RT_USRQ_DISPATCHER	       230
+
+#define MAX_LXRT_FUN		       231
 
 // not recovered yet 
 // Qblk's 
@@ -403,7 +405,7 @@
 #define LINUX_SERVER		1020
 #define ALLOC_REGISTER 		1021
 #define DELETE_DEREGISTER	1022
-#define FORCE_TASK_SOFT  	1023
+#define HARD_SOFT_TOGGLER	1023
 #define PRINTK			1024
 #define GET_EXECTIME		1025
 #define GET_TIMEORIG 		1026
@@ -411,6 +413,8 @@
 #define LXRT_RWL_DELETE 	1028
 #define LXRT_SPL_INIT		1029
 #define LXRT_SPL_DELETE 	1030
+#define KERNEL_CALIBRATOR	1031
+#define GET_CPU_FREQ		1032
 
 #define FORCE_SOFT 0x80000000
 
@@ -420,7 +424,7 @@
 #define ENCODE_LXRT_REQ(dynx, srq, lsize)  (((dynx) << 24) | ((srq) << 12) | GT_NR_SYSCALLS | (lsize))
 // ... and this is the decoding.
 #define SRQ(x)   (((x) >> 12) & 0xFFF)
-#define NARG(x)  ((x) & (GT_NR_SYSCALLS - 1))
+#define LXRT_NARG(x)  ((x) & (GT_NR_SYSCALLS - 1))
 #define INDX(x)  (((x) >> 24) & 0xF)
 
 #define LINUX_SYSCALL_GET_MODE       0
@@ -517,35 +521,22 @@ int set_rt_fun_entries(struct rt_native_fun_entry *entry);
 extern "C" {
 #endif /* __cplusplus */
 
-#if 1 // needs CONFIG_RTAI_INTERNAL_LXRT_SUPPORT no more
- 
-static inline struct rt_task_struct *pid2rttask(long pid)
-{
-	struct task_struct *lnxtsk = find_task_by_pid(pid);
-        return lnxtsk ? lnxtsk->rtai_tskext(TSKEXT0) : NULL;
-	return ((unsigned long)pid) > PID_MAX_LIMIT ? (struct rt_task_struct *)pid : find_task_by_pid(pid)->rtai_tskext(TSKEXT0);
-}
+/*+++++++++++ INLINES FOR PIERRE's PROXIES AND INTERTASK MESSAGES ++++++++++++*/
 
-static inline long rttask2pid(struct rt_task_struct * task)
-{
-    return task->lnxtsk ? task->lnxtsk->pid : (long)task;
-}
-
-#else /* !CONFIG_RTAI_INTERNAL_LXRT_SUPPORT */
+#include <linux/types.h>
+RT_TASK *rt_find_task_by_pid(pid_t);
 
 static inline struct rt_task_struct *pid2rttask(pid_t pid)
 {
-    return 0;
+	return rt_find_task_by_pid(pid);
 }
 
-// The following might look strange but it must be so to work with
-// buddies also.
-static inline pid_t rttask2pid(struct rt_task_struct * task)
+static inline long rttask2pid(struct rt_task_struct *task)
 {
-    return (long) task;
+        return task->tid;
 }
 
-#endif /* CONFIG_RTAI_INTERNAL_LXRT_SUPPORT */
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 int set_rtai_callback(void (*fun)(void));
 
@@ -629,11 +620,36 @@ RTAI_PROTO(unsigned long, rt_get_name, (void *adr))
 	return rtai_lxrt(BIDX, SIZARG, LXRT_GET_NAME, &arg).i[LOW];
 }
 
+#include <signal.h>
+
+#ifdef CONFIG_RTAI_HARD_SOFT_TOGGLER
+#ifndef __SUPPORT_HARD_SOFT_TOGGLER__
+#define __SUPPORT_HARD_SOFT_TOGGLER__
+
+static void hard_soft_toggler(int sig) 
+{ 
+	if (sig == SIGUSR1) {
+		struct { RT_TASK *task; } arg = { NULL };
+		rtai_lxrt(BIDX, SIZARG, HARD_SOFT_TOGGLER, &arg);
+	}
+}
+
+#endif
+
+#define SET_SIGNAL_TOGGLER() do { signal(SIGUSR1, hard_soft_toggler); } while(0)
+
+#else
+
+#define SET_SIGNAL_TOGGLER() do { } while(0)
+
+#endif
+
 RTAI_PROTO(RT_TASK *, rt_task_init_schmod, (unsigned long name, int priority, int stack_size, int max_msg_size, int policy, int cpus_allowed))
 {
         struct sched_param mysched;
         struct { unsigned long name; long priority, stack_size, max_msg_size, cpus_allowed; } arg = { name ? name : rt_get_name(NULL), priority, stack_size, max_msg_size, cpus_allowed };
 
+	SET_SIGNAL_TOGGLER();
         if (policy == SCHED_OTHER) {
         	mysched.sched_priority = 0;
 	} else if ((mysched.sched_priority = sched_get_priority_max(policy) - priority) < 1) {
@@ -648,18 +664,7 @@ RTAI_PROTO(RT_TASK *, rt_task_init_schmod, (unsigned long name, int priority, in
 	return (RT_TASK *)rtai_lxrt(BIDX, SIZARG, LXRT_TASK_INIT, &arg).v[LOW];
 }
 
-static inline int rt_clone(void *fun, void *args, long stack_size, unsigned long flags)
-{
-	void *sp;
-	if (!flags) {
-		flags = CLONE_VM | CLONE_FS | CLONE_FILES;
-	}
-	memset(sp = malloc(stack_size), 0, stack_size);
-	sp = (void *)(((unsigned long)sp + stack_size - 16) & ~0xF);
-	return clone((int (*)(void *))fun, sp, flags, args);
-}
-
-#define RT_THREAD_STACK_MIN  64*1024
+#define RT_THREAD_STACK_MIN  16*1024
 
 #include <pthread.h>
 
@@ -911,7 +916,7 @@ RTAI_PROTO(int,rt_change_prio,(RT_TASK *task, int priority))
  * the related transition from another process.
  *
  */
-RTAI_PROTO(void,rt_make_soft_real_time,(void))
+RTAI_PROTO(void, rt_make_soft_real_time, (void))
 {
 	struct { unsigned long dummy; } arg;
 	rtai_lxrt(BIDX, SIZARG, MAKE_SOFT_RT, &arg);
@@ -976,50 +981,50 @@ RTAI_PROTO(void, rt_sched_unlock, (void))
 
 RTAI_PROTO(void, rt_pend_linux_irq, (unsigned irq))
 {
-	struct { unsigned irq; } arg = { irq };
+	struct { unsigned long irq; } arg = { irq };
 	rtai_lxrt(BIDX, SIZARG, PEND_LINUX_IRQ, &arg);
 }
 
 RTAI_PROTO(int, rt_irq_wait, (unsigned irq))
 {
-	struct { unsigned irq; } arg = { irq };
+	struct { unsigned long irq; } arg = { irq };
 	return rtai_lxrt(BIDX, SIZARG, IRQ_WAIT, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rt_irq_wait_if, (unsigned irq))
 {
-	struct { unsigned irq; } arg = { irq };
+	struct { unsigned long irq; } arg = { irq };
 	return rtai_lxrt(BIDX, SIZARG, IRQ_WAIT_IF, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rt_irq_wait_until, (unsigned irq, RTIME time))
 {
-	struct { unsigned irq; RTIME time; } arg = { irq, time };
+	struct { unsigned long irq; RTIME time; } arg = { irq, time };
 	return rtai_lxrt(BIDX, SIZARG, IRQ_WAIT_UNTIL, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rt_irq_wait_timed, (unsigned irq, RTIME delay))
 {
-	struct { unsigned irq; RTIME delay; } arg = { irq, delay };
+	struct { unsigned long irq; RTIME delay; } arg = { irq, delay };
 	return rtai_lxrt(BIDX, SIZARG, IRQ_WAIT_TIMED, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rt_irq_signal, (unsigned irq))
 {
-	struct { unsigned irq; } arg = { irq };
+	struct { unsigned long irq; } arg = { irq };
 	return rtai_lxrt(BIDX, SIZARG, IRQ_SIGNAL, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rt_request_irq_task, (unsigned irq, void *handler, int type, int affine2task))
 {
-	struct { unsigned irq; void *handler; long type, affine2task; } arg = { irq, handler, type, affine2task };
+	struct { unsigned long irq; void *handler; long type, affine2task; } arg = { irq, handler, type, affine2task };
 	return rtai_lxrt(BIDX, SIZARG, REQUEST_IRQ_TASK, &arg).i[LOW];
 }
 
 
 RTAI_PROTO(int, rt_release_irq_task, (unsigned irq))
 {
-	struct { unsigned irq; } arg = { irq };
+	struct { unsigned long irq; } arg = { irq };
 	return rtai_lxrt(BIDX, SIZARG, RELEASE_IRQ_TASK, &arg).i[LOW];
 }
 
@@ -1087,19 +1092,19 @@ RTAI_PROTO(void, stop_rt_timer, (void))
 	}
 }
 
-RTAI_PROTO(void, rt_request_rtc,(int rtc_freq, void *handler))
+RTAI_PROTO(void, rt_request_rtc, (int rtc_freq, void *handler))
 {
 	struct { long rtc_freq; void *handler; } arg = { rtc_freq, handler };
 	rtai_lxrt(BIDX, SIZARG, REQUEST_RTC, &arg);
 }
 
-RTAI_PROTO(void, rt_release_rtc,(void))
+RTAI_PROTO(void, rt_release_rtc, (void))
 {
 	struct { unsigned long dummy; } arg;
 	rtai_lxrt(BIDX, SIZARG, RELEASE_RTC, &arg);
 }
 
-RTAI_PROTO(RTIME,rt_get_time,(void))
+RTAI_PROTO(RTIME, rt_get_time, (void))
 {
 	struct { unsigned long dummy; } arg;
 	return rtai_lxrt(BIDX, SIZARG, GET_TIME, &arg).rt;
@@ -1117,31 +1122,31 @@ RTAI_PROTO(RTIME, rt_get_real_time_ns, (void))
 	return rtai_lxrt(BIDX, SIZARG, GET_REAL_TIME_NS, &arg).rt;
 }
 
-RTAI_PROTO(RTIME,count2nano,(RTIME count))
+RTAI_PROTO(RTIME, count2nano, (RTIME count))
 {
 	struct { RTIME count; } arg = { count };
 	return rtai_lxrt(BIDX, SIZARG, COUNT2NANO, &arg).rt;
 }
 
-RTAI_PROTO(RTIME,nano2count,(RTIME nanos))
+RTAI_PROTO(RTIME, nano2count, (RTIME nanos))
 {
 	struct { RTIME nanos; } arg = { nanos };
 	return rtai_lxrt(BIDX, SIZARG, NANO2COUNT, &arg).rt;
 }
 
-RTAI_PROTO(void,rt_busy_sleep,(int ns))
+RTAI_PROTO(void, rt_busy_sleep, (int ns))
 {
 	struct { long ns; } arg = { ns };
 	rtai_lxrt(BIDX, SIZARG, BUSY_SLEEP, &arg);
 }
 
-RTAI_PROTO(void,rt_set_periodic_mode,(void))
+RTAI_PROTO(void, rt_set_periodic_mode, (void))
 {
 	struct { unsigned long dummy; } arg;
 	rtai_lxrt(BIDX, SIZARG, SET_PERIODIC_MODE, &arg);
 }
 
-RTAI_PROTO(void,rt_set_oneshot_mode,(void))
+RTAI_PROTO(void, rt_set_oneshot_mode, (void))
 {
 	struct { unsigned long dummy; } arg;
 	rtai_lxrt(BIDX, SIZARG, SET_ONESHOT_MODE, &arg);
@@ -1318,19 +1323,6 @@ RTAI_PROTO(int,rt_set_linux_signal_handler,(RT_TASK *task, void (*handler)(int s
 }
 
 #define VSNPRINTF_BUF_SIZE 256
-RTAI_PROTO(int,rtai_print_to_screen,(const char *format, ...))
-{
-	char display[VSNPRINTF_BUF_SIZE];
-	struct { const char *display; long nch; } arg = { display, 0 };
-	va_list args;
-
-	va_start(args, format);
-	arg.nch = vsnprintf(display, VSNPRINTF_BUF_SIZE, format, args);
-	va_end(args);
-	rtai_lxrt(BIDX, SIZARG, PRINT_TO_SCREEN, &arg);
-	return arg.nch;
-}
-
 RTAI_PROTO(int,rt_printk,(const char *format, ...))
 {
 	char display[VSNPRINTF_BUF_SIZE];
@@ -1342,6 +1334,19 @@ RTAI_PROTO(int,rt_printk,(const char *format, ...))
 	va_end(args);
 	rtai_lxrt(BIDX, SIZARG, PRINTK, &arg);
 	return arg.nch;
+}
+
+RTAI_PROTO(int,rtai_print_to_screen,(const char *format, ...))
+{
+        char display[VSNPRINTF_BUF_SIZE];
+        struct { const char *display; long nch; } arg = { display, 0 };
+        va_list args;
+
+        va_start(args, format);
+        arg.nch = vsnprintf(display, VSNPRINTF_BUF_SIZE, format, args);
+        va_end(args);
+        rtai_lxrt(BIDX, SIZARG, PRINTK, &arg);
+        return arg.nch;
 }
 
 RTAI_PROTO(int,rt_usp_signal_handler,(void (*handler)(void)))
@@ -1374,10 +1379,10 @@ RTAI_PROTO(void,rt_set_usp_flags_mask,(unsigned long flags_mask))
 	rtai_lxrt(BIDX, SIZARG, SET_USP_FLG_MSK, &arg);
 }
 
-RTAI_PROTO(RT_TASK *,rt_force_task_soft,(int pid))
+RTAI_PROTO(pid_t, rt_get_linux_tid, (RT_TASK *task))
 {
-	struct { long pid; } arg = { pid };
-	return (RT_TASK *)rtai_lxrt(BIDX, SIZARG, FORCE_TASK_SOFT, &arg).v[LOW];
+	struct { RT_TASK *task; } arg = { task };
+	return rtai_lxrt(BIDX, SIZARG, HARD_SOFT_TOGGLER, &arg).i[LOW];
 }
 
 RTAI_PROTO(RT_TASK *,rt_agent,(void))
@@ -1513,6 +1518,32 @@ RTAI_PROTO(RTIME, stop_ftimer,(void))
 	struct { long dummy; } arg;
 	rtai_lxrt(BIDX, SIZARG, RELEASE_RTC, &arg);
 	return rtai_lxrt(BIDX, SIZARG, STOP_TIMER, &arg).rt;
+}
+
+RTAI_PROTO(int, kernel_calibrator, (int period, int loops, int Latency))
+{
+	struct { long period, loops, Latency; } arg = { period, loops, Latency };
+	return rtai_lxrt(BIDX, SIZARG, KERNEL_CALIBRATOR, &arg).i[0];
+}
+
+RTAI_PROTO(unsigned int, rt_get_cpu_freq, (void))
+{
+	struct { unsigned long dummy; } arg;
+	return rtai_lxrt(BIDX, SIZARG, GET_CPU_FREQ, &arg).i[0];
+}
+
+#ifndef CONFIG_RTAI_TSC
+#define rt_get_tscnt rt_get_time
+#endif
+
+static inline RTIME nanos2tscnts(RTIME nanos, unsigned int cpu_freq)
+{
+	return (RTIME)((long double)nanos*((long double)cpu_freq/(long double)1000000000));
+}
+
+static inline RTIME tscnts2nanos(RTIME tscnts, unsigned int cpu_freq)
+{
+	return (RTIME)((long double)tscnts*((long double)1000000000/(long double)cpu_freq));
 }
 
 #ifdef __cplusplus

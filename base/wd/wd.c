@@ -92,7 +92,7 @@
  * 5. Keeps a record of bad tasks (apart from those that have been killed) that 
  *    can be examined via a /proc interface. (/proc/rtai/watchdog)
  * 
- * ID: @(#)$Id: wd.c,v 1.14 2009/03/18 23:15:48 mante Exp $
+ * ID: @(#)$Id: wd.c,v 1.15 2013/10/22 14:54:15 ando Exp $
  *
  *******************************************************************************/
 
@@ -136,12 +136,12 @@ static int    wdog_read_proc(char *page, char **start, off_t off, int count,
 #ifdef MY_ALLOC
 #define BAD_TASK_MAX 100	// Feel free to change this
 
-static spinlock_t alloc_lock = SPIN_LOCK_UNLOCKED;
+static DEFINE_SPINLOCK(alloc_lock);
 static BAD_RT_TASK bad_task_pool[BAD_TASK_MAX];
 #endif
 
 // The current version number
-static char version[] = "$Revision: 1.14 $";
+static char version[] = "$Revision: 1.15 $";
 static char ver[10];
 
 // User friendly policy names

@@ -42,28 +42,46 @@ isolcpus=       [KNL,SMP] Isolate CPUs from the general scheduler.
                 suboptimal load balancer performance.
 
 Add the following to the above, from the very same source:
+acpi_irq_nobalance [HW,ACPI]
+		  ACPI will not move active IRQs (default)
+		  default in PIC mode
 
-noirqbalance    [IA-32,SMP,KNL] Disable kernel irq balancing
 Irq balancing can be disabled directly at kernel configuration and has little
-effect on what will follow. Nonetheless RTAI prefers to be sure that Linux
+effect on what will follow. Nonetheless you should prefer to be sure that Linux
 does not manipulate hardware related stuff on its own. So if you forgot to
 disable irq balancing when you made your kernel there is no need to remake it,
-just set "noirqbalance" at boot time.
+just set it at boot time.
 
 From what above it should be easy to infer that by using "isolcpus" you can
 be sure that Linux will have none of its tasks running on the isolated cpus.
-That is not entirely true since many kernel threads (daemons) will have a
-copy of each daemon repeated and assigned to all available CPUs. Nonetheless
-they will do nothing if no interrupts arrive on the isolated CPUs. Thus if
-RTAI is able to care avoiding any hard interrupt on the isolated CPUs they
-will be isolated from Linux _completely_. Finally, combining all of the above
-with the possibility of forcing RTAI enabled Linux process/thread/kthreads
-to stay on the isolated CPUs the latter will find themselves processing just
-RTAI real time stuff, with a significant reduction of latencies/jitters.
-In the case of many RTAI tasks running on the isolated CPUs all issues
-producing latency/jitter will still have an effect, but it will be reduced
-to the least possible, without any added bus/pipe/cache interference from
-Linux.
+That is not entirely true since a few kernel threads and kworkers will have 
+a copy of each of them repeated and assigned to all of the available CPUs.
+It is assumed that they will have very little to do if no interrupt arrives 
+on the isolated CPUs. Thus if RTAI is able to care avoiding any hard interrupt 
+on the isolated CPUs they will be fairly well isolated from Linux. 
+
+Nevertheless, to further help isolation, RTAI removes any kernel thread and 
+kworker at the insmoding of its HAL. Even if such an action does not impede
+their further dynamic creations there is some evidence that it is useful
+anyhow. It would also be possible to block such dynamic creations, an action
+that is postponed till more experience is gathered with the use of what above.
+To easily check if any following dynamic insertion of something within the
+isolated cpus has happened the following might be of help:
+cat /proc/*/task/*/status |grep "allowed:" |grep <mask>,
+where mask is the mask of what you want either to see not or see. 
+
+With what above only Linux rescheduling interrupts should appear on the
+isolated CPUs. They are not difficult to block too, but it does not seem
+that much more has to be gained by doing so. Therefore, as for what above,
+it is momentarily set aside as a possible future TODO action.
+
+Finally, combining all of the above with the possibility of forcing RTAI 
+enabled Linux process/thread/kthreads to stay on the isolated CPUs the 
+latter will find themselves processing just RTAI real time stuff, with 
+a significant reduction of latencies/jitters. In the case of many RTAI 
+tasks running on the isolated CPUs all issues producing latency/jitter 
+will still have an effect, but it will be reduced to the least possible, 
+without any added bus/pipe/cache interference from Linux.
 
 It should be noticed however that there will remain a single interrupt still
 managed by Linux, i.e. the one to the local APIC timer. Such an interrupt
@@ -111,7 +129,7 @@ previously.
 ------------------------
 
 If you want to make sure nothing unwanted is _ever_ scheduled on a specific
-CPU or core the hotplug system is your friend. (Logically) off lined CPUs are
+CPU or core the hotplug system is your friend. (Logically) offlined CPUs are
 removed from the Linux scheduler and thus no longer get tasks assigned. Online
 again and assigned to a cpuset, RTAI tasks can be scheduled on these CPUs. See
 'Documentation/cpusets.txt' and 'Documentation/cgroup.txt'.

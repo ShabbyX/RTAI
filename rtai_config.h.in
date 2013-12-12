@@ -81,6 +81,9 @@
 /* Kconfig */
 #undef CONFIG_RTAI_HAL_PREEMPT
 
+/* Kconfig */
+#undef CONFIG_RTAI_HARD_SOFT_TOGGLER
+
 /* Host system alias */
 #undef CONFIG_RTAI_HOST_STRING
 
@@ -98,6 +101,9 @@
 
 /* Use RTAI Adeos-newgen HAL */
 #undef CONFIG_RTAI_IPIPE
+
+/* Kconfig */
+#undef CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY
 
 /* Kconfig */
 #undef CONFIG_RTAI_KSTACK_HEAPSZ
@@ -267,8 +273,14 @@
 /* Kconfig */
 #undef CONFIG_RTAI_TRACE
 
+/* Use TSC in user space */
+#undef CONFIG_RTAI_TSC
+
 /* Kconfig */
 #undef CONFIG_RTAI_TUNE_TSC_SYNC
+
+/* Kconfig */
+#undef CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY
 
 /* Kconfig */
 #undef CONFIG_RTAI_USE_COMEDI_LOCK

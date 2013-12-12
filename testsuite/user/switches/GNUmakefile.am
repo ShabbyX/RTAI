@@ -5,7 +5,7 @@ test_PROGRAMS = switches
 switches_SOURCES = switches.c
 
 switches_CPPFLAGS = \
-	@RTAI_USER_CFLAGS@ \
+	@RTAI_REAL_USER_CFLAGS@ \
 	-I$(top_srcdir)/base/include \
 	-I../../../base/include
 

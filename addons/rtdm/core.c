@@ -1477,9 +1477,9 @@ int __rt_dev_select(int nfds, fd_set *rfds, fd_set *wfds, fd_set *efds, nanosecs
 			reqp[i] = &req[i];
 			resp[i] = &res[i];
 			if (space) {
-				memcpy((void *)reqp[i], (void *)fds[i], __FDELT(nfds + __NFDBITS - 1)*sizeof(long));
+				memcpy((void *)reqp[i], (void *)fds[i], __FDELT__(nfds + __NFDBITS__ - 1)*sizeof(long));
 			} else {
-				rt_copy_from_user((void *)reqp[i], (void *)fds[i], __FDELT(nfds + __NFDBITS - 1)*sizeof(long));
+				rt_copy_from_user((void *)reqp[i], (void *)fds[i], __FDELT__(nfds + __NFDBITS__ - 1)*sizeof(long));
 			}
 		} else {
 			reqp[i] = resp[i] = NULL;

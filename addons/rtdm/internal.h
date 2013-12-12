@@ -59,7 +59,6 @@ extern unsigned int devname_hashtab_size;
 extern unsigned int protocol_hashtab_size;
 extern struct list_head *rtdm_named_devices;
 extern struct list_head *rtdm_protocol_devices;
-extern struct proc_dir_entry *rtdm_proc_root;
 
 #ifdef MODULE
 #define rtdm_initialised 1
@@ -80,9 +79,28 @@ static inline void rtdm_dereference_device(struct rtdm_device *device)
 int __init rtdm_dev_init(void);
 void rtdm_dev_cleanup(void);
 
-int rtdm_proc_register_device(struct rtdm_device *device);
+#ifdef CONFIG_PROC_FS
 int __init rtdm_proc_init(void);
 void rtdm_proc_cleanup(void);
+int rtdm_proc_register_device(struct rtdm_device *device);
+void rtdm_proc_unregister_device(struct rtdm_device *device);
+#else
+static inline int rtdm_proc_init(void)
+{
+	return 0;
+}
+void rtdm_proc_cleanup(void)
+{
+}
+static int rtdm_proc_register_device(struct rtdm_device *device)
+{
+	return 0;
+}
+static void rtdm_proc_unregister_device(struct rtdm_device *device)
+{
+}
+#endif
+
 void rtdm_apc_handler(void *cookie);
 
 #endif /* _RTDM_INTERNAL_H */

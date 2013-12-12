@@ -57,7 +57,7 @@ MODULE_LICENSE("GPL");
 	do { \
 		RTIME t = timespec2count(abstime); \
 		int ret; \
-		if (abs(ret = rt_sem_wait_until(mutex, t)) >= RTE_LOWERR) { \
+		if ((ret = abs(rt_sem_wait_until(mutex, t))) >= RTE_LOWERR) { \
 			return ret == RTE_TIMOUT ? -ETIMEDOUT : -EBADF; \
 		} \
 	} while (0)
@@ -80,10 +80,10 @@ MODULE_LICENSE("GPL");
 		RTIME t = timespec2count(abstime); \
 		int ret; \
 		rt_sem_signal(mutex); \
-		if (abs(ret = rt_sem_wait_until(cond, t)) >= RTE_LOWERR) { \
+		if ((ret = abs(rt_sem_wait_until(cond, t))) >= RTE_LOWERR) { \
 			return ret == RTE_TIMOUT ? -ETIMEDOUT : -EBADF; \
 		} \
-		if (abs(ret = rt_sem_wait_until(mutex, t)) >= RTE_LOWERR) { \
+		if ((ret = abs(rt_sem_wait_until(mutex, t))) >= RTE_LOWERR) { \
 			rt_sem_signal(cond); \
 			return ret == RTE_TIMOUT ? -ETIMEDOUT : -EBADF; \
 		} \
@@ -970,7 +970,7 @@ static int pqueue_proc_unregister(void)
 ///////////////////////////////////////////////////////////////////////////////
 
 struct rt_native_fun_entry rt_pqueue_entries[] = {
-	{ { UR1(1, 5) | UR2(4, 6), _mq_open },  	        MQ_OPEN },
+	{ { UR1(1, 5) | UR2(4, 6), _mq_open }, 	        MQ_OPEN },
         { { 1, _mq_receive },  		                MQ_RECEIVE },
         { { 1, _mq_send },    		                MQ_SEND },
         { { 1, mq_close },                              MQ_CLOSE },

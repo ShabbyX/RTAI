@@ -1,10 +1,14 @@
 if CONFIG_X86
-ARCHDIR = i386
+ARCHDIR = x86
 endif
 
-if CONFIG_X86_64
-ARCHDIR = x86_64
-endif
+#if CONFIG_I386
+#ARCHDIR = i386
+#endif
+
+#if CONFIG_X86_64
+#ARCHDIR = x86_64
+#endif
 
 if CONFIG_ARM
 ARCHDIR = arm
@@ -29,4 +33,4 @@ modext = @RTAI_MODULE_EXT@
 rtai_hal$(modext):
 	@(cd $(ARCHDIR)/hal && make rtai_hal$(modext))
 
-EXTRA_DIST = x86/patches
+#EXTRA_DIST = x86/patches

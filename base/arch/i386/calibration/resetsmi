@@ -1,6 +1,0 @@
-#!/bin/sh
-MOD=rtai_smi_rt
-
-insmod @PATH@/${MOD}.ko smiReset=1
-rmmod ${MOD}
-

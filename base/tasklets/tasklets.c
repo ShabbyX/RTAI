@@ -81,7 +81,9 @@
 #include <linux/slab.h>
 #include <linux/interrupt.h>
 #include <asm/uaccess.h>
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0)
 #include <asm/system.h>
+#endif
 #include <asm/rtai_sched.h>
 #include <rtai_tasklets.h>
 #include <rtai_lxrt.h>
@@ -117,8 +119,9 @@ static struct rt_tasklet_struct timers_list[NUM_CPUS] =
 static struct rt_tasklet_struct tasklets_list =
 { &tasklets_list, &tasklets_list, };
 
-static spinlock_t timers_lock[NUM_CPUS] = { SPIN_LOCK_UNLOCKED, };
-static spinlock_t tasklets_lock = SPIN_LOCK_UNLOCKED;
+// static spinlock_t timers_lock[NUM_CPUS] = { SPIN_LOCK_UNLOCKED, };
+static spinlock_t timers_lock[NUM_CPUS] = { __SPIN_LOCK_UNLOCKED(timers_lock[0]), };
+static DEFINE_SPINLOCK(tasklets_lock);
 
 static struct rt_fun_entry rt_tasklet_fun[]  __attribute__ ((__unused__));
 
@@ -821,7 +824,7 @@ RTAI_SYSCALL_MODE int rt_delete_tasklet(struct rt_tasklet_struct *tasklet)
 static int PosixTimers = POSIX_TIMERS;
 RTAI_MODULE_PARM(PosixTimers, int);
 
-static spinlock_t ptimer_lock = SPIN_LOCK_UNLOCKED;
+static DEFINE_SPINLOCK(ptimer_lock);
 static volatile int ptimer_index;
 struct ptimer_list { int t_indx, p_idx; struct ptimer_list *p_ptr; struct rt_tasklet_struct *timer;} *posix_timer;
 

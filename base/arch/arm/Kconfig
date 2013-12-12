@@ -6,7 +6,7 @@ config MODULES
 
 config RTAI_VERSION
 	string
-	default "3.9 (vulcano)"
+	default "magma"
 
 menu "General"
 
@@ -286,6 +286,10 @@ config RTAI_NETRPC_RTNET
 	depends on RTAI_NETRPC
 	default y
 
+config RTAI_SHM
+	tristate
+	default n
+
 config RTAI_SEM
 	tristate "Semaphores"
 	default m
@@ -524,30 +528,6 @@ config RTAI_CPLUSPLUS
 	bool
 	default n
 
-config RTAI_COMEDI_LXRT
-	bool "Comedi support over LXRT"
-	depends on RTAI_SCHED_LXRT
-	default n
-	help
-
-	RTAI offers the kcomedilib interface to LXRT real-time
-	applications. A kernel module will be built and a library will
-	be provided. The kernel modules is called rtai_comedi.o and
-	must be loaded if you want to use the libkcomedilxrt.a
-	library.
-
-config RTAI_COMEDI_DIR
-	depends on RTAI_COMEDI_LXRT
-	string "COMEDI installation directory"
-	default "/usr/local"
-	help
-
-	You need the COMEDI support for data acquisition to build
-	applications such as RTAILab.
-	You can set the path to this package's installation
-	directory here. More specifically, RTAI needs the file
-	linux/comedilib.h.
-
 config RTAI_SERIAL
 	bool "Serial line driver"
 	default n
@@ -556,5 +536,3 @@ config RTAI_SERIAL
 	The module will be called rtai_serial.o.
 
 endmenu
-
-

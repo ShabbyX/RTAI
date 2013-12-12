@@ -147,7 +147,7 @@ void __rtai_mq_exit(void);
 RTAI_SYSCALL_MODE mqd_t _mq_open(char *mq_name, int oflags, mode_t permissions, struct mq_attr *mq_attr, long space);
 static inline mqd_t mq_open(char *mq_name, int oflags, mode_t permissions, struct mq_attr *mq_attr)
 {
-	return _mq_open(mq_name, oflags, permissions, mq_attr, 0);
+	return _mq_open(mq_name, oflags, permissions, mq_attr, 1);
 }
 
 RTAI_SYSCALL_MODE size_t _mq_receive(mqd_t mq, char *msg_buffer, size_t buflen, unsigned int *msgprio, int space);
@@ -171,7 +171,7 @@ RTAI_SYSCALL_MODE int mq_setattr(mqd_t mq, const struct mq_attr *new_attrs, stru
 RTAI_SYSCALL_MODE int _mq_notify(mqd_t mq, RT_TASK *task, long space, long rem, const struct sigevent *notification);
 static inline int mq_notify(mqd_t mq, const struct sigevent *notification)
 {
-	return _mq_notify(mq, rt_whoami(), 0, (notification ? 0 : 1), notification );
+	return _mq_notify(mq, rt_whoami(), 1, (notification ? 0 : 1), notification );
 }
 
 RTAI_SYSCALL_MODE int mq_unlink(char *mq_name);
@@ -256,7 +256,7 @@ RTAI_PROTO(int, rt_request_signal_mq, (mqd_t mq))
 RTAI_PROTO(mqd_t, mq_open,(char *mq_name, int oflags, mode_t permissions, struct mq_attr *mq_attr))
 {
 	mqd_t ret;
-	struct {char *mq_name; long oflags; long permissions; struct mq_attr *mq_attr; long namesize, attrsize; long space; } arg = { mq_name, oflags, permissions, mq_attr, strlen(mq_name) + 1, sizeof(struct mq_attr), 1 };
+	struct {char *mq_name; long oflags; long permissions; struct mq_attr *mq_attr; long namesize, attrsize; long space; } arg = { mq_name, oflags, permissions, mq_attr, strlen(mq_name) + 1, sizeof(struct mq_attr), 0 };
 	if ((ret = (mqd_t)rtai_lxrt(MQIDX, SIZARG, MQ_OPEN, &arg).i[LOW]) >= 0) {
 		// Prepare notify task 
 		if (oflags & O_NOTIFY_NP)	{
@@ -299,7 +299,7 @@ RTAI_PROTO(int, mq_setattr,(mqd_t mq, const struct mq_attr *new_attrs, struct mq
 RTAI_PROTO(int, mq_notify,(mqd_t mq, const struct sigevent *notification))
 {
 	int ret;
-	struct { long mq; RT_TASK* task; long space; long rem; const struct sigevent *notification; long size;} arg = { mq, rt_buddy(), 1, (notification ? 0 : 1), notification, sizeof(struct sigevent) };
+	struct { long mq; RT_TASK* task; long space; long rem; const struct sigevent *notification; long size;} arg = { mq, rt_buddy(), 0, (notification ? 0 : 1), notification, sizeof(struct sigevent) };
 	if ((ret = rtai_lxrt(MQIDX, SIZARG, MQ_NOTIFY, &arg).i[LOW]) >= 0) {
 		if (ret == O_NOTIFY_NP) {
 			rt_request_signal_mq (mq);

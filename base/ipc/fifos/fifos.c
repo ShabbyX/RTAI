@@ -217,8 +217,8 @@ typedef struct rt_fifo_struct {
 } FIFO;
 
 static int fifo_srq, async_sig;
-static spinlock_t rtf_lock = SPIN_LOCK_UNLOCKED;
-static spinlock_t rtf_name_lock = SPIN_LOCK_UNLOCKED;
+static DEFINE_SPINLOCK(rtf_lock);
+static DEFINE_SPINLOCK(rtf_name_lock);
 
 #define MAX_FIFOS 64
 //static FIFO fifo[MAX_FIFOS] = {{{0}}};

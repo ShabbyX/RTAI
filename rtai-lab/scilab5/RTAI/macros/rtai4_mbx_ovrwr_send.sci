@@ -17,7 +17,7 @@ function [x,y,typ] = rtai4_mbx_ovrwr_send(job,arg1,arg2)
     exprs=graphics.exprs;
     while %t do
       [ok,inport,name,ipaddr,exprs]=..
-      getvalue('Set RTAI mbx_ovrwr_send block parameters',..
+      scicos_getvalue('Set RTAI mbx_ovrwr_send block parameters',..
       ['Input ports:';
        'MBX Name:';
        'IP address:'],..
@@ -53,7 +53,7 @@ function [x,y,typ] = rtai4_mbx_ovrwr_send(job,arg1,arg2)
     model.dstate=[];
     model.blocktype='d'
     model.dep_ut=[%t %f]
-    exprs=[sci2exp(inport),name,ipaddr]
+    exprs=[sci2exp(inport);name;ipaddr]
     gr_i=['xstringb(orig(1),orig(2),[''Mbx Send Ovw'';name],sz(1),sz(2),''fill'');']
     x=standard_define([3 2],model,exprs,gr_i)
   end

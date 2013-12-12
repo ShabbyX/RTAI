@@ -1,7 +1,7 @@
 /*
  * Project: rtai_cpp - RTAI C++ Framework
  *
- * File: $Id: cond.h,v 1.3 2005/03/18 09:29:59 rpm Exp $
+ * File: $Id: cond.h,v 1.4 2013/10/22 14:54:14 ando Exp $
  *
  * Copyright: (C) 2001,2002 Erwin Rol <erwin@muffin.org>
  *

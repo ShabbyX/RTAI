@@ -17,7 +17,7 @@ function [x,y,typ] = rtai4_meter(job,arg1,arg2)
     exprs=graphics.exprs;
     while %t do
       [ok,name,exprs]=..
-      getvalue('Set RTAI-meter block parameters',..
+      scicos_getvalue('Set RTAI-meter block parameters',..
       ['Meter name:'],..
       list('str',1),exprs)
       if ~ok then break,end

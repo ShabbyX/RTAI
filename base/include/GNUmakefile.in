@@ -87,7 +87,7 @@ AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
 	distdir
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = asm-arm asm-m68k asm-ppc asm-x86_64 asm-i386
+DIST_SUBDIRS = asm-arm asm-m68k asm-ppc asm-x86
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
   dir0=`pwd`; \
@@ -221,6 +221,7 @@ RTAI_MAYBE_SIMDIR = @RTAI_MAYBE_SIMDIR@
 RTAI_MODULE_DIR = @RTAI_MODULE_DIR@
 RTAI_MODULE_EXT = @RTAI_MODULE_EXT@
 RTAI_POSIX_WRAP = @RTAI_POSIX_WRAP@
+RTAI_REAL_USER_CFLAGS = @RTAI_REAL_USER_CFLAGS@
 RTAI_TARGET_ARCH = @RTAI_TARGET_ARCH@
 RTAI_TARGET_ARCH_OPTS = @RTAI_TARGET_ARCH_OPTS@
 RTAI_TARGET_SUBARCH = @RTAI_TARGET_SUBARCH@
@@ -290,12 +291,19 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+
+#if CONFIG_I386
+#ARCHDIR = asm-i386
+#endif
+
+#if CONFIG_X86_64
+#ARCHDIR = asm-x86_64
+#endif
 @CONFIG_ARM_TRUE@ARCHDIR = asm-arm
 @CONFIG_M68KNOMMU_TRUE@ARCHDIR = asm-m68k
 @CONFIG_M68K_TRUE@ARCHDIR = asm-m68k
 @CONFIG_PPC_TRUE@ARCHDIR = asm-ppc
-@CONFIG_X86_64_TRUE@ARCHDIR = asm-x86_64
-@CONFIG_X86_TRUE@ARCHDIR = asm-i386
+@CONFIG_X86_TRUE@ARCHDIR = asm-x86
 nobase_include_HEADERS = \
 		rtai.h \
 		rtai_hal_names.h \

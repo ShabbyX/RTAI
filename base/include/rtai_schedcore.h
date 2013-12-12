@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2008 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright (C) 1999-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -31,7 +31,6 @@
 #include <linux/timex.h>
 #include <linux/sched.h>
 #include <asm/param.h>
-#include <asm/system.h>
 #include <asm/io.h>
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,18)
 #include <linux/oom.h>
@@ -59,131 +58,23 @@
 #include <rtai_shm.h>
 #include <rtai_usi.h>
 
-#ifndef _RTAI_SCHED_XN_H
-#define _RTAI_SCHED_XN_H
 
 #ifdef OOM_DISABLE
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,32)
 #define RTAI_OOM_DISABLE() \
 	do { current->oomkilladj = OOM_DISABLE; } while (0)
 #else
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
 #define RTAI_OOM_DISABLE() \
 	do { current->signal->oom_adj = OOM_DISABLE; } while (0)
+#else
+#define RTAI_OOM_DISABLE() \
+	do { current->signal->oom_score_adj = OOM_DISABLE; } while (0)
+#endif
 #endif
 #else
 #define RTAI_OOM_DISABLE()
 #endif
-
-#if defined(CONFIG_RTAI_IMMEDIATE_LINUX_SYSCALL) && CONFIG_RTAI_IMMEDIATE_LINUX_SYSCALL
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#define SKIP_IMMEDIATE_LINUX_SYSCALL() \
-	if (regs->LINUX_SYSCALL_NR == __NR_kill || regs->LINUX_SYSCALL_NR == __NR_rt_sigsuspend) { return 0; }
-#else
-#define SKIP_IMMEDIATE_LINUX_SYSCALL()
-#endif
-
-#else
-
-#define SKIP_IMMEDIATE_LINUX_SYSCALL()  do { return 0; } while (0)
-
-#endif
-
-#ifdef RTAI_TRIOSS
-
-extern int nkgkptd;
-#define FUSIONEXT  (nkgkptd)
-
-// provisional, to be replaced by appropriate headers declarations
-#define XNSUSP   (0x00000001)
-#define XNRELAX  (0x00000100)
-
-typedef struct xnarchtcb {
-    union i387_union fpuenv __attribute__ ((aligned (16)));
-    unsigned stacksize;
-    unsigned long *stackbase;
-    unsigned long esp; 
-    unsigned long eip;
-    struct task_struct *user_task;
-    struct task_struct *active_task;
-    unsigned long *espp; 
-    unsigned long *eipp;
-    union i387_union *fpup; 
-} xnarchtcb_t;
-
-typedef struct xnthread { xnarchtcb_t tcb; unsigned long status; } xnthread_t;
-
-extern void xnpod_resume_thread(void *, unsigned long);
-extern void xnpod_schedule(void);
-// end of provisional
-
-extern struct hal_domain_struct *fusion_domain;
-
-extern struct klist_t fusion_wake_up_srq[];
-
-#define NON_RTAI_TASK_SUSPEND(task) \
-do { \
-	xnthread_t *thread; \
-	if ((thread = (task->lnxtsk)->rtai_tskext(FUSIONEXT)) && !(thread->status & XNRELAX)) { \
-		atomic_set_mask(XNSUSP, (atomic_t *)&thread->status); \
-	} else { \
-		(task->lnxtsk)->state = TASK_SOFTREALTIME; \
-	} \
-} while (0)
-
-#define pend_fusion_wake_up_srq(lnxtsk, cpuid) \
-do { \
-	fusion_wake_up_srq[cpuid].task[fusion_wake_up_srq[cpuid].in++ & (MAX_WAKEUP_SRQ - 1)] = lnxtsk; \
-	hal_pend_domain_uncond(fusion_wake_up_srq[cpuid].srq, fusion_domain, cpuid); \
-} while (0)
-
-#define NON_RTAI_TASK_RESUME(ready_task) \
-do { \
-	xnthread_t *thread; \
-	if ((thread = (ready_task->lnxtsk)->rtai_tskext(FUSIONEXT)) && !(thread->status & XNRELAX)) { \
-		pend_fusion_wake_up_srq(ready_task->lnxtsk, rtai_cpuid()); \
-	} else { \
-               	pend_wake_up_srq(ready_task->lnxtsk, rtai_cpuid()); \
-	} \
-} while (0)
-
-#define DECLARE_FUSION_WAKE_UP_STUFF \
-struct klist_t fusion_wake_up_srq[MAX_WAKEUP_SRQ]; \
-static void fusion_wake_up_srq_handler(unsigned srq) \
-{ \
-	int cpuid = srq - fusion_wake_up_srq[0].srq; \
-	while (fusion_wake_up_srq[cpuid].out != fusion_wake_up_srq[cpuid].in) { \
-		xnpod_resume_thread(((struct task_struct *)fusion_wake_up_srq[cpuid].task[fusion_wake_up_srq[cpuid].out++ & (MAX_WAKEUP_SRQ - 1)])->rtai_tskext(FUSIONEXT), XNSUSP); \
-	} \
-	xnpod_schedule(); \
-} \
-EXPORT_SYMBOL(fusion_wake_up_srq);
-
-#define REQUEST_RESUME_SRQs_STUFF() \
-do { \
-	int cpuid; \
-	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) { \
-        	hal_virtualize_irq(hal_root_domain, wake_up_srq[cpuid].srq = hal_alloc_irq(), wake_up_srq_handler, NULL, IPIPE_HANDLE_FLAG); \
-        	hal_virtualize_irq(fusion_domain, fusion_wake_up_srq[cpuid].srq = hal_alloc_irq(), fusion_wake_up_srq_handler, NULL, IPIPE_HANDLE_FLAG); \
-	} \
-} while (0)
-
-#define RELEASE_RESUME_SRQs_STUFF() \
-do { \
-	int cpuid; \
-	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) { \
-		hal_virtualize_irq(hal_root_domain, wake_up_srq[cpuid].srq, NULL, NULL, 0); \
-		hal_free_irq(wake_up_srq[cpuid].srq); \
-		hal_virtualize_irq(fusion_domain, fusion_wake_up_srq[cpuid].srq, NULL, NULL, 0); \
-		hal_free_irq(fusion_wake_up_srq[cpuid].srq); \
-	} \
-} while (0)
-
-#else /* !RTAI_TRIOSS */
-
-#define FUSIONEXT  (0)
-
-#define DECLARE_FUSION_WAKE_UP_STUFF
 
 #define NON_RTAI_TASK_SUSPEND(task) \
 	do { (task->lnxtsk)->state = TASK_SOFTREALTIME; } while (0)
@@ -193,34 +84,18 @@ do { \
 
 #define REQUEST_RESUME_SRQs_STUFF() \
 do { \
-	int cpuid; \
-	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) { \
-        	hal_virtualize_irq(hal_root_domain, wake_up_srq[cpuid].srq = hal_alloc_irq(), wake_up_srq_handler, NULL, IPIPE_HANDLE_FLAG); \
-		if ( wake_up_srq[cpuid].srq != (wake_up_srq[0].srq + cpuid)) { \
-			int i; \
-			for (i = 0; i <= cpuid; i++) { \
-				hal_virtualize_irq(hal_root_domain, wake_up_srq[i].srq, NULL, NULL, 0); \
-				hal_free_irq(wake_up_srq[i].srq); \
-			} \
-			printk("*** NON CONSECUTIVE WAKE UP SRQs, ABORTING ***\n"); \
-			return -1; \
-		} \
+	if (!(wake_up_srq[0].srq = hal_alloc_irq())) { \
+		printk("*** ABORT, NO VIRQ AVAILABLE FOR THE WAKING UP SRQ. ***\n"); \
+		return -1; \
 	} \
+	hal_virtualize_irq(hal_root_domain, wake_up_srq[0].srq, wake_up_srq_handler, NULL, IPIPE_HANDLE_FLAG); \
 } while (0)
 
 #define RELEASE_RESUME_SRQs_STUFF() \
 do { \
-	int cpuid; \
-	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) { \
-		hal_virtualize_irq(hal_root_domain, wake_up_srq[cpuid].srq, NULL, NULL, 0); \
-		hal_free_irq(wake_up_srq[cpuid].srq); \
-	} \
+	hal_virtualize_irq(hal_root_domain, wake_up_srq[0].srq, NULL, NULL, 0); \
+	hal_free_irq(wake_up_srq[0].srq); \
 } while (0)
-
-#endif /* END RTAI_TRIOSS */
-
-#endif /* !_RTAI_SCHED_XN_H */
-
 
 extern RT_TASK rt_smp_linux_task[];
 
@@ -371,7 +246,7 @@ struct epoch_struct { spinlock_t lock; volatile int touse; volatile RTIME time[2
 #define REALTIME2COUNT(rtime)
 #endif
 
-#define MAX_WAKEUP_SRQ (2 << 7)
+#define MAX_WAKEUP_SRQ (1 << 6)
 
 struct klist_t { int srq; volatile unsigned long in, out; void *task[MAX_WAKEUP_SRQ]; };
 extern struct klist_t wake_up_srq[];
@@ -379,7 +254,7 @@ extern struct klist_t wake_up_srq[];
 #define pend_wake_up_srq(lnxtsk, cpuid) \
 do { \
 	wake_up_srq[cpuid].task[wake_up_srq[cpuid].in++ & (MAX_WAKEUP_SRQ - 1)] = lnxtsk; \
-	hal_pend_uncond(wake_up_srq[cpuid].srq, cpuid); \
+	hal_pend_uncond(wake_up_srq[0].srq, cpuid); \
 } while (0)
 
 static inline void enq_ready_task(RT_TASK *ready_task)
@@ -775,6 +650,7 @@ int rt_kthread_init_cpuid(RT_TASK *task,
 
 #else /* !__KERNEL__ */
 
+#if 0
 #include <rtai_version.h>
 #include <rtai_lxrt.h>
 #include <rtai_sched.h>
@@ -796,6 +672,7 @@ int rt_kthread_init_cpuid(RT_TASK *task,
 #include <rtai_netrpc.h>
 #include <rtai_shm.h>
 #include <rtai_usi.h>
+#endif
 
 #endif /* __KERNEL__ */
 
