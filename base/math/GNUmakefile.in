@@ -51,104 +51,7 @@ CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
 libmath_a_LIBADD =
-am__libmath_a_SOURCES_DIST = e_acos.c e_asin.c e_atan2.c e_cosh.c \
-	e_exp.c e_fmod.c e_log.c e_log10.c e_pow.c e_rem_pio2.c \
-	e_sinh.c e_sqrt.c k_cos.c k_rem_pio2.c k_sin.c k_tan.c \
-	s_atan.c s_ceil.c s_copysign.c s_cos.c s_expm1.c s_fabs.c \
-	s_floor.c s_frexp.c s_modf.c s_scalbn.c s_sin.c s_tan.c \
-	s_tanh.c sign.c w_acos.c w_asin.c w_atan2.c w_cosh.c w_exp.c \
-	w_fmod.c w_log.c w_log10.c w_pow.c w_sinh.c w_sqrt.c libm.c \
-	fpP.h mathP.h ceilfloor.c e_acosh.c e_atanh.c e_gamma.c \
-	e_gamma_r.c e_hypot.c e_j0.c e_j1.c e_jn.c e_lgamma.c \
-	e_lgamma_r.c e_remainder.c e_scalb.c fpmacros.c frexpldexp.c \
-	k_standard.c logb.c rndint.c s_asinh.c s_cbrt.c s_erf.c \
-	s_finite.c s_ilogb.c s_ldexp.c s_lib_version.c s_log1p.c \
-	s_logb.c s_matherr.c s_nextafter.c s_rint.c s_signgam.c \
-	s_significand.c scalb.c w_acosh.c w_atanh.c w_cabs.c w_drem.c \
-	w_gamma.c w_gamma_r.c w_hypot.c w_j0.c w_j1.c w_jn.c \
-	w_lgamma.c w_lgamma_r.c w_remainder.c w_scalb.c
-@CONFIG_RTAI_MATH_C99_FALSE@am_libmath_a_OBJECTS = e_acos.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	e_asin.$(OBJEXT) e_atan2.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	e_cosh.$(OBJEXT) e_exp.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	e_fmod.$(OBJEXT) e_log.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	e_log10.$(OBJEXT) e_pow.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	e_rem_pio2.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	e_sinh.$(OBJEXT) e_sqrt.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	k_cos.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	k_rem_pio2.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	k_sin.$(OBJEXT) k_tan.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	s_atan.$(OBJEXT) s_ceil.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	s_copysign.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	s_cos.$(OBJEXT) s_expm1.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	s_fabs.$(OBJEXT) s_floor.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	s_frexp.$(OBJEXT) s_modf.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	s_scalbn.$(OBJEXT) s_sin.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	s_tan.$(OBJEXT) s_tanh.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	sign.$(OBJEXT) w_acos.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	w_asin.$(OBJEXT) w_atan2.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	w_cosh.$(OBJEXT) w_exp.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	w_fmod.$(OBJEXT) w_log.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	w_log10.$(OBJEXT) w_pow.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	w_sinh.$(OBJEXT) w_sqrt.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_FALSE@	libm.$(OBJEXT)
-@CONFIG_RTAI_MATH_C99_TRUE@am_libmath_a_OBJECTS = ceilfloor.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_acos.$(OBJEXT) e_acosh.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_asin.$(OBJEXT) e_atan2.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_atanh.$(OBJEXT) e_cosh.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_exp.$(OBJEXT) e_fmod.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_gamma.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_gamma_r.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_hypot.$(OBJEXT) e_j0.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_j1.$(OBJEXT) e_jn.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_lgamma.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_lgamma_r.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_log.$(OBJEXT) e_log10.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_pow.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_rem_pio2.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_remainder.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_scalb.$(OBJEXT) e_sinh.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_sqrt.$(OBJEXT) fpmacros.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	frexpldexp.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	k_cos.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	k_rem_pio2.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	k_sin.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	k_standard.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	k_tan.$(OBJEXT) logb.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	rndint.$(OBJEXT) s_asinh.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_atan.$(OBJEXT) s_cbrt.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_ceil.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_copysign.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_cos.$(OBJEXT) s_erf.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_expm1.$(OBJEXT) s_fabs.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_finite.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_floor.$(OBJEXT) s_frexp.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_ilogb.$(OBJEXT) s_ldexp.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_lib_version.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_log1p.$(OBJEXT) s_logb.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_matherr.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_modf.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_nextafter.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_rint.$(OBJEXT) s_scalbn.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_signgam.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_significand.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_sin.$(OBJEXT) s_tan.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_tanh.$(OBJEXT) scalb.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	sign.$(OBJEXT) w_acos.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_acosh.$(OBJEXT) w_asin.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_atan2.$(OBJEXT) w_atanh.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_cabs.$(OBJEXT) w_cosh.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_drem.$(OBJEXT) w_exp.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_fmod.$(OBJEXT) w_gamma.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_gamma_r.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_hypot.$(OBJEXT) w_j0.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_j1.$(OBJEXT) w_jn.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_lgamma.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_lgamma_r.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_log.$(OBJEXT) w_log10.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_pow.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_remainder.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_scalb.$(OBJEXT) w_sinh.$(OBJEXT) \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_sqrt.$(OBJEXT) libm.$(OBJEXT)
+am_libmath_a_OBJECTS = libm.$(OBJEXT)
 libmath_a_OBJECTS = $(am_libmath_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/base/config/autoconf/depcomp
@@ -164,7 +67,7 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(libmath_a_SOURCES)
-DIST_SOURCES = $(am__libmath_a_SOURCES_DIST)
+DIST_SOURCES = $(libmath_a_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -270,6 +173,7 @@ RTAI_KMOD_CXXFLAGS = @RTAI_KMOD_CXXFLAGS@
 RTAI_LINUX_DIR = @RTAI_LINUX_DIR@
 RTAI_LINUX_VERSION = @RTAI_LINUX_VERSION@
 RTAI_LXRT_LDADD = @RTAI_LXRT_LDADD@
+RTAI_MATH_LIBM = @RTAI_MATH_LIBM@
 RTAI_MAYBE_DOCDIR = @RTAI_MAYBE_DOCDIR@
 RTAI_MAYBE_SIMDIR = @RTAI_MAYBE_SIMDIR@
 RTAI_MODULE_DIR = @RTAI_MODULE_DIR@
@@ -347,49 +251,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 moduledir = @RTAI_MODULE_DIR@
 modext = @RTAI_MODULE_EXT@
-@CONFIG_RTAI_MATH_C99_FALSE@libmath_a_SOURCES = e_acos.c e_asin.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	e_atan2.c e_cosh.c e_exp.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	e_fmod.c e_log.c e_log10.c e_pow.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	e_rem_pio2.c e_sinh.c e_sqrt.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	k_cos.c k_rem_pio2.c k_sin.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	k_tan.c s_atan.c s_ceil.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	s_copysign.c s_cos.c s_expm1.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	s_fabs.c s_floor.c s_frexp.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	s_modf.c s_scalbn.c s_sin.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	s_tan.c s_tanh.c sign.c w_acos.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	w_asin.c w_atan2.c w_cosh.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	w_exp.c w_fmod.c w_log.c w_log10.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	w_pow.c w_sinh.c w_sqrt.c libm.c \
-@CONFIG_RTAI_MATH_C99_FALSE@	fpP.h mathP.h
-@CONFIG_RTAI_MATH_C99_TRUE@libmath_a_SOURCES = ceilfloor.c e_acos.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_acosh.c e_asin.c e_atan2.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_atanh.c e_cosh.c e_exp.c e_fmod.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_gamma.c e_gamma_r.c e_hypot.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_j0.c e_j1.c e_jn.c e_lgamma.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_lgamma_r.c e_log.c e_log10.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_pow.c e_rem_pio2.c e_remainder.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	e_scalb.c e_sinh.c e_sqrt.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	fpmacros.c frexpldexp.c k_cos.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	k_rem_pio2.c k_sin.c k_standard.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	k_tan.c logb.c rndint.c s_asinh.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_atan.c s_cbrt.c s_ceil.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_copysign.c s_cos.c s_erf.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_expm1.c s_fabs.c s_finite.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_floor.c s_frexp.c s_ilogb.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_ldexp.c s_lib_version.c s_log1p.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_logb.c s_matherr.c s_modf.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_nextafter.c s_rint.c s_scalbn.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_signgam.c s_significand.c s_sin.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	s_tan.c s_tanh.c scalb.c sign.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_acos.c w_acosh.c w_asin.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_atan2.c w_atanh.c w_cabs.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_cosh.c w_drem.c w_exp.c w_fmod.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_gamma.c w_gamma_r.c w_hypot.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_j0.c w_j1.c w_jn.c w_lgamma.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_lgamma_r.c w_log.c w_log10.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_pow.c w_remainder.c w_scalb.c \
-@CONFIG_RTAI_MATH_C99_TRUE@	w_sinh.c w_sqrt.c libm.c fpP.h \
-@CONFIG_RTAI_MATH_C99_TRUE@	mathP.h
+libmath_a_SOURCES = libm.c
 @CONFIG_KBUILD_FALSE@noinst_LIBRARIES = libmath.a
 @CONFIG_KBUILD_FALSE@libmath_a_AR = $(CROSS_COMPILE)ar cru
 @CONFIG_KBUILD_FALSE@INCLUDES = \
@@ -448,95 +310,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ceilfloor.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_acos.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_acosh.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_asin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_atan2.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_atanh.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_cosh.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_exp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_fmod.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_gamma.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_gamma_r.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_hypot.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_j0.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_j1.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_jn.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_lgamma.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_lgamma_r.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_log.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_log10.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_pow.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_rem_pio2.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_remainder.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_scalb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_sinh.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/e_sqrt.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fpmacros.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frexpldexp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/k_cos.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/k_rem_pio2.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/k_sin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/k_standard.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/k_tan.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libm.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rndint.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_asinh.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_atan.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_cbrt.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_ceil.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_copysign.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_cos.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_erf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_expm1.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_fabs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_finite.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_floor.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_frexp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_ilogb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_ldexp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_lib_version.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_log1p.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_logb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_matherr.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_modf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_nextafter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_rint.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_scalbn.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_signgam.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_significand.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_sin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_tan.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s_tanh.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scalb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sign.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_acos.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_acosh.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_asin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_atan2.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_atanh.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_cabs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_cosh.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_drem.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_exp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_fmod.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_gamma.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_gamma_r.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_hypot.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_j0.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_j1.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_jn.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_lgamma.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_lgamma_r.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_log.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_log10.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_pow.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_remainder.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_scalb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_sinh.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w_sqrt.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -771,12 +545,19 @@ uninstall-am:
 @CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_TOP@ \
 @CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_CMD@ rtai_extradef="@RTAI_FP_CFLAGS@" rtai_extraopt="@RTAI_TARGET_ARCH_OPTS@" \
 @CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_BOTTOM@
+@CONFIG_KBUILD_TRUE@	mv $@ $@.tmp
+@CONFIG_KBUILD_TRUE@	$(CROSS_COMPILE)$(LD) -r -static -o $@ $@.tmp @RTAI_MATH_LIBM@
+@CONFIG_KBUILD_TRUE@	rm -f $@.tmp
+
+#	$(CROSS_COMPILE)$(LD) --whole-archive -r -static -o $@ rtai_math.o -L/usr/lib/x86_64-linux-gnu/ -lm
 
 @CONFIG_KBUILD_TRUE@clean-local:
 @CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_CLEAN@
 
+# $(LD) -r -static -o $@ $< libm_32.a
 @CONFIG_KBUILD_FALSE@rtai_math.o: libmath.a
-@CONFIG_KBUILD_FALSE@	$(CROSS_COMPILE)$(LD) --whole-archive $< -r -o $@
+
+#	$(CROSS_COMPILE)$(LD) --whole-archive -r -static -o $@ $< -L/usr/lib -lm
 
 all-local: rtai_math$(modext)
 @CONFIG_RTAI_MATH_BUILTIN_FALSE@@CONFIG_RTAI_OLD_FASHIONED_BUILD_TRUE@	$(mkinstalldirs) $(top_srcdir)/modules

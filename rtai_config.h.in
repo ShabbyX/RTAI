@@ -172,6 +172,12 @@
 #undef CONFIG_RTAI_MATH_C99
 
 /* Kconfig */
+#undef CONFIG_RTAI_MATH_KCOMPLEX
+
+/* Kconfig */
+#undef CONFIG_RTAI_MATH_LIBM_TO_USE
+
+/* Kconfig */
 #undef CONFIG_RTAI_MBX
 
 /* Kconfig */

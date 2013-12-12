@@ -735,10 +735,29 @@ config RTAI_MATH
 	functions for kernel space. It might be useful to avoid fighting
 	for the use of libc within the kernel.
 
-config RTAI_MATH_C99
-	bool "C99 standard support"
+config RTAI_MATH_LIBM_TO_USE
+	string "1 - NEWLIB (default), 2 - UCLIB, 3 - GLIBC"
+	depends on RTAI_MATH
+	default 1
+	help
+	Your libm.a of choice.
+
+config RTAI_MATH_LIBM_DIR
+	depends on RTAI_MATH
+	string "The installation directory of your chosen libm.a"
+	default "/usr/lib"
+
+config RTAI_MATH_KCOMPLEX
+	bool "Include complex support"
 	depends on RTAI_MATH
 	default n
+	help
+	This parameter allows the inclusion of complex support functions,		ignored for uClibc.
+
+#config RTAI_MATH_C99
+#	bool "C99 standard support"
+#	depends on RTAI_MATH
+#	default n
 
 config RTAI_MALLOC
 	tristate "Real-time malloc support"

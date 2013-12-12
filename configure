@@ -632,6 +632,7 @@ RTAI_KBUILD_TOP
 RTAI_KBUILD_ENV
 RTAI_MODULE_EXT
 RTAI_MODULE_DIR
+RTAI_MATH_LIBM
 RTAI_LINUX_VERSION
 RTAI_LINUX_DIR
 RTAI_FP_CFLAGS
@@ -954,6 +955,7 @@ with_module_dir
 with_linux_dir
 enable_trace
 enable_math
+with_math_libm_dir
 enable_bits
 enable_fifos
 enable_netrpc
@@ -1751,6 +1753,7 @@ Optional Packages:
   --with-kconfig-file=<kconfig-file>      KConfig parameter file
   --with-module-dir=<module-dir>      Installation directory for modules
   --with-linux-dir=<linux-dir>      RTAI-enabled Linux kernel tree
+ --with-math-libm-dir	libm dir/file for math support
   --with-comedi              directory containing COMEDI
  --with-16550a-ham	Set real-time serial driver hardware access mode (pio|mmio|any)
   --with-x                use the X Window System
@@ -15802,8 +15805,32 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: ${CONFIG_RTAI_MATH:-no}" >&5
 $as_echo "${CONFIG_RTAI_MATH:-no}" >&6; }
 
+RTAI_MATH_LIBM=
+
 if test x$CONFIG_RTAI_MATH = xy ; then
   RTAI_BUILTIN_MODLIST="$RTAI_BUILTIN_MODLIST math"
+fi
+
+if test x$CONFIG_RTAI_MATH != x ; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for libm dir/file for math support" >&5
+$as_echo_n "checking for libm dir/file for math support... " >&6; }
+
+# Check whether --with-math-libm-dir was given.
+if test "${with_math_libm_dir+set}" = set; then :
+  withval=$with_math_libm_dir;
+fi
+
+  if test x"$CONFIG_RTAI_MATH_LIBM_DIR" = x ; then
+        RTAI_MATH_LIBM="/usr/lib/libm.a"
+  elif test -f "$CONFIG_RTAI_MATH_LIBM_DIR" ; then
+    RTAI_MATH_LIBM="$CONFIG_RTAI_MATH_LIBM_DIR"
+  elif test -d "$CONFIG_RTAI_MATH_LIBM_DIR" ; then
+    RTAI_MATH_LIBM="$CONFIG_RTAI_MATH_LIBM_DIR/libm.a"
+  else
+    as_fn_error $? "Bad argument $withvar to --with-math-libm-dir" "$LINENO" 5
+  fi
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: libm: $RTAI_MATH_LIBM" >&5
+$as_echo "libm: $RTAI_MATH_LIBM" >&6; }
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for bits IPC support" >&5
@@ -18848,6 +18875,15 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+
+cat >>confdefs.h <<_ACEOF
+#define CONFIG_RTAI_MATH_LIBM_TO_USE $CONFIG_RTAI_MATH_LIBM_TO_USE
+_ACEOF
+
+test x$CONFIG_RTAI_MATH_KCOMPLEX = xy &&
+$as_echo "#define CONFIG_RTAI_MATH_KCOMPLEX 1" >>confdefs.h
+
+
 case $CONFIG_RTAI_BUSY_TIME_ALIGN in
 	y) CONFIG_RTAI_BUSY_TIME_ALIGN=1 ;;
 	n|*) CONFIG_RTAI_BUSY_TIME_ALIGN=0 ;;
@@ -19769,6 +19805,7 @@ fi
 RTAI_POSIX_WRAP=`for f in \`cat "${srcdir}/base/posix/POSIX_WRAPS"\`; do echo -n " -Wl,--wrap -Wl,$f" ; done`
 
 RTAI_USER_CFLAGS="-I$LINUX_KERNELSRC/include $RTAI_REAL_USER_CFLAGS"
+
 
 
 
