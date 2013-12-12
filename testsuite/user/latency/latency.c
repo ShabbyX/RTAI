@@ -36,7 +36,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #endif
 #define TIMER_MODE  0
 
-#define SKIP ((1000000000*AVRGTIME)/PERIOD)/1
+#define ECHOSPEED 1
+
+#define SKIP ((1000000000*AVRGTIME)/PERIOD)/ECHOSPEED
 
 #define MAXDIM 10
 

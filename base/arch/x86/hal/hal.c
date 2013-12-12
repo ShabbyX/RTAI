@@ -250,6 +250,8 @@ int rtai_calibrate_hard_timer(void)
 }
 EXPORT_SYMBOL(rtai_calibrate_hard_timer);
 
+#ifdef CONFIG_SMP
+
 extern int rtai_sched_affinity;  // in Linux "kernel/sched/core.c"
 // should we hold a lock for p->cpus_allowed, risky ?
 void free_isolcpus_from_linux(void *IsolCpusMask)
@@ -282,3 +284,10 @@ void free_isolcpus_from_linux(void *IsolCpusMask)
 		set_cpus_allowed_ptr(p, &mask);
 	}
 }
+
+#else
+
+void free_isolcpus_from_linux(void *IsolCpusMask) { return; }
+
+#endif
+

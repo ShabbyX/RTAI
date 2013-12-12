@@ -1107,12 +1107,8 @@ RTAI_PROTO(void, rt_release_rtc, (void))
 
 RTAI_PROTO(RTIME, rt_get_time, (void))
 {
-#ifdef CONFIG_RTAI_TSC
-	return rt_get_tscnt();
-#else
 	struct { unsigned long dummy; } arg;
 	return rtai_lxrt(BIDX, SIZARG, GET_TIME, &arg).rt;
-#endif
 }
 
 RTAI_PROTO(RTIME, rt_get_real_time, (void))
@@ -1555,6 +1551,10 @@ RTAI_PROTO(unsigned int, rt_get_cpu_freq, (void))
 	struct { unsigned long dummy; } arg;
 	return rtai_lxrt(BIDX, SIZARG, GET_CPU_FREQ, &arg).i[0];
 }
+
+#ifndef CONFIG_RTAI_TSC
+#define rt_get_tscnt rt_get_time
+#endif
 
 static inline RTIME nanos2tscnts(RTIME nanos, unsigned int cpu_freq)
 {

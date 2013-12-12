@@ -213,6 +213,7 @@ typedef struct rt_task_struct {
 	unsigned long usp_flags_mask;
 	unsigned long force_soft;
 	volatile int is_hard;
+	int kerrno;
 
 	long busy_time_align;
 	void *linux_syscall_server;

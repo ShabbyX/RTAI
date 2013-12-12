@@ -13182,7 +13182,7 @@ index 817bf70..a0f7815 100644
  	oldmm = prev->active_mm;
 +
 +if (!rq) {
-+	switch_mm(oldmm, next->active_mm, next);
++	__switch_mm(oldmm, next->active_mm, next);
 +	if (!mm) enter_lazy_tlb(oldmm, next);
 +} else {
 +	prepare_task_switch(rq, prev, next);

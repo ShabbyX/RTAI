@@ -62,12 +62,12 @@ on the isolated CPUs they will be fairly well isolated from Linux.
 
 Nevertheless, to further help isolation, RTAI removes any kernel thread and 
 kworker at the insmoding of its HAL. Even if such an action does not impede
-their further dynamic creations there is some evidence that it is of useful
+their further dynamic creations there is some evidence that it is useful
 anyhow. It would also be possible to block such dynamic creations, an action
 that is postponed till more experience is gathered with the use of what above.
 To easily check if any following dynamic insertion of something within the
 isolated cpus has happened the following might be of help:
-cat /proc/*/task/*/status |grep "Cpus_allowed:" |grep <mask>,
+cat /proc/*/task/*/status |grep "allowed:" |grep <mask>,
 where mask is the mask of what you want either to see not or see. 
 
 With what above only Linux rescheduling interrupts should appear on the

@@ -69,9 +69,6 @@ void rtai_proc_lxrt_unregister(void);
 
 MODULE_LICENSE("GPL");
 
-int ppp;
-EXPORT_SYMBOL(ppp);
-
 /* +++++++++++++++++ WHAT MUST BE AVAILABLE EVERYWHERE ++++++++++++++++++++++ */
 
 RT_TASK rt_smp_linux_task[NR_RT_CPUS];

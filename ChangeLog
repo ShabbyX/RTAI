@@ -1,8 +1,47 @@
+2013-11-23 Paolo Mantegazza <mantegazza@aero.polimi.it> and 
+
+	* base/math/libm.c: added function cd2str, i.e. compex double to 
+	  string.
+
+2013-11-19 Paolo Mantegazza <mantegazza@aero.polimi.it> and 
+	   Marco Morandini <morandini@aero.polimi.it>
+
+	* base/math/libm.c: updated to use complex functions and glibc-libm.a,
+	  i386 only, newlib-libm.a and uClibi-libm.a
+	* base/math/export_glibc, export_newlib.h and export_uclibc.h: private
+	  headers exporting what is specific to each of the supported libm.a.
+	* base/math/README.KLIBM: explanation of what the new way math support
+	  in kernel space is.
+	* base/include/rtai_math.h: new self contained header.
+	* base/arch/x86/Kconfig: add parameters to configure the refurbished 
+	  math support in kernel space.
+
+2013-11-14 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal.c: do not make available rtai_sched_affinity
+	  and free_isolcpus_from_linux under UP.
+
+2013-11-11 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/math/libm.c: added a trivial d2str (double to string).
+	* base/include/rtai_kerrno.h: added the declaration of d2str.
+
+2013-11-09 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/math/libm.c: uses just the standard GPLed glibc, added the
+	  possibility of calling both the float and double version of 
+	  glibc-libm functions.
+	* base/include/rtai_sched.h: a added kerrno to RT_TASK, to support 
+	  a per kernel task errno management with the refurbished libm.c
+	* base/include/rtai_kerrno.h: new header to support the management 
+	  of per kernel tasks errno.
+
 2013-11-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/include/rtai_lxrt.h: added rt_get_cpu_freq and static
 	  inlines for an easier converion of tsc counts from/to nanos, 
-	  directly in user space.
+	  directly in user space; simple inlined conversion functions 
+	  provided in rtai_lxrt.h.
 	* base/sched/sys.c: implemented the above rt_get_cpu_freq.
 	* base/arch/x86/hal/hal.c: added a function to be called for ensuring
 	  that no Linux task will be on the CPUs isolated for RTAI.

@@ -70,6 +70,8 @@ MODULE_PARM_DESC(timer_mode, "timer running mode: 0-oneshot, 1-periodic");
 #define RUNNABLE_ON_CPUS 3	// 1: on cpu 0 only, 2: on cpu 1 only, 3: on any;
 #define RUN_ON_CPUS (num_online_cpus() > 1 ? RUNNABLE_ON_CPUS : 1)
 
+#define ECHOSPEED 1
+
 /*
  *	Global Variables
  */
@@ -243,7 +245,7 @@ __latency_init(void)
 		period_counts = nano2count(period);
 	}
 
-	loops = (1000000000*avrgtime)/period;
+	loops = ((1000000000*avrgtime)/period)/ECHOSPEED;
 
 	/* Calculate the start time for the task. */
 	/* We set this to "now plus 10 periods"   */
