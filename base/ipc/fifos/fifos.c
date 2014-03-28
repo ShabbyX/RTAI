@@ -1818,66 +1818,46 @@ module_exit(__rtai_fifos_exit);
 #ifdef CONFIG_PROC_FS
 /* ----------------------< proc filesystem section >----------------------*/
 
-static int rtai_read_fifos(char* buf, char** start, off_t offset,
-	int len, int *eof, void *data)
+static int PROC_READ_FUN(rtai_read_fifos) 
 {
 	int i;
+	PROC_PRINT_VARS;
 
-	len = sprintf(buf, "RTAI Real Time fifos status.\n\n" );
-	if (len > LIMIT) {
-		return(len);
-	}
-	len += sprintf(buf + len, "Maximum number of FIFOS %d.\n\n", MaxFifos);
-	if (len > LIMIT) {
-		return(len);
-	}
-	len += sprintf(buf+len, "fifo No  Open Cnt  Buff Size  handler  malloc type");
-	if (len > LIMIT) {
-		return(len);
-	}
-	len += sprintf(buf+len, " Name\n----------------");
-	if (len > LIMIT) {
-		return(len);
-	}
-	len += sprintf(buf+len, "-----------------------------------------\n");
-	if (len > LIMIT) {
-		return(len);
-	}
+	PROC_PRINT("RTAI Real Time fifos status.\n\n");
+	PROC_PRINT("Maximum number of FIFOS %d.\n\n", MaxFifos);
+	PROC_PRINT("fifo No  Open Cnt  Buff Size  handler  malloc type");
+	PROC_PRINT(" Name\n----------------");
+	PROC_PRINT("-----------------------------------------\n");
 /*
  * Display the status of all open RT fifos.
  */
 	for (i = 0; i < MAX_FIFOS; i++) {
 		if (fifo[i].opncnt > 0) {
-			len += sprintf( buf+len, "%-8d %-9d %-10d %-10p %-12s", i,
+			PROC_PRINT("%-8d %-9d %-10d %-10p %-12s", i,
                         	        fifo[i].opncnt, fifo[i].mbx.size,
 					fifo[i].handler,
 					fifo[i].malloc_type == 'v'
 					    ? "vmalloc" : "kmalloc" 
 					);
-			if (len > LIMIT) {
-				return(len);
-			}
-			len += sprintf(buf+len, "%s\n", fifo[i].name);
-			if (len > LIMIT) {
-				return(len);
-			}
+			PROC_PRINT("%s\n", fifo[i].name);
 		} /* End if - fifo is open. */
 	} /* End for loop - loop for all fifos. */
-	return len;
+	return 0;
 
 }  /* End function - rtai_read_fifos */
+
+PROC_READ_OPEN_OPS(rtai_fifos_fops, rtai_read_fifos);
 
 static int rtai_proc_fifo_register(void) 
 {
         struct proc_dir_entry *proc_fifo_ent;
-        proc_fifo_ent = create_proc_entry("fifos", S_IFREG|S_IRUGO|S_IWUSR, 
-								rtai_proc_root);
+        proc_fifo_ent = CREATE_PROC_ENTRY("fifos", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root, &rtai_fifos_fops);
         if (!proc_fifo_ent) {
                 printk("Unable to initialize /proc/rtai/fifos\n");
                 return(-1);
         }
-        proc_fifo_ent->read_proc = rtai_read_fifos;
-	return 0;
+	SET_PROC_READ_ENTRY(proc_fifo_ent, rtai_read_fifos);
+	PROC_PRINT_DONE;
 }
 
 static void rtai_proc_fifo_unregister(void) 

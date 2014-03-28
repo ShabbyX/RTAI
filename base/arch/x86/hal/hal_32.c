@@ -1571,10 +1571,10 @@ extern void cleanup_tsc_sync(void);
 extern volatile long rtai_tsc_ofst[];
 #endif
 
-static int rtai_read_proc (char *page, char **start, off_t off, int count, int *eof, void *data)
+static int PROC_READ_FUN(rtai_read_proc)
 {
-	PROC_PRINT_VARS;
 	int i, none;
+	PROC_PRINT_VARS;
 
 	PROC_PRINT("\n** RTAI/x86:\n\n");
 	PROC_PRINT("    CPU   Frequency: %lu (Hz)\n", rtai_tunables.cpu_freq);
@@ -1629,11 +1629,13 @@ static int rtai_read_proc (char *page, char **start, off_t off, int count, int *
 	PROC_PRINT_DONE;
 }
 
+PROC_READ_OPEN_OPS(rtai_hal_proc_fops, rtai_read_proc);
+
 static int rtai_proc_register (void)
 {
 	struct proc_dir_entry *ent;
 
-	rtai_proc_root = create_proc_entry("rtai",S_IFDIR, 0);
+	rtai_proc_root = CREATE_PROC_ENTRY("rtai", S_IFDIR, NULL, &rtai_hal_proc_fops);
 	if (!rtai_proc_root) {
 		printk(KERN_ERR "Unable to initialize /proc/rtai.\n");
 		return -1;
@@ -1641,20 +1643,21 @@ static int rtai_proc_register (void)
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
 	rtai_proc_root->owner = THIS_MODULE;
 #endif
-	ent = create_proc_entry("hal",S_IFREG|S_IRUGO|S_IWUSR,rtai_proc_root);
+	ent = CREATE_PROC_ENTRY("hal", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root,
+&rtai_hal_proc_fops);
 	if (!ent) {
 		printk(KERN_ERR "Unable to initialize /proc/rtai/hal.\n");
 		return -1;
         }
-	ent->read_proc = rtai_read_proc;
+	SET_PROC_READ_ENTRY(ent, rtai_read_proc);
 
 	return 0;
 }
 
 static void rtai_proc_unregister (void)
 {
-	remove_proc_entry("hal",rtai_proc_root);
-	remove_proc_entry("rtai",0);
+	remove_proc_entry("hal", rtai_proc_root);
+	remove_proc_entry("rtai", 0);
 }
 
 #endif /* CONFIG_PROC_FS */

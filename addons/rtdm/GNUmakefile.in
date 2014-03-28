@@ -54,7 +54,7 @@ ARFLAGS = cru
 librtdm_a_LIBADD =
 am_librtdm_a_OBJECTS = core.$(OBJEXT) device.$(OBJEXT) \
 	drvlib.$(OBJEXT) module.$(OBJEXT) proc.$(OBJEXT) \
-	rtai_taskq.$(OBJEXT) select.$(OBJEXT)
+	rtai_taskq.$(OBJEXT) select.$(OBJEXT) vfile.$(OBJEXT)
 librtdm_a_OBJECTS = $(am_librtdm_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/base/config/autoconf/depcomp
@@ -322,7 +322,8 @@ librtdm_a_SOURCES = \
 	module.c \
 	proc.c \
 	rtai_taskq.c \
-	select.c
+	select.c \
+	vfile.c
 
 include_HEADERS = \
 	rtdm.h \
@@ -330,7 +331,8 @@ include_HEADERS = \
 	rtserial.h \
 	xn.h \
 	rtai_taskq.h \
-	select.h
+	select.h \
+	vfile.h
 
 @CONFIG_KBUILD_FALSE@noinst_LIBRARIES = librtdm.a
 @CONFIG_KBUILD_FALSE@librtdm_a_AR = $(CROSS_COMPILE)ar cru
@@ -404,6 +406,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/proc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtai_taskq.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/select.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vfile.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

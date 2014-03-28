@@ -12,7 +12,8 @@ librtdm_a_SOURCES = \
 	module.c \
 	proc.c \
 	rtai_taskq.c \
-	select.c
+	select.c \
+	vfile.c
 
 include_HEADERS = \
 	rtdm.h \
@@ -20,7 +21,8 @@ include_HEADERS = \
 	rtserial.h \
 	xn.h \
 	rtai_taskq.h \
-	select.h
+	select.h \
+	vfile.h
 
 if CONFIG_KBUILD
 rtai_rtdm$(modext): @RTAI_KBUILD_ENV@
