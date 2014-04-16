@@ -38,7 +38,7 @@ efltk_cflags = $(shell @EFLTK_DIR@/bin/efltk-config --cxxflags)
 efltk_ldflags = $(shell @EFLTK_DIR@/bin/efltk-config --ldflags --use-gl --multithread)
 
 xrtailab_CPPFLAGS = \
-	@RTAI_USER_CFLAGS@ \
+	@RTAI_REAL_USER_CFLAGS@ \
 	-I$(top_srcdir)/base/include \
 	-I../base/include \
 	$(efltk_cflags) \
