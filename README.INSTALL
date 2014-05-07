@@ -15,8 +15,7 @@ RTAI (Real-time Application Interface) patched Linux kernel with
 IPIPE (Interrupt Pileline) enabled.
 
 Please note that only x86-based (32-bit and x86_64) architectures
-have been tested with this branch. x86_64 support is still a work in progress
-with the 3.x kernel series, but is a high priority.
+have been tested with this branch.
 
 This README.INSTALL file was written for x86-based architectures only.
 If you are using ARM or any other architecture, YMMV (Your mileage may vary.)
@@ -71,7 +70,7 @@ $ ls /home
    # cp -prvL /home/<your user>/devel/RTAI/base/arch/x86/patches/hal-linux-3.4.55-x86-1.patch /usr/src/
    # patch -p1 < ../hal-linux-3.4.55-x86-1.patch
 
-Please note: Is it necessary to know your CPU architecture before proceeding.
+Please note: It is necessary to know your CPU architecture before proceeding.
 Run the following command to determine if you are on a 64-bit or 32-bit Linux distribution:
 
    $ uname -m
@@ -158,10 +157,7 @@ Press enter again, and proceed with compiling the kernel.
    compiling times on SMP systems.
 
    # make -j$(cat /proc/cpuinfo | grep processor | wc -l)
-   # make modules_install
-   # cp -prvL arch/x86/boot/bzImage /boot/vmlinuz-3.4.55-RTAI
-   # cp -prvL System.map /boot/System.map-3.4.55-RTAI
-   # cp -prvL .config /boot/config-3.4.55-RTAI
+   # make modules_install install
 
 5.) Update your boot loader. If you are an experienced GRUB user, it is recommended to
 modify the grub.cfg or menu.lst file by hand, to remove unncessary bloat from the file,
@@ -173,20 +169,6 @@ Depending on your Linux distribution, one of these commands would do it for you:
    # grub2-mkconfig -o /boot/grub2/grub.cfg
    # grub2-mkconfig -o /boot/grub/grub.cfg
    # update-grub
-
-If you're a minimalist like me, run something like this as root:
-
---------------------cut here--------------------
-cat > /boot/grub2/grub.cfg << EOF
-set default=0
-set timeout=3
-
-menuentry "Linux 3.4.55 RTAI" {
-  set root=(hd0,1)
-  linux /boot/vmlinuz-3.4.55-RTAI root=/dev/sda1 ro consoleblank=0
-}
-EOF
---------------------cut here--------------------
 
 6.) Reboot into your new kernel and be sure you select it at boot time!
 
