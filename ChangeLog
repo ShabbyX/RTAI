@@ -1,3 +1,16 @@
+2014-05-13 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* base/sched/{GNUmakefile.am,sched.c}: use MODULE_ALIAS()
+	  instead of manual symlinks for legacy schedulers,
+	  thanks to Lukas Anzinger <lukas@lukasanzinger.at>
+	* base/sched/GNUmakefile.in: regenerate
+
+2014-05-06 Pierangelo Masarati <masarati@aero.polimi.it>
+
+	* configure.in: fix linux source dir extraction when further args
+	  follow -C, thanks to Lukas Anzinger <lukas@lukasanzinger.at>
+	* configure: rebuild
+
 2014-02-19 Pierangelo Masarati <masarati@aero.polimi.it>
 
 	* addons/rdtm/GNUmakefile.*: updated for Linux >= 3.10.0.

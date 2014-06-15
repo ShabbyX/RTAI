@@ -293,17 +293,6 @@ top_srcdir = @top_srcdir@
 moduledir = @RTAI_MODULE_DIR@
 modext = @RTAI_MODULE_EXT@
 schedulers = rtai_sched$(modext)
-# $(main_scheduler) is the scheduler links are created from;
-# it is rtai_sched for all archs, except x86_64, where rtai_lxrt is used
-# $(legacy_schedulers) are all the schedulers that are generated
-# as links of $(main_scheduler); for x86_64, they are all but rtai_lxrt
-#if CONFIG_X86_64
-#main_scheduler = rtai_lxrt
-#legacy_schedulers = up mup smp ksched sched
-#else # CONFIG_X86_64
-main_scheduler = rtai_sched
-legacy_schedulers = up mup smp ksched lxrt
-#endif # CONFIG_X86_64
 noinst_LIBRARIES = $(am__append_1)
 builtins = @RTAI_BUILTIN_MODLIST@
 @CONFIG_KBUILD_TRUE@builtins_srclist = $(wildcard $(foreach mod,$(builtins),$(patsubst %,$(top_srcdir)/base/%/*.[chS],$(mod))))
@@ -323,7 +312,7 @@ rtai_sched_extradef = -DUSE_RTAI_TASKS=1
 
 # liblxrt is always built
 SUBDIRS = liblxrt
-EXTRA_DIST = Makefile.kbuild sched.piped sched.immed
+EXTRA_DIST = Makefile.kbuild
 all: all-recursive
 
 .SUFFIXES:
@@ -824,18 +813,10 @@ uninstall-am:
 all-local: $(schedulers)
 @CONFIG_RTAI_OLD_FASHIONED_BUILD_TRUE@	$(mkinstalldirs) $(top_srcdir)/modules
 @CONFIG_RTAI_OLD_FASHIONED_BUILD_TRUE@	$(INSTALL_DATA) $^ $(top_srcdir)/modules
-@CONFIG_RTAI_OLD_FASHIONED_BUILD_TRUE@	for s in $(legacy_schedulers) ; do \
-@CONFIG_RTAI_OLD_FASHIONED_BUILD_TRUE@		rm -f $(top_srcdir)/modules/rtai_$$s$(modext) ; \
-@CONFIG_RTAI_OLD_FASHIONED_BUILD_TRUE@		$(LN_S) $(main_scheduler)$(modext) $(top_srcdir)/modules/rtai_$$s$(modext) ; \
-@CONFIG_RTAI_OLD_FASHIONED_BUILD_TRUE@	done
 
 install-exec-local: $(schedulers)
 	$(mkinstalldirs) $(DESTDIR)$(moduledir)
 	$(INSTALL_DATA) $(schedulers) $(DESTDIR)$(moduledir)
-	for s in $(legacy_schedulers) ; do \
-		rm -f $(DESTDIR)$(moduledir)/rtai_$$s$(modext) ; \
-		$(LN_S) $(main_scheduler)$(modext) $(DESTDIR)$(moduledir)/rtai_$$s$(modext) ; \
-	done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -2698,6 +2698,12 @@ module_exit(__rtai_lxrt_exit);
 
 #ifdef CONFIG_KBUILD
 
+MODULE_ALIAS("rtai_up");
+MODULE_ALIAS("rtai_mup");
+MODULE_ALIAS("rtai_smp");
+MODULE_ALIAS("rtai_ksched");
+MODULE_ALIAS("rtai_lxrt");
+
 EXPORT_SYMBOL(rt_fun_lxrt);
 EXPORT_SYMBOL(clr_rtext);
 EXPORT_SYMBOL(set_rtext);

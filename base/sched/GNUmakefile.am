@@ -5,17 +5,6 @@ modext = @RTAI_MODULE_EXT@
 CROSS_COMPILE = @CROSS_COMPILE@
 
 schedulers =
-# $(main_scheduler) is the scheduler links are created from;
-# it is rtai_sched for all archs, except x86_64, where rtai_lxrt is used
-# $(legacy_schedulers) are all the schedulers that are generated
-# as links of $(main_scheduler); for x86_64, they are all but rtai_lxrt
-#if CONFIG_X86_64
-#main_scheduler = rtai_lxrt
-#legacy_schedulers = up mup smp ksched sched
-#else # CONFIG_X86_64
-main_scheduler = rtai_sched
-legacy_schedulers = up mup smp ksched lxrt
-#endif # CONFIG_X86_64
 
 noinst_LIBRARIES =
 builtins = @RTAI_BUILTIN_MODLIST@
@@ -96,21 +85,13 @@ all-local: $(schedulers)
 if CONFIG_RTAI_OLD_FASHIONED_BUILD
 	$(mkinstalldirs) $(top_srcdir)/modules
 	$(INSTALL_DATA) $^ $(top_srcdir)/modules
-	for s in $(legacy_schedulers) ; do \
-		rm -f $(top_srcdir)/modules/rtai_$$s$(modext) ; \
-		$(LN_S) $(main_scheduler)$(modext) $(top_srcdir)/modules/rtai_$$s$(modext) ; \
-	done
 endif
 
 install-exec-local: $(schedulers)
 	$(mkinstalldirs) $(DESTDIR)$(moduledir)
 	$(INSTALL_DATA) $(schedulers) $(DESTDIR)$(moduledir)
-	for s in $(legacy_schedulers) ; do \
-		rm -f $(DESTDIR)$(moduledir)/rtai_$$s$(modext) ; \
-		$(LN_S) $(main_scheduler)$(modext) $(DESTDIR)$(moduledir)/rtai_$$s$(modext) ; \
-	done
 
 # liblxrt is always built
 SUBDIRS = liblxrt
 
-EXTRA_DIST = Makefile.kbuild sched.piped sched.immed
+EXTRA_DIST = Makefile.kbuild
