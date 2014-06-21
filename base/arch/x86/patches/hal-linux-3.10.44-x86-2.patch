@@ -3200,7 +3200,7 @@ index da85a8e..0880fb2 100644
  
  	printk(KERN_INFO "HPET: %d timers in total, %d timers will be used for per-cpu timer\n",
 diff --git a/arch/x86/kernel/i387.c b/arch/x86/kernel/i387.c
-index f7ea30d..958317d 100644
+index b03ff18..45c2e31 100644
 --- a/arch/x86/kernel/i387.c
 +++ b/arch/x86/kernel/i387.c
 @@ -72,7 +72,9 @@ EXPORT_SYMBOL(irq_fpu_usable);
@@ -3303,7 +3303,7 @@ index 9a5c460..5d3c70b 100644
  handle_real_irq:
 diff --git a/arch/x86/kernel/ipipe.c b/arch/x86/kernel/ipipe.c
 new file mode 100644
-index 0000000..8827ca4
+index 0000000..e2e5132
 --- /dev/null
 +++ b/arch/x86/kernel/ipipe.c
 @@ -0,0 +1,649 @@
@@ -4442,7 +4442,7 @@ index ada87a3..a782bc5 100644
  		pcntxt_mask, xstate_size);
  }
 diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index a14a6ea..ea80dc3 100644
+index 765210d..09f27fa 100644
 --- a/arch/x86/kvm/svm.c
 +++ b/arch/x86/kvm/svm.c
 @@ -3810,7 +3810,7 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
@@ -4472,7 +4472,7 @@ index a14a6ea..ea80dc3 100644
  }
  
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 5402c94..d641f9a 100644
+index 7cdafb6..5f744dc 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
 @@ -1690,9 +1690,11 @@ static void __vmx_load_host_state(struct vcpu_vmx *vmx)
@@ -4538,7 +4538,7 @@ index 5402c94..d641f9a 100644
  	return &vmx->vcpu;
  
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 1bd6ea0..6486908 100644
+index 1be0a9e..8ebfdc5 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
 @@ -39,6 +39,7 @@
@@ -5123,6 +5123,18 @@ index 0000000..3fe423c
 +	/* n bits clocksource with 32 < n < 64, not supported. */
 +	CFI_ENDPROC
 +ENDPROC(__ipipe_get_cs_tsc)
+diff --git a/drivers/cpuidle/Kconfig b/drivers/cpuidle/Kconfig
+index c4cc27e..fdc993a 100644
+--- a/drivers/cpuidle/Kconfig
++++ b/drivers/cpuidle/Kconfig
+@@ -2,6 +2,7 @@
+ config CPU_IDLE
+ 	bool "CPU idle PM support"
+ 	default y if ACPI || PPC_PSERIES
++	depends on !(ARCH_OMAP4 && IPIPE)
+ 	help
+ 	  CPU idle is a generic framework for supporting software-controlled
+ 	  idle processor power management.  It includes modular cross-platform
 diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
 index 0a30088..63bfcd1 100644
 --- a/drivers/gpu/drm/i915/i915_gem.c
@@ -5182,7 +5194,7 @@ index 6e373ea..f32da7b 100644
  struct ht_irq_cfg {
  	struct pci_dev *dev;
 diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index d28d7af..0bb630b 100644
+index d8c06a3..5e30a24 100644
 --- a/drivers/tty/serial/8250/8250_core.c
 +++ b/drivers/tty/serial/8250/8250_core.c
 @@ -3151,6 +3151,84 @@ static int serial8250_resume(struct platform_device *dev)
@@ -5270,20 +5282,8 @@ index d28d7af..0bb630b 100644
  static struct platform_driver serial8250_isa_driver = {
  	.probe		= serial8250_probe,
  	.remove		= serial8250_remove,
-diff --git a/drivers/cpuidle/Kconfig b/drivers/cpuidle/Kconfig
-index c4cc27e..fdc993a 100644
---- a/drivers/cpuidle/Kconfig
-+++ b/drivers/cpuidle/Kconfig
-@@ -2,6 +2,7 @@
- config CPU_IDLE
- 	bool "CPU idle PM support"
- 	default y if ACPI || PPC_PSERIES
-+	depends on !(ARCH_OMAP4 && IPIPE)
- 	help
- 	  CPU idle is a generic framework for supporting software-controlled
- 	  idle processor power management.  It includes modular cross-platform
 diff --git a/fs/exec.c b/fs/exec.c
-index bb60cda..3a6cf0d 100644
+index dd6aa61..8e880ee 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
 @@ -815,6 +815,7 @@ static int exec_mmap(struct mm_struct *mm)
@@ -5537,7 +5537,7 @@ index 7279b94..d55a23f 100644
  
  /*
 diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 99d0fbc..3650c8a 100644
+index 7a13848..640b2fd 100644
 --- a/include/linux/ftrace.h
 +++ b/include/linux/ftrace.h
 @@ -103,6 +103,7 @@ enum {
@@ -7659,7 +7659,7 @@ index 0000000..deb0a47
 +
 +#endif	/* !__LINUX_IPIPE_TRACE_H */
 diff --git a/include/linux/irq.h b/include/linux/irq.h
-index bc4e066..2852f34 100644
+index d591bfe..325c392 100644
 --- a/include/linux/irq.h
 +++ b/include/linux/irq.h
 @@ -317,6 +317,11 @@ struct irq_chip {
@@ -7674,7 +7674,7 @@ index bc4e066..2852f34 100644
  
  	void		(*irq_cpu_online)(struct irq_data *data);
  	void		(*irq_cpu_offline)(struct irq_data *data);
-@@ -533,7 +538,14 @@ extern int irq_set_irq_type(unsigned int irq, unsigned int type);
+@@ -534,7 +539,14 @@ extern int irq_set_irq_type(unsigned int irq, unsigned int type);
  extern int irq_set_msi_desc(unsigned int irq, struct msi_desc *entry);
  extern int irq_set_msi_desc_off(unsigned int irq_base, unsigned int irq_offset,
  				struct msi_desc *entry);
@@ -7690,7 +7690,7 @@ index bc4e066..2852f34 100644
  
  static inline struct irq_chip *irq_get_chip(unsigned int irq)
  {
-@@ -679,7 +691,11 @@ struct irq_chip_type {
+@@ -680,7 +692,11 @@ struct irq_chip_type {
   * different flow mechanisms (level/edge) for it.
   */
  struct irq_chip_generic {
@@ -7702,7 +7702,7 @@ index bc4e066..2852f34 100644
  	void __iomem		*reg_base;
  	unsigned int		irq_base;
  	unsigned int		irq_cnt;
-@@ -737,18 +753,28 @@ static inline struct irq_chip_type *irq_data_get_chip_type(struct irq_data *d)
+@@ -738,18 +754,28 @@ static inline struct irq_chip_type *irq_data_get_chip_type(struct irq_data *d)
  #define IRQ_MSK(n) (u32)((n) < 32 ? ((1 << (n)) - 1) : UINT_MAX)
  
  #ifdef CONFIG_SMP
@@ -7884,7 +7884,7 @@ index bc2994e..5e2da8d 100644
  #define write_unlock_irq(lock)		_raw_write_unlock_irq(lock)
  
 diff --git a/include/linux/rwlock_api_smp.h b/include/linux/rwlock_api_smp.h
-index 9c9f049..62c894150 100644
+index 9c9f049..62c8941 100644
 --- a/include/linux/rwlock_api_smp.h
 +++ b/include/linux/rwlock_api_smp.h
 @@ -141,7 +141,9 @@ static inline int __raw_write_trylock(rwlock_t *lock)
@@ -8190,7 +8190,7 @@ index 75f3494..21b2d46 100644
  
  static inline void spin_unlock_wait(spinlock_t *lock)
 diff --git a/include/linux/spinlock_api_smp.h b/include/linux/spinlock_api_smp.h
-index 51df117a..7e7b9a7 100644
+index 51df117..7e7b9a7 100644
 --- a/include/linux/spinlock_api_smp.h
 +++ b/include/linux/spinlock_api_smp.h
 @@ -99,7 +99,9 @@ static inline int __raw_spin_trylock(raw_spinlock_t *lock)
@@ -8321,7 +8321,7 @@ index e0ed284..c6db05c 100644
   * and other sensitive information are never written to disk.
   */
 diff --git a/init/Kconfig b/init/Kconfig
-index 2d9b831..5978d85 100644
+index 5d6feba..49390c8 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
 @@ -55,6 +55,7 @@ config CROSS_COMPILE
@@ -8540,10 +8540,10 @@ index 19d9a57..4e99085 100644
  
  #if DBG_MAX_REG_NUM > 0
 diff --git a/kernel/exit.c b/kernel/exit.c
-index 7bb73f9..1de2495 100644
+index 6682b2e..9e17231 100644
 --- a/kernel/exit.c
 +++ b/kernel/exit.c
-@@ -790,6 +790,7 @@ void do_exit(long code)
+@@ -797,6 +797,7 @@ void do_exit(long code)
  		acct_process();
  	trace_sched_process_exit(tsk);
  
@@ -8589,7 +8589,7 @@ index ff7be9d..3e90f7c 100644
  	trace_task_newtask(p, clone_flags);
 diff --git a/kernel/ipipe/Kconfig b/kernel/ipipe/Kconfig
 new file mode 100644
-index 0000000..da17b04
+index 0000000..ca4df2e
 --- /dev/null
 +++ b/kernel/ipipe/Kconfig
 @@ -0,0 +1,63 @@
@@ -9042,7 +9042,7 @@ index 0000000..1147bf4
 +}
 diff --git a/kernel/ipipe/core.c b/kernel/ipipe/core.c
 new file mode 100644
-index 0000000..31818db
+index 0000000..acc253f
 --- /dev/null
 +++ b/kernel/ipipe/core.c
 @@ -0,0 +1,1812 @@
@@ -10860,7 +10860,7 @@ index 0000000..31818db
 +#endif
 diff --git a/kernel/ipipe/timer.c b/kernel/ipipe/timer.c
 new file mode 100644
-index 0000000..0c9b908
+index 0000000..0421a49
 --- /dev/null
 +++ b/kernel/ipipe/timer.c
 @@ -0,0 +1,500 @@
@@ -13302,10 +13302,10 @@ index 8ab8e93..12ad1d2 100644
  static void free_desc(unsigned int irq)
  {
 diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index dc4db32..f61872e 100644
+index 8815abf..5d85de9 100644
 --- a/kernel/irq/manage.c
 +++ b/kernel/irq/manage.c
-@@ -716,9 +716,14 @@ again:
+@@ -711,9 +711,14 @@ again:
  
  	desc->threads_oneshot &= ~action->thread_mask;
  
@@ -13574,7 +13574,7 @@ index c3ae144..13b960a 100644
  	return clock;
  }
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b4308d7..57b05a9 100644
+index 2672eca..26a0f61 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
 @@ -1423,7 +1423,9 @@ void scheduler_ipi(void)
@@ -13597,7 +13597,7 @@ index b4308d7..57b05a9 100644
  }
  
  static void ttwu_queue_remote(struct task_struct *p, int cpu)
-@@ -1495,7 +1499,8 @@ try_to_wake_up(struct task_struct *p, un
+@@ -1495,7 +1499,8 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
  	 */
  	smp_mb__before_spinlock();
  	raw_spin_lock_irqsave(&p->pi_lock, flags);
@@ -13607,7 +13607,7 @@ index b4308d7..57b05a9 100644
  		goto out;
  
  	success = 1; /* we're going to change ->state */
-@@ -1961,6 +1966,8 @@ asmlinkage void schedule_tail(struct tas
+@@ -1961,6 +1966,8 @@ asmlinkage void schedule_tail(struct task_struct *prev)
  {
  	struct rq *rq = this_rq();
  
@@ -13616,7 +13616,7 @@ index b4308d7..57b05a9 100644
  	finish_task_switch(rq, prev);
  
  	/*
-@@ -1981,16 +1988,21 @@ asmlinkage void schedule_tail(struct tas
+@@ -1981,16 +1988,21 @@ asmlinkage void schedule_tail(struct task_struct *prev)
   * context_switch - switch to the new MM and the new
   * thread's register state.
   */
@@ -13641,7 +13641,7 @@ index b4308d7..57b05a9 100644
  	/*
  	 * For paravirt, this is coupled with an exit in switch_to to
  	 * combine the page table reload and the switch backend into
-@@ -2018,12 +2030,20 @@ context_switch(struct rq *rq, struct tas
+@@ -2018,12 +2030,20 @@ context_switch(struct rq *rq, struct task_struct *prev,
  #ifndef __ARCH_WANT_UNLOCKED_CTXSW
  	spin_release(&rq->lock.dep_map, 1, _THIS_IP_);
  #endif
@@ -13662,7 +13662,7 @@ index b4308d7..57b05a9 100644
  	/*
  	 * this_rq must be evaluated again because prev may have moved
  	 * CPUs since it called schedule(), thus the 'rq' on its stack
-@@ -2031,6 +2051,10 @@ context_switch(struct rq *rq, struct tas
+@@ -2031,6 +2051,10 @@ context_switch(struct rq *rq, struct task_struct *prev,
  	 */
  	finish_task_switch(this_rq(), prev);
  }
@@ -13673,7 +13673,7 @@ index b4308d7..57b05a9 100644
  
  /*
   * nr_running and nr_context_switches:
-@@ -2799,6 +2823,7 @@ notrace unsigned long get_parent_ip(unsi
+@@ -2799,6 +2823,7 @@ notrace unsigned long get_parent_ip(unsigned long addr)
  
  void __kprobes add_preempt_count(int val)
  {
@@ -13689,7 +13689,7 @@ index b4308d7..57b05a9 100644
  #ifdef CONFIG_DEBUG_PREEMPT
  	/*
  	 * Underflow?
-@@ -2867,6 +2893,7 @@ static noinline void __schedule_bug(stru
+@@ -2867,6 +2893,7 @@ static noinline void __schedule_bug(struct task_struct *prev)
   */
  static inline void schedule_debug(struct task_struct *prev)
  {
@@ -13747,7 +13747,7 @@ index b4308d7..57b05a9 100644
  }
  
  static inline void sched_submit_work(struct task_struct *tsk)
-@@ -3100,12 +3136,13 @@ asmlinkage void __sched notrace preempt_
+@@ -3100,12 +3136,13 @@ asmlinkage void __sched notrace preempt_schedule(void)
  	 * If there is a non-zero preempt_count or interrupts are disabled,
  	 * we do not want to preempt the current task. Just return..
  	 */
@@ -13763,7 +13763,7 @@ index b4308d7..57b05a9 100644
  		sub_preempt_count_notrace(PREEMPT_ACTIVE);
  
  		/*
-@@ -3173,6 +3210,8 @@ static void __wake_up_common(wait_queue_
+@@ -3173,6 +3210,8 @@ static void __wake_up_common(wait_queue_head_t *q, unsigned int mode,
  {
  	wait_queue_t *curr, *next;
  
@@ -13780,7 +13780,7 @@ index b4308d7..57b05a9 100644
  
  	if (running)
  		p->sched_class->set_curr_task(rq);
-@@ -4764,6 +4804,7 @@ void __cpuinit init_idle(struct task_str
+@@ -4764,6 +4804,7 @@ void __cpuinit init_idle(struct task_struct *idle, int cpu)
  
  	/* Set the preempt count _outside_ the spinlocks! */
  	task_thread_info(idle)->preempt_count = 0;
@@ -13788,7 +13788,7 @@ index b4308d7..57b05a9 100644
  
  	/*
  	 * The idle tasks have their own, simple scheduling class:
-@@ -4809,6 +4850,9 @@ void do_set_cpus_allowed(struct task_str
+@@ -4809,6 +4850,9 @@ void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask)
   * task must not exit() & deallocate itself prematurely. The
   * call is not atomic; no spinlocks may be held.
   */
@@ -13798,7 +13798,7 @@ index b4308d7..57b05a9 100644
  int set_cpus_allowed_ptr(struct task_struct *p, const struct cpumask *new_mask)
  {
  	unsigned long flags;
-@@ -4826,13 +4870,21 @@ int set_cpus_allowed_ptr(struct task_str
+@@ -4826,13 +4870,21 @@ int set_cpus_allowed_ptr(struct task_struct *p, const struct cpumask *new_mask)
  		goto out;
  	}
  
@@ -13821,7 +13821,7 @@ index b4308d7..57b05a9 100644
  	if (p->on_rq) {
  		struct migration_arg arg = { p, dest_cpu };
  		/* Need help from migration thread: drop lock and wait. */
-@@ -8096,3 +8148,40 @@ void dump_cpu_task(int cpu)
+@@ -8095,3 +8147,40 @@ void dump_cpu_task(int cpu)
  	pr_info("Task dump for CPU %d:\n", cpu);
  	sched_show_task(cpu_curr(cpu));
  }
@@ -14106,7 +14106,7 @@ index 4251374..3df1b0b 100644
  }
  
 diff --git a/kernel/timer.c b/kernel/timer.c
-index 15bc1b4..ca04d76 100644
+index 20f45ea..b8c3290 100644
 --- a/kernel/timer.c
 +++ b/kernel/timer.c
 @@ -1363,6 +1363,25 @@ void update_process_times(int user_tick)
@@ -14148,7 +14148,7 @@ index 015f85a..b6d06ce 100644
  	help
  	  This option will modify all the calls to function tracing
 diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 4b93b84..ad118db 100644
+index 797d3b9..736baa8 100644
 --- a/kernel/trace/ftrace.c
 +++ b/kernel/trace/ftrace.c
 @@ -32,6 +32,7 @@
@@ -14216,7 +14216,7 @@ index 4b93b84..ad118db 100644
  	ret = 0;
   out:
  	mutex_unlock(&ftrace_lock);
-@@ -4278,9 +4297,9 @@ void __init ftrace_init(void)
+@@ -4263,9 +4282,9 @@ void __init ftrace_init(void)
  	/* Keep the ftrace pointer to the stub */
  	addr = (unsigned long)ftrace_stub;
  
@@ -14471,7 +14471,7 @@ index 08a4f06..15810f4 100644
  
  	raw_spin_lock_irqsave(lock, flags);
 diff --git a/lib/bust_spinlocks.c b/lib/bust_spinlocks.c
-index f8e0e53..02175aa3 100644
+index f8e0e53..02175aa 100644
 --- a/lib/bust_spinlocks.c
 +++ b/lib/bust_spinlocks.c
 @@ -14,6 +14,7 @@
@@ -14548,7 +14548,7 @@ index e742d06..32bedf1 100644
  	help
  	  Transparent Hugepages allows the kernel to use huge pages and
 diff --git a/mm/memory.c b/mm/memory.c
-index 4b60011..b4c639e 100644
+index ebe0f28..da499c6 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
 @@ -814,6 +814,32 @@ out:
@@ -14674,7 +14674,7 @@ index 4b60011..b4c639e 100644
  		if (entry.val)
  			break;
  		progress += 8;
-@@ -2566,32 +2638,6 @@ static inline int pte_unmap_same(struct mm_struct *mm, pmd_t *pmd,
+@@ -2571,32 +2643,6 @@ static inline int pte_unmap_same(struct mm_struct *mm, pmd_t *pmd,
  	return same;
  }
  
@@ -14707,7 +14707,7 @@ index 4b60011..b4c639e 100644
  /*
   * This routine handles present pages, when users try to write
   * to a shared page. It is done by copying the page to a new address
-@@ -4294,3 +4340,38 @@ void copy_user_huge_page(struct page *dst, struct page *src,
+@@ -4299,3 +4345,38 @@ void copy_user_huge_page(struct page *dst, struct page *src,
  	}
  }
  #endif /* CONFIG_TRANSPARENT_HUGEPAGE || CONFIG_HUGETLBFS */
@@ -14747,10 +14747,10 @@ index 4b60011..b4c639e 100644
 +
 +#endif
 diff --git a/mm/mlock.c b/mm/mlock.c
-index 79b7cf7..e11b57a 100644
+index 713e462..ca48974 100644
 --- a/mm/mlock.c
 +++ b/mm/mlock.c
-@@ -587,3 +587,28 @@ void user_shm_unlock(size_t size, struct user_struct *user)
+@@ -589,3 +589,28 @@ void user_shm_unlock(size_t size, struct user_struct *user)
  	spin_unlock(&shmlock_user_lock);
  	free_uid(user);
  }
