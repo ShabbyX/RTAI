@@ -2066,13 +2066,13 @@ extern struct proc_dir_entry *rtai_proc_root;
 
 /* ----------------------< proc filesystem section >----------------------*/
 
-static int rtai_read_lxrt(char *page, char **start, off_t off, int count, int *eof, void *data)
+static int PROC_READ_FUN(rtai_read_lxrt)
 {
-	PROC_PRINT_VARS;
 	struct rt_registry_entry entry;
 	char *type_name[] = { "TASK", "SEM", "RWL", "SPL", "MBX", "PRX", "BITS", "TBX", "HPCK" };
 	unsigned int i = 1;
 	char name[8];
+	PROC_PRINT_VARS;
 
 	PROC_PRINT("\nRTAI LXRT Information.\n\n");
 	PROC_PRINT("    MAX_SLOTS = %d\n\n", MAX_SLOTS);
@@ -2102,17 +2102,18 @@ static int rtai_read_lxrt(char *page, char **start, off_t off, int count, int *e
         PROC_PRINT_DONE;
 }  /* End function - rtai_read_lxrt */
 
+PROC_READ_OPEN_OPS(rtai_lxrt_fops, rtai_read_lxrt);
+
 int rtai_proc_lxrt_register(void)
 {
 	struct proc_dir_entry *proc_lxrt_ent;
 
-
-	proc_lxrt_ent = create_proc_entry("names", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root);
+	proc_lxrt_ent = CREATE_PROC_ENTRY("names", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root, &rtai_lxrt_fops);
 	if (!proc_lxrt_ent) {
 		printk("Unable to initialize /proc/rtai/lxrt\n");
 		return(-1);
 	}
-	proc_lxrt_ent->read_proc = rtai_read_lxrt;
+	SET_PROC_READ_ENTRY(proc_lxrt_ent, rtai_read_lxrt);
 	return(0);
 }  /* End function - rtai_proc_lxrt_register */
 

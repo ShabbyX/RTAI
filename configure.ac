@@ -232,7 +232,7 @@ if grep KERNELSRC $RTAI_LINUX_DIR/Makefile > /dev/null; then
 eval LINUX_`grep '^KERNELSRC' $RTAI_LINUX_DIR/Makefile | sed -e 's, ,,g'|sed -e 's,:,,g'`
 eval LINUX_`grep '^KERNELOUTPUT' $RTAI_LINUX_DIR/Makefile | sed -e 's, ,,g'|sed -e 's,:,,g'`
 elif grep '^MAKEARGS *:= *-C' $RTAI_LINUX_DIR/Makefile > /dev/null; then
-LINUX_KERNELSRC=`sed -n -e 's,^MAKEARGS *:= *-C *\(@<:@^@<:@:space:@:>@@:>@*\),\1,p' $RTAI_LINUX_DIR/Makefile`
+LINUX_KERNELSRC=`sed -n -e 's,^MAKEARGS *:= *-C *\(@<:@^@<:@:space:@:>@@:>@*\).*,\1,p' $RTAI_LINUX_DIR/Makefile`
 LINUX_KERNELOUTPUT=$RTAI_LINUX_DIR
 else
 LINUX_KERNELOUTPUT=$RTAI_LINUX_DIR

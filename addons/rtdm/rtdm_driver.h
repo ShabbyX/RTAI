@@ -40,6 +40,7 @@
 
 #include "xn.h"
 #include "select.h"
+#include <rtdm/vfile.h>
 #include <rtdm/rtdm.h>
 
 
@@ -509,6 +510,12 @@ struct rtdm_device {
 
 	/** Name of /proc entry for the device, must not be NULL */
 	const char *proc_name;
+#ifdef CONFIG_PROC_FS
+        /** Set to device's vfile data after registration, do not modify */
+        struct xnvfile_directory vfroot;
+        struct xnvfile_regular info_vfile;
+#endif
+
 	/** Set to device's /proc root entry after registration, do not modify */
 	struct proc_dir_entry *proc_entry;
 

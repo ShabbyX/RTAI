@@ -2267,13 +2267,12 @@ extern unsigned long tlsf_get_used_size(rtheap_t *);
 #define rt_get_heap_mem_used(heap)  rtheap_used_mem(heap)
 #endif
 
-static int rtai_read_sched(char *page, char **start, off_t off, int count,
-                           int *eof, void *data)
+static int PROC_READ_FUN(rtai_read_sched)
 {
-	PROC_PRINT_VARS;
         int cpuid, i = 1;
 	unsigned long t;
 	RT_TASK *task;
+	PROC_PRINT_VARS;
 
 	PROC_PRINT("\nRTAI LXRT Real Time Task Scheduler.\n\n");
 	PROC_PRINT("    Calibrated Time Base Frequency: %lu Hz\n", tuned.cpu_freq);
@@ -2345,18 +2344,19 @@ static int rtai_read_sched(char *page, char **start, off_t off, int count,
 
 }  /* End function - rtai_read_sched */
 
+PROC_READ_OPEN_OPS(rtai_sched_proc_fops, rtai_read_sched);
 
 static int rtai_proc_sched_register(void) 
 {
         struct proc_dir_entry *proc_sched_ent;
 
 
-        proc_sched_ent = create_proc_entry("scheduler", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root);
+        proc_sched_ent = CREATE_PROC_ENTRY("scheduler", S_IFREG|S_IRUGO|S_IWUSR, rtai_proc_root, &rtai_sched_proc_fops);
         if (!proc_sched_ent) {
                 printk("Unable to initialize /proc/rtai/scheduler\n");
                 return(-1);
         }
-        proc_sched_ent->read_proc = rtai_read_sched;
+	SET_PROC_READ_ENTRY(proc_sched_ent, rtai_read_sched);
         return(0);
 }  /* End function - rtai_proc_sched_register */
 
@@ -2729,6 +2729,12 @@ module_exit(__rtai_lxrt_exit);
 #endif
 
 #ifdef CONFIG_KBUILD
+
+MODULE_ALIAS("rtai_up");
+MODULE_ALIAS("rtai_mup");
+MODULE_ALIAS("rtai_smp");
+MODULE_ALIAS("rtai_ksched");
+MODULE_ALIAS("rtai_lxrt");
 
 EXPORT_SYMBOL(rt_fun_lxrt);
 EXPORT_SYMBOL(clr_rtext);

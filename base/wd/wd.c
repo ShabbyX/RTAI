@@ -92,7 +92,7 @@
  * 5. Keeps a record of bad tasks (apart from those that have been killed) that 
  *    can be examined via a /proc interface. (/proc/rtai/watchdog)
  * 
- * ID: @(#)$Id: wd.c,v 1.14 2013/02/27 12:12:08 mante Exp $
+ * ID: @(#)$Id: wd.c,v 1.15 2014/02/16 14:20:52 mante Exp $
  *
  *******************************************************************************/
 
@@ -108,8 +108,7 @@ MODULE_LICENSE("GPL");
 #include <linux/proc_fs.h>
 #include <rtai_proc_fs.h>
 static struct proc_dir_entry *wd_proc;
-static int    wdog_read_proc(char *page, char **start, off_t off, int count,
-                             int *eof, void *data);
+static int PROC_READ_FUN(wdog_read_proc);
 #endif
 
 #include <rtai_sched.h>
@@ -141,7 +140,7 @@ static BAD_RT_TASK bad_task_pool[BAD_TASK_MAX];
 #endif
 
 // The current version number
-static char version[] = "$Revision: 1.14 $";
+static char version[] = "$Revision: 1.15 $";
 static char ver[10];
 
 // User friendly policy names
@@ -589,16 +588,15 @@ static void dummy(long wd)
 
 // ----------------------------- PROC INTERFACE --------------------------------
 #ifdef CONFIG_PROC_FS
-static int wdog_read_proc(char *page, char **start, off_t off, int count,
-                          int *eof, void *data)
+static int PROC_READ_FUN(wdog_read_proc)
 {
-    PROC_PRINT_VARS;
     RT_TASK	*task;
     BAD_RT_TASK	*bt;
     long 	 onsec, osec;
     long 	 ansec, asec;
     int		 cpuid, tl, id = 1;
     char	 action[10];
+    PROC_PRINT_VARS;
 
     // Heading and parameters
     PROC_PRINT("\nRTAI Watchdog Status\n");
@@ -699,6 +697,8 @@ static struct rt_fun_entry rt_watchdog_fun[] = {
         [WD_SET_LIMIT]    = { 0, rt_wdset_limit }
 };
 
+PROC_READ_OPEN_OPS(rtai_wdog_fops, wdog_read_proc);
+
 // ----------------------------- MODULE CONTROL --------------------------------
 int __rtai_wd_init(void)
 {
@@ -795,8 +795,8 @@ int __rtai_wd_init(void)
 
 #ifdef CONFIG_PROC_FS
     // Register /proc interface
-    wd_proc = create_proc_entry("watchdog", 0, rtai_proc_root);
-    wd_proc->read_proc = wdog_read_proc;
+    wd_proc = CREATE_PROC_ENTRY("watchdog", 0, rtai_proc_root, &rtai_wdog_fops);
+    SET_PROC_READ_ENTRY(wd_proc, wdog_read_proc);
 #endif
     return 0;
 }

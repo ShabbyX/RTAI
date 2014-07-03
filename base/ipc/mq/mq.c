@@ -914,11 +914,10 @@ EXPORT_SYMBOL(mq_unlink);
 
 #ifdef CONFIG_PROC_FS
 
-static int pqueue_read_proc(char *page, char **start, off_t off, int count,
-			    int *eof, void *data)
+static int PROC_READ_FUN(pqueue_read_proc)
 {
-PROC_PRINT_VARS;
 int ind;
+PROC_PRINT_VARS;
 
     PROC_PRINT("\nRTAI Posix Queue Status\n");
     PROC_PRINT("-----------------------\n\n");
@@ -949,12 +948,14 @@ int ind;
     PROC_PRINT_DONE;
 }
 
+PROC_READ_OPEN_OPS(rtai_pqueue_fops, pqueue_read_proc)
+
 static struct proc_dir_entry *proc_rtai_pqueue;
 
 static int pqueue_proc_register(void)
 {
-    proc_rtai_pqueue = create_proc_entry("pqueue", 0, rtai_proc_root);
-    proc_rtai_pqueue->read_proc = pqueue_read_proc;
+    proc_rtai_pqueue = CREATE_PROC_ENTRY("pqueue", 0, rtai_proc_root, &rtai_pqueue_fops);
+    SET_PROC_READ_ENTRY(proc_rtai_pqueue, pqueue_read_proc);
     return 0;
 }
 
