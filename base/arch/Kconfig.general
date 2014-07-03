@@ -85,6 +85,19 @@ config RTAI_MAINTAINER_AUTOTOOLS
 	depends on RTAI_MAINTAINER
 	default n
 
+choice
+	optional
+	prompt "Private maintainer profiles"
+	depends on RTAI_MAINTAINER
+
+config RTAI_MAINTAINER_NONE
+	bool "Use standard settings"
+
+config RTAI_MAINTAINER_PMA
+	bool "Use settings from mantegazza()aero!polimi!it"
+
+endchoice
+
 config RTAI_QUIET
 	bool "Quiet build"
 	default y

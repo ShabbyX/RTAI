@@ -7,19 +7,6 @@ menu "General"
 source "base/arch/Kconfig.general"
 
 choice
-	optional
-	prompt "Private maintainer profiles"
-	depends on RTAI_MAINTAINER
-
-config RTAI_MAINTAINER_NONE
-	bool "Use standard settings"
-
-config RTAI_MAINTAINER_PMA
-	bool "Use settings from mantegazza()aero!polimi!it"
-
-endchoice
-
-choice
 	prompt "Inlining mode of user-space services"
 	help
 	Allows choosing among:

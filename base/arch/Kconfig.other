@@ -4,7 +4,7 @@
 
 config RTAI_USE_NEWERR
 	bool "New return values of blocking RTAI APIs"
-	default n
+	default y
 	help
 	Return values for RTAI blocking APIs are a bit sketchy. That
 	is due to a long standing legacy dating back to DOS and 8 bits PCs,
