@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to create configure
 AC_PREREQ(2.68)
 
-AC_INIT([RTAI], [magma-unofficial], [rtai@rtai.org])
+AC_INIT([RTAI], [UNOFFICIAL], [https://github.com/ShabbyX/RTAI/issues])
 
 CONFIG_RTAI_VERSION_MAJOR=3
 CONFIG_RTAI_VERSION_MINOR=7

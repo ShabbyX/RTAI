@@ -8,4 +8,4 @@ config MODULES
 
 config RTAI_VERSION
 	string
-	default "3.9.1 (magma-unofficial)"
+	default "4.0.0 (unofficial)"
