@@ -28,160 +28,11 @@ config RTAI_LINUXDIR
 	This variable contains the directory of your previously
 	patched Linux kernel. As explained before, you can change the
 	value of the Linux source tree which is fixed by default to
-	/usr/src/linux.  
-
-menu "RTAI Documentation"
-
-config RTAI_DOX_DOC
-	bool "Build RTAI Doxygen documentation (HTML)"
-	default n
-	help
-	This option causes the Doxygen-based RTAI documentation to be
-	built. This option is intended for people actually writing
-	documentation and who want to update the pre-built manuals,
-	regular users can just use the latter directly. You will need
-	the Doxygen toolsuite for regenerating the documentation.
-
-config RTAI_DOC_LATEX_NONSTOP
-        bool "Enable LaTeX verbose output"
-        default n
-        help
-        By default, all documentation generated with LaTeX uses the 
-        silent (batchmode) of LaTeX. If this option is enabled, the 
-        verbose (nonstopmode) of LaTeX will be used instead. This 
-        option is mainly intended for people writing RTAI 
-        documentation.
-
-config RTAI_DBX_DOC
-	bool "Build DocBook XML documentation (HTML/PDF)"
-	default n
-	help
-	This option causes the DocBook XML based RTAI documentation to be
-	built. This option is intended for people actually writing
-	documentation and who want to update the pre-built manuals,
-	regular users can just use the latter directly.
-
-config RTAI_DBX_NET
-        bool "Let the DocBook XML tools use network"
-	depends on RTAI_DBX_DOC
-        default n
-        help
-        Let the DocBook tools use internet to fetch the DTD and XSL stylesheets.
-        If disabled, the documentation generation will fail if the necessary 
-        DTD(s) and XSL stylesheets can not be found on the local computer.
-
-config RTAI_DBX_ROOT
-        string "Docbook XML root"
-	depends on RTAI_DBX_DOC
-        default ""
-        help
-        Specify the DocBook XML root (that is, the directory where docbook.dtd
-        should be taken). Leave blank to let configure try the "well-known"
-        locations.
-
-config RTAI_DBX_XSL_ROOT
-        string "Docbook XML XSL stylesheet root"
-	depends on RTAI_DBX_DOC
-        default ""
-        help
-        Specify the DocBook XML XSL root. Leave blank to let configure try the
-        "well-known" locations.
+	/usr/src/linux.
 
 endmenu
 
-config RTAI_TESTSUITE
-	bool "Build RTAI testsuite"
-	default y
-	help
-	Once you are done with the building process of RTAI, it may be
-	safe to run the testsuite to make sure your RTAI system is
-	functional. However if it does not it is possible that RTAI is not
-	the only one to blame, check your kernel config also.
-
-config RTAI_COMPAT
-	bool "Enable source compatibility mode"
-	default y
-	help
-	This option allows to preserve the compatibility between
-	applications issued from the 24.1.x version of RTAI and the
-	3.x branch.  This way, no adaptation in the header files is
-	required.
-
-config RTAI_EXTENDED
-	bool "Enable extended configuration mode"
-	default n
-	help
-	Allows some configuration parameters in the Hardware
-	Abstraction Layer or the schedulers.
-
-config RTAI_KMOD_DEBUG
-	bool "Enable debug symbols in modules"
-	depends on RTAI_EXTENDED
-	default n
-	help
-	This options adds the -g flag when compiling
-	kernel modules.
-
-config RTAI_USER_DEBUG
-	bool "Enable debug symbols in user-space programs"
-	depends on RTAI_EXTENDED
-	default n
-	help
-	This options adds the -g flag when compiling user-space programs. 
-	User space RTAI syscall by simple inlining is implicitly disabled.
-
-config RTAI_MAINTAINER
-	bool "Enable maintainer mode"
-	depends on RTAI_EXTENDED
-	default n
-	help
-
-	This option will activate the '--enable-maintainer-mode'
-	option in the configure scripts. For more information, refer
-	to the autoconf documentation:
-	http://sources.redhat.com/autobook/autobook/autobook_26.html#SEC26
-
-config RTAI_MAINTAINER_AUTOTOOLS
-	bool "Enable Autoconf/Automake maintainer mode"
-	depends on RTAI_MAINTAINER
-	default n
-
-choice
-	optional
-	prompt "Private maintainer profiles"
-	depends on RTAI_MAINTAINER
-
-config RTAI_MAINTAINER_NONE
-	bool "Use standard settings"
-
-config RTAI_MAINTAINER_PMA
-	bool "Use settings from mantegazza()aero!polimi!it"
-
-endchoice
-
-choice
-	prompt "Inlining mode of user-space services"
-	help
-	Allows choosing among:
-	- Never inline:         i.e. user-space services are linked to 
-	  programs against the appropriate support library (e.g. liblxrt.a 
-	  for user space RTAI syscall services).
-	- Eager inlining:       i.e. static inline, always inline regardless 
-	  of compiler's optimization switch;
-
-config RTAI_LXRT_NO_INLINE
-	bool "No inlining"
-	help
-
-config RTAI_LXRT_STATIC_INLINE
-	bool "Eager inlining"
-	help
-
-endchoice
-
-endmenu
-
-menu "Machine (x86)"
+menu "Machine (x86 / x86_64)"
 
 config RTAI_FPU_SUPPORT
 	bool "Enable FPU support"
@@ -318,7 +169,7 @@ config RTAI_BUSY_TIME_ALIGN
 	For more precise results see the following options.
 
 config RTAI_KERN_BUSY_ALIGN_RET_DELAY
-	string "  Delay to return to a switched in timed kernel task (ns)"
+	string "Delay to return to a switched in timed kernel task (ns)"
 	default 0
 	depends on RTAI_BUSY_TIME_ALIGN
 	help
@@ -338,7 +189,7 @@ config RTAI_KERN_BUSY_ALIGN_RET_DELAY
 	below will allow applying the busy wait just to kernel tasks.
 
 config RTAI_USER_BUSY_ALIGN_RET_DELAY
-	string "  Delay to return to a switched in timed user task (ns)"
+	string "Delay to return to a switched in timed user task (ns)"
 	default 0
 	depends on RTAI_BUSY_TIME_ALIGN
 	help
@@ -356,7 +207,7 @@ config RTAI_USER_BUSY_ALIGN_RET_DELAY
 
 config RTAI_SCHED_LXRT_NUMSLOTS
 	string "Number of registrable RTAI objects"
-	default 150
+	default 256
 	help
 	The maximum number of registrable objects in RTAI.
 
@@ -559,7 +410,7 @@ config RTAI_SEM
 	The module will be called rtai_sem.o.
 
 config RTAI_RT_POLL
-	bool "  Enable IPCs polling"
+	bool "Enable IPCs polling"
 	depends on RTAI_SEM
 	default n
 	help
@@ -727,9 +578,9 @@ config RTAI_USE_NEWERR
 	existing working applications.
 
 config RTAI_MATH
-	bool "Mathfuns support in kernel"
+	tristate "Mathfuns support in kernel"
 	depends on RTAI_FPU_SUPPORT
-	default n
+	default y
 	help
 	This parameter allows building a module containing math support 
 	functions for kernel space. It might be useful to avoid fighting
@@ -738,7 +589,7 @@ config RTAI_MATH
 config RTAI_MATH_C99
 	bool "C99 standard support"
 	depends on RTAI_MATH
-	default n
+	default y
 
 config RTAI_MALLOC
 	tristate "Real-time malloc support"
@@ -819,49 +670,6 @@ config RTAI_TASK_SWITCH_SIGNAL
 	The default is to not make available this feature, so you must enable
 	it explicitly if it is useful for your application.
 
-config RTAI_USI
-	bool "User-space interrupts"
-	default n
-	help
-	RTAI examples are available to show managing interrupts in user 
-	space, e.g: resumefromintr in "showroom" CVS (kernel/user/netrpc),
-	"pressa" in "showroom" (user); but all of them require installing
-	a proper handler in kernel space, to wake up a hard real-time user
-	space task.
-	The user space interrupt support does much of the same, but adds 
-	something that permits you to write nothing in kernel space.
-	The module will be called rtai_usi.o.
-	
-
-config RTAI_WD
-	bool "Watchdog support"
-	default n
-	help
-	The purpose of the watchdog is to provide protection services
-	to RTAI thereby protecting it (and the host Linux OS) against
-	programming errors in RTAI applications.
-	The RTAI module and a scheduler should be mounted to use the
-	watchdog and once mounted, it will constantly monitor periodic
-	real-time tasks that already exist, or that are created later.
-	However this feature is optional and it is assumed that your
-	RTAI applications are well behaved so that RTAI should behave
-	the same whether or not you have the watchdog mounted. The
-	overhead imposed by the watchdog depends on the speed that you
-	run it, but in most cases should be minimal.
-	The following watchdog policies are possible:
-	- do nothing other than log some messages and keep a record of
-	  the bad task; 
-	- resynchronise the task's frame time and nothing more;
-	- debug policy which is a special case of the above
-	  resynchronisation policy; 
-	- stretch the period of the offending task until it no longer
-	  overruns; 
-	- slip the offending task by forcibly suspending it for a
-	  percentage of its period; 
-	- suspend the offending task so that it no longer threaten the system;
-	- kill the offending task and remove all traces.
-	The module will be called rtai_wd.o.
-
 config RTAI_HARD_SOFT_TOGGLER
 	bool "Install Linux signal handler to toggle hard-soft modes"
 	default n
@@ -882,49 +690,6 @@ endmenu
 
 menu "Add-ons"
 
-config RTAI_COMEDI_LXRT
-	bool "Real Time COMEDI support in user space"
-	default n
-	help
-	RTAI offers a unified COMEDI interface to kernel/user space real-time
-	applications. A kernel module will be built and a library will be 
-	provided. The kernel modules is called rtai_comedi.o and must be 
-	loaded if you want to use the libkcomedilxrt.a library.
-
-config RTAI_COMEDI_DIR
-	depends on RTAI_COMEDI_LXRT
-	string "COMEDI installation directory"
-	default "/usr/local"
-	help
-	You may need the COMEDI support for data acquisition to build your
-	applications, such as RTAILab.
-	You can set the path to COMEDI installation directory here. 
-	It will be found either in Linux, since 2.6.29 (circa), see README
-	in "addons/comedi" for what to do in such a case, or by getting 
-        kcomedi from www.comedi.org, in which case RTAI needs the file 
-	linux/comedilib.h also.
-
-config RTAI_USE_COMEDI_LOCK
-	depends on RTAI_COMEDI_LXRT
-	bool "Use COMEDI lock by default"
-	default "n"
-	help
-	You may need the COMEDI lock for data acquisition when sharing a
-	board among many users. You can lock/unlock explicitly any 
-	operation by calling comedi_lock/unlock yourself. By setting this
-	parameter all functions needing a lock for a safe shared use are
-	lock/unlocked by default. It can be useful to save a couple of
-	calls to enforce locking from user space. Little is gained with it
-	in kernel space.
-
-config RTAI_CPLUSPLUS
-	bool "In-kernel C++ support"
-	default n
-	help
-	RTAI offers a C++ framework if you want to develop C++ real-time 
-	applications.
-	The module will be called rtai_cpp.o.
-
 config RTAI_RTDM
 	bool "Real-Time Driver Model over RTAI"
 	default n
@@ -934,7 +699,7 @@ config RTAI_RTDM
 config RTAI_RTDM_FD_MAX
 	depends on RTAI_RTDM
 	string "Number of RTDM file descriptors"
-	default 128
+	default 512
 	help
 	The maximum number of file descriptors in RTDM.
 
@@ -965,81 +730,4 @@ config RTAI_DEBUG_RTDM
         Enable some elementary debugging of wrong requests to RTDM, in the 
 	form of messages asserting what's improper and where it's happening.
 
-menu "Drivers"
-
-config RTAI_DRIVERS_SERIAL
-	bool "RTAI serial line driver"
-	default y
-	help
-	The RTAI real-time serial driver.
-	The module will be called rtai_serial.o.
-
-config RTAI_DRIVERS_16550A
-	bool "RTDM based 16550A driver support"
-	depends on RTAI_RTDM
-	default n
-	help
-	An alternate RTAI real-time serial driver based on RTDM.
-	The module will be called rtai_16550A.o.
-
-choice
-	prompt "Hardware access mode"
-	depends on RTAI_DRIVERS_16550A
-	default RTAI_16550A_PIO
-	help
-	Allows choosing among:
-
-	- Port based:    driver uses I/O ports, as defined by module vector 
-                         parameters "io=port1,port2,...".
-
-	- Memory mapped: driver uses memory mapping, as defined by module
-			 vector parameters "mem=addr1,addr2,...".
-
-	- Whatever:      the driver can use both I/O and memory mapping, as
-			 assigned by "io" and "mem" module vectors parameters,
-			 but with only one mode allowed for each device e.g.:
-			 "io=0x2F8,0,0x3F8 mem=0,0xe0000000,0"; for devices 1,
-			 2 and 3 respectively.
-
-config RTAI_16550A_PIO
-	bool "Port based"
-
-config RTAI_16550A_MMIO
-	bool "Memory mapped"
-
-config RTAI_16550A_ANY
-	bool "Whatever port and memory mix"
-
-endchoice
-
 endmenu
-
-endmenu
-
-menu "RTAI Lab"
-
-config RTAI_LAB
-	bool "RTAI Lab"
-	default n
-	help
-	RTAI-Lab is a tool that allows the execution of any suite of
-	real-time controllers/simulators automatically generated by
-	Matlab/Simulink/RTW, hereafter addressed as RTW, and/or
-	Scilab/Scicos/CodeGen, addressed as SCICOS:
-	- in a local/remote/distributed way,
-	- by monitoring their local/remote/distributed execution,
-	- by changing their parameters on the fly for performance supervision,
-	  monitoring, tuning and optimisation.
-
-config RTAI_EFLTK_DIR
-	depends on RTAI_LAB
-	string "EFLTK installation directory"
-	default "/usr/local"
-	help
-	You need the Extended Fast Light Toolkit (EFLTK) to build
-	RTAILab. You can set the path to this package's installation
-	directory here.
-
-endmenu
-
-source rtai-sim/Kconfig

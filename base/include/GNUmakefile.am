@@ -1,30 +1,4 @@
-if CONFIG_X86
 ARCHDIR = asm-x86
-endif
-
-#if CONFIG_I386
-#ARCHDIR = asm-i386
-#endif
-
-#if CONFIG_X86_64
-#ARCHDIR = asm-x86_64
-#endif
-
-if CONFIG_ARM
-ARCHDIR = asm-arm
-endif
-
-if CONFIG_PPC
-ARCHDIR = asm-ppc
-endif
-
-if CONFIG_M68KNOMMU
-ARCHDIR = asm-m68k
-endif
-
-if CONFIG_M68K
-ARCHDIR = asm-m68k
-endif
 
 nobase_include_HEADERS = \
 		rtai.h \

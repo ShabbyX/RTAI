@@ -1,2 +1,0 @@
-sed s/xxxx/$1/ template.c.tmp > $1.c
-

@@ -1,16 +1,15 @@
 # We want these to be the native ones.
-ifeq ($(HOSTCC),)
+ifeq ($(CC),)
 override CC := gcc
 else
-override CC := $(HOSTCC)
+override CC := $(CC)
 endif
-ifeq ($(HOSTCXX),)
+ifeq ($(CXX),)
 override CXX := g++
 else
-override CXX := $(HOSTCXX)
+override CXX := $(CXX)
 endif
-#override CC := gcc -Wall -pedantic
-#override CXX := g++ -Wall -pedantic
+override ARCH := $(shell echo $(ARCH) | sed -e 's/i.*86.*/x86/' -e 's/x86_64/x86/')
 
 ifeq ($(MAKECMDGOALS),qbuild)
 -include .qtinst
@@ -20,171 +19,518 @@ ifeq ($(MAKECMDGOALS),gbuild)
 -include .gtkinst
 endif
 
-srcdir := $(srctree)/base/config/kconfig
-this_dir := $(shell pwd)
-MOC = $(QTDIR)/bin/moc
+include ../Makefile.include
+this_dir := base/config/kconfig
 
-CFLAGS := -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer 
-LXDIALOG_EXTRACFLAGS := -DLOCALE 
-LXDIALOG_LOADLIBES   := -lncurses
+CFLAGS := -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer
 
-ifeq (/usr/include/ncurses/ncurses.h, $(wildcard /usr/include/ncurses/ncurses.h))
-        LXDIALOG_EXTRACFLAGS += -I/usr/include/ncurses -DCURSES_LOC="<ncurses.h>"
-else
-ifeq (/usr/include/ncurses/curses.h, $(wildcard /usr/include/ncurses/curses.h))
-        LXDIALOG_EXTRACFLAGS += -I/usr/include/ncurses -DCURSES_LOC="<ncurses/curses.h>"
-else
-ifeq (/usr/include/ncurses.h, $(wildcard /usr/include/ncurses.h))
-        LXDIALOG_EXTRACFLAGS += -DCURSES_LOC="<ncurses.h>"
-else
-	LXDIALOG_EXTRACFLAGS += -DCURSES_LOC="<curses.h>"
-endif
-endif
-endif
+PHONY += oldconfig xconfig gconfig menuconfig config silentoldconfig update-po-config
 
-LXDIALOG_OBJS := lxdialog/checklist.o lxdialog/menubox.o \
-		 lxdialog/textbox.o lxdialog/yesno.o lxdialog/inputbox.o \
-		 lxdialog/util.o lxdialog/lxdialog.o lxdialog/msgbox.o
+Kconfig := $(srctree)/base/arch/$(ARCH)/Kconfig
 
 xconfig: qconf
-	@./qconf $(srctree)/base/arch/$(ARCH)/Kconfig
+	@./$< $(Kconfig)
 
 gconfig: gconf
-	@./gconf $(srctree)/base/arch/$(ARCH)/Kconfig
+	@./$< $(Kconfig)
 
-menuconfig mconfig: mconf
-	@./mconf $(srctree)/base/arch/$(ARCH)/Kconfig
+menuconfig: mconf
+	@./$< $(Kconfig)
 
 config: conf
-	@./conf $(srctree)/base/arch/$(ARCH)/Kconfig
+	@./$< --oldaskconfig $(Kconfig)
+
+nconfig: nconf
+	@./$< $(Kconfig)
 
 oldconfig: conf
-	@./conf -o $(srctree)/base/arch/$(ARCH)/Kconfig
+	@./$< --$@ $(Kconfig)
 
-qconf: .qtinst
-	$(MAKE) -f $(srcdir)/Makefile.kconfig qbuild srctree=$(srctree) ARCH=$(ARCH)
+silentoldconfig: conf
+	@mkdir -p include/generated
+	@./$< --$@ $(Kconfig)
 
-qbuild: qconf.o kconfig_load.o libkconfig.so
-	$(CXX) -o qconf $^ -Wl,-rpath,$(this_dir) -L$(QTDIR)/lib -Wl,-rpath,$(QTDIR)/lib -l$(QTLIB) -ldl
+# Create new linux.pot file
+# Adjust charset to UTF-8 in .po file to accept UTF-8 in Kconfig files
+update-po-config: kxgettext gconf.glade.h
+	@echo "  GEN     config.pot"
+	@xgettext --default-domain=linux                         \
+	    --add-comments --keyword=_ --keyword=N_                 \
+	    --from-code=UTF-8                                       \
+	    --files-from=$(srctree)/base/config/kconfig/POTFILES.in     \
+	    --directory=$(srctree) --directory=$(objtree)           \
+	    --output config.pot
+	@sed -i s/CHARSET/UTF-8/ config.pot
+	@(for i in `ls $(srctree)/arch/*/Kconfig      \
+	    $(srctree)/arch/*/um/Kconfig`;               \
+	    do                                           \
+		echo "  GEN     $$i";                    \
+		kxgettext $$i                     \
+		     >> config.pot;               \
+	    done )
+	@echo "  GEN     linux.pot"
+	@msguniq --sort-by-file --to-code=UTF-8 config.pot \
+	    --output linux.pot
+	@rm -f config.pot
 
-gconf: .gtkinst
-	$(MAKE) -f $(srcdir)/Makefile.kconfig gbuild srctree=$(srctree) ARCH=$(ARCH)
+PHONY += allnoconfig allyesconfig allmodconfig alldefconfig randconfig
 
-gbuild: gconf.o kconfig_load.o libkconfig.so
-	$(CC) -o gconf $^ -Wl,-rpath,$(this_dir) $(GLIBS)
+allnoconfig allyesconfig allmodconfig alldefconfig randconfig: conf
+	@./$< --$@ $(Kconfig)
 
-mconf: lxdialog/lxdialog mconf.o libkconfig.so
-	$(CC) -o $@ mconf.o libkconfig.so -Wl,-rpath,$(this_dir)
+PHONY += listnewconfig olddefconfig oldnoconfig savedefconfig defconfig
 
-mconf.o: $(srcdir)/mconf.c
-	$(CC) $(CFLAGS) -I$(srcdir) -c $<
+listnewconfig olddefconfig: conf
+	@./$< --$@ $(Kconfig)
 
-conf: conf.o libkconfig.so
-	$(CC) -o $@ conf.o libkconfig.so -Wl,-rpath,$(this_dir)
+# oldnoconfig is an alias of olddefconfig, because people already are dependent
+# on its behavior(sets new symbols to their default value but not 'n') with the
+# counter-intuitive name.
+oldnoconfig: conf
+	@./$< --olddefconfig $(Kconfig)
 
-conf.o: $(srcdir)/conf.c
-	$(CC) $(CFLAGS) -I$(srcdir) -c $<
+savedefconfig: conf
+	@./$< --$@=defconfig $(Kconfig)
 
-libkconfig.so: zconf.tab.o
-	$(CC) -shared -o $@ $<
+defconfig: conf
+	@./$< --defconfig $(Kconfig)
 
-lkc_defs.h: $(srcdir)/lkc_proto.h
-	@sed < $< > $@ 's/P(\([^,]*\),.*/#define \1 (\*\1_p)/'
+%_defconfig: conf
+	@./$< --defconfig=base/arch/$(SRCARCH)/configs/$@ $(Kconfig)
 
-kconfig_load.o: $(srcdir)/kconfig_load.c
-	$(CC) $(CFLAGS) -I. -c $<
+# Help text used by make help
+help:
+	@echo  '  config	  - Update current config utilising a line-oriented program'
+	@echo  '  nconfig         - Update current config utilising a ncurses menu based program'
+	@echo  '  menuconfig	  - Update current config utilising a menu based program'
+	@echo  '  xconfig	  - Update current config utilising a QT based front-end'
+	@echo  '  gconfig	  - Update current config utilising a GTK based front-end'
+	@echo  '  oldconfig	  - Update current config utilising a provided .rtai_config as base'
+	@echo  '  silentoldconfig - Same as oldconfig, but quietly, additionally update deps'
+	@echo  '  defconfig	  - New config with default from ARCH supplied defconfig'
+	@echo  '  savedefconfig   - Save current config as ./defconfig (minimal config)'
+	@echo  '  allnoconfig	  - New config where all options are answered with no'
+	@echo  '  allyesconfig	  - New config where all options are accepted with yes'
+	@echo  '  allmodconfig	  - New config selecting modules when possible'
+	@echo  '  alldefconfig    - New config with all symbols set to default'
+	@echo  '  randconfig	  - New config with random answer to all options'
+	@echo  '  listnewconfig   - List new options'
+	@echo  '  olddefconfig	  - Same as silentoldconfig but sets new symbols to their default value'
 
-qconf.moc: $(srcdir)/qconf.h
-	$(MOC) -i $< -o $@
+# lxdialog stuff
+check-lxdialog  := $(srctree)/base/config/kconfig/lxdialog/check-lxdialog.sh
 
-$(srcdir)/qconf.cc: qconf.moc
+# Use recursively expanded variables so we do not call gcc unless
+# we really need to do so. (Do not call gcc as part of make mrproper)
+EXTRACFLAGS += $(shell $(SHELL) $(check-lxdialog) -ccflags) \
+		    -DLOCALE
 
-qconf.o: lkc_defs.h $(srcdir)/qconf.cc
-	$(CXX) -O2 -I$(QTDIR)/include -I$(srcdir) -I. -c $(srcdir)/qconf.cc
+# ===========================================================================
+# Shared Makefile for the various kconfig executables:
+# conf:	  Used for defconfig, oldconfig and related targets
+# nconf:  Used for the nconfig target.
+#         Utilizes ncurses
+# mconf:  Used for the menuconfig target
+#         Utilizes the lxdialog package
+# qconf:  Used for the xconfig target
+#         Based on QT which needs to be installed to compile it
+# gconf:  Used for the gconfig target
+#         Based on GTK which needs to be installed to compile it
+# object files used by all kconfig flavours
 
-lex.zconf.c: $(srcdir)/lex.zconf.c_shipped
-	@cat $< > $@
+lxdialog := lxdialog/checklist.o lxdialog/util.o lxdialog/inputbox.o
+lxdialog += lxdialog/textbox.o lxdialog/yesno.o lxdialog/menubox.o
 
-zconf.tab.c: $(srcdir)/confdata.c $(srcdir)/zconf.tab.c_shipped
-	@cat $(srcdir)/zconf.tab.c_shipped > $@
+conf-objs	:= conf.o  zconf.tab.o
+mconf-objs     := mconf.o zconf.tab.o $(lxdialog)
+nconf-objs     := nconf.o zconf.tab.o nconf.gui.o
+kxgettext-objs	:= kxgettext.o zconf.tab.o
+qconf-cxxobjs	:= qconf.o
+qconf-objs	:= zconf.tab.o
+gconf-objs	:= gconf.o zconf.tab.o
 
-zconf.tab.o: zconf.tab.c lex.zconf.c
-	$(CC) $(CFLAGS) -I$(srcdir) -fPIC -c zconf.tab.c
+hostprogs-y := conf
 
-gconf.o: lkc_defs.h $(srcdir)/gconf.c
-	$(CC) -O2 $(GCFLAGS) -I$(srcdir) -I. -c $(srcdir)/gconf.c
+ifeq ($(MAKECMDGOALS),nconfig)
+	hostprogs-y += nconf
+endif
 
-.qtinst:
-	@set -e; for d in $$QTDIR /usr/share/qt /usr/share/qt*3* /usr/lib/qt*3*; do \
-	  if [ -f $$d/include/qconfig.h ]; then DIR=$$d; break; fi; \
-	done; \
-	if [ -z "$$DIR" ]; then \
-	  echo "*"; \
-	  echo "* Unable to find the QT installation. Please make sure that the"; \
-	  echo "* QT development package is correctly installed. The QTDIR"; \
-	  echo "* environment variable can be set to point to a non-standard location."; \
-	  echo "*"; \
-	  false; \
-	fi; \
-	LIB=qt; \
-	if [ -f $$DIR/lib/libqt-mt.so ]; then LIB=qt-mt; fi; \
-	echo "QTDIR=$$DIR" > $@; echo "QTLIB=$$LIB" >> $@; \
-	if [ ! -x $$DIR/bin/moc -a -x /usr/bin/moc ]; then \
-	  echo "*"; \
-	  echo "* Unable to find $$DIR/bin/moc, using /usr/bin/moc instead."; \
-	  echo "*"; \
-	  echo "MOC=/usr/bin/moc" >> $@; \
-	fi
+ifeq ($(MAKECMDGOALS),menuconfig)
+	hostprogs-y += mconf
+endif
 
-.gtkinst:
-	@if `pkg-config gtk+-2.0 gmodule-2.0 libglade-2.0 --exists`; then \
-		if `pkg-config gtk+-2.0 --atleast-version=2.0.0`; then	\
-			GCFLAGS=`pkg-config gtk+-2.0 gmodule-2.0 libglade-2.0 --cflags`; \
-			GLIBS=`pkg-config gtk+-2.0 gmodule-2.0 libglade-2.0 --libs`; \
-			echo "GCFLAGS=$$GCFLAGS" > $@; echo "GLIBS=$$GLIBS" >> $@; \
-		else \
-			echo "*"; \
-			echo "* GTK+ is present but version >= 2.0.0 is required."; \
-			echo "*"; \
-			false; \
-		fi \
-	else \
-		echo "*"; \
-		echo "* Unable to find the GTK+ installation. Please make sure that"; \
-		echo "* the GTK+ 2.0 development package is correctly installed..."; \
-		echo "* You will need gtk+-2.0, glib-2.0 and libglade-2.0."; \
-		echo "*"; \
-		false; \
-	fi
+ifeq ($(MAKECMDGOALS),update-po-config)
+	hostprogs-y += kxgettext
+endif
 
-lxdialog/lxdialog: .ncurses $(LXDIALOG_OBJS)
-	$(CC) -o $@ $(LXDIALOG_OBJS) $(LXDIALOG_LOADLIBES)
+ifeq ($(MAKECMDGOALS),xconfig)
+	qconf-target := 1
+endif
+ifeq ($(MAKECMDGOALS),gconfig)
+	gconf-target := 1
+endif
 
-$(LXDIALOG_OBJS): %.o: $(srcdir)/%.c
-	$(CC) $(CFLAGS) $(LXDIALOG_EXTRACFLAGS) -I$(srcdir) -c $< -o $@
+ifeq ($(qconf-target),1)
+	hostprogs-y += qconf
+endif
 
-.ncurses:
-	@echo "main() {}" > lxtemp.c
-	@if $(CC) lxtemp.c $(LXDIALOG_LOADLIBES); then \
-		rm -f lxtemp.c a.out; \
-	else \
-		rm -f lxtemp.c; \
-		echo -e "\007" ;\
-		echo ">> Unable to find the Ncurses libraries." ;\
-		echo ">>" ;\
-		echo ">> You must have Ncurses installed in order" ;\
-		echo ">> to use 'make menuconfig'" ;\
-		echo ;\
-		exit 1 ;\
-	fi
-	@test -d lxdialog || mkdir -p lxdialog
-	@touch $@
+ifeq ($(gconf-target),1)
+	hostprogs-y += gconf
+endif
 
+PHONY += clean distclean
+
+quiet_cmd_clean-objs = CLEAN   $(this_dir)/ objects
+      cmd_clean-objs = rm -rf *.o *.so *.moc *.tmp* *.pot
+quiet_cmd_clean-ships = CLEAN   $(this_dir)/ shipped files
+      cmd_clean-ships = rm -rf zconf.tab.c zconf.lex.c zconf.hash.c gconf.glade.h
+quiet_cmd_clean-execs = CLEAN   $(this_dir)/ executables
+      cmd_clean-execs = rm -rf mconf qconf gconf nconf
 clean:
-	rm -f *.o *.so lkc_defs.h qconf gconf zconf.tab.[ch] lex.zconf.c conf
-	rm -f *.moc .qtinst .gtkinst mconf lxdialog/*.o lxdialog/lxdialog .ncurses
+	$(call cmd,clean-objs)
+	$(call cmd,clean-ships)
+	$(call cmd,clean-execs)
 
 distclean: clean
-	rm -f $(distdir)/*~ $(distdir)/#*#
 
-.PHONY: xconfig gconfig menuconfig mconfig clean distclean
+# Check that we have the required ncurses stuff installed for lxdialog (menuconfig)
+PHONY += dochecklxdialog
+$(lxdialog): | dochecklxdialog
+dochecklxdialog:
+	@$(SHELL) $(check-lxdialog) -check $(CC) $(EXTRACFLAGS) $(LOADLIBES_mconf)
+
+always := dochecklxdialog
+
+# Add environment specific flags
+EXTRACFLAGS += $(shell $(SHELL) $(srctree)/base/config/kconfig/check.sh $(CC) $(CFLAGS))
+
+# generated files seem to need this to find local include files
+CFLAGS_zconf.lex.o	:= -I$(srctree)/base/config/kconfig
+CFLAGS_zconf.tab.o	:= -I$(srctree)/base/config/kconfig
+
+LEX_PREFIX	:= zconf
+YACC_PREFIX	:= zconf
+
+LOADLIBES_qconf	= $(KC_QT_LIBS)
+CXXFLAGS_qconf.o	= $(KC_QT_CFLAGS)
+
+LOADLIBES_gconf	= `pkg-config --libs gtk+-2.0 gmodule-2.0 libglade-2.0`
+CFLAGS_gconf.o	= `pkg-config --cflags gtk+-2.0 gmodule-2.0 libglade-2.0` \
+			  -Wno-missing-prototypes
+
+LOADLIBES_mconf   = $(shell $(SHELL) $(check-lxdialog) -ldflags $(CC))
+
+LOADLIBES_nconf	= -lmenu -lpanel -lncurses
+qconf.o: .tmp_qtcheck
+
+ifeq ($(qconf-target),1)
+.tmp_qtcheck: Makefile
+-include .tmp_qtcheck
+
+# QT needs some extra effort...
+.tmp_qtcheck:
+	@set -e; echo "  CHECK   qt"; dir=""; pkg=""; \
+	if ! pkg-config --exists QtCore 2> /dev/null; then \
+	    echo "* Unable to find the QT4 tool qmake. Trying to use QT3"; \
+	    pkg-config --exists qt 2> /dev/null && pkg=qt; \
+	    pkg-config --exists qt-mt 2> /dev/null && pkg=qt-mt; \
+	    if [ -n "$$pkg" ]; then \
+	      cflags="\$$(shell pkg-config $$pkg --cflags)"; \
+	      libs="\$$(shell pkg-config $$pkg --libs)"; \
+	      moc="\$$(shell pkg-config $$pkg --variable=prefix)/bin/moc"; \
+	      dir="$$(pkg-config $$pkg --variable=prefix)"; \
+	    else \
+	      for d in $$QTDIR /usr/share/qt* /usr/lib/qt*; do \
+		if [ -f $$d/include/qconfig.h ]; then dir=$$d; break; fi; \
+	      done; \
+	      if [ -z "$$dir" ]; then \
+		echo >&2 "*"; \
+		echo >&2 "* Unable to find any QT installation. Please make sure that"; \
+		echo >&2 "* the QT4 or QT3 development package is correctly installed and"; \
+		echo >&2 "* either qmake can be found or install pkg-config or set"; \
+		echo >&2 "* the QTDIR environment variable to the correct location."; \
+		echo >&2 "*"; \
+		false; \
+	      fi; \
+	      libpath=$$dir/lib; lib=qt; osdir=""; \
+	      $(CXX) -print-multi-os-directory > /dev/null 2>&1 && \
+		osdir=x$$($(CXX) -print-multi-os-directory); \
+	      test -d $$libpath/$$osdir && libpath=$$libpath/$$osdir; \
+	      test -f $$libpath/libqt-mt.so && lib=qt-mt; \
+	      cflags="-I$$dir/include"; \
+	      libs="-L$$libpath -Wl,-rpath,$$libpath -l$$lib"; \
+	      moc="$$dir/bin/moc"; \
+	    fi; \
+	    if [ ! -x $$dir/bin/moc -a -x /usr/bin/moc ]; then \
+	      echo "*"; \
+	      echo "* Unable to find $$dir/bin/moc, using /usr/bin/moc instead."; \
+	      echo "*"; \
+	      moc="/usr/bin/moc"; \
+	    fi; \
+	else \
+	  cflags="\$$(shell pkg-config QtCore QtGui Qt3Support --cflags)"; \
+	  libs="\$$(shell pkg-config QtCore QtGui Qt3Support --libs)"; \
+	  moc="\$$(shell pkg-config QtCore --variable=moc_location)"; \
+	  [ -n "$$moc" ] || moc="\$$(shell pkg-config QtCore --variable=prefix)/bin/moc"; \
+	fi; \
+	echo "KC_QT_CFLAGS=$$cflags" > $@; \
+	echo "KC_QT_LIBS=$$libs" >> $@; \
+	echo "KC_QT_MOC=$$moc" >> $@
+endif
+
+gconf.o: .tmp_gtkcheck
+
+ifeq ($(gconf-target),1)
+-include .tmp_gtkcheck
+
+# GTK needs some extra effort, too...
+.tmp_gtkcheck:
+	@if `pkg-config --exists gtk+-2.0 gmodule-2.0 libglade-2.0`; then		\
+		if `pkg-config --atleast-version=2.0.0 gtk+-2.0`; then			\
+			touch $@;								\
+		else									\
+			echo >&2 "*";							\
+			echo >&2 "* GTK+ is present but version >= 2.0.0 is required.";	\
+			echo >&2 "*";							\
+			false;								\
+		fi									\
+	else										\
+		echo >&2 "*";								\
+		echo >&2 "* Unable to find the GTK+ installation. Please make sure that";	\
+		echo >&2 "* the GTK+ 2.0 development package is correctly installed...";	\
+		echo >&2 "* You need gtk+-2.0, glib-2.0 and libglade-2.0.";		\
+		echo >&2 "*";								\
+		false;									\
+	fi
+endif
+
+zconf.tab.o: zconf.lex.c zconf.hash.c
+
+qconf.o: qconf.moc
+
+quiet_cmd_qt-moc	= QT MOC  $(this_dir)/$@
+      cmd_qt-moc	= $(KC_QT_MOC) -i $< -o $@
+%.moc: %.h .tmp_qtcheck
+	$(call cmd,qt-moc)
+
+# Extract gconf menu items for I18N support
+gconf.glade.h: gconf.glade
+	@intltool-extract --type=gettext/glade --srcdir=$(srctree) gconf.glade
+
+
+
+
+
+# The rest of the file is what is copied and modified from scripts/Makefile.build,
+# scripts/Makefile.host and scripts/Makefile.lib from the Linux kernel.
+# This includes rules to actually build the configuration program.
+
+# ==========================================================================
+# Building
+# ==========================================================================
+
+# Backward compatibility
+ccflags-y  += $(EXTRA_CFLAGS)
+cppflags-y += $(EXTRA_CPPFLAGS)
+ldflags-y  += $(EXTRA_LDFLAGS)
+
+# Figure out what we need to build from the various variables
+# ===========================================================================
+
+# Libraries are always collected in one lib file.
+# Filter out objects already built-in
+
+lib-y := $(filter-out $(obj-y), $(sort $(lib-y)))
+
+
+# if $(foo-objs) exists, foo.o is a composite object
+multi-used-y := $(sort $(foreach m,$(obj-y), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y))), $(m))))
+multi-used   := $(multi-used-y)
+
+# Build list of the parts of our composite objects, our composite
+# objects depend on those (obviously)
+multi-objs-y := $(foreach m, $(multi-used-y), $($(m:.o=-objs)) $($(m:.o=-y)))
+multi-objs   := $(multi-objs-y)
+
+
+
+c_flags       = $(ccflags-y) $(CFLAGS_$(basetarget).o)
+cpp_flags     = $(cppflags-y) $(CPPFLAGS_$(@F))
+ld_flags       = $(LDFLAGS) $(ldflags-y)
+
+# GPERF
+# ---------------------------------------------------------------------------
+quiet_cmd_gperf	= GPERF   $(this_dir)/$@
+      cmd_gperf	= gperf -t --output-file $@ -a -C -E -g -k 1,3,$$ -p -t $<
+.PRECIOUS: %.hash.c_shipped
+%.hash.c_shipped: %.gperf
+	$(call cmd,gperf)
+
+# LEX
+# ---------------------------------------------------------------------------
+quiet_cmd_flex	= LEX     $@
+      cmd_flex	= flex -o $@ -L -P $(LEX_PREFIX) $<
+.PRECIOUS: %.lex.c_shipped
+%.lex.c_shipped: %.l
+	$(call cmd,flex)
+
+# YACC
+# ---------------------------------------------------------------------------
+quiet_cmd_bison	= YACC    $@
+      cmd_bison	= bison -o $@ -t -l -p $(YACC_PREFIX) $<
+.PRECIOUS: %.tab.c_shipped
+%.tab.c_shipped: %.y
+	$(call cmd,bison)
+
+quiet_cmd_bison_h	= YACC    $@
+      cmd_bison_h	= bison -o /dev/null --defines=$@ -t -l -p $(YACC_PREFIX) $<
+.PRECIOUS: %.tab.h_shipped
+%.tab.h_shipped: %.y
+	$(call cmd,bison_h)
+
+# Shipped files
+# ===========================================================================
+quiet_cmd_shipped	= SHIPPED $@
+      cmd_shipped	= cat $< > $@
+%.c: %.c_shipped
+	$(call cmd,shipped)
+%.h: %.h_shipped
+	$(call cmd,shipped)
+
+# ==========================================================================
+# Building binaries on the host system
+# Binaries are used during the compilation of the kernel, for example
+# to preprocess a data file.
+#
+# Both C and C++ are supported, but preferred language is C for such utilities.
+#
+# Sample syntax (see Documentation/kbuild/makefiles.txt for reference)
+# hostprogs-y := bin2hex
+# Will compile bin2hex.c and create an executable named bin2hex
+#
+# hostprogs-y    := lxdialog
+# lxdialog-objs := checklist.o lxdialog.o
+# Will compile lxdialog.c and checklist.c, and then link the executable
+# lxdialog, based on checklist.o and lxdialog.o
+#
+# hostprogs-y      := qconf
+# qconf-cxxobjs   := qconf.o
+# qconf-objs      := menu.o
+# Will compile qconf as a C++ program, and menu as a C program.
+# They are linked as C++ code to the executable qconf
+
+# hostprogs-y := conf
+# conf-objs  := conf.o libkconfig.so
+# libkconfig-objs := expr.o type.o
+# Will create a shared library named libkconfig.so that consists of
+# expr.o and type.o (they are both compiled as C code and the object files
+# are made as position independent code).
+# conf.c is compiled as a C program, and conf.o is linked together with
+# libkconfig.so as the executable conf.
+# Note: Shared libraries consisting of C++ files are not supported
+
+__hostprogs := $(sort $(hostprogs-y))
+
+# C code
+# Executables compiled from a single .c file
+host-csingle	:= $(foreach m,$(__hostprogs),$(if $($(m)-objs),,$(m)))
+
+# C executables linked based on several .o files
+host-cmulti	:= $(foreach m,$(__hostprogs),\
+		   $(if $($(m)-cxxobjs),,$(if $($(m)-objs),$(m))))
+
+# Object (.o) files compiled from .c files
+host-cobjs	:= $(sort $(foreach m,$(__hostprogs),$($(m)-objs)))
+
+# C++ code
+# C++ executables compiled from at least on .cc file
+# and zero or more .c files
+host-cxxmulti	:= $(foreach m,$(__hostprogs),$(if $($(m)-cxxobjs),$(m)))
+
+# C++ Object (.o) files compiled from .cc files
+host-cxxobjs	:= $(sort $(foreach m,$(host-cxxmulti),$($(m)-cxxobjs)))
+
+# Shared libaries (only .c supported)
+# Shared libraries (.so) - all .so files referenced in "xxx-objs"
+host-cshlib	:= $(sort $(filter %.so, $(host-cobjs)))
+# Remove .so files from "xxx-objs"
+host-cobjs	:= $(filter-out %.so,$(host-cobjs))
+
+#Object (.o) files used by the shared libaries
+host-cshobjs	:= $(sort $(foreach m,$(host-cshlib),$($(m:.so=-objs))))
+
+
+__hostprogs     := $(__hostprogs)
+host-csingle	:= $(host-csingle)
+host-cmulti	:= $(host-cmulti)
+host-cobjs	:= $(host-cobjs)
+host-cxxmulti	:= $(host-cxxmulti)
+host-cxxobjs	:= $(host-cxxobjs)
+host-cshlib	:= $(host-cshlib)
+host-cshobjs	:= $(host-cshobjs)
+
+#####
+# Handle options to gcc. Support building with separate output directory
+
+hostc_flags   = $(CFLAGS)   $(EXTRACFLAGS)   \
+		 $(CFLAGS_$(basetarget).o)
+hostcxx_flags = $(CXXFLAGS) $(EXTRACXXFLAGS) \
+		 $(CXXFLAGS_$(basetarget).o)
+
+#####
+# Compile programs on the host
+
+# Create executable from a single .c file
+# host-csingle -> Executable
+quiet_cmd_host-csingle	= HOSTCC  $(this_dir)/$@
+      cmd_host-csingle	= $(CC) $(hostc_flags) -o $@ $< $(LOADLIBES) $(LOADLIBES_$(@F))
+$(host-csingle): %: %.c
+	$(call cmd,host-csingle)
+
+# Link an executable based on list of .o files, all plain c
+# host-cmulti -> executable
+quiet_cmd_host-cmulti	= HOSTLD  $(this_dir)/$@
+      cmd_host-cmulti	= $(CC) $(LDFLAGS) -o $@ $($(@F)-objs) $(LOADLIBES) $(LOADLIBES_$(@F))
+$(host-cmulti): %: $(host-cobjs) $(host-cshlib)
+	$(call cmd,host-cmulti)
+
+# Create .o file from a single .c file
+# host-cobjs -> .o
+quiet_cmd_host-cobjs	= HOSTCC  $(this_dir)/$@
+      cmd_host-cobjs	= $(CC) $(hostc_flags) -c -o $@ $<
+$(host-cobjs): %.o: %.c
+	$(call cmd,host-cobjs)
+
+# Link an executable based on list of .o files, a mixture of .c and .cc
+# host-cxxmulti -> executable
+quiet_cmd_host-cxxmulti	= HOSTLD  $(this_dir)/$@
+      cmd_host-cxxmulti	= $(CXX) $(LDFLAGS) -o $@ $(foreach o,objs cxxobjs,\
+			  $($(@F)-$(o))) \
+			  $(LOADLIBES) $(LOADLIBES_$(@F))
+$(host-cxxmulti): %: $(host-cobjs) $(host-cxxobjs) $(host-cshlib)
+	$(call cmd,host-cxxmulti)
+
+# Create .o file from a single .cc (C++) file
+quiet_cmd_host-cxxobjs	= HOSTCXX $(this_dir)/$@
+      cmd_host-cxxobjs	= $(CXX) $(hostcxx_flags) -c -o $@ $<
+$(host-cxxobjs): %.o: %.cc
+	$(call cmd,host-cxxobjs)
+
+# Compile .c file, create position independent .o file
+# host-cshobjs -> .o
+quiet_cmd_host-cshobjs	= HOSTCC  -fPIC $(this_dir)/$@
+      cmd_host-cshobjs	= $(HOSTCC) $(hostc_flags) -fPIC -c -o $@ $<
+$(host-cshobjs): %.o: %.c
+	$(call cmd,host-cshobjs)
+
+# Link a shared library, based on position independent .o files
+# *.o -> .so shared library (host-cshlib)
+quiet_cmd_host-cshlib	= HOSTLLD -shared $(this_dir)/$@
+      cmd_host-cshlib	= $(CC) $(LDFLAGS) -shared -o $@ $($(@F:.so=-objs))  $(LOADLIBES) $(LOADLIBES_$(@F))
+$(host-cshlib): %: $(host-cshobjs)
+	$(call cmd,host-cshlib)
+
+targets += $(host-csingle)  $(host-cmulti) $(host-cobjs)\
+	   $(host-cxxmulti) $(host-cxxobjs) $(host-cshlib) $(host-cshobjs)
+
+.PHONY: $(PHONY)

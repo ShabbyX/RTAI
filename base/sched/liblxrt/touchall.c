@@ -23,6 +23,7 @@
 #include <sys/user.h>
 #include <sys/mman.h>
 #include <malloc.h>
+#include <rtai_lxrt.h>
 
 #define TOUCH_BUFSIZE 256
 #define GROW_STACK (64*1024)

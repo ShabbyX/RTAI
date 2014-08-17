@@ -1,52 +1,27 @@
-ACLOCAL_AMFLAGS=-I base/config/autoconf
-
 OPTDIRS =
 
-if CONFIG_RTAI_TESTSUITE
-OPTDIRS += testsuite
-endif
-
-if CONFIG_RTAI_ADDONS
 OPTDIRS += addons
-endif
 
-if CONFIG_RTAI_LAB
-OPTDIRS += rtai-lab
-endif
-
-OPTDIRS += rtai-py
-
-SUBDIRS = base @RTAI_MAYBE_DOCDIR@ $(OPTDIRS)
+SUBDIRS = base $(OPTDIRS)
 
 DIST_SUBDIRS = \
-	@RTAI_MAYBE_DOCDIR@ \
 	base \
-	testsuite \
-	addons \
-	rtai-lab \
-	rtai-py
+	addons
 
 EXTRA_DIST = \
-makefile \
 README.INSTALL \
 README.ISOLCPUS \
 README.LINUX_SERVER \
 README.LXRT_EXTS_IN_USE \
-README.SMI \
-@RTAI_MAYBE_SIMDIR@
+README.SMI
 
-DISTCLEANFILES = .rtai_config .rtai_config.old .cfok .cfchanged Module.symvers
+DISTCLEANFILES = .rtai_config .rtai_config.old .cfok .cfchanged Module.symvers configure
 
 moduledir = @RTAI_MODULE_DIR@
 
-all-recursive install-recursive: base/GNUmakefile clean-if-reconfigured
+MAKEFLAGS := $(MAKEFLAGS) --no-print-directory
 
-base/GNUmakefile: @RTAI_LINUX_DIR@/.config
-	@echo "*****************************************" ; \
-	 echo "*  The Linux configuration has changed  *" ; \
-	 echo "*  forcing 'make reconfig' ...          *" ; \
-	 echo "*****************************************" ; \
-	$(MAKE) reconfig
+all-recursive install-recursive: base/GNUmakefile clean-if-reconfigured
 
 clean-if-reconfigured:
 	@if test -r .cfchanged ; then \
@@ -58,9 +33,43 @@ clean-if-reconfigured:
 	   $(MAKE) clean ; \
 	fi
 
-reconfig xconfig gconfig mconfig menuconfig config oldconfig:
-	@$(MAKE) -f $(srcdir)/makefile $@ \
-	srctree=$(srcdir) ARCH=@RTAI_HOST_STRING@ CROSS_COMPILE=@CROSS_COMPILE@
+CONFIG_METHODS := config nconfig menuconfig xconfig gconfig oldconfig silentoldconfig defconfig \
+	savedefconfig allnoconfig allyesconfig allmodconfig alldefconfig \
+	randconfig listnewconfig olddefconfig
+.PHONY: $(CONFIG_METHODS)
+$(CONFIG_METHODS):
+	@$(MAKE) -C base/config/kconfig \
+	-f Makefile.kconfig $@ \
+	srctree=$(PWD) ARCH=`uname -m` quiet_
+	@$(MAKE) --no-print-directory config-status
+
+config-status: .rtai_config
+	@test -r config.status && recf=yes || recf=no ; \
+	eval `grep ^CONFIG_RTAI_INSTALLDIR $<`; \
+	eval `grep ^CONFIG_RTAI_MAINTAINER $<`; \
+	test x$$CONFIG_RTAI_MAINTAINER_AUTOTOOLS = xy && confopts=--enable-maintainer-mode; \
+	CC="$(CC)" \
+	CXX="$(CXX)" \
+	LD="$(LD)" \
+	AR="$(AR)" \
+	RANLIB=ranlib \
+	STRIP=strip \
+	NM=nm \
+	$(srctree)./configure \
+	--build=$(build_alias) \
+	--host=$(host_alias) \
+	--with-kconfig-file=./$< \
+	--with-linux-dir=$(RTAI_LINUX_DIR) \
+	--prefix=$$CONFIG_RTAI_INSTALLDIR \
+	$$confopts ; \
+	if test $$? = 0; then \
+	   touch .cfok ; \
+	   if test x$$recf = xyes ; then \
+	      touch .cfchanged ; \
+	   fi ; \
+	else \
+	   rm -f .cfok ; false; \
+	fi
 
 if CONFIG_RTAI_OLD_FASHIONED_BUILD
 clean-local:
@@ -98,21 +107,21 @@ dist-hook:
 dev devices:
 	@if test -r $(DESTDIR)/etc/udev/udev.rules ; then \
 	    for f in \
-	            $(srcdir)/base/ipc/shm/rtai_shm.udev \
-	            $(srcdir)/base/ipc/fifos/rtai_fifos.udev \
-	            ; do \
-	        b=`basename $$f` ; \
-	        grep -q RTAI:`basename $$b .udev` $(DESTDIR)/etc/udev/udev.rules || \
-	        $$sudo sh -c "( echo ; cat $$f ) >> $(DESTDIR)/etc/udev/udev.rules" ; \
+		    $(srcdir)/base/ipc/shm/rtai_shm.udev \
+		    $(srcdir)/base/ipc/fifos/rtai_fifos.udev \
+		    ; do \
+		b=`basename $$f` ; \
+		grep -q RTAI:`basename $$b .udev` $(DESTDIR)/etc/udev/udev.rules || \
+		$$sudo sh -c "( echo ; cat $$f ) >> $(DESTDIR)/etc/udev/udev.rules" ; \
 	    done ; \
 	elif test -d $(DESTDIR)/etc/udev/rules.d ; then \
 	    for f in \
-	            $(srcdir)/base/ipc/shm/rtai_shm.udev \
-	            $(srcdir)/base/ipc/fifos/rtai_fifos.udev \
-	            ; do \
-	        b=`basename $$f` ; \
-	        grep -q RTAI:`basename $$b .udev` $(DESTDIR)/etc/udev/rules.d/99-rtai.rules || \
-	        $$sudo sh -c "( echo ; cat $$f ) >> $(DESTDIR)/etc/udev/rules.d/99-rtai.rules" ; \
+		    $(srcdir)/base/ipc/shm/rtai_shm.udev \
+		    $(srcdir)/base/ipc/fifos/rtai_fifos.udev \
+		    ; do \
+		b=`basename $$f` ; \
+		grep -q RTAI:`basename $$b .udev` $(DESTDIR)/etc/udev/rules.d/99-rtai.rules || \
+		$$sudo sh -c "( echo ; cat $$f ) >> $(DESTDIR)/etc/udev/rules.d/99-rtai.rules" ; \
 	    done ; \
 	fi ; \
 	if test x$(DESTDIR) = x; then \
@@ -123,9 +132,9 @@ dev devices:
 	    for n in `seq 0 9`; do \
 	       f="$(DESTDIR)/dev/rtf$$n"; \
 	       if test \! -c $$f; then \
-	          $$sudo mknod -m 666 $$f c 150 $$n; \
+		  $$sudo mknod -m 666 $$f c 150 $$n; \
 	       fi; \
 	    done ; \
 	fi
 
-.PHONY: reconfig xconfig gconfig mconfig menuconfig config oldconfig clean-if-reconfigured dev devices
+.PHONY: clean-if-reconfigured dev devices

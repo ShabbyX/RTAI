@@ -1,20 +1,20 @@
 moduledir = @RTAI_MODULE_DIR@
 
-CROSS_COMPILE = @CROSS_COMPILE@
+
 
 noinst_LIBRARIES = libtrace.a
 
 libtrace_a_SOURCES = trace.c
 
-libtrace_a_AR = $(CROSS_COMPILE)ar cru
+libtrace_a_AR = ar cru
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
 	-I$(top_srcdir)/base/include \
 	-I../include
 
 rtai_trace.o: libtrace.a
-	$(CROSS_COMPILE)$(LD) --whole-archive $< -r -o $@
+	$(LD) --whole-archive $< -r -o $@
 
 all-local: rtai_trace.o
 if CONFIG_RTAI_OLD_FASHIONED_BUILD

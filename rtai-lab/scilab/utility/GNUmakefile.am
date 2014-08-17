@@ -1,4 +1,0 @@
-install-exec-local:
-	$(INSTALL_SCRIPT) $(srcdir)/gen_dev $(DESTDIR)$(bindir)
-
-EXTRA_DIST = gen_dev

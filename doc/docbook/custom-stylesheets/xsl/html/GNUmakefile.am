@@ -1,6 +1,0 @@
-include ../../../docbook.rules
-
-EXTRA_DIST=rtai-titlepage.spec.xml
-
-DBX_XSL_DOCS=rtai-titlepage.xsl chunk.xsl
-CLEANFILES=rtai-titlepage.xsl

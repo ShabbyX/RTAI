@@ -1,8 +1,0 @@
-SUBDIRS=docbook doxygen
-
-EXTRA_DIST=maintainers \
-	User-Manual.txt \
-	Linux-syscalls-servers.txt
-
-generate-doc-and-commit:
-	srcdir=$(srcdir) $(top_srcdir)/base/scripts/generate-doc-and-commit

@@ -2,7 +2,7 @@ moduledir = @RTAI_MODULE_DIR@
 
 modext = @RTAI_MODULE_EXT@
 
-CROSS_COMPILE = @CROSS_COMPILE@
+
 
 libmbx_a_SOURCES = mbx.c
 
@@ -22,15 +22,15 @@ endif
 else
 noinst_LIBRARIES = libmbx.a
 
-libmbx_a_AR = $(CROSS_COMPILE)ar cru
+libmbx_a_AR = ar cru
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
 	-I$(top_srcdir)/base/include \
 	-I../../include
 
 rtai_mbx.o: libmbx.a
-	$(CROSS_COMPILE)$(LD) --whole-archive $< -r -o $@
+	$(LD) --whole-archive $< -r -o $@
 endif
 
 all-local: rtai_mbx$(modext)

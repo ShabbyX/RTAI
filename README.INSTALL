@@ -168,17 +168,7 @@ simply does _not_ work for the purpose of selecting alternate compiler
 toolchains. Again, you need to let the configuration engine know about
 these new settings as explained above.
 
-1.2 Cross-compilation support
------------------------------
-
-Simply add ARCH and CROSS_COMPILE variables as usual to the standard
-command lines, e.g.
-
-$ make -f $source_tree/makefile ARCH=arm CROSS_COMPILE=arm-linux-
-
-Names of available architectures can be found under base/arch/*.
-
-1.3 Installing the software
+1.2 Installing the software
 ---------------------------
 
 When the standard (or cross-) compilation has finished:
@@ -213,7 +203,7 @@ installation directory contents to run RTAI programs.
 NOTE: Do not pay attention to the "*** Warning" messages appearing on
 module compilation output. They are harmless and will be fixed later.
 
-1.4 Compiling parts of the tree
+1.3 Compiling parts of the tree
 -------------------------------
 
 RTAI developers may want to recompile parts of the tree from times to
@@ -226,7 +216,7 @@ to bootstrap the build system when it is about to be configured for
 the first time. After the first configuration has been successful, one
 just need to run "make xconfig|gconfig|menuconfig|..." as usual.
 
-1.5 Changing the configuration
+1.4 Changing the configuration
 ------------------------------
 
 Each time you want to change your configuration, just run "make
@@ -241,7 +231,7 @@ When invoked for the first time in an empty build directory, the
 default "make" goal is "menuconfig" in a regular terminal, or
 "xconfig" in an emacs-term.
 
-1.6 Modifying the autotool template files
+1.5 Modifying the autotool template files
 -----------------------------------------
 
 If you have to change some template files used by any of the autotools
@@ -253,7 +243,7 @@ o automake 1.9.2
 o aclocal 1.9.2
 o libtool 1.5.8
 
-1.7 Using the integrated calibration tool
+1.6 Using the integrated calibration tool
 -----------------------------------------
 
 RTAI 3.x comes with a brand new calibration tool which should help you
