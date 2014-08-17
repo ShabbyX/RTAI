@@ -1,0 +1,9 @@
+base referer
+rect $rtai__scb_8h.html 318,158 398,182
+rect $rtai__schedcore_8h-source.html 221,84 341,108
+rect $mbx_8c.html 8,9 66,33
+rect $msg_8c.html 90,9 149,33
+rect $sem_8c.html 173,9 232,33
+rect $shm_8c.html 432,9 490,33
+rect $api_8c.html 256,9 306,33
+rect $tasklets_8c.html 330,9 408,33

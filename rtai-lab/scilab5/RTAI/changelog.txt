@@ -1,0 +1,4 @@
+changelog of the toolbox_skeleton
+
+-- Roberto Bucher <roberto.bucher@supsi.ch>  Fri, 09 Jan 2009
+

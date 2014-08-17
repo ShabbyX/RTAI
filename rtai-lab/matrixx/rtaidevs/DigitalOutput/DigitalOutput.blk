@@ -1,0 +1,20 @@
+MATRIXx VERSION 720   0 SB 12-JAN-107 17:00 
+
+   SYS BUILD  700     pc                     
+     1
+     1                                                                  
+                                           2           4           0          -1
+||
+2 4 0 0
+           1         177         137           6
+An_ISI_Dummy                             0   1        0        0       0       0
+An_ISI_Dummy                             177         137           6          -1
+An_ISI_Dummy|||000000|000000|DigitalOutput||rtai_comedi_dioout.c|rtai_co
+medi_dioout| |rtaidevs\icons\rtai_comedi_dioout.bmp|File_Bitmap 'rtaidev
+s\icons\rtai_comedi_dioout.bmp'~|
+0 8 0 0 0 0 0 -1 11 -1 0 26 0 13 26 0 14 27 4 14 31 4 29 137 6 177 0 0 2 0 -1 3
+0 0 6 -1 6 1 1 0 0 14 13 0 1 0 0 25 0 15 27 0 15 33 0 15 35 0 15 0 0 134218753
+480 -150 80 80 0 32770 0 9 0 0 21 2 40 68 2 80 0 2 1 0 0 0 0 0 1 1 1 1 47 0 2 33
+-1 1 0 1000 1000 14 0 0 0 0 0 0 1 0 0 0 0 480 -150 0 8 7 1 1 1 1 1 80 80 1 54
+655361 0 0 0 0 0 0 0 0 0 0 0
+100 200 200 100 5 0.001

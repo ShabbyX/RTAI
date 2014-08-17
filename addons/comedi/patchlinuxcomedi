@@ -1,0 +1,117 @@
+#
+#   Copyright (C)  2010 Paolo Mantegazza <mantegazza@aero.polimi.it>
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, Inc., 675 Mass Ave, Cambridge MA 02139,
+#   USA; either version 2 of the License, or (at your option) any later
+#   version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+#
+# WHAT TO DO:
+# See "WHAT TO DO" in README in this directory.
+# END OF WHAT TO DO.
+#
+# >>> Save original comedi dir
+#
+if test -d ../comedi.orig; then
+echo "*** comedi.orig exists, no copy made ***"
+else
+cp -r ../comedi ../comedi.orig
+fi
+#
+# >>> Set generic calls in comedi.
+#
+for i in `find . -name "*.c"`; do cat $i | sed s/request_irq/comedi_request_irq/g | sed s/free_irq/comedi_free_irq/g | sed s/udelay/comedi_udelay/g | sed s/spin_lock_irqsave/comedi_spin_lock_irqsave/g | sed s/spin_unlock_irqrestore/comedi_spin_unlock_irqrestore/g > newcopy; mv newcopy $i; done
+#
+# >>> Create comedi_system.h by cleaning this script part, care of not inserting
+# >>> blank lines but the one that separates this script from comedi_system.h
+# >>> body.
+#
+cat $0 | sed '1,/^$/ d' > comedi_system.h
+#
+# >>> Add an include for comedi_system.h in comedidev.h, to be seen everywhere.
+#
+cat comedidev.h | sed '/comedi.h/ i\#include "comedi_system.h"' > newcopy
+mv newcopy comedidev.h
+#
+# >>> Append and export pointers for dynamically linking rtai_comedi extensions.
+#
+echo "" >>comedi_ksyms.c
+echo "int  (*rt_comedi_request_irq)(unsigned int, irq_handler_t, unsigned long, const char *, void *) = request_irq;" >>comedi_ksyms.c
+echo "void (*rt_comedi_release_irq)(unsigned int, void *) = free_irq;" >>comedi_ksyms.c
+echo "void (*rt_comedi_busy_sleep)(unsigned long) = __udelay;" >>comedi_ksyms.c
+echo "" >>comedi_ksyms.c
+echo "EXPORT_SYMBOL(rt_comedi_request_irq);" >>comedi_ksyms.c
+echo "EXPORT_SYMBOL(rt_comedi_release_irq);" >>comedi_ksyms.c
+echo "EXPORT_SYMBOL(rt_comedi_busy_sleep);" >>comedi_ksyms.c
+#
+# >>> Simulate a comedi.org distribution, to cheat RTAI configure for a while.
+#
+mkdir include
+mkdir include/linux
+cp comedi.h include/linux
+cp comedilib.h include/linux
+exit
+
+#ifndef _COMEDI_SYSTEM_H_
+#define _COMEDI_SYSTEM_H_
+
+#ifdef CONFIG_IPIPE
+
+#include <linux/version.h>
+#include <linux/interrupt.h>
+
+extern int  (*rt_comedi_request_irq)(unsigned int, irq_handler_t, unsigned long, const char *, void *);
+extern void (*rt_comedi_release_irq)(unsigned int, void *);
+extern void (*rt_comedi_busy_sleep)(unsigned long);
+
+#define comedi_request_irq(irq, handler, flags, name, dev) \
+        ({ rt_comedi_request_irq(irq, (void *)handler, flags, name, dev); })
+
+#define comedi_free_irq(irq, dev) \
+        rt_comedi_release_irq(irq, dev)
+
+#define comedi_udelay(usec) \
+	rt_comedi_busy_sleep(usec)
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,33)
+#define COMEDI_SPIN_LOCKP(lock_ptr) lock_ptr
+#else
+#define COMEDI_SPIN_LOCKP(lock_ptr) ((raw_spinlock_t *)lock_ptr)
+#endif
+#define comedi_spin_lock_irqsave(lock_ptr, flags) \
+	({ local_irq_save_hw(flags); _raw_spin_lock(COMEDI_SPIN_LOCKP(lock_ptr)); flags; })
+
+#define comedi_spin_unlock_irqrestore(lock_ptr, flags) \
+	do { _raw_spin_unlock(COMEDI_SPIN_LOCKP(lock_ptr)); local_irq_restore_hw(flags); } while (0)
+
+#else
+
+#define comedi_request_irq(irq, handler, flags, device, dev_id) \
+	request_irq(irq, handler, flags, device, dev_id)
+
+#define comedi_free_irq(irq, dev_id) \
+	free_irq(irq, dev_id)
+
+#define comedi_udelay(usec) \
+	udelay(usec)
+
+#define comedi_spin_lock_irqsave(lock_ptr, flags) \
+	({ spin_lock_irqsave(lock_ptr, flags); flags; })
+
+#define comedi_spin_unlock_irqrestore(lock_ptr, flags) \
+	spin_unlock_irqrestore(lock_ptr, flags)
+
+#endif
+
+#endif /* _COMEDI_SYSTEM_H_ */

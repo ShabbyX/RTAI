@@ -1,0 +1,2 @@
+# RTAI:rtai_shm
+KERNEL=="rtai_shm", MODE="0666"

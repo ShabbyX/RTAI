@@ -1,0 +1,11 @@
+install-data-local:
+
+EXTRA_DIST = \
+	rtai.tlc \
+	ptinfo.tlc \
+	rtai.tmf \
+	rtmain.c \
+	setup.m \
+	devices \
+	lib \
+	examples

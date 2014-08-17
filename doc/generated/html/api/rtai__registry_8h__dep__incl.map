@@ -1,0 +1,9 @@
+base referer
+rect $rtai__netrpc_8h-source.html 174,158 270,182
+rect $rtai__schedcore_8h-source.html 157,84 277,108
+rect $mbx_8c.html 8,9 66,33
+rect $msg_8c.html 90,9 149,33
+rect $sem_8c.html 274,9 333,33
+rect $shm_8c.html 357,9 416,33
+rect $api_8c.html 440,9 490,33
+rect $tasklets_8c.html 173,9 250,33

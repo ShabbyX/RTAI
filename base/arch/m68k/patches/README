@@ -1,0 +1,5 @@
+The following processors and distributions are supported:
+	MCF5329 - Linux BSP version 20081215 and uClinux version 20080808(not recommended - use Freescale's Linux BSP instead)
+	MCF54455 - Linux BSP version 20071214
+
+For each processor, see the appropriate manual in its subdirectory.

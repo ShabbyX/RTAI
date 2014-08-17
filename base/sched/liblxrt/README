@@ -1,0 +1,9 @@
+
+                        RTAI LXRT liblxrt
+
+Acknowledgment to Tomasz Motylewski for his file touchall.c that provides
+the function lock_all(). It grows the stack and locks all the pages of
+memory so that exception 14 vectors need not be handled while in LXRT
+hard real time mode. 
+
+(C) Pierre Cloutier <pcloutier@PoseidonControls.com> LGPLv2 

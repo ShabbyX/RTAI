@@ -1,0 +1,12 @@
+EXTRA_CFLAGS += -I$(rtai_srctree)/base/include \
+		-I$(src)/../include \
+		-I$(src)/../.. \
+		$(rtai_extradef) \
+		-D__IN_RTAI__
+
+obj-m += $(rtai_target).o
+
+rtai_sched-objs := $(rtai_objs)
+
+rtai_lxrt-objs := $(rtai_objs)
+
