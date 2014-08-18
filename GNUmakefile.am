@@ -40,14 +40,12 @@ CONFIG_METHODS := config nconfig menuconfig xconfig gconfig oldconfig silentoldc
 $(CONFIG_METHODS):
 	@$(MAKE) -C base/config/kconfig \
 	-f Makefile.kconfig $@ \
-	srctree=$(PWD) ARCH=`uname -m` quiet_
+	srctree=$(PWD) ARCH=`uname -m`
 	@$(MAKE) --no-print-directory config-status
 
 config-status: .rtai_config
 	@test -r config.status && recf=yes || recf=no ; \
 	eval `grep ^CONFIG_RTAI_INSTALLDIR $<`; \
-	eval `grep ^CONFIG_RTAI_MAINTAINER $<`; \
-	test x$$CONFIG_RTAI_MAINTAINER_AUTOTOOLS = xy && confopts=--enable-maintainer-mode; \
 	CC="$(CC)" \
 	CXX="$(CXX)" \
 	LD="$(LD)" \
