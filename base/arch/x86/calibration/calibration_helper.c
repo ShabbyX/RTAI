@@ -47,7 +47,7 @@ void print_usage(void)
 	, stderr);
 }
 
-static int period = 200 /* us */, loops = 1 /* s */, tol = 100 /* ns */;
+static int period = 200 /* us */, loops = 1 /* s */;
 
 static inline int sign(int v) { return v > 0 ? 1 : (v < 0 ? -1 : 0); }
 static int user_latency;

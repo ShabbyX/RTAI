@@ -16,8 +16,4 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-//#define CONFIG_RTAI_LXRT_INLINE 0
 #include <rtdm/rtdm.h>
-#ifdef CONFIG_RTAI_DRIVERS_16550A
-#include <rtdm/rtserial.h>
-#endif /* CONFIG_RTAI_DRIVERS_16550A */

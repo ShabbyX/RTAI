@@ -41,7 +41,6 @@
 #include <rtai_sched.h>
 #include <rtai_malloc.h>
 #include <rtai_trace.h>
-#include <rtai_leds.h>
 #include <rtai_sem.h>
 #include <rtai_rwl.h>
 #include <rtai_spl.h>
@@ -51,12 +50,10 @@
 #include <rtai_tbx.h>
 #include <rtai_mq.h>
 #include <rtai_bits.h>
-#include <rtai_wd.h>
 #include <rtai_tasklets.h>
 #include <rtai_fifos.h>
 #include <rtai_netrpc.h>
 #include <rtai_shm.h>
-#include <rtai_usi.h>
 
 
 #ifdef OOM_DISABLE

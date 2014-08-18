@@ -2344,8 +2344,7 @@ static int support_posix_timer(void *data)
 			}
 		}
 	}
-	
-	rtai_sti();
+
 	rt_make_soft_real_time();
 	rt_task_delete(task);
 

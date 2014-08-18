@@ -290,7 +290,6 @@ RTAI_SYSCALL_MODE void rt_register_task(struct rt_tasklet_struct *tasklet, struc
 #include <sys/mman.h>
 #include <stdarg.h>
 
-#include <rtai_usi.h>
 #include <rtai_lxrt.h>
 
 #define rt_tasklet_struct  rt_usp_tasklet_struct
@@ -339,7 +338,6 @@ static int support_tasklet(struct support_tasklet_s *args)
 				break;
 			}
 		}
-		rtai_sti();
 		rt_make_soft_real_time();
 		rt_task_delete(task);
 		return 0;
