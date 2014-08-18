@@ -68,6 +68,7 @@
 
 #include <rtai_sched.h>
 #include <rtai_nam2num.h>
+#include <linux/sched.h>
 
 // scheduler
 #define YIELD				 0
@@ -1481,6 +1482,25 @@ RTAI_PROTO(int, rt_task_masked_unblock, (RT_TASK *task, unsigned long mask))
 
 #define rt_task_wakeup_sleeping(task)  rt_task_masked_unblock(task, RT_SCHED_DELAYED)
 
+/**
+ * Get execution time of task.
+ *
+ * If RTAI is configured to monitor task execution times, then this function
+ * can be used to retrieve such information.
+ *
+ * @param task is the task for which execution time is retrieved.
+ *
+ * @param exectime is an array of three RTIME variables.
+ *
+ * @a task can be NULL, in which case the current task is selected.
+ *
+ * @a exectime consists of three values; @a exectime[0] is the total time the
+ * task spent on CPUs, @a exectime[1] is the first time the task was scheduled
+ * and @a exectime[2] is the time of the call to this function.
+ *
+ * To track the execution time, @a exectime[0] is sufficient. To get the percentage
+ * of CPU usage, this value can be divided by @a exectime[2] - @a exectime[1].
+ */
 RTAI_PROTO(void, rt_get_exectime, (RT_TASK *task, RTIME *exectime))
 {
 	RTIME lexectime[] = { 0LL, 0LL, 0LL };
