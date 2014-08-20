@@ -179,6 +179,8 @@ extern double __ieee754_jn __P((int,double));
 extern double __ieee754_yn __P((int,double));
 extern double __ieee754_remainder __P((double,double));
 extern int    __ieee754_rem_pio2 __P((double,double*));
+extern double __ieee754_fmin __P((double,double));
+extern double __ieee754_fmax __P((double,double));
 #if defined(_SCALB_INT)
 extern double __ieee754_scalb __P((double,int));
 #else
