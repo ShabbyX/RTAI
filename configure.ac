@@ -1197,15 +1197,15 @@ RTAI_KBUILD_DISTCLEAN=""
 AC_MSG_CHECKING([for kernel module extension])
 AC_MSG_RESULT([$RTAI_MODULE_EXT])
 
-RTAI_REAL_USER_CFLAGS="-O2 -fomit-frame-pointer"
+RTAI_REAL_USER_CFLAGS=""
 
 if test x"$LINUX_KERNELOUTPUT" != x"$LINUX_KERNELSRC"; then
   RTAI_REAL_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include $RTAI_REAL_USER_CFLAGS"
 fi
 
 dnl extra arch-dependent opts to be passed to the compiler
-RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce -pipe"
-RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -Wall -Wstrict-prototypes -pipe"
+RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce"
+RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -Wall -Wstrict-prototypes"
 RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -ffreestanding -fno-builtin-sin -fno-builtin-cos -mieee-fp -mhard-float -mpreferred-stack-boundary=4 -msse -Wno-undef"
 
 if test x$CONFIG_RTAI_KMOD_DEBUG = xy; then
