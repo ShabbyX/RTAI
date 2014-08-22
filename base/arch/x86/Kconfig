@@ -34,20 +34,6 @@ endmenu
 
 menu "Machine (x86 / x86_64)"
 
-config RTAI_FPU_SUPPORT
-	bool "Enable FPU support"
-	default y
-	help
-	The FPU executes instructions from the processor's normal
-	instruction stream. It can handle the types of high-precision
-	floating-point processing operations commonly found in
-	scientific, engineering, and business applications.  Enabling
-	FPU support on a platform providing this hardware component
-	may greatly improve performances.  You can obtain more
-	information about Float-Point Unit on x86 platform on
-	internet at the following URL:
-	http://www.intel.com/design/intarch/techinfo/Pentium/fpu.htm
-
 config RTAI_CPUS
 	string "Number of CPUs (SMP-only)"
 	default 4
@@ -576,20 +562,6 @@ config RTAI_USE_NEWERR
 	Thus the new scheme has been made configurable to allow RTAI users
 	to choose what to do, without forcing any adaption for already 
 	existing working applications.
-
-config RTAI_MATH
-	tristate "Mathfuns support in kernel"
-	depends on RTAI_FPU_SUPPORT
-	default y
-	help
-	This parameter allows building a module containing math support 
-	functions for kernel space. It might be useful to avoid fighting
-	for the use of libc within the kernel.
-
-config RTAI_MATH_C99
-	bool "C99 standard support"
-	depends on RTAI_MATH
-	default y
 
 config RTAI_MALLOC
 	tristate "Real-time malloc support"

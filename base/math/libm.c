@@ -44,10 +44,8 @@ void __rtai_math_exit(void)
 	}
 }
 
-#ifndef CONFIG_RTAI_MATH_BUILTIN
 module_init(__rtai_math_init);
 module_exit(__rtai_math_exit);
-#endif /* CONFIG_RTAI_MATH_BUILTIN */
 
 #ifdef CONFIG_KBUILD
 EXPORT_SYMBOL(acos);
@@ -74,8 +72,6 @@ EXPORT_SYMBOL(sinh);
 EXPORT_SYMBOL(sqrt);
 EXPORT_SYMBOL(tan);
 EXPORT_SYMBOL(tanh);
-
-#ifdef CONFIG_RTAI_MATH_C99
 EXPORT_SYMBOL(acosh);
 EXPORT_SYMBOL(asinh);
 EXPORT_SYMBOL(atanh);
@@ -112,5 +108,4 @@ EXPORT_SYMBOL(y0);
 EXPORT_SYMBOL(y1);
 EXPORT_SYMBOL(yn);
 EXPORT_SYMBOL(libm_errno);
-#endif /* CONFIG_RTAI_MATH_C99 */
 #endif /* CONFIG_KBUILD */

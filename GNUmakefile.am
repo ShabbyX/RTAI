@@ -98,9 +98,7 @@ install-exec-local: devices
 
 dist-hook:
 	$(MAKE) -C $(distdir)/base/config/kconfig \
-	-f Makefile.kconfig distclean srctree=$(distdir)
-	rm -fr `find $(distdir) -name CVS`
-	test -e $(srcdir)/doc || rm -fr $(distdir)/doc
+	-f Makefile.kconfig distclean srctree=$(srcdir)
 
 dev devices:
 	@if test -r $(DESTDIR)/etc/udev/udev.rules ; then \

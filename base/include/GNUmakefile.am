@@ -41,7 +41,7 @@ install-data-local:
 
 if CONFIG_RTAI_OLD_FASHIONED_BUILD
 distclean-local:
-	rm -f $(DESTDIR)$(includedir)/asm $(DESTDIR)$(includedir)/rtai_config.h
+	rm -f $(srcdir)$(includedir)/asm $(srcdir)$(includedir)/rtai_config.h
 endif
 
 SUBDIRS = $(ARCHDIR)

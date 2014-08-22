@@ -276,23 +276,7 @@ AC_ARG_ENABLE(trace,
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_TRACE:-no})
 
-if test x${CONFIG_RTAI_MATH} = xy; then
-   CONFIG_RTAI_MATH=m
-fi
-
-AC_MSG_CHECKING(for math support)
-AC_ARG_ENABLE(math,
-	[ --enable-math		Enable math support],
-	[case "$enableval" in
-	y | yes | b | builtin | built-in) CONFIG_RTAI_MATH=y ;;
-	m | mod | module) CONFIG_RTAI_MATH=m ;;
-	*) unset CONFIG_RTAI_MATH ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_MATH:-no})
-
-if test x$CONFIG_RTAI_MATH = xy ; then
-  RTAI_BUILTIN_MODLIST="$RTAI_BUILTIN_MODLIST math"
-fi
+CONFIG_RTAI_MATH=m
 
 AC_MSG_CHECKING(for bits IPC support)
 AC_ARG_ENABLE(bits,
@@ -717,15 +701,6 @@ CXXFLAGS="$save_CXXFLAGS"
 
 CONFIG_RTAI_FPU_SUPPORT=y
 
-AC_MSG_CHECKING(for math C99 support)
-AC_ARG_ENABLE(math-c99,
-	[ --enable-math-c99	Enable math C99 support],
-	[case "$enableval" in
-	y | yes) CONFIG_RTAI_MATH_C99=y ;;
-	*) unset CONFIG_RTAI_MATH_C99 ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_MATH_C99:-no})
-
 AC_MSG_CHECKING(for tlsf use in real-time malloc support)
 AC_ARG_ENABLE(malloc-tlsf,
 	[ --enable-malloc-tlsf	Enable tlsf support in malloc],
@@ -937,15 +912,6 @@ if test x$CONFIG_RTAI_RTDM_SHIRQ = xy ; then
    fi
 fi
 
-dnl Built-in math support is not currently available with Kbuild-built
-dnl kernels due to bad dependencies on user-space headers we really
-dnl need to fix first. So we leave in place all the config machinery
-dnl for having built-in/modular math support, but will complain here
-dnl until those dependencies are properly cleared.
-if test x$CONFIG_KBUILD = xy -a x$CONFIG_RTAI_MATH = xy ; then
-   AC_MSG_ERROR([Built-in math support is not currently available with Linux >= 2.6.x])
-fi
-
 dnl
 dnl Build a Kconfig file corresponding to the current configuration
 dnl if none exists.
@@ -966,6 +932,8 @@ AC_DEFINE_UNQUOTED(CONFIG_RTAI_REVISION_LEVEL,$CONFIG_RTAI_REVISION_LEVEL,[Kconf
 
 AC_DEFINE(CONFIG_RTAI,1,[Legacy])
 AC_DEFINE(CONFIG_RTAI_MOUNT_ON_LOAD,1,[Legacy])
+AC_DEFINE(CONFIG_RTAI_FPU_SUPPORT,1,[Kconfig])
+AC_DEFINE(CONFIG_RTAI_MATH,1,[Kconfig])
 test \! x$CONFIG_KBUILD = x && AC_DEFINE(CONFIG_KBUILD,1,[Kconfig])
 test \! x$CONFIG_RTAI_ADEOS = x && AC_DEFINE(CONFIG_RTAI_ADEOS,1,[Kconfig])
 test \! x$CONFIG_RTAI_HAL_PREEMPT = x && AC_DEFINE(CONFIG_RTAI_HAL_PREEMPT,1,[Kconfig])
@@ -973,10 +941,7 @@ test \! x$CONFIG_RTAI_CPUS = x && AC_DEFINE_UNQUOTED(CONFIG_RTAI_CPUS,$CONFIG_RT
 test x$CONFIG_RTAI_DIAG_TSC_SYNC = xy && AC_DEFINE(CONFIG_RTAI_DIAG_TSC_SYNC,1,[Kconfig])
 test \! x$CONFIG_RTAI_MASTER_TSC_CPU = x && AC_DEFINE_UNQUOTED(CONFIG_RTAI_MASTER_TSC_CPU,$CONFIG_RTAI_MASTER_TSC_CPU,[Kconfig])
 test x$CONFIG_RTAI_TUNE_TSC_SYNC = xy && AC_DEFINE(CONFIG_RTAI_TUNE_TSC_SYNC,1,[Kconfig])
-test \! x$CONFIG_RTAI_FPU_SUPPORT = x && AC_DEFINE(CONFIG_RTAI_FPU_SUPPORT,1,[Kconfig])
-test \! x$CONFIG_RTAI_MATH_C99 = x && AC_DEFINE(CONFIG_RTAI_MATH_C99,1,[Kconfig])
 test \! x$CONFIG_RTAI_TRACE = x && AC_DEFINE(CONFIG_RTAI_TRACE,1,[Kconfig])
-test \! x$CONFIG_RTAI_MATH = x && AC_DEFINE(CONFIG_RTAI_MATH,1,[Kconfig])
 test \! x$CONFIG_RTAI_BITS = x && AC_DEFINE(CONFIG_RTAI_BITS,1,[Kconfig])
 test \! x$CONFIG_RTAI_FIFOS = x && AC_DEFINE(CONFIG_RTAI_FIFOS,1,[Kconfig])
 test \! x$CONFIG_RTAI_NETRPC = x && AC_DEFINE(CONFIG_RTAI_NETRPC,1,[Kconfig])
@@ -999,7 +964,6 @@ test \! x$CONFIG_RTAI_ALIGN_LINUX_PRIORITY = x && AC_DEFINE(CONFIG_RTAI_ALIGN_LI
 test \! x$CONFIG_RTAI_TASK_SWITCH_SIGNAL = x && AC_DEFINE(CONFIG_RTAI_TASK_SWITCH_SIGNAL,1,[Kconfig])
 test \! x$CONFIG_RTAI_HARD_SOFT_TOGGLER = x && AC_DEFINE(CONFIG_RTAI_HARD_SOFT_TOGGLER,1,[Kconfig])
 
-test x$CONFIG_RTAI_MATH = xy && AC_DEFINE(CONFIG_RTAI_MATH_BUILTIN,1,[Kconfig])
 test x$CONFIG_RTAI_BITS = xy && AC_DEFINE(CONFIG_RTAI_BITS_BUILTIN,1,[Kconfig])
 test x$CONFIG_RTAI_FIFOS = xy && AC_DEFINE(CONFIG_RTAI_FIFOS_BUILTIN,1,[Kconfig])
 test x$CONFIG_RTAI_NETRPC = xy && AC_DEFINE(CONFIG_RTAI_NETRPC_BUILTIN,1,[Kconfig])
@@ -1155,7 +1119,6 @@ AM_CONDITIONAL(CONFIG_RTAI_MALLOC,[test -n "$CONFIG_RTAI_MALLOC"])
 AM_CONDITIONAL(CONFIG_RTAI_TASKLETS,[test -n "$CONFIG_RTAI_TASKLETS"])
 AM_CONDITIONAL(CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL,[test -n "$CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL"])
 
-AM_CONDITIONAL(CONFIG_RTAI_MATH_BUILTIN,[test x$CONFIG_RTAI_MATH = xy])
 AM_CONDITIONAL(CONFIG_RTAI_BITS_BUILTIN,[test x$CONFIG_RTAI_BITS = xy])
 AM_CONDITIONAL(CONFIG_RTAI_FIFOS_BUILTIN,[test x$CONFIG_RTAI_FIFOS = xy])
 AM_CONDITIONAL(CONFIG_RTAI_NETRPC_BUILTIN,[test x$CONFIG_RTAI_NETRPC = xy])
@@ -1173,7 +1136,6 @@ AM_CONDITIONAL(CONFIG_RTAI_RTDM,[test x$CONFIG_RTAI_RTDM = xy])
 
 dnl Misc compilation conditionals
 AM_CONDITIONAL(CONFIG_RTAI_ADEOS,[test "$CONFIG_RTAI_ADEOS" = y])
-AM_CONDITIONAL(CONFIG_RTAI_MATH_C99,[test "$CONFIG_RTAI_MATH_C99" = y])
 
 dnl Maintenance symbols and profiles
 AM_CONDITIONAL(CONFIG_RTAI_OLD_FASHIONED_BUILD,[test "$CONFIG_RTAI_OLD_FASHIONED_BUILD" = y])
