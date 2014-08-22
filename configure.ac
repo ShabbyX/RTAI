@@ -1158,7 +1158,7 @@ fi
 dnl extra arch-dependent opts to be passed to the compiler
 RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce"
 RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -Wall -Wstrict-prototypes"
-RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -ffreestanding -mieee-fp -mhard-float -mpreferred-stack-boundary=4 -msse -Wno-undef"
+RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -ffreestanding -frounding-math -fsignaling-nans -mieee-fp -mhard-float -mpreferred-stack-boundary=4 -mfpmath=sse -msse -msse2 -Wno-undef"
 
 if test x$CONFIG_RTAI_KMOD_DEBUG = xy; then
    RTAI_KMOD_CFLAGS="-g $RTAI_KMOD_CFLAGS"

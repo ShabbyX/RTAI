@@ -47,7 +47,6 @@ void __rtai_math_exit(void)
 module_init(__rtai_math_init);
 module_exit(__rtai_math_exit);
 
-#ifdef CONFIG_KBUILD
 EXPORT_SYMBOL(acos);
 EXPORT_SYMBOL(asin);
 EXPORT_SYMBOL(atan);
@@ -93,19 +92,13 @@ EXPORT_SYMBOL(lgamma_r);
 EXPORT_SYMBOL(log1p);
 EXPORT_SYMBOL(logb);
 EXPORT_SYMBOL(matherr);
-EXPORT_SYMBOL(nearbyint);
 EXPORT_SYMBOL(nextafter);
 EXPORT_SYMBOL(remainder);
 EXPORT_SYMBOL(rint);
-EXPORT_SYMBOL(rinttol);
-EXPORT_SYMBOL(round);
-EXPORT_SYMBOL(roundtol);
 EXPORT_SYMBOL(scalb);
 EXPORT_SYMBOL(signgam);
 EXPORT_SYMBOL(significand);
-EXPORT_SYMBOL(trunc);
 EXPORT_SYMBOL(y0);
 EXPORT_SYMBOL(y1);
 EXPORT_SYMBOL(yn);
 EXPORT_SYMBOL(libm_errno);
-#endif /* CONFIG_KBUILD */
