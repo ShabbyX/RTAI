@@ -50,13 +50,13 @@ config RTAI_FPU_SUPPORT
 
 config RTAI_CPUS
 	string "Number of CPUs (SMP-only)"
-	default 2
+	default 4
 	help
 	RTAI has native support for Symmetrical Multi-Processing
 	machines. If it is your case, you may want to enter here the
 	number of CPUs of your motherboard.
 
-	PAY ATTENTION: the default value is 2.
+	PAY ATTENTION: the default value is 4.
 
 config RTAI_DIAG_TSC_SYNC
 	bool "Diagnose out of sync MP-TSCs"
@@ -264,7 +264,7 @@ config RTAI_FULL_PRINHER
 
 config RTAI_ALIGN_LINUX_PRIORITY
 	bool "Keep Linux task priority aligned to RTAI"
-	default n
+	default y
 	help
 
 	By enabling this option the RTAI scheduler will keep Linux tasks
@@ -275,7 +275,7 @@ config RTAI_ALIGN_LINUX_PRIORITY
 
 config RTAI_ONE_SHOT
 	bool "One-shot timer mode"
-	default n
+	default y
 	help
 	Set to enable one-shot timer mode as the default. If not set, the 
 	hard timer will run in periodic mode according to the period used 
