@@ -25,7 +25,7 @@ configure
 aclocal.m4
 ltversion.m4
 bin/
-m4/
+m4/*
 doc/guide/*.html
 addons/drivers/16550A/FORCE
 
