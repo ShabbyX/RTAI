@@ -1,8 +1,6 @@
-/* e_fmax.c Alec Ari */
 /*
- * ====================================================
- * Copyright (C) 2014 by Alec Ari, All rights reserved.
- * ====================================================
+ * e_fmax.c
+ * Written by Alec Ari, feel free to modify, don't care
  */
 
 #include "math.h"
