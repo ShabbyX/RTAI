@@ -4,19 +4,14 @@ AC_PREREQ(2.69)
 AC_INIT([4.0.0], [4.0.0], [neotheuser@ymail.com])
 AC_CONFIG_AUX_DIR(base/config/autoconf)
 AC_CONFIG_MACRO_DIR([m4])
-AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([foreign no-exeext dist-bzip2])
 AM_SILENT_RULES([yes])
+AC_CONFIG_HEADERS(rtai_config.h)
 
 CONFIG_RTAI_VERSION_MAJOR=4
 CONFIG_RTAI_VERSION_MINOR=0
 CONFIG_RTAI_REVISION_LEVEL=0
 
-AC_CONFIG_HEADERS(rtai_config.h)
-AC_CONFIG_SRCDIR(base/sched/sched.c)
-AC_PREFIX_DEFAULT(/usr/realtime)
-AC_CANONICAL_BUILD
-AC_CANONICAL_HOST
 AC_PROG_INSTALL
 LT_INIT
 AM_PROG_AS
@@ -216,12 +211,7 @@ dnl
 dnl Identify the base technology used.
 dnl
 
-unset CONFIG_RTAI_ADEOS
-unset CONFIG_RTAI_IPIPE
-
 AC_MSG_CHECKING([for RTAI base technology])
-
-dnl we simply check for ipipe.h
 if test -r $LINUX_KERNELSRC/include/linux/ipipe.h; then
    AC_DEFINE(CONFIG_RTAI_IPIPE,1,[Use RTAI Adeos-newgen HAL])
    AC_MSG_RESULT([RTAI Adeos-newgen HAL])
@@ -580,7 +570,7 @@ AC_ARG_ENABLE(sched-lxrt-numslots,
 	esac])
 if test x$CONFIG_RTAI_SCHED_LXRT_NUMSLOTS = x ; then
   # Use a reasonable default if unset
-  CONFIG_RTAI_SCHED_LXRT_NUMSLOTS=512
+  CONFIG_RTAI_SCHED_LXRT_NUMSLOTS=1024
 fi
 AC_MSG_RESULT($CONFIG_RTAI_SCHED_LXRT_NUMSLOTS)
 
@@ -605,7 +595,7 @@ AC_ARG_ENABLE(rtdm-fd-max,
 	esac])
 if test x$CONFIG_RTAI_RTDM_FD_MAX = x ; then
   # Use a reasonable default if unset
-  CONFIG_RTAI_RTDM_FD_MAX=128
+  CONFIG_RTAI_RTDM_FD_MAX=512
 else
 	case $CONFIG_RTAI_RTDM_FD_MAX in
 	changequote(,)dnl

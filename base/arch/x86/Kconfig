@@ -193,7 +193,7 @@ config RTAI_USER_BUSY_ALIGN_RET_DELAY
 
 config RTAI_SCHED_LXRT_NUMSLOTS
 	string "Number of registrable RTAI objects"
-	default 256
+	default 1024
 	help
 	The maximum number of registrable objects in RTAI.
 
