@@ -76,8 +76,8 @@ clean-local:
 distclean-local:
 	$(MAKE) -C $(srcdir)/base/config/kconfig \
 	-f Makefile.kconfig distclean srctree=$(srcdir)
-	find . -name autom4te.cache | xargs rm -fr
 	find . -name GNUmakefile.in | xargs rm -fr
+	rm -rf rtai_config* autom4te.cache
 else
 clean-local:
 	rm -f .cfchanged
