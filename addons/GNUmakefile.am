@@ -1,5 +1,0 @@
-OPTDIRS =
-
-OPTDIRS += rtdm
-
-SUBDIRS = $(OPTDIRS)

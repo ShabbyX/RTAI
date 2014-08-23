@@ -2,8 +2,6 @@ moduledir = @RTAI_MODULE_DIR@
 
 modext = @RTAI_MODULE_EXT@
 
-
-
 libnetrpc_a_SOURCES = netrpc.c rtnetP.h
 
 if CONFIG_KBUILD
@@ -27,7 +25,6 @@ libnetrpc_a_AR = ar cru
 AM_CPPFLAGS = \
 	@RTAI_KMOD_CFLAGS@ \
 	-I$(top_srcdir)/base/include \
-	-I$(top_srcdir)/addons/rtdm \
 	-I$(srcdir)/rtnet \
 	-I../../include
 

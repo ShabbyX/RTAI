@@ -1,12 +1,6 @@
-OPTDIRS =
+SUBDIRS = base
 
-OPTDIRS += addons
-
-SUBDIRS = base $(OPTDIRS)
-
-DIST_SUBDIRS = \
-	base \
-	addons
+DIST_SUBDIRS = base
 
 EXTRA_DIST = \
 README.INSTALL \

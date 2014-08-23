@@ -574,65 +574,6 @@ if test x$CONFIG_RTAI_SCHED_LXRT_NUMSLOTS = x ; then
 fi
 AC_MSG_RESULT($CONFIG_RTAI_SCHED_LXRT_NUMSLOTS)
 
-AC_MSG_CHECKING(for RTDM support)
-AC_ARG_ENABLE(rtdm,
-	[ --enable-rtdm		Enable RTDM support],
-	[case "$enableval" in
-	y | yes | b | builtin | built-in) CONFIG_RTAI_RTDM=y ;;
-	m | mod | module) CONFIG_RTAI_RTDM=m ;;
-	*) unset CONFIG_RTAI_RTDM ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_RTDM:-no})
-
-AC_MSG_CHECKING(for maximum file descriptors in RTDM)
-AC_ARG_ENABLE(rtdm-fd-max,
-	      [ --enable-rtdm-fd-max		Set maximum number of RTDM file descriptor slots],
-	[case "$enableval" in
- changequote(,)dnl
-	[1-9][0-9]*) CONFIG_RTAI_RTDM_FD_MAX=$enableval ;;
- changequote([,])dnl
-	*) AC_MSG_ERROR([Bad argument to option: --enable-rtdm-fd-max=<number>]) ;;
-	esac])
-if test x$CONFIG_RTAI_RTDM_FD_MAX = x ; then
-  # Use a reasonable default if unset
-  CONFIG_RTAI_RTDM_FD_MAX=512
-else
-	case $CONFIG_RTAI_RTDM_FD_MAX in
-	changequote(,)dnl
-	[1-9][0-9]*) ;;
-	changequote([,])dnl
-	*) AC_MSG_ERROR([Bad value $CONFIG_RTAI_RTDM_FD_MAX for RTAI_RTDM_FD_MAX]) ;;
-	esac
-fi
-AC_MSG_RESULT($CONFIG_RTAI_RTDM_FD_MAX)
-
-AC_MSG_CHECKING(for shared interrupts in RTDM)
-AC_ARG_ENABLE(rtdm-shirq,
-	      [ --enable-rtdm-shirq	Enable shared interrupts in RTDM],
-	[case "$enableval" in
-	y | yes) CONFIG_RTAI_RTDM_SHIRQ=y ;;
-	*) unset CONFIG_RTAI_RTDM_SHIRQ ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_RTDM_SHIRQ:-no})
-
-AC_MSG_CHECKING(for select(2) support in RTDM)
-AC_ARG_ENABLE(rtdm-select,
-	      [ --enable-rtdm-select	Enable select support in RTDM],
-	[case "$enableval" in
-	y | yes) CONFIG_RTAI_RTDM_SELECT=y ;;
-	*) unset CONFIG_RTAI_RTDM_SELECT ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_RTDM_SELECT:-no})
-
-AC_MSG_CHECKING(for RTDM debug)
-AC_ARG_ENABLE(debug-rtdm,
-	      [ --enable-debug-rtdm		Enable RTDM debug],
-	[case "$enableval" in
-	y | yes) CONFIG_RTAI_DEBUG_RTDM=y ;;
-	*) unset CONFIG_RTAI_DEBUG_RTDM ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_DEBUG_RTDM:-no})
-
 AC_MSG_CHECKING(for task switch signal)
 AC_ARG_ENABLE(task-switch-signal,
 	      [ --enable-task-switch-signal		Enable RTAI task switch signal],
@@ -890,18 +831,6 @@ if test x$CONFIG_RTAI_MQ = xy ; then
    fi
 fi
 
-if test x$CONFIG_RTAI_RTDM_SELECT = xy ; then
-   if test x$CONFIG_RTAI_RTDM = x ; then
-      AC_MSG_ERROR([--enable-rtdm-select=y requires --enable-rtdm=y])
-   fi
-fi
-
-if test x$CONFIG_RTAI_RTDM_SHIRQ = xy ; then
-   if test x$CONFIG_RTAI_RTDM = x ; then
-      AC_MSG_ERROR([--enable-rtdm-shirq=y requires --enable-rtdm=y])
-   fi
-fi
-
 dnl
 dnl Build a Kconfig file corresponding to the current configuration
 dnl if none exists.
@@ -949,7 +878,6 @@ test \! x$CONFIG_RTAI_USE_TLSF = x && AC_DEFINE(CONFIG_RTAI_USE_TLSF,1,[Kconfig]
 test \! x$CONFIG_RTAI_MALLOC_VMALLOC = x && AC_DEFINE(CONFIG_RTAI_MALLOC_VMALLOC,1,[Kconfig])
 test \! x$CONFIG_RTAI_TASKLETS = x && AC_DEFINE(CONFIG_RTAI_TASKLETS,1,[Kconfig])
 test \! x$CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL = x && AC_DEFINE(CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL,1,[Kconfig])
-test \! x$CONFIG_RTAI_RTDM = x && AC_DEFINE(CONFIG_RTAI_RTDM,1,[Kconfig])
 test \! x$CONFIG_RTAI_ALIGN_LINUX_PRIORITY = x && AC_DEFINE(CONFIG_RTAI_ALIGN_LINUX_PRIORITY,1,[Kconfig])
 test \! x$CONFIG_RTAI_TASK_SWITCH_SIGNAL = x && AC_DEFINE(CONFIG_RTAI_TASK_SWITCH_SIGNAL,1,[Kconfig])
 test \! x$CONFIG_RTAI_HARD_SOFT_TOGGLER = x && AC_DEFINE(CONFIG_RTAI_HARD_SOFT_TOGGLER,1,[Kconfig])
@@ -972,10 +900,6 @@ test x$CONFIG_RTAI_LONG_TIMED_LIST = xy && AC_DEFINE(CONFIG_RTAI_LONG_TIMED_LIST
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_SCHED_8254_LATENCY,$CONFIG_RTAI_SCHED_8254_LATENCY,[Kconfig])
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_SCHED_APIC_LATENCY,$CONFIG_RTAI_SCHED_APIC_LATENCY,[Kconfig])
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_SCHED_LXRT_NUMSLOTS,$CONFIG_RTAI_SCHED_LXRT_NUMSLOTS,[Kconfig])
-AC_DEFINE_UNQUOTED(CONFIG_RTAI_RTDM_FD_MAX,$CONFIG_RTAI_RTDM_FD_MAX,[Kconfig])
-test x$CONFIG_RTAI_RTDM_SHIRQ = xy && AC_DEFINE(CONFIG_RTAI_RTDM_SHIRQ,1,[Kconfig])
-test x$CONFIG_RTAI_RTDM_SELECT = xy && AC_DEFINE(CONFIG_RTAI_RTDM_SELECT,1,[Kconfig])
-test x$CONFIG_RTAI_DEBUG_RTDM = xy && AC_DEFINE(CONFIG_RTAI_DEBUG_RTDM,1,[Kconfig])
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_CAL_FREQS_FACT,$CONFIG_RTAI_CAL_FREQS_FACT,[Kconfig])
 
 case $CONFIG_RTAI_MONITOR_EXECTIME in
@@ -1121,9 +1045,6 @@ AM_CONDITIONAL(CONFIG_RTAI_SHM_BUILTIN,[test x$CONFIG_RTAI_SHM = xy])
 AM_CONDITIONAL(CONFIG_RTAI_MALLOC_BUILTIN,[test x$CONFIG_RTAI_MALLOC = xy])
 AM_CONDITIONAL(CONFIG_RTAI_TASKLETS_BUILTIN,[test x$CONFIG_RTAI_TASKLETS = xy])
 
-dnl Supported skins
-AM_CONDITIONAL(CONFIG_RTAI_RTDM,[test x$CONFIG_RTAI_RTDM = xy])
-
 dnl Misc compilation conditionals
 AM_CONDITIONAL(CONFIG_RTAI_ADEOS,[test "$CONFIG_RTAI_ADEOS" = y])
 
@@ -1207,7 +1128,6 @@ AC_CONFIG_LINKS(base/malloc/Makefile:base/malloc/Makefile.kbuild)
 AC_CONFIG_LINKS(base/tasklets/Makefile:base/tasklets/Makefile.kbuild)
 AC_CONFIG_LINKS(base/math/Makefile:base/math/Makefile.kbuild)
 AC_CONFIG_LINKS(base/sched/Makefile:base/sched/Makefile.kbuild)
-AC_CONFIG_LINKS(addons/rtdm/Makefile:addons/rtdm/Makefile.kbuild)
 
 dnl
 dnl POSIX wraps
@@ -1277,10 +1197,7 @@ AC_CONFIG_FILES([ \
 	base/malloc/GNUmakefile \
 	base/tasklets/GNUmakefile \
 	base/trace/GNUmakefile \
-	base/posix/GNUmakefile \
-	addons/GNUmakefile \
-	addons/rtdm/GNUmakefile \
-	addons/rtdm/lib/GNUmakefile
+	base/posix/GNUmakefile
 	])
 
 AC_OUTPUT
