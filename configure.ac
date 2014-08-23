@@ -56,7 +56,6 @@ if test $GCC_VERSION_MAJOR -lt 3 -o $GCC_VERSION_MAJOR -eq 3 -a $GCC_VERSION_MIN
 else
 	AC_MSG_RESULT([yes])
 fi
-RTAI_FP_CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0"
 
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_BUILD_STRING,"$build",[Build system alias])
 RTAI_BUILD_STRING="$build"
@@ -737,24 +736,6 @@ if test x$CONFIG_X86_TSC = xy ; then
 	AC_DEFINE(CONFIG_RTAI_TSC,1,[Use TSC in user space])
 fi
 
-AC_MSG_CHECKING(for debug symbols in kernel modules)
-AC_ARG_ENABLE(module-debug,
-	[ --enable-module-debug	Enable debug information in kernel modules],
-	[case "$enableval" in
-	y | yes) CONFIG_RTAI_KMOD_DEBUG=y ;;
-	*) unset CONFIG_RTAI_KMOD_DEBUG ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_KMOD_DEBUG:-no})
-
-AC_MSG_CHECKING(for debug symbols in user-space programs)
-AC_ARG_ENABLE(user-debug,
-	[ --enable-user-debug	Enable debug information in user-space programs],
-	[case "$enableval" in
-	y | yes) CONFIG_RTAI_USER_DEBUG=y ;;
-	*) unset CONFIG_RTAI_USER_DEBUG ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_USER_DEBUG:-no})
-
 dnl Catch sub-package flags
 
 dnl We need to know this before building the APIC support
@@ -1067,21 +1048,10 @@ RTAI_KBUILD_DISTCLEAN=""
 AC_MSG_CHECKING([for kernel module extension])
 AC_MSG_RESULT([$RTAI_MODULE_EXT])
 
-RTAI_REAL_USER_CFLAGS=""
-
-if test x"$LINUX_KERNELOUTPUT" != x"$LINUX_KERNELSRC"; then
-  RTAI_REAL_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include $RTAI_REAL_USER_CFLAGS"
-fi
-
 dnl extra arch-dependent opts to be passed to the compiler
-RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CFLAGS -fno-rtti -fno-exceptions -fno-strength-reduce"
-RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -Wall -Wstrict-prototypes"
-RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -ffreestanding -frounding-math -fsignaling-nans -mieee-fp -mhard-float -mpreferred-stack-boundary=4 -mfpmath=sse -msse -msse2 -Wno-undef"
-
-if test x$CONFIG_RTAI_KMOD_DEBUG = xy; then
-   RTAI_KMOD_CFLAGS="-g $RTAI_KMOD_CFLAGS"
-   RTAI_KMOD_CXXFLAGS="-g $RTAI_KMOD_CXXFLAGS"
-fi
+RTAI_KMOD_CXXFLAGS="-fno-rtti -fno-exceptions -fno-strength-reduce"
+RTAI_USER_CFLAGS="-Wall -Wstrict-prototypes"
+RTAI_FP_CFLAGS="-ffreestanding -frounding-math -fsignaling-nans -mieee-fp -mhard-float -mpreferred-stack-boundary=4 -mfpmath=sse -msse -msse2 -Wno-undef"
 
 if [[ $ac_cv_accepts_cxa_atexit = yes ]]; then
    RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CXXFLAGS -fno-use-cxa-atexit"
@@ -1091,10 +1061,10 @@ RTAI_LXRT_LDADD=
 
 RTAI_KMOD_APP_CFLAGS=$RTAI_KMOD_CFLAGS
 RTAI_KMOD_APP_CXXFLAGS=$RTAI_KMOD_CXXFLAGS
-RTAI_USER_APP_CFLAGS=$RTAI_REAL_USER_CFLAGS
+RTAI_USER_APP_CFLAGS=$RTAI_USER_CFLAGS
 RTAI_KMOD_CFLAGS="$RTAI_KMOD_CFLAGS -D__IN_RTAI__"
 RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CXXFLAGS -D__IN_RTAI__"
-RTAI_REAL_USER_CFLAGS="$RTAI_REAL_USER_CFLAGS -D__IN_RTAI__"
+RTAI_USER_CFLAGS="$RTAI_USER_CFLAGS -D__IN_RTAI__"
 
 AC_CONFIG_LINKS(base/include/asm:$srcdir/base/include/asm-x86)
 
@@ -1131,8 +1101,6 @@ dnl POSIX wraps
 dnl
 RTAI_POSIX_WRAP=`for f in \`cat "${srcdir}/base/posix/POSIX_WRAPS"\`; do echo -n " -Wl,--wrap -Wl,$f" ; done`
 
-RTAI_USER_CFLAGS="-I$LINUX_KERNELSRC/include $RTAI_REAL_USER_CFLAGS"
-
 dnl
 dnl Build the Makefiles
 dnl
@@ -1145,7 +1113,6 @@ AC_SUBST(RTAI_KMOD_CFLAGS)
 AC_SUBST(RTAI_KMOD_CXXFLAGS)
 AC_SUBST(RTAI_COMPAT_CPPFLAGS)
 AC_SUBST(RTAI_USER_CFLAGS)
-AC_SUBST(RTAI_REAL_USER_CFLAGS)
 AC_SUBST(RTAI_KMOD_APP_CFLAGS)
 AC_SUBST(RTAI_KMOD_APP_CXXFLAGS)
 AC_SUBST(RTAI_USER_APP_CFLAGS)

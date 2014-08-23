@@ -3,8 +3,6 @@ moduledir = @RTAI_MODULE_DIR@
 
 modext = @RTAI_MODULE_EXT@
 
-
-
 libcalibrate_rt_a_SOURCES = calibrate-module.c calibrate.h
 libsmi_rt_a_SOURCES = smi-module.c
 
@@ -57,7 +55,7 @@ calibration_PROGRAMS += calibration_helper
 calibrate_SOURCES = calibrate.c calibrate.h
 
 calibrate_CPPFLAGS = \
-	@RTAI_REAL_USER_CFLAGS@ \
+	@RTAI_USER_CFLAGS@ \
 	-DKERNEL_HELPER_PATH="\"$(calibrationdir)/rtai_calibrate$(modext)\"" \
 	-DUSER_HELPER_PATH="\"$(calibrationdir)/calibration_helper\"" \
 	-I$(top_srcdir)/base/include \
@@ -66,7 +64,7 @@ calibrate_CPPFLAGS = \
 calibration_helper_SOURCES = calibration_helper.c
 
 calibration_helper_CPPFLAGS = \
-	@RTAI_REAL_USER_CFLAGS@ \
+	@RTAI_USER_CFLAGS@ \
 	-DHAL_SCHED_PATH="\"$(DESTDIR)$(moduledir)\"" \
 	-DHAL_SCHED_MODEXT="\"$(modext)\"" \
 	-I$(top_srcdir)/base/include \
