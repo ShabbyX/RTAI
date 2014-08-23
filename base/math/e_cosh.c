@@ -5,24 +5,24 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
 
 /* __ieee754_cosh(x)
- * Method : 
+ * Method :
  * mathematically cosh(x) if defined to be (exp(x)+exp(-x))/2
- *	1. Replace x by |x| (cosh(x) = cosh(-x)). 
- *	2. 
- *		                                        [ exp(x) - 1 ]^2 
- *	    0        <= x <= ln2/2  :  cosh(x) := 1 + -------------------
- *			       			           2*exp(x)
+ *	1. Replace x by |x| (cosh(x) = cosh(-x)).
+ *	2.
+ *							[ exp(x) - 1 ]^2
+ *	    0	<= x <= ln2/2  :  cosh(x) := 1 + -------------------
+ *			       				   2*exp(x)
  *
- *		                                  exp(x) +  1/exp(x)
+ *						  exp(x) +  1/exp(x)
  *	    ln2/2    <= x <= 22     :  cosh(x) := -------------------
- *			       			          2
- *	    22       <= x <= lnovft :  cosh(x) := exp(x)/2 
+ *			       				  2
+ *	    22       <= x <= lnovft :  cosh(x) := exp(x)/2
  *	    lnovft   <= x <= ln2ovft:  cosh(x) := exp(x/2)/2 * exp(x/2)
  *	    ln2ovft  <  x	    :  cosh(x) := huge*huge (overflow)
  *
@@ -37,7 +37,7 @@
 static const double one = 1.0, half=0.5, huge = 1.0e300;
 
 	double __ieee754_cosh(double x)
-{	
+{
 	double t,w;
 	int32_t ix;
 	u_int32_t lx;
@@ -47,7 +47,7 @@ static const double one = 1.0, half=0.5, huge = 1.0e300;
 	ix &= 0x7fffffff;
 
     /* x is INF or NaN */
-	if(ix>=0x7ff00000) return x*x;	
+	if(ix>=0x7ff00000) return x*x;
 
     /* |x| in [0,0.5*ln2], return 1+expm1(|x|)^2/(2*exp(|x|)) */
 	if(ix<0x3fd62e43) {
@@ -68,7 +68,7 @@ static const double one = 1.0, half=0.5, huge = 1.0e300;
 
     /* |x| in [log(maxdouble), overflowthresold] */
 	GET_LOW_WORD(lx,x);
-	if (ix<0x408633CE || 
+	if (ix<0x408633CE ||
 	      ((ix==0x408633ce)&&(lx<=(u_int32_t)0x8fb9f87d))) {
 	    w = __ieee754_exp(half*fabs(x));
 	    t = half*w;

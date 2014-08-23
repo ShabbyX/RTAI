@@ -25,8 +25,8 @@ struct option options[] = {
 	{ "help",       0, 0, 'h' },
 	{ "period",     1, 0, 'p' },
 	{ "spantime",   1, 0, 's' },
-	{ "tol",        1, 0, 't' },
-	{ NULL,         0, 0,  0  }
+	{ "tol",	1, 0, 't' },
+	{ NULL,	 0, 0,  0  }
 };
 
 void print_usage(void)
@@ -85,13 +85,13 @@ int main(int argc, char *argv[])
 {
 	int kern_latency, UserLatency = 0, KernLatency = 0, tol = 100;
 
-        while (1) {
+	while (1) {
 		int c;
 		if ((c = getopt_long(argc, argv, "hp:t:l:", options, NULL)) < 0) {
 			break;
 		}
 		switch(c) {
-			case 'h': { print_usage();         return 0; } 
+			case 'h': { print_usage();	 return 0; }
 			case 'p': { period = atoi(optarg);    break; }
 			case 't': { loops  = atoi(optarg);    break; }
 			case 'l': { tol    = atoi(optarg);    break; }

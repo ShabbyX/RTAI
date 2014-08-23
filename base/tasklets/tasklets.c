@@ -27,15 +27,15 @@
  * @defgroup tasklets module
  *
  * The tasklets module adds an interesting feature along the line, pioneered
- * by RTAI, of a symmetric usage of all its services inter-intra kernel and 
- * user space, both for soft and hard real time applications.   In such a way 
+ * by RTAI, of a symmetric usage of all its services inter-intra kernel and
+ * user space, both for soft and hard real time applications.   In such a way
  * you have opened a whole spectrum of development and implementation
  * lanes, allowing maximum flexibility with uncompromized performances.
  *
- * The new services provided can be useful when you have many tasks, both 
- * in kernel and user space, that must execute simple, often ripetitive, 
- * functions, both in soft and hard real time, asynchronously within their 
- * parent application. Such tasks are here called tasklets and can be of 
+ * The new services provided can be useful when you have many tasks, both
+ * in kernel and user space, that must execute simple, often ripetitive,
+ * functions, both in soft and hard real time, asynchronously within their
+ * parent application. Such tasks are here called tasklets and can be of
  * two kinds: normal tasklets and timed tasklets (timers).
  *
  * It must be noted that only timers should need to be made available both in
@@ -43,30 +43,30 @@
  * but standard functions that can be directly executed by calling them, so
  * there would be no need for any special treatment.   However to maintain full
  * usage symmetry and to ease any possible porting from one address space to
- * the other, plain tasklets can be used in the same way from whatever address 
+ * the other, plain tasklets can be used in the same way from whatever address
  * space.
  *
- * Tasklets should be used where and whenever the standard hard real time 
- * RTAI tasks are used.  Instances of such applications are timed polling and 
- * simple Programmable Logic Controllers (PLC) like sequences of services.   
- * Obviously there are many others instances that can make it sufficient the 
- * use of tasklets, either normal or timers.   In general such an approach can 
+ * Tasklets should be used where and whenever the standard hard real time
+ * RTAI tasks are used.  Instances of such applications are timed polling and
+ * simple Programmable Logic Controllers (PLC) like sequences of services.
+ * Obviously there are many others instances that can make it sufficient the
+ * use of tasklets, either normal or timers.   In general such an approach can
  * be a very useful complement to fully featured tasks in controlling complex
  * machines and systems, both for basic and support services.
  *
  * It is remarked that the implementation found here for timed tasklets rely on
- * server support tasks, one per cpu, that execute the related timer functions, 
- * either in oneshot or periodic mode, on the base of their time deadline and 
- * according to their, user assigned, priority. Instead, as told above, plain 
- * tasklets are just functions executed from kernel space; their execution 
- * needs no server and is simply triggered by calling a given service function 
+ * server support tasks, one per cpu, that execute the related timer functions,
+ * either in oneshot or periodic mode, on the base of their time deadline and
+ * according to their, user assigned, priority. Instead, as told above, plain
+ * tasklets are just functions executed from kernel space; their execution
+ * needs no server and is simply triggered by calling a given service function
  * at due time, either from a kernel task or interrupt handler requiring, or in
  * charge of, their execution whenever they are needed.
  *
  * Note that in user space you run within the memory of the process owning the
  * tasklet function so you MUST lock all of your tasks memory in core, by
- * using mlockall, to prevent it being swapped out.   Pre grow also your stack 
- * to the largest size needed during the execution of your application, see 
+ * using mlockall, to prevent it being swapped out.   Pre grow also your stack
+ * to the largest size needed during the execution of your application, see
  * mlockall usage in Linux mans.
  *
  * The RTAI distribution contains many useful examples that demonstrate the use
@@ -97,22 +97,22 @@ extern struct epoch_struct boot_epoch;
 DEFINE_LINUX_CR0
 
 #ifdef CONFIG_SMP
-#define NUM_CPUS           RTAI_NR_CPUS
+#define NUM_CPUS	   RTAI_NR_CPUS
 #define TIMED_TIMER_CPUID  (timed_timer->cpuid)
-#define TIMER_CPUID        (timer->cpuid)
-#define LIST_CPUID         (cpuid)
+#define TIMER_CPUID	(timer->cpuid)
+#define LIST_CPUID	 (cpuid)
 #else
-#define NUM_CPUS           1
+#define NUM_CPUS	   1
 #define TIMED_TIMER_CPUID  (0)
-#define TIMER_CPUID        (0)
-#define LIST_CPUID         (0)
+#define TIMER_CPUID	(0)
+#define LIST_CPUID	 (0)
 #endif
 
 
 static struct rt_tasklet_struct timers_list[NUM_CPUS] =
-{ { &timers_list[0], &timers_list[0], RT_SCHED_LOWEST_PRIORITY, 0, 0, RT_TIME_END, 0LL, NULL, 0UL, 0UL, 0, NULL, NULL, 0, 
+{ { &timers_list[0], &timers_list[0], RT_SCHED_LOWEST_PRIORITY, 0, 0, RT_TIME_END, 0LL, NULL, 0UL, 0UL, 0, NULL, NULL, 0,
 #ifdef  CONFIG_RTAI_LONG_TIMED_LIST
-{ NULL } 
+{ NULL }
 #endif
 }, };
 
@@ -142,19 +142,19 @@ static struct rt_fun_entry rt_tasklet_fun[] = {
 	{ 0, rt_wait_tasklet_is_hard },	   	//  13
 	{ 0, rt_set_tasklet_priority },  	//  14
 	{ 0, rt_register_task },	  	//  15
-	{ 0, rt_get_timer_times },		//  16	
-	{ 0, rt_get_timer_overrun },		//  17	
-		
-/* Posix timers support */	
+	{ 0, rt_get_timer_times },		//  16
+	{ 0, rt_get_timer_overrun },		//  17
+
+/* Posix timers support */
 
 	{ 0, rt_ptimer_create },		//  18
 	{ 0, rt_ptimer_settime },		//  19
 	{ 0, rt_ptimer_overrun },		//  20
 	{ 0, rt_ptimer_gettime },		//  21
-	{ 0, rt_ptimer_delete }			//  22	
-	
+	{ 0, rt_ptimer_delete }			//  22
+
 /* End Posix timers support */
-	
+
 };
 
 #ifdef CONFIG_RTAI_LONG_TIMED_LIST
@@ -193,7 +193,7 @@ static inline void enq_timer(struct rt_tasklet_struct *timed_timer)
 {
 	struct rt_tasklet_struct *timer;
 	timer = &timers_list[TIMED_TIMER_CPUID];
-        while (timed_timer->firing_time > (timer = timer->next)->firing_time);
+	while (timed_timer->firing_time > (timer = timer->next)->firing_time);
 	timer->prev = (timed_timer->prev = timer->prev)->next = timed_timer;
 	timed_timer->next = timer;
 }
@@ -262,10 +262,10 @@ RTAI_SYSCALL_MODE int rt_insert_tasklet(struct rt_tasklet_struct *tasklet, int p
 	}
 // tasklet insertion tasklets_list
 	flags = rt_spin_lock_irqsave(&tasklets_lock);
-	tasklet->next             = &tasklets_list;
-	tasklet->prev             = tasklets_list.prev;
+	tasklet->next	     = &tasklets_list;
+	tasklet->prev	     = tasklets_list.prev;
 	(tasklets_list.prev)->next = tasklet;
-	tasklets_list.prev         = tasklet;
+	tasklets_list.prev	 = tasklet;
 	rt_spin_unlock_irqrestore(flags, &tasklets_lock);
 	return 0;
 }
@@ -390,7 +390,7 @@ static RT_TASK timers_manager[NUM_CPUS];
 
 static inline void asgn_min_prio(int cpuid)
 {
-// find minimum priority in timers_struct 
+// find minimum priority in timers_struct
 	RT_TASK *timer_manager;
 	struct rt_tasklet_struct *timer, *timerl;
 	spinlock_t *lock;
@@ -453,10 +453,10 @@ static inline void set_timer_firing_time(struct rt_tasklet_struct *timer, RTIME 
  * @param period is the period of a periodic timer. A periodic timer keeps
  * calling its handler at  firing_time + k*period k = 0, 1.  To define a oneshot
  * timer simply use a null period.
- * 
+ *
  * @param handler is the timer function to be executed at each timer expiration.
  *
- * @param data is an unsigned long to be passed to the handler.   Clearly by a 
+ * @param data is an unsigned long to be passed to the handler.   Clearly by a
  * appropriate type casting one can pass a pointer to whatever data structure
  * and type is needed.
  *
@@ -477,25 +477,25 @@ RTAI_SYSCALL_MODE int rt_insert_timer(struct rt_tasklet_struct *timer, int prior
 
 // timer initialization
 	timer->uses_fpu    = 0;
-	
+
 	if (pid >= 0) {
 		if (!handler) {
 			return -EINVAL;
 		}
-		timer->handler   = handler;	
+		timer->handler   = handler;
 		timer->data 			 = data;
 	} else {
 		if (timer->handler != NULL || timer->handler == (void *)1) {
-			timer->handler = (void *)1;	
+			timer->handler = (void *)1;
 			timer->data    = data;
-		}		
+		}
 	}
-	
-	timer->priority    = priority;	
+
+	timer->priority    = priority;
 	REALTIME2COUNT(firing_time)
 	timer->firing_time = firing_time;
 	timer->period      = period;
-	
+
 	if (!pid) {
 		timer->task = 0;
 		timer->cpuid = cpuid = NUM_CPUS > 1 ? rtai_cpuid() : 0;
@@ -573,7 +573,7 @@ RTAI_SYSCALL_MODE void rt_set_timer_priority(struct rt_tasklet_struct *timer, in
 
 /**
  * Change the firing time of a timer.
- * 
+ *
  * rt_set_timer_firing_time changes the firing time of a periodic timer
  * overloading any existing value, so that the timer next shoot will take place
  * at the new firing time. Note that if a oneshot timer has its firing time
@@ -609,7 +609,7 @@ RTAI_SYSCALL_MODE void rt_set_timer_firing_time(struct rt_tasklet_struct *timer,
 
 /**
  * Change the period of a timer.
- * 
+ *
  * rt_set_timer_period changes the period of a periodic timer. Note that the new
  * period will be used to pace the timer only after the expiration of the firing
  * time already in place. Using this function with a period different from zero
@@ -643,10 +643,10 @@ RTAI_SYSCALL_MODE void rt_set_timer_period(struct rt_tasklet_struct *timer, RTIM
 RTAI_SYSCALL_MODE void rt_get_timer_times(struct rt_tasklet_struct *timer, RTIME timer_times[])
 {
 	RTIME firing;
-	
+
 	firing = -rt_get_time();
 	firing += timer->firing_time;
-		
+
 	timer_times[0] = firing > 0 ? firing : -1;
 	timer_times[1] = timer->period;
 }
@@ -811,16 +811,16 @@ RTAI_SYSCALL_MODE int rt_delete_tasklet(struct rt_tasklet_struct *tasklet)
 	tasklet->handler = 0;
 	rt_copy_to_user(tasklet->usptasklet, tasklet, sizeof(struct rt_usp_tasklet_struct));
 	rt_task_resume(tasklet->task);
-	thread = tasklet->thread;	
+	thread = tasklet->thread;
 	rt_free(tasklet);
-	return thread;	
+	return thread;
 }
 
 /*
  * Posix Timers support function
  */
- 
- 
+
+
 static int PosixTimers = POSIX_TIMERS;
 RTAI_MODULE_PARM(PosixTimers, int);
 
@@ -831,7 +831,7 @@ struct ptimer_list { int t_indx, p_idx; struct ptimer_list *p_ptr; struct rt_tas
 static int init_ptimers(void)
 {
 	int i;
-	
+
 	if (!(posix_timer = (struct ptimer_list *)kmalloc((PosixTimers)*sizeof(struct ptimer_list), GFP_KERNEL))) {
 		printk("Init MODULE no memory for Posix Timer's list.\n");
 		return -ENOMEM;
@@ -847,8 +847,8 @@ static int init_ptimers(void)
 static void cleanup_ptimers(void)
 {
 	kfree(posix_timer);
-} 
- 
+}
+
 static inline int get_ptimer_indx(struct rt_tasklet_struct *timer)
 {
 	unsigned long flags;
@@ -903,7 +903,7 @@ RTAI_SYSCALL_MODE void rt_ptimer_settime(timer_t timer, const struct itimerspec 
 {
 	struct rt_tasklet_struct *tasklet;
 	RTIME now;
-	
+
 	tasklet = posix_timer[timer].timer;
 	rt_remove_timer(tasklet);
 	now = rt_get_time();
@@ -913,7 +913,7 @@ RTAI_SYSCALL_MODE void rt_ptimer_settime(timer_t timer, const struct itimerspec 
 		}else {
 			now = 0;
 		}
-	}	
+	}
 	if (timespec2count ( &(value->it_value)) > 0) {
 		if (data) {
 			rt_insert_timer(tasklet, 0, now + timespec2count ( &(value->it_value) ), timespec2count ( &(value->it_interval) ), NULL, data, -1);
@@ -940,19 +940,19 @@ RTAI_SYSCALL_MODE int rt_ptimer_delete(timer_t timer, long space)
 {
 	struct rt_tasklet_struct *tasklet;
 	int rtn = 0;
-	
+
 	tasklet = posix_timer[timer].timer;
 	gvb_ptimer_indx(timer);
-	rt_remove_tasklet(tasklet);	
+	rt_remove_tasklet(tasklet);
 	if (space) {
 		tasklet->handler = 0;
 		rt_copy_to_user(tasklet->usptasklet, tasklet, sizeof(struct rt_usp_tasklet_struct));
 		rt_task_resume(tasklet->task);
-		rtn = tasklet->thread;	
-	} 
+		rtn = tasklet->thread;
+	}
 	rt_free(tasklet);
 	return rtn;
-}		
+}
 EXPORT_SYMBOL(rt_ptimer_delete);
 
  /*
@@ -969,10 +969,10 @@ int __rtai_tasklets_init(void)
 	if(set_rt_fun_ext_index(rt_tasklet_fun, TASKLETS_IDX)) {
 		printk("Recompile your module with a different index\n");
 		return -EACCES;
-        }
+	}
 	if (init_ptimers()) {
 		return -ENOMEM;
-	}	
+	}
 	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
 		timers_lock[cpuid] = timers_lock[0];
 		timers_list[cpuid] = timers_list[0];
@@ -989,7 +989,7 @@ void __rtai_tasklets_exit(void)
 {
 	int cpuid;
  	reset_rt_fun_ext_index(rt_tasklet_fun, TASKLETS_IDX);
-	cleanup_ptimers();    
+	cleanup_ptimers();
 	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
 		rt_task_delete(&timers_manager[cpuid]);
 	}

@@ -34,7 +34,7 @@ void touch_area(void *begin, size_t len, int writeable) {
 	volatile char *ptr = begin;
 	int i, page_size;
 	volatile int tmp;
-	
+
 	page_size = getpagesize();
 	for(i=0;i<len;i+=page_size) {
 		tmp=ptr[i];
@@ -51,7 +51,7 @@ int touch_all(void) {
 	unsigned long start,end,flags,size;
 	char perms[STR_SIZE],dev[STR_SIZE];
 	char buf[TOUCH_BUFSIZE];
-	
+
 	maps=fopen("/proc/self/maps","r");
 	if(!maps) {
 		perror("touch_all");
@@ -81,12 +81,12 @@ int lock_all(int stk, int heap) {
 
 	dynamically tunable      *
 	mmap threshold      128k *
-    mmap threshold max  512k  
-	mmap max           1024k *
+    mmap threshold max  512k
+	mmap max	   1024k *
 	trim threshold      128k *
-	top pad               0k *	
-	heap min             32k
-	heap max           1024k
+	top pad	       0k *
+	heap min	     32k
+	heap max	   1024k
 */
 
     n = heap / 65536 + 1;
@@ -94,14 +94,14 @@ int lock_all(int stk, int heap) {
 		printf("heap too large\n");
 		exit(-1);
 	}
-	
+
     err = mallopt(M_MMAP_THRESHOLD, 512*1024);
 	if (!err) {
 		printf("mallopt(M_MMAP_THRESHOLD, heap) failed\n");
 		exit(-1);
-	}	 
+	}
 
-	err = mallopt(M_TOP_PAD,        heap ? heap : GROW_HEAP);
+	err = mallopt(M_TOP_PAD,	heap ? heap : GROW_HEAP);
     if (!err) {
 		printf("mallopt(M_TOP_PAD, heap) failed\n");
 		exit(-1);
@@ -126,16 +126,16 @@ void dump_malloc_stats(void)
 {
 	struct mallinfo mi;
 	extern int rtai_print_to_screen(const char *fmt, ...);
-//	memset(&mi, 0, sizeof(mi));	
+//	memset(&mi, 0, sizeof(mi));
 	mi = mallinfo();
 
 	rtai_print_to_screen("\ntotal space allocated from system %d\n", mi.arena);
-	rtai_print_to_screen("number of non-inuse chunks        %d\n", mi.ordblks);
-	rtai_print_to_screen("number of mmapped regions         %d\n", mi.hblks);
+	rtai_print_to_screen("number of non-inuse chunks	%d\n", mi.ordblks);
+	rtai_print_to_screen("number of mmapped regions	 %d\n", mi.hblks);
 	rtai_print_to_screen("total space in mmapped regions    %d\n", mi.hblkhd);
-	rtai_print_to_screen("total allocated space             %d\n", mi.uordblks);
-	rtai_print_to_screen("total non-inuse space             %d\n", mi.fordblks);
-	rtai_print_to_screen("top-most, releasable space        %d\n", mi.keepcost);
+	rtai_print_to_screen("total allocated space	     %d\n", mi.uordblks);
+	rtai_print_to_screen("total non-inuse space	     %d\n", mi.fordblks);
+	rtai_print_to_screen("top-most, releasable space	%d\n", mi.keepcost);
 }
 
 /*

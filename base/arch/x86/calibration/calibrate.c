@@ -52,12 +52,12 @@ struct option options[] = {
     { "user",       0, 0, 'u' },
     { "period",     1, 0, 'p' },
     { "time",       1, 0, 't' },
-    { "cpu",        0, 0, 'c' },
+    { "cpu",	0, 0, 'c' },
     { "apic",       0, 0, 'a' },
     { "both",       0, 0, 'b' },
     { "scope",      1, 0, 's' },
     { "interrupt",  0, 0, 'i' },
-    { NULL,         0, 0,  0 }
+    { NULL,	 0, 0,  0 }
 };
 
 void print_usage(void)
@@ -194,8 +194,8 @@ int main(int argc, char *argv[])
 				rtai_srq(srq, (unsigned long)args);
 				read(fifo, &average, sizeof(average));
 				average /= (int)args[2];
-			        if (params.mp) {
-			        	printf("\n*** '#define LATENCY_APIC %d' (IN USE %lu)\n\n", (int)params.latency_apic + average, params.latency_apic);
+				if (params.mp) {
+					printf("\n*** '#define LATENCY_APIC %d' (IN USE %lu)\n\n", (int)params.latency_apic + average, params.latency_apic);
 				} else {
 					printf("\n*** '#define LATENCY_8254 %d' (IN USE %lu)\n\n", (int)params.latency_8254 + average, params.latency_8254);
 				}
@@ -226,18 +226,18 @@ int main(int argc, char *argv[])
 //				    exit(1);
 				    }
 				average /= (int)args[2];
-			        if (params.mp) {
-			        	printf("\n*** '#define LATENCY_APIC %d' (IN USE %lu)\n\n", (int)params.latency_apic + average, params.latency_apic);
+				if (params.mp) {
+					printf("\n*** '#define LATENCY_APIC %d' (IN USE %lu)\n\n", (int)params.latency_apic + average, params.latency_apic);
 				} else {
 					printf("\n*** '#define LATENCY_8254 %d' (IN USE %lu)\n\n", (int)params.latency_8254 + average, params.latency_8254);
 				}
 				break;
 			}
 
-			case 'a': 
+			case 'a':
 				if (!params.mp) {
-					printf("*** APIC FREQUENCY CALIBRATION NOT AVAILABLE UNDER UP ***\n");	
-					break;	
+					printf("*** APIC FREQUENCY CALIBRATION NOT AVAILABLE UNDER UP ***\n");
+					break;
 				}
 			case 'b':
 			case 'c': {

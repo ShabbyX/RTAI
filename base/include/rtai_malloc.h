@@ -96,12 +96,12 @@ typedef struct rtheap {
     int flags;
 
     u_long extentsize,
-           pagesize,
-           pageshift,
+	   pagesize,
+	   pageshift,
 	   hdrsize,
 	   npages,	/* Number of pages per extent */
 	   ubytes,
-           maxcont;
+	   maxcont;
 
     struct list_head extents;
 

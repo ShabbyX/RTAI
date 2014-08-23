@@ -5,13 +5,13 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
 
 
-/* 
+/*
  * wrapper double gamma_r(double x, int *signgamp)
  */
 
@@ -20,4 +20,4 @@
 	double gamma_r(double x, int *signgamp)	/* wrapper lgamma_r */
 {
 	return __ieee754_lgamma_r(x,signgamp);
-}             
+}

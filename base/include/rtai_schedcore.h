@@ -108,14 +108,14 @@ extern volatile int rt_sched_timed;
 #ifdef CONFIG_RTAI_MALLOC_BUILTIN
 #define sched_mem_init() \
 	{ if(__rtai_heap_init() != 0) { \
-                return(-ENOMEM); \
-        } }
+		return(-ENOMEM); \
+	} }
 #define sched_mem_end()	 __rtai_heap_exit()
 #else  /* CONFIG_RTAI_MALLOC_BUILTIN */
 #define sched_mem_init()
 #define sched_mem_end()
 #endif /* !CONFIG_RTAI_MALLOC_BUILTIN */
-#define call_exit_handlers(task)	        __call_exit_handlers(task)
+#define call_exit_handlers(task)		__call_exit_handlers(task)
 #define set_exit_handler(task, fun, arg1, arg2)	__set_exit_handler(task, fun, arg1, arg2)
 #else  /* !CONFIG_RTAI_MALLOC */
 #define sched_mem_init()
@@ -150,7 +150,7 @@ void rtai_handle_isched_lock(int nesting);
 #endif
 
 /*
- * WATCH OUT for the max expected number of arguments of rtai funs and 
+ * WATCH OUT for the max expected number of arguments of rtai funs and
  * their scattered around different calling ways.
  */
 
@@ -201,7 +201,7 @@ static inline void send_sched_ipi(unsigned long dest)
 
 #define RT_SCHEDULE_MAP(schedmap)       rt_schedule()
 
-#define RT_SCHEDULE(task, cpuid)        rt_schedule()
+#define RT_SCHEDULE(task, cpuid)	rt_schedule()
 
 #define RT_SCHEDULE_BOTH(task, cpuid)   rt_schedule()
 
@@ -239,7 +239,7 @@ struct epoch_struct { spinlock_t lock; volatile int touse; volatile RTIME time[2
 	if (rtime > boot_epoch.time[boot_epoch.touse][0]) { \
 		rtime -= boot_epoch.time[boot_epoch.touse][0]; \
 	}
-#else 
+#else
 #define REALTIME2COUNT(rtime)
 #endif
 
@@ -368,8 +368,8 @@ static inline void enq_timed_task(RT_TASK *timed_task)
 static inline void rem_timed_task(RT_TASK *task)
 {
 	if ((task->state & RT_SCHED_DELAYED)) {
-                (task->tprev)->tnext = task->tnext;
-                (task->tnext)->tprev = task->tprev;
+		(task->tprev)->tnext = task->tnext;
+		(task->tnext)->tprev = task->tprev;
 #ifdef CONFIG_SMP
 		rb_erase_task(task, task->runnable_on_cpus);
 #else
@@ -391,16 +391,16 @@ static inline void wake_up_timed_tasks(int cpuid)
 			if ((task->state & RT_SCHED_SUSPENDED) && task->suspdepth > 0) {
 				task->suspdepth = 0;
 			}
-        	        if ((task->state &= ~(RT_SCHED_DELAYED | RT_SCHED_SUSPENDED | RT_SCHED_SEMAPHORE | RT_SCHED_RECEIVE | RT_SCHED_SEND | RT_SCHED_RPC | RT_SCHED_RETURN | RT_SCHED_MBXSUSP | RT_SCHED_POLL)) == RT_SCHED_READY) {
-                	        if (task->policy < 0) {
-                        	        enq_ready_edf_task(task);
-	                        } else {
-        	                        enq_ready_task(task);
-                	        }
+			if ((task->state &= ~(RT_SCHED_DELAYED | RT_SCHED_SUSPENDED | RT_SCHED_SEMAPHORE | RT_SCHED_RECEIVE | RT_SCHED_SEND | RT_SCHED_RPC | RT_SCHED_RETURN | RT_SCHED_MBXSUSP | RT_SCHED_POLL)) == RT_SCHED_READY) {
+				if (task->policy < 0) {
+					enq_ready_edf_task(task);
+				} else {
+					enq_ready_task(task);
+				}
 #if defined(CONFIG_RTAI_BUSY_TIME_ALIGN) && CONFIG_RTAI_BUSY_TIME_ALIGN
 				task->busy_time_align = oneshot_timer;
 #endif
-        	        }
+			}
 			rb_erase_task(task, cpuid);
 			task = task->tnext;
 		} while (task->resume_time <= rt_time_h);
@@ -429,35 +429,35 @@ static inline RTIME get_time(void)
 
 static inline void enqueue_blocked(RT_TASK *task, QUEUE *queue, int qtype)
 {
-        QUEUE *q;
-        task->blocked_on = (q = queue);
-        if (!qtype) {
-                while ((q = q->next) != queue && (q->task)->priority <= task->priority);
-        }
-        q->prev = (task->queue.prev = q->prev)->next  = &(task->queue);
-        task->queue.next = q;
+	QUEUE *q;
+	task->blocked_on = (q = queue);
+	if (!qtype) {
+		while ((q = q->next) != queue && (q->task)->priority <= task->priority);
+	}
+	q->prev = (task->queue.prev = q->prev)->next  = &(task->queue);
+	task->queue.next = q;
 }
 
 
 static inline void dequeue_blocked(RT_TASK *task)
 {
-        task->prio_passed_to     = NULL;
-        (task->queue.prev)->next = task->queue.next;
-        (task->queue.next)->prev = task->queue.prev;
-        task->blocked_on         = NULL;
+	task->prio_passed_to     = NULL;
+	(task->queue.prev)->next = task->queue.next;
+	(task->queue.next)->prev = task->queue.prev;
+	task->blocked_on	 = NULL;
 }
 
 static inline unsigned long pass_prio(RT_TASK *to, RT_TASK *from)
 {
-        QUEUE *q, *blocked_on;
+	QUEUE *q, *blocked_on;
 #ifdef CONFIG_SMP
 	RT_TASK *rhead;
-        unsigned long schedmap;
-        schedmap = 0;
+	unsigned long schedmap;
+	schedmap = 0;
 #endif
 //	from->prio_passed_to = to;
-        while (to && to->priority > from->priority) {
-                to->priority = from->priority;
+	while (to && to->priority > from->priority) {
+		to->priority = from->priority;
 		if (to->state == RT_SCHED_READY) {
 			if ((to->rprev)->priority > to->priority || (to->rnext)->priority < to->priority) {
 #ifdef CONFIG_SMP
@@ -487,7 +487,7 @@ static inline unsigned long pass_prio(RT_TASK *to, RT_TASK *from)
 				}
 			}
 			to = (to->state & RT_SCHED_SEMAPHORE) ? ((SEM *)blocked_on)->owndby : blocked_on->task;
-                }
+		}
 //		to = to->prio_passed_to;
 	}
 #ifdef CONFIG_SMP
@@ -500,14 +500,14 @@ static inline unsigned long pass_prio(RT_TASK *to, RT_TASK *from)
 static inline RT_TASK *_rt_whoami(void)
 {
 #ifdef CONFIG_SMP
-        RT_TASK *rt_current;
-        unsigned long flags;
-        flags = rt_global_save_flags_and_cli();
-        rt_current = RT_CURRENT;
-        rt_global_restore_flags(flags);
-        return rt_current;
+	RT_TASK *rt_current;
+	unsigned long flags;
+	flags = rt_global_save_flags_and_cli();
+	rt_current = RT_CURRENT;
+	rt_global_restore_flags(flags);
+	return rt_current;
 #else
-        return rt_smp_current[0];
+	return rt_smp_current[0];
 #endif
 }
 
@@ -580,7 +580,7 @@ static inline int rtai_init_features (void)
     __rtai_math_init();
 #endif /* CONFIG_RTAI_MATH_BUILTIN */
 #ifdef CONFIG_RTAI_USI
-        printk(KERN_INFO "RTAI[usi]: enabled.\n");
+	printk(KERN_INFO "RTAI[usi]: enabled.\n");
 #endif /* CONFIG_RTAI_USI */
 
 	return 0;

@@ -43,7 +43,7 @@
 #define TIMER_INSERT 	 5
 #define TIMER_REMOVE	 6
 #define SET_TASKLETS_PRI 7
-#define SET_FIR_TIM	 8	
+#define SET_FIR_TIM	 8
 #define SET_PER	 	 9
 #define SET_HDL		10
 #define SET_DAT	 	11
@@ -170,7 +170,7 @@ RTAI_SYSCALL_MODE struct rt_task_struct *rt_tasklet_use_fpu(struct rt_tasklet_st
  * use to access all its related services.
  *
  */
-#define rt_init_timer rt_init_tasklet 
+#define rt_init_timer rt_init_tasklet
 
 /**
  * Delete, in kernel space, a timed tasklet, simply called timer, structure
@@ -278,7 +278,7 @@ do { \
 RTAI_SYSCALL_MODE int rt_wait_tasklet_is_hard(struct rt_tasklet_struct *tasklet, long thread);
 
 RTAI_SYSCALL_MODE void rt_register_task(struct rt_tasklet_struct *tasklet, struct rt_tasklet_struct *usptasklet, struct rt_task_struct *task);
- 
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
@@ -344,7 +344,7 @@ static int support_tasklet(struct support_tasklet_s *args)
 	}
 	printf("CANNOT INIT SUPPORT TASKLET\n");
 	return -1;
-	
+
 }
 #endif /* __SUPPORT_TASKLET__ */
 
@@ -367,7 +367,7 @@ RTAI_PROTO(struct rt_tasklet_struct *, rt_init_tasklet, (void))
 		if ((arg.thread = rt_thread_create((void *)support_tasklet, &arg.tasklet, TASKLET_STACK_SIZE))) {
 			int i;
 #define POLLS_PER_SEC 100
-		        for (i = 0; i < POLLS_PER_SEC/5 && !arg.done; i++) {
+			for (i = 0; i < POLLS_PER_SEC/5 && !arg.done; i++) {
 				struct timespec delay = { 0, 1000000000/POLLS_PER_SEC };
 				nanosleep(&delay, NULL);
        			}

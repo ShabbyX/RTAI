@@ -5,7 +5,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -30,16 +30,16 @@
  * 	   (To avoid cancellation, use
  *		sin(x) +- cos(x) = -cos(2x)/(sin(x) -+ cos(x))
  * 	    to compute the worse one.)
- *	   
+ *
  *	3 Special cases
  *		j1(nan)= nan
  *		j1(0) = 0
  *		j1(inf) = 0
- *		
+ *
  * Method -- y1(x):
- *	1. screen out x<=0 cases: y1(0)=-inf, y1(x<0)=NaN 
+ *	1. screen out x<=0 cases: y1(0)=-inf, y1(x<0)=NaN
  *	2. For x<2.
- *	   Since 
+ *	   Since
  *		y1(x) = 2/pi*(j1(x)*(ln(x/2)+Euler)-1/x-x/2+5/64*x^3-...)
  *	   therefore y1(x)-2/pi*j1(x)*ln(x)-1/x is an odd function.
  *	   We use the following function to approximate y1,
@@ -60,7 +60,7 @@
 
 static double pone(double), qone(double);
 
-static const double 
+static const double
 huge    = 1e300,
 one	= 1.0,
 invsqrtpi=  5.64189583547756279280e-01, /* 0x3FE20DD7, 0x50429B6D */
@@ -78,7 +78,7 @@ s05  =  1.23542274426137913908e-11; /* 0x3DAB2ACF, 0xCFB97ED8 */
 
 static const double zero    = 0.0;
 
-	double __ieee754_j1(double x) 
+	double __ieee754_j1(double x)
 {
 	double z, s,c,ss,cc,r,u,v,y;
 	int32_t hx,ix;
@@ -135,52 +135,52 @@ static const double V0[5] = {
   1.66559246207992079114e-11, /* 0x3DB25039, 0xDACA772A */
 };
 
-	double __ieee754_y1(double x) 
+	double __ieee754_y1(double x)
 {
 	double z, s,c,ss,cc,u,v;
 	int32_t hx,ix,lx;
 
 	EXTRACT_WORDS(hx,lx,x);
-        ix = 0x7fffffff&hx;
+	ix = 0x7fffffff&hx;
     /* if Y1(NaN) is NaN, Y1(-inf) is NaN, Y1(inf) is 0 */
-	if(ix>=0x7ff00000) return  one/(x+x*x); 
-        if((ix|lx)==0) return -one/zero;
-        if(hx<0) return zero/zero;
-        if(ix >= 0x40000000) {  /* |x| >= 2.0 */
-                s = sin(x);
-                c = cos(x);
-                ss = -s-c;
-                cc = s-c;
-                if(ix<0x7fe00000) {  /* make sure x+x not overflow */
-                    z = cos(x+x);
-                    if ((s*c)>zero) cc = z/ss;
-                    else            ss = z/cc;
-                }
-        /* y1(x) = sqrt(2/(pi*x))*(p1(x)*sin(x0)+q1(x)*cos(x0))
-         * where x0 = x-3pi/4
-         *      Better formula:
-         *              cos(x0) = cos(x)cos(3pi/4)+sin(x)sin(3pi/4)
-         *                      =  1/sqrt(2) * (sin(x) - cos(x))
-         *              sin(x0) = sin(x)cos(3pi/4)-cos(x)sin(3pi/4)
-         *                      = -1/sqrt(2) * (cos(x) + sin(x))
-         * To avoid cancellation, use
-         *              sin(x) +- cos(x) = -cos(2x)/(sin(x) -+ cos(x))
-         * to compute the worse one.
-         */
-                if(ix>0x48000000) z = (invsqrtpi*ss)/sqrt(x);
-                else {
-                    u = pone(x); v = qone(x);
-                    z = invsqrtpi*(u*ss+v*cc)/sqrt(x);
-                }
-                return z;
-        } 
-        if(ix<=0x3c900000) {    /* x < 2**-54 */
-            return(-tpi/x);
-        } 
-        z = x*x;
-        u = U0[0]+z*(U0[1]+z*(U0[2]+z*(U0[3]+z*U0[4])));
-        v = one+z*(V0[0]+z*(V0[1]+z*(V0[2]+z*(V0[3]+z*V0[4]))));
-        return(x*(u/v) + tpi*(__ieee754_j1(x)*__ieee754_log(x)-one/x));
+	if(ix>=0x7ff00000) return  one/(x+x*x);
+	if((ix|lx)==0) return -one/zero;
+	if(hx<0) return zero/zero;
+	if(ix >= 0x40000000) {  /* |x| >= 2.0 */
+		s = sin(x);
+		c = cos(x);
+		ss = -s-c;
+		cc = s-c;
+		if(ix<0x7fe00000) {  /* make sure x+x not overflow */
+		    z = cos(x+x);
+		    if ((s*c)>zero) cc = z/ss;
+		    else	    ss = z/cc;
+		}
+	/* y1(x) = sqrt(2/(pi*x))*(p1(x)*sin(x0)+q1(x)*cos(x0))
+	 * where x0 = x-3pi/4
+	 *      Better formula:
+	 *	      cos(x0) = cos(x)cos(3pi/4)+sin(x)sin(3pi/4)
+	 *		      =  1/sqrt(2) * (sin(x) - cos(x))
+	 *	      sin(x0) = sin(x)cos(3pi/4)-cos(x)sin(3pi/4)
+	 *		      = -1/sqrt(2) * (cos(x) + sin(x))
+	 * To avoid cancellation, use
+	 *	      sin(x) +- cos(x) = -cos(2x)/(sin(x) -+ cos(x))
+	 * to compute the worse one.
+	 */
+		if(ix>0x48000000) z = (invsqrtpi*ss)/sqrt(x);
+		else {
+		    u = pone(x); v = qone(x);
+		    z = invsqrtpi*(u*ss+v*cc)/sqrt(x);
+		}
+		return z;
+	}
+	if(ix<=0x3c900000) {    /* x < 2**-54 */
+	    return(-tpi/x);
+	}
+	z = x*x;
+	u = U0[0]+z*(U0[1]+z*(U0[2]+z*(U0[3]+z*U0[4])));
+	v = one+z*(V0[0]+z*(V0[1]+z*(V0[2]+z*(V0[3]+z*V0[4]))));
+	return(x*(u/v) + tpi*(__ieee754_j1(x)*__ieee754_log(x)-one/x));
 }
 
 /* For x >= 8, the asymptotic expansions of pone is
@@ -265,19 +265,19 @@ static const double ps2[5] = {
 {
 	const double *p = 0,*q = 0;
 	double z,r,s;
-        int32_t ix;
+	int32_t ix;
 	GET_HIGH_WORD(ix,x);
 	ix &= 0x7fffffff;
-        if(ix>=0x40200000)     {p = pr8; q= ps8;}
-        else if(ix>=0x40122E8B){p = pr5; q= ps5;}
-        else if(ix>=0x4006DB6D){p = pr3; q= ps3;}
-        else if(ix>=0x40000000){p = pr2; q= ps2;}
-        z = one/(x*x);
-        r = p[0]+z*(p[1]+z*(p[2]+z*(p[3]+z*(p[4]+z*p[5]))));
-        s = one+z*(q[0]+z*(q[1]+z*(q[2]+z*(q[3]+z*q[4]))));
-        return one+ r/s;
+	if(ix>=0x40200000)     {p = pr8; q= ps8;}
+	else if(ix>=0x40122E8B){p = pr5; q= ps5;}
+	else if(ix>=0x4006DB6D){p = pr3; q= ps3;}
+	else if(ix>=0x40000000){p = pr2; q= ps2;}
+	z = one/(x*x);
+	r = p[0]+z*(p[1]+z*(p[2]+z*(p[3]+z*(p[4]+z*p[5]))));
+	s = one+z*(q[0]+z*(q[1]+z*(q[2]+z*(q[3]+z*q[4]))));
+	return one+ r/s;
 }
-		
+
 
 /* For x >= 8, the asymptotic expansions of qone is
  *	3/8 s - 105/1024 s^3 - ..., where s = 1/x.

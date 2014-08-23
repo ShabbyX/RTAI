@@ -64,7 +64,7 @@ static RTAI_SYSCALL_MODE int sys_rtdm_open(const char *path, long oflag)
 	char krnl_path[RTDM_MAX_DEVNAME_LEN + 1];
 
 	if (unlikely(!__xn_access_ok(curr, VERIFY_READ, path, sizeof(krnl_path)))) {
-	        return -EFAULT;
+		return -EFAULT;
 	}
 	__xn_copy_from_user(curr, krnl_path, path, sizeof(krnl_path) - 1);
 	krnl_path[sizeof(krnl_path) - 1] = '\0';
@@ -144,40 +144,40 @@ static struct rt_fun_entry rtdm[] = {
 
 /* This is needed because RTDM interrupt handlers:
  * - do no want immediate in handler rescheduling, RTAI can be configured
- *   to act in the same, way but might not have been enabled to do so; 
+ *   to act in the same, way but might not have been enabled to do so;
  * - may not reenable the PIC directly, assuming it will be done here;
  * - may not propagate, assuming it will be done here as well.
  * - might use shared interrupts its own way;
- * REMARK: RTDM irqs management is as generic as its pet system dictates 
- *         and there is no choice but doing the same as closely as possible; 
- *         so this is an as verbatim as possible copy of what is needed from 
- *         the RTDM pet system.
+ * REMARK: RTDM irqs management is as generic as its pet system dictates
+ *	 and there is no choice but doing the same as closely as possible;
+ *	 so this is an as verbatim as possible copy of what is needed from
+ *	 the RTDM pet system.
  * REMINDER: the RTAI dispatcher cares mask/ack-ing anyhow, but RTDM will
- *           (must) provide the most suitable one for the shared case. */
+ *	   (must) provide the most suitable one for the shared case. */
 
 #ifndef CONFIG_RTAI_SCHED_ISR_LOCK
 extern struct { volatile int locked, rqsted; } rt_scheduling[];
 extern void rtai_isr_sched_handle(int);
 
 #define RTAI_SCHED_ISR_LOCK() \
-        do { \
+	do { \
 		int cpuid = rtai_cpuid(); \
-                if (!rt_scheduling[cpuid].locked++) { \
-                        rt_scheduling[cpuid].rqsted = 0; \
-                }
+		if (!rt_scheduling[cpuid].locked++) { \
+			rt_scheduling[cpuid].rqsted = 0; \
+		}
 #define RTAI_SCHED_ISR_UNLOCK() \
-                rtai_cli(); \
-                if (rt_scheduling[cpuid].locked && !(--rt_scheduling[cpuid].locked)) { \
-                        if (rt_scheduling[cpuid].rqsted > 0) { \
+		rtai_cli(); \
+		if (rt_scheduling[cpuid].locked && !(--rt_scheduling[cpuid].locked)) { \
+			if (rt_scheduling[cpuid].rqsted > 0) { \
 				rtai_isr_sched_handle(cpuid); \
-                        } \
-                } \
-        } while (0)
+			} \
+		} \
+	} while (0)
 #else /* !CONFIG_RTAI_SCHED_ISR_LOCK */
 #define RTAI_SCHED_ISR_LOCK() \
-        do {             } while (0)
+	do {	     } while (0)
 #define RTAI_SCHED_ISR_UNLOCK() \
-        do { rtai_cli(); } while (0)
+	do { rtai_cli(); } while (0)
 #endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
 
 #define XNINTR_MAX_UNHANDLED	1000
@@ -321,8 +321,8 @@ static void xnintr_edge_shirq_handler(unsigned irq, void *cookie)
 
 
 
-                } else if (end == NULL)
-                        end = intr;
+		} else if (end == NULL)
+			end = intr;
 
 		if (counter++ > MAX_EDGEIRQ_COUNTER)
 			break;
@@ -462,8 +462,8 @@ static inline xnintr_t *xnintr_shirq_next(xnintr_t *prev)
 
 static inline int xnintr_irq_attach(xnintr_t *intr)
 {
-	return xnarch_hook_irq(intr->irq, &xnintr_irq_handler, 
-				                  intr->iack, intr);
+	return xnarch_hook_irq(intr->irq, &xnintr_irq_handler,
+						  intr->iack, intr);
 }
 
 static inline int xnintr_irq_detach(xnintr_t *intr)
@@ -503,7 +503,7 @@ static void xnintr_irq_handler(unsigned irq, void *cookie)
 	xnlock_get(&xnirqs[irq].lock);
 
 #ifdef CONFIG_SMP
-	/* 
+	/*
 	 * In SMP case, we have to reload the cookie under the per-IRQ
 	 * lock to avoid racing with xnintr_detach. However, we
 	 * assume that no CPU migration will occur while running the
@@ -657,16 +657,16 @@ EXPORT_SYMBOL_GPL(xnintr_detach);
 int xnintr_enable(xnintr_t *intr)
 {
 
-        rt_enable_irq(intr->irq);
-        return 0;
+	rt_enable_irq(intr->irq);
+	return 0;
 }
 EXPORT_SYMBOL_GPL(xnintr_enable);
 
 int xnintr_disable(xnintr_t *intr)
 {
 
-        rt_disable_irq(intr->irq);
-        return 0;
+	rt_disable_irq(intr->irq);
+	return 0;
 }
 EXPORT_SYMBOL_GPL(xnintr_disable);
 
@@ -683,21 +683,21 @@ EXPORT_SYMBOL_GPL(xnintr_affinity);
 extern struct epoch_struct boot_epoch;
 
 #ifdef CONFIG_SMP
-#define NUM_CPUS           RTAI_NR_CPUS
+#define NUM_CPUS	   RTAI_NR_CPUS
 #define TIMED_TIMER_CPUID  (timed_timer->cpuid)
-#define TIMER_CPUID        (timer->cpuid)
-#define LIST_CPUID         (cpuid)
+#define TIMER_CPUID	(timer->cpuid)
+#define LIST_CPUID	 (cpuid)
 #else
-#define NUM_CPUS           1
+#define NUM_CPUS	   1
 #define TIMED_TIMER_CPUID  (0)
-#define TIMER_CPUID        (0)
-#define LIST_CPUID         (0)
+#define TIMER_CPUID	(0)
+#define LIST_CPUID	 (0)
 #endif
 
 static struct rtdm_timer_struct timers_list[NUM_CPUS] =
 { { &timers_list[0], &timers_list[0], RT_SCHED_LOWEST_PRIORITY, 0, RT_TIME_END, 0LL, NULL, 0UL,
 #ifdef  CONFIG_RTAI_LONG_TIMED_LIST
-{ NULL } 
+{ NULL }
 #endif
 }, };
 
@@ -740,7 +740,7 @@ static inline void enq_timer(struct rtdm_timer_struct *timed_timer)
 {
 	struct rtdm_timer_struct *timer;
 	timer = &timers_list[TIMED_TIMER_CPUID];
-        while (timed_timer->firing_time > (timer = timer->next)->firing_time);
+	while (timed_timer->firing_time > (timer = timer->next)->firing_time);
 	timer->prev = (timed_timer->prev = timer->prev)->next = timed_timer;
 	timed_timer->next = timer;
 }
@@ -797,13 +797,13 @@ RTAI_SYSCALL_MODE int rt_timer_insert(struct rtdm_timer_struct *timer, int prior
 	if (!handler) {
 		return -EINVAL;
 	}
-	timer->handler     = handler;	
-	timer->data        = data;
-	timer->priority    = priority;	
+	timer->handler     = handler;
+	timer->data	= data;
+	timer->priority    = priority;
 	timer->firing_time = firing_time;
 	timer->period      = period;
 	REALTIME2COUNT(firing_time)
-	
+
 	timer->cpuid = cpuid = NUM_CPUS > 1 ? rtai_cpuid() : 0;
 // timer insertion in timers_list
 	flags = rt_spin_lock_irqsave(lock = &timers_lock[LIST_CPUID]);
@@ -893,7 +893,7 @@ RTAI_MODULE_PARM(TimersManagerStacksize, int);
 static int rtai_timers_init(void)
 {
 	int cpuid;
-	
+
 	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
 		timers_lock[cpuid] = timers_lock[0];
 		timers_list[cpuid] = timers_list[0];
@@ -923,24 +923,24 @@ int __init rtdm_skin_init(void)
 	int err;
 
 	rtai_timers_init();
-        if(set_rt_fun_ext_index(rtdm, RTDM_INDX)) {
-                printk("LXRT extension %d already in use. Recompile RTDM with a different extension index\n", RTDM_INDX);
-                return -EACCES;
-        }
+	if(set_rt_fun_ext_index(rtdm, RTDM_INDX)) {
+		printk("LXRT extension %d already in use. Recompile RTDM with a different extension index\n", RTDM_INDX);
+		return -EACCES;
+	}
 	if ((err = rtdm_dev_init())) {
-	        goto fail;
+		goto fail;
 	}
 
 	xnintr_mount();
 
 #ifdef CONFIG_RTAI_RTDM_SELECT
 	if (xnselect_mount()) {
-	        goto cleanup_core;
+		goto cleanup_core;
 	}
 #endif
 #ifdef CONFIG_PROC_FS
 	if ((err = rtdm_proc_init())) {
-	        goto cleanup_core;
+		goto cleanup_core;
 	}
 #endif /* CONFIG_PROC_FS */
 
@@ -966,7 +966,7 @@ void __exit rtdm_skin_exit(void)
 #endif
 	rtai_timers_cleanup();
 	rtdm_dev_cleanup();
-        reset_rt_fun_ext_index(rtdm, RTDM_INDX);
+	reset_rt_fun_ext_index(rtdm, RTDM_INDX);
 #ifdef CONFIG_PROC_FS
 	rtdm_proc_cleanup();
 #endif /* CONFIG_PROC_FS */

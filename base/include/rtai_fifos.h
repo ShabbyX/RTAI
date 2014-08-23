@@ -48,8 +48,8 @@
 #define SET_ASYNC_SIG		14
 #define EAVESDROP		19
 #define OVRWRITE		20
-#define READ_IF         	21
-#define WRITE_IF        	22
+#define READ_IF	 	21
+#define WRITE_IF		22
 #define RTF_NAMED_CREATE    	23
 
 #define RTF_GET_N_FIFOS		15
@@ -75,24 +75,24 @@ struct rt_fifo_get_info_struct{
 
 #define  FUN_FIFOS_LXRT_INDX 10
 
-#define _CREATE         0
-#define _DESTROY        1
-#define _PUT            2
-#define _GET            3
-#define _RESET          4
-#define _RESIZE         5
+#define _CREATE	 0
+#define _DESTROY	1
+#define _PUT	    2
+#define _GET	    3
+#define _RESET	  4
+#define _RESIZE	 5
 #define _SEM_INIT       6
 #define _SEM_DESTRY     7
 #define _SEM_POST       8
-#define _SEM_TRY        9
+#define _SEM_TRY	9
 #define _CREATE_NAMED  10
 #define _GETBY_NAME    11
 #define _OVERWRITE     12
-#define _PUT_IF        13
-#define _GET_IF        14
+#define _PUT_IF	13
+#define _GET_IF	14
 #define _NAMED_CREATE  15
-#define _AVBS          16
-#define _FRBS          17
+#define _AVBS	  16
+#define _FRBS	  17
 
 #ifdef __KERNEL__
 
@@ -112,8 +112,8 @@ typedef int (*rtf_handler_t)(unsigned int fifo, int rw);
 
 /* Attach a handler to an RT-FIFO.
  *
- * Allow function handler to be called when a user process reads or writes to 
- * the FIFO. When the function is called, it is passed the fifo number as the 
+ * Allow function handler to be called when a user process reads or writes to
+ * the FIFO. When the function is called, it is passed the fifo number as the
  * argument.
  */
 
@@ -136,7 +136,7 @@ int rtf_create_handler(unsigned int fifo,	/* RT-FIFO */
 #define X_FIFO_HANDLER(handler) ((int (*)(unsigned int, int rw))(handler))
 
 /* Create an RT-FIFO.
- * 
+ *
  * An RT-FIFO fifo is created with initial size of size.
  * Return value: On success, 0 is returned. On error, -1 is returned.
  */
@@ -148,7 +148,7 @@ RTAI_SYSCALL_MODE int rtf_create(unsigned int fifo, int size);
  * An RT-FIFO is created with a name of name, it will be allocated
  * the first unused minor number and will have a user assigned size.
  * Return value: On success, the allocated minor number is returned.
- *               On error, -errno is returned.
+ *	       On error, -errno is returned.
  */
 
 int rtf_named_create(const char *name, int size);
@@ -157,8 +157,8 @@ int rtf_named_create(const char *name, int size);
  *
  * An RT-FIFO is created with a name of name, it will be allocated
  * the first unused minor number and will have a default size.
- * Return value: On success, the allocated minor number is returned. 
- *               On error, -errno is returned.
+ * Return value: On success, the allocated minor number is returned.
+ *	       On error, -errno is returned.
  */
 
 RTAI_SYSCALL_MODE int rtf_create_named(const char *name);
@@ -166,14 +166,14 @@ RTAI_SYSCALL_MODE int rtf_create_named(const char *name);
 /* Look up a named RT-FIFO.
  *
  * Find the RT-FIFO with the name name.
- * Return value: On success, the minor number is returned. 
- *               On error, -errno is returned.
+ * Return value: On success, the minor number is returned.
+ *	       On error, -errno is returned.
  */
 
 RTAI_SYSCALL_MODE int rtf_getfifobyname(const char *name);
 
 /* Reset an RT-FIFO.
- * 
+ *
  * An RT-FIFO fifo is reset by setting its buffer pointers to zero, so
  * that any existing data is discarded and the fifo started anew like at its
  * creation.
@@ -182,7 +182,7 @@ RTAI_SYSCALL_MODE int rtf_getfifobyname(const char *name);
 RTAI_SYSCALL_MODE int rtf_reset(unsigned int fifo);
 
 /* destroy an RT-FIFO.
- * 
+ *
  * Return value: On success, 0 is returned.
  */
 
@@ -190,7 +190,7 @@ RTAI_SYSCALL_MODE int rtf_destroy(unsigned int fifo);
 
 
 /* Resize an RT-FIFO.
- * 
+ *
  * Return value: size is returned on success. On error, a negative value
  * is returned.
  */
@@ -250,7 +250,7 @@ RTAI_SYSCALL_MODE int rtf_get_if(unsigned int fifo,	/* RT-FIFO */
 	    int count		/* number of bytes to read */);
 
 
-/* 
+/*
  * Preview the an RT-FIFO content.
  */
 
@@ -323,7 +323,7 @@ extern "C" {
 
 RTAI_PROTO(int, rtf_create,(unsigned int fifo, int size))
 {
-	struct { unsigned long fifo, size; } arg = { fifo, size }; 
+	struct { unsigned long fifo, size; } arg = { fifo, size };
 	return rtai_lxrt(FUN_FIFOS_LXRT_INDX, SIZARG, _CREATE, &arg).i[LOW];
 }
 
@@ -393,31 +393,31 @@ RTAI_PROTO(int, rtf_reset_lxrt,(unsigned int fifo))
 
 RTAI_PROTO(int, rtf_resize_lxrt,(unsigned int fifo, int size))
 {
-	struct { unsigned long fifo, size; } arg = { fifo, size }; 
+	struct { unsigned long fifo, size; } arg = { fifo, size };
 	return rtai_lxrt(FUN_FIFOS_LXRT_INDX, SIZARG, _RESIZE, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rtf_sem_init_lxrt,(unsigned int fifo, int value))
 {
-	struct { unsigned long fifo, value; } arg = { fifo, value }; 
+	struct { unsigned long fifo, value; } arg = { fifo, value };
 	return rtai_lxrt(FUN_FIFOS_LXRT_INDX, SIZARG, _SEM_INIT, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rtf_sem_post_lxrt,(unsigned int fifo))
 {
-	struct { unsigned long fifo; } arg = { fifo }; 
+	struct { unsigned long fifo; } arg = { fifo };
 	return rtai_lxrt(FUN_FIFOS_LXRT_INDX, SIZARG, _SEM_POST, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rtf_sem_trywait_lxrt,(unsigned int fifo))
 {
-	struct { unsigned long fifo; } arg = { fifo }; 
+	struct { unsigned long fifo; } arg = { fifo };
 	return rtai_lxrt(FUN_FIFOS_LXRT_INDX, SIZARG, _SEM_TRY, &arg).i[LOW];
 }
 
 RTAI_PROTO(int, rtf_sem_destroy_lxrt,(unsigned int fifo))
 {
-	struct { unsigned long fifo; } arg = { fifo }; 
+	struct { unsigned long fifo; } arg = { fifo };
 	return rtai_lxrt(FUN_FIFOS_LXRT_INDX, SIZARG, _SEM_DESTRY, &arg).i[LOW];
 }
 
@@ -495,8 +495,8 @@ RTAI_PROTO(int, rtf_suspend_timed,(int fd, int ms_delay))
  * rtf_open_sized is the equivalent of rtf_create() in user space; it creates a
  * real-time fifo (RT-FIFO) of initial size @a size.
  *
- * @param size is the requested size for the fifo. 
- * 
+ * @param size is the requested size for the fifo.
+ *
  * The RT-FIFO is a character based mechanism to communicate among real-time
  * tasks and ordinary Linux processes. The rtf_* functions are used by the
  * real-time tasks; Linux processes use standard character device access
@@ -516,7 +516,7 @@ RTAI_PROTO(int, rtf_suspend_timed,(int fd, int ms_delay))
  * track their number, and avoid destroying/closing a fifo that is still used.
  *
  * @return the usual Unix file descriptor on succes, to be used in standard reads
- * and writes. 
+ * and writes.
  * @retval -ENOMEM if the necessary size could not be allocated for the RT-FIFO.
  *
  * @note In user space, the standard UNIX open acts like rtf_open_sized with a
@@ -526,14 +526,14 @@ RTAI_PROTO(int, rtf_open_sized,(const char *dev, int perm, int size))
 {
 	int fd;
 
-	if ((fd = open(dev, perm)) < 0) { 
+	if ((fd = open(dev, perm)) < 0) {
 		return -errno;
 	}
 	if (ioctl(fd, RESIZE, size) < 0) {
 	    	close(fd);
 		return -errno;
 	}
-	return fd; 
+	return fd;
 }
 
 RTAI_PROTO(int, rtf_evdrp,(int fd, void *buf, int count))
@@ -660,11 +660,11 @@ RTAI_PROTO(int, rtf_sem_init,(int fd, int value))
  *
  * A process blocked on a semaphore returns when:
  * - the caller task is in the first place of the waiting queue and somebody
- *   issues a rtf_sem_post; 
+ *   issues a rtf_sem_post;
  * - an error occurs (e.g. the semaphore is destroyed).
  *
  * @param fd is the file descriptor returned by standard UNIX open in user space
- * 
+ *
  * Since it is blocking rtf_sem_waitcannot be used both in kernel and user
  * space.
  *
@@ -797,7 +797,7 @@ RTAI_PROTO(int, rtf_create_named,(const char *name))
 	if (strlen(name) > RTF_NAMELEN) {
 	    	return -1;
 	}
-	if ((fd = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDONLY)) < 0) { 
+	if ((fd = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDONLY)) < 0) {
 		return -errno;
 	}
 	strncpy(nm, name, RTF_NAMELEN+1);

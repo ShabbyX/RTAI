@@ -226,23 +226,23 @@ void cleanup_tsc_sync(void)
 #define CAL_LOOPS 200
 int rtai_calibrate_hard_timer(void)
 {
-        unsigned long flags;
-        RTIME t;
-        int i, dt;
+	unsigned long flags;
+	RTIME t;
+	int i, dt;
 
-        flags = rtai_critical_enter(NULL);
+	flags = rtai_critical_enter(NULL);
 #ifdef CONFIG_X86_LOCAL_APIC
-        t = rtai_rdtsc();
-        for (i = 0; i < CAL_LOOPS; i++) {
-                apic_write_around(APIC_TMICT, 8000);
-        }
+	t = rtai_rdtsc();
+	for (i = 0; i < CAL_LOOPS; i++) {
+		apic_write_around(APIC_TMICT, 8000);
+	}
 #else
-        outb(0x34, 0x43);
-        t = rtai_rdtsc();
-        for (i = 0; i < CAL_LOOPS; i++) {
-                outb(LATCH & 0xff,0x40);
-                outb(LATCH >> 8,0x40);
-        }
+	outb(0x34, 0x43);
+	t = rtai_rdtsc();
+	for (i = 0; i < CAL_LOOPS; i++) {
+		outb(LATCH & 0xff,0x40);
+		outb(LATCH >> 8,0x40);
+	}
 #endif
 	dt = (int)(rtai_rdtsc() - t);
 	rtai_critical_exit(flags);
@@ -269,7 +269,7 @@ void free_isolcpus_from_linux(void *IsolCpusMask)
 			cpumask_complement(&mask, (struct cpumask *)IsolCpusMask);
 		}
 #if 0 // diagnostic
-		{ 
+		{
 			char buf[4*sizeof(struct cpumask)];
 			cpumask_scnprintf(buf, sizeof(buf), &p->cpus_allowed);
 			printk("PID: %d, ORIG: %s ", p->pid, buf);

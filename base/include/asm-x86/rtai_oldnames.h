@@ -34,23 +34,23 @@
 
 #ifdef __KERNEL__
 
-#define IFLAG                        RTAI_IFLAG
-#define hard_cli()                   rtai_cli()
-#define hard_sti()                   rtai_sti()
+#define IFLAG			RTAI_IFLAG
+#define hard_cli()		   rtai_cli()
+#define hard_sti()		   rtai_sti()
 #define hard_save_flags_and_cli(x)   rtai_save_flags_and_cli(x)
-#define hard_restore_flags(x)        rtai_restore_flags(x)
-#define hard_save_flags(x)           rtai_save_flags(x)
-#define hard_cpu_id                  hal_processor_id
+#define hard_restore_flags(x)	rtai_restore_flags(x)
+#define hard_save_flags(x)	   rtai_save_flags(x)
+#define hard_cpu_id		  hal_processor_id
 
 #endif /* __KERNEL__ */
 
 #ifndef __RTAI_HAL__
 
-#define tuned           rtai_tunables
+#define tuned	   rtai_tunables
 #define NR_RT_CPUS      RTAI_NR_CPUS
 #define RT_TIME_END     RTAI_TIME_LIMIT
 
-#define CPU_FREQ        RTAI_CPU_FREQ
+#define CPU_FREQ	RTAI_CPU_FREQ
 #define TIMER_8254_IRQ  RTAI_TIMER_8254_IRQ
 #define FREQ_8254       RTAI_FREQ_8254
 #define LATENCY_8254    RTAI_LATENCY_8254
@@ -94,9 +94,9 @@ static inline int rt_free_cpu_own_irq (unsigned irq) {
 }
 
 static inline unsigned long get_cr2 (void) {
-        unsigned long address;
-        __asm__("movq %%cr2,%0":"=r" (address));
-        return address;
+	unsigned long address;
+	__asm__("movq %%cr2,%0":"=r" (address));
+	return address;
 }
 
 #endif /* __KERNEL__ */

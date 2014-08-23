@@ -38,7 +38,7 @@
 #ifndef DECLARE_MUTEX_LOCKED
 #ifndef __DECLARE_SEMAPHORE_GENERIC
 #define DECLARE_MUTEX_LOCKED(name) \
-        struct semaphore name = __SEMAPHORE_INITIALIZER(name, 0)
+	struct semaphore name = __SEMAPHORE_INITIALIZER(name, 0)
 #else
 #define DECLARE_MUTEX_LOCKED(name) __DECLARE_SEMAPHORE_GENERIC(name,0)
 #endif
@@ -69,7 +69,7 @@ typedef int timer_t;
 #ifndef __deprecated
 #define container_of(ptr, type, member) \
 	({ const typeof( ((type *)0)->member ) *__mptr = (ptr); \
-        (type *)( (char *)__mptr - offsetof(type,member) );})
+	(type *)( (char *)__mptr - offsetof(type,member) );})
 #endif
 
 #ifndef __deprecated
@@ -77,7 +77,7 @@ typedef int timer_t;
 #endif
 
 #define RTAI_MODULE_PARM_ARRAY(name, type, addr, size) \
-        static inline void *__check_existence_##name(void) { return &name; } \
+	static inline void *__check_existence_##name(void) { return &name; } \
 	MODULE_PARM(name, "1-" __MODULE_STRING(size) _MODULE_PARM_STRING_ ## type);
 #define _MODULE_PARM_STRING_charp "s"
 
@@ -126,12 +126,12 @@ do { \
 
 static inline unsigned long hweight_long(unsigned long w)
 {
-        return sizeof(w) == 4 ? hweight32(w) : hweight32(w);
+	return sizeof(w) == 4 ? hweight32(w) : hweight32(w);
 }
 
 #else /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) */
 
-#ifndef init_MUTEX_LOCKED 
+#ifndef init_MUTEX_LOCKED
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,26)
 #define init_MUTEX_LOCKED(sem)  sema_init(sem, 0)
 #endif
@@ -211,7 +211,7 @@ typedef struct class_simple class_t;
 #ifndef CONFIG_SYSFS
 typedef void * class_t;
 #define class_create(a,b)  ((void *)1)
-#define CLASS_DEVICE_CREATE(a, b, c, d, ...)  ((void *)1) 
+#define CLASS_DEVICE_CREATE(a, b, c, d, ...)  ((void *)1)
 #define class_device_destroy(a, b)
 #define class_destroy(a)
 #endif

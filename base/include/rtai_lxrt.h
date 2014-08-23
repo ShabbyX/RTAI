@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  *
  * ACKNOWLEDGMENTS:
- * Pierre Cloutier (pcloutier@poseidoncontrols.com) has suggested the 6 
+ * Pierre Cloutier (pcloutier@poseidoncontrols.com) has suggested the 6
  * characters names and fixed many inconsistencies within this file.
  */
 
@@ -92,9 +92,9 @@
 #define HARD_TIMER_COUNT		18
 #define GET_TIME_NS			19
 #define GET_CPU_TIME_NS			20
-#define SET_RUNNABLE_ON_CPUS		21 
-#define SET_RUNNABLE_ON_CPUID		22	 
-#define GET_TIMER_CPU			23	 
+#define SET_RUNNABLE_ON_CPUS		21
+#define SET_RUNNABLE_ON_CPUID		22
+#define GET_TIMER_CPU			23
 #define START_RT_APIC_TIMERS		24
 #define HARD_TIMER_COUNT_CPUID		25
 #define COUNT2NANO_CPUID		26
@@ -108,8 +108,8 @@
 #define WAKEUP_SLEEPING			34
 #define CHANGE_TASK_PRIO 		35
 #define SET_RESUME_TIME 		36
-#define SET_PERIOD        		37
-#define HARD_TIMER_RUNNING              38
+#define SET_PERIOD			37
+#define HARD_TIMER_RUNNING	      38
 
 // semaphores
 #define TYPED_SEM_INIT 			39
@@ -135,7 +135,7 @@
 #define RWL_RDLOCK_IF 			59
 #define RWL_RDLOCK_UNTIL 		60
 #define RWL_RDLOCK_TIMED 		61
-#define RWL_WRLOCK 			62	
+#define RWL_WRLOCK 			62
 #define RWL_WRLOCK_IF	 		63
 #define RWL_WRLOCK_UNTIL		64
 #define RWL_WRLOCK_TIMED		65
@@ -144,7 +144,7 @@
 #define SPL_DELETE			68
 #define NAMED_SPL_INIT 			69
 #define NAMED_SPL_DELETE		70
-#define SPL_LOCK 			71	
+#define SPL_LOCK 			71
 #define SPL_LOCK_IF	 		72
 #define SPL_LOCK_TIMED			73
 #define SPL_UNLOCK 			74
@@ -165,7 +165,7 @@
 #define MBX_RECEIVE_UNTIL		87
 #define MBX_RECEIVE_TIMED		88
 #define MBX_EVDRP			89
-#define MBX_OVRWR_SEND                  90
+#define MBX_OVRWR_SEND		  90
 
 // short intertask messages
 #define SENDMSG				91
@@ -201,63 +201,63 @@
 #define EVDRPX			       119
 
 // proxies
-#define PROXY_ATTACH                   120
+#define PROXY_ATTACH		   120
 #define PROXY_DETACH     	       121
-#define PROXY_TRIGGER                  122
+#define PROXY_TRIGGER		  122
 
 
 // synchronous user space specific intertask messages and related proxies
-#define RT_SEND                        123
-#define RT_RECEIVE                     124
-#define RT_CRECEIVE          	       125
-#define RT_REPLY                       126
-#define RT_PROXY_ATTACH                127
-#define RT_PROXY_DETACH                128
-#define RT_TRIGGER                     129
-#define RT_NAME_ATTACH                 130
-#define RT_NAME_DETACH                 131
-#define RT_NAME_LOCATE                 132
+#define RT_SEND			123
+#define RT_RECEIVE		     124
+#define RT_CRECEIVE	  	       125
+#define RT_REPLY		       126
+#define RT_PROXY_ATTACH		127
+#define RT_PROXY_DETACH		128
+#define RT_TRIGGER		     129
+#define RT_NAME_ATTACH		 130
+#define RT_NAME_DETACH		 131
+#define RT_NAME_LOCATE		 132
 
 // bits
-#define BITS_INIT          	       133	
-#define BITS_DELETE        	       134
+#define BITS_INIT	  	       133
+#define BITS_DELETE		       134
 #define NAMED_BITS_INIT    	       135
 #define NAMED_BITS_DELETE  	       136
-#define BITS_GET           	       137
-#define BITS_RESET         	       138
-#define BITS_SIGNAL        	       139
-#define BITS_WAIT          	       140
-#define BITS_WAIT_IF       	       141		
+#define BITS_GET	   	       137
+#define BITS_RESET	 	       138
+#define BITS_SIGNAL		       139
+#define BITS_WAIT	  	       140
+#define BITS_WAIT_IF       	       141
 #define BITS_WAIT_UNTIL    	       142
 #define BITS_WAIT_TIMED   	       143
 
 // typed mail boxes
-#define TBX_INIT                       144
-#define TBX_DELETE         	       145
-#define NAMED_TBX_INIT                 146
-#define NAMED_TBX_DELETE               147
-#define TBX_SEND                       148
-#define TBX_SEND_IF                    149
-#define TBX_SEND_UNTIL                 150
-#define TBX_SEND_TIMED                 151
-#define TBX_RECEIVE                    152
-#define TBX_RECEIVE_IF                 153
-#define TBX_RECEIVE_UNTIL              154
-#define TBX_RECEIVE_TIMED              155
-#define TBX_BROADCAST                  156
-#define TBX_BROADCAST_IF               157
-#define TBX_BROADCAST_UNTIL            158
-#define TBX_BROADCAST_TIMED            159
-#define TBX_URGENT                     160
-#define TBX_URGENT_IF                  161
-#define TBX_URGENT_UNTIL               162
-#define TBX_URGENT_TIMED               163
+#define TBX_INIT		       144
+#define TBX_DELETE	 	       145
+#define NAMED_TBX_INIT		 146
+#define NAMED_TBX_DELETE	       147
+#define TBX_SEND		       148
+#define TBX_SEND_IF		    149
+#define TBX_SEND_UNTIL		 150
+#define TBX_SEND_TIMED		 151
+#define TBX_RECEIVE		    152
+#define TBX_RECEIVE_IF		 153
+#define TBX_RECEIVE_UNTIL	      154
+#define TBX_RECEIVE_TIMED	      155
+#define TBX_BROADCAST		  156
+#define TBX_BROADCAST_IF	       157
+#define TBX_BROADCAST_UNTIL	    158
+#define TBX_BROADCAST_TIMED	    159
+#define TBX_URGENT		     160
+#define TBX_URGENT_IF		  161
+#define TBX_URGENT_UNTIL	       162
+#define TBX_URGENT_TIMED	       163
 
 // pqueue
-#define MQ_OPEN         	       164
+#define MQ_OPEN	 	       164
 #define MQ_RECEIVE      	       165
-#define MQ_SEND         	       166
-#define MQ_CLOSE        	       167
+#define MQ_SEND	 	       166
+#define MQ_CLOSE		       167
 #define MQ_GETATTR     		       168
 #define MQ_SETATTR      	       169
 #define MQ_NOTIFY       	       170
@@ -271,8 +271,8 @@
 #define NAMED_TASK_DELETE	       176
 
 // registry
-#define GET_ADR         	       177
-#define GET_NAME         	       178
+#define GET_ADR	 	       177
+#define GET_NAME	 	       178
 
 // netrpc
 #define NETRPC			       179
@@ -280,31 +280,31 @@
 #define DDN2NL			       181
 #define SET_THIS_NODE		       182
 #define FIND_ASGN_STUB		       183
-#define REL_STUB		       184	
+#define REL_STUB		       184
 #define WAITING_RETURN		       185
 
 // a semaphore extension
 #define COND_SIGNAL		       186
 
 // new shm
-#define SHM_ALLOC                      187
-#define SHM_FREE                       188
-#define SHM_SIZE                       189
-#define HEAP_SET                       190
-#define HEAP_ALLOC                     191
-#define HEAP_FREE                      192
-#define HEAP_NAMED_ALLOC               193
-#define HEAP_NAMED_FREE                194
-#define MALLOC                         195
-#define FREE                           196
-#define NAMED_MALLOC                   197
-#define NAMED_FREE                     198
+#define SHM_ALLOC		      187
+#define SHM_FREE		       188
+#define SHM_SIZE		       189
+#define HEAP_SET		       190
+#define HEAP_ALLOC		     191
+#define HEAP_FREE		      192
+#define HEAP_NAMED_ALLOC	       193
+#define HEAP_NAMED_FREE		194
+#define MALLOC			 195
+#define FREE			   196
+#define NAMED_MALLOC		   197
+#define NAMED_FREE		     198
 
 #define SUSPEND_IF		       199
 #define SUSPEND_UNTIL	 	       200
 #define SUSPEND_TIMED		       201
-#define IRQ_WAIT		       202	
-#define IRQ_WAIT_IF		       203	
+#define IRQ_WAIT		       202
+#define IRQ_WAIT_IF		       203
 #define IRQ_WAIT_UNTIL		       204
 #define IRQ_WAIT_TIMED		       205
 #define IRQ_SIGNAL		       206
@@ -314,11 +314,11 @@
 #define SCHED_UNLOCK		       210
 #define PEND_LINUX_IRQ		       211
 #define SET_LINUX_SYSCALL_MODE	       212
-/*#define RETURN_LINUX_SYSCALL         213 available */
-#define REQUEST_RTC                    214
-#define RELEASE_RTC                    215
-#define RT_GETTID                      216
-#define SET_NETRPC_TIMEOUT             217
+/*#define RETURN_LINUX_SYSCALL	 213 available */
+#define REQUEST_RTC		    214
+#define RELEASE_RTC		    215
+#define RT_GETTID		      216
+#define SET_NETRPC_TIMEOUT	     217
 #define GET_REAL_TIME		       218
 #define GET_REAL_TIME_NS	       219
 
@@ -339,13 +339,13 @@
 
 #define MAX_LXRT_FUN		       231
 
-// not recovered yet 
-// Qblk's 
+// not recovered yet
+// Qblk's
 #define RT_INITTICKQUEUE		69
 #define RT_RELEASETICKQUEUE     	70
-#define RT_QDYNALLOC            	71
-#define RT_QDYNFREE             	72
-#define RT_QDYNINIT             	73
+#define RT_QDYNALLOC	    	71
+#define RT_QDYNFREE	     	72
+#define RT_QDYNINIT	     	73
 #define RT_QBLKWAIT			74
 #define RT_QBLKREPEAT			75
 #define RT_QBLKSOON			76
@@ -372,11 +372,11 @@
 #define RTAI_MALLOC			96
 #define RT_FREE				97
 #define RT_MMGR_STATS			98
-#define RT_STOMP                	99
+#define RT_STOMP			99
 // VC
-#define RT_VC_ATTACH            	100
-#define RT_VC_RELEASE           	101
-#define RT_VC_RESERVE          		102
+#define RT_VC_ATTACH	    	100
+#define RT_VC_RELEASE	   	101
+#define RT_VC_RESERVE	  		102
 // Linux Signal Support
 #define RT_GET_LINUX_SIGNAL		103
 #define RT_GET_ERRNO			104
@@ -402,7 +402,7 @@
 #define SET_USP_FLAGS   	1016
 #define GET_USP_FLG_MSK 	1017
 #define SET_USP_FLG_MSK 	1018
-#define IS_HARD         	1019
+#define IS_HARD	 	1019
 #define LINUX_SERVER		1020
 #define ALLOC_REGISTER 		1021
 #define DELETE_DEREGISTER	1022
@@ -429,8 +429,8 @@
 #define INDX(x)  (((x) >> 24) & 0xF)
 
 #define LINUX_SYSCALL_GET_MODE       0
-#define SYNC_LINUX_SYSCALL           1
-#define ASYNC_LINUX_SYSCALL          2
+#define SYNC_LINUX_SYSCALL	   1
+#define ASYNC_LINUX_SYSCALL	  2
 #define LINUX_SYSCALL_CANCELED       3
 #define LINUX_SYSCALL_GET_CALLBACK   ((void *)4)
 
@@ -446,15 +446,15 @@ struct linux_syscalls_list { int in, out, nr, id, mode; void (*cbfun)(long, long
 
 /*
      Encoding of system call argument
-            31                                    0  
+	    31				    0
 soft SRQ    .... |||| |||| |||| .... .... .... ....  0 - 4095 max
-int  NARG   .... .... .... .... |||| |||| |||| ||||  
+int  NARG   .... .... .... .... |||| |||| |||| ||||
 arg  INDX   |||| .... .... .... .... .... .... ....
 */
 
 /*
-These USP (unsigned long) type fields allow to read and write up to 2 arguments.  
-                                               
+These USP (unsigned long) type fields allow to read and write up to 2 arguments.
+
 The high part of the unsigned long encodes writes
 W ARG1 BF .... .... ..|| |... .... .... .... ....
 W ARG1 SZ .... ...| ||.. .... .... .... .... ....
@@ -534,7 +534,7 @@ static inline struct rt_task_struct *pid2rttask(pid_t pid)
 
 static inline long rttask2pid(struct rt_task_struct *task)
 {
-        return task->tid;
+	return task->tid;
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -605,7 +605,7 @@ RTAI_PROTO(void *, rt_get_adr, (unsigned long name))
 {
 	struct { unsigned long name; } arg = { name };
 	return rtai_lxrt(BIDX, SIZARG, LXRT_GET_ADR, &arg).v[LOW];
-} 
+}
 
 /**
  * Get an object name by its address.
@@ -627,8 +627,8 @@ RTAI_PROTO(unsigned long, rt_get_name, (void *adr))
 #ifndef __SUPPORT_HARD_SOFT_TOGGLER__
 #define __SUPPORT_HARD_SOFT_TOGGLER__
 
-static void hard_soft_toggler(int sig) 
-{ 
+static void hard_soft_toggler(int sig)
+{
 	if (sig == SIGUSR1) {
 		struct { RT_TASK *task; } arg = { NULL };
 		rtai_lxrt(BIDX, SIZARG, HARD_SOFT_TOGGLER, &arg);
@@ -647,18 +647,18 @@ static void hard_soft_toggler(int sig)
 
 RTAI_PROTO(RT_TASK *, rt_task_init_schmod, (unsigned long name, int priority, int stack_size, int max_msg_size, int policy, int cpus_allowed))
 {
-        struct sched_param mysched;
-        struct { unsigned long name; long priority, stack_size, max_msg_size, cpus_allowed; } arg = { name ? name : rt_get_name(NULL), priority, stack_size, max_msg_size, cpus_allowed };
+	struct sched_param mysched;
+	struct { unsigned long name; long priority, stack_size, max_msg_size, cpus_allowed; } arg = { name ? name : rt_get_name(NULL), priority, stack_size, max_msg_size, cpus_allowed };
 
 	SET_SIGNAL_TOGGLER();
-        if (policy == SCHED_OTHER) {
-        	mysched.sched_priority = 0;
+	if (policy == SCHED_OTHER) {
+		mysched.sched_priority = 0;
 	} else if ((mysched.sched_priority = sched_get_priority_max(policy) - priority) < 1) {
 		mysched.sched_priority = 1;
 	}
-        if (sched_setscheduler(0, policy, &mysched) < 0) {
-                return 0;
-        }
+	if (sched_setscheduler(0, policy, &mysched) < 0) {
+		return 0;
+	}
 	rtai_iopl();
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
@@ -674,7 +674,7 @@ RTAI_PROTO(long, rt_thread_create, (void *fun, void *args, int stack_size))
 	long thread;
 	pthread_attr_t attr;
 
-        pthread_attr_init(&attr);
+	pthread_attr_init(&attr);
 	if (!pthread_attr_setstacksize(&attr, stack_size > RT_THREAD_STACK_MIN ? stack_size : RT_THREAD_STACK_MIN)) {
 		struct { unsigned long hs; } arg = { 0 };
 		if ((arg.hs = rtai_lxrt(BIDX, SIZARG, IS_HARD, &arg).i[LOW])) {
@@ -715,7 +715,7 @@ static void linux_syscall_server_fun(struct linux_syscalls_list *list)
 		struct linux_syscall calldata[syscalls.nr];
 		syscalls.syscall = calldata;
 		memset(calldata, 0, sizeof(calldata));
-                mlockall(MCL_CURRENT | MCL_FUTURE);
+		mlockall(MCL_CURRENT | MCL_FUTURE);
 		list->serv = &syscalls;
 		rtai_lxrt(BIDX, sizeof(RT_TASK *), RESUME, &syscalls.task);
 		while (abs(rtai_lxrt(BIDX, sizeof(RT_TASK *), SUSPEND, &syscalls.serv).i[LOW]) < RTE_LOWERR) {
@@ -734,7 +734,7 @@ static void linux_syscall_server_fun(struct linux_syscalls_list *list)
 				syscalls.out = 0;
 			}
 		}
-        }
+	}
 	rtai_lxrt(BIDX, sizeof(RT_TASK *), LXRT_TASK_DELETE, &syscalls.serv);
 }
 
@@ -748,20 +748,20 @@ RTAI_PROTO(int, rt_set_linux_syscall_mode, (int mode, void (*cbfun)(long, long))
 
 RTAI_PROTO(int, rt_linux_syscall_mode, (struct linux_syscalls_list *syscalls, int mode))
 {
-	int retval; 
+	int retval;
 	if (syscalls == NULL) {
 		return EINVAL;
 	}
-	retval = syscalls->mode; 
+	retval = syscalls->mode;
 	if (mode == SYNC_LINUX_SYSCALL || mode == ASYNC_LINUX_SYSCALL) {
-		syscalls->mode = mode; 
+		syscalls->mode = mode;
 	}
 	return retval;
 }
 
 RTAI_PROTO(void *, rt_linux_syscall_cbfun, (struct linux_syscalls_list *syscalls, void (*cbfun)(long, long)))
 {
-	void *retval; 
+	void *retval;
 	if (syscalls == NULL) {
 		return (void *)EINVAL;
 	}
@@ -846,12 +846,12 @@ RTAI_PROTO(RT_TASK *, rt_thread_init, (unsigned long name, int priority, int max
 
 /**
  * Create an RTAI task extension for a Linux process/task in user space.
- * 
+ *
  * rt_task_init extends the Linux task structure, making it possible to use
  * RTAI APIs that wants to access RTAI scheduler services.   It needs no task
  * function as none is used, but it does need to setup an RTAI task structure
  * and initialize it appropriately as the provided services are carried out as
- * if the Linux process has become an RTAI task also.   Because of that it 
+ * if the Linux process has become an RTAI task also.   Because of that it
  * requires less arguments and returns the pointer to the RTAI task extension
  * that is to be used in related calls.
  *
@@ -860,23 +860,23 @@ RTAI_PROTO(RT_TASK *, rt_thread_init, (unsigned long name, int priority, int max
  *
  * @param priority is the priority of the RTAI task extension.
  *
- * @param stack_size, a legacy parameter used nomore; kept for portability 
- * reasons only. (It was just what is implied by such a name and referred to 
+ * @param stack_size, a legacy parameter used nomore; kept for portability
+ * reasons only. (It was just what is implied by such a name and referred to
  * the stack size used by the buddy in the very first implementation of LXRT).
  *
  * @param max_msg_size is a hint for the size of the most lengthy intertask
  * message that is likely to be exchanged.
  *
  * @a max_msg_size can be zero, in which case a default internal value is
- * used.  Keep an eye on such a default message (256) size. It could be 
- * possible that a larger size is required to suite your needs best. In such 
- * a case either recompile sys.c with the macro MSG_SIZE set appropriately, 
- * or assign a larger size here esplicitly.  Note that the message size is 
- * not critical though. In fact the module reassigns it, dynamically and 
- * appropriately sized, whenever it is needed.  The cost is a real time 
+ * used.  Keep an eye on such a default message (256) size. It could be
+ * possible that a larger size is required to suite your needs best. In such
+ * a case either recompile sys.c with the macro MSG_SIZE set appropriately,
+ * or assign a larger size here esplicitly.  Note that the message size is
+ * not critical though. In fact the module reassigns it, dynamically and
+ * appropriately sized, whenever it is needed.  The cost is a real time
  * allocation of the new buffer.
  * Note also that @a max_msg_size is for a buffer to be used to copy whatever
- * intertask message from user to kernel space, as intertask messages are not 
+ * intertask message from user to kernel space, as intertask messages are not
  * necessarily used immediately.
  *
  * It is important to remark that the returned task pointers cannot be used
@@ -885,7 +885,7 @@ RTAI_PROTO(RT_TASK *, rt_thread_init, (unsigned long name, int priority, int max
  *
  * @return On success a pointer to the task structure initialized in kernel
  * space.
- * @return On failure a NULL value is returned if it was not possible to setup 
+ * @return On failure a NULL value is returned if it was not possible to setup
  * the RTAI task extension or something using the same name was found.
  */
 RTAI_PROTO(RT_TASK *,rt_task_init,(unsigned long name, int priority, int stack_size, int max_msg_size))
@@ -1161,16 +1161,16 @@ RTAI_PROTO(int, rt_task_signal_handler, (RT_TASK *task, void (*handler)(void)))
 
 RTAI_PROTO(int,rt_task_use_fpu,(RT_TASK *task, int use_fpu_flag))
 {
-        struct { RT_TASK *task; long use_fpu_flag; } arg = { task, use_fpu_flag };
-        if (rtai_lxrt(BIDX, SIZARG, RT_BUDDY, &arg).v[LOW] != task) {
-                return rtai_lxrt(BIDX, SIZARG, TASK_USE_FPU, &arg).i[LOW];
-        } else {
+	struct { RT_TASK *task; long use_fpu_flag; } arg = { task, use_fpu_flag };
+	if (rtai_lxrt(BIDX, SIZARG, RT_BUDDY, &arg).v[LOW] != task) {
+		return rtai_lxrt(BIDX, SIZARG, TASK_USE_FPU, &arg).i[LOW];
+	} else {
 // note that it would be enough to do whatever FP op here to have it OK. But
 // that is scary if it is done when already in hard real time, and we do not
 // want to force users to call this before making it hard.
-                rtai_lxrt(BIDX, SIZARG, HRT_USE_FPU, &arg);
-                return 0;
-        }
+		rtai_lxrt(BIDX, SIZARG, HRT_USE_FPU, &arg);
+		return 0;
+	}
 }
 
 RTAI_PROTO(int,rt_buddy_task_use_fpu,(RT_TASK *task, int use_fpu_flag))
@@ -1339,15 +1339,15 @@ RTAI_PROTO(int,rt_printk,(const char *format, ...))
 
 RTAI_PROTO(int,rtai_print_to_screen,(const char *format, ...))
 {
-        char display[VSNPRINTF_BUF_SIZE];
-        struct { const char *display; long nch; } arg = { display, 0 };
-        va_list args;
+	char display[VSNPRINTF_BUF_SIZE];
+	struct { const char *display; long nch; } arg = { display, 0 };
+	va_list args;
 
-        va_start(args, format);
-        arg.nch = vsnprintf(display, VSNPRINTF_BUF_SIZE, format, args);
-        va_end(args);
-        rtai_lxrt(BIDX, SIZARG, PRINTK, &arg);
-        return arg.nch;
+	va_start(args, format);
+	arg.nch = vsnprintf(display, VSNPRINTF_BUF_SIZE, format, args);
+	va_end(args);
+	rtai_lxrt(BIDX, SIZARG, PRINTK, &arg);
+	return arg.nch;
 }
 
 RTAI_PROTO(int,rt_usp_signal_handler,(void (*handler)(void)))
@@ -1401,7 +1401,7 @@ RTAI_PROTO(int, rt_gettid, (void))
 }
 
 /**
- * Give a Linux process, or pthread, hard real time execution capabilities 
+ * Give a Linux process, or pthread, hard real time execution capabilities
  * allowing full kernel preemption.
  *
  * rt_make_hard_real_time makes the soft Linux POSIX real time process, from
@@ -1418,7 +1418,7 @@ RTAI_PROTO(int, rt_gettid, (void))
  * process that was made hard real time with a Linux buddy server, either
  * standard or POSIX soft real time.   To communicate and synchronize with the
  * buddy you can use the wealth of available RTAI, and its schedulers, services.
- * 
+ *
  * After all it is pure nonsense to use a non hard real time Operating System,
  * i.e. Linux, from within hard real time processes.
  */
@@ -1429,7 +1429,7 @@ RTAI_PROTO(void,rt_make_hard_real_time,(void))
 }
 
 /**
- * Allows a non root user to use the Linux POSIX soft real time process 
+ * Allows a non root user to use the Linux POSIX soft real time process
  * management and memory lock functions, and allows it to do any input-output
  * operation from user space.
  *

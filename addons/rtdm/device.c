@@ -226,7 +226,7 @@ int rtdm_dev_register(struct rtdm_device *device)
 			    return -EINVAL;);
 		if (device->open_rt &&
 		    device->socket_rt != (void *)rtdm_no_support)
-		        xnlogerr("RTDM: RT open handler is deprecated, "
+			xnlogerr("RTDM: RT open handler is deprecated, "
 				 "driver requires update.\n");
 		SET_DEFAULT_OP_IF_NULL(*device, open);
 		SET_DEFAULT_OP(*device, socket);

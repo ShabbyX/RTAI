@@ -100,7 +100,7 @@ struct symbol {
 #define SYMBOL_WARNED     0x8000  /* warning has been issued */
 
 /* Set when symbol.def[] is used */
-#define SYMBOL_DEF        0x10000  /* First bit of SYMBOL_DEF */
+#define SYMBOL_DEF	0x10000  /* First bit of SYMBOL_DEF */
 #define SYMBOL_DEF_USER   0x10000  /* symbol.def[S_DEF_USER] is valid */
 #define SYMBOL_DEF_AUTO   0x20000  /* symbol.def[S_DEF_AUTO] is valid */
 #define SYMBOL_DEF3       0x40000  /* symbol.def[S_DEF_3] is valid */
@@ -113,12 +113,12 @@ struct symbol {
  * with a config "symbol".
  * Sample:
  * config FOO
- *         default y
- *         prompt "foo prompt"
- *         select BAR
+ *	 default y
+ *	 prompt "foo prompt"
+ *	 select BAR
  * config BAZ
- *         int "BAZ Value"
- *         range 1..255
+ *	 int "BAZ Value"
+ *	 range 1..255
  */
 enum prop_type {
 	P_UNKNOWN,
@@ -135,16 +135,16 @@ enum prop_type {
 
 struct property {
 	struct property *next;     /* next property - null if last */
-	struct symbol *sym;        /* the symbol for which the property is associated */
+	struct symbol *sym;	/* the symbol for which the property is associated */
 	enum prop_type type;       /* type of property */
-	const char *text;          /* the prompt value - P_PROMPT, P_MENU, P_COMMENT */
+	const char *text;	  /* the prompt value - P_PROMPT, P_MENU, P_COMMENT */
 	struct expr_value visible;
-	struct expr *expr;         /* the optional conditional part of the property */
-	struct menu *menu;         /* the menu the property are associated with
+	struct expr *expr;	 /* the optional conditional part of the property */
+	struct menu *menu;	 /* the menu the property are associated with
 				    * valid for: P_SELECT, P_RANGE, P_CHOICE,
 				    * P_PROMPT, P_DEFAULT, P_MENU, P_COMMENT */
-	struct file *file;         /* what file was this property defined */
-	int lineno;                /* what lineno was this property defined */
+	struct file *file;	 /* what file was this property defined */
+	int lineno;		/* what lineno was this property defined */
 };
 
 #define for_all_properties(sym, st, tok) \

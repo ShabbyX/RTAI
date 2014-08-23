@@ -2,7 +2,7 @@
  * rtai_leds.c - mini-driver for generic control of digital signals
  *
  * Copyright (C) 2000  Pierre Cloutier <pcloutier@PoseidonControls.com>
- *               2001  David A. Schleef <ds@schleef.org>
+ *	       2001  David A. Schleef <ds@schleef.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of version 2 of the GNU General Public

@@ -143,7 +143,7 @@ int rtdm_task_init_cpuid(rtdm_task_t *task, const char *name,
 {
 	char *lname;
 	if (rt_task_init_cpuid(task, (void *)task_proc, (long)arg, PAGE_SIZE, priority, 0, 0, cpuid)) {
-        	return -ENOMEM;
+		return -ENOMEM;
 	}
 	if (period > 0) {
 		rt_task_make_periodic_relative_ns(task, 0, period);
@@ -449,9 +449,9 @@ EXPORT_SYMBOL(rtdm_task_join_nrt);
  */
 void rtdm_task_busy_sleep(nanosecs_rel_t delay)
 {
-        xnticks_t wakeup = rtai_rdtsc() + llimd(delay, tuned.cpu_freq, 1000000000);
-        while ((xnticks_t)(rtai_rdtsc() - wakeup) < 0)
-                cpu_relax();
+	xnticks_t wakeup = rtai_rdtsc() + llimd(delay, tuned.cpu_freq, 1000000000);
+	while ((xnticks_t)(rtai_rdtsc() - wakeup) < 0)
+		cpu_relax();
 }
 
 EXPORT_SYMBOL(rtdm_task_busy_sleep);
@@ -543,7 +543,7 @@ EXPORT_SYMBOL(rtdm_timer_destroy);
 int rtdm_timer_start(rtdm_timer_t *timer, nanosecs_abs_t expiry,
 		     nanosecs_rel_t interval, enum rtdm_timer_mode mode)
 {
- 
+
 	int err;
 
 
@@ -575,7 +575,7 @@ EXPORT_SYMBOL(rtdm_timer_start);
  */
 void rtdm_timer_stop(rtdm_timer_t *timer)
 {
- 
+
 
 
 	xntimer_stop(timer);
@@ -652,7 +652,7 @@ static inline int _sem_wait_timed(void *sem, nanosecs_rel_t timeout, rtdm_toseq_
 		ret = rt_sem_wait(sem);
 	} else {
 		/* timeout sequence, i.e. abs timeout, or relative timeout */
-		ret = timeout_seq ? rt_sem_wait_until(sem, *timeout_seq) : rt_sem_wait_timed(sem, nano2count(timeout)); 
+		ret = timeout_seq ? rt_sem_wait_until(sem, *timeout_seq) : rt_sem_wait_timed(sem, nano2count(timeout));
 	}
 	if (ret < RTE_LOWERR) {
 		return 0;
@@ -713,11 +713,11 @@ int device_service_routine(...)
  * interpret special timeout values (infinite and non-blocking),
  * disburdening the driver developer from handling them separately.
  *
- * RTAI REMARK: 
+ * RTAI REMARK:
  * This is just a confusing set of words to patch missing APIs with absolute
- * deadlines in xenomai. In short a timeout_seq is nothing but the absolute 
+ * deadlines in xenomai. In short a timeout_seq is nothing but the absolute
  * deadline and so should be used in any related RTAI API that does it so
- * natively already. Thus the same code in RTAI would simply be: 
+ * natively already. Thus the same code in RTAI would simply be:
  * @code
 int device_service_routine(...)
 {
@@ -733,7 +733,7 @@ int device_service_routine(...)
 	...
 }
  * @endcode
- * though it is not so because of an easier porting. Nonetheless the RTAI 
+ * though it is not so because of an easier porting. Nonetheless the RTAI
  * implementation takes care of using its simpler native way anyhow.
  * END OF RTAI REMARK.
  *
@@ -1108,7 +1108,7 @@ int rtdm_event_select_bind(rtdm_event_t *event, rtdm_selector_t *selector,
 	xnlock_get_irqsave(&nklock, s);
 	err = xnselect_bind(&event->select_block,
 			    binding, selector, type, fd_index,
-			    event->pending || 
+			    event->pending ||
 			    event->synch_base.magic != RT_SEM_MAGIC);
 
 	xnlock_put_irqrestore(&nklock, s);
@@ -1298,7 +1298,7 @@ int rtdm_sem_timeddown(rtdm_sem_t *sem, nanosecs_rel_t timeout,
 
 
 
-	if ((retval = _sem_wait_timed(&sem->sem, timeout, timeout_seq)) == 1) {	
+	if ((retval = _sem_wait_timed(&sem->sem, timeout, timeout_seq)) == 1) {
 		SELECT_SIGNAL(&sem->select_block, 0);
 	}
 	return retval;
@@ -1649,19 +1649,19 @@ int rtdm_irq_request(rtdm_irq_t *irq_handle, unsigned int irq_no,
 		     rtdm_irq_handler_t handler, unsigned long flags,
 		     const char *device_name, void *arg)
 {
-        int err;
+	int err;
 
-        xnintr_init(irq_handle, device_name, irq_no, handler, NULL, flags);
+	xnintr_init(irq_handle, device_name, irq_no, handler, NULL, flags);
 
-        err = xnintr_attach(irq_handle, arg);
-        if (err)
-                return err;
+	err = xnintr_attach(irq_handle, arg);
+	if (err)
+		return err;
 
-        err = xnintr_enable(irq_handle);
-        if (err)
-                xnintr_detach(irq_handle);
+	err = xnintr_enable(irq_handle);
+	if (err)
+		xnintr_detach(irq_handle);
 
-        return err;
+	return err;
 }
 
 EXPORT_SYMBOL(rtdm_irq_request);

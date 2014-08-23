@@ -42,12 +42,12 @@
 
 static inline void proc_remove(struct proc_dir_entry *pde)
 {
-        remove_proc_entry(pde->name, pde->parent);
+	remove_proc_entry(pde->name, pde->parent);
 }
 
 #endif
 
-#define wrap_f_inode(file)                ((file)->f_path.dentry->d_inode)
+#define wrap_f_inode(file)		((file)->f_path.dentry->d_inode)
 #define wrap_proc_dir_entry_owner(entry)  do { (void)entry; } while(0)
 
 struct xnvfile_directory;

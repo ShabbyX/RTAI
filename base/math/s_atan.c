@@ -5,7 +5,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -24,9 +24,9 @@
  *      [39/16,INF]   atan(x) = atan(INF) + atan( -1/t )
  *
  * Constants:
- * The hexadecimal values are the intended ones for the following 
- * constants. The decimal values may be used, provided that the 
- * compiler will convert from decimal to binary accurately enough 
+ * The hexadecimal values are the intended ones for the following
+ * constants. The decimal values may be used, provided that the
+ * compiler will convert from decimal to binary accurately enough
  * to produce the hexadecimal values shown.
  */
 
@@ -61,7 +61,7 @@ static const double aT[] = {
   1.62858201153657823623e-02, /* 0x3F90AD3A, 0xE322DA11 */
 };
 
-	static const double 
+	static const double
 one   = 1.0,
 huge   = 1.0e300;
 
@@ -89,9 +89,9 @@ huge   = 1.0e300;
 	x = fabs(x);
 	if (ix < 0x3ff30000) {		/* |x| < 1.1875 */
 	    if (ix < 0x3fe60000) {	/* 7/16 <=|x|<11/16 */
-		id = 0; x = (2.0*x-one)/(2.0+x); 
+		id = 0; x = (2.0*x-one)/(2.0+x);
 	    } else {			/* 11/16<=|x|< 19/16 */
-		id = 1; x  = (x-one)/(x+one); 
+		id = 1; x  = (x-one)/(x+one);
 	    }
 	} else {
 	    if (ix < 0x40038000) {	/* |x| < 2.4375 */

@@ -17,7 +17,7 @@
  */
 
 
-// Wrappers and inlines to avoid too much an editing of RTDM code. 
+// Wrappers and inlines to avoid too much an editing of RTDM code.
 // The core stuff is just RTAI in disguise.
 
 #ifndef _RTAI_XNSTUFF_H
@@ -40,8 +40,8 @@
 
 #define RTAI_ASSERT(subsystem, cond, action)  do { \
     if (unlikely(CONFIG_RTAI_DEBUG_##subsystem > 0 && !(cond))) { \
-        xnlogerr("assertion failed at %s:%d (%s)\n", __FILE__, __LINE__, (#cond)); \
-        action; \
+	xnlogerr("assertion failed at %s:%d (%s)\n", __FILE__, __LINE__, (#cond)); \
+	action; \
     } \
 } while(0)
 
@@ -50,38 +50,38 @@
 		xnpod_fatal("bug at %s:%d (%s)", __FILE__, __LINE__, (#cond)); */ \
  } while(0)
 
-/* 
+/*
   With what above we let some assertion diagnostic. Here below we keep knowledge
   of specific assertions we care of.
  */
 
-#define xnpod_root_p()          (!current->rtai_tskext(TSKEXT0) || !((RT_TASK *)(current->rtai_tskext(TSKEXT0)))->is_hard)
+#define xnpod_root_p()	  (!current->rtai_tskext(TSKEXT0) || !((RT_TASK *)(current->rtai_tskext(TSKEXT0)))->is_hard)
 #define xnshadow_thread(t)      ((xnthread_t *)current->rtai_tskext(TSKEXT0))
 #define rthal_local_irq_test()  (!rtai_save_flags_irqbit())
-#define rthal_local_irq_enable  rtai_sti 
+#define rthal_local_irq_enable  rtai_sti
 #define rthal_domain rtai_domain
-#define rthal_local_irq_disabled()                              \
-({                                                              \
-        unsigned long __flags, __ret;                           \
-        local_irq_save_hw_smp(__flags);                         \
-        __ret = ipipe_test_pipeline_from(&rthal_domain);        \
-        local_irq_restore_hw_smp(__flags);                      \
-        __ret;                                                  \
+#define rthal_local_irq_disabled()			      \
+({							      \
+	unsigned long __flags, __ret;			   \
+	local_irq_save_hw_smp(__flags);			 \
+	__ret = ipipe_test_pipeline_from(&rthal_domain);	\
+	local_irq_restore_hw_smp(__flags);		      \
+	__ret;						  \
 })
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 
 #define _MODULE_PARM_STRING_charp "s"
 #define compat_module_param_array(name, type, count, perm) \
-        static inline void *__check_existence_##name(void) { return &name; } \
-        MODULE_PARM(name, "1-" __MODULE_STRING(count) _MODULE_PARM_STRING_##type)
+	static inline void *__check_existence_##name(void) { return &name; } \
+	MODULE_PARM(name, "1-" __MODULE_STRING(count) _MODULE_PARM_STRING_##type)
 
 typedef unsigned long phys_addr_t;
 
 #else
 
 #define compat_module_param_array(name, type, count, perm) \
-        module_param_array(name, type, NULL, perm)
+	module_param_array(name, type, NULL, perm)
 
 #endif
 
@@ -105,7 +105,7 @@ typedef struct { volatile unsigned long lock[2]; } xnlock_t;
 
 #ifndef list_first_entry
 #define list_first_entry(ptr, type, member) \
-        list_entry((ptr)->next, type, member)
+	list_entry((ptr)->next, type, member)
 #endif
 
 #ifndef local_irq_save_hw_smp
@@ -120,9 +120,9 @@ typedef struct { volatile unsigned long lock[2]; } xnlock_t;
 
 #ifdef CONFIG_SMP
 
-#define DECLARE_XNLOCK(lock)              xnlock_t lock
+#define DECLARE_XNLOCK(lock)	      xnlock_t lock
 #define DECLARE_EXTERN_XNLOCK(lock)       extern xnlock_t lock
-#define DEFINE_XNLOCK(lock)               xnlock_t lock = XNARCH_LOCK_UNLOCKED
+#define DEFINE_XNLOCK(lock)	       xnlock_t lock = XNARCH_LOCK_UNLOCKED
 #define DEFINE_PRIVATE_XNLOCK(lock)       static DEFINE_XNLOCK(lock)
 
 static inline void xnlock_init(xnlock_t *lock)
@@ -189,9 +189,9 @@ static inline void xnlock_put_irqrestore(xnlock_t *lock, spl_t flags)
 #define DEFINE_XNLOCK(lock)
 #define DEFINE_PRIVATE_XNLOCK(lock)
 
-#define xnlock_init(lock)                   do { } while(0)
-#define xnlock_get(lock)                    rtai_cli()
-#define xnlock_put(lock)                    rtai_sti()
+#define xnlock_init(lock)		   do { } while(0)
+#define xnlock_get(lock)		    rtai_cli()
+#define xnlock_put(lock)		    rtai_sti()
 #define xnlock_get_irqsave(lock, flags)     rtai_save_flags_and_cli(flags)
 #define xnlock_put_irqrestore(lock, flags)  rtai_restore_flags(flags)
 
@@ -209,7 +209,7 @@ static inline void xnlock_put_irqrestore(xnlock_t *lock, spl_t flags)
 
 #define xnprintf(fmt, args...)  printk(KERN_INFO XNARCH_PROMPT fmt, ##args)
 #define xnlogerr(fmt, args...)  printk(KERN_ERR  XNARCH_PROMPT fmt, ##args)
-#define xnlogwarn               xnlogerr
+#define xnlogwarn	       xnlogerr
 
 // user space access (taken from Linux)
 
@@ -360,12 +360,12 @@ typedef atomic_t atomic_counter_t;
 typedef RTIME xnticks_t;
 
 typedef struct xnstat_exectime {
-        xnticks_t start;
-        xnticks_t total;
+	xnticks_t start;
+	xnticks_t total;
 } xnstat_exectime_t;
 
 typedef struct xnstat_counter {
-        int counter;
+	int counter;
 } xnstat_counter_t;
 #define xnstat_counter_inc(c)  ((c)->counter++)
 
@@ -434,14 +434,14 @@ extern unsigned long IsolCpusMask;
 // support for RTDM timers
 
 struct rtdm_timer_struct {
-        struct rtdm_timer_struct *next, *prev;
-        int priority, cpuid;
-        RTIME firing_time, period;
-        void (*handler)(unsigned long);
-        unsigned long data;
+	struct rtdm_timer_struct *next, *prev;
+	int priority, cpuid;
+	RTIME firing_time, period;
+	void (*handler)(unsigned long);
+	unsigned long data;
 #ifdef  CONFIG_RTAI_LONG_TIMED_LIST
-        rb_root_t rbr;
-        rb_node_t rbn;
+	rb_root_t rbr;
+	rb_node_t rbn;
 #endif
 };
 
@@ -455,18 +455,18 @@ typedef struct rtdm_timer_struct xntimer_t;
 
 /* Timer modes */
 typedef enum xntmode {
-        XN_RELATIVE,
-        XN_ABSOLUTE,
-        XN_REALTIME
+	XN_RELATIVE,
+	XN_ABSOLUTE,
+	XN_REALTIME
 } xntmode_t;
 
 #define xntbase_ns2ticks(rtdm_tbase, expiry)  nano2count(expiry)
 
 static inline void xntimer_init(xntimer_t *timer, void (*handler)(xntimer_t *))
 {
-        memset(timer, 0, sizeof(struct rtdm_timer_struct));
-        timer->handler = (void *)handler;
-        timer->data    = (unsigned long)timer;
+	memset(timer, 0, sizeof(struct rtdm_timer_struct));
+	timer->handler = (void *)handler;
+	timer->data    = (unsigned long)timer;
 	timer->next    =  timer->prev = timer;
 }
 
@@ -479,12 +479,12 @@ static inline int xntimer_start(xntimer_t *timer, xnticks_t value, xnticks_t int
 
 static inline void xntimer_destroy(xntimer_t *timer)
 {
-        rt_timer_remove(timer);
+	rt_timer_remove(timer);
 }
 
 static inline void xntimer_stop(xntimer_t *timer)
 {
-        rt_timer_remove(timer);
+	rt_timer_remove(timer);
 }
 
 // support for use in RTDM usage testing found in RTAI SHOWROOM CVS
@@ -492,11 +492,11 @@ static inline void xntimer_stop(xntimer_t *timer)
 static inline unsigned long long xnarch_ulldiv(unsigned long long ull, unsigned
 long uld, unsigned long *r)
 {
-        unsigned long rem = do_div(ull, uld);
-        if (r) {
-                *r = rem;
-        }
-        return ull;
+	unsigned long rem = do_div(ull, uld);
+	if (r) {
+		*r = rem;
+	}
+	return ull;
 }
 
 // support for RTDM select
@@ -559,15 +559,15 @@ static inline int emptyq_p(xnqueue_t *queue)
 
 #define xnpod_schedule  rt_schedule_readied
 
-#define xnthread_t            RT_TASK
+#define xnthread_t	    RT_TASK
 #define xnpod_current_thread  _rt_whoami
 #define xnthread_test_info    rt_task_test_taskq_retval
 
-#define xnsynch_t                   TASKQ
+#define xnsynch_t		   TASKQ
 #define xnsynch_init(s, f, p)       rt_taskq_init(s, f)
-#define xnsynch_destroy             rt_taskq_delete
+#define xnsynch_destroy	     rt_taskq_delete
 #define xnsynch_wakeup_one_sleeper  rt_taskq_ready_one
-#define xnsynch_flush               rt_taskq_ready_all
+#define xnsynch_flush	       rt_taskq_ready_all
 static inline void xnsynch_sleep_on(void *synch, xnticks_t timeout, xntmode_t timeout_mode)
 {
 	if (timeout == XN_INFINITE) {
@@ -599,9 +599,9 @@ static inline void xnsynch_sleep_on(void *synch, xnticks_t timeout, xntmode_t ti
 #define SELECT_SIGNAL(select_block, state) \
 do { \
 	spl_t flags; \
-        xnlock_get_irqsave(&nklock, flags); \
-        if (xnselect_signal(select_block, state) && state) { \
-                xnpod_schedule(); \
+	xnlock_get_irqsave(&nklock, flags); \
+	if (xnselect_signal(select_block, state) && state) { \
+		xnpod_schedule(); \
 	} \
 	xnlock_put_irqrestore(&nklock, flags); \
 } while (0)
@@ -614,35 +614,35 @@ do { \
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 
-#define __WORK_INITIALIZER(n,f,d) {                             \
-        .list   = { &(n).list, &(n).list },                     \
-        .sync = 0,                                              \
-        .routine = (f),                                         \
-        .data = (d),                                            \
+#define __WORK_INITIALIZER(n,f,d) {			     \
+	.list   = { &(n).list, &(n).list },		     \
+	.sync = 0,					      \
+	.routine = (f),					 \
+	.data = (d),					    \
 }
 
-#define DECLARE_WORK(n,f,d)             struct tq_struct n = __WORK_INITIALIZER(n, f, d)
+#define DECLARE_WORK(n,f,d)	     struct tq_struct n = __WORK_INITIALIZER(n, f, d)
 #define DECLARE_WORK_NODATA(n, f)       DECLARE_WORK(n, f, NULL)
-#define DECLARE_WORK_FUNC(f)            void f(void *cookie)
+#define DECLARE_WORK_FUNC(f)	    void f(void *cookie)
 #define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_WORK(n, f, NULL)
 
-#define schedule_delayed_work(work, delay) do {                 \
-	if (delay) {                                            \
-		set_current_state(TASK_UNINTERRUPTIBLE);        \
-		schedule_timeout(delay);                        \
-	}                                                       \
-	schedule_task(work);                                    \
+#define schedule_delayed_work(work, delay) do {		 \
+	if (delay) {					    \
+		set_current_state(TASK_UNINTERRUPTIBLE);	\
+		schedule_timeout(delay);			\
+	}						       \
+	schedule_task(work);				    \
 } while (0)
 
 #else
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,20)
 #define DECLARE_WORK_NODATA(f, n)       DECLARE_WORK(f, n, NULL)
-#define DECLARE_WORK_FUNC(f)            void f(void *cookie)
+#define DECLARE_WORK_FUNC(f)	    void f(void *cookie)
 #define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_DELAYED_WORK(n, f, NULL)
 #else /* >= 2.6.20 */
 #define DECLARE_WORK_NODATA(f, n)       DECLARE_WORK(f, n)
-#define DECLARE_WORK_FUNC(f)            void f(struct work_struct *work)
+#define DECLARE_WORK_FUNC(f)	    void f(struct work_struct *work)
 #define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_DELAYED_WORK(n, f)
 #endif /* >= 2.6.20 */
 

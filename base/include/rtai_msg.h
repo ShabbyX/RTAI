@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002 POSEIDON CONTROLS INC <pcloutier@poseidoncontrols.com>
- *                    Paolo Mantegazza <mantegazza@aero.polimi.it>
+ *		    Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -46,8 +46,8 @@ struct proxy_t {
     char *msg;
 };
 
-#define SYNCMSG          0
-#define PROXY           -1
+#define SYNCMSG	  0
+#define PROXY	   -1
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,7 +66,7 @@ RTAI_SYSCALL_MODE struct rt_task_struct *rt_send_if(struct rt_task_struct *task,
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_send_until(struct rt_task_struct *task,
 				     unsigned long msg,
 				     RTIME time);
-    
+
 RTAI_SYSCALL_MODE struct rt_task_struct *rt_send_timed(struct rt_task_struct *task,
 				     unsigned long msg,
 				     RTIME delay);
@@ -524,7 +524,7 @@ RTAI_PROTO(unsigned long, rt_qDynAlloc,(unsigned long n))
 {
 	struct { unsigned long n; } arg = { n };
 	return (unsigned long) rtai_lxrt(BIDX, SIZARG, RT_QDYNALLOC, &arg).i[LOW];
-} 
+}
 
 RTAI_PROTO(unsigned long, rt_qDynFree,(int n))
 {

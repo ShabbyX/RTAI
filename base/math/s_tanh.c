@@ -5,7 +5,7 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
@@ -21,7 +21,7 @@
  *				      e  + e
  *	1. reduce x to non-negative by tanh(-x) = -tanh(x).
  *	2.  0      <= x <= 2**-55 : tanh(x) := x*(one+x)
- *					        -t
+ *						-t
  *	    2**-55 <  x <=  1     : tanh(x) := -----; t = expm1(-2x)
  *					       t + 2
  *						     2
@@ -49,7 +49,7 @@ static const double one=1.0, two=2.0, tiny = 1.0e-300;
 	ix = jx&0x7fffffff;
 
     /* x is INF or NaN */
-	if(ix>=0x7ff00000) { 
+	if(ix>=0x7ff00000) {
 	    if (jx>=0) return one/x+one;    /* tanh(+-inf)=+-1 */
 	    else       return one/x-one;    /* tanh(NaN) = NaN */
 	}
@@ -62,8 +62,8 @@ static const double one=1.0, two=2.0, tiny = 1.0e-300;
 		t = expm1(two*fabs(x));
 		z = one - two/(t+two);
 	    } else {
-	        t = expm1(-two*fabs(x));
-	        z= -t/(t+two);
+		t = expm1(-two*fabs(x));
+		z= -t/(t+two);
 	    }
     /* |x| > 22, return +-1 */
 	} else {

@@ -37,13 +37,13 @@
 
 #define RT_RESEM_SUSPDEL  (-0x7fffFfff)
 
-#define RT_SCHED_READY        1
+#define RT_SCHED_READY	1
 #define RT_SCHED_SUSPENDED    2
 #define RT_SCHED_DELAYED      4
 #define RT_SCHED_SEMAPHORE    8
-#define RT_SCHED_SEND        16
+#define RT_SCHED_SEND	16
 #define RT_SCHED_RECEIVE     32
-#define RT_SCHED_RPC         64
+#define RT_SCHED_RPC	 64
 #define RT_SCHED_RETURN     128
 #define RT_SCHED_MBXSUSP    256
 #define RT_SCHED_SFTRDY     512
@@ -110,14 +110,14 @@
 
 #define rt_is_reterr(i)  (i >= RTE_LOWERR)
 
-#define RT_IRQ_TASK         0
+#define RT_IRQ_TASK	 0
 #define RT_IRQ_TASKLET      1
 #define RT_IRQ_TASK_ERR     0x7FFFFFFF
 
 struct rt_task_struct;
 
-typedef struct rt_task_info { 
-	RTIME period; long base_priority, priority; 
+typedef struct rt_task_info {
+	RTIME period; long base_priority, priority;
 } RT_TASK_INFO;
 
 #ifdef __KERNEL__
@@ -270,13 +270,13 @@ int rt_kthread_init(struct rt_task_struct *task,
 		    void(*signal)(void));
 
 int rt_kthread_init_cpuid(struct rt_task_struct *task,
-		          void (*rt_thread)(long),
-		          long data,
-		          int stack_size,
-		          int priority,
-		          int uses_fpu,
-		          void(*signal)(void),
-		          unsigned run_on_cpu);
+			  void (*rt_thread)(long),
+			  long data,
+			  int stack_size,
+			  int priority,
+			  int uses_fpu,
+			  void(*signal)(void),
+			  unsigned run_on_cpu);
 
 RTAI_SYSCALL_MODE void rt_set_runnable_on_cpus(struct rt_task_struct *task,
 			     unsigned long cpu_mask);
@@ -320,7 +320,7 @@ RTAI_SYSCALL_MODE int rt_task_signal_handler(struct rt_task_struct *task,
 
 RTAI_SYSCALL_MODE int rt_task_use_fpu(struct rt_task_struct *task,
 		    int use_fpu_flag);
-  
+
 void rt_linux_use_fpu(int use_fpu_flag);
 
 RTAI_SYSCALL_MODE int rt_hard_timer_tick_count(void);
@@ -330,11 +330,11 @@ RTAI_SYSCALL_MODE int rt_hard_timer_tick_count_cpuid(int cpuid);
 RTAI_SYSCALL_MODE RTIME count2nano(RTIME timercounts);
 
 RTAI_SYSCALL_MODE RTIME nano2count(RTIME nanosecs);
-  
+
 RTAI_SYSCALL_MODE RTIME count2nano_cpuid(RTIME timercounts, unsigned cpuid);
 
 RTAI_SYSCALL_MODE RTIME nano2count_cpuid(RTIME nanosecs, unsigned cpuid);
-  
+
 RTIME rt_get_time(void);
 
 RTAI_SYSCALL_MODE RTIME rt_get_time_cpuid(unsigned cpuid);
@@ -459,33 +459,33 @@ RT_TRAP_HANDLER rt_set_task_trap_handler(struct rt_task_struct *task,
 
 static inline RTIME timeval2count(struct timeval *t)
 {
-        return nano2count(t->tv_sec*1000000000LL + t->tv_usec*1000);
+	return nano2count(t->tv_sec*1000000000LL + t->tv_usec*1000);
 }
 
 static inline void count2timeval(RTIME rt, struct timeval *t)
 {
-        t->tv_sec = rtai_ulldiv(count2nano(rt), 1000000000, (unsigned long *)&t->tv_usec);
-        t->tv_usec /= 1000;
+	t->tv_sec = rtai_ulldiv(count2nano(rt), 1000000000, (unsigned long *)&t->tv_usec);
+	t->tv_usec /= 1000;
 }
 
 static inline RTIME timespec2count(const struct timespec *t)
 {
-        return nano2count(t->tv_sec*1000000000LL + t->tv_nsec);
+	return nano2count(t->tv_sec*1000000000LL + t->tv_nsec);
 }
 
 static inline void count2timespec(RTIME rt, struct timespec *t)
 {
-        t->tv_sec = rtai_ulldiv(count2nano(rt), 1000000000, (unsigned long *)&t->tv_nsec);
+	t->tv_sec = rtai_ulldiv(count2nano(rt), 1000000000, (unsigned long *)&t->tv_nsec);
 }
 
 static inline RTIME timespec2nanos(const struct timespec *t)
 {
-        return t->tv_sec*1000000000LL + t->tv_nsec;
+	return t->tv_sec*1000000000LL + t->tv_nsec;
 }
 
 static inline void nanos2timespec(RTIME rt, struct timespec *t)
 {
-        t->tv_sec = rtai_ulldiv(rt, 1000000000, (unsigned long *)&t->tv_nsec);
+	t->tv_sec = rtai_ulldiv(rt, 1000000000, (unsigned long *)&t->tv_nsec);
 }
 
 void rt_make_hard_real_time(RT_TASK *task);

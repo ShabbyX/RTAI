@@ -34,10 +34,10 @@
 #undef SETUP_8254_TSC_EMULATION
 #undef CLEAR_8254_TSC_EMULATION
 
-#define RTAI_CPU_FREQ             RTAI_FREQ_8254
+#define RTAI_CPU_FREQ	     RTAI_FREQ_8254
 #define RTAI_CALIBRATED_CPU_FREQ  RTAI_FREQ_8254
-#define rtai_rdtsc()              rd_8254_ts()
-#define rdtsc()                   rd_8254_ts()
+#define rtai_rdtsc()	      rd_8254_ts()
+#define rdtsc()		   rd_8254_ts()
 
 #define TICK_8254_TSC_EMULATION()  rd_8254_ts()
 

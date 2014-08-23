@@ -63,7 +63,7 @@ static inline void rt_exec_signal(RT_TASK *sigtask, RT_TASK *task)
 	flags = rt_global_save_flags_and_cli();
 	if (sigtask->suspdepth > 0 && !(--sigtask->suspdepth)) {
 		if (task) {
-			sigtask->priority = task->priority; 
+			sigtask->priority = task->priority;
  			if (!task->pstate++) {
 				rem_ready_task(task);
 				task->state |= RT_SCHED_SIGSUSP;
@@ -84,7 +84,7 @@ static inline void rt_exec_signal(RT_TASK *sigtask, RT_TASK *task)
  *
  * @param task is the task for which the signal was previously requested.
  *
- * A call of this function will release a signal previously requested for 
+ * A call of this function will release a signal previously requested for
  * a task.
  *
  * @retval 0 on success.
@@ -109,15 +109,15 @@ RTAI_SYSCALL_MODE int rt_release_signal(long signal, RT_TASK *task)
 EXPORT_SYMBOL(rt_release_signal);
 
 /**
- * Trigger a signal for a task (i.e. send a signal to the task), executing 
+ * Trigger a signal for a task (i.e. send a signal to the task), executing
  * the related handler.
  *
  * @param signal, >= 0, is the signal.
  *
  * @param task is the task to which the signal is sent.
  *
- * A call of this function will stop the task served by signal, if executing, 
- * till the triggered handler has finished its execution, carried out at the 
+ * A call of this function will stop the task served by signal, if executing,
+ * till the triggered handler has finished its execution, carried out at the
  * same priority and on the same CPU of the task it is serving.
  *
  */
@@ -206,7 +206,7 @@ RTAI_SYSCALL_MODE int rt_wait_signal(RT_TASK *sigtask, RT_TASK *task)
 			sigtask->state |= RT_SCHED_SIGSUSP;
 			rem_ready_current(sigtask);
 			if (task->pstate > 0 && !(--task->pstate) && (task->state &= ~RT_SCHED_SIGSUSP) == RT_SCHED_READY) {
-                	       	enq_ready_task(task);
+			       	enq_ready_task(task);
 	       		}
 			rt_schedule();
 		}
@@ -218,7 +218,7 @@ RTAI_SYSCALL_MODE int rt_wait_signal(RT_TASK *sigtask, RT_TASK *task)
 EXPORT_SYMBOL(rt_wait_signal);
 
 static void signal_suprt_fun(long args)
-{		
+{
 	struct sigsuprt_t arg = *((struct sigsuprt_t *)args);
 
 	if (!rt_request_signal_(arg.sigtask, arg.task, arg.signal)) {
@@ -237,10 +237,10 @@ static void signal_suprt_fun(long args)
  * @param sighdl is the handler that will execute upon signal reception.
  *
  * RTAI real time signal handlers are executed within a host hard real time
- * thread, assigned to the same CPU of the receiving task, while the task 
- * receiving the signal is kept stopped. No difference between kernel and 
+ * thread, assigned to the same CPU of the receiving task, while the task
+ * receiving the signal is kept stopped. No difference between kernel and
  * user space, the usual symmetric usage.
- * If the request is succesfull the function will return with signal reception 
+ * If the request is succesfull the function will return with signal reception
  * enabled.
  *
  * @retval 0 on success.

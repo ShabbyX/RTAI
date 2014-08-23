@@ -50,16 +50,16 @@
 
 #define RTDM_INDX  15
 
-#define __rtdm_fdcount          0
-#define __rtdm_open             1
-#define __rtdm_socket           2
-#define __rtdm_close            3
-#define __rtdm_ioctl            4
-#define __rtdm_read             5
-#define __rtdm_write            6
-#define __rtdm_recvmsg          7
-#define __rtdm_sendmsg          8
-#define __rtdm_select           9
+#define __rtdm_fdcount	  0
+#define __rtdm_open	     1
+#define __rtdm_socket	   2
+#define __rtdm_close	    3
+#define __rtdm_ioctl	    4
+#define __rtdm_read	     5
+#define __rtdm_write	    6
+#define __rtdm_recvmsg	  7
+#define __rtdm_sendmsg	  8
+#define __rtdm_select	   9
 
 #ifdef __KERNEL__
 
@@ -132,7 +132,7 @@ typedef int64_t nanosecs_rel_t;
 #define RTDM_CLASS_NETWORK		4
 #define RTDM_CLASS_RTMAC		5
 #define RTDM_CLASS_TESTING		6
-#define RTDM_CLASS_RTIPC                7
+#define RTDM_CLASS_RTIPC		7
 /*
 #define RTDM_CLASS_USB			?
 #define RTDM_CLASS_FIREWIRE		?
@@ -328,7 +328,7 @@ static inline int rt_dev_select(int nfds, fd_set *rfds, fd_set *wfds, fd_set *ef
 	int ret;
 	selector = rt_malloc(sizeof(struct xnselector));
 	xnselector_init(selector);
-        ret = __rt_dev_select(nfds, rfds, wfds, efds, timeout, selector, 1);
+	ret = __rt_dev_select(nfds, rfds, wfds, efds, timeout, selector, 1);
 	xnselector_destroy(selector);
 	return ret;
 #else
@@ -364,26 +364,26 @@ static inline int RTDM_RTAI_LXRT(int ext, int lsize, int srq, void *arg)
 
 static inline int rt_dev_fdcount(void)
 {
-        struct { long dummy; } arg = { 0 };
-        return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_fdcount, &arg);
+	struct { long dummy; } arg = { 0 };
+	return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_fdcount, &arg);
 }
 
 static inline int rt_dev_open(const char *path, int oflag, ...)
 {
-        struct { const char *path; long oflag; } arg = { path, oflag };
-        return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_open, &arg);
+	struct { const char *path; long oflag; } arg = { path, oflag };
+	return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_open, &arg);
 }
 
 static inline int rt_dev_socket(int protocol_family, int socket_type, int protocol)
 {
-        struct { long protocol_family; long socket_type; long protocol; } arg = { protocol_family, socket_type, protocol };
-        return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_socket, &arg);
+	struct { long protocol_family; long socket_type; long protocol; } arg = { protocol_family, socket_type, protocol };
+	return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_socket, &arg);
 }
 
 static inline int rt_dev_close(int fd)
 {
-        struct { long fd; } arg = { fd };
-        return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_close, &arg);
+	struct { long fd; } arg = { fd };
+	return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_close, &arg);
 }
 
 static inline int rt_dev_ioctl(int fd, int request, ...)
@@ -398,20 +398,20 @@ static inline int rt_dev_ioctl(int fd, int request, ...)
 
 static inline ssize_t rt_dev_read(int fd, void *buf, size_t nbytes)
 {
-        struct { long fd; void *buf; long nbytes; } arg = { fd, buf, nbytes };
-        return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_read, &arg);
+	struct { long fd; void *buf; long nbytes; } arg = { fd, buf, nbytes };
+	return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_read, &arg);
 }
 
 static inline ssize_t rt_dev_write(int fd, const void *buf, size_t nbytes)
 {
-        struct { long fd; const void *buf; long nbytes; } arg = { fd, buf, nbytes };
-        return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_write, &arg);
+	struct { long fd; const void *buf; long nbytes; } arg = { fd, buf, nbytes };
+	return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_write, &arg);
 }
 
 static inline ssize_t rt_dev_recvmsg(int fd, struct msghdr *msg, int flags)
 {
-        struct { long fd; struct msghdr *msg; long flags; } arg = { fd, msg, flags };
-        return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_recvmsg, &arg);
+	struct { long fd; struct msghdr *msg; long flags; } arg = { fd, msg, flags };
+	return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_recvmsg, &arg);
 }
 
 static inline ssize_t rt_dev_sendmsg(int fd, const struct msghdr *msg, int flags)
@@ -420,7 +420,7 @@ static inline ssize_t rt_dev_sendmsg(int fd, const struct msghdr *msg, int flags
 	return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_sendmsg, &arg);
 }
 
-static inline ssize_t rt_dev_recvfrom(int fd, void *buf, size_t len, int flags, 
+static inline ssize_t rt_dev_recvfrom(int fd, void *buf, size_t len, int flags,
 				      struct sockaddr *from, socklen_t *fromlen)
 {
 	struct iovec iov;
@@ -446,10 +446,10 @@ static inline ssize_t rt_dev_recvfrom(int fd, void *buf, size_t len, int flags,
 static inline int rt_dev_select(int nfds, fd_set *rfds, fd_set *wfds, fd_set *efds, nanosecs_rel_t timeout)
 {
 #ifdef CONFIG_RTAI_RTDM_SELECT
-        struct { long nfds; fd_set *rfds; fd_set *wfds; fd_set *efds; nanosecs_rel_t timeout; } arg = { nfds, rfds, wfds, efds, timeout };
-        return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_select, &arg);
+	struct { long nfds; fd_set *rfds; fd_set *wfds; fd_set *efds; nanosecs_rel_t timeout; } arg = { nfds, rfds, wfds, efds, timeout };
+	return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_select, &arg);
 #else
-        return -ENOSYS;
+	return -ENOSYS;
 #endif
 }
 

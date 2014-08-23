@@ -132,18 +132,18 @@ static void nop_fun(BITS *bits, unsigned long mask)
 }
 
 static int (*test_fun[])(BITS *, unsigned long) = {
-	all_set, any_set,             all_clr,             any_clr, 
-	         all_set_and_any_set, all_set_and_all_clr, all_set_and_any_clr,
-	                              any_set_and_all_clr, any_set_and_any_clr,
-	                                                   all_clr_and_any_clr,
-	         all_set_or_any_set,  all_set_or_all_clr,  all_set_or_any_clr,
-	                              any_set_or_all_clr,  any_set_or_any_clr,
-	                                                   all_clr_or_any_clr
+	all_set, any_set,	     all_clr,	     any_clr,
+		 all_set_and_any_set, all_set_and_all_clr, all_set_and_any_clr,
+				      any_set_and_all_clr, any_set_and_any_clr,
+							   all_clr_and_any_clr,
+		 all_set_or_any_set,  all_set_or_all_clr,  all_set_or_any_clr,
+				      any_set_or_all_clr,  any_set_or_any_clr,
+							   all_clr_or_any_clr
 };
 
 static void (*exec_fun[])(BITS *, unsigned long) = {
 	set_bits_mask, clr_bits_mask,
-	          set_clr_bits_mask,
+		  set_clr_bits_mask,
 	nop_fun
 };
 
@@ -175,7 +175,7 @@ int rt_bits_delete(BITS *bits)
 		rem_timed_task(task);
 		if (task->state != RT_SCHED_READY && (task->state &= ~(RT_SCHED_SEMAPHORE | RT_SCHED_DELAYED)) == RT_SCHED_READY) {
 			task->blocked_on = RTP_OBJREM;
-			enq_ready_task(task);	
+			enq_ready_task(task);
 #ifdef CONFIG_SMP
 			set_bit(task->runnable_on_cpus & 0x1F, &schedmap);
 #endif
@@ -266,7 +266,7 @@ RTAI_SYSCALL_MODE int _rt_bits_wait(BITS *bits, int testfun, unsigned long testm
 	flags = rt_global_save_flags_and_cli();
 	if (!test_fun[testfun](bits, testmasks)) {
 		void *retpnt;
-		long bits_test[2];	
+		long bits_test[2];
 		rt_current = RT_CURRENT;
 		TEST_BUF(rt_current, bits_test);
 		TEST_FUN(rt_current)  = testfun;
@@ -444,18 +444,18 @@ RTAI_SYSCALL_MODE int rt_bits_delete_u(BITS *bits)
 /* ++++++++++++++++++++++++++++ BITS ENTRIES ++++++++++++++++++++++++++++++++ */
 
 struct rt_native_fun_entry rt_bits_entries[] = {
-	{ { 0, rt_bits_init_u },          	BITS_INIT },
-	{ { 0, rt_bits_delete_u },        	BITS_DELETE },
+	{ { 0, rt_bits_init_u },	  	BITS_INIT },
+	{ { 0, rt_bits_delete_u },		BITS_DELETE },
 	{ { 0, rt_named_bits_init },    	NAMED_BITS_INIT },
 	{ { 0, rt_named_bits_delete },  	NAMED_BITS_DELETE },
-	{ { 1, rt_get_bits },           	BITS_GET },
-	{ { 1, rt_bits_reset },         	BITS_RESET },
-	{ { 1, rt_bits_signal },        	BITS_SIGNAL },
-	{ { 1, _rt_bits_wait },          	BITS_WAIT },
+	{ { 1, rt_get_bits },	   	BITS_GET },
+	{ { 1, rt_bits_reset },	 	BITS_RESET },
+	{ { 1, rt_bits_signal },		BITS_SIGNAL },
+	{ { 1, _rt_bits_wait },	  	BITS_WAIT },
 	{ { 1, _rt_bits_wait_if },       	BITS_WAIT_IF },
 	{ { 1, _rt_bits_wait_until },    	BITS_WAIT_UNTIL },
 	{ { 1, _rt_bits_wait_timed },		BITS_WAIT_TIMED },
-	{ { 0, 0 },                            	000 }
+	{ { 0, 0 },			    	000 }
 };
 
 extern int set_rt_fun_entries(struct rt_native_fun_entry *entry);

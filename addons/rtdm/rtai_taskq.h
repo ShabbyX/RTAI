@@ -70,7 +70,7 @@ void rt_taskq_wait_until(TASKQ *taskq, RTIME time);
 
 static inline int rt_task_test_taskq_retval(RT_TASK *task, unsigned long mask)
 {
-	return ((task)->retval & mask); 
+	return ((task)->retval & mask);
 }
 
 #endif /* !_RTAI_TASKQ_H */

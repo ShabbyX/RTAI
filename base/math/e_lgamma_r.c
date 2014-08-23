@@ -5,18 +5,18 @@
  *
  * Developed at SunPro, a Sun Microsystems, Inc. business.
  * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice 
+ * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
  */
 
 /* __ieee754_lgamma_r(x, signgamp)
- * Reentrant version of the logarithm of the Gamma function 
- * with user provide pointer for the sign of Gamma(x). 
+ * Reentrant version of the logarithm of the Gamma function
+ * with user provide pointer for the sign of Gamma(x).
  *
  * Method:
  *   1. Argument Reduction for 0 < x <= 8
- * 	Since gamma(1+s)=s*gamma(s), for x in [0,8], we may 
+ * 	Since gamma(1+s)=s*gamma(s), for x in [0,8], we may
  * 	reduce x to a number in [1.5,2.5] by
  * 		lgamma(1+s) = log(s) + lgamma(s)
  *	for example,
@@ -38,9 +38,9 @@
  *		|P/Q - (lgamma(x)-0.5s)| < 2**-61.71
  *	Our algorithms are based on the following observation
  *
- *                             zeta(2)-1    2    zeta(3)-1    3
+ *			     zeta(2)-1    2    zeta(3)-1    3
  * lgamma(2+s) = s*(1-Euler) + --------- * s  -  --------- * s  + ...
- *                                 2                 3
+ *				 2		 3
  *
  *	where Euler = 0.5771... is the Euler constant, which is very
  *	close to 0.5.
@@ -52,35 +52,35 @@
  *	Let z = 1/x, then we approximation
  *		f(z) = lgamma(x) - (x-0.5)(log(x)-1)
  *	by
- *	  			    3       5             11
+ *	  			    3       5	     11
  *		w = w0 + w1*z + w2*z  + w3*z  + ... + w6*z
- *	where 
+ *	where
  *		|w - f(z)| < 2**-58.74
- *		
+ *
  *   4. For negative x, since (G is gamma function)
  *		-x*G(-x)*G(x) = pi/sin(pi*x),
  * 	we have
  * 		G(x) = pi/(sin(pi*x)*(-x)*G(-x))
  *	since G(-x) is positive, sign(G(x)) = sign(sin(pi*x)) for x<0
- *	Hence, for x<0, signgam = sign(sin(pi*x)) and 
+ *	Hence, for x<0, signgam = sign(sin(pi*x)) and
  *		lgamma(x) = log(|Gamma(x)|)
  *			  = log(pi/(|x*sin(pi*x)|)) - lgamma(-x);
- *	Note: one should avoid compute pi*(-x) directly in the 
+ *	Note: one should avoid compute pi*(-x) directly in the
  *	      computation of sin(pi*(-x)).
- *		
+ *
  *   5. Special Cases
  *		lgamma(2+s) ~ s*(1-Euler) for tiny s
  *		lgamma(1)=lgamma(2)=0
  *		lgamma(x) ~ -log(x) for tiny x
  *		lgamma(0) = lgamma(inf) = inf
  *	 	lgamma(-integer) = +-inf
- *	
+ *
  */
 
 #include "math.h"
 #include "mathP.h"
 
-static const double 
+static const double
 two52=  4.50359962737049600000e+15, /* 0x43300000, 0x00000000 */
 half=  5.00000000000000000000e-01, /* 0x3FE00000, 0x00000000 */
 one =  1.00000000000000000000e+00, /* 0x3FF00000, 0x00000000 */
@@ -171,21 +171,21 @@ static __inline__ double sin_pi(double x)
 	    y   = 2.0*(y - floor(y));		/* y = |x| mod 2.0 */
 	    n   = (int) (y*4.0);
 	} else {
-            if(ix>=0x43400000) {
-                y = zero; n = 0;                 /* y must be even */
-            } else {
-                if(ix<0x43300000) z = y+two52;	/* exact */
+	    if(ix>=0x43400000) {
+		y = zero; n = 0;		 /* y must be even */
+	    } else {
+		if(ix<0x43300000) z = y+two52;	/* exact */
 		GET_LOW_WORD(n,z);
 		n &= 1;
-                y  = n;
-                n<<= 2;
-            }
-        }
+		y  = n;
+		n<<= 2;
+	    }
+	}
 	switch (n) {
 	    case 0:   y =  __kernel_sin(pi*y,zero,0); break;
-	    case 1:   
+	    case 1:
 	    case 2:   y =  __kernel_cos(pi*(0.5-y),zero); break;
-	    case 3:  
+	    case 3:
 	    case 4:   y =  __kernel_sin(pi*(one-y),zero,0); break;
 	    case 5:
 	    case 6:   y = -__kernel_cos(pi*(y-1.5),zero); break;
@@ -208,8 +208,8 @@ static __inline__ double sin_pi(double x)
 	if((ix|lx)==0) return one/zero;
 	if(ix<0x3b900000) {	/* |x|<2**-70, return -log(|x|) */
 	    if(hx<0) {
-	        *signgamp = -1;
-	        return -__ieee754_log(-x);
+		*signgamp = -1;
+		return -__ieee754_log(-x);
 	    } else return -__ieee754_log(x);
 	}
 	if(hx<0) {
@@ -233,8 +233,8 @@ static __inline__ double sin_pi(double x)
 	  	else {y = x; i=2;}
 	    } else {
 	  	r = zero;
-	        if(ix>=0x3FFBB4C3) {y=2.0-x;i=0;} /* [1.7316,2] */
-	        else if(ix>=0x3FF3B4C4) {y=x-tc;i=1;} /* [1.23,1.73] */
+		if(ix>=0x3FFBB4C3) {y=2.0-x;i=0;} /* [1.7316,2] */
+		else if(ix>=0x3FF3B4C4) {y=x-tc;i=1;} /* [1.23,1.73] */
 		else {y=x-one;i=2;}
 	    }
 	    switch(i) {
@@ -252,7 +252,7 @@ static __inline__ double sin_pi(double x)
 		p3 = t2+w*(t5+w*(t8+w*(t11+w*t14)));
 		p  = z*p1-(tt-w*(p2+y*p3));
 		r += (tf + p); break;
-	      case 2:	
+	      case 2:
 		p1 = y*(u0+y*(u1+y*(u2+y*(u3+y*(u4+y*u5)))));
 		p2 = one+y*(v1+y*(v2+y*(v3+y*(v4+y*v5))));
 		r += (-0.5*y + p1/p2);
@@ -281,7 +281,7 @@ static __inline__ double sin_pi(double x)
 	    y = z*z;
 	    w = w0+z*(w1+y*(w2+y*(w3+y*(w4+y*(w5+y*w6)))));
 	    r = (x-half)*(t-one)+w;
-	} else 
+	} else
     /* 2**58 <= x <= inf */
 	    r =  x*(__ieee754_log(x)-one);
 	if(hx<0) r = nadj - r;

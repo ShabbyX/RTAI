@@ -23,10 +23,10 @@
 
 #define RT_BITS_MAGIC 0x9ac24448  // nam2num("rtbits")
 
-#define ALL_SET               0
-#define ANY_SET               1
-#define ALL_CLR               2
-#define ANY_CLR               3
+#define ALL_SET	       0
+#define ANY_SET	       1
+#define ALL_CLR	       2
+#define ANY_CLR	       3
 
 #define ALL_SET_AND_ANY_SET   4
 #define ALL_SET_AND_ALL_CLR   5
@@ -42,10 +42,10 @@
 #define ANY_SET_OR_ANY_CLR   14
 #define ALL_CLR_OR_ANY_CLR   15
 
-#define SET_BITS              0
-#define CLR_BITS              1
-#define SET_CLR_BITS          2
-#define NOP_BITS              3
+#define SET_BITS	      0
+#define CLR_BITS	      1
+#define SET_CLR_BITS	  2
+#define NOP_BITS	      3
 
 #define BITS_ERR     (RTE_OBJINV)  // same as semaphores
 #define BITS_TIMOUT  (RTE_TIMOUT)  // same as semaphores

@@ -24,23 +24,23 @@
 #include <linux/version.h>
 #include <rtai_sem.h>
 
-#define MSGQ_INIT            TBX_INIT
-#define MSGQ_DELETE          TBX_DELETE
+#define MSGQ_INIT	    TBX_INIT
+#define MSGQ_DELETE	  TBX_DELETE
 #define NAMED_MSGQ_INIT      NAMED_TBX_INIT
 #define NAMED_MSGQ_DELETE    NAMED_TBX_DELETE
-#define MSG_SEND             TBX_SEND
-#define MSG_SEND_IF          TBX_SEND_IF
+#define MSG_SEND	     TBX_SEND
+#define MSG_SEND_IF	  TBX_SEND_IF
 #define MSG_SEND_UNTIL       TBX_SEND_UNTIL
 #define MSG_SEND_TIMED       TBX_SEND_TIMED
-#define MSG_RECEIVE          TBX_RECEIVE
+#define MSG_RECEIVE	  TBX_RECEIVE
 #define MSG_RECEIVE_IF       TBX_RECEIVE_IF
 #define MSG_RECEIVE_UNTIL    TBX_RECEIVE_UNTIL
 #define MSG_RECEIVE_TIMED    TBX_RECEIVE_TIMED
-#define MSG_BROADCAST        TBX_BROADCAST
+#define MSG_BROADCAST	TBX_BROADCAST
 #define MSG_BROADCAST_IF     TBX_BROADCAST_IF
 #define MSG_BROADCAST_UNTIL  TBX_BROADCAST_UNTIL
 #define MSG_BROADCAST_TIMED  TBX_BROADCAST_TIMED
-#define MSG_EVDRP            TBX_URGENT
+#define MSG_EVDRP	    TBX_URGENT
 
 #define TBX  RT_MSGQ
 
@@ -51,7 +51,7 @@ typedef struct rt_msgh {
 	int broadcast;
 	int size;
 	int priority;
-	void *next;	
+	void *next;
 } RT_MSGH;
 
 #define RT_MSGH_SIZE  (sizeof(RT_MSGH))
@@ -301,25 +301,25 @@ RTAI_PROTO(int, rt_msg_broadcast_timed, (RT_MSGQ *msgq, void *msg, int msg_size,
 #endif /* __KERNEL__ */
 
 #define rt_tbx_init(tbx, size, flags)  rt_msgq_init(tbx, size, 0)
-#define rt_tbx_delete(tbx)             rt_msgq_delete(tbx)
+#define rt_tbx_delete(tbx)	     rt_msgq_delete(tbx)
 
-#define rt_tbx_send(tbx, msg, msg_size)               rt_msg_send(tbx, msg, msg_size, 1)
-#define rt_tbx_send_if(tbx, msg, msg_size)            rt_msg_send_if(tbx, msg, msg_size, 1)
+#define rt_tbx_send(tbx, msg, msg_size)	       rt_msg_send(tbx, msg, msg_size, 1)
+#define rt_tbx_send_if(tbx, msg, msg_size)	    rt_msg_send_if(tbx, msg, msg_size, 1)
 #define rt_tbx_send_until(tbx, msg, msg_size, until)  rt_msg_send_until(tbx, msg, msg_size, 1, until)
 #define rt_tbx_send_timed(tbx, msg, msg_size, delay)  rt_msg_send_timed(tbx, msg, msg_size, 1, delay)
 
-#define rt_tbx_receive(tbx, msg, msg_size)               rt_msg_receive(tbx, msg, msg_size, 0)
-#define rt_tbx_receive_if(tbx, msg, msg_size)            rt_msg_receive_if(tbx, msg, msg_size, 0)
+#define rt_tbx_receive(tbx, msg, msg_size)	       rt_msg_receive(tbx, msg, msg_size, 0)
+#define rt_tbx_receive_if(tbx, msg, msg_size)	    rt_msg_receive_if(tbx, msg, msg_size, 0)
 #define rt_tbx_receive_until(tbx, msg, msg_size, until)  rt_msg_receive_until(tbx, msg, msg_size, 0, until)
 #define rt_tbx_receive_timed(tbx, msg, msg_size, delay)  rt_msg_receive_timed(tbx, msg, msg_size, 0, delay)
 
-#define rt_tbx_broadcast(tbx, msg, msg_size)               rt_msg_broadcast(tbx, msg, msg_size, 0)
-#define rt_tbx_broadcast_if(tbx, msg, msg_size)            rt_msg_broadcast_if(tbx, msg, msg_size, 0)
+#define rt_tbx_broadcast(tbx, msg, msg_size)	       rt_msg_broadcast(tbx, msg, msg_size, 0)
+#define rt_tbx_broadcast_if(tbx, msg, msg_size)	    rt_msg_broadcast_if(tbx, msg, msg_size, 0)
 #define rt_tbx_broadcast_until(tbx, msg, msg_size, until)  rt_msg_broadcast_until(tbx, msg, msg_size, 0, until)
 #define rt_tbx_broadcast_timed(tbx, msg, msg_size, delay)  rt_msg_broadcast_timed(tbx, msg, msg_size, 0, delay)
 
-#define rt_tbx_urgent(tbx, msg, msg_size)               rt_msg_send(tbx, msg, msg_size, 0)
-#define rt_tbx_urgent_if(tbx, msg, msg_size)            rt_msg_send_if(tbx, msg, msg_size, 0)
+#define rt_tbx_urgent(tbx, msg, msg_size)	       rt_msg_send(tbx, msg, msg_size, 0)
+#define rt_tbx_urgent_if(tbx, msg, msg_size)	    rt_msg_send_if(tbx, msg, msg_size, 0)
 #define rt_tbx_urgent_until(tbx, msg, msg_size, until)  rt_msg_send_until(tbx, msg, msg_size, 0, until)
 #define rt_tbx_urgent_timed(tbx, msg, msg_size, delay)  rt_msg_send_timed(tbx, msg, msg_size, 0, delay)
 

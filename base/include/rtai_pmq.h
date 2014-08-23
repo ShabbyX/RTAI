@@ -2,8 +2,8 @@
  * pqueues interface for Real Time Linux.
  *
  * Copyright (©) 1999 Zentropic Computing, All rights reserved
- *  
- * Authors:         Trevor Woolven (trevw@zentropix.com)
+ *
+ * Authors:	 Trevor Woolven (trevw@zentropix.com)
  *
  * Original date:   Thu 15 Jul 1999
  *
@@ -43,10 +43,10 @@
 #define MQ_MIN_MSG_PRIORITY 0			/* Lowest priority message */
 #define MQ_MAX_MSG_PRIORITY MQ_PRIO_MAX		/* Highest priority message */
 
-#define MAX_PQUEUES     4       /* Maximum number of message queues in module, 
-				   remember to update rtai_mq.h too.          */
+#define MAX_PQUEUES     4       /* Maximum number of message queues in module,
+				   remember to update rtai_mq.h too.	  */
 #define MAX_MSGSIZE     50      /* Maximum message size per queue (bytes) */
-#define MAX_MSGS        10      /* Maximum number of messages per queue */
+#define MAX_MSGS	10      /* Maximum number of messages per queue */
 
 #define O_NOTIFY_NP 	0x1000
 
@@ -214,12 +214,12 @@ struct suprt_fun_arg { mqd_t mq; RT_TASK *task; unsigned long cpuid; pthread_t s
 #define __SIGNAL_SUPPORT_FUN_PMQ__
 
 static void signal_suprt_fun_mq(struct suprt_fun_arg *fun_arg)
-{		
+{
 	struct sigtsk_t { RT_TASK *sigtask; RT_TASK *task; };
 	struct suprt_fun_arg arg = *fun_arg;
- 	struct sigreq_t { RT_TASK *sigtask; RT_TASK *task; long signal;} sigreq = {NULL, arg.task, (arg.mq + MAXSIGNALS)};	
+ 	struct sigreq_t { RT_TASK *sigtask; RT_TASK *task; long signal;} sigreq = {NULL, arg.task, (arg.mq + MAXSIGNALS)};
  	struct sigevent notification;
-	
+
 	if ((sigreq.sigtask = rt_thread_init(rt_get_name(0), SIGNAL_TASK_INIPRIO, 0, SCHED_FIFO, 1 << arg.cpuid))) {
 		if (!rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(struct sigreq_t), RT_SIGNAL_REQUEST, &sigreq).i[LOW]) {
 			struct arg_reg { mqd_t mq; RT_TASK *task; struct sigevent *usp_notification;} arg_reg = {arg.mq, arg.task, &notification};
@@ -237,7 +237,7 @@ static void signal_suprt_fun_mq(struct suprt_fun_arg *fun_arg)
 		}
 		rt_task_delete(sigreq.sigtask);
 	}
-}	
+}
 
 #endif
 
@@ -245,13 +245,13 @@ RTAI_PROTO(int, rt_request_signal_mq, (mqd_t mq))
 {
 		struct suprt_fun_arg { mqd_t mq; RT_TASK *task; unsigned long cpuid; pthread_t self;} arg = { mq, NULL, 0, pthread_self() };
 		arg.cpuid = rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(void *), RT_SIGNAL_HELPER, (void *)&arg.task).i[LOW];
-		arg.task = rt_buddy();	
+		arg.task = rt_buddy();
 		if (rt_thread_create(signal_suprt_fun_mq, &arg, SIGNAL_TASK_STACK_SIZE)) {
 			int ret;
 			ret = rtai_lxrt(RTAI_SIGNALS_IDX, sizeof(RT_TASK *), RT_SIGNAL_HELPER, &arg.task).i[LOW];
 			return ret;
 		}
-	return -1;		
+	return -1;
 }
 
 
@@ -260,12 +260,12 @@ RTAI_PROTO(mqd_t, mq_open,(char *mq_name, int oflags, mode_t permissions, struct
 	mqd_t ret;
 	struct {char *mq_name; long oflags; long permissions; struct mq_attr *mq_attr; long namesize, attrsize; long space; } arg = { mq_name, oflags, permissions, mq_attr, strlen(mq_name) + 1, sizeof(struct mq_attr), 1 };
 	if ((ret = (mqd_t)rtai_lxrt(MQIDX, SIZARG, MQ_OPEN, &arg).i[LOW]) >= 0) {
-		// Prepare notify task 
+		// Prepare notify task
 		if (oflags & O_NOTIFY_NP)	{
 			rt_request_signal_mq (ret);
 		}
 		return ret;
-	}	
+	}
 	errno = -ret;
 	return -1;
 }

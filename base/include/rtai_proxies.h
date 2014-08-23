@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000  Pierre Cloutier  <pcloutier@poseidoncontrols.com>
- *                     Paolo Mantegazza <mantegazza@aero.polimi.it>
+ *		     Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as

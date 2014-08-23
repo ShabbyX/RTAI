@@ -29,9 +29,9 @@
 
 #define HAL_VERSION_STRING   IPIPE_VERSION_STRING
 
-#define HAL_NR_CPUS          IPIPE_NR_CPUS
-#define HAL_NR_FAULTS        IPIPE_NR_FAULTS
-#define HAL_NR_EVENTS        IPIPE_NR_EVENTS
+#define HAL_NR_CPUS	  IPIPE_NR_CPUS
+#define HAL_NR_FAULTS	IPIPE_NR_FAULTS
+#define HAL_NR_EVENTS	IPIPE_NR_EVENTS
 #define HAL_ROOT_NPTDKEYS    IPIPE_ROOT_NPTDKEYS
 
 #define HAL_APIC_HIGH_VECTOR  IPIPE_HRTIMER_VECTOR //IPIPE_SERVICE_VECTOR3
@@ -44,13 +44,13 @@
 #define HAL_EXIT_PROCESS      IPIPE_EVENT_EXIT
 #define HAL_KICK_PROCESS      IPIPE_EVENT_SIGWAKE
 
-#define hal_pipeline        __ipipe_pipeline
-#define hal_domain_struct   ipipe_domain 
-#define hal_root_domain     ipipe_root_domain 
+#define hal_pipeline	__ipipe_pipeline
+#define hal_domain_struct   ipipe_domain
+#define hal_root_domain     ipipe_root_domain
 
 // temporary fix for using PPC
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,17) || (defined(CONFIG_PPC) && LINUX_VERSION_CODE > KERNEL_VERSION(2,6,13))
-#define hal_current_domain(cpuid)  per_cpu(ipipe_percpu_domain, cpuid) 
+#define hal_current_domain(cpuid)  per_cpu(ipipe_percpu_domain, cpuid)
 #else
 #define hal_current_domain(cpuid)  (ipipe_percpu_domain[cpuid])
 #endif
@@ -70,7 +70,7 @@
 #define hal_lock_irq    __ipipe_lock_irq
 #define hal_unlock_irq  __ipipe_unlock_irq
 
-#define hal_std_irq_dtype        __ipipe_std_irq_dtype
+#define hal_std_irq_dtype	__ipipe_std_irq_dtype
 #define hal_ipipe_std_irq_dtype  __adeos_std_irq_dtype
 
 #define hal_tick_regs  __ipipe_tick_regs
@@ -94,7 +94,7 @@
 #define hal_suspend_domain()  break
 
 #define hal_alloc_irq       ipipe_alloc_virq
-#define hal_free_irq        ipipe_free_virq
+#define hal_free_irq	ipipe_free_virq
 
 #if !defined(CONFIG_PPC) && (LINUX_VERSION_CODE < KERNEL_VERSION(2,4,32) || (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,14)))
 #define hal_virtualize_irq  ipipe_virtualize_irq
@@ -112,13 +112,13 @@ do { \
 } while (0)
 #endif
 
-#define hal_sysinfo_struct         ipipe_sysinfo
-#define hal_attr_struct            ipipe_domain_attr
-#define hal_init_attr              ipipe_init_attr
-#define hal_register_domain        ipipe_register_domain
+#define hal_sysinfo_struct	 ipipe_sysinfo
+#define hal_attr_struct	    ipipe_domain_attr
+#define hal_init_attr	      ipipe_init_attr
+#define hal_register_domain	ipipe_register_domain
 #define hal_unregister_domain      ipipe_unregister_domain
-#define hal_catch_event            ipipe_catch_event
-#define hal_event_handler          ipipe_event_handler
+#define hal_catch_event	    ipipe_catch_event
+#define hal_event_handler	  ipipe_event_handler
 #define hal_event_handler_fun(e)   legacy.handlers[e] //evhand[e]
 
 #define hal_set_printk_sync   ipipe_set_printk_sync
@@ -136,8 +136,8 @@ do { \
 
 #define hal_processor_id  ipipe_processor_id
 
-#define hal_hw_cli                local_irq_disable_hw
-#define hal_hw_sti                local_irq_enable_hw
+#define hal_hw_cli		local_irq_disable_hw
+#define hal_hw_sti		local_irq_enable_hw
 #define hal_hw_local_irq_save     local_irq_save_hw
 #define hal_hw_local_irq_restore  local_irq_restore_hw
 #define hal_hw_local_irq_flags    local_save_flags_hw

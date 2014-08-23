@@ -424,7 +424,7 @@ typedef struct rtser_event {
  * Get serial device's modem contol register
  *
  * @param[out] arg Pointer to variable receiving the content (int, see
- *             @ref RTSER_MCR_xxx)
+ *	     @ref RTSER_MCR_xxx)
  *
  * @return 0 on success, otherwise negative error code
  *

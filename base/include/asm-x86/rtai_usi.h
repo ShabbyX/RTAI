@@ -23,13 +23,13 @@
 
 #define _STARTUP_IRQ       1
 #define _SHUTDOWN_IRQ      2
-#define _ENABLE_IRQ        3
+#define _ENABLE_IRQ	3
 #define _DISABLE_IRQ       4
 #define _MASK_AND_ACK_IRQ  5
-#define _ACK_IRQ           6
-#define _UNMASK_IRQ        7
-#define _DISINT            8
-#define _ENINT             9
+#define _ACK_IRQ	   6
+#define _UNMASK_IRQ	7
+#define _DISINT	    8
+#define _ENINT	     9
 #define _SAVE_FLAGS_CLI   10
 #define _RESTORE_FLAGS    11
 
@@ -37,7 +37,7 @@
 
 #ifdef CONFIG_RTAI_USI
 
-static void usi_cli(unsigned long arg, unsigned long *eflags) 
+static void usi_cli(unsigned long arg, unsigned long *eflags)
 {
 	clear_bit(RTAI_IFLAG, eflags);
 }

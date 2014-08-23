@@ -6,7 +6,7 @@
  *
  * @note Copyright &copy; 1999  Paolo Mantegazza <mantegazza@aero.polimi.it>,
  * extensions for user space modules are jointly copyrighted (2000) with:
- *            Pierre Cloutier <pcloutier@poseidoncontrols.com>,
+ *	    Pierre Cloutier <pcloutier@poseidoncontrols.com>,
  *     	Steve Papacharalambous <stevep@zentropix.com>.
  *
  * This program is free software; you can redistribute it and/or
@@ -36,14 +36,14 @@ struct rt_registry_entry {
 	void *adr;		 // Physical rt memory address of resource
 	struct task_struct *tsk; // Linux task owner of the resource
 	int type;		 // Type of resource
-        unsigned short count;	 // Usage registry
+	unsigned short count;	 // Usage registry
 	unsigned short alink;
 	unsigned short nlink;
 };
 
 #define MAX_SLOTS  CONFIG_RTAI_SCHED_LXRT_NUMSLOTS // Max number of registered objects
 
-#define IS_TASK  0               // Used to identify registered resources
+#define IS_TASK  0	       // Used to identify registered resources
 #define IS_SEM   1
 #define IS_RWL   2
 #define IS_SPL   3

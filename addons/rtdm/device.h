@@ -31,7 +31,7 @@
 
 
 extern struct semaphore nrt_dev_lock;
-extern xnlock_t         rt_dev_lock;
+extern xnlock_t	 rt_dev_lock;
 
 extern unsigned int     devname_hashtab_size;
 extern unsigned int     protocol_hashtab_size;
@@ -42,7 +42,7 @@ extern struct list_head *rtdm_protocol_devices;
 #ifdef MODULE
 #define rtdm_initialised 1
 #else /* !MODULE */
-extern int              rtdm_initialised;
+extern int	      rtdm_initialised;
 #endif /* MODULE */
 
 

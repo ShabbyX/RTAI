@@ -79,7 +79,7 @@ extern "C" {
 
 RTAI_PROTO(struct rtai_rwlock *, rt_typed_rwl_init,(unsigned long name, int type))
 {
-        struct { unsigned long name; long type; } arg = { name, type };
+	struct { unsigned long name; long type; } arg = { name, type };
        	return (struct rtai_rwlock *)rtai_lxrt(BIDX, SIZARG, LXRT_RWL_INIT, &arg).v[LOW];
 }
 

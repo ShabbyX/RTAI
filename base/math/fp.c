@@ -24,7 +24,7 @@ long int __forisnan ( double arg )
 		if ( ( ( x.hex.high & 0x000FFFFF ) | x.hex.low ) == 0 )
 			return (long int) FP_INFINITE;
 		else
-			return ( x.hex.high & 0x00080000 ) ? FP_QNAN : FP_SNAN; 
+			return ( x.hex.high & 0x00080000 ) ? FP_QNAN : FP_SNAN;
 		}
 		else if ( exponent != 0)
 			return (long int) FP_NORMAL;
@@ -41,5 +41,5 @@ long int __forisnan ( double arg )
 long int __isnan ( double x )
 {
 	long int class = __forisnan(x);
-	return ( ( class == FP_SNAN ) || ( class == FP_QNAN ) ); 
+	return ( ( class == FP_SNAN ) || ( class == FP_QNAN ) );
 }

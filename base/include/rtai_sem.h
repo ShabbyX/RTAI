@@ -240,18 +240,18 @@ static inline int rt_pmutex_unlock(pmutex_t *mutex) {
 }
 
 #undef rt_mutex_init
-#define rt_mutex_init(mtx)             rt_typed_sem_init(mtx, 1, RES_SEM)
-#define rt_mutex_delete(mtx)           rt_sem_delete(mtx)
-#define rt_mutex_destroy(mtx)          rt_sem_delete(mtx)
-#define rt_mutex_trylock(mtx)          rt_sem_wait_if(mtx)
-#define rt_mutex_lock(mtx)             rt_sem_wait(mtx)
+#define rt_mutex_init(mtx)	     rt_typed_sem_init(mtx, 1, RES_SEM)
+#define rt_mutex_delete(mtx)	   rt_sem_delete(mtx)
+#define rt_mutex_destroy(mtx)	  rt_sem_delete(mtx)
+#define rt_mutex_trylock(mtx)	  rt_sem_wait_if(mtx)
+#define rt_mutex_lock(mtx)	     rt_sem_wait(mtx)
 #define rt_mutex_timedlock(mtx, time)  rt_sem_wait_until(mtx, time)
-#define rt_mutex_unlock(mtx)           rt_sem_signal(mtx)
+#define rt_mutex_unlock(mtx)	   rt_sem_signal(mtx)
 
-#define rt_cond_init(cnd)                  rt_typed_sem_init(cnd, 0, BIN_SEM | PRIO_Q)
-#define rt_cond_delete(cnd)                rt_sem_delete(cnd)
-#define rt_cond_destroy(cnd)               rt_sem_delete(cnd)
-#define rt_cond_broadcast(cnd)             rt_sem_broadcast(cnd)
+#define rt_cond_init(cnd)		  rt_typed_sem_init(cnd, 0, BIN_SEM | PRIO_Q)
+#define rt_cond_delete(cnd)		rt_sem_delete(cnd)
+#define rt_cond_destroy(cnd)	       rt_sem_delete(cnd)
+#define rt_cond_broadcast(cnd)	     rt_sem_broadcast(cnd)
 
 static inline int rt_cond_timedwait(CND *cnd, SEM *mtx, RTIME time) {
     return rt_cond_wait_until(cnd, mtx, time) < SEM_TIMOUT ? 0 : -1;
@@ -291,7 +291,7 @@ RTAI_PROTO(SEM *, rt_typed_sem_init,(unsigned long name, int value, int type))
  *
  * @return a pointer to the semaphore to be used in related calls or 0 if an
  * error has occured.
- */ 
+ */
 #define rt_sem_init(name, value) rt_typed_sem_init(name, value, CNT_SEM)
 
 #define rt_named_sem_init(sem_name, value) \
@@ -377,11 +377,11 @@ RTAI_PROTO(int, rt_sem_count,(SEM *sem))
  *
  * @return a pointer to the condition variable to be used in related calls or 0
  * if an error has occured.
- */ 
-#define rt_cond_init(name)                 rt_typed_sem_init(name, 0, BIN_SEM)
-#define rt_cond_delete(cnd)                rt_sem_delete(cnd)
-#define rt_cond_destroy(cnd)               rt_sem_delete(cnd)
-#define rt_cond_broadcast(cnd)             rt_sem_broadcast(cnd)
+ */
+#define rt_cond_init(name)		 rt_typed_sem_init(name, 0, BIN_SEM)
+#define rt_cond_delete(cnd)		rt_sem_delete(cnd)
+#define rt_cond_destroy(cnd)	       rt_sem_delete(cnd)
+#define rt_cond_broadcast(cnd)	     rt_sem_broadcast(cnd)
 #define rt_cond_timedwait(cnd, mtx, time)  rt_cond_wait_until(cnd, mtx, time)
 
 RTAI_PROTO(int, rt_cond_signal,(CND *cnd))

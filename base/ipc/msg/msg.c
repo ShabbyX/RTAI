@@ -1,11 +1,11 @@
-/** 
+/**
  * @file
  * Message handling functions.
  * @author Paolo Mantegazza
  *
  * @note Copyright (C) 1999-2003 Paolo Mantegazza
  * <mantegazza@aero.polimi.it> [ Specific COPYRIGHTS follow along the
- *  code ] 
+ *  code ]
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -125,7 +125,7 @@ do { if (task && task->magic != RT_TASK_MAGIC) return TASK_INVAL; } while (0)
  * A special value is returned as described below in case of
  * a failure:
  * - @b 0xFFFF: @e task does not refer to a valid task.
- * 
+ *
  * @note Since all the messaging functions return a task address
  * 0xFFFF could seem an inappropriate return value. However on all the
  * CPUs RTAI runs on 0xFFFF is not an address that can be used by any
@@ -182,11 +182,11 @@ RTAI_SYSCALL_MODE RT_TASK *rt_send(RT_TASK *task, unsigned long msg)
  *
  * @param msg corresponds to the message that has to be sent.
  *
- * @return the pointer to the task @e task that received the message 
+ * @return the pointer to the task @e task that received the message
  * is returned upon success.<br>
  * @e 0 is returned if the message has not been sent.<br>
  * A special value @e 0xFFFF is returned upon failure.<br><br>
- * The errors are described below: 
+ * The errors are described below:
  * - @b 0: the task @e task was not ready to receive the message.
  * - @b 0xFFFF: @e task does not refer to a valid task.
  *
@@ -254,8 +254,8 @@ RTAI_SYSCALL_MODE RT_TASK *rt_send_if(RT_TASK *task, unsigned long msg)
  * expiration.<br>
  * 0 is returned if the message has not been sent.
  * A special value is returned on other failure. The errors
- * are described below:  
- * - @b 0: operation timed out, message was not delivered; 
+ * are described below:
+ * - @b 0: operation timed out, message was not delivered;
  * - @b 0xFFFF: @e task does not refer to a valid task.
  *
  * See also: @ref rt_send_timed().
@@ -312,7 +312,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_send_until(RT_TASK *task, unsigned long msg, RTIME
  * @anchor rt_send_timed
  * brief Send a message with a relative timeout.
  *
- * rt_send_timed sends the message @e msg to the task @e task. If the 
+ * rt_send_timed sends the message @e msg to the task @e task. If the
  * receiver task is ready to get the message, this function does not
  * block the sending task, but its execution can be preempted if the
  * receiving task has a higher priority. Otherwise the caller task is
@@ -334,8 +334,8 @@ RTAI_SYSCALL_MODE RT_TASK *rt_send_until(RT_TASK *task, unsigned long msg, RTIME
  * message i.e. the message received before timeout expiration.<br>
  * 0 if the message has not been sent.<br>
  * A special value on other failure. The errors
- * are described below:  
- * - @b 0: operation timed out, message was not delivered; 
+ * are described below:
+ * - @b 0: operation timed out, message was not delivered;
  * - @b 0xFFFF: @e task does not refer to a valid task.
  *
  * See also: @ref rt_send_until().
@@ -392,7 +392,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_send_timed(RT_TASK *task, unsigned long msg, RTIME
  * 	 implement functions similar to its peers send-receive-replay
  * 	 found in QNX, except that in RTAI only four bytes messages
  * 	 contained in any integer can be exchanged. That's so because
- * 	 it is more efficient and often enough. If you need to pass 
+ * 	 it is more efficient and often enough. If you need to pass
  *       arbitrarely long messages see the extended intertask messaging
  *       functions.  Moreover note also that we prefer
  * 	 the idea of calling a function by using a message and then
@@ -424,7 +424,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpc(RT_TASK *task, unsigned long to_do, void *resu
 		rt_current->state |= RT_SCHED_RETURN;
 	} else {
 		rt_current->msg = to_do;
-                enqueue_blocked(rt_current, &task->msg_queue, 0);
+		enqueue_blocked(rt_current, &task->msg_queue, 0);
 		rt_current->state |= RT_SCHED_RPC;
 	}
 	enqueue_resqtsk(task);
@@ -523,7 +523,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpc_if(RT_TASK *task, unsigned long to_do, void *r
 }
 
 
-/** 
+/**
  * @ingroup rpc
  * @anchor rt_rpc_until
  * @brief Make a remote procedure call with an absolute timeout.
@@ -533,7 +533,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpc_if(RT_TASK *task, unsigned long to_do, void *r
  * received or a timeout occurs. So the caller task is always blocked
  * and queued up in priority order while the receiver
  * inheredits the blocked sender priority if it is higher (lower in value)
- * than its. 
+ * than its.
  * The receiver task may get the message with any @ref
  * rt_receive() function. It can send the answer with @ref rt_return().
  *
@@ -550,7 +550,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpc_if(RT_TASK *task, unsigned long to_do, void *r
  * arrived, 0 is returned.
  * On other failure, a special value is returned as described below:
  * - @b 0: The message could not be sent or the answer did not arrived
- *    	   in time.  
+ *    	   in time.
  * - @b 0xFFFF: @e task does not refer to a valid task.
  *
  * See also: @ref rt_receive(), @ref rt_return(), @ref rt_isrpc().
@@ -608,7 +608,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpc_until(RT_TASK *task, unsigned long to_do, void
 }
 
 
-/** 
+/**
  * @ingroup rpc
  * @anchor rt_rpc_timed
  * @brief Make a remote procedure call with a relative timeout.
@@ -635,7 +635,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpc_until(RT_TASK *task, unsigned long to_do, void
  * arrived, 0 is returned.
  * On other failure, a special value is returned as described below:
  * - @b 0: The message could not be sent or the answer did not arrived
- *    	   in time.  
+ *    	   in time.
  * - @b 0xFFFF: @e task does not refer to a valid task.
  *
  * See also: @ref rt_receive(), @ref rt_return(), @ref rt_isrpc().
@@ -675,7 +675,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpc_timed(RT_TASK *task, unsigned long to_do, void
  *  cannot figure out what RPC result the sender is waiting for.<br>
  * @ref rt_return() is intelligent enough to not send an answer to a
  * task which is not waiting for it. Therefore using rt_isrpc might not
- * be necessary. 
+ * be necessary.
  */
 RTAI_SYSCALL_MODE int rt_isrpc(RT_TASK *task)
 {
@@ -686,22 +686,22 @@ RTAI_SYSCALL_MODE int rt_isrpc(RT_TASK *task)
 /**
  * @ingroup rpc
  * @anchor rt_return
- * @brief Return (sends) the result back to the task that made the 
+ * @brief Return (sends) the result back to the task that made the
  *  related remote procedure call.
  *
  * rt_return sends the result @e result to the task @e task. If the task
  * calling rt_rpc is not waiting the answer (i.e. killed or
  * timed out) this return message is silently discarded. The returning task
- * tries to release any previously inheredited priority inherediting the 
+ * tries to release any previously inheredited priority inherediting the
  * highest priority of any rpcing task still waiting for
- * a return, but only if does not own a resource semaphore. In the latter 
+ * a return, but only if does not own a resource semaphore. In the latter
  * case it will keep the eighest inheredited priority till it has released
  * the resource ownership and no further message is waiting for a return.
  * That means that in the case priority inheritance is coming only
  * from rpced messages the task will return to its base priority when no
- * further message is queued for a return. Such a scheme automatically 
- * sets a dynamic priority ceiling in the case priorities are 
- * inheredited both from intertask messaging and resource semaphores 
+ * further message is queued for a return. Such a scheme automatically
+ * sets a dynamic priority ceiling in the case priorities are
+ * inheredited both from intertask messaging and resource semaphores
  * ownership.
  *
  * @return On success, task (the pointer to the task that is got the
@@ -743,24 +743,24 @@ RTAI_SYSCALL_MODE RT_TASK *rt_return(RT_TASK *task, unsigned long result)
  * @anchor rt_evdrp
  * @brief Eavedrop (spy) the content of a message.
  *
- * rt_evdrp spies the content of a message from the task specified by @e task 
- * while leaving it on the queue. To actually receive the message any of the 
+ * rt_evdrp spies the content of a message from the task specified by @e task
+ * while leaving it on the queue. To actually receive the message any of the
  * rt_receive function must be used specifically. If task
  * is equal to 0, the caller eavdrops the first message of its receive queue,
  * if any. rt_evdrp never blocks.
  *
  * @param task is a pointer to a @e RT_TASK structure.
- * 
- * @param msg points to any 4 bytes word buffer provided by the
- * caller. 
  *
- * @return a pointer to the sender task is returned upon success.<br> 
+ * @param msg points to any 4 bytes word buffer provided by the
+ * caller.
+ *
+ * @return a pointer to the sender task is returned upon success.<br>
  * 0 is returned if no message is available.
- * A special value is returned on other failure. The errors 
- * are described below:  
+ * A special value is returned on other failure. The errors
+ * are described below:
  * - @b 0: the sender task was killed before sending the message;
  * - @b 0xFFFF: @e task does not refer to a valid task.
- * 
+ *
  * @note Since all the messaging functions return a task address
  * 0xFFFF could seem an inappropriate return value.  However on all
  * the CPUs RTAI runs on 0xFFFF is not an address that can be used by
@@ -795,26 +795,26 @@ RTAI_SYSCALL_MODE RT_TASK *rt_evdrp(RT_TASK *task, void *msg)
  * is a pending message, rt_receive does not block but can be
  * preempted if the task that rt_sent the just received message has a
  * higher priority. The task will not block if it receives rpced messages
- * since rpcing tasks always waits for a returned message. Moreover it 
+ * since rpcing tasks always waits for a returned message. Moreover it
  * inheredits the highest priority of any rpcing task waiting on the receive
- * queue. The receiving task will then recover its priority as explained in 
- * rt_return. Otherwise the caller task is blocked waiting for any 
+ * queue. The receiving task will then recover its priority as explained in
+ * rt_return. Otherwise the caller task is blocked waiting for any
  * message to be sent/rpced.
  *
  * @param task is a pointer to a @e RT_TASK structure.
- * 
- * @param msg points to any 4 bytes word buffer provided by the
- * caller. 
  *
- * @return a pointer to the sender task is returned upon success.<br> 
+ * @param msg points to any 4 bytes word buffer provided by the
+ * caller.
+ *
+ * @return a pointer to the sender task is returned upon success.<br>
  * 0 is returned if the caller is unblocked but no message has
  * been received (e.g. the task @e task was killed before sending the
  * message.)<br>
- * A special value is returned on other failure. The errors 
- * are described below:  
+ * A special value is returned on other failure. The errors
+ * are described below:
  * - @b 0: the sender task was killed before sending the message;
  * - @b 0xFFFF: @e task does not refer to a valid task.
- * 
+ *
  * @note Since all the messaging functions return a task address
  * 0xFFFF could seem an inappropriate return value.  However on all
  * the CPUs RTAI runs on 0xFFFF is not an address that can be used by
@@ -850,7 +850,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive(RT_TASK *task, void *msg)
 				}
 			}
 		} else if (task->state & RT_SCHED_RPC) {
-                        enqueue_blocked(task, &rt_current->ret_queue, 0);
+			enqueue_blocked(task, &rt_current->ret_queue, 0);
 			task->state = (task->state & ~(RT_SCHED_RPC | RT_SCHED_DELAYED)) | RT_SCHED_RETURN;
 		}
 	} else {
@@ -883,7 +883,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive(RT_TASK *task, void *msg)
  * @ingroup msg
  * @anchor rt_receive_if
  * @brief Receive a message, only if the calling task is not blocked.
- * 
+ *
  * rt_receive_if tries to get a message from the task specified by
  * task. If task is equal to 0, the caller accepts messages from any
  * task. The caller task is never blocked but can be preempted if the
@@ -891,8 +891,8 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive(RT_TASK *task, void *msg)
  * higher priority. The task will not block if it receives rpced messages
  * since rpcing tasks always waits for a returned message. Moreover it
  * inheredits the highest priority of any rpcing task waiting on the receive
- * queue. The receiving task will then recover its priority as explained in 
- * rt_return. Otherwise the caller task is blocked waiting for any 
+ * queue. The receiving task will then recover its priority as explained in
+ * rt_return. Otherwise the caller task is blocked waiting for any
  * message to be sent/rpced.
  *
  * @param task is a pointer to the task structure.
@@ -901,7 +901,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive(RT_TASK *task, void *msg)
  *
  * @return a pointer to the sender task is returned upon success.<br>
  * A special value is returned on other failure. The errors are
- * described below:   
+ * described below:
  * - @b 0: there was no message to receive;
  * - @b 0xFFFF: @e task does not refer to a valid task.
  *
@@ -976,7 +976,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive_if(RT_TASK *task, void *msg)
  * higher priority. The task will not block if it receives rpced messages
  * since rpcing tasks always waits for a returned message. Moreover it
  * inheredits the highest priority of any rpcing task waiting on the receive
- * queue. The receiving task will then recover its priority as explained in 
+ * queue. The receiving task will then recover its priority as explained in
  * rt_return. Otherwise the caller task is blocked waiting for any
  * message to be sent/rpced.
  * In this case these functions return if:
@@ -993,7 +993,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive_if(RT_TASK *task, void *msg)
  *
  * @return On success, a pointer to the sender task is returned.
  * On other failure, a special value is returned. The errors
- * are described below:  
+ * are described below:
  * - @b 0: there was no message to receive.
  * - @b 0xFFFF: @e task does not refer to a valid task.
  *
@@ -1073,14 +1073,14 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive_until(RT_TASK *task, void *msg, RTIME time
  *
  * rt_receive_timed receives a message from the task specified by
  * task. If task is equal to 0, the caller accepts messages from any
- * task. 
+ * task.
  * If there is a pending message, rt_receive does not block but
  * but can be preempted if the
  * task that rt_sent the just received message has a
  * higher priority. The task will not block if it receives rpced messages
  * since rpcing tasks always waits for a returned message. Moreover it
  * inheredits the highest priority of any rpcing task waiting on the receive
- * queue. The receiving task will then recover its priority as explained in 
+ * queue. The receiving task will then recover its priority as explained in
  * rt_return. Otherwise the caller task is blocked waiting for any
  * message to be sent/rpced.
  * In this case these functions return if:
@@ -1097,7 +1097,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive_until(RT_TASK *task, void *msg, RTIME time
  *
  * @return On success, a pointer to the sender task is returned.
  * On other failure, a special value is returned. The errors
- * are described below:  
+ * are described below:
  * - @b 0: there was no message to receive.
  * - @b 0xFFFF: @e task does not refer to a valid task.
  *
@@ -1115,7 +1115,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receive_timed(RT_TASK *task, void *msg, RTIME dela
 
 /* ++++++++++++++++++++++++++ EXTENDED MESSAGES +++++++++++++++++++++++++++++++
 COPYRIGHT (C) 2003  Pierre Cloutier  (pcloutier@poseidoncontrols.com)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		    Paolo Mantegazza (mantegazza@aero.polimi.it)
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 #define SET_RPC_MCB() \
@@ -1133,12 +1133,12 @@ COPYRIGHT (C) 2003  Pierre Cloutier  (pcloutier@poseidoncontrols.com)
  *
  * rt_rpcx makes an extended Remote Procedure Call (RPC). rt_rpcx is used for
  * synchronous inter task messaging. It sends an arbitrary @e smsg of size
- * @e ssize bytes to the task @e task then it always blocks waiting until a 
- * message, of size @e rsize bytes at most, is returned in @e rmsg from the 
- * called task. If the returned message is greater tha rsize it will be 
- * truncated. So the caller task is always blocked on the receiver priority 
- * queue while the receiver inheredits the blocked sender priority if it is 
- * higher (lower in value) than its. The receiver task may get the message 
+ * @e ssize bytes to the task @e task then it always blocks waiting until a
+ * message, of size @e rsize bytes at most, is returned in @e rmsg from the
+ * called task. If the returned message is greater tha rsize it will be
+ * truncated. So the caller task is always blocked on the receiver priority
+ * queue while the receiver inheredits the blocked sender priority if it is
+ * higher (lower in value) than its. The receiver task may get the message
  * with any rt_receivex function. It can send an answer with @ref rt_returnx().
  *
  * @param task pointer to the RT_TASK structure of the receiver.
@@ -1177,14 +1177,14 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpcx(RT_TASK *task, void *smsg, void *rmsg, int ss
 /**
  * @ingroup rpc
  * @anchor rt_rpcx_if
- * @brief Make an extended remote procedure call, only if the calling task 
+ * @brief Make an extended remote procedure call, only if the calling task
  * will not be blocked.
  *
  * rt_rpcx_if tries to make an extended Remote Procedure Call (RPC). If the
  * receiver task is ready to accept a message rt_rpcx_if sends the
  * message as it will be done by rt_rpcx.
- * If the receiver is not ready rt_rpcx_if returns immediately. The receiver 
- * task may get the message with any rt_receivex function. It can send the 
+ * If the receiver is not ready rt_rpcx_if returns immediately. The receiver
+ * task may get the message with any rt_receivex function. It can send the
  * answer with * @ref rt_returnx().
  *
  * @param task pointer to the RT_TASK structure of the receiver.
@@ -1224,19 +1224,19 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpcx_if(RT_TASK *task, void *smsg, void *rmsg, int
 }
 
 
-/** 
+/**
  * @ingroup rpc
  * @anchor rt_rpcx_until
  * @brief Make an extended remote procedure call with absolute timeout.
  *
- * rt_rpcx_until makes an extended Remote Procedure Call (RPC). 
- * It sends an arbitrary @e smsg of size @e ssize bytes to the task @e task 
- * then it always blocks waiting until a message, of size @e rsize bytes at 
- * most, is returned in @e rmsg from the called task or a timeout occurs. 
- * If the returned message is greater tha rsize it will be truncated. 
+ * rt_rpcx_until makes an extended Remote Procedure Call (RPC).
+ * It sends an arbitrary @e smsg of size @e ssize bytes to the task @e task
+ * then it always blocks waiting until a message, of size @e rsize bytes at
+ * most, is returned in @e rmsg from the called task or a timeout occurs.
+ * If the returned message is greater tha rsize it will be truncated.
  * So the caller task is always blocked on the receiver priority queue while
- * the receiver inheredits the blocked sender priority if it is higher 
- * (lower in value) than its. The receiver task may get the message with any 
+ * the receiver inheredits the blocked sender priority if it is higher
+ * (lower in value) than its. The receiver task may get the message with any
  * rt_receivex function. It can send an answer with @ref rt_returnx().
  *
  * @param task pointer to the RT_TASK structure of the receiver.
@@ -1256,7 +1256,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpcx_if(RT_TASK *task, void *smsg, void *rmsg, int
  * arrived, 0 is returned.
  * On other failure, a special value is returned as described below:
  * - @b 0: The message could not be sent or the answer did not arrived
- *    	   in time.  
+ *    	   in time.
  * - @b 0xFFFF: @e task does not refer to a valid task.
  *
  * See also: @ref rt_receive(), @ref rt_return(), @ref rt_isrpc().
@@ -1279,19 +1279,19 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpcx_until(RT_TASK *task, void *smsg, void *rmsg, 
 }
 
 
-/** 
+/**
  * @ingroup rpc
  * @anchor rt_rpcx_timed
  * @brief Make an extended remote procedure call with a relative timeout.
  *
- * rt_rpcx_timed makes an extended Remote Procedure Call (RPC). 
- * It sends an arbitrary @e smsg of size @e ssize bytes to the task @e task 
- * then it always blocks waiting until a message, of size @e rsize bytes at 
- * most, is returned in @e rmsg from the called task or a timeout occurs. 
- * If the returned message is greater tha rsize it will be truncated. 
+ * rt_rpcx_timed makes an extended Remote Procedure Call (RPC).
+ * It sends an arbitrary @e smsg of size @e ssize bytes to the task @e task
+ * then it always blocks waiting until a message, of size @e rsize bytes at
+ * most, is returned in @e rmsg from the called task or a timeout occurs.
+ * If the returned message is greater tha rsize it will be truncated.
  * So the caller task is always blocked on the receiver priority queue while
- * the receiver inheredits the blocked sender priority if it is higher 
- * (lower in value) than its. The receiver task may get the message with any 
+ * the receiver inheredits the blocked sender priority if it is higher
+ * (lower in value) than its. The receiver task may get the message with any
  * rt_receivex function. It can send an answer with @ref rt_returnx().
  *
  * @param task pointer to the RT_TASK structure of the receiver.
@@ -1311,7 +1311,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpcx_until(RT_TASK *task, void *smsg, void *rmsg, 
  * arrived, 0 is returned.
  * On other failure, a special value is returned as described below:
  * - @b 0: The message could not be sent or the answer did not arrived
- *    	   in time.  
+ *    	   in time.
  * - @b 0xFFFF: @e task does not refer to a valid task.
  *
  * See also: @ref rt_receive(), @ref rt_return(), @ref rt_isrpc().
@@ -1347,7 +1347,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpcx_timed(RT_TASK *task, void *smsg, void *rmsg, 
  * @anchor rt_sendx
  * @brief Send an extended message.
  *
- * rt_sendx sends an arbitrary message @e msg of size @e size bytes to the task 
+ * rt_sendx sends an arbitrary message @e msg of size @e size bytes to the task
  * @e task. If the
  * receiver task is ready to get the message rt_sendx does not block
  * the sending task, but its execution can be preempted if the
@@ -1369,13 +1369,13 @@ RTAI_SYSCALL_MODE RT_TASK *rt_rpcx_timed(RT_TASK *task, void *smsg, void *rmsg, 
  * A special value is returned as described below in case of
  * a failure:
  * - @b 0xFFFF: @e task does not refer to a valid task.
- * 
+ *
  * @note Since all the messaging functions return a task address
  * 0xFFFF could seem an inappropriate return value. However on all the
  * CPUs RTAI runs on 0xFFFF is not an address that can be used by any
  * RTAI task, so it is should be safe always.
  */
-RTAI_SYSCALL_MODE RT_TASK *rt_sendx(RT_TASK *task, void *msg, int size) 
+RTAI_SYSCALL_MODE RT_TASK *rt_sendx(RT_TASK *task, void *msg, int size)
 {
 	if (task) {
 		struct mcb_t mcb;
@@ -1390,10 +1390,10 @@ RTAI_SYSCALL_MODE RT_TASK *rt_sendx(RT_TASK *task, void *msg, int size)
 /**
  * @ingroup msg
  * @anchor rt_sendx_if
- * @brief Send an extended message, only if the calling task will not be 
+ * @brief Send an extended message, only if the calling task will not be
  * blocked.
  *
- * rt_sendx_if sends an arbitrary message @e msg of size @e size bytes to the 
+ * rt_sendx_if sends an arbitrary message @e msg of size @e size bytes to the
  * task @e task if the latter is ready to receive. So the caller task in never
  * blocked but its execution can be preempted if the
  * receiving task has a higher priority.
@@ -1412,7 +1412,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_sendx(RT_TASK *task, void *msg, int size)
  * A special value is returned as described below in case of
  * a failure:
  * - @b 0xFFFF: @e task does not refer to a valid task.
- * 
+ *
  * @note Since all the messaging functions return a task address
  * 0xFFFF could seem an inappropriate return value. However on all the
  * CPUs RTAI runs on 0xFFFF is not an address that can be used by any
@@ -1456,7 +1456,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_sendx_if(RT_TASK *task, void *msg, int size)
  * @anchor rt_sendx_until
  * @brief Send an extended message with absolute timeout.
  *
- * rt_sendx_until sends an arbitrary message @e msg of size @e size bytes to 
+ * rt_sendx_until sends an arbitrary message @e msg of size @e size bytes to
  * the task @e task. If the
  * receiver task is ready to get the message rt_sendx_until does not block
  * the sending task, but its execution can be preempted if the
@@ -1486,7 +1486,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_sendx_if(RT_TASK *task, void *msg, int size)
  * a failure:
  * - @b 0: operation timed out, message was not delivered;
  * - @b 0xFFFF: @e task does not refer to a valid task.
- * 
+ *
  * @note Since all the messaging functions return a task address
  * 0xFFFF could seem an inappropriate return value. However on all the
  * CPUs RTAI runs on 0xFFFF is not an address that can be used by any
@@ -1509,7 +1509,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_sendx_until(RT_TASK *task, void *msg, int size, RT
  * @anchor rt_sendx_timed
  * @brief Send an extended message with relative timeout.
  *
- * rt_sendx_until sends an arbitrary message @e msg of size @e size bytes to 
+ * rt_sendx_until sends an arbitrary message @e msg of size @e size bytes to
  * the task @e task. If the
  * receiver task is ready to get the message rt_sendx_until does not block
  * the sending task, but its execution can be preempted if the
@@ -1539,7 +1539,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_sendx_until(RT_TASK *task, void *msg, int size, RT
  * a failure:
  * - @b 0: operation timed out, message was not delivered;
  * - @b 0xFFFF: @e task does not refer to a valid task.
- * 
+ *
  * @note Since all the messaging functions return a task address
  * 0xFFFF could seem an inappropriate return value. However on all the
  * CPUs RTAI runs on 0xFFFF is not an address that can be used by any
@@ -1560,22 +1560,22 @@ RTAI_SYSCALL_MODE RT_TASK *rt_sendx_timed(RT_TASK *task, void *msg, int size, RT
 /**
  * @ingroup rpc
  * @anchor rt_returnx
- * @brief Return (sends) an extended result back to the task that made the 
+ * @brief Return (sends) an extended result back to the task that made the
  *  related extended remote procedure call.
  *
- * rt_returns sends the result @e msg of size @e size to the task @e task. 
+ * rt_returns sends the result @e msg of size @e size to the task @e task.
  * If the task calling rt_rpcx is not waiting the answer (i.e. killed or
  * timed out) this return message is silently discarded. The returning task
- * tries to release any previously inheredited priority inherediting the 
+ * tries to release any previously inheredited priority inherediting the
  * highest priority of any rpcing task still waiting for
- * a return, but only if does not own a resource semaphore. In the latter 
+ * a return, but only if does not own a resource semaphore. In the latter
  * case it will keep the eighest inheredited priority till it has released
  * the resource ownership and no further message is waiting for a return.
  * That means that in the case priority inheritance is coming only
  * from rpced messages the task will return to its base priority when no
- * further message is queued for a return. Such a scheme automatically 
- * sets a dynamic priority ceiling in the case priorities are 
- * inheredited both from intertask messaging and resource semaphores 
+ * further message is queued for a return. Such a scheme automatically
+ * sets a dynamic priority ceiling in the case priorities are
+ * inheredited both from intertask messaging and resource semaphores
  * ownership.
  *
  * @return On success, task (the pointer to the task that is got the
@@ -1601,7 +1601,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_returnx(RT_TASK *task, void *msg, int size)
 
 	flags = rt_global_save_flags_and_cli();
 	ASSIGN_RT_CURRENT;
-        if ((task->state & RT_SCHED_RETURN) && task->msg_queue.task == rt_current) {
+	if ((task->state & RT_SCHED_RETURN) && task->msg_queue.task == rt_current) {
 		struct mcb_t *mcb;
 		if ((mcb = (struct mcb_t *)task->msg)->rbytes < size) {
 			size = mcb->rbytes;
@@ -1633,14 +1633,14 @@ RTAI_SYSCALL_MODE RT_TASK *rt_returnx(RT_TASK *task, void *msg, int size)
  * @anchor rt_evdrpx
  * @brief Eavedrop (spy) the content of an extended message.
  *
- * rt_evdrpx spies the content of a message from the task specified by @e task 
- * while leaving it on the queue. To actually receive the message any of the 
+ * rt_evdrpx spies the content of a message from the task specified by @e task
+ * while leaving it on the queue. To actually receive the message any of the
  * rt_receivex function must be used specifically. If task
  * is equal to 0, the caller eavdrops the first message of its receive queue,
  * if any. rt_evdrpix never blocks.
  *
  * @param task is a pointer to a @e RT_TASK structure.
- * 
+ *
  * @param msg points to the message to be eavedropped, without receive.
  *
  * @param size size of the message to be eavedropped.
@@ -1648,13 +1648,13 @@ RTAI_SYSCALL_MODE RT_TASK *rt_returnx(RT_TASK *task, void *msg, int size)
  * @param len is a pointer to an integer to be set to the actual len of the
  * eavedropped message.
  *
- * @return a pointer to the sender task is returned upon success.<br> 
+ * @return a pointer to the sender task is returned upon success.<br>
  * 0 is returned if no message is available.
- * A special value is returned on other failure. The errors 
- * are described below:  
+ * A special value is returned on other failure. The errors
+ * are described below:
  * - @b 0: the sender task was killed before sending the message;
  * - @b 0xFFFF: @e task does not refer to a valid task.
- * 
+ *
  * @note Since all the messaging functions return a task address
  * 0xFFFF could seem an inappropriate return value.  However on all
  * the CPUs RTAI runs on 0xFFFF is not an address that can be used by
@@ -1675,20 +1675,20 @@ RTAI_SYSCALL_MODE RT_TASK *rt_evdrpx(RT_TASK *task, void *msg, int size, long *l
  * @anchor rt_receivex
  * @brief Receive an extended message.
  *
- * rt_receivex gets an extended message @a msg of size @a size from the task 
+ * rt_receivex gets an extended message @a msg of size @a size from the task
  * specified by @e task task. If task
  * is equal to 0, the caller accepts messages from any task. If there
  * is a pending message, rt_receivex does not block but can be
  * preempted if the task that rt_sent the just received message has a
  * higher priority. The task will not block if it receives rpcxed messages
- * since rpcxing tasks always wait for a returned message. Moreover it 
+ * since rpcxing tasks always wait for a returned message. Moreover it
  * inheredits the highest priority of any rpcxing task waiting on the receive
- * queue. The receiving task will then recover its priority as explained in 
- * rt_returnx. Otherwise the caller task is blocked waiting for any 
+ * queue. The receiving task will then recover its priority as explained in
+ * rt_returnx. Otherwise the caller task is blocked waiting for any
  * message to be sentx/rpcxed.
  *
  * @param task is a pointer to a @e RT_TASK structure.
- * 
+ *
  * @param msg points to the message to be eavedropped, without receive.
  *
  * @param size size of the message to be eavedropped.
@@ -1696,15 +1696,15 @@ RTAI_SYSCALL_MODE RT_TASK *rt_evdrpx(RT_TASK *task, void *msg, int size, long *l
  * @param len is a pointer to an integer to be set to the actual len of the
  * eavedropped message.
  *
- * @return a pointer to the sender task is returned upon success.<br> 
+ * @return a pointer to the sender task is returned upon success.<br>
  * 0 is returned if the caller is unblocked but no message has
  * been received (e.g. the task @e task was killed before sending the
  * message.)<br>
- * A special value is returned on other failure. The errors 
- * are described below:  
+ * A special value is returned on other failure. The errors
+ * are described below:
  * - @b 0: the sender task was killed before sending the message;
  * - @b 0xFFFF: @e task does not refer to a valid task.
- * 
+ *
  * @note Since all the messaging functions return a task address
  * 0xFFFF could seem an inappropriate return value.  However on all
  * the CPUs RTAI runs on 0xFFFF is not an address that can be used by
@@ -1725,20 +1725,20 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receivex(RT_TASK *task, void *msg, int size, long 
  * @anchor rt_receivex_if
  * @brief Receive an extended message, only if the calling task is not blocked.
  *
- * rt_receivex gets an extended message @a msg of size @a size from the task 
+ * rt_receivex gets an extended message @a msg of size @a size from the task
  * specified by @e task task. If task
- * is equal to 0, the caller accepts messages from any task. The caller task 
- * is never blocked but can be preempted if the task that rt_sentx the just 
+ * is equal to 0, the caller accepts messages from any task. The caller task
+ * is never blocked but can be preempted if the task that rt_sentx the just
  * received message has a higher priority.
  * The task will not block if it receives rpcxed messages
- * since rpcxing tasks always wait for a returned message. Moreover it 
+ * since rpcxing tasks always wait for a returned message. Moreover it
  * inheredits the highest priority of any rpcxing task waiting on the receive
- * queue. The receiving task will then recover its priority as explained in 
- * rt_returnx. Otherwise the caller task is blocked waiting for any 
+ * queue. The receiving task will then recover its priority as explained in
+ * rt_returnx. Otherwise the caller task is blocked waiting for any
  * message to be sentx/rpcxed.
  *
  * @param task is a pointer to a @e RT_TASK structure.
- * 
+ *
  * @param msg points to the message to be eavedropped, without receive.
  *
  * @param size size of the message to be eavedropped.
@@ -1746,15 +1746,15 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receivex(RT_TASK *task, void *msg, int size, long 
  * @param len is a pointer to an integer to be set to the actual len of the
  * eavedropped message.
  *
- * @return a pointer to the sender task is returned upon success.<br> 
+ * @return a pointer to the sender task is returned upon success.<br>
  * 0 is returned if the caller is unblocked but no message has
  * been received (e.g. the task @e task was killed before sending the
  * message.)<br>
- * A special value is returned on other failure. The errors 
- * are described below:  
+ * A special value is returned on other failure. The errors
+ * are described below:
  * - @b 0: the sender task was killed before sending the message;
  * - @b 0xFFFF: @e task does not refer to a valid task.
- * 
+ *
  * @note Since all the messaging functions return a task address
  * 0xFFFF could seem an inappropriate return value.  However on all
  * the CPUs RTAI runs on 0xFFFF is not an address that can be used by
@@ -1792,7 +1792,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receivex_if(RT_TASK *task, void *msg, int size, lo
  * - timeout occurs;
  * - an error occurs (e.g. the sender task is killed.)
  * @param task is a pointer to a @e RT_TASK structure.
- * 
+ *
  * @param msg points to the message to be eavedropped, without receive.
  *
  * @param size size of the message to be eavedropped.
@@ -1802,15 +1802,15 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receivex_if(RT_TASK *task, void *msg, int size, lo
  *
  * @param time is an absolute timout value.
  *
- * @return a pointer to the sender task is returned upon success.<br> 
+ * @return a pointer to the sender task is returned upon success.<br>
  * 0 is returned if the caller is unblocked but no message has
  * been received (e.g. the task @e task was killed before sending the
  * message.)<br>
- * A special value is returned on other failure. The errors 
- * are described below:  
+ * A special value is returned on other failure. The errors
+ * are described below:
  * - @b 0: the sender task was killed before sending the message;
  * - @b 0xFFFF: @e task does not refer to a valid task.
- * 
+ *
  * @note Since all the messaging functions return a task address
  * 0xFFFF could seem an inappropriate return value.  However on all
  * the CPUs RTAI runs on 0xFFFF is not an address that can be used by
@@ -1848,7 +1848,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receivex_until(RT_TASK *task, void *msg, int size,
  * - timeout occurs;
  * - an error occurs (e.g. the sender task is killed.)
  * @param task is a pointer to a @e RT_TASK structure.
- * 
+ *
  * @param msg points to the message to be eavedropped, without receive.
  *
  * @param size size of the message to be eavedropped.
@@ -1858,15 +1858,15 @@ RTAI_SYSCALL_MODE RT_TASK *rt_receivex_until(RT_TASK *task, void *msg, int size,
  *
  * @param delay is a timeout relative to the current time.
  *
- * @return a pointer to the sender task is returned upon success.<br> 
+ * @return a pointer to the sender task is returned upon success.<br>
  * 0 is returned if the caller is unblocked but no message has
  * been received (e.g. the task @e task was killed before sending the
  * message.)<br>
- * A special value is returned on other failure. The errors 
- * are described below:  
+ * A special value is returned on other failure. The errors
+ * are described below:
  * - @b 0: the sender task was killed before sending the message;
  * - @b 0xFFFF: @e task does not refer to a valid task.
- * 
+ *
  * @note Since all the messaging functions return a task address
  * 0xFFFF could seem an inappropriate return value.  However on all
  * the CPUs RTAI runs on 0xFFFF is not an address that can be used by
@@ -1906,7 +1906,7 @@ static void proxy_task(RT_TASK *me)
 	struct proxy_t *my;
 	unsigned long ret;
 
-	my = (struct proxy_t *)me->stack_bottom;        	
+	my = (struct proxy_t *)me->stack_bottom;
 	while (1) {
 		while (my->nmsgs) {
 		 	atomic_dec((atomic_t *)&my->nmsgs);
@@ -1922,7 +1922,7 @@ RT_TASK *__rt_proxy_attach(void (*agent)(long), RT_TASK *task, void *msg, int nb
 	RT_TASK *proxy, *rt_current;
 	struct proxy_t *my;
 
-        rt_current = _rt_whoami();
+	rt_current = _rt_whoami();
 	if (!task) {
 		task = rt_current;
 	}
@@ -1952,7 +1952,7 @@ RT_TASK *__rt_proxy_attach(void (*agent)(long), RT_TASK *task, void *msg, int nb
 		memcpy(my->msg, msg, nbytes);
 	}
 
-        // agent is at *(proxy->stack + 2)
+	// agent is at *(proxy->stack + 2)
 	return proxy;
 }
 
@@ -1977,7 +1977,7 @@ RTAI_SYSCALL_MODE int rt_proxy_detach(RT_TASK *proxy)
 RTAI_SYSCALL_MODE RT_TASK *rt_trigger(RT_TASK *proxy)
 {
 	struct proxy_t *his;
-	
+
 	his = (struct proxy_t *)(proxy->stack_bottom);
 	if (his && proxy->magic == RT_TASK_MAGIC) {
 		atomic_inc((atomic_t *)&his->nmsgs);
@@ -1989,7 +1989,7 @@ RTAI_SYSCALL_MODE RT_TASK *rt_trigger(RT_TASK *proxy)
 
 /* ++++++++++++ ANOTHER API SET FOR EXTENDED INTERTASK MESSAGES +++++++++++++++
 COPYRIGHT (C) 2003  Pierre Cloutier  (pcloutier@poseidoncontrols.com)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+		    Paolo Mantegazza (mantegazza@aero.polimi.it)
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 #include <asm/uaccess.h>
@@ -2006,7 +2006,7 @@ RTAI_SYSCALL_MODE int rt_Send(pid_t pid, void *smsg, void *rmsg, size_t ssize, s
 		unsigned long replylen;
 		cb.cmd    = SYNCMSG;
 		cb.sbuf   = smsg;
-		cb.sbytes = ssize; 
+		cb.sbytes = ssize;
 		cb.rbuf   = rmsg;
 		cb.rbytes = rsize;
 		if (!(replier = rt_rpc(task, (unsigned long)&cb, &replylen))) {
@@ -2025,7 +2025,7 @@ RTAI_SYSCALL_MODE pid_t rt_Receive(pid_t pid, void *msg, size_t maxsize, size_t 
 	MSGCB *cb;
 	if ((task = rt_receive(pid ? pid2rttask(pid) : 0, (void *)&cb))) {
 		if ((pid = rttask2pid(task))) {
-			*msglen = maxsize <= cb->sbytes ? maxsize : cb->sbytes; 
+			*msglen = maxsize <= cb->sbytes ? maxsize : cb->sbytes;
 			if (*msglen) {
 				memcpy(msg, cb->sbuf, *msglen);
 			}
@@ -2084,22 +2084,22 @@ RTAI_SYSCALL_MODE int rt_Reply(pid_t pid, void *msg, size_t size)
 
 static void Proxy_Task(RT_TASK *me)
 {
-        struct proxy_t *my;
+	struct proxy_t *my;
 	MSGCB cb;
-        unsigned long replylen;
-        my = (struct proxy_t *)me->stack_bottom;
+	unsigned long replylen;
+	my = (struct proxy_t *)me->stack_bottom;
 	cb.cmd    = PROXY;
 	cb.sbuf   = my->msg;
 	cb.sbytes = my->nbytes;
 	cb.rbuf   = &replylen;
 	cb.rbytes = sizeof(replylen);
-        while(1) {
+	while(1) {
 		while (my->nmsgs) {
 			atomic_dec((atomic_t *)&my->nmsgs);
-                        rt_rpc(my->receiver, (unsigned long)(&cb), &replylen);
+			rt_rpc(my->receiver, (unsigned long)(&cb), &replylen);
 		}
 		rt_task_suspend(me);
-        }
+	}
 }
 
 RTAI_SYSCALL_MODE pid_t rt_Proxy_attach(pid_t pid, void *msg, int nbytes, int prio)
@@ -2123,11 +2123,11 @@ RTAI_SYSCALL_MODE pid_t rt_Trigger(pid_t pid)
 	RT_TASK *proxy;
        	struct proxy_t *his;
 	if ((proxy = pid2rttask(pid))) {
-	        his = (struct proxy_t *)(proxy->stack_bottom);
-        	if (his && proxy->magic == RT_TASK_MAGIC) {
-	                atomic_inc((atomic_t *)&his->nmsgs);
-        	        rt_task_resume(proxy);
-                	return rttask2pid(his->receiver);
+		his = (struct proxy_t *)(proxy->stack_bottom);
+		if (his && proxy->magic == RT_TASK_MAGIC) {
+			atomic_inc((atomic_t *)&his->nmsgs);
+			rt_task_resume(proxy);
+			return rttask2pid(his->receiver);
 		}
 		return -EINVAL;
 	}
@@ -2153,9 +2153,9 @@ RTAI_SYSCALL_MODE pid_t rt_Name_locate(const char *arghost, const char *argname)
 	extern RT_TASK rt_smp_linux_task[];
 	int cpuid;
 	RT_TASK *task;
-        for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
-                task = &rt_smp_linux_task[cpuid];
-                while ((task = task->next)) {
+	for (cpuid = 0; cpuid < num_online_cpus(); cpuid++) {
+		task = &rt_smp_linux_task[cpuid];
+		while ((task = task->next)) {
 			if (!strncmp(argname, task->task_name, RTAI_MAX_NAME_LENGTH - 1)) {
 				return task->tid;
 			}
@@ -2203,9 +2203,9 @@ struct rt_native_fun_entry rt_msg_entries[] = {
 	{ { UW1(2, 3) | UW2(4, 0), rt_receivex_if },	RECEIVEX_IF },
 	{ { UW1(2, 3) | UW2(4, 0), rt_receivex_until }, RECEIVEX_UNTIL },
 	{ { UW1(2, 3) | UW2(4, 0), rt_receivex_timed },	RECEIVEX_TIMED },
-	{ { UR1(2, 3), rt_proxy_attach },         	PROXY_ATTACH },
-	{ { 1, rt_proxy_detach },                 	PROXY_DETACH },
-	{ { 1, rt_trigger },                      	PROXY_TRIGGER },
+	{ { UR1(2, 3), rt_proxy_attach },	 	PROXY_ATTACH },
+	{ { 1, rt_proxy_detach },		 	PROXY_DETACH },
+	{ { 1, rt_trigger },		      	PROXY_TRIGGER },
 	{ { UR1(2, 4) | UW1(3, 5), rt_Send },	 	RT_SEND },
 	{ { UW1(2, 3) | UW2(4, 0), rt_Receive },	RT_RECEIVE },
 	{ { UW1(2, 3) | UW2(4, 0), rt_Creceive }, 	RT_CRECEIVE },

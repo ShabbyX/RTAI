@@ -27,12 +27,12 @@
 
 #if defined(__KERNEL__) && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,25)
 
-#define RT_REG_ORIG_AX        orig_ax
-#define RT_REG_SP             sp
-#define RT_REG_FLAGS          flags
-#define RT_REG_IP             ip
-#define RT_REG_CS             cs
-#define RT_REG_BP             bp
+#define RT_REG_ORIG_AX	orig_ax
+#define RT_REG_SP	     sp
+#define RT_REG_FLAGS	  flags
+#define RT_REG_IP	     ip
+#define RT_REG_CS	     cs
+#define RT_REG_BP	     bp
 
 #define RTAI_SYSCALL_CODE     bx
 #define RTAI_SYSCALL_ARGS     cx
@@ -50,12 +50,12 @@
 
 #else
 
-#define RT_REG_ORIG_AX           orig_eax
-#define RT_REG_SP                esp
-#define RT_REG_FLAGS             eflags
-#define RT_REG_IP                eip
-#define RT_REG_CS                xcs
-#define RT_REG_BP                ebp
+#define RT_REG_ORIG_AX	   orig_eax
+#define RT_REG_SP		esp
+#define RT_REG_FLAGS	     eflags
+#define RT_REG_IP		eip
+#define RT_REG_CS		xcs
+#define RT_REG_BP		ebp
 
 #define RTAI_SYSCALL_CODE     ebx
 #define RTAI_SYSCALL_ARGS     ecx
@@ -78,11 +78,11 @@
 
 #ifdef CONFIG_X86_LOCAL_APIC
 
-#define TIMER_NAME        "APIC"
+#define TIMER_NAME	"APIC"
 #define TIMER_TYPE  1
 #define HRT_LINUX_TIMER_NAME  "lapic"
 #define FAST_TO_READ_TSC
-#define TIMER_FREQ        RTAI_FREQ_APIC
+#define TIMER_FREQ	RTAI_FREQ_APIC
 #define TIMER_LATENCY     RTAI_LATENCY_APIC
 #define TIMER_SETUP_TIME  RTAI_SETUP_TIME_APIC
 #define ONESHOT_SPAN      (CPU_FREQ/(CONFIG_RTAI_CAL_FREQS_FACT + 2)) //(0x7FFFFFFFLL*(CPU_FREQ/TIMER_FREQ))
@@ -97,10 +97,10 @@
 #else /* !CONFIG_X86_LOCAL_APIC */
 
 #define USE_LINUX_TIMER
-#define TIMER_NAME        "8254-PIT"
+#define TIMER_NAME	"8254-PIT"
 #define TIMER_TYPE  0
 #define HRT_LINUX_TIMER_NAME  "pit"
-#define TIMER_FREQ        RTAI_FREQ_8254
+#define TIMER_FREQ	RTAI_FREQ_8254
 #define TIMER_LATENCY     RTAI_LATENCY_8254
 #define TIMER_SETUP_TIME  RTAI_SETUP_TIME_8254
 #define ONESHOT_SPAN      ((0x7FFF*(CPU_FREQ/TIMER_FREQ))/(CONFIG_RTAI_CAL_FREQS_FACT + 1)) //(0x7FFF*(CPU_FREQ/TIMER_FREQ))

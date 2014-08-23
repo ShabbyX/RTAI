@@ -25,7 +25,7 @@
 
 #ifndef	_RTAI_MATH_H
 #define	_RTAI_MATH_H	1
-#define _MATH_H         1
+#define _MATH_H	 1
 
 #include <rtai_types.h>
 #ifdef __attribute_pure__
@@ -130,7 +130,7 @@ __BEGIN_DECLS
 #  undef _Mdouble_
 // added for gcc-3.2
 # undef _Mdouble_BEGIN_NAMESPACE
-# undef _Mdouble_END_NAMESPACE 
+# undef _Mdouble_END_NAMESPACE
 // end added for gcc-3.2
 #  undef __MATH_PRECNAME
 
