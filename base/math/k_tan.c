@@ -10,10 +10,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: k_tan.c,v 1.8 1995/05/10 20:46:37 jtc Exp $";
-#endif
-
 /* __kernel_tan( x, y, k )
  * kernel tan function on [-pi/4, pi/4], pi/4 ~ 0.7854
  * Input x is assumed to be bounded by ~pi/4 in magnitude.
@@ -50,11 +46,8 @@ static char rcsid[] = "$NetBSD: k_tan.c,v 1.8 1995/05/10 20:46:37 jtc Exp $";
 
 #include "math.h"
 #include "mathP.h"
-#ifdef __STDC__
+
 static const double 
-#else
-static double 
-#endif
 one   =  1.00000000000000000000e+00, /* 0x3FF00000, 0x00000000 */
 pio4  =  7.85398163397448278999e-01, /* 0x3FE921FB, 0x54442D18 */
 pio4lo=  3.06161699786838301793e-17, /* 0x3C81A626, 0x33145C07 */
@@ -74,12 +67,7 @@ T[] =  {
   2.59073051863633712884e-05, /* 0x3EFB2A70, 0x74BF7AD4 */
 };
 
-#ifdef __STDC__
 	double __kernel_tan(double x, double y, int iy)
-#else
-	double __kernel_tan(x, y, iy)
-	double x,y; int iy;
-#endif
 {
 	double z,r,v,w,s;
 	int32_t ix,hx;

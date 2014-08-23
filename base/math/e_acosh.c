@@ -10,10 +10,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: e_acosh.c,v 1.9 1995/05/12 04:57:18 jtc Exp $";
-#endif
-
 /* __ieee754_acosh(x)
  * Method :
  *	Based on 
@@ -31,20 +27,11 @@ static char rcsid[] = "$NetBSD: e_acosh.c,v 1.9 1995/05/12 04:57:18 jtc Exp $";
 #include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 static const double 
-#else
-static double 
-#endif
 one	= 1.0,
 ln2	= 6.93147180559945286227e-01;  /* 0x3FE62E42, 0xFEFA39EF */
 
-#ifdef __STDC__
 	double __ieee754_acosh(double x)
-#else
-	double __ieee754_acosh(x)
-	double x;
-#endif
 {	
 	double t;
 	int32_t hx;

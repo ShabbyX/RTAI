@@ -10,10 +10,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: s_expm1.c,v 1.8 1995/05/10 20:47:09 jtc Exp $";
-#endif
-
 /* expm1(x)
  * Returns exp(x)-1, the exponential of x minus 1.
  *
@@ -109,14 +105,9 @@ static char rcsid[] = "$NetBSD: s_expm1.c,v 1.8 1995/05/10 20:47:09 jtc Exp $";
  * to produce the hexadecimal values shown.
  */
 
-#include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 static const double
-#else
-static double
-#endif
 one		= 1.0,
 huge		= 1.0e+300,
 tiny		= 1.0e-300,
@@ -131,12 +122,7 @@ Q3  =  -7.93650757867487942473e-05, /* BF14CE19 9EAADBB7 */
 Q4  =   4.00821782732936239552e-06, /* 3ED0CFCA 86E65239 */
 Q5  =  -2.01099218183624371326e-07; /* BE8AFDB7 6E09C32D */
 
-#ifdef __STDC__
 	double expm1(double x)
-#else
-	double expm1(x)
-	double x;
-#endif
 {
 	double y,hi,lo,c,t,e,hxs,hfx,r1;
 	int32_t k,xsb;

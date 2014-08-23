@@ -10,10 +10,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: s_scalbn.c,v 1.8 1995/05/10 20:48:08 jtc Exp $";
-#endif
-
 /* 
  * scalbn (double x, int n)
  * scalbn(x,n) returns x* 2**n  computed by  exponent  
@@ -24,22 +20,13 @@ static char rcsid[] = "$NetBSD: s_scalbn.c,v 1.8 1995/05/10 20:48:08 jtc Exp $";
 #include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 static const double
-#else
-static double
-#endif
 two54   =  1.80143985094819840000e+16, /* 0x43500000, 0x00000000 */
 twom54  =  5.55111512312578270212e-17, /* 0x3C900000, 0x00000000 */
 huge   = 1.0e+300,
 tiny   = 1.0e-300;
 
-#ifdef __STDC__
 	double scalbn (double x, int n)
-#else
-	double scalbn (x,n)
-	double x; int n;
-#endif
 {
 	int32_t k,hx,lx;
 	EXTRACT_WORDS(hx,lx,x);

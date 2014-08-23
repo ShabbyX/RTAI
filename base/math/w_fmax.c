@@ -5,7 +5,6 @@
  * ====================================================
  */
 
-#include "math.h"
 #include "mathP.h"
 
 	double fmax(double x,double y)

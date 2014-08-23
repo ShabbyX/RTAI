@@ -10,19 +10,10 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: s_matherr.c,v 1.6 1995/05/10 20:47:53 jtc Exp $";
-#endif
-
 #include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 	int matherr(struct exception *x)
-#else
-	int matherr(x)
-	struct exception *x;
-#endif
 {
 	int n=0;
 	if(x->arg1!=x->arg1) return 0;

@@ -10,10 +10,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: s_log1p.c,v 1.8 1995/05/10 20:47:46 jtc Exp $";
-#endif
-
 /* double log1p(double x)
  *
  * Method :                  
@@ -79,14 +75,9 @@ static char rcsid[] = "$NetBSD: s_log1p.c,v 1.8 1995/05/10 20:47:46 jtc Exp $";
  *	 See HP-15C Advanced Functions Handbook, p.193.
  */
 
-#include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 static const double
-#else
-static double
-#endif
 ln2_hi  =  6.93147180369123816490e-01,	/* 3fe62e42 fee00000 */
 ln2_lo  =  1.90821492927058770002e-10,	/* 3dea39ef 35793c76 */
 two54   =  1.80143985094819840000e+16,  /* 43500000 00000000 */
@@ -98,18 +89,9 @@ Lp5 = 1.818357216161805012e-01,  /* 3FC74664 96CB03DE */
 Lp6 = 1.531383769920937332e-01,  /* 3FC39A09 D078C69F */
 Lp7 = 1.479819860511658591e-01;  /* 3FC2F112 DF3E5244 */
 
-#ifdef __STDC__
 static const double zero = 0.0;
-#else
-static double zero = 0.0;
-#endif
 
-#ifdef __STDC__
 	double log1p(double x)
-#else
-	double log1p(x)
-	double x;
-#endif
 {
 	double hfsq,f=0.0,c=0.0,s,z,R,u;
 	int32_t k,hx,hu=0,ax;

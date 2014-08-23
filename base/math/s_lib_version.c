@@ -10,10 +10,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: s_lib_version.c,v 1.6 1995/05/10 20:47:44 jtc Exp $";
-#endif
-
 /*
  * MACRO for standards
  */
@@ -21,19 +17,4 @@ static char rcsid[] = "$NetBSD: s_lib_version.c,v 1.6 1995/05/10 20:47:44 jtc Ex
 #include "math.h"
 #include "mathP.h"
 
-/*
- * define and initialize _LIB_VERSION
- */
-#ifdef _POSIX_MODE
-_LIB_VERSION_TYPE _LIB_VERSION = _POSIX_;
-#else
-#ifdef _XOPEN_MODE
-_LIB_VERSION_TYPE _LIB_VERSION = _XOPEN_;
-#else
-#ifdef _SVID3_MODE
-_LIB_VERSION_TYPE _LIB_VERSION = _SVID_;
-#else					/* default _IEEE_MODE */
 _LIB_VERSION_TYPE _LIB_VERSION = _IEEE_;
-#endif
-#endif
-#endif

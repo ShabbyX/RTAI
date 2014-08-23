@@ -10,10 +10,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: e_hypot.c,v 1.9 1995/05/12 04:57:27 jtc Exp $";
-#endif
-
 /* __ieee754_hypot(x,y)
  *
  * Method :                  
@@ -46,15 +42,9 @@ static char rcsid[] = "$NetBSD: e_hypot.c,v 1.9 1995/05/12 04:57:27 jtc Exp $";
  * 	than 1 ulps (units in the last place) 
  */
 
-#include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 	double __ieee754_hypot(double x, double y)
-#else
-	double __ieee754_hypot(x,y)
-	double x, y;
-#endif
 {
 	double a=x,b=y,t1,t2,y1,y2,w;
 	int32_t j,k,ha,hb;

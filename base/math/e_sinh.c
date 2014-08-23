@@ -10,10 +10,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: e_sinh.c,v 1.7 1995/05/10 20:46:13 jtc Exp $";
-#endif
-
 /* __ieee754_sinh(x)
  * Method : 
  * mathematically sinh(x) if defined to be (exp(x)-exp(-x))/2
@@ -35,18 +31,9 @@ static char rcsid[] = "$NetBSD: e_sinh.c,v 1.7 1995/05/10 20:46:13 jtc Exp $";
 #include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 static const double one = 1.0, shuge = 1.0e307;
-#else
-static double one = 1.0, shuge = 1.0e307;
-#endif
 
-#ifdef __STDC__
 	double __ieee754_sinh(double x)
-#else
-	double __ieee754_sinh(x)
-	double x;
-#endif
 {	
 	double t,w,h;
 	int32_t ix,jx;

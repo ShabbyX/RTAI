@@ -10,13 +10,8 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: k_standard.c,v 1.6 1995/05/10 20:46:35 jtc Exp $";
-#endif
-
 #include "math.h"
 #include "mathP.h"
-#include <linux/errno.h>		/* FIXME */
 
 extern int libm_errno;
 
@@ -24,11 +19,7 @@ extern int printk(const char *, ...);
 
 #define	WRITE2(u,v) printk("%.*s",v,u)
 
-#ifdef __STDC__
 static const double zero = 0.0;	/* used as const */
-#else
-static double zero = 0.0;	/* used as const */
-#endif
 
 /* 
  * Standard conformance (non-IEEE) on exception cases.
@@ -77,13 +68,7 @@ static double zero = 0.0;	/* used as const */
  *	42-- pow(NaN,0.0)
  */
 
-
-#ifdef __STDC__
 	double __kernel_standard(double x, double y, int type) 
-#else
-	double __kernel_standard(x,y,type) 
-	double x,y; int type;
-#endif
 {
 	struct exception exc;
 #ifndef HUGE_VAL	/* this is the only routine that uses HUGE_VAL */ 
@@ -103,12 +88,12 @@ static double zero = 0.0;	/* used as const */
 		exc.name = type < 100 ? "acos" : "acosf";
 		exc.retval = zero;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if(_LIB_VERSION == _SVID_) {
 		    (void) WRITE2("acos: DOMAIN error\n", 19);
 		  }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 2:
@@ -118,12 +103,12 @@ static double zero = 0.0;	/* used as const */
 		exc.name = type < 100 ? "asin" : "asinf";
 		exc.retval = zero;
 		if(_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if(_LIB_VERSION == _SVID_) {
 		    	(void) WRITE2("asin: DOMAIN error\n", 19);
 		  }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 3:
@@ -135,12 +120,12 @@ static double zero = 0.0;	/* used as const */
 		exc.name = type < 100 ? "atan2" : "atan2f";
 		exc.retval = zero;
 		if(_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if(_LIB_VERSION == _SVID_) {
 			(void) WRITE2("atan2: DOMAIN error\n", 20);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 4:
@@ -153,9 +138,9 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = ERANGE;
+		  libm_errno = 34;
 		else if (!matherr(&exc)) {
-			libm_errno = ERANGE;
+			libm_errno = 34;
 		}
 		break;
 	    case 5:
@@ -168,9 +153,9 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = ERANGE;
+		  libm_errno = 34;
 		else if (!matherr(&exc)) {
-			libm_errno = ERANGE;
+			libm_errno = 34;
 		}
 		break;
 	    case 6:
@@ -183,9 +168,9 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = ERANGE;
+		  libm_errno = 34;
 		else if (!matherr(&exc)) {
-			libm_errno = ERANGE;
+			libm_errno = 34;
 		}
 		break;
 	    case 7:
@@ -195,9 +180,9 @@ static double zero = 0.0;	/* used as const */
 		exc.name = type < 100 ? "exp" : "expf";
 		exc.retval = zero;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = ERANGE;
+		  libm_errno = 34;
 		else if (!matherr(&exc)) {
-			libm_errno = ERANGE;
+			libm_errno = 34;
 		}
 		break;
 	    case 8:
@@ -210,12 +195,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = -HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("y0: DOMAIN error\n", 17);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 9:
@@ -228,12 +213,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = -HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("y0: DOMAIN error\n", 17);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 10:
@@ -246,12 +231,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = -HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("y1: DOMAIN error\n", 17);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 11:
@@ -264,12 +249,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = -HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("y1: DOMAIN error\n", 17);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 12:
@@ -282,12 +267,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = -HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("yn: DOMAIN error\n", 17);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 13:
@@ -300,12 +285,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = -HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("yn: DOMAIN error\n", 17);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 14:
@@ -318,9 +303,9 @@ static double zero = 0.0;	/* used as const */
                 else
                   exc.retval = HUGE_VAL;
                 if (_LIB_VERSION == _POSIX_)
-			libm_errno = ERANGE;
+			libm_errno = 34;
                 else if (!matherr(&exc)) {
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
 		}
 		break;
 	    case 15:
@@ -333,12 +318,12 @@ static double zero = 0.0;	/* used as const */
                 else
                   exc.retval = HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("lgamma: SING error\n", 19);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 16:
@@ -351,12 +336,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = -HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = ERANGE;
+		  libm_errno = 34;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("log: SING error\n", 16);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 17:
@@ -369,12 +354,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = -HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("log: DOMAIN error\n", 18);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 18:
@@ -387,12 +372,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = -HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = ERANGE;
+		  libm_errno = 34;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("log10: SING error\n", 18);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 19:
@@ -405,12 +390,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = -HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("log10: DOMAIN error\n", 20);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 20:
@@ -423,7 +408,7 @@ static double zero = 0.0;	/* used as const */
 		if (_LIB_VERSION != _SVID_) exc.retval = 1.0;
 		else if (!matherr(&exc)) {
 			(void) WRITE2("pow(0,0): DOMAIN error\n", 23);
-			libm_errno = EDOM;
+			libm_errno = 33;
 		}
 		break;
 	    case 21:
@@ -441,9 +426,9 @@ static double zero = 0.0;	/* used as const */
 		  if(x<zero&&rint(y)!=y) exc.retval = -HUGE_VAL;
 		}
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = ERANGE;
+		  libm_errno = 34;
 		else if (!matherr(&exc)) {
-			libm_errno = ERANGE;
+			libm_errno = 34;
 		}
 		break;
 	    case 22:
@@ -453,9 +438,9 @@ static double zero = 0.0;	/* used as const */
 		exc.name = type < 100 ? "pow" : "powf";
 		exc.retval =  zero;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = ERANGE;
+		  libm_errno = 34;
 		else if (!matherr(&exc)) {
-			libm_errno = ERANGE;
+			libm_errno = 34;
 		}
 		break;
 	    case 23:
@@ -468,12 +453,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = -HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("pow(0,neg): DOMAIN error\n", 25);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 24:
@@ -486,12 +471,12 @@ static double zero = 0.0;	/* used as const */
 		else 
 		    exc.retval = zero/zero;	/* X/Open allow NaN */
 		if (_LIB_VERSION == _POSIX_) 
-		   libm_errno = EDOM;
+		   libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("neg**non-integral: DOMAIN error\n", 32);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 25:
@@ -504,9 +489,9 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = ( (x>zero) ? HUGE_VAL : -HUGE_VAL);
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = ERANGE;
+		  libm_errno = 34;
 		else if (!matherr(&exc)) {
-			libm_errno = ERANGE;
+			libm_errno = 34;
 		}
 		break;
 	    case 26:
@@ -519,12 +504,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		  exc.retval = zero/zero;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("sqrt: DOMAIN error\n", 19);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
             case 27:
@@ -537,12 +522,12 @@ static double zero = 0.0;	/* used as const */
 		else
 		    exc.retval = zero/zero;
                 if (_LIB_VERSION == _POSIX_)
-                  libm_errno = EDOM;
+                  libm_errno = 33;
                 else if (!matherr(&exc)) {
                   if (_LIB_VERSION == _SVID_) {
                     (void) WRITE2("fmod:  DOMAIN error\n", 20);
                   }
-                  libm_errno = EDOM;
+                  libm_errno = 33;
                 }
                 break;
             case 28:
@@ -552,12 +537,12 @@ static double zero = 0.0;	/* used as const */
                 exc.name = type < 100 ? "remainder" : "remainderf";
                 exc.retval = zero/zero;
                 if (_LIB_VERSION == _POSIX_)
-                  libm_errno = EDOM;
+                  libm_errno = 33;
                 else if (!matherr(&exc)) {
                   if (_LIB_VERSION == _SVID_) {
                     (void) WRITE2("remainder: DOMAIN error\n", 24);
                   }
-                  libm_errno = EDOM;
+                  libm_errno = 33;
                 }
                 break;
             case 29:
@@ -567,12 +552,12 @@ static double zero = 0.0;	/* used as const */
                 exc.name = type < 100 ? "acosh" : "acoshf";
                 exc.retval = zero/zero;
                 if (_LIB_VERSION == _POSIX_)
-                  libm_errno = EDOM;
+                  libm_errno = 33;
                 else if (!matherr(&exc)) {
                   if (_LIB_VERSION == _SVID_) {
                     (void) WRITE2("acosh: DOMAIN error\n", 20);
                   }
-                  libm_errno = EDOM;
+                  libm_errno = 33;
                 }
                 break;
             case 30:
@@ -582,12 +567,12 @@ static double zero = 0.0;	/* used as const */
                 exc.name = type < 100 ? "atanh" : "atanhf";
                 exc.retval = zero/zero;
                 if (_LIB_VERSION == _POSIX_)
-                  libm_errno = EDOM;
+                  libm_errno = 33;
                 else if (!matherr(&exc)) {
                   if (_LIB_VERSION == _SVID_) {
                     (void) WRITE2("atanh: DOMAIN error\n", 20);
                   }
-                  libm_errno = EDOM;
+                  libm_errno = 33;
                 }
                 break;
             case 31:
@@ -597,12 +582,12 @@ static double zero = 0.0;	/* used as const */
                 exc.name = type < 100 ? "atanh" : "atanhf";
 		exc.retval = x/zero;	/* sign(x)*inf */
                 if (_LIB_VERSION == _POSIX_)
-                  libm_errno = EDOM;
+                  libm_errno = 33;
                 else if (!matherr(&exc)) {
                   if (_LIB_VERSION == _SVID_) {
                     (void) WRITE2("atanh: SING error\n", 18);
                   }
-                  libm_errno = EDOM;
+                  libm_errno = 33;
                 }
                 break;
 	    case 32:
@@ -612,9 +597,9 @@ static double zero = 0.0;	/* used as const */
 		exc.name = type < 100 ? "scalb" : "scalbf";
 		exc.retval = x > zero ? HUGE_VAL : -HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = ERANGE;
+		  libm_errno = 34;
 		else if (!matherr(&exc)) {
-			libm_errno = ERANGE;
+			libm_errno = 34;
 		}
 		break;
 	    case 33:
@@ -624,9 +609,9 @@ static double zero = 0.0;	/* used as const */
 		exc.name = type < 100 ? "scalb" : "scalbf";
 		exc.retval = copysign(zero,x);
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = ERANGE;
+		  libm_errno = 34;
 		else if (!matherr(&exc)) {
-			libm_errno = ERANGE;
+			libm_errno = 34;
 		}
 		break;
 	    case 34:
@@ -636,13 +621,13 @@ static double zero = 0.0;	/* used as const */
                 exc.name = type < 100 ? "j0" : "j0f";
                 exc.retval = zero;
                 if (_LIB_VERSION == _POSIX_)
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
                 else if (!matherr(&exc)) {
                         if (_LIB_VERSION == _SVID_) {
                                 (void) WRITE2(exc.name, 2);
                                 (void) WRITE2(": TLOSS error\n", 14);
                         }
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
                 }        
 		break;
 	    case 35:
@@ -652,13 +637,13 @@ static double zero = 0.0;	/* used as const */
                 exc.name = type < 100 ? "y0" : "y0f";
                 exc.retval = zero;
                 if (_LIB_VERSION == _POSIX_)
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
                 else if (!matherr(&exc)) {
                         if (_LIB_VERSION == _SVID_) {
                                 (void) WRITE2(exc.name, 2);
                                 (void) WRITE2(": TLOSS error\n", 14);
                         }
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
                 }        
 		break;
 	    case 36:
@@ -668,13 +653,13 @@ static double zero = 0.0;	/* used as const */
                 exc.name = type < 100 ? "j1" : "j1f";
                 exc.retval = zero;
                 if (_LIB_VERSION == _POSIX_)
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
                 else if (!matherr(&exc)) {
                         if (_LIB_VERSION == _SVID_) {
                                 (void) WRITE2(exc.name, 2);
                                 (void) WRITE2(": TLOSS error\n", 14);
                         }
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
                 }        
 		break;
 	    case 37:
@@ -684,13 +669,13 @@ static double zero = 0.0;	/* used as const */
                 exc.name = type < 100 ? "y1" : "y1f";
                 exc.retval = zero;
                 if (_LIB_VERSION == _POSIX_)
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
                 else if (!matherr(&exc)) {
                         if (_LIB_VERSION == _SVID_) {
                                 (void) WRITE2(exc.name, 2);
                                 (void) WRITE2(": TLOSS error\n", 14);
                         }
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
                 }        
 		break;
 	    case 38:
@@ -700,13 +685,13 @@ static double zero = 0.0;	/* used as const */
                 exc.name = type < 100 ? "jn" : "jnf";
                 exc.retval = zero;
                 if (_LIB_VERSION == _POSIX_)
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
                 else if (!matherr(&exc)) {
                         if (_LIB_VERSION == _SVID_) {
                                 (void) WRITE2(exc.name, 2);
                                 (void) WRITE2(": TLOSS error\n", 14);
                         }
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
                 }        
 		break;
 	    case 39:
@@ -716,13 +701,13 @@ static double zero = 0.0;	/* used as const */
                 exc.name = type < 100 ? "yn" : "ynf";
                 exc.retval = zero;
                 if (_LIB_VERSION == _POSIX_)
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
                 else if (!matherr(&exc)) {
                         if (_LIB_VERSION == _SVID_) {
                                 (void) WRITE2(exc.name, 2);
                                 (void) WRITE2(": TLOSS error\n", 14);
                         }
-                        libm_errno = ERANGE;
+                        libm_errno = 34;
                 }        
 		break;
 	    case 40:
@@ -735,9 +720,9 @@ static double zero = 0.0;	/* used as const */
                 else
                   exc.retval = HUGE_VAL;
                 if (_LIB_VERSION == _POSIX_)
-		  libm_errno = ERANGE;
+		  libm_errno = 34;
                 else if (!matherr(&exc)) {
-                  libm_errno = ERANGE;
+                  libm_errno = 34;
                 }
 		break;
 	    case 41:
@@ -750,12 +735,12 @@ static double zero = 0.0;	/* used as const */
                 else
                   exc.retval = HUGE_VAL;
 		if (_LIB_VERSION == _POSIX_)
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		else if (!matherr(&exc)) {
 		  if (_LIB_VERSION == _SVID_) {
 			(void) WRITE2("gamma: SING error\n", 18);
 		      }
-		  libm_errno = EDOM;
+		  libm_errno = 33;
 		}
 		break;
 	    case 42:
@@ -768,7 +753,7 @@ static double zero = 0.0;	/* used as const */
 		if (_LIB_VERSION == _IEEE_ ||
 		    _LIB_VERSION == _POSIX_) exc.retval = 1.0;
 		else if (!matherr(&exc)) {
-			libm_errno = EDOM;
+			libm_errno = 33;
 		}
 		break;
 	}

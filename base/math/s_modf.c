@@ -1,4 +1,3 @@
-#if !defined(__ppc__)
 /* @(#)s_modf.c 5.1 93/09/24 */
 /*
  * ====================================================
@@ -10,10 +9,6 @@
  * is preserved.
  * ====================================================
  */
-
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: s_modf.c,v 1.8 1995/05/10 20:47:55 jtc Exp $";
-#endif
 
 /*
  * modf(double x, double *iptr) 
@@ -28,18 +23,9 @@ static char rcsid[] = "$NetBSD: s_modf.c,v 1.8 1995/05/10 20:47:55 jtc Exp $";
 #include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 static const double one = 1.0;
-#else
-static double one = 1.0;
-#endif
 
-#ifdef __STDC__
 	double modf(double x, double *iptr)
-#else
-	double modf(x, iptr)
-	double x,*iptr;
-#endif
 {
 	int32_t i0,i1,j0;
 	u_int32_t i;
@@ -82,4 +68,3 @@ static double one = 1.0;
 	    }
 	}
 }
-#endif /* !__ppc__ */

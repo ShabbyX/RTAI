@@ -1,4 +1,3 @@
-#if !defined(__ppc__)
 /* @(#)s_rint.c 5.1 93/09/24 */
 /*
  * ====================================================
@@ -11,10 +10,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: s_rint.c,v 1.8 1995/05/10 20:48:04 jtc Exp $";
-#endif
-
 /*
  * rint(x)
  * Return x rounded to integral value according to the prevailing
@@ -25,25 +20,15 @@ static char rcsid[] = "$NetBSD: s_rint.c,v 1.8 1995/05/10 20:48:04 jtc Exp $";
  *	Inexact flag raised if x not equal to rint(x).
  */
 
-#include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 static const double
-#else
-static double 
-#endif
 TWO52[2]={
   4.50359962737049600000e+15, /* 0x43300000, 0x00000000 */
  -4.50359962737049600000e+15, /* 0xC3300000, 0x00000000 */
 };
 
-#ifdef __STDC__
 	double rint(double x)
-#else
-	double rint(x)
-	double x;
-#endif
 {
 	int32_t i0,j0,sx;
 	u_int32_t i,i1;
@@ -85,4 +70,3 @@ TWO52[2]={
 	w = TWO52[sx]+x;
 	return w-TWO52[sx];
 }
-#endif /* !__ppc__ */

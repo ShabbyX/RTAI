@@ -1,4 +1,3 @@
-#if !defined(__ppc__)
 /* @(#)s_ldexp.c 5.1 93/09/24 */
 /*
  * ====================================================
@@ -11,26 +10,15 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: s_ldexp.c,v 1.6 1995/05/10 20:47:40 jtc Exp $";
-#endif
-
 #include "math.h"
 #include "mathP.h"
-#include <linux/errno.h>
 
 extern int libm_errno;
 
-#ifdef __STDC__
 	double ldexp(double value, int exp)
-#else
-	double ldexp(value, exp)
-	double value; int exp;
-#endif
 {
 	if(!finite(value)||value==0.0) return value;
 	value = scalbn(value,exp);
-	if(!finite(value)||value==0.0) libm_errno = ERANGE;
+	if(!finite(value)||value==0.0) libm_errno = 34;
 	return value;
 }
-#endif /* !__ppc__ */

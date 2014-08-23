@@ -10,10 +10,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: w_jn.c,v 1.6 1995/05/10 20:49:19 jtc Exp $";
-#endif
-
 /*
  * wrapper jn(int n, double x), yn(int n, double x)
  * floating point Bessel's function of the 1st and 2nd kind
@@ -40,53 +36,14 @@ static char rcsid[] = "$NetBSD: w_jn.c,v 1.6 1995/05/10 20:49:19 jtc Exp $";
  *	
  */
 
-#include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 	double jn(int n, double x)	/* wrapper jn */
-#else
-	double jn(n,x)			/* wrapper jn */
-	double x; int n;
-#endif
 {
-#ifdef _IEEE_LIBM
 	return __ieee754_jn(n,x);
-#else
-	double z;
-	z = __ieee754_jn(n,x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x) ) return z;
-	if(fabs(x)>X_TLOSS) {
-	    return __kernel_standard((double)n,x,38); /* jn(|x|>X_TLOSS,n) */
-	} else
-	    return z;
-#endif
 }
 
-#ifdef __STDC__
 	double yn(int n, double x)	/* wrapper yn */
-#else
-	double yn(n,x)			/* wrapper yn */
-	double x; int n;
-#endif
 {
-#ifdef _IEEE_LIBM
 	return __ieee754_yn(n,x);
-#else
-	double z;
-	z = __ieee754_yn(n,x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x) ) return z;
-        if(x <= 0.0){
-                if(x==0.0)
-                    /* d= -one/(x-x); */
-                    return __kernel_standard((double)n,x,12);
-                else
-                    /* d = zero/(x-x); */
-                    return __kernel_standard((double)n,x,13);
-        }
-	if(x>X_TLOSS) {
-	    return __kernel_standard((double)n,x,39); /* yn(x>X_TLOSS,n) */
-	} else
-	    return z;
-#endif
 }

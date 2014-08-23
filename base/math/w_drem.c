@@ -5,11 +5,11 @@
  * Placed into the Public Domain, 1994.
  */
 
-#include <math.h>
+#include "math.h"
+#include "mathP.h"
 
-double
-drem(x, y)
-	double x, y;
+double drem(x, y)
+double x, y;
 {
 	return remainder(x, y);
 }

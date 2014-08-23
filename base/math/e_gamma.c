@@ -1,4 +1,3 @@
-
 /* @(#)e_gamma.c 5.1 93/09/24 */
 /*
  * ====================================================
@@ -22,13 +21,7 @@
 
 extern int signgam;
 
-#ifdef __STDC__
-	//__private_extern__
 	double __ieee754_gamma(double x)
-#else
-	double __ieee754_gamma(x)
-	double x;
-#endif
 {
 	return __ieee754_gamma_r(x,&signgam);
 }

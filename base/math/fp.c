@@ -3,7 +3,7 @@
  * Re-written and trimmmed down by Alec Ari
  */
 
-#include     "fp.h"
+#include "fp.h"
 
 /* Stuff for insan */
 

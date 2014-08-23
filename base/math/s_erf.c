@@ -10,10 +10,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: s_erf.c,v 1.8 1995/05/10 20:47:05 jtc Exp $";
-#endif
-
 /* double erf(double x)
  * double erfc(double x)
  *			     x
@@ -108,21 +104,17 @@ static char rcsid[] = "$NetBSD: s_erf.c,v 1.8 1995/05/10 20:47:05 jtc Exp $";
  *	   	erfc/erf(NaN) is NaN
  */
 
-
 #include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 static const double
-#else
-static double
-#endif
 tiny	    = 1e-300,
 half=  5.00000000000000000000e-01, /* 0x3FE00000, 0x00000000 */
 one =  1.00000000000000000000e+00, /* 0x3FF00000, 0x00000000 */
 two =  2.00000000000000000000e+00, /* 0x40000000, 0x00000000 */
-	/* c = (float)0.84506291151 */
+/* c = (float)0.84506291151 */
 erx =  8.45062911510467529297e-01, /* 0x3FEB0AC1, 0x60000000 */
+
 /*
  * Coefficients for approximation to  erf on [0,0.84375]
  */
@@ -138,6 +130,7 @@ qq2  =  6.50222499887672944485e-02, /* 0x3FB0A54C, 0x5536CEBA */
 qq3  =  5.08130628187576562776e-03, /* 0x3F74D022, 0xC4D36B0F */
 qq4  =  1.32494738004321644526e-04, /* 0x3F215DC9, 0x221C1A10 */
 qq5  = -3.96022827877536812320e-06, /* 0xBED09C43, 0x42A26120 */
+
 /*
  * Coefficients for approximation to  erf  in [0.84375,1.25] 
  */
@@ -154,6 +147,7 @@ qa3  =  7.18286544141962662868e-02, /* 0x3FB2635C, 0xD99FE9A7 */
 qa4  =  1.26171219808761642112e-01, /* 0x3FC02660, 0xE763351F */
 qa5  =  1.36370839120290507362e-02, /* 0x3F8BEDC2, 0x6B51DD1C */
 qa6  =  1.19844998467991074170e-02, /* 0x3F888B54, 0x5735151D */
+
 /*
  * Coefficients for approximation to  erfc in [1.25,1/0.35]
  */
@@ -173,6 +167,7 @@ sa5  =  4.29008140027567833386e+02, /* 0x407AD021, 0x57700314 */
 sa6  =  1.08635005541779435134e+02, /* 0x405B28A3, 0xEE48AE2C */
 sa7  =  6.57024977031928170135e+00, /* 0x401A47EF, 0x8E484A93 */
 sa8  = -6.04244152148580987438e-02, /* 0xBFAEEFF2, 0xEE749A62 */
+
 /*
  * Coefficients for approximation to  erfc in [1/.35,28]
  */
@@ -191,12 +186,7 @@ sb5  =  2.55305040643316442583e+03, /* 0x40A3F219, 0xCEDF3BE6 */
 sb6  =  4.74528541206955367215e+02, /* 0x407DA874, 0xE79FE763 */
 sb7  = -2.24409524465858183362e+01; /* 0xC03670E2, 0x42712D62 */
 
-#ifdef __STDC__
 	double erf(double x) 
-#else
-	double erf(x) 
-	double x;
-#endif
 {
 	int32_t hx,ix,i;
 	double R,S,P,Q,s,y,z,r;
@@ -247,12 +237,7 @@ sb7  = -2.24409524465858183362e+01; /* 0xC03670E2, 0x42712D62 */
 	if(hx>=0) return one-r/x; else return  r/x-one;
 }
 
-#ifdef __STDC__
 	double erfc(double x) 
-#else
-	double erfc(x) 
-	double x;
-#endif
 {
 	int32_t hx,ix;
 	double R,S,P,Q,s,y,z,r;

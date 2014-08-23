@@ -1,4 +1,3 @@
-
 /* @(#)e_lgamma.c 5.1 93/09/24 */
 /*
  * ====================================================
@@ -18,17 +17,12 @@
  * Method: call __ieee754_lgamma_r
  */
 
+#include "math.h"
 #include "mathP.h"
 
 extern int signgam;
 
-#ifdef __STDC__
-	//__private_extern__
 	double __ieee754_lgamma(double x)
-#else
-	double __ieee754_lgamma(x)
-	double x;
-#endif
 {
 	return __ieee754_lgamma_r(x,&signgam);
 }

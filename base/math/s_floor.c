@@ -11,10 +11,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: s_floor.c,v 1.8 1995/05/10 20:47:20 jtc Exp $";
-#endif
-
 /*
  * floor(x)
  * Return x rounded toward -inf to integral value
@@ -24,21 +20,11 @@ static char rcsid[] = "$NetBSD: s_floor.c,v 1.8 1995/05/10 20:47:20 jtc Exp $";
  *	Inexact flag raised if x not equal to floor(x).
  */
 
-#include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 static const double huge = 1.0e300;
-#else
-static double huge = 1.0e300;
-#endif
 
-#ifdef __STDC__
 	double floor(double x)
-#else
-	double floor(x)
-	double x;
-#endif
 {
 	int32_t i0,i1,j0;
 	u_int32_t i,j;

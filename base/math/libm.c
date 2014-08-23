@@ -90,7 +90,6 @@ EXPORT_SYMBOL(ldexp);
 EXPORT_SYMBOL(lgamma);
 EXPORT_SYMBOL(lgamma_r);
 EXPORT_SYMBOL(log1p);
-EXPORT_SYMBOL(logb);
 EXPORT_SYMBOL(matherr);
 EXPORT_SYMBOL(nextafter);
 EXPORT_SYMBOL(remainder);

@@ -10,10 +10,6 @@
  * ====================================================
  */
 
-#if defined(LIBM_SCCS) && !defined(lint)
-static char rcsid[] = "$NetBSD: s_nextafter.c,v 1.8 1995/05/10 20:47:58 jtc Exp $";
-#endif
-
 /* IEEE functions
  *	nextafter(x,y)
  *	return the next machine floating-point number of x in the
@@ -21,15 +17,9 @@ static char rcsid[] = "$NetBSD: s_nextafter.c,v 1.8 1995/05/10 20:47:58 jtc Exp 
  *   Special cases:
  */
 
-#include "math.h"
 #include "mathP.h"
 
-#ifdef __STDC__
 	double nextafter(double x, double y)
-#else
-	double nextafter(x,y)
-	double x,y;
-#endif
 {
 	int32_t hx,hy,ix,iy;
 	u_int32_t lx,ly;
