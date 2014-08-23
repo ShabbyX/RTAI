@@ -234,17 +234,6 @@ if test x${CONFIG_MODULES} = x ; then
   AC_MSG_ERROR([Please set CONFIG_MODULES for $RTAI_LINUX_DIR and rebuild your kernel])
 fi
 
-if test x${CONFIG_MODVERSIONS} = xy ; then
-	case "${RTAI_LINUX_VERSION}" in
-	2.4.*)
-  AC_MSG_ERROR([Please unset CONFIG_MODVERSIONS for $RTAI_LINUX_DIR and rebuild your kernel])
-		;;
-	*)
-		dnl reported to be harmless in 2.6
-		;;
-	esac
-fi
-
 if test x${CONFIG_RTAI_ADEOS} = xy -a x${CONFIG_ADEOS_CORE} = x; then
    AC_MSG_ERROR([Please activate the Adeos support in $RTAI_LINUX_DIR and rebuild your kernel])
 fi
