@@ -630,8 +630,6 @@ AC_LANG_RESTORE)
 AC_MSG_RESULT($ac_cv_accepts_cxa_atexit)
 CXXFLAGS="$save_CXXFLAGS"
 
-CONFIG_RTAI_FPU_SUPPORT=y
-
 AC_MSG_CHECKING(for tlsf use in real-time malloc support)
 AC_ARG_ENABLE(malloc-tlsf,
 	[ --enable-malloc-tlsf	Enable tlsf support in malloc],
@@ -851,7 +849,6 @@ AC_DEFINE_UNQUOTED(CONFIG_RTAI_REVISION_LEVEL,$CONFIG_RTAI_REVISION_LEVEL,[Kconf
 
 AC_DEFINE(CONFIG_RTAI,1,[Legacy])
 AC_DEFINE(CONFIG_RTAI_MOUNT_ON_LOAD,1,[Legacy])
-AC_DEFINE(CONFIG_RTAI_FPU_SUPPORT,1,[Kconfig])
 AC_DEFINE(CONFIG_RTAI_MATH,1,[Kconfig])
 test \! x$CONFIG_KBUILD = x && AC_DEFINE(CONFIG_KBUILD,1,[Kconfig])
 test \! x$CONFIG_RTAI_ADEOS = x && AC_DEFINE(CONFIG_RTAI_ADEOS,1,[Kconfig])

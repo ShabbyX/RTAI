@@ -34,20 +34,10 @@
 #include <asm/processor.h>
 #endif /* !__cplusplus */
 
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,25)
-typedef union i387_union FPU_ENV;
-#define TASK_FPENV(tsk)  (&(tsk)->thread.i387.fxsave)
-#elif LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,34)
-typedef union thread_xstate FPU_ENV;
-#define TASK_FPENV(tsk)  (&(tsk)->thread.xstate->fxsave)
-#else
 typedef union thread_xstate FPU_ENV;
 #define TASK_FPENV(tsk)  (&(tsk)->thread.fpu.state->fxsave)
-#endif
 
-#ifdef CONFIG_RTAI_FPU_SUPPORT
-
-// RAW FPU MANAGEMENT FOR USAGE FROM WHAT/WHEREVER RTAI DOES IN KERNEL
+/* RAW FPU MANAGEMENT FOR USAGE FROM WHAT/WHEREVER RTAI DOES IN KERNEL */
 
 #define enable_fpu()  do { \
 	__asm__ __volatile__ ("clts"); \
@@ -68,7 +58,7 @@ typedef union thread_xstate FPU_ENV;
 	} \
 } while (0)
 
-// initialise the hard fpu unit directly
+/* initialise the hard fpu unit directly */
 #define init_hard_fpenv() do { \
 	unsigned long __mxcsr; \
 	__asm__ __volatile__ ("clts; fninit"); \
@@ -76,7 +66,7 @@ typedef union thread_xstate FPU_ENV;
 	__asm__ __volatile__ ("ldmxcsr %0": : "m" (__mxcsr)); \
 } while (0)
 
-// initialise the given fpenv union, without touching the related hard fpu unit
+/* initialise the given fpenv union, without touching the related hard fpu unit */
 #define __init_fpenv(fpenv)  do { \
 	memset(fpenv, 0, sizeof(struct i387_fxsave_struct)); \
 	(fpenv)->cwd = 0x37f; \
@@ -84,7 +74,6 @@ typedef union thread_xstate FPU_ENV;
 } while (0)
 
 /* taken from Linux i387.h */
-
 static inline int __save_fpenv(struct i387_fxsave_struct __user *fx)
 {
 	int err;
@@ -129,7 +118,7 @@ static inline int __restore_fpenv(struct i387_fxsave_struct *fx)
 #define save_fpenv(fpenv)     do { __save_fpenv(&(fpenv).fxsave); } while (0)
 #define restore_fpenv(fpenv)  do { __restore_fpenv(&(fpenv).fxsave); } while (0)
 
-// FPU MANAGEMENT DRESSED FOR IN KTHREAD/THREAD/PROCESS FPU USAGE FROM RTAI
+/* FPU MANAGEMENT DRESSED FOR IN KTHREAD/THREAD/PROCESS FPU USAGE FROM RTAI */
 
 #define init_hard_fpu(lnxtsk)  do { \
 	init_hard_fpenv(); \
@@ -148,58 +137,18 @@ static inline int __restore_fpenv(struct i387_fxsave_struct *fx)
 	set_lnxtsk_using_fpu(lnxtsk); \
 } while (0)
 
-#else /* !CONFIG_RTAI_FPU_SUPPORT */
-
-#define enable_fpu()
-#define save_fpcr_and_enable_fpu(fpcr)
-#define restore_fpcr(fpcr)
-#define init_hard_fpenv()
-#define init_fpenv(fpenv)
-#define save_fpenv(fpenv)
-#define restore_fpenv(fpenv)
-#define init_hard_fpu(lnxtsk)
-#define init_fpu(lnxtsk)
-#define restore_fpu(lnxtsk)
-
-#endif /* CONFIG_RTAI_FPU_SUPPORT */
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-
-#define set_lnxtsk_uses_fpu(lnxtsk) \
-	do { (lnxtsk)->used_math = 1; } while(0)
-#define clear_lnxtsk_uses_fpu(lnxtsk) \
-	do { (lnxtsk)->used_math = 0; } while(0)
-#define lnxtsk_uses_fpu(lnxtsk)  ((lnxtsk)->used_math)
-
-#define set_lnxtsk_using_fpu(lnxtsk) \
-	do { task_thread_info(lnxtsk)->status |= TS_USEDFPU; } while(0)
-//	do { (lnxtsk)->thread_info->status |= TS_USEDFPU; } while(0)
-
-#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11) */
-
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,11)
-
 #define set_lnxtsk_uses_fpu(lnxtsk) \
 	do { set_stopped_child_used_math(lnxtsk); } while(0)
 #define clear_lnxtsk_uses_fpu(lnxtsk) \
 	do { clear_stopped_child_used_math(lnxtsk); } while(0)
 #define lnxtsk_uses_fpu(lnxtsk)  (tsk_used_math(lnxtsk))
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
 #undef init_fpu
 #include <asm/i387.h>
 #include <asm/fpu-internal.h>
 #define rtai_set_fpu_used(lnxtsk) __thread_set_has_fpu(lnxtsk)
-#else
-#define rtai_set_fpu_used(lnxtsk) do { task_thread_info(lnxtsk)->status |= TS_USEDFPU; } while(0)
-#endif
 
 #define set_lnxtsk_using_fpu(lnxtsk) \
-	do { rtai_set_fpu_used(lnxtsk); } while(0) //do { task_thread_info(lnxtsk)->status |= TS_USEDFPU; } while(0)
-//	do { (lnxtsk)->thread_info->status |= TS_USEDFPU; } while(0)
-
-#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,11) */
-
+	do { rtai_set_fpu_used(lnxtsk); } while(0)
 
 #endif /* !_RTAI_ASM_X86_64_FPU_H */
