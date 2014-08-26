@@ -370,9 +370,6 @@ typedef struct xnstat_counter {
 #define xnstat_counter_inc(c)  ((c)->counter++)
 
 typedef struct xnintr {
-#ifdef CONFIG_RTAI_RTDM_SHIRQ
-    struct xnintr *next;
-#endif /* CONFIG_RTAI_RTDM_SHIRQ */
     unsigned unhandled;
     xnisr_t isr;
     void *cookie;
@@ -594,23 +591,7 @@ static inline void xnsynch_sleep_on(void *synch, xnticks_t timeout, xntmode_t ti
 #define rthal_apc_schedule(apc) \
 	rt_pend_linux_srq((apc))
 
-#ifdef CONFIG_RTAI_RTDM_SELECT
-
-#define SELECT_SIGNAL(select_block, state) \
-do { \
-	spl_t flags; \
-	xnlock_get_irqsave(&nklock, flags); \
-	if (xnselect_signal(select_block, state) && state) { \
-		xnpod_schedule(); \
-	} \
-	xnlock_put_irqrestore(&nklock, flags); \
-} while (0)
-
-#else
-
 #define SELECT_SIGNAL(select_block, state)  do { } while (0)
-
-#endif
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 
