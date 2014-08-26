@@ -924,8 +924,8 @@ void rt_request_apic_timers (void (*handler)(void), struct apic_timer_setup_data
 		}
 	}
 
-	rtai_critical_exit(flags);
 	rtai_request_tickdev(handler);
+	rtai_critical_exit(flags);
 }
 
 /**
@@ -942,8 +942,8 @@ void rt_free_apic_timers(void)
 	rtai_release_tickdev();
 	rtai_sync_level = 3;
 	rtai_setup_periodic_apic(RTAI_APIC_ICOUNT,LOCAL_TIMER_VECTOR);
-	rtai_critical_exit(flags);
 	rt_release_irq(RTAI_APIC_TIMER_IPI);
+	rtai_critical_exit(flags);
 }
 
 /**
@@ -1394,7 +1394,7 @@ static unsigned long hal_request_apic_freq(void);
 
 static void rtai_install_archdep (void)
 {
-	ipipe_select_timers(cpu_active_mask);
+	ipipe_select_timers(cpu_present_mask);
 	hal_catch_event(hal_root_domain, HAL_SYSCALL_PROLOGUE, (void *)intercept_syscall_prologue);
 
 	if (rtai_cpufreq_arg == 0) {
