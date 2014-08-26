@@ -30,12 +30,6 @@
 
 #include <rtai_schedcore.h>
 
-#define CONFIG_RTAI_OPT_PERVASIVE
-
-#ifndef CONFIG_RTAI_DEBUG_RTDM
-#define CONFIG_RTAI_DEBUG_RTDM  0
-#endif
-
 #define RTAI_DEBUG(subsystem)   (CONFIG_RTAI_DEBUG_##subsystem > 0)
 
 #define RTAI_ASSERT(subsystem, cond, action)  do { \
