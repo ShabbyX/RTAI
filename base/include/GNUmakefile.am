@@ -3,7 +3,6 @@ ARCHDIR = asm-x86
 nobase_include_HEADERS = \
 		rtai.h \
 		rtai_hal_names.h \
-		rtai_bits.h \
 		rtai_fifos.h \
 		rtai_lxrt.h \
 		rtai_malloc.h \
@@ -30,7 +29,6 @@ nobase_include_HEADERS = \
 		rtai_signal.h \
 		rtai_spl.h \
 		rtai_tasklets.h \
-		rtai_tbx.h \
 		rtai_trace.h \
 		rtai_types.h \
 		rtai_version.h \

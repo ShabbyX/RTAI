@@ -256,20 +256,6 @@ AC_MSG_RESULT(${CONFIG_RTAI_TRACE:-no})
 
 CONFIG_RTAI_MATH=m
 
-AC_MSG_CHECKING(for bits IPC support)
-AC_ARG_ENABLE(bits,
-	[ --enable-bits		Enable bits IPC support],
-	[case "$enableval" in
-	y | yes | b | builtin | built-in) CONFIG_RTAI_BITS=y ;;
-	m | mod | module) CONFIG_RTAI_BITS=m ;;
-	*) unset CONFIG_RTAI_BITS ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_BITS:-no})
-
-if test x$CONFIG_RTAI_BITS = xy ; then
-  RTAI_BUILTIN_MODLIST="$RTAI_BUILTIN_MODLIST ipc/bits"
-fi
-
 AC_MSG_CHECKING(for real-time fifos support)
 AC_ARG_ENABLE(fifos,
 	[ --enable-fifos		Enable fifo IPC support],
@@ -365,20 +351,6 @@ AC_MSG_RESULT(${CONFIG_RTAI_MBX:-no})
 
 if test x$CONFIG_RTAI_MBX = xy ; then
   RTAI_BUILTIN_MODLIST="$RTAI_BUILTIN_MODLIST ipc/mbx"
-fi
-
-AC_MSG_CHECKING(for typed mailbox support)
-AC_ARG_ENABLE(tbx,
-	[ --enable-tbx		Enable typed mailbox support],
-	[case "$enableval" in
-	y | yes | b | builtin | built-in) CONFIG_RTAI_TBX=y ;;
-	m | mod | module) CONFIG_RTAI_TBX=m ;;
-	*) unset CONFIG_RTAI_TBX ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_TBX:-no})
-
-if test x$CONFIG_RTAI_TBX = xy ; then
-  RTAI_BUILTIN_MODLIST="$RTAI_BUILTIN_MODLIST ipc/tbx"
 fi
 
 AC_MSG_CHECKING(for POSIX-like message queue support)
@@ -775,18 +747,6 @@ if test x$CONFIG_RTAI_MBX = xy ; then
    fi
 fi
 
-if test x$CONFIG_RTAI_TBX = xy -o x$CONFIG_RTAI_TBX = xm ; then
-   if test x$CONFIG_RTAI_SEM = x ; then
-      AC_MSG_ERROR([--enable-tbx requires --enable-sem])
-   fi
-fi
-
-if test x$CONFIG_RTAI_TBX = xy ; then
-   if test x$CONFIG_RTAI_SEM = xm ; then
-      AC_MSG_ERROR([--enable-tbx=y requires --enable-sem=y])
-   fi
-fi
-
 if test x$CONFIG_RTAI_MQ = xy -o x$CONFIG_RTAI_MQ = xm ; then
    if test x$CONFIG_RTAI_SEM = x ; then
       AC_MSG_ERROR([--enable-mq requires --enable-sem])
@@ -828,7 +788,6 @@ test x$CONFIG_RTAI_DIAG_TSC_SYNC = xy && AC_DEFINE(CONFIG_RTAI_DIAG_TSC_SYNC,1,[
 test \! x$CONFIG_RTAI_MASTER_TSC_CPU = x && AC_DEFINE_UNQUOTED(CONFIG_RTAI_MASTER_TSC_CPU,$CONFIG_RTAI_MASTER_TSC_CPU,[Kconfig])
 test x$CONFIG_RTAI_TUNE_TSC_SYNC = xy && AC_DEFINE(CONFIG_RTAI_TUNE_TSC_SYNC,1,[Kconfig])
 test \! x$CONFIG_RTAI_TRACE = x && AC_DEFINE(CONFIG_RTAI_TRACE,1,[Kconfig])
-test \! x$CONFIG_RTAI_BITS = x && AC_DEFINE(CONFIG_RTAI_BITS,1,[Kconfig])
 test \! x$CONFIG_RTAI_FIFOS = x && AC_DEFINE(CONFIG_RTAI_FIFOS,1,[Kconfig])
 test \! x$CONFIG_RTAI_NETRPC = x && AC_DEFINE(CONFIG_RTAI_NETRPC,1,[Kconfig])
 test x$CONFIG_RTAI_NETRPC_RTNET = xy && AC_DEFINE(CONFIG_RTAI_NETRPC_RTNET,1,[Kconfig])
@@ -837,7 +796,6 @@ test \! x$CONFIG_RTAI_RT_POLL = x && AC_DEFINE(CONFIG_RTAI_RT_POLL,1,[Kconfig])
 test \! x$CONFIG_RTAI_RT_POLL_ON_STACK = x && AC_DEFINE(CONFIG_RTAI_RT_POLL_ON_STACK,1,[Kconfig])
 test \! x$CONFIG_RTAI_MSG = x && AC_DEFINE(CONFIG_RTAI_MSG,1,[Kconfig])
 test \! x$CONFIG_RTAI_MBX = x && AC_DEFINE(CONFIG_RTAI_MBX,1,[Kconfig])
-test \! x$CONFIG_RTAI_TBX = x && AC_DEFINE(CONFIG_RTAI_TBX,1,[Kconfig])
 test \! x$CONFIG_RTAI_MQ = x && AC_DEFINE(CONFIG_RTAI_MQ,1,[Kconfig])
 test \! x$CONFIG_RTAI_SHM = x && AC_DEFINE(CONFIG_RTAI_SHM,1,[Kconfig])
 test \! x$CONFIG_RTAI_MALLOC = x && AC_DEFINE(CONFIG_RTAI_MALLOC,1,[Kconfig])
@@ -849,13 +807,11 @@ test \! x$CONFIG_RTAI_ALIGN_LINUX_PRIORITY = x && AC_DEFINE(CONFIG_RTAI_ALIGN_LI
 test \! x$CONFIG_RTAI_TASK_SWITCH_SIGNAL = x && AC_DEFINE(CONFIG_RTAI_TASK_SWITCH_SIGNAL,1,[Kconfig])
 test \! x$CONFIG_RTAI_HARD_SOFT_TOGGLER = x && AC_DEFINE(CONFIG_RTAI_HARD_SOFT_TOGGLER,1,[Kconfig])
 
-test x$CONFIG_RTAI_BITS = xy && AC_DEFINE(CONFIG_RTAI_BITS_BUILTIN,1,[Kconfig])
 test x$CONFIG_RTAI_FIFOS = xy && AC_DEFINE(CONFIG_RTAI_FIFOS_BUILTIN,1,[Kconfig])
 test x$CONFIG_RTAI_NETRPC = xy && AC_DEFINE(CONFIG_RTAI_NETRPC_BUILTIN,1,[Kconfig])
 test x$CONFIG_RTAI_SEM = xy && AC_DEFINE(CONFIG_RTAI_SEM_BUILTIN,1,[Kconfig])
 test x$CONFIG_RTAI_MSG = xy && AC_DEFINE(CONFIG_RTAI_MSG_BUILTIN,1,[Kconfig])
 test x$CONFIG_RTAI_MBX = xy && AC_DEFINE(CONFIG_RTAI_MBX_BUILTIN,1,[Kconfig])
-test x$CONFIG_RTAI_TBX = xy && AC_DEFINE(CONFIG_RTAI_TBX_BUILTIN,1,[Kconfig])
 test x$CONFIG_RTAI_MQ = xy && AC_DEFINE(CONFIG_RTAI_MQ_BUILTIN,1,[Kconfig])
 test x$CONFIG_RTAI_SHM = xy && AC_DEFINE(CONFIG_RTAI_SHM_BUILTIN,1,[Kconfig])
 test x$CONFIG_RTAI_MALLOC = xy && AC_DEFINE(CONFIG_RTAI_MALLOC_BUILTIN,1,[Kconfig])
@@ -985,7 +941,6 @@ AM_CONDITIONAL(CONFIG_SMP,[test "$CONFIG_SMP" = y])
 
 AM_CONDITIONAL(CONFIG_RTAI_TRACE,[test -n "$CONFIG_RTAI_TRACE"])
 AM_CONDITIONAL(CONFIG_RTAI_MATH,[test -n "$CONFIG_RTAI_MATH"])
-AM_CONDITIONAL(CONFIG_RTAI_BITS,[test -n "$CONFIG_RTAI_BITS"])
 AM_CONDITIONAL(CONFIG_RTAI_FIFOS,[test -n "$CONFIG_RTAI_FIFOS"])
 AM_CONDITIONAL(CONFIG_RTAI_NETRPC,[test -n "$CONFIG_RTAI_NETRPC"])
 AM_CONDITIONAL(CONFIG_RTAI_SEM,[test -n "$CONFIG_RTAI_SEM"])
@@ -993,20 +948,17 @@ AM_CONDITIONAL(CONFIG_RTAI_RT_POLL,[test -n "$CONFIG_RTAI_RT_POLL"])
 AM_CONDITIONAL(CONFIG_RTAI_RT_POLL_ON_STACK,[test -n "$CONFIG_RTAI_RT_POLL_ON_STACK"])
 AM_CONDITIONAL(CONFIG_RTAI_MSG,[test -n "$CONFIG_RTAI_MSG"])
 AM_CONDITIONAL(CONFIG_RTAI_MBX,[test -n "$CONFIG_RTAI_MBX"])
-AM_CONDITIONAL(CONFIG_RTAI_TBX,[test -n "$CONFIG_RTAI_TBX"])
 AM_CONDITIONAL(CONFIG_RTAI_MQ,[test -n "$CONFIG_RTAI_MQ"])
 AM_CONDITIONAL(CONFIG_RTAI_SHM,[test -n "$CONFIG_RTAI_SHM"])
 AM_CONDITIONAL(CONFIG_RTAI_MALLOC,[test -n "$CONFIG_RTAI_MALLOC"])
 AM_CONDITIONAL(CONFIG_RTAI_TASKLETS,[test -n "$CONFIG_RTAI_TASKLETS"])
 AM_CONDITIONAL(CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL,[test -n "$CONFIG_RTAI_LXRT_USE_LINUX_SYSCALL"])
 
-AM_CONDITIONAL(CONFIG_RTAI_BITS_BUILTIN,[test x$CONFIG_RTAI_BITS = xy])
 AM_CONDITIONAL(CONFIG_RTAI_FIFOS_BUILTIN,[test x$CONFIG_RTAI_FIFOS = xy])
 AM_CONDITIONAL(CONFIG_RTAI_NETRPC_BUILTIN,[test x$CONFIG_RTAI_NETRPC = xy])
 AM_CONDITIONAL(CONFIG_RTAI_SEM_BUILTIN,[test x$CONFIG_RTAI_SEM = xy])
 AM_CONDITIONAL(CONFIG_RTAI_MSG_BUILTIN,[test x$CONFIG_RTAI_MSG = xy])
 AM_CONDITIONAL(CONFIG_RTAI_MBX_BUILTIN,[test x$CONFIG_RTAI_MBX = xy])
-AM_CONDITIONAL(CONFIG_RTAI_TBX_BUILTIN,[test x$CONFIG_RTAI_TBX = xy])
 AM_CONDITIONAL(CONFIG_RTAI_MQ_BUILTIN,[test x$CONFIG_RTAI_MQ = xy])
 AM_CONDITIONAL(CONFIG_RTAI_SHM_BUILTIN,[test x$CONFIG_RTAI_SHM = xy])
 AM_CONDITIONAL(CONFIG_RTAI_MALLOC_BUILTIN,[test x$CONFIG_RTAI_MALLOC = xy])
@@ -1070,13 +1022,11 @@ fi
 
 AC_CONFIG_LINKS(base/arch/x86/hal/Makefile:base/arch/x86/hal/Makefile.kbuild)
 AC_CONFIG_LINKS(base/arch/x86/calibration/Makefile:base/arch/x86/calibration/Makefile.kbuild)
-AC_CONFIG_LINKS(base/ipc/bits/Makefile:base/ipc/bits/Makefile.kbuild)
 AC_CONFIG_LINKS(base/ipc/fifos/Makefile:base/ipc/fifos/Makefile.kbuild)
 AC_CONFIG_LINKS(base/ipc/mbx/Makefile:base/ipc/mbx/Makefile.kbuild)
 AC_CONFIG_LINKS(base/ipc/mq/Makefile:base/ipc/mq/Makefile.kbuild)
 AC_CONFIG_LINKS(base/ipc/msg/Makefile:base/ipc/msg/Makefile.kbuild)
 AC_CONFIG_LINKS(base/ipc/sem/Makefile:base/ipc/sem/Makefile.kbuild)
-AC_CONFIG_LINKS(base/ipc/tbx/Makefile:base/ipc/tbx/Makefile.kbuild)
 AC_CONFIG_LINKS(base/ipc/netrpc/Makefile:base/ipc/netrpc/Makefile.kbuild)
 AC_CONFIG_LINKS(base/ipc/shm/Makefile:base/ipc/shm/Makefile.kbuild)
 AC_CONFIG_LINKS(base/posix/Makefile:base/posix/Makefile.kbuild)
@@ -1137,14 +1087,12 @@ AC_CONFIG_FILES([ \
 	base/arch/x86/calibration/GNUmakefile \
 	base/arch/x86/calibration/setsmi \
 	base/include/asm-x86/GNUmakefile \
-   	base/ipc/bits/GNUmakefile \
 	base/ipc/fifos/GNUmakefile \
 	base/ipc/netrpc/GNUmakefile \
 	base/ipc/shm/GNUmakefile \
 	base/ipc/sem/GNUmakefile \
 	base/ipc/msg/GNUmakefile \
 	base/ipc/mbx/GNUmakefile \
-	base/ipc/tbx/GNUmakefile \
 	base/ipc/mq/GNUmakefile \
 	base/math/GNUmakefile \
 	base/malloc/GNUmakefile \

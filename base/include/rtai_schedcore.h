@@ -47,9 +47,7 @@
 #include <rtai_scb.h>
 #include <rtai_mbx.h>
 #include <rtai_msg.h>
-#include <rtai_tbx.h>
 #include <rtai_mq.h>
-#include <rtai_bits.h>
 #include <rtai_tasklets.h>
 #include <rtai_fifos.h>
 #include <rtai_netrpc.h>
@@ -543,9 +541,6 @@ static inline XHDL *__set_exit_handler(RT_TASK *task, void (*fun) (void *, int),
 static inline int rtai_init_features (void)
 
 {
-#ifdef CONFIG_RTAI_LEDS_BUILTIN
-    __rtai_leds_init();
-#endif /* CONFIG_RTAI_LEDS_BUILTIN */
 #ifdef CONFIG_RTAI_SEM_BUILTIN
     __rtai_sem_init();
 #endif /* CONFIG_RTAI_SEM_BUILTIN */
@@ -555,15 +550,9 @@ static inline int rtai_init_features (void)
 #ifdef CONFIG_RTAI_MBX_BUILTIN
     __rtai_mbx_init();
 #endif /* CONFIG_RTAI_MBX_BUILTIN */
-#ifdef CONFIG_RTAI_TBX_BUILTIN
-    __rtai_msg_queue_init();
-#endif /* CONFIG_RTAI_TBX_BUILTIN */
 #ifdef CONFIG_RTAI_MQ_BUILTIN
     __rtai_mq_init();
 #endif /* CONFIG_RTAI_MQ_BUILTIN */
-#ifdef CONFIG_RTAI_BITS_BUILTIN
-    __rtai_bits_init();
-#endif /* CONFIG_RTAI_BITS_BUILTIN */
 #ifdef CONFIG_RTAI_TASKLETS_BUILTIN
     __rtai_tasklets_init();
 #endif /* CONFIG_RTAI_TASKLETS_BUILTIN */
@@ -579,9 +568,6 @@ static inline int rtai_init_features (void)
 #ifdef CONFIG_RTAI_MATH_BUILTIN
     __rtai_math_init();
 #endif /* CONFIG_RTAI_MATH_BUILTIN */
-#ifdef CONFIG_RTAI_USI
-	printk(KERN_INFO "RTAI[usi]: enabled.\n");
-#endif /* CONFIG_RTAI_USI */
 
 	return 0;
 }
@@ -603,15 +589,9 @@ static inline void rtai_cleanup_features (void) {
 #ifdef CONFIG_RTAI_TASKLETS_BUILTIN
     __rtai_tasklets_exit();
 #endif /* CONFIG_RTAI_TASKLETS_BUILTIN */
-#ifdef CONFIG_RTAI_BITS_BUILTIN
-    __rtai_bits_exit();
-#endif /* CONFIG_RTAI_BITS_BUILTIN */
 #ifdef CONFIG_RTAI_MQ_BUILTIN
     __rtai_mq_exit();
 #endif /* CONFIG_RTAI_MQ_BUILTIN */
-#ifdef CONFIG_RTAI_TBX_BUILTIN
-    __rtai_msg_queue_exit();
-#endif /* CONFIG_RTAI_TBX_BUILTIN */
 #ifdef CONFIG_RTAI_MBX_BUILTIN
     __rtai_mbx_exit();
 #endif /* CONFIG_RTAI_MBX_BUILTIN */
@@ -621,9 +601,6 @@ static inline void rtai_cleanup_features (void) {
 #ifdef CONFIG_RTAI_SEM_BUILTIN
     __rtai_sem_exit();
 #endif /* CONFIG_RTAI_SEM_BUILTIN */
-#ifdef CONFIG_RTAI_LEDS_BUILTIN
-    __rtai_leds_exit();
-#endif /* CONFIG_RTAI_LEDS_BUILTIN */
 }
 
 int rt_check_current_stack(void);
@@ -646,30 +623,6 @@ int rt_kthread_init_cpuid(RT_TASK *task,
 			  unsigned int cpuid);
 
 #else /* !__KERNEL__ */
-
-#if 0
-#include <rtai_version.h>
-#include <rtai_lxrt.h>
-#include <rtai_sched.h>
-#include <rtai_malloc.h>
-#include <rtai_trace.h>
-#include <rtai_leds.h>
-#include <rtai_sem.h>
-#include <rtai_rwl.h>
-#include <rtai_spl.h>
-#include <rtai_scb.h>
-#include <rtai_mbx.h>
-#include <rtai_msg.h>
-#include <rtai_tbx.h>
-#include <rtai_mq.h>
-#include <rtai_bits.h>
-#include <rtai_wd.h>
-#include <rtai_tasklets.h>
-#include <rtai_fifos.h>
-#include <rtai_netrpc.h>
-#include <rtai_shm.h>
-#include <rtai_usi.h>
-#endif
 
 #endif /* __KERNEL__ */
 

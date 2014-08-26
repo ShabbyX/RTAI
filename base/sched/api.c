@@ -2069,7 +2069,7 @@ extern struct proc_dir_entry *rtai_proc_root;
 static int PROC_READ_FUN(rtai_read_lxrt)
 {
 	struct rt_registry_entry entry;
-	char *type_name[] = { "TASK", "SEM", "RWL", "SPL", "MBX", "PRX", "BITS", "TBX", "HPCK" };
+	char *type_name[] = { "TASK", "SEM", "RWL", "SPL", "MBX", "PRX", "HPCK" };
 	unsigned int i = 1;
 	char name[8];
 	PROC_PRINT_VARS;

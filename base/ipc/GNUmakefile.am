@@ -1,8 +1,4 @@
-OPTDIRS=
-
-if CONFIG_RTAI_BITS
-OPTDIRS += bits
-endif
+OPTDIRS =
 
 if CONFIG_RTAI_FIFOS
 OPTDIRS += fifos
@@ -22,10 +18,6 @@ endif
 
 if CONFIG_RTAI_MBX
 OPTDIRS += mbx
-endif
-
-if CONFIG_RTAI_TBX
-OPTDIRS += tbx
 endif
 
 if CONFIG_RTAI_MQ

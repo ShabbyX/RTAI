@@ -8,7 +8,6 @@ Their structuring within RTAI is eased in the new experimental layout, which
 much eases features expansions, without bloating the core code of the 
 schedulers.
 Message queues have the advantage of allowing fully prioritised send/receives,
-TBX has just the possibility of urging ahead of anything already sent, MBX none.
 However to avoid the nightmare of managing etherougeneously fragmented buffers,
 under hard real time constraints, they require that a maximum per message size 
 is assigned at their creation. So once more the RTAI user is provided another 

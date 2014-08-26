@@ -299,22 +299,6 @@ endmenu
 
 menu "Supported services"
 
-config RTAI_BITS
-	tristate "Event flags"
-	default m
-	help
-	Event flags are used to synchronize a task to the occurrence of 
-	multiple events. RTAI uses the term "bits" to stress the fact that
-	events are just logical objects, i.e. a kind of digital I/O, 
-	nothing else being associated to them, e.g a count. 
-	So any synchronization based on them may be disjunctive, when any 
-	of the events have occurred, or conjunctive, when all events have 
-	occurred. The former corresponds to a logical OR whereas the latter 
-	is associated to a logical AND. Their use is similar to semaphores 
-	except that signal/waits are not related to just a simple counter 
-	but depends on the combination of set of bits.
-	The module will be called rtai_bits.o.
-
 config RTAI_FIFOS
 	tristate "Fifo"
 	default m
@@ -448,28 +432,6 @@ config RTAI_MBX
 	principle and on Last In First Out (LIFO) for urgent delivery.
 	Mailboxes depend on semaphores.
 	The module will be called rtai_mbx.o.
-
-
-config RTAI_TBX
-	tristate "RTAI message queues and typed mailboxes"
-	depends on RTAI_SEM
-	default y if RTAI_SEM=y
-	default m if RTAI_SEM=m
-	help
-	RTAI message queues (msgq) are intertask processor messages that allow 
-	exchanging prioritised messages of any size. Broadcasting of messages
-	to all the waiting tasks is also possible.
-	Legacy typed mailbox (TBX) services are recovered by using RTAI msgqs
-	and afford a pre canned example of their use offering:
-	1 - message broadcasting allowing to send a message to all the tasks 
-	   that are pending on the same TBX;
-	2 - urgent sending of messages: these messages are not enqueued, but 
-	    inserted in the head of the queue, bypassing all the other 
-	    messages already present in TBX;
-	3 - a priority or fifo wakeup policy that may be set at runtime when 
-	    creating the typed mailbox.
-	Typed mailboxes depend on semaphores.
-	The module will be called rtai_tbx.o.
 
 config RTAI_TASKLETS
 	tristate "Tasklets"

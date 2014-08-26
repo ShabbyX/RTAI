@@ -81,14 +81,12 @@ RTAI-specific switches are:
 
  --enable-trace		Enable trace support
  --enable-math		Enable math support
- --enable-bits		Enable bits IPC support
  --enable-fifos		Enable fifo IPC support
  --enable-netrpc	Enable netrpc support
  --enable-netrpc-rtnet	Enable use of RTNet
  --enable-sem		Enable semaphore support
  --enable-msg		Enable messaging support
  --enable-mbx		Enable mailbox support
- --enable-tbx		Enable typed mailbox support
  --enable-mq		Enable POSIX-like message queue support
  --enable-shm		Enable shared memory support
  --enable-malloc	Enable real-time malloc support

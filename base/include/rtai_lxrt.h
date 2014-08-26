@@ -231,28 +231,6 @@
 #define BITS_WAIT_UNTIL    	       142
 #define BITS_WAIT_TIMED   	       143
 
-// typed mail boxes
-#define TBX_INIT		       144
-#define TBX_DELETE	 	       145
-#define NAMED_TBX_INIT		 146
-#define NAMED_TBX_DELETE	       147
-#define TBX_SEND		       148
-#define TBX_SEND_IF		    149
-#define TBX_SEND_UNTIL		 150
-#define TBX_SEND_TIMED		 151
-#define TBX_RECEIVE		    152
-#define TBX_RECEIVE_IF		 153
-#define TBX_RECEIVE_UNTIL	      154
-#define TBX_RECEIVE_TIMED	      155
-#define TBX_BROADCAST		  156
-#define TBX_BROADCAST_IF	       157
-#define TBX_BROADCAST_UNTIL	    158
-#define TBX_BROADCAST_TIMED	    159
-#define TBX_URGENT		     160
-#define TBX_URGENT_IF		  161
-#define TBX_URGENT_UNTIL	       162
-#define TBX_URGENT_TIMED	       163
-
 // pqueue
 #define MQ_OPEN	 	       164
 #define MQ_RECEIVE      	       165
