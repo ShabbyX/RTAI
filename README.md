@@ -1,6 +1,6 @@
 RTAI for LinuxCNC
 
-Only tested and confirmed working on AMD64 platforms.
+Tested and confirmed working on AMD64 and i686 platforms.
 
 SSE, SSE2, and FPU support required.
 
