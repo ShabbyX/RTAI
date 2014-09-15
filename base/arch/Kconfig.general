@@ -104,3 +104,16 @@ config RTAI_QUIET
 	help
 	If enabled, building would be less verbose. If not, the complete
 	build command is written for each command.
+
+config RTAI_STARTUP_LOAD
+	bool "Load RTAI modules on startup"
+	default y
+	help
+	If enabled, a script would be installed in /etc/init.d and configured
+	to run at startup and shutdown to load and unload RTAI modules
+	automatically.
+
+	If you are not sure about system stability upon loading RTAI modules,
+	disable this option, or after installation do:
+
+	    sudo update-rc.d rtai disable

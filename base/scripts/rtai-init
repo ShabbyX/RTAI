@@ -1,0 +1,57 @@
+#!/bin/sh
+
+#------------------------------------------------------------------------------
+#
+# Init script for insmod/rmmoding rtai modules
+#
+#------------------------------------------------------------------------------
+
+### BEGIN INIT INFO
+# Provides:          Loading of rtai modules
+# Required-Start:    
+# Should-Start:      
+# Required-Stop:     
+# Should-Stop:       
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: RTAI loader
+# Description:       RTAI loader
+### END INIT INFO
+
+cmd=start
+if test $# -ge 1
+then
+	cmd=$1
+fi
+
+rtai_module_dir=`rtai-config --module-dir`
+modules="rtai_hal rtai_sched rtai_malloc rtai_sem rtai_shm rtai_fifos rtai_mbx rtai_rtdm rtai_math"
+
+case $cmd in
+
+	start)
+		for i in $modules; do
+			m="$rtai_module_dir"/$i.ko
+			[ -f "$m" ] && insmod "$m"
+		done
+		exit 0
+		;;
+
+	stop)
+		modules_inverted=""
+		for i in $modules; do
+			modules_inverted="$i $modules_inverted"
+		done
+		for i in $modules_inverted; do
+			if lsmod | grep $i >/dev/null 2>&1; then
+				rmmod "$i"
+			fi
+		done
+		exit 0
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop}"
+		;;
+
+esac

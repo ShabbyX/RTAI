@@ -3,5 +3,9 @@ install-exec-local:
 	$(INSTALL_SCRIPT) rtai-load $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) rtai-config $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) $(srcdir)/rtai-info $(DESTDIR)$(bindir)
+if CONFIG_RTAI_STARTUP_LOAD
+	$(INSTALL_SCRIPT) rtai-init /etc/init.d/rtai
+	update-rc.d rtai defaults
+endif
 
 EXTRA_DIST = rtai-info bootstrap mode-control
