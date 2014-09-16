@@ -3,6 +3,7 @@
   Paolo Mantegazza (mantegazza@aero.polimi.it)
 
   Modified 15.1.2003 Roberto Bucher bucher@die.supsi.ch
+  Modified 15.9.2014 Steffen Mauch steffen.mauch@gmail.com
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -51,10 +52,16 @@ static void mdlInitializeSizes(SimStruct *S)
 	if (ssGetNumSFcnParams(S) != ssGetSFcnParamsCount(S)) {
 		return;
 	}
-	ssSetNumInputPorts(S, 1);
-	ssSetNumOutputPorts(S, 0);
-	ssSetInputPortMatrixDimensions(S, 0, DYNAMICALLY_SIZED, DYNAMICALLY_SIZED);
+	if (!ssSetNumInputPorts(S, 1)) return;
+
+#ifdef MATLAB_MEX_FILE
+	ssSetInputPortDimensionInfo(S, 0, DYNAMIC_DIMENSION);
+#endif
+	ssSetInputPortDataType(S, 0, SS_DOUBLE);
 	ssSetInputPortDirectFeedThrough(S, 0, 1);
+
+	ssSetNumOutputPorts(S, 0);
+
 	ssSetNumContStates(S, 0);
 	ssSetNumDiscStates(S, 0);
 	ssSetNumSampleTimes(S, 1);
@@ -67,7 +74,7 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 	ssSetOffsetTime(S, 0, 0.0);
 }
 
-#define MDL_START 
+#define MDL_START
 static void mdlStart(SimStruct *S)
 {
 #ifndef MATLAB_MEX_FILE
@@ -81,7 +88,7 @@ static void mdlStart(SimStruct *S)
 		if (!rt_get_adr(nam2num(name))) break;
 	}
 	rtaiLog[i] = S;
-	if (!(mbx = (MBX *)rt_mbx_init(nam2num(name), (MBX_RTAI_LOG_SIZE/(dim[0]*dim[1]*sizeof(float))*(dim[0]*dim[1]*sizeof(float)))))) {
+	if (!(mbx = (MBX *)rt_mbx_init(nam2num(name), (MBX_RTAI_LOG_SIZE/(dim[0]*dim[1]*sizeof(double))*(dim[0]*dim[1]*sizeof(double)))))) {
 		printf("Cannot init mailbox\n");
 		exit(1);
 	}
@@ -91,17 +98,17 @@ static void mdlStart(SimStruct *S)
 
 static void mdlOutputs(SimStruct *S, int_T tid)
 {
+#ifndef MATLAB_MEX_FILE
 	InputRealPtrsType uPtrs = ssGetInputPortRealSignalPtrs(S,0);
 	int_T *dim = ssGetInputPortDimensions(S,0);
-#ifndef MATLAB_MEX_FILE
 	struct {
-		float u[dim[0]*dim[1]];
+		double u[dim[0]*dim[1]];
 	} data;
 	int i;
 
 	MBX *mbx = (MBX *)ssGetPWork(S)[0];
 	for (i = 0; i < (dim[0]*dim[1]); i++) {
-		data.u[i] = (float)*uPtrs[i];
+		data.u[i] = (double)*uPtrs[i];
 	}
 	rt_mbx_send_if(mbx, &data, sizeof(data));
 #endif
