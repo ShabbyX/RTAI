@@ -1850,7 +1850,7 @@ case $RTAI_TARGET_ARCH in
         else
            RTAI_FP_CFLAGS="$RTAI_FP_CFLAGS -ffast-math -msoft-float"
         fi
-	RTAI_TARGET_ARCH_OPTS="$RTAI_TARGET_ARCH_OPTS -msse -msse2"
+	RTAI_TARGET_ARCH_OPTS="$RTAI_TARGET_ARCH_OPTS -msse -msse2 -mpreferred-stack-boundary=4"
         ;;
    esac
    ;;
