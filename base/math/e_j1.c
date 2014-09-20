@@ -55,7 +55,6 @@
  *	   by method mentioned above.
  */
 
-#include "math.h"
 #include "mathP.h"
 
 static double pone(double), qone(double);

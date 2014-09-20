@@ -3,7 +3,6 @@
  * Written by Alec Ari, feel free to modify, don't care
  */
 
-#include "math.h"
 #include "mathP.h"
 
 	double __ieee754_fmax(double __x, double __y)

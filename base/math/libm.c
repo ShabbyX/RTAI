@@ -21,6 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/init.h>
+#define __USE_MISC
+#define __USE_SVID
+#define __USE_ISOC99 1
 #include <rtai_math.h>
 
 MODULE_LICENSE("GPL");
@@ -58,6 +61,7 @@ EXPORT_SYMBOL(cosh);
 EXPORT_SYMBOL(exp);
 EXPORT_SYMBOL(expm1);
 EXPORT_SYMBOL(fabs);
+EXPORT_SYMBOL(finite);
 EXPORT_SYMBOL(floor);
 EXPORT_SYMBOL(fmod);
 EXPORT_SYMBOL(frexp);

@@ -21,7 +21,6 @@
  *		 := sign(x)*log1p(|x| + x^2/(1 + sqrt(1+x^2)))
  */
 
-#include "math.h"
 #include "mathP.h"
 
 static const double

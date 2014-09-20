@@ -80,7 +80,6 @@
  *---------------
  */
 
-#include "math.h"
 #include "mathP.h"
 
 static	const double	one	= 1.0, tiny=1.0e-300;

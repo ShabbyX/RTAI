@@ -61,7 +61,6 @@
  * to produce the hexadecimal values shown.
  */
 
-#include "math.h"
 #include "mathP.h"
 
 static const double

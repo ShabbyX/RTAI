@@ -10,7 +10,6 @@
  * ====================================================
  */
 
-#include "math.h"
 #include "mathP.h"
 
 extern int libm_errno;

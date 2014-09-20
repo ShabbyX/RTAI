@@ -126,7 +126,6 @@
  * to produce the hexadecimal values shown.
  */
 
-#include "math.h"
 #include "mathP.h"
 
 static const int init_jk[] = {2,3,4,6}; /* initial value for jk */

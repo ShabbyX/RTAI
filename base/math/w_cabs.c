@@ -5,15 +5,9 @@
  * Placed into the Public Domain, 1994.
  */
 
-#include "math.h"
 #include "mathP.h"
 
-struct complex {
-	double x;
-	double y;
-};
-
-double cabs(struct complex z)
+double cabs(double __complex__ z)
 {
-	return hypot(z.x, z.y);
+	return hypot(__builtin_creal(z), __builtin_cimag(z));
 }

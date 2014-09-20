@@ -16,7 +16,6 @@
  * for exercising the fraction-part(F) IEEE 754-1985 test vector.
  */
 
-#include "math.h"
 #include "mathP.h"
 
 	double significand(double x)
