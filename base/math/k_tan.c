@@ -44,7 +44,6 @@
  *		       = 1 - 2*(tan(y) - (tan(y)^2)/(1+tan(y)))
  */
 
-#include "math.h"
 #include "mathP.h"
 
 static const double

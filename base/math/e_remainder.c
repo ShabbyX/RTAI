@@ -19,7 +19,6 @@
  *	Based on fmod() return x-[x/p]chopped*p exactlp.
  */
 
-#include "math.h"
 #include "mathP.h"
 
 static const double zero = 0.0;

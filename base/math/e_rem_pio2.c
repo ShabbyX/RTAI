@@ -16,7 +16,6 @@
  * use __kernel_rem_pio2()
  */
 
-#include "math.h"
 #include "mathP.h"
 
 /*

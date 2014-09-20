@@ -38,7 +38,6 @@
  *		sin(x) = x + (S1*x + (x *(r-y/2)+y))
  */
 
-#include "math.h"
 #include "mathP.h"
 
 static const double

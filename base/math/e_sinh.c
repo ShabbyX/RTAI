@@ -28,7 +28,6 @@
  *	only sinh(0)=0 is exact for finite x.
  */
 
-#include "math.h"
 #include "mathP.h"
 
 static const double one = 1.0, shuge = 1.0e307;

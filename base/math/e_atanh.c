@@ -28,7 +28,6 @@
  *
  */
 
-#include "math.h"
 #include "mathP.h"
 
 static const double one = 1.0, huge = 1e300;

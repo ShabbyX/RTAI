@@ -14,7 +14,6 @@
  * MACRO for standards
  */
 
-#include "math.h"
 #include "mathP.h"
 
 _LIB_VERSION_TYPE _LIB_VERSION = _IEEE_;

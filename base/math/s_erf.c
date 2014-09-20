@@ -104,7 +104,6 @@
  *	   	erfc/erf(NaN) is NaN
  */
 
-#include "math.h"
 #include "mathP.h"
 
 static const double

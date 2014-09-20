@@ -10,7 +10,6 @@
  * ====================================================
  */
 
-#include "math.h"
 #include "mathP.h"
 
 	int matherr(struct exception *x)

@@ -16,7 +16,6 @@
  * should use scalbn() instead.
  */
 
-#include "math.h"
 #include "mathP.h"
 
 	double __ieee754_scalb(double x, double fn)

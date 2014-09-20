@@ -34,121 +34,69 @@
 #ifdef __attribute_used__
 #undef __attribute_used__
 #endif
-#include <features.h>
 
-__BEGIN_DECLS
-
-/* Get machine-dependent HUGE_VAL value (returned on overflow).
-   On all IEEE754 machines, this is +Infinity.  */
-#include <bits/huge_val.h>
-
-/* Get machine-dependent NAN value (returned for some domain errors).  */
-#ifdef	 __USE_ISOC99
-# include <bits/nan.h>
+#ifdef __cplusplus
+extern "C" {
 #endif
-/* Get general and ISO C99 specific information.  */
-#include <bits/mathdef.h>
 
+extern double acos(double);
+extern double asin(double);
+extern double atan(double);
+extern double atan2(double, double);
+extern double ceil(double);
+extern double copysign(double, double);
+extern double cos(double);
+extern double cosh(double);
+extern double exp(double);
+extern double expm1(double);
+extern double fabs(double);
+extern int finite(double);
+extern double floor(double);
+extern double fmod(double, double);
+extern double frexp(double, int *);
+extern double log(double);
+extern double log10(double);
+extern double modf(double, double *);
+extern double pow(double, double);
+extern double scalbn(double, long);
+extern double sin(double);
+extern double sinh(double);
+extern double sqrt(double);
+extern double tan(double);
+extern double tanh(double);
+extern double acosh(double);
+extern double asinh(double);
+extern double atanh(double);
+extern double cabs(double __complex__ x);
+extern double cbrt(double);
+extern double drem(double, double);
+extern double erf(double);
+extern double erfc(double);
+extern double gamma(double);
+extern double gamma_r(double, int *);
+extern double hypot(double, double);
+extern int ilogb(double);
+extern double j0(double);
+extern double j1(double);
+extern double jn(int, double);
+extern double ldexp(double, int);
+extern double lgamma(double);
+extern double lgamma_r(double, int *);
+extern double log1p(double);
+extern double nextafter(double, double);
+extern double remainder(double, double);
+extern double rint(double);
+extern double scalb(double, double);
+extern double significand(double);
+extern double y0(double);
+extern double y1(double);
+extern double yn(int, double);
+extern int libm_errno;
 
-/* The file <bits/mathcalls.h> contains the prototypes for all the
-   actual math functions.  These macros are used for those prototypes,
-   so we can easily declare each function as both `name' and `__name',
-   and can declare the float versions `namef' and `__namef'.  */
-
-#define __MATHCALL(function,suffix, args)	\
-  __MATHDECL (_Mdouble_,function,suffix, args)
-#define __MATHDECL(type, function,suffix, args) \
-  __MATHDECL_1(type, function,suffix, args); \
-  __MATHDECL_1(type, __CONCAT(__,function),suffix, args)
-#define __MATHCALLX(function,suffix, args, attrib)	\
-  __MATHDECLX (_Mdouble_,function,suffix, args, attrib)
-#define __MATHDECLX(type, function,suffix, args, attrib) \
-  __MATHDECL_1(type, function,suffix, args) __attribute__ (attrib); \
-  __MATHDECL_1(type, __CONCAT(__,function),suffix, args) __attribute__ (attrib)
-#define __MATHDECL_1(type, function,suffix, args) \
-  extern type __MATH_PRECNAME(function,suffix) args __THROW
-
-#define _Mdouble_ 		double
-#define __MATH_PRECNAME(name,r)	__CONCAT(name,r)
-// added for gcc-3.2
-#define _Mdouble_BEGIN_NAMESPACE __BEGIN_NAMESPACE_STD
-#define _Mdouble_END_NAMESPACE   __END_NAMESPACE_STD
-// end added for gcc-3.2
-#include <bits/mathcalls.h>
-#undef	_Mdouble_
-// added for gcc-3.2
-#undef _Mdouble_BEGIN_NAMESPACE
-#undef _Mdouble_END_NAMESPACE
-// end added for gcc-3.2
-#undef	__MATH_PRECNAME
-
-#if defined __USE_MISC || defined __USE_ISOC99
-
-
-/* Include the file of declarations again, this time using `float'
-   instead of `double' and appending f to each function name.  */
-
-# ifndef _Mfloat_
-#  define _Mfloat_		float
-# endif
-# define _Mdouble_ 		_Mfloat_
-# ifdef __STDC__
-#  define __MATH_PRECNAME(name,r) name##f##r
-# else
-#  define __MATH_PRECNAME(name,r) name/**/f/**/r
-# endif
-// added for gcc-3.2
-#define _Mdouble_BEGIN_NAMESPACE __BEGIN_NAMESPACE_C99
-#define _Mdouble_END_NAMESPACE   __END_NAMESPACE_C99
-// end added for gcc-3.2
-# include <bits/mathcalls.h>
-# undef	_Mdouble_
-// added for gcc-3.2
-# undef _Mdouble_BEGIN_NAMESPACE
-# undef _Mdouble_END_NAMESPACE
-// end added for gcc-3.2
-# undef	__MATH_PRECNAME
-
-# if (__STDC__ - 0 || __GNUC__ - 0) && !defined __NO_LONG_DOUBLE_MATH
-/* Include the file of declarations again, this time using `long double'
-   instead of `double' and appending l to each function name.  */
-
-#  ifndef _Mlong_double_
-#   define _Mlong_double_	long double
-#  endif
-#  define _Mdouble_ 		_Mlong_double_
-#  ifdef __STDC__
-#   define __MATH_PRECNAME(name,r) name##l##r
-#  else
-#   define __MATH_PRECNAME(name,r) name/**/l/**/r
-#  endif
-// added for gcc-3.2
-#define _Mdouble_BEGIN_NAMESPACE __BEGIN_NAMESPACE_C99
-#define _Mdouble_END_NAMESPACE   __END_NAMESPACE_C99
-// end added for gcc-3.2
-#  include <bits/mathcalls.h>
-#  undef _Mdouble_
-// added for gcc-3.2
-# undef _Mdouble_BEGIN_NAMESPACE
-# undef _Mdouble_END_NAMESPACE
-// end added for gcc-3.2
-#  undef __MATH_PRECNAME
-
-# endif /* __STDC__ || __GNUC__ */
-
-#endif	/* Use misc or ISO C99.  */
-#undef	__MATHDECL_1
-#undef	__MATHDECL
-#undef	__MATHCALL
-
-
-#if defined __USE_MISC || defined __USE_XOPEN
 /* This variable is used by `gamma' and `lgamma'.  */
 extern int signgam;
-#endif
 
 
-/* ISO C99 defines some generic macros which work on any data type.  */
 #if defined(__USE_ISOC99) && __USE_ISOC99
 
 /* Get the architecture specific values describing the floating-point
@@ -239,16 +187,16 @@ enum
 # define isnormal(x) (fpclassify (x) == FP_NORMAL)
 
 /* Return nonzero value if X is a NaN.  We could use `fpclassify' but
-   we already have this functions `__isnan' and it is faster.  */
+   we already have this functions `__builtin_isnan' and it is faster.  */
 # ifdef __NO_LONG_DOUBLE_MATH
 #  define isnan(x) \
-     (sizeof (x) == sizeof (float) ? __isnanf (x) : __isnan (x))
+     (sizeof (x) == sizeof (float) ? __builtin_isnanf (x) : __builtin_isnan (x))
 # else
 #  define isnan(x) \
      (sizeof (x) == sizeof (float)					      \
-      ? __isnanf (x)							      \
+      ? __builtin_isnanf (x)							      \
       : sizeof (x) == sizeof (double)					      \
-      ? __isnan (x) : __isnanl (x))
+      ? __builtin_isnan (x) : __builtin_isnanl (x))
 # endif
 
 /* Return nonzero value is X is positive or negative infinity.  */
@@ -442,21 +390,16 @@ extern int matherr (struct exception *__exc);
 
 #endif
 
-__END_DECLS
-
 /* Missing declarations */
-
-struct complex {
-	double x;
-	double y;
-};
-
-double cabs __P((struct complex));
 
 double gamma_r(double x, int *signgamp); /* wrapper lgamma_r */
 
 long int rinttol(double x);
 
 long int roundtol(double x);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* !_RTAI_MATH_H  */
