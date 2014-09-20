@@ -14,8 +14,6 @@
 
 extern int libm_errno;
 
-extern int printk(const char *, ...);
-
 #define	WRITE2(u,v) printk("%.*s",v,u)
 
 static const double zero = 0.0;	/* used as const */
