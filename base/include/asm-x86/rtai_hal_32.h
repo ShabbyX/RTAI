@@ -236,7 +236,7 @@ static inline long long rtai_llimd(long long ll, int mult, int div) {
 
 static inline unsigned long long rtai_u64div32c(unsigned long long a,
 						unsigned long b,
-						int *r) {
+						int *r __attribute__((unused))) {
 
 	union { unsigned long long ull; unsigned long ul[2]; } u;
 	u.ull = a;

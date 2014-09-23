@@ -888,7 +888,7 @@ RTAI_PROTO(RT_TASK *, rt_thread_init, (unsigned long name, int priority, int max
  * @return On failure a NULL value is returned if it was not possible to setup 
  * the RTAI task extension or something using the same name was found.
  */
-RTAI_PROTO(RT_TASK *,rt_task_init,(unsigned long name, int priority, int stack_size, int max_msg_size))
+RTAI_PROTO(RT_TASK *,rt_task_init,(unsigned long name, int priority, int stack_size __attribute__((unused)), int max_msg_size))
 {
 	return rt_task_init_schmod(name, priority, 0, max_msg_size, SCHED_FIFO, 0xFF);
 }

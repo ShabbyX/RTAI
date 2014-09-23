@@ -408,7 +408,7 @@ RTAI_PROTO(int, rt_cond_wait_timed,(CND *cnd, SEM *mutex, RTIME delay))
 	return rtai_lxrt(BIDX, SIZARG, COND_WAIT_TIMED, &arg).i[LOW];
 }
 
-RTAI_PROTO(int, rt_poll, (struct rt_poll_s *pdsa, unsigned long nr, RTIME timeout))
+RTAI_PROTO(int, rt_poll, (struct rt_poll_s *pdsa __attribute__((unused)), unsigned long nr __attribute__((unused)), RTIME timeout __attribute__((unused))))
 {
 #ifdef CONFIG_RTAI_RT_POLL
 	struct { struct rt_poll_s *pdsa; unsigned long nr; RTIME timeout; long space; } arg = { pdsa, nr, timeout, 0 };
