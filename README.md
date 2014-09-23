@@ -14,4 +14,4 @@ Branch `magma` tracks the official CVS branch of the
 upstream RTAI repository.  Branch `vulcano` is not tracked, since
 it's conceptually a tag on magma.
 
-Please refer to the README.INSTALL file for building instructions.
+Please refer to the README.INSTALL file for build instructions.
