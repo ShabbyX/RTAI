@@ -3,112 +3,133 @@
 usage() {
     test -n "$@" || echo "$@" >&2
     {
-	echo "usage:  $0 OPTIONS ..."
-	echo
-	echo "This stub script locates and runs a kernel-specific version"
-	echo "of rtai-config."
-	echo
-	echo "Stub script options:"
-	echo "	-v KVER		Select rtai-config script for a kernel version"
-	echo "	-l		List available kernel choices"
-	echo "	-h | -?		This help"
-	echo ""
-	echo "kernel-specific options:"
-	echo "	--help"
-	echo "	--version"
-	echo "	--cc"
-	echo "	--cxx"
-	echo "	--arch"
-	echo "	--subarch"
-	echo "	--prefix"
-	echo "	--config"
-	echo "	--module-cflags"
-	echo "	--module-cxxflags"
-	echo "	--module-ext"
-	echo "	--lxrt-cflags"
-	echo "	--lxrt-ldflags"
-	echo "	--linux-dir"
-	echo "	--linux-version"
-	echo "	--module-dir"
-	echo "	--library-dir"
-	echo "	--comedi-dir"
-	echo "	--efltk-dir"
-	echo "	--posix-wrap"
+        echo "usage:  $0 OPTIONS ..."
+        echo
+        echo "This stub script locates and runs a kernel-specific version"
+        echo "of rtai-config."
+        echo
+        echo "Stub script options:"
+        echo "        -v KVER           Select rtai-config script for a kernel version"
+        echo "        -r                Select rtai-config script for the running kernel"
+        echo "        -l                List available kernel choices"
+        echo "        -h | -?           This help"
+        echo ""
+        echo "kernel-specific options:"
+        echo "        --help"
+        echo "        --version"
+        echo "        --cc"
+        echo "        --cxx"
+        echo "        --arch"
+        echo "        --subarch"
+        echo "        --prefix"
+        echo "        --config"
+        echo "        --module-cflags"
+        echo "        --module-cxxflags"
+        echo "        --module-ext"
+        echo "        --lxrt-cflags"
+        echo "        --lxrt-ldflags"
+        echo "        --linux-dir"
+        echo "        --linux-version"
+        echo "        --module-dir"
+        echo "        --library-dir"
+        echo "        --comedi-dir"
+        echo "        --efltk-dir"
+        echo "        --posix-wrap"
     } >&2
     exit 1
+}
+
+count_rtai_config() {
+    local count=0
+    # loop through each rtai-config* executable in $PATH
+    for dir in ${PATH//:/ }; do
+        for c in $dir/rtai-config?*; do
+            # Skip anything not executable
+            test -x $c || continue
+            count=$((count+1))
+        done
+    done
+
+    echo "$count"
 }
 
 select_rtai_config() {
     # select_rtai_config -l lists all kernels an rtai-config is found
     # for
     if test "$1" = "-l"; then
-	local LIST=true
-	shift
+        local LIST=true
+        shift
     else
-	local LIST=false
+        local LIST=false
     fi
 
     # select_rtai_config -d searches for a kernel by its header
     # directory location rather than its utsname
     if test "$1" = "-d"; then
-	local FIND_BY_DIR=true
-	shift
-	# canonicalize header directory path from command line
-	local ARG="$(readlink -f $1)"
+        local FIND_BY_DIR=true
+        shift
+        # canonicalize header directory path from command line
+        local ARG="$(readlink -f $1)"
     else
-	local FIND_BY_DIR=false
-	local ARG="$1"
+        local FIND_BY_DIR=false
+        local ARG="$1"
     fi
 
     # loop through each rtai-config* executable in $PATH
     for dir in ${PATH//:/ }; do
-	for c in $dir/rtai-config?*; do
-	    # Skip anything not executable
-	    test -x $c || continue
+        for c in $dir/rtai-config?*; do
+            # Skip anything not executable
+            test -x $c || continue
 
-	    if $FIND_BY_DIR; then
-		# Search for rtai-config with matching kernel header
-		# directory
-		TEST="$(readlink -f $($c --linux-dir 2>/dev/null))"
-	    else
-		# Search for rtai-config with matching kernel utsname
-		# or kernel version
+            if $FIND_BY_DIR; then
+                # Search for rtai-config with matching kernel header
+                # directory
+                TEST="$(readlink -f $($c --linux-dir 2>/dev/null))"
+            else
+                # Search for rtai-config with matching kernel utsname
+                # or kernel version
 
-		# if rtai-config understands '--linux-utsname', use it
-		TEST="$($c --linux-utsname 2>/dev/null)"
-		# otherwise, use '--linux-version' option
-		test -n "$TEST" || TEST="$($c --linux-version)"
-	    fi
+                # if rtai-config understands '--linux-utsname', use it
+                TEST="$($c --linux-utsname 2>/dev/null)"
+                # otherwise, use '--linux-version' option
+                test -n "$TEST" || TEST="$($c --linux-version)"
+            fi
 
-	    if $LIST; then
-		# In list mode, list the choices
-		if test "$TEST" = "$RUNNING_KVER"; then
-		    # tell user this is the running kernel but keep
-		    # stdout readable by scripts
-		    echo -n "$TEST"
-		    echo -n "	** running kernel" >&2
-		    echo
-		else
-		    echo "$TEST"
-		fi
+            if $LIST; then
+                # In list mode, list the choices
+                if test "$TEST" = "$RUNNING_KVER"; then
+                    # tell user this is the running kernel but keep
+                    # stdout readable by scripts
+                    echo -n "$TEST"
+                    echo -n "  ** running kernel" >&2
+                    echo
+                else
+                    echo "$TEST"
+                fi
 
-	    else
-		# If the script output matches the given $ARG, print
-		# the path to rtai-config and return
-		if test "$TEST" = "$ARG"; then
-		    echo "$c"
-		    return
-		fi
-	    fi
-	done
+            else
+                # If the script output matches the given $ARG, print
+                # the path to rtai-config and return
+                if test "$TEST" = "$ARG"; then
+                    echo "$c"
+                    return
+                fi
+            fi
+        done
     done
 
     # Finish up depending on mode
     if $LIST; then
-	exit
+        exit
     else
-	echo "Error:  no rtai-config script found matching $ARG" >&2
-	exit 1
+        if test "$DEFAULT_TO_RUNNING" = "y"; then
+            echo "error:  a single rtai-config script was found" >&2
+            echo "error:  but it doesn't match the running kernel" >&2
+            echo "error:  refusing to proceed because this may not be your intention" >&2
+        else
+            echo "error:  no rtai-config script found matching $ARG" >&2
+        fi
+        exit 1
     fi
 }
 
@@ -117,6 +138,7 @@ RTAI_CONFIG_ARGS=""
 
 # currently running kernel
 RUNNING_KVER="$(uname -r)"
+DEFAULT_TO_RUNNING=n
 
 # be sure we don't accidentally call ourself
 test -z "$IN_RTAI_STUB" || { echo "Error:  ran ourself!" >&2 ; exit ; }
@@ -131,26 +153,38 @@ SELECT_ARG=$RTAI_KVER
 
 # Process command-line args; double-dash '--foo' arguments get passed
 # on to kernel rtai-config
-while getopts h?lv:d:-: ARG; do
+while getopts h?lrv:d:-: ARG; do
     case $ARG in
-	h | "?") usage ;;
-	v)  SELECT_ARG="$OPTARG" ;;
-	d)  SELECT_ARG="-d $OPTARG" ;;
-	l)  select_rtai_config -l ;;
-	-)  RTAI_CONFIG_ARGS="$RTAI_CONFIG_ARGS --$OPTARG" ;;
+        h | "?") usage ;;
+        v)  SELECT_ARG="$OPTARG" ;;
+        r)  SELECT_ARG="$RUNNING_KVER" ;;
+        d)  SELECT_ARG="-d $OPTARG" ;;
+        l)  select_rtai_config -l ;;
+        -)  RTAI_CONFIG_ARGS="$RTAI_CONFIG_ARGS --$OPTARG" ;;
     esac
 done
 
 # Usage if no args found to pass to kernel rtai-config
 test -n "$RTAI_CONFIG_ARGS" || usage
 
-# if no KVER selected, default to running kernel version and print
-# warning
+# if no KVER selected, check to see how many rtai-config's exist.
+# if there is only one, then default to running kernel.  This means
+# that if there is one and it's not the running kernel, an error
+# is given.
+# If more than one rtai-config is found, then complain immediately.
+
 if test -z "$SELECT_ARG"; then
-    SELECT_ARG=$RUNNING_KVER
-    echo "Warning:  no '-v KVER' option specified" >&2
-    echo "Warning:  defaulting to running kernel version $SELECT_ARG" >&2
-    echo 'Warning:  (add "-v `uname -r`" to silence this warning)' >&2
+    if test $(count_rtai_config) -eq 1; then
+        SELECT_ARG=$RUNNING_KVER
+        DEFAULT_TO_RUNNING=y
+    fi
+fi
+
+if test -z "$SELECT_ARG"; then
+    echo "error:  no '-v KVER' or '-r' option specified" >&2
+    echo "error:  and more than one rtai-config found" >&2
+    echo "error:  refusing to proceed in ambiguous case" >&2
+    exit 1
 fi
 
 # select the kernel-specific rtai-config script by kernel version
