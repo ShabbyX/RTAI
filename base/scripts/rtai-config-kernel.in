@@ -4,7 +4,6 @@ staging=${DESTDIR}
 prefix="@prefix@"
 exec_prefix="@exec_prefix@"
 libdir="@libdir@"
-datarootdir="@datarootdir@"
 datadir="@datadir@"
 pkgdatadir="${datadir}/@PACKAGE@"
 includedir="@includedir@"
@@ -18,10 +17,11 @@ RTAI_TARGET_SUBARCH="@RTAI_TARGET_SUBARCH@"
 RTAI_CONFIG="${staging}${pkgdatadir}/config-rtai-${RTAI_VERSION}"
 RTAI_LINUX_DIR="@RTAI_LINUX_DIR@"
 RTAI_LINUX_VERSION="@RTAI_LINUX_VERSION@"
-RTAI_KERNEL_CFLAGS="-I. @RTAI_COMPAT_CPPFLAGS@ -I${staging}${includedir} @RTAI_KMOD_APP_CFLAGS@ @RTAI_FP_CFLAGS@"
-RTAI_KERNEL_CXXFLAGS="-I. @RTAI_COMPAT_CPPFLAGS@ -I${staging}${includedir} @RTAI_KMOD_APP_CXXFLAGS@ @RTAI_FP_CFLAGS@"
+RTAI_LINUX_UTSNAME="@RTAI_LINUX_UTSNAME@"
+RTAI_KERNEL_CFLAGS="-I. -I${staging}${includedir} @RTAI_KMOD_APP_CFLAGS@ @RTAI_FP_CFLAGS@"
+RTAI_KERNEL_CXXFLAGS="-I. -I${staging}${includedir} @RTAI_KMOD_APP_CXXFLAGS@ @RTAI_FP_CFLAGS@"
 RTAI_MODULE_DIR="${staging}@RTAI_MODULE_DIR@"
-RTAI_LXRT_CFLAGS="-I. @RTAI_COMPAT_CPPFLAGS@ -I${staging}${includedir} @RTAI_USER_APP_CFLAGS@"
+RTAI_LXRT_CFLAGS="-I. -I${staging}${includedir} @RTAI_USER_APP_CFLAGS@"
 RTAI_LXRT_LDFLAGS="-L${staging}${libdir} @RTAI_LXRT_LDADD@ -lpthread"
 RTAI_LIBRARY_DIR="${staging}${libdir}"
 COMEDI_DIR="@COMEDI_DIR@"
@@ -51,6 +51,7 @@ Options :
         --lxrt-ldflags
         --linux-dir
         --linux-version
+        --linux-utsname
         --module-dir
         --library-dir
         --comedi-dir
@@ -116,6 +117,9 @@ while test $# -gt 0; do
             ;;
         --linux-ver*)
             echo $RTAI_LINUX_VERSION
+            ;;
+        --linux-utsname)
+            echo $RTAI_LINUX_UTSNAME
             ;;
         --comedi-dir)
             echo $COMEDI_DIR

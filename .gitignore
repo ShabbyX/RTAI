@@ -15,7 +15,7 @@ base/sched/malloc.c
 Module.symvers
 modules.order
 base/include/asm
-base/scripts/rtai-config
+base/scripts/rtai-config-*
 base/scripts/rtai-load
 rtai_config.h
 

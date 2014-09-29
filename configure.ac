@@ -259,6 +259,26 @@ if test x${CONFIG_RTAI_LINUXDIR} = x; then
 fi
 
 dnl
+dnl check the utsname configured in the kernel headers
+dnl
+AC_MSG_CHECKING([linux utsname])
+if test -e $RTAI_LINUX_DIR/include/linux/utsrelease.h; then
+    VERSION_FILE=$RTAI_LINUX_DIR/include/linux/utsrelease.h
+elif test -e $RTAI_LINUX_DIR/include/generated/utsrelease.h; then
+    VERSION_FILE=$RTAI_LINUX_DIR/include/generated/utsrelease.h
+else
+    VERSION_FILE=$RTAI_LINUX_DIR/include/linux/version.h
+fi
+RTAI_LINUX_UTSNAME=`$CC -E -dM ${VERSION_FILE} 2>/dev/null | \
+    grep UTS | cut -d '"' -f 2`
+
+if test -z "$RTAI_LINUX_UTSNAME"; then
+    AC_MSG_RESULT([not found])
+else
+    AC_MSG_RESULT([$RTAI_LINUX_UTSNAME])
+fi
+
+dnl
 dnl define the name of the target arch (only matters for powerpc so far)
 dnl
 case $RTAI_TARGET_ARCH in
@@ -2034,6 +2054,7 @@ AC_SUBST(RTAI_LXRT_LDADD)
 AC_SUBST(RTAI_FP_CFLAGS)
 AC_SUBST(RTAI_LINUX_DIR)
 AC_SUBST(RTAI_LINUX_VERSION)
+AC_SUBST(RTAI_LINUX_UTSNAME)
 AC_SUBST(RTAI_MATH_LIBM)
 AC_SUBST(RTAI_MODULE_DIR)
 AC_SUBST(RTAI_MODULE_EXT)
@@ -2059,7 +2080,7 @@ AC_CONFIG_FILES([ \
 	base/sched/GNUmakefile \
 	base/sched/liblxrt/GNUmakefile \
 	base/scripts/GNUmakefile \
-	base/scripts/rtai-config \
+	base/scripts/rtai-config-kernel \
 	base/scripts/rtai-load \
         base/arch/i386/GNUmakefile \
 	base/arch/i386/hal/GNUmakefile \

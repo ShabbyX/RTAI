@@ -1,6 +1,8 @@
 install-exec-local:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) rtai-load $(DESTDIR)$(bindir)
+	$(INSTALL_SCRIPT) rtai-config-kernel \
+		$(DESTDIR)$(bindir)/rtai-config-@RTAI_LINUX_UTSNAME@
 	$(INSTALL_SCRIPT) rtai-config $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) $(srcdir)/rtai-info $(DESTDIR)$(bindir)
 if CONFIG_RTAI_STARTUP_LOAD
