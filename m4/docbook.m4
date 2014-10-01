@@ -67,7 +67,12 @@ AC_SUBST(DBX_XSLTPROC)
 
 AC_CHECK_PROG(DBX_FOP, fop.sh, fop.sh)
 if test x"$DBX_FOP" = x -a -n "$DBX_DOC"; then
-   AC_MSG_ERROR([fop.sh was not found. Check your PATH variable and try again.])
+   AC_CHECK_PROG(DBX_FOP, fop, fop)
+   if test -z "$DBX_FOP"; then
+      AC_MSG_ERROR(
+         [Neither fop.sh nor fop was not found. ]
+	 [Check your PATH variable and try again.])
+   fi
 fi
 AC_SUBST(DBX_FOP)
 
