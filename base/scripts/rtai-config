@@ -9,32 +9,34 @@ usage() {
         echo "of rtai-config."
         echo
         echo "Stub script options:"
-        echo "        -v KVER           Select rtai-config script for a kernel version"
-        echo "        -r                Select rtai-config script for the running kernel"
-        echo "        -l                List available kernel choices"
-        echo "        -h | -?           This help"
+        echo "  -v KVER     Select rtai-config script for a kernel version"
+        echo "  -r          Select rtai-config script for the running kernel"
+        echo "  -o          Select *only* kernel version found; if multiple"
+        echo "              RTAI kernel headers found, exit with error"
+        echo "  -l          List available kernel choices"
+        echo "  -h | -?     This help"
         echo ""
         echo "kernel-specific options:"
-        echo "        --help"
-        echo "        --version"
-        echo "        --cc"
-        echo "        --cxx"
-        echo "        --arch"
-        echo "        --subarch"
-        echo "        --prefix"
-        echo "        --config"
-        echo "        --module-cflags"
-        echo "        --module-cxxflags"
-        echo "        --module-ext"
-        echo "        --lxrt-cflags"
-        echo "        --lxrt-ldflags"
-        echo "        --linux-dir"
-        echo "        --linux-version"
-        echo "        --module-dir"
-        echo "        --library-dir"
-        echo "        --comedi-dir"
-        echo "        --efltk-dir"
-        echo "        --posix-wrap"
+        echo "  --help"
+        echo "  --version"
+        echo "  --cc"
+        echo "  --cxx"
+        echo "  --arch"
+        echo "  --subarch"
+        echo "  --prefix"
+        echo "  --config"
+        echo "  --module-cflags"
+        echo "  --module-cxxflags"
+        echo "  --module-ext"
+        echo "  --lxrt-cflags"
+        echo "  --lxrt-ldflags"
+        echo "  --linux-dir"
+        echo "  --linux-version"
+        echo "  --module-dir"
+        echo "  --library-dir"
+        echo "  --comedi-dir"
+        echo "  --efltk-dir"
+        echo "  --posix-wrap"
     } >&2
     exit 1
 }
@@ -54,13 +56,19 @@ count_rtai_config() {
 }
 
 select_rtai_config() {
-    # select_rtai_config -l lists all kernels an rtai-config is found
-    # for
+    # -l: list all kernels for which an rtai-config is found
+    local LIST=false
     if test "$1" = "-l"; then
         local LIST=true
         shift
-    else
-        local LIST=false
+    fi
+
+    # -o: select the first (outside logic should confirm the *only*)
+    # kernel found
+    local SELECT_ONLY=false
+    if test "$1" = "-o"; then
+	SELECT_ONLY=true
+	shift
     fi
 
     # select_rtai_config -d searches for a kernel by its header
@@ -110,7 +118,7 @@ select_rtai_config() {
             else
                 # If the script output matches the given $ARG, print
                 # the path to rtai-config and return
-                if test "$TEST" = "$ARG"; then
+                if $SELECT_ONLY || test "$TEST" = "$ARG"; then
                     echo "$c"
                     return
                 fi
@@ -125,7 +133,9 @@ select_rtai_config() {
         if test "$DEFAULT_TO_RUNNING" = "y"; then
             echo "error:  a single rtai-config script was found" >&2
             echo "error:  but it doesn't match the running kernel" >&2
-            echo "error:  refusing to proceed because this may not be your intention" >&2
+            echo "error:  and no '-o' option given" >&2
+            echo "error:  refusing to proceed because this may not be" >&2
+            echo "error:  your intention" >&2
         else
             echo "error:  no rtai-config script found matching $ARG" >&2
         fi
@@ -153,13 +163,14 @@ SELECT_ARG=$RTAI_KVER
 
 # Process command-line args; double-dash '--foo' arguments get passed
 # on to kernel rtai-config
-while getopts h?lrv:d:-: ARG; do
+while getopts h?lrov:d:-: ARG; do
     case $ARG in
         h | "?") usage ;;
         v)  SELECT_ARG="$OPTARG" ;;
         r)  SELECT_ARG="$RUNNING_KVER" ;;
         d)  SELECT_ARG="-d $OPTARG" ;;
         l)  select_rtai_config -l ;;
+	o)  SELECT_ARG="-o" ;;
         -)  RTAI_CONFIG_ARGS="$RTAI_CONFIG_ARGS --$OPTARG" ;;
     esac
 done
@@ -174,7 +185,7 @@ test -n "$RTAI_CONFIG_ARGS" || usage
 # If more than one rtai-config is found, then complain immediately.
 
 if test -z "$SELECT_ARG"; then
-    if test $(count_rtai_config) -eq 1; then
+    if test $(count_rtai_config) -eq 1 -a "$SELECT_ARG" != "-o"; then
         SELECT_ARG=$RUNNING_KVER
         DEFAULT_TO_RUNNING=y
     fi
