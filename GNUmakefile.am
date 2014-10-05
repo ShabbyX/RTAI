@@ -21,7 +21,8 @@ DIST_SUBDIRS = \
 	testsuite \
 	addons \
 	rtai-lab \
-	rtai-py
+	rtai-py \
+	doc
 
 EXTRA_DIST = \
 README.INSTALL \
@@ -30,7 +31,7 @@ README.LINUX_SERVER \
 README.LXRT_EXTS_IN_USE \
 README.SMI
 
-DISTCLEANFILES = .rtai_config .rtai_config.old .cfok .cfchanged Module.symvers configure
+DISTCLEANFILES = .rtai_config .rtai_config.old .cfok .cfchanged Module.symvers
 
 moduledir = @RTAI_MODULE_DIR@
 
