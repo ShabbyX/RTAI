@@ -1,0 +1,4 @@
+# Stub file to make kbuild 'make clean' happy                -*-makefile-*-
+#
+# /usr/src/linux-headers-`uname -r`/scripts/Makefile.clean wants to
+# include either 'Kbuild' or 'Makefile' in this directory.
