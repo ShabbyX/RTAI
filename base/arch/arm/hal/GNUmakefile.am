@@ -63,3 +63,5 @@ install-exec-local: rtai_hal$(modext)
 
 
 EXTRA_DIST = Makefile.kbuild hal.immed hal.piped
+
+DISTCLEANFILES = Makefile
