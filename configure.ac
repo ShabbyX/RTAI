@@ -1986,10 +1986,12 @@ else
 fi
 
 if test x$CONFIG_KBUILD = xy; then
-   AC_CONFIG_LINKS(base/arch/$RTAI_TARGET_ARCH/hal/Makefile:base/arch/$RTAI_TARGET_ARCH/hal/Makefile.kbuild)
-   if test -d $srcdir/base/arch/$RTAI_TARGET_ARCH/calibration; then
-      AC_CONFIG_LINKS(base/arch/$RTAI_TARGET_ARCH/calibration/Makefile:base/arch/$RTAI_TARGET_ARCH/calibration/Makefile.kbuild)
-   fi
+   for a in arm i386 m68k m68knommu ppc x86 x86_64; do
+       AC_CONFIG_LINKS(base/arch/$a/hal/Makefile:base/arch/$a/hal/Makefile.kbuild)
+       if test -d $srcdir/base/arch/$a/calibration; then
+	  AC_CONFIG_LINKS(base/arch/$a/calibration/Makefile:base/arch/$a/calibration/Makefile.kbuild)
+       fi
+   done
    AC_CONFIG_LINKS(base/ipc/bits/Makefile:base/ipc/bits/Makefile.kbuild)
    AC_CONFIG_LINKS(base/ipc/fifos/Makefile:base/ipc/fifos/Makefile.kbuild)
    AC_CONFIG_LINKS(base/ipc/mbx/Makefile:base/ipc/mbx/Makefile.kbuild)
