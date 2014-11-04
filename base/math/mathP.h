@@ -184,7 +184,6 @@ extern double __ieee754_fmax(double,double);
 extern double __ieee754_scalb(double,double);
 
 /* fdlibm kernel function */
-extern double __kernel_standard(double,double,int);
 extern double __kernel_sin(double,double,int);
 extern double __kernel_cos(double,double);
 extern double __kernel_tan(double,double,int);
