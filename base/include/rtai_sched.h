@@ -422,7 +422,8 @@ int rt_task_wait_period(void);
 
 void rt_schedule(void);
 
-RTIME next_period(void);
+RTAI_SYSCALL_MODE RTIME rt_task_next_period(void);
+#define next_period rt_task_next_period
 
 RTAI_SYSCALL_MODE void rt_busy_sleep(int nanosecs);
 

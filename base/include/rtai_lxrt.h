@@ -416,6 +416,7 @@
 #define LXRT_SPL_DELETE 	1030
 #define KERNEL_CALIBRATOR	1031
 #define GET_CPU_FREQ		1032
+#define NEXT_PERIOD		1033
 
 #define FORCE_SOFT 0x80000000
 
@@ -1550,6 +1551,12 @@ RTAI_PROTO(unsigned int, rt_get_cpu_freq, (void))
 {
 	struct { unsigned long dummy; } arg;
 	return rtai_lxrt(BIDX, SIZARG, GET_CPU_FREQ, &arg).i[0];
+}
+
+RTAI_PROTO(RTIME, rt_task_next_period, (void))
+{
+	struct { unsigned long dummy; } arg;
+	return rtai_lxrt(BIDX, SIZARG, NEXT_PERIOD, &arg).rt;
 }
 
 #ifndef CONFIG_RTAI_TSC

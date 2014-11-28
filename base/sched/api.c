@@ -910,7 +910,7 @@ RTAI_SYSCALL_MODE int rt_set_period(RT_TASK *task, RTIME new_period)
 }
 
 /**
- * @anchor next_period
+ * @anchor rt_task_next_period
  * @brief Get the time a periodic task will be resumed after calling
  *  rt_task_wait_period.
  *
@@ -921,7 +921,7 @@ RTAI_SYSCALL_MODE int rt_set_period(RT_TASK *task, RTIME new_period)
  *
  * @return Next period time in internal count units.
  */
-RTIME next_period(void)
+RTAI_SYSCALL_MODE RTIME rt_task_next_period(void)
 {
 	RT_TASK *rt_current;
 	unsigned long flags;
@@ -2155,7 +2155,7 @@ EXPORT_SYMBOL(rt_task_wait_period);
 EXPORT_SYMBOL(rt_task_set_resume_end_times);
 EXPORT_SYMBOL(rt_set_resume_time);
 EXPORT_SYMBOL(rt_set_period);
-EXPORT_SYMBOL(next_period);
+EXPORT_SYMBOL(rt_task_next_period);
 EXPORT_SYMBOL(rt_busy_sleep);
 EXPORT_SYMBOL(rt_sleep);
 EXPORT_SYMBOL(rt_sleep_until);

@@ -627,6 +627,9 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 			rt_get_exectime(larg->task, larg->exectime);
                         return 0;
 		}
+		case NEXT_PERIOD: {
+			return rt_task_next_period();
+		}
 		case GET_TIMEORIG: {
 			struct arg { RTIME *time_orig; };
 			if (larg->time_orig) {
