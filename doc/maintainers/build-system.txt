@@ -4,7 +4,7 @@ Description of the build system
 1. Motivations
 --------------
 
-The RTAI build system is a merge of Linux's 2.5 Kconfig with
+The RTAI build system is a merge of Linux's 3.9 Kconfig with
 autoconf/automake/libtool. The following requirements led to such
 mixed system:
 
@@ -60,41 +60,42 @@ RTAI needs to be configured prior to being built, but the
 configuration tool cannot rely on autoconf-generated Makefiles to
 build itself. Therefore, the GUI-aided configuration system which
 depends on dynamically built programs is bootstrapped by a simple
-"makefile" (note the small caps) at the root of the source tree.
+"Makefile" at the root of the source tree.
 
-The bootstrap makefile traps the targets needed to build and run the
+The bootstrap Makefile traps the targets needed to build and run the
 Kconfig tool (make menuconfig|xconfig|gconfig), and invokes the
-self-contained base/config/kconfig/Makefile.kc makefile which in
+self-contained base/config/kconfig/Makefile.kconfig makefile which in
 turn builds and run the configuration GUI as required. Upon return of
-the GUI-based configuration session, the bootstrap makefile (re)runs
+the GUI-based configuration session, the bootstrap Makefile (re)runs
 autoconf's "configure" script as needed to take the configuration
 changes into account.
 
 Once the configuration script has been run successfully at least once,
-there is no more need to use the bootstrap makefile located in the
-source tree, since the top-level autoconf-generated Makefile will be
+there is no more need to use the bootstrap Makefile located in the
+source tree, since the top-level autoconf-generated GNUMakefile will be
 available in the build tree, and handle the menuconfig, xconfig,
 gconfig and other targets appropriately (actually, menuconfig, xconfig
-and gconfig are silently passed to the boostrap makefile by the
+and gconfig are silently passed to the boostrap Makefile by the
 autoconf-generated one so that we do not duplicate rather complex
 rules uselessly).
-
-Take a look at ../README.UNSTABLE for more on building RTAI from a
-user standpoint.
 
 4. Dependencies
 ---------------
 
 The build system is based on:
 
-o Kconfig as extracted from Linux 2.5.69 development version. The
-X-based configuration front-ends either needs Qt (xconfig) or GTK2
-(gconfig), and the dialog-based one depends on ncurses.
-o Autoconf >= 2.59
-o Automake >= 1.9.2
+o Kconfig as extracted from Linux 3.9. The X-based configuration front-ends
+either needs Qt (xconfig) or GTK2 (gconfig), and the dialog-based one
+depends on ncurses.
+o Autoconf >= 2.68
+o Automake >= 1.11
 o Libtool >= 1.5.8
 
 --
 November 21, 2004
 Philippe Gerum
 <rpm@xenomai.org>
+
+December 12, 2014
+Shahbaz Youssefi
+<shabbyx@gmail.com>

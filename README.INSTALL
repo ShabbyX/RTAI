@@ -175,7 +175,7 @@ Depending on your Linux distribution, one of these commands would do it for you:
 7.) Compile RTAI userland / userspace:
 
    $ cd ~/devel/RTAI
-   $ ./autogen.sh
+   $ autoreconf -i
    $ make menuconfig
 
 *IMPORTANT: IF YOU ARE USING A MULTI-CORE SMP SYSTEM, IT IS REQUIRED

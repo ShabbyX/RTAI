@@ -63,40 +63,7 @@ CONFIG_METHODS := config nconfig menuconfig xconfig gconfig oldconfig silentoldc
 	randconfig listnewconfig olddefconfig
 .PHONY: $(CONFIG_METHODS)
 $(CONFIG_METHODS):
-	@$(MAKE) -C base/config/kconfig \
-	-f Makefile.kconfig $@ \
-	srctree=$(PWD) ARCH=`uname -m` CONFIG_RTAI_QUIET=$(CONFIG_RTAI_QUIET)
-	@$(MAKE) --no-print-directory config-status
-
-config-status: .rtai_config
-	@test -r config.status && recf=yes || recf=no ; \
-	eval `grep ^CONFIG_RTAI_INSTALLDIR $<`; \
-	eval `grep ^CONFIG_RTAI_MAINTAINER $<`; \
-	test x$$CONFIG_RTAI_MAINTAINER_AUTOTOOLS = xy && confopts=--enable-maintainer-mode; \
-	CROSS_COMPILE=$(CROSS_COMPILE) \
-	CC="$(CROSS_COMPILE)$(CC)" \
-	CXX="$(CROSS_COMPILE)$(CXX)" \
-	LD="$(CROSS_COMPILE)$(LD)" \
-	AR="$(CROSS_COMPILE)$(AR)" \
-	RANLIB=$(CROSS_COMPILE)ranlib \
-	STRIP=$(CROSS_COMPILE)strip \
-	NM=$(CROSS_COMPILE)nm \
-	$(srctree)./configure \
-	--build=$(build_alias) \
-	--host=$(host_alias) \
-	--with-kconfig-file=./$< \
-	--with-linux-dir=$(RTAI_LINUX_DIR) \
-	--prefix=$$CONFIG_RTAI_INSTALLDIR \
-	--enable-quiet-build=@CONFIG_RTAI_QUIET@ \
-	$$confopts ; \
-	if test $$? = 0; then \
-	   touch .cfok ; \
-	   if test x$$recf = xyes ; then \
-	      touch .cfchanged ; \
-	   fi ; \
-	else \
-	   rm -f .cfok ; false; \
-	fi
+	@$(MAKE) -f Makefile $@
 
 if CONFIG_RTAI_OLD_FASHIONED_BUILD
 clean-local:
