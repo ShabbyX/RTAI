@@ -1260,7 +1260,7 @@ RTAI_PROTO(void,start_rt_apic_timers,(struct apic_timer_setup_data *setup_mode, 
 
 RTAI_PROTO(int, rt_hard_timer_tick_cpuid, (int cpuid))
 {
-	struct { unsigned long cpuid; } arg = { cpuid };
+	struct { unsigned long cpuid; } arg = { (unsigned)cpuid };
 	return rtai_lxrt(BIDX, SIZARG, HARD_TIMER_COUNT_CPUID, &arg).i[LOW];
 }
 
@@ -1278,13 +1278,13 @@ RTAI_PROTO(RTIME,nano2count_cpuid,(RTIME nanos, unsigned int cpuid))
 
 RTAI_PROTO(RTIME,rt_get_time_cpuid,(unsigned int cpuid))
 {
-	struct { unsigned long cpuid; } arg = { cpuid };
+	struct { unsigned long cpuid; } arg = { (unsigned)cpuid };
 	return rtai_lxrt(BIDX, SIZARG, GET_TIME_CPUID, &arg).rt;
 }
 
 RTAI_PROTO(RTIME,rt_get_time_ns_cpuid,(unsigned int cpuid))
 {
-	struct { unsigned long cpuid; } arg = { cpuid };
+	struct { unsigned long cpuid; } arg = { (unsigned)cpuid };
 	return rtai_lxrt(BIDX, SIZARG, GET_TIME_NS_CPUID, &arg).rt;
 }
 
