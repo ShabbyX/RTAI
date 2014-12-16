@@ -46,7 +46,7 @@ base/GNUmakefile: @RTAI_LINUX_DIR@/.config
 	 echo "*  The Linux configuration has changed  *" ; \
 	 echo "*  forcing 'make reconfig' ...          *" ; \
 	 echo "*****************************************" ; \
-	$(MAKE) reconfig
+	$(MAKE) -f Makefile reconfig
 
 clean-if-reconfigured:
 	@if test -r .cfchanged ; then \

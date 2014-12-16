@@ -43,12 +43,12 @@ $(CONFIG_METHODS):
 	@$(MAKE) -C base/config/kconfig \
 	-f Makefile.kconfig $@ \
 	srctree=$(PWD) ARCH=`uname -m` CONFIG_RTAI_QUIET=quiet_
-	@$(MAKE) config.status
+	@$(MAKE) -f Makefile config.status
 
 
 reconfig:
 	@touch .rtai_config
-	@$(MAKE) config.status
+	@$(MAKE) -f Makefile config.status
 
 config.status: .rtai_config
 	@test -r config.status && recf=yes || recf=no ; \
