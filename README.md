@@ -1,3 +1,5 @@
+IMPORTANT NOTICE: STOP COPYING MY WORK FROM THIS TREE WITHOUT CREDITING ME!
+
 RTAI for LinuxCNC
 
 Tested and confirmed working on AMD64 and i686 platforms.
