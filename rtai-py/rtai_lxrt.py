@@ -154,7 +154,8 @@ nano2count = rtai.nano2count
 
 rt_busy_sleep = rtai.rt_busy_sleep
 
-rtai.rt_force_task_soft.restype = c_ulong
+rtai.rt_get_linux_tid.argtypes = [c_void_p]
+rtai.rt_get_linux_tid.restype = c_int
 
 rtai.rt_agent.restype = c_ulong
 

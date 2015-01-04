@@ -58,9 +58,9 @@ rt_thread_create = rtai.rt_thread_create
 rt_make_soft_real_time = rtai.rt_make_soft_real_time
 rt_make_hard_real_time = rtai.rt_make_hard_real_time
 
-rtai.rt_task_delete.argtypes = [c_void_p]
-rt_task_delete = rtai.rt_task_delete
-rt_thread_delete = rtai.rt_task_delete
+rtai.rt_thread_delete.argtypes = [c_void_p]
+rt_thread_delete = rtai.rt_thread_delete
+rt_task_delete = rtai.rt_thread_delete
 
 rtai.rt_thread_join.argtypes = [c_ulong]
 rt_thread_join = rtai.rt_thread_join
@@ -160,7 +160,8 @@ nano2count = rtai.nano2count
 
 rt_busy_sleep = rtai.rt_busy_sleep
 
-rtai.rt_force_task_soft.restype = c_ulong
+rtai.rt_get_linux_tid.argtypes = [c_void_p]
+rtai.rt_get_linux_tid.restype = c_int
 
 rtai.rt_agent.restype = c_ulong
 
