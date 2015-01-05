@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
 
-/*
+/* 
  * Simple SHM demo program: The application program "main.c" lists
  * a counter incremented in the RTAI kernel modue "ex_shm.c".
  */
@@ -67,7 +67,7 @@ static void fun(long t)
 int init_module (void)
 {
 	RTIME tick_period;
-	RTIME now;
+	RTIME now; 
 #ifdef SHM_DEBUG
 	int size = SHMSIZ ;
 	unsigned long vaddr, paddr;
@@ -85,7 +85,7 @@ int init_module (void)
 	while (size > 0)
 	{
 		paddr = kvirt_to_pa(vaddr);
-		printk("vaddr=0x%lx paddr=0x%lx\n", vaddr, paddr);
+		printk("vaddr=0x%lx paddr=0x%lx\n", vaddr, paddr); 
 		vaddr += PAGE_SIZE;
 		size -= PAGE_SIZE;
 	}

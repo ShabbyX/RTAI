@@ -24,7 +24,7 @@ MODULE_LICENSE("GPL");
  *	Allocate memory from the appropriate pools and return a pointer to it.
  *	NULL is returned if the allocation fails
  */
-
+ 
 void* ipc_alloc(int size)
 {
 	void* out;
@@ -43,7 +43,7 @@ void* ipc_alloc(int size)
  *	Free a block created with ipc_alloc. The caller must know the size
  *	used in the allocation call.
  */
-
+ 
 void ipc_free(void* ptr, int size)
 {
 	if(size > PAGE_SIZE)
@@ -59,9 +59,9 @@ void ipc_free(void* ptr, int size)
  *
  *	Given a size for the ipc identifier range (limited below IPCMNI)
  *	set up the sequence range to use then allocate and initialise the
- *	array itself.
+ *	array itself. 
  */
-
+ 
 void __init ipc_init_ids(struct ipc_ids* ids, int size)
 {
 	int i;
@@ -93,13 +93,13 @@ void __init ipc_init_ids(struct ipc_ids* ids, int size)
 }
 
 /**
- *	ipc_findkey	-	find a key in an ipc identifier set
+ *	ipc_findkey	-	find a key in an ipc identifier set	
  *	@ids: Identifier set
  *	@key: The key to find
  *
  *	Returns the identifier if found or -1 if not.
  */
-
+ 
 int ipc_findkey(struct ipc_ids* ids, key_t key)
 {
 	int id;
@@ -155,7 +155,7 @@ static int grow_ary(struct ipc_ids* ids, int newsize)
  *	is returned. The list is returned in a locked state on success.
  *	On failure the list is not locked and -1 is returned.
  */
-
+ 
 int ipc_addid(struct ipc_ids* ids, struct kern_ipc_perm* new, int size)
 {
 	int id;
@@ -193,7 +193,7 @@ found:
  *	variables recomputed. The object associated with the identifier
  *	is returned.
  */
-
+ 
 struct kern_ipc_perm* ipc_rmid(struct ipc_ids* ids, int id)
 {
 	struct kern_ipc_perm* p;
@@ -225,7 +225,7 @@ struct kern_ipc_perm* ipc_rmid(struct ipc_ids* ids, int id)
  *	Check user, group, other permissions for access
  *	to ipc resources. return 0 if allowed
  */
-
+ 
 int ipcperms (struct kern_ipc_perm *ipcp, short flag)
 {	/* flag will most probably be 0 or S_...UGO from <linux/stat.h> */
 	int requested_mode, granted_mode;
@@ -237,7 +237,7 @@ int ipcperms (struct kern_ipc_perm *ipcp, short flag)
 	else if (in_group_p(ipcp->cgid) || in_group_p(ipcp->gid))
 		granted_mode >>= 3;
 	/* is there some bit set in requested_mode but not in granted_mode? */
-	if ((requested_mode & ~granted_mode & 0007) &&
+	if ((requested_mode & ~granted_mode & 0007) && 
 	    !capable(CAP_IPC_OWNER))
 		return -1;
 
@@ -257,7 +257,7 @@ int ipcperms (struct kern_ipc_perm *ipcp, short flag)
  *	Turn the kernel object 'in' into a set of permissions descriptions
  *	for returning to userspace (out).
  */
-
+ 
 
 void kernel_to_ipc64_perm (struct kern_ipc_perm *in, struct ipc64_perm *out)
 {
@@ -278,7 +278,7 @@ void kernel_to_ipc64_perm (struct kern_ipc_perm *in, struct ipc64_perm *out)
  *	Turn the new style permissions object in into a compatibility
  *	object and store it into the 'out' pointer.
  */
-
+ 
 void ipc64_perm_to_ipc_perm (struct ipc64_perm *in, struct ipc_perm *out)
 {
 	out->key	= in->key;
@@ -330,7 +330,7 @@ int init_module(void)
 	if (set_rt_fun_ext_index(rtai_sysvmsg_fun, SYSV_MSG_IDX)) {
 		rt_printk("%d is a wrong index module for lxrt.\n", SYSV_MSG_IDX);
 		return -EACCES;
-	}
+	}			
 	msg_init();
 	printk("%s: loaded.\n", MODULE_NAME);
 	return(0);

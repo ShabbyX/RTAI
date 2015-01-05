@@ -49,12 +49,12 @@ int main(void)
 	}
 
 	rt_set_oneshot_mode();
-	period = start_rt_timer(nano2count(PERIOD));
+	period = start_rt_timer(nano2count(PERIOD)); 
 	while(!rt_get_adr(testb));
 	rt_task_make_periodic(rt_get_adr(testb), rt_get_time() + period, period);
-	while (!end) {
+	while (!end) { 
 		rt_sleep(nano2count(400000000));
-		printf("SUPERVISOR WAITING FOR Ctrl-C\n");
+		printf("SUPERVISOR WAITING FOR Ctrl-C\n"); 
 	}
 	rt_set_usp_flags(rt_get_adr(testb), FORCE_SOFT);
 	while(rt_get_adr(testb)) {

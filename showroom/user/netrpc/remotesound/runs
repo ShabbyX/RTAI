@@ -19,7 +19,7 @@ echo "Press <enter> to load modules:"
 read junk
 cd ../..; ./ldmod; cd -
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod $MODULES/rtai_netrpc.ko ThisNode="131.175.154.67"
 else insmod $MODULES/rtai_netrpc.o ThisNode="127.0.0.1"; fi
 echo

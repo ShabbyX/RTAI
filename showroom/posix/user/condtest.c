@@ -184,7 +184,7 @@ int main(void)
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	RT_SET_REAL_TIME_MODE();
 	pthread_cleanup_push(main_exit_handler, 0);
-	start_rt_timer(nano2count(TICK));
+	start_rt_timer(0);
 	DISPLAY("User space POSIX test program.\n");
 	pthread_cond_init(cond = &conds, NULL);
 	pthread_mutex_init(mtx = &mtxs, NULL);

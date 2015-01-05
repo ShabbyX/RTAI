@@ -60,7 +60,7 @@ void dump_stats(double sum, int total_hits)
 	/* compute std-deviation (unbiased form) */
 	variance /= total_hits - 1;
 	variance = sqrt(variance);
-
+	
 	printf("HSS| %9d| %10.3f| %10.3f\n", total_hits, avg, variance);
 }
 
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
                default:
 
                        fprintf(stderr, "usage: switch [options]\n"
-                               "\t-h             - enable histogram\n"
+                               "\t-h             - enable histogram\n" 
                                "\t-p <period_us> - timer period\n"
                                "\t-n <samples>   - number of samples to collect\n"
                                "\t-i <samples>   - number of _first_ samples to ignore\n");
@@ -221,7 +221,7 @@ int main(int argc, char **argv)
        setlinebuf(stdout);
 
        mlockall(MCL_CURRENT|MCL_FUTURE);
-
+       
        printf("== Sampling period: %llu us\n", sampling_period / 1000);
        printf("== Do not interrupt this program\n");
 

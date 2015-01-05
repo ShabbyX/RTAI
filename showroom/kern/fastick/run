@@ -1,16 +1,33 @@
 #!/bin/sh
+libpath=`rtai-config --library-dir`
+
+if [ "$libpath" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
+
 if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
 echo
 echo "*** FAST TICKING USING FIFOs (kernel) ***"
 echo "Press <enter> to load modules:"
 read junk
 cd ..; ./ldmod; cd -
+insmod /usr/vulcano/modules/rtai_hal.ko
+insmod /usr/vulcano/modules/rtai_fifos.ko
+for n in `seq 0 9`; do
+        f=/dev/rtf$n
+        if test \! -c $f; then
+                mknod -m 666 $f c 150 $n
+        fi
+done
 echo
 echo "Now start the realtime the fifo based fast ticking <enter>,"
 echo "<ctrl-C> to end it:>"
 read junk
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./fastick1_rt.ko;
 else insmod ./fastick1.o; fi
 ./display
@@ -21,7 +38,7 @@ echo "Now start the realtime the sysreq based fast ticking <enter>,"
 echo "<ctrl-C> to end it:>"
 read junk
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./fastick2_rt.ko;
 else insmod ./fastick2.o; fi
 ./display

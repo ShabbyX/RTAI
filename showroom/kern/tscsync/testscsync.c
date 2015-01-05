@@ -21,9 +21,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 	Hacked from arch/ia64/kernel/smpboot.c.
 */
 
+#include <linux/version.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/delay.h>
+
+#include <rtai.h>
 
 MODULE_LICENSE("GPL");
 
@@ -35,7 +38,7 @@ static inline long long readtsc(void)
 {
 	long long t;
 	__asm__ __volatile__("rdtsc" : "=A" (t));
-	return tune ? t - ofst[hard_smp_processor_id()] : t;
+	return tune ? t - ofst[rtai_cpuid()] : t;
 }
 
 #define MASTER	(0)
@@ -51,7 +54,7 @@ static void sync_master(void *arg)
 {
 	unsigned long flags, lflags, i;
 
-	if ((unsigned long)arg != hard_smp_processor_id()) {
+	if ((unsigned long)arg != rtai_cpuid()) {
 		return;
 	}
 
@@ -73,7 +76,7 @@ static inline long long get_delta (long long *rt, long long *master, unsigned in
 {
 	unsigned long long best_t0 = 0, best_t1 = ~0ULL, best_tm = 0;
 	unsigned long long tcenter, t0, t1, tm;
-	long i, lflags;
+	unsigned long i, lflags;
 
 	for (i = 0; i < NUM_ITERS; ++i) {
 		t0 = readtsc();
@@ -114,8 +117,11 @@ void rtai_sync_tsc (unsigned int master, unsigned int slave)
 	long long delta, rt, master_time_stamp;
 
 	go[MASTER] = 1;
-
-	if (smp_call_function(sync_master, (void *)master, 1, 0) < 0) {
+	if (smp_call_function(sync_master, (void *)master, 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,27)
+                                                           1,
+#endif
+                                                              0) < 0) {
 		printk(KERN_ERR "sync_tsc: failed to get attention of CPU %u!\n", master);
 		return;
 	}
@@ -156,6 +162,8 @@ static void kthread_fun(void *null)
 	}
 }
 
+#include <linux/kthread.h>
+
 #define NTERMS 100
 int init_module(void)
 {
@@ -166,7 +174,7 @@ int init_module(void)
 		 tt = readtsc();
 	}
 	readofst = ((long)(readtsc() - t))/NTERMS;
-	kernel_thread((void *)kthread_fun, NULL, 0);
+	kthread_run((void *)kthread_fun, NULL, "TSC_SYNC_CHECK");
 	return 0;
 }
 

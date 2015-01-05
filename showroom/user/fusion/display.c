@@ -26,7 +26,7 @@ void display(void *cookie)
 	while (!finished) {
 		smpl = NULL;
 		rt_queue_recv(&q, (void *)&smpl, TM_INFINITE);
-		if (smpl == NULL) continue;
+		if (smpl == NULL) continue; 
 		if (data_lines && (n++%data_lines) == 0) {
 			time_t now, dt;
 			time(&now);

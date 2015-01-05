@@ -59,7 +59,7 @@
 
 #ifndef __KERNEL__
 
-static inline void tmr_get_setup(int timer, int *period, int *freq)
+static inline void tmr_get_setup(int timer, int *period, int *freq) 
 {
 	struct { int timer, *period, *freq; } arg = { timer, period, freq };
 	rtai_lxrt(TMR_INDX, SIZARG, TMR_GET_SETUP, &arg);
@@ -77,7 +77,7 @@ static inline void tmr_stop(int timer)
 	rtai_lxrt(TMR_INDX, SIZARG, TMR_STOP, &arg);
 }
 
-static inline int tmr_get_isr_count(int timer)
+static inline int tmr_get_isr_count(int timer) 
 {
 	struct { int timer; } arg = { timer };
 	return rtai_lxrt(TMR_INDX, SIZARG, TMR_GET_ISR_COUNT, &arg).i[LOW];

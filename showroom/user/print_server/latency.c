@@ -62,7 +62,7 @@ static void async_callback(long syscall_nr, long retval)
 	struct pollfd ufds = { 0, POLLIN, };
 	printf("SYSCALL %ld, RETVAL %ld, ERRNO %d\n", syscall_nr, retval, retval < 0 ? errno : 0);
 	if (retval < 0) {
-		perror(NULL);
+		perror(NULL);	
 	}
 	if (poll(&ufds, 1, 1)) {
 		end = 1;
@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
 	close(fd);
 	rt_make_soft_real_time();
 	if (!hard_timer_running) {
-		stop_rt_timer();
+		stop_rt_timer();	
 	}
 	rt_get_exectime(task, exectime);
 	if (exectime[1] && exectime[2]) {

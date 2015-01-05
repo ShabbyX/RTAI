@@ -19,7 +19,7 @@ echo
 echo "Now start the msg clock <enter>."
 read junk
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then
 
 insmod ./dispclk_rt.ko;

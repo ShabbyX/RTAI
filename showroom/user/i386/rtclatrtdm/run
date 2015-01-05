@@ -36,7 +36,7 @@ fi
 echo
 echo "... <enter> again to end and to remove the modules."
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./irqlat_rt.ko;
 else insmod ./irqlat.o; fi
 echo

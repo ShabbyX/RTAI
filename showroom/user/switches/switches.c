@@ -33,9 +33,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #include <rtai_sem.h>
 #include <rtai_msg.h>
 
-#define LOOPS  1000
-#define NR_RT_TASKS 10
+#define LOOPS  2000
+#define NR_RT_TASKS 20
+#define CPUMSK 0x1
 #define taskname(x) (1000 + (x))
+
+#define RT_MAKE_HARD_REAL_TIME() rt_make_hard_real_time()
 
 static pthread_t thread[NR_RT_TASKS];
 
@@ -45,7 +48,7 @@ static SEM *sem;
 
 static int volatile hrt[NR_RT_TASKS], change, end;
 
-static int indx[NR_RT_TASKS];
+static int indx[NR_RT_TASKS];       
 
 static void *thread_fun(void *arg)
 {
@@ -55,13 +58,13 @@ static void *thread_fun(void *arg)
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 	mytask_indx = ((int *)arg)[0];
 	if (!(mytask[mytask_indx] = rt_thread_init(taskname(mytask_indx), 0, 0,
-SCHED_FIFO, 0x1))) {
+SCHED_FIFO, CPUMSK))) {
 		printf("CANNOT INIT TASK %u\n", taskname(mytask_indx));
 		exit(1);
 	}
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);
-	rt_make_hard_real_time();
+	RT_MAKE_HARD_REAL_TIME();
 	hrt[mytask_indx] = 1;
 	while (!end) {
 		switch (change) {
@@ -96,49 +99,49 @@ int main(void)
 {
 	RTIME tsr, tss, tsm, trpc;
 	RT_TASK *mainbuddy;
-	int i, k, s;
+	int i, k, s;       
 	unsigned long msg;
 
 	printf("\n\nWait for it ...\n");
-	if (!(mainbuddy = rt_thread_init(nam2num("MASTER"), 1000, 0, SCHED_FIFO, 0x1))) {
+	if (!(mainbuddy = rt_thread_init(nam2num("MASTER"), 1000, 0, SCHED_FIFO, CPUMSK))) {
 		printf("CANNOT INIT TASK %lu\n", nam2num("MASTER"));
 		exit(1);
 	}
 
-	sem = rt_sem_init(nam2num("SEMAPH"), 1);
+	sem = rt_sem_init(nam2num("SEMAPH"), 1); 
 	change =  0;
-
+	
 	for (i = 0; i < NR_RT_TASKS; i++) {
 		indx[i] = i;
 		if (!(thread[i] = rt_thread_create(thread_fun, indx + i, 0))) {
 			printf("ERROR IN CREATING THREAD %d\n", indx[i]);
 			exit(1);
- 		}
- 	}
+ 		}       
+ 	} 
 
 	do {
 		msleep(50);
-		s = 0;
+		s = 0;	
 		for (i = 0; i < NR_RT_TASKS; i++) {
 			s += hrt[i];
 		}
 	} while (s != NR_RT_TASKS);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
-
-	rt_make_hard_real_time();
+	
+	RT_MAKE_HARD_REAL_TIME();
 	tsr = rt_get_cpu_time_ns();
 	for (i = 0; i < LOOPS; i++) {
 		for (k = 0; k < NR_RT_TASKS; k++) {
 			rt_task_resume(mytask[k]);
-		}
-	}
+		} 
+	} 
 	tsr = rt_get_cpu_time_ns() - tsr;
 
 	change = 1;
 
 	for (k = 0; k < NR_RT_TASKS; k++) {
 		rt_task_resume(mytask[k]);
-	}
+	} 
 
 	tss = rt_get_cpu_time_ns();
 	for (i = 0; i < LOOPS; i++) {
@@ -199,10 +202,10 @@ int main(void)
 	end = 1;
 	for (i = 0; i < NR_RT_TASKS; i++) {
 		rt_rpc(mytask[i], 0, &msg);
-	}
+	} 
 	do {
 		msleep(50);
-		s = 0;
+		s = 0;	
 		for (i = 0; i < NR_RT_TASKS; i++) {
 			s += hrt[i];
 		}
@@ -213,6 +216,6 @@ int main(void)
 	for (i = 0; i < NR_RT_TASKS; i++) {
 		rt_thread_join(thread[i]);
 	}
-
+	
 	return 0;
 }

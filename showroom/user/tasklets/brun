@@ -19,7 +19,7 @@ echo "Press <enter> to load modules:"
 read junk
 cd ..; ./ldmod; cd -
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod $MODULES/rtai_tasklets.ko;
 else insmod $MODULES/rtai_tasklets.o; fi
 echo

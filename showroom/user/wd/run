@@ -24,7 +24,7 @@ echo "*** PREEMPTION CHECK (user) ***"
 echo "Press <enter> to load LXRT modules:"
 read junk
 cd ..; ./ldmod; cd -
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod $MODULES/rtai_wd.ko wd_OneShot=1;
 else insmod $MODULES/rtai_wd.o wd_OneShot=1; fi
 echo

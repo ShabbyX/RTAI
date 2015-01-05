@@ -21,13 +21,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
+#include <errno.h>
 
 #include <sys/poll.h>
 
-#include <rtai_lxrt.h>
+//#include <rtai_lxrt.h>
 
 int main(int argc, char *argv[])
 {
+	int pid, ret, errsv;
+
+	if (argc != 2) {
+		printf("\nNO TASK TO MAKE SOFT HAS BEEN GIVEN, USAGE:\nmakesoft <pid>.\n\n");
+		return 1;
+	}
+	pid = strtol(argv[1], (char **)NULL, 10);
+	ret = kill(pid, SIGUSR1);
+	errsv = errno;
+	printf("KILL RET %d %d %d\n", pid, ret, errsv);
+	return 0;
+#if 0
 	RT_TASK *mytask, *task;
 	int pid;
 
@@ -40,7 +53,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	pid = strtol(argv[1], (char **)NULL, 10);
-#if 0
+#if 0 // the previous way
 	printf("%s HARD LXRT REAL TIME TASK, PID = %d.\n", pid < 0 ? "TERMINATING" : "MAKING IT SOFT THE", pid);
 	rt_force_task_soft(abs(pid));
 	return 0;
@@ -53,10 +66,11 @@ int main(int argc, char *argv[])
 			kill(abs(pid), SIGKILL);
 		}
 		printf("HARD LXRT REAL TIME TASK, PID = %d, %s.\n", pid, pid < 0 ? "TERMINATED" : "MADE SOFT");
-	} else {
+	} else {	
 		printf("TASK PID: %d, NOT HARD REAL TIME OR FAKY.\n", pid);
 	}
 #endif
 	rt_task_delete(mytask);
+#endif
 	return 0;
 }

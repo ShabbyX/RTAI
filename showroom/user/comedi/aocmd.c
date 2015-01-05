@@ -49,7 +49,7 @@ static lsampl_t maxdata;
 
 static int init_board(void)
 {
-	dev = comedi_open("/dev/comedi0");
+	dev = comedi_open("/dev/comedi0");		
 	printf("Comedi device (6071) handle: %p.\n", dev);
 	if (!dev){
 		printf("Unable to open (6071) %s.\n", "/dev/comedi0");
@@ -72,7 +72,7 @@ int do_cmd(void)
 	int ret, i;
 	unsigned int chanlist[NCHAN];
 	unsigned int buf_write[NCHAN] = { 0, 1 };
-
+  
 	memset(&cmd, 0, sizeof(cmd));
 	for (i = 0; i < NCHAN; i++) {
 		chanlist[i] = CR_PACK(buf_write[i], AO_RANGE, AREF_GROUND);
@@ -85,7 +85,7 @@ int do_cmd(void)
 	cmd.start_arg = 0;
 
 	cmd.scan_begin_src = TRIG_TIMER;
-	cmd.scan_begin_arg = SAMP_TIME;
+	cmd.scan_begin_arg = SAMP_TIME; 
 
 	cmd.convert_src = TRIG_NOW;
 	cmd.convert_arg = 0;
@@ -95,12 +95,12 @@ int do_cmd(void)
 
 	cmd.stop_src = TRIG_NONE;
 	cmd.stop_arg = 0;
-
+	
 	cmd.chanlist = chanlist;
 	cmd.chanlist_len = NCHAN;
 
 	ret = comedi_command_test(dev, &cmd);
-	ret = comedi_command_test(dev, &cmd);
+	ret = comedi_command_test(dev, &cmd);		
 
 	if (ret) {
 		return ret;

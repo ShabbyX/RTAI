@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //#define DIAG_FLAGS  X86
 
 #ifdef DIAG_FLAGS
-
+ 
 #	if DIAG_FLAGS == X86
 #		define CHECK_FLAGS() do { \
  			unsigned long flags; \
@@ -37,9 +37,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #	else
 #		error "sorry, architecture is not supported"
 #	endif
-
+ 
 #else /* !DIAG_FLAGS */
-
+ 
 #	define CHECK_FLAGS()	do { /* nop */ } while (0)
-
+ 
 #endif /* DIAG_FLAGS */

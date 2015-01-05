@@ -14,7 +14,7 @@ latency: latency.c
 	$(CC) $(LXRT_CFLAGS) -o $@ $< $(LXRT_LDFLAGS) -llxrt
 
 display: display.c
-	$(CC) $(LXRT_CFLAGS) -o $@ $< $(LXRT_LDFLAGS)
+	$(CC) $(LXRT_CFLAGS) -o $@ $< $(LXRT_LDFLAGS) 
 clean:
 	rm -f *.o latency display
 

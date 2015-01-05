@@ -77,7 +77,7 @@ void latency (void *cookie)
     }
 
     err = rt_timer_inquire(&timer_info);
-
+    
     if (err)
         {
         fprintf(stderr,"latency: rt_timer_inquire, code %d\n",err);
@@ -423,7 +423,7 @@ int main (int argc, char **argv)
     histogram_max = calloc(histogram_size, sizeof(long));
     histogram_min = calloc(histogram_size, sizeof(long));
 
-    if (!(histogram_avg && histogram_max && histogram_min))
+    if (!(histogram_avg && histogram_max && histogram_min)) 
         cleanup_upon_sig(0);
 
     if (period_ns == 0)

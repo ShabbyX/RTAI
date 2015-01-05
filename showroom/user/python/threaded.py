@@ -29,7 +29,7 @@ def thread_fun(mytask_indx, null2) :
 	global cpus_allowed
 	sem = c_void_p()
 	mytask_name = taskname(mytask_indx)
-	cpus_allowed = 1 - cpus_allowed
+	cpus_allowed = 1 - cpus_allowed 
  	mytask = rt_task_init_schmod(mytask_name, 1, 0, 0, 0, 1 << cpus_allowed)
  	if mytask == NULL :
 		printf("CANNOT INIT TASK %lu\n", mytask_name)
@@ -68,7 +68,7 @@ def thread_fun(mytask_indx, null2) :
 	return
 
 
-indx = (c_int*NTASKS)()
+indx = (c_int*NTASKS)()       
 mytask_name = nam2num("MASTER")
 
 mytask = rt_task_init_schmod(mytask_name, 1, 0, 0, 0, 0xF)
@@ -77,7 +77,7 @@ if mytask == NULL :
 
 printf("MASTER INIT: name = %lu, address = %p.\n", mytask_name, mytask)
 
-sem = rt_sem_init(nam2num("SEM"), 0)
+sem = rt_sem_init(nam2num("SEM"), 0) 
 start_rt_timer(0)
 
 for i in range(0, ntasks) :

@@ -1,21 +1,21 @@
 /*  The mening of the defined macros is as follows:
  *  VECLEN:         The length of a singleprecision vector register
- *  vec_add:        Add to single precision vectors.
+ *  vec_add:        Add to single precision vectors. 
  *  vec_mul:        Multiply to single precision vectors.
  *  vec_mov:        Moves data around
  *  vec_mov1:       Load one element in a vector and zero all other entries!
  *  vec_splat:      Load one element relpicated in all positions in the vector.
- *  vec_load_apart: Load elements from different memory positions into a register.
+ *  vec_load_apart: Load elements from different memory positions into a register. 
  *  vec_sum:        Sums a register.
  *  vec_store_one:  Stores lowest element in vector to memory, no zero-extend!
  * Meaning of suffixes is as follows:
  *    mr means memory to register
- *    rr means register to register
+ *    rr means register to register 
  *    rm means register to memory
  *    a means that instruction needs aligned data
  *    1 means that the instructions only operates on the lowest element of the
  *      vector.
- *
+ * 
  * The _1 instructions work under one important assumption: That you never mix them
  * with regular instructions, e.g. loading into a register with a normal mov, and
  * then using add_rr_1 will not work under 3dnow! since it is in reality a normal add.
@@ -27,7 +27,7 @@
 
 
 /* Things to try:
- *    Non-temporal stores
+ *    Non-temporal stores 
  *    Sequences of instructions instead of movups
  *
  *
@@ -131,7 +131,7 @@
 #define gen_vec_rm(op,reg,mem) \
         __asm__ __volatile__ (#op " " #reg ", %0" \
                               : "=m" (((mem)[0])), "=m" (((mem)[1])), "=m" (((mem)[2])), "=m" (((mem)[3])) \
-                              :  /* nothing */ )
+                              :  /* nothing */ )                          
 
 
 
@@ -175,7 +175,7 @@
 #define vec_shuffle_wrap(mode,reg1,reg2) \
         __asm__ __volatile__ ("shufps " #mode ", " #reg1 ", " #reg2 \
 			      : /* nothing */\
-			      : /* nothing */)
+			      : /* nothing */) 
 
 /* Hack! */
 /* To use this instruction be sure that register 7 is not in use!!! */
@@ -189,9 +189,9 @@
                               "shufps $1, " #reg ", %%xmm7\n"\
     			      "addss %%xmm7, " #reg "\n"\
 			      : /* nothing */\
-			      : /* nothing */)
+			      : /* nothing */) 
 
-
+     
 #define vec_splat(mem,reg)      vec_splat_wrap(mem,reg)
 #define vec_splat_wrap(mem,reg) \
         __asm__ __volatile__ ("movss %0, " #reg "\n"\
@@ -217,7 +217,7 @@
 			    "shufps $0xee," #reg2 "," #regout "\n"\
 			    "addps  " #reg0 "," #regout "\n"\
 			    : /* nothing */  \
-			    : /* nothing */)
+			    : /* nothing */)			    
 
 
 
@@ -248,7 +248,7 @@ typedef float vector[VECLEN];
 #define gen_vec_rm(op,reg,mem) \
         __asm__ __volatile__ (#op " " #reg ", %0" \
                               : "=m" (((mem)[0])), "=m" (((mem)[1])) \
-                              :  /* nothing */ )
+                              :  /* nothing */ )                          
 
 
 
@@ -301,7 +301,7 @@ typedef float vector[VECLEN];
         __asm__ __volatile__ ("movhlps " #reg ", %%xmm7\n"\
     			      "addpd %%xmm7, " #reg "\n"\
 			      : /* nothing */\
-			      : /* nothing */)
+			      : /* nothing */) 
 
 #define vec_sum_full(reg1,reg2,empty1) vec_sum_full_wrap(reg1,reg2,empty1)
 #define vec_sum_full_wrap(reg1,reg2,empty1) \
@@ -309,9 +309,9 @@ typedef float vector[VECLEN];
                               "movlhps " #reg2 ", " #empty1 "\n"\
     			      "addpd " #empty1 ", " #reg1 "\n"\
 			      : /* nothing */\
-			      : /* nothing */)
+			      : /* nothing */) 
 
-
+     
 typedef double vector[VECLEN];
 
 #endif
@@ -341,7 +341,7 @@ typedef double vector[VECLEN];
 #define gen_vec_rm(op,reg,mem) \
         __asm__ __volatile__ (#op " " #reg ", %0" \
                               : "=m" (((mem)[0])), "=m" (((mem)[1])) \
-			      :  /* nothing */ )
+			      :  /* nothing */ )                            
 
 
 
@@ -393,7 +393,7 @@ typedef double vector[VECLEN];
                               : "m" ((mem1)[0]), "m" (((mem2)[0])))
 
 
-#define vec_zero(reg)           gen_vec_rr(pxor,reg,reg)
+#define vec_zero(reg)           gen_vec_rr(pxor,reg,reg)     
 
 #define vec_enter()             __asm__ __volatile__ ("femms")
 #define vec_exit()              __asm__ __volatile__ ("femms")
@@ -455,7 +455,7 @@ typedef float vector[VECLEN];
 #define gen_vec_rm(op,reg,mem) \
         __asm__ __volatile__ (#op " " #reg ", %0" \
                               : "=m" (((mem)[0])), "=m" (((mem)[1])), "=m" (((mem)[2])), "=m" (((mem)[3])) \
-                              :  /* nothing */ )
+                              :  /* nothing */ )                          
 
 
 #define gen_alti3(op,reg1,reg2,regout) \
@@ -510,7 +510,7 @@ high = vec_sel(v, high, mask); \
 vec_st(low,  0, (where)); \
 vec_st(high, 16, (where))
 
-#define vec_mov_mr_a(mem,reg)  reg = vec_ld(0, mem)
+#define vec_mov_mr_a(mem,reg)  reg = vec_ld(0, mem) 
 
 #define vec_mov_mr(u,v) \
 p_vector = (vector unsigned char)vec_lvsl(0, (int*)(v)); \
@@ -531,6 +531,7 @@ regout = vec_add(empty0,empty1)
 
 
 #endif /* ALTIVEC_C */
+
 
 
 

@@ -37,11 +37,11 @@ static int close_file( int fd, unsigned char *name)
 	do {
 		i++;
 		ret = rt_dev_close(fd);
-		switch(-ret) {
+		switch(-ret) { 
 			case EBADF:
 				printf("%s -> invalid fd or context\n",name);
 				break;
-			case EAGAIN:
+			case EAGAIN: 
 				printf("%s -> EAGAIN (%d times)\n",name,i);
 				rt_sleep(nano2count(50000)); // wait 50us
 				break;
@@ -59,7 +59,7 @@ static int close_file( int fd, unsigned char *name)
 /**********************************************************/
 /*            CLEANING UP                                 */
 /**********************************************************/
-void cleanup_all(void)
+void cleanup_all(void) 
 {
 	if (my_state & STATE_FILE_OPENED) {
 		close_file( my_fd, DEV_FILE " (user)");
@@ -104,7 +104,7 @@ void my_task_proc(void *arg)
 #endif
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);
-
+    
 	counter = 0;
 	while (1) {
 		if (++counter >= (BUFFER_SIZE/sizeof(int))) {
@@ -138,7 +138,7 @@ void my_task_proc(void *arg)
  		}
 
   		if (shutdownnow == 1) break;
-
+    
 		rt_make_soft_real_time();
 #ifdef USEMMAP
 		mmappointer[counter] = counter;

@@ -31,10 +31,10 @@ read junk
 sync
 cd ../; ./ldmod; cd -
 if (`rtai-config --linux-version | grep -q 2.6`);
-then
+then 
 insmod ./sysreq_rt.ko;
-else
-insmod ./sysreq.o;
+else 
+insmod ./sysreq.o; 
 fi
 ./display
 echo

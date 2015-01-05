@@ -76,7 +76,7 @@ static const struct rtser_config write_config = {
 static int close_file( int fd, char *name)
 {
 	int err, i=0;
-
+	
 	do {
 		i++;
 		err = rt_dev_close(fd);
@@ -105,18 +105,18 @@ void cleanup_all(void)
 		close_file(read_fd, READ_FILE" (read)");
 		read_state &= ~STATE_FILE_OPENED;
 	}
-
+	
 	if (write_state & STATE_FILE_OPENED) {
 		close_file(write_fd, WRITE_FILE " (write)");
 		write_state &= ~STATE_FILE_OPENED;
 	}
-
+	
 	if (write_state & STATE_TASK_CREATED) {
 		printf(MAIN_PREFIX "delete write_task\n");
 //		rt_task_delete(&write_task);
 		write_state &= ~STATE_TASK_CREATED;
 	}
-
+	
 	if (read_state & STATE_TASK_CREATED) {
 		printf(MAIN_PREFIX "delete read_task\n");
 		rt_task_delete(&read_task);
@@ -154,7 +154,7 @@ void write_task_proc(void *arg)
 			       strerror(-err));
 			break;
 		}
-
+	
 		write_time = rt_timer_read();
 
 		written = rt_dev_write(write_fd, &write_time, sz);
@@ -187,7 +187,7 @@ void read_task_proc(void *arg)
 	ssize_t sz = sizeof(RTIME);
 	ssize_t read = 0;
 	struct rtser_event rx_event;
-
+	
 	printf(" Nr |   write->irq    |    irq->read    |   write->read   |\n");
 	printf("-----------------------------------------------------------\n");
 

@@ -67,7 +67,7 @@ static unsigned long long reterr[] = {
 };
 
 /*
- * our demo error function that does call the original function
+ * our demo error function that does call the original function 
  * (not in case of error :-)
  */
 static long long errfun(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9)
@@ -76,11 +76,11 @@ static long long errfun(int a1, int a2, int a3, int a4, int a5, int a6, int a7, 
 }
 
 /*
- * enquiring for a netrpc proper error: a positive return confirms a net_rpc
- * error, decremented by one indexes into the call table of net_rpc, thus
- * letting we know the API that went wrong; using zero for "port" it is
- * possible to enquire on errors for ports requests also, in which case a
- * negative value is returned
+ * enquiring for a netrpc proper error: a positive return confirms a net_rpc 
+ * error, decremented by one indexes into the call table of net_rpc, thus 
+ * letting we know the API that went wrong; using zero for "port" it is 
+ * possible to enquire on errors for ports requests also, in which case a 
+ * negative value is returned 
  */
 int rt_netrpc_errenq(int port)
 {
@@ -133,7 +133,7 @@ static int encode(struct portslot_t *portslotp, long *msg, int size, int where)
 {
 /*
  * encodeing is done on locally built messages; so no error should be in them;
- * we need just to checksum and remember the function request; in case of an
+ * we need just to checksum and remember the function request; in case of an 
  * error on the net we can use this index to return an appropriate value if
  * and when enquired, so: ...
  */
@@ -153,7 +153,7 @@ static int encode(struct portslot_t *portslotp, long *msg, int size, int where)
  */
 		if (!EXT(msg[4])) {
 /*
- * save the index in the fuction calls table, incremented by 1 to distinguish
+ * save the index in the fuction calls table, incremented by 1 to distinguish 
  * the zero indexed function from nothing
  */
 			funindx[portslotp->indx] = FUN(msg[4]) + 1;
@@ -206,8 +206,8 @@ static int decode(struct portslot_t *portslotp, long *msg, int size, int where)
 			break;
 		}
 /*
- * a port request has returned with whatever error, we could inform the
- * user as below; in our case it is commented and we do nothing because the
+ * a port request has returned with whatever error, we could inform the 
+ * user as below; in our case it is commented and we do nothing because the 
  * execution was forced to be OK anyhow
  */
 		case PRT_RCV: {
@@ -223,7 +223,7 @@ static int decode(struct portslot_t *portslotp, long *msg, int size, int where)
 /*
  * in case of a wrong msg we can ask the execution of a function of ours
  * the related msg build up can be copied from rt_net_rpc; here we execute
- * just the original request through our function (memorising it in an unused
+ * just the original request through our function (memorising it in an unused 
  * arg) ...
  */
 		case RPC_SRV: {
@@ -242,8 +242,8 @@ static int decode(struct portslot_t *portslotp, long *msg, int size, int where)
  */
 		}
 /*
- * an rpc request has returned with whatever error, we could inform the
- * user as below; in our case it is commented and we do nothing because the
+ * an rpc request has returned with whatever error, we could inform the 
+ * user as below; in our case it is commented and we do nothing because the 
  * execution was forced to be OK anyhow
  */
 		case RPC_RCV: {

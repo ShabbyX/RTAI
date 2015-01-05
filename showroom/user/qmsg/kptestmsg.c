@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 2005  Paolo Mantegazza (mantegazza@aero.polimi.it)
+COPYRIGHT (C) 2005-2013  Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 */
 
 
-#include <linux/config.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/module.h>
@@ -47,7 +46,7 @@ static double randu(void)
 	return (-1.0 + (double)(i + i)/2796203.0);
 }
 
-static void mfun(int t)
+static void mfun(long t)
 {
 	char tname[6] = "MFUN", mname[6] = "RMBX";
 	RT_MSGQ *smbx, *rmbx;
@@ -66,7 +65,7 @@ static void mfun(int t)
 	while (end < t) {
 		msg[MAXSIZ] = 0;
 		for (i = 1; i < MAXSIZ; i++) {
-			msg[MAXSIZ] += (msg[i] = MAXSIZ*randu());
+			msg[MAXSIZ] += (msg[i] = MAXSIZ*randu()); 
 		}
 		if (rt_msg_send(smbx, msg, sizeof(int)*(MAXSIZ + 1), 1)) {
 			rt_printk("SEND FAILED, TASK: %d\n", t);
@@ -85,15 +84,13 @@ static void mfun(int t)
 //		rt_printk("TASK: %d, OK (%d).\n", t, cnt[t]);
 		rt_sleep(nano2count(SLEEP_TIME));
 	}
-prem:
+prem: 
 	rt_free(msg);
 	rt_printk("TASK %d ENDS.\n", t);
 }
 
 static RT_MSGQ *smbx, *rmbx[NTASKS];
 static RT_TASK mthread[NTASKS];
-
-extern int rt_kthread_init(RT_TASK *, void *, int, int, int, int, int);
 
 int init_module(void)
 {
@@ -135,7 +132,7 @@ void cleanup_module(void)
 
 	for (i = 0; i < NTASKS; i++) {
 		rt_named_msgq_delete(rmbx[i]);
-		printk("TASK %d, LOOPS: %d.\n", i, cnt[i]);
+		printk("TASK %d, LOOPS: %d.\n", i, cnt[i]); 
 	}
 	rt_named_msgq_delete(smbx);
 

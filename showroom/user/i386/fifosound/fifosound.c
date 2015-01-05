@@ -77,7 +77,7 @@ static void *intr_handler(void *args)
 	while(!end) {
 		if (rtf_get(playfifo, &data, 1) > 0) {
 			data = filter(data);
-			temp = inb(PORT_ADR);
+			temp = inb(PORT_ADR);            
 			temp &= 0xfd;
 			temp |= (data & 1) << 1;
 			outb(temp, PORT_ADR);
@@ -85,7 +85,7 @@ static void *intr_handler(void *args)
 		rt_task_wait_period();
 		if (rtf_get(cntrfifo, &data, 1) > 0) {
 			break;
-		}
+		} 
 	}
 
 	rt_make_soft_real_time();
@@ -127,14 +127,14 @@ int main(void)
 	read(cntrfifo, &data, 1);
 	printf("\nINIT MASTER TASK\n\n(CTRL-C TO END EVERYTHING)\n");
 
-	while (!end) {
+	while (!end) {	
 		lseek(player, 0, SEEK_SET);
 		while(!end && read(player, &data, 1) > 0) {
 			write(playfifo, &data, 1);
 		}
 	}
 
-	write(cntrfifo, &data, 1);
+	write(cntrfifo, &data, 1); 
 	close(playfifo);
 	close(cntrfifo);
 	close(player);

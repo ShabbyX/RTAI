@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <unistd.h>
 
+#include <rtai_nam2num.h>
 #include <rtai_scb.h>
 
 #define BUFSIZE 512
@@ -26,7 +27,7 @@ int main(void)
 		exit(1);
 	}
 
-	while (!end) {
+	while (!end) {	
 		lseek(player, 0, SEEK_SET);
                 while(!end && (cnt = read(player, data, BUFSIZE)) > 0) {
                         while (!end && rt_scb_put(scb, data, cnt));

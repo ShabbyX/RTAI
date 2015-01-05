@@ -19,7 +19,7 @@ def taskname(x) :
 
 mytask = (c_void_p*NR_RT_TASKS)()
 hrt = (c_long*NR_RT_TASKS)()
-indx = (c_long*NR_RT_TASKS)()
+indx = (c_long*NR_RT_TASKS)()       
 
 change = 0
 end = False
@@ -68,11 +68,11 @@ for i in range(0, NR_RT_TASKS) :
 s = 0
 while s != NR_RT_TASKS :
 	msleep(50)
-	s = 0
+	s = 0	
 	for i in range (0, NR_RT_TASKS) :
 		s += hrt[i]
 
-sem = rt_sem_init(nam2num("SEMAPH"), 1)
+sem = rt_sem_init(nam2num("SEMAPH"), 1) 
 change = 0
 
 print "TESTING WITH", NR_RT_TASKS, "TASKS."

@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 	int isr_cnt[isr_lat_range + 1], sched_cnt[sched_lat_range + 1];
 	int i, k;
 	struct { int isr; int sched; } latency;
-	FILE *latency_file;
+	FILE *latency_file; 
 
 	signal(SIGINT, endme);
 
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 
 	rt_make_soft_real_time();
 	rt_task_delete(reptsk);
-
+	
 	if (!(latency_file = fopen( "latencies.txt", "w+"))) {
 		printf( "Error opening file: latencies.txt.\n");
 		return 1;

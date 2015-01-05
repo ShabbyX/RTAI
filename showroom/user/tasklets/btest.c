@@ -57,7 +57,7 @@ int main(void)
 		puts(" ERROR IN SETTING THE SCHEDULER UP");
 		perror("errno");
 		exit(0);
- 	}
+ 	}       
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
 	start_rt_timer(0);

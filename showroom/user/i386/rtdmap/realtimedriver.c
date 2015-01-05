@@ -70,7 +70,7 @@ static int demo_interrupt(rtdm_irq_t *irq_context)
     rtdm_event_signal(&ctx->irq_event);
 #endif
     events++;
-
+        
     rtdm_lock_put(&ctx->lock);
     // those return values were dropped from the RTDM
     // ret = RTDM_IRQ_ENABLE | RTDM_IRQ_PROPAGATE;
@@ -100,7 +100,7 @@ int demo_open_rt(struct rtdm_dev_context    *context,
 #endif
     int dev_id = context->device->device_id;
     int ret;
-
+    
     // get the context for our driver - used to store driver info
     my_context = (struct demodrv_context *)context->dev_private;
 
@@ -213,7 +213,7 @@ int demo_ioctl_rt(struct rtdm_dev_context   *context,
         case MMAP: // set mmap pointer
 #ifdef USEMMAP
           printk("buf = %p:%x\n", my_context->buf, *(int *)my_context->buf);
-
+      
           err = rtdm_mmap_to_user(user_info, my_context->buf, BUFFER_SIZE,
                               PROT_READ|PROT_WRITE, (void **)arg, &mmap_ops,
                               (void *)0x12345678);

@@ -10,7 +10,7 @@ LXRT_CFLAGS = $(shell rtai-config --lxrt-cflags)
 
 all:: latency
 
-ifneq ($(findstring 2.6.,$(shell rtai-config --linux-version 2>/dev/null)),)
+ifneq ($(findstring 2.6.,$(shell rtai-config --linux-version 2>/dev/null)) || $(findstring 3.,$(shell rtai-config --linux-version 3>/dev/null)),)
 
 LINUX_DIR = $(shell rtai-config --linux-dir)
 
@@ -22,7 +22,7 @@ all::
 #	$(MAKE) -C $(LINUX_DIR) CC=$(CC) SUBDIRS=$$PWD V=$(V) modules
 
 clean::
-	$(RM) $(LINUX_DIR)/.tmp_versions/*_rt.mod *.o *.ko *.mod.c .*.cmd
+	$(RM) $(LINUX_DIR)/.tmp_versions/*_rt.mod *.o *.ko *.mod.c .*.cmd *.order *.symvers
 
 else
 

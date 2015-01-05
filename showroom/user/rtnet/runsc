@@ -25,8 +25,9 @@ echo "Now start the realtime process <enter> and wait for its end:"
 read junk
 /usr/rtnet/examples/rtai/rtnet_ifs
 /usr/rtnet/examples/rtai/simpleserver 5000 &
-usleep 100000
+sleep 0.05
 /usr/rtnet/examples/rtai/simpleclient 5000 127.0.0.1 5000
+/usr/rtnet/examples/rtai/simpleclient 5000 127.0.0.1 5000 50 50
 echo
 echo "Done. Press <enter> to remove the modules."
 read junk

@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 2002-2008  Paolo Mantegazza (mantegazza@aero.polimi.it)
+COPYRIGHT (C) 2002-2013  Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -52,13 +52,15 @@ static void timer_handler(unsigned long data)
 	CHECK_FLAGS();
 	while ((ovr = rt_irq_wait_if(TIMER_IRQ)) > 0) {
 		if (ovr == RT_IRQ_TASK_ERR) return;
-		if (ovr > 0) {
+		if (ovr > 0) {	
 			/* overrun processing, if any, goes here */
 			rt_sem_signal(dspsem);
 		}
 	}
+	do {
 	/* normal processing goes here */
-	intcnt++;
+		++intcnt;
+	} while(0);
 	rtc_enable_irq(TIMER_IRQ, TIMER_FRQ);
 	rt_sem_signal(dspsem);
 }

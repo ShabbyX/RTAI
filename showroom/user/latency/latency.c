@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #define TIMER_MODE  0
 #define SOLO        0
 
-#define SMPLSXAVRG ((1000000000*AVRGTIME)/PERIOD)/1
+#define SMPLSXAVRG ((1000000000*AVRGTIME)/PERIOD)/100
 
 #define MAXDIM 10
 static double a[MAXDIM], b[MAXDIM];
@@ -48,6 +48,13 @@ static double dot(double *a, double *b, int n)
                 s = s + a[k]*b[k];
         }
 	return s;
+}
+
+#define MAXIO 3
+static void do_some_io(void)
+{
+	int k = MAXIO;
+	for(; k >= 0; k--) outb(1, 0x378);
 }
 
 static volatile int end;
@@ -149,6 +156,7 @@ int main(int argc, char *argv[])
 			}
 			average += diff;
 			s = dot(a, b, MAXDIM);
+			do_some_io();
 			if (fabs((s - sref)/sref) > 1.0e-15) {
 				printf("\nDOT PRODUCT RESULT = %20.16e %20.16e %20.16e\n", s, sref, fabs((s - sref)/sref));
 				return 0;
@@ -175,7 +183,7 @@ int main(int argc, char *argv[])
 	}
 	rt_make_soft_real_time();
 	if (!hard_timer_running) {
-		stop_rt_timer();
+		stop_rt_timer();	
 	}
 	rt_get_exectime(task, exectime);
 	if (exectime[1] && exectime[2]) {

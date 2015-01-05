@@ -2,7 +2,7 @@
 Typed mailboxes module for RTAI -  Examples
 
 ------------------------------------------------------------------------------
-COPYRIGHT (C) 2001  G.M. Bertani (gmbertani@yahoo.it)
+COPYRIGHT (C) 2001  G.M. Bertani (gmbertani@yahoo.it) 
                     (http://www.geocities.com/gmbertani)
 
 This library is free software; you can redistribute it and/or
@@ -22,8 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
 Here there are four little examples that I used to test the TBX functionality.
-All these examples creates one TBX and 7 tasks: task1 sends ordinary messages,
-task4 sends broadcasting messages and task7 sends urgent messages.
+All these examples creates one TBX and 7 tasks: task1 sends ordinary messages, 
+task4 sends broadcasting messages and task7 sends urgent messages. 
 All the other tasks read from the same TBX and print the results on console.
 
 
@@ -34,7 +34,7 @@ of the source task. The fourth (./runu) is test 2 in user space.
 In the head of the file there are some #defines that could be modified, if you
 like it, to see what happens.
 
-After MAXCOUNT messages sent, the sending tasks stops.
+After MAXCOUNT messages sent, the sending tasks stops.  
 
 These examples generate a lot of printk() on console, but you can read them
 from /var/log/messages when the test finishes.

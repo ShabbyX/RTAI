@@ -62,7 +62,7 @@ static void mfun(int t)
 	while (end < t) {
 		msg[MAXSIZ] = 0;
 		for (i = 1; i < MAXSIZ; i++) {
-			msg[MAXSIZ] += (msg[i] = MAXSIZ*randu());
+			msg[MAXSIZ] += (msg[i] = MAXSIZ*randu()); 
 		}
 		if (rt_msgsnd_nu(smbx, 1, msg, sizeof(msg), 0)) {
 			rt_printk("SEND FAILED, TASK: %d\n", t);
@@ -81,7 +81,7 @@ static void mfun(int t)
 //		rt_printk("TASK: %d, OK (%d).\n", t, cnt[t]);
 		rt_sleep(nano2count(SLEEP_TIME));
 	}
-prem:
+prem: 
 	rt_make_soft_real_time();
 	rt_task_delete(mytask);
 	printf("TASK %d ENDS.\n", t);
@@ -165,7 +165,7 @@ int main(void)
 
 	for (i = 0; i < NTASKS; i++) {
 		rt_msgctl(rmbx[i], IPC_RMID, NULL);
-		printf("TASK %d, LOOPS: %d.\n", i, cnt[i]);
+		printf("TASK %d, LOOPS: %d.\n", i, cnt[i]); 
 	}
 	rt_msgctl(smbx, IPC_RMID, NULL);
 

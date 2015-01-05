@@ -44,7 +44,7 @@ static void rt_timer_tick(void)
 			rt_times.linux_time += rt_times.linux_tick;
 		}
 		rt_pend_linux_irq(TIMER_8254_IRQ);
-	}
+	} 
 }
 
 
@@ -52,7 +52,7 @@ int init_module(void)
 {
 	rtf_create_using_bh(CMDF, 4, 0);
 	rt_mount_rtai();
-	rt_request_timer(rt_timer_tick, imuldiv(TICK, FREQ_8254, 1000000000), 0);
+	rt_request_timer(rt_timer_tick, imuldiv(TICK, FREQ_8254, 1000000000), 0); 
 	return 0;
 }
 

@@ -28,7 +28,7 @@
 #define RUNNABLE_ON_CPUS 3
 #define RUN_ON_CPUS (num_online_cpus() > 1 ? RUNNABLE_ON_CPUS : 1)
 
-#define TIMER_TO_CPU 3
+#define TIMER_TO_CPU 3  
 // < 0 || > 1 to maintain a symmetrically processed timer
 
 #define STACK_SIZE 2000

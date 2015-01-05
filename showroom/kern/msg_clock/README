@@ -10,6 +10,6 @@ make clean
 make
 ./run
 
-then follow the menu.
+then follow the menu. 
 
 Alternatively use "make insmod" to lauch and "make rmmod" to remove it.

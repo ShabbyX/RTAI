@@ -10,17 +10,17 @@ fi
 export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
 
 if [ $UID != 0 ]; then SUDO='sudo '; else SUDO=''; fi
-echo
+echo 
 echo "*** SOUND USING FIFO (user) ***"
 echo "Press enter to load lxrt module:"
 read junk
 cd ../..; ./ldmod; cd -
-echo
+echo 
 echo "Now press <enter> to run the RT program:"
 read junk
 sync
 $SUDO ./fifosound
-echo
+echo 
 echo "To remove the modules, press <enter>:"
 read junk
 ./rem

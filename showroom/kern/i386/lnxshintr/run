@@ -13,16 +13,18 @@ echo
 echo "*** HEARTBEAT (kernel) ***"
 echo "Press <enter> to load modules:"
 read junk
-cd ../..; ./ldmod; cd -
+#cd ../..; ./ldmod; cd -
 sync
 echo
 echo "Now start the realtime process <enter> and wait for its end."
 read junk
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
-then
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
+then 
+insmod $MODULES/rtai_hal.ko;
 insmod ./lnxshintr_rt.ko;
-else
+else 
+insmod $MODULES/rtai_hal.o;
 insmod ./lnxshintr.o;
 fi
 

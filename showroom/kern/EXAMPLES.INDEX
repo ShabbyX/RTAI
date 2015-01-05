@@ -5,14 +5,14 @@ condtest: RTAI conditionnal variable test.
 
 edf: a simple check of Early Deadline First (EDF) scheduling.
 
-fastick: simulate a higher frequency Linux tick for a task communicating with
+fastick: simulate a higher frequency Linux tick for a task communicating with 
          a real time task or an interrupt handler through a fifo.
 
-fp: demonstrates the support of floating point operations in real-time tasks
+fp: demonstrates the support of floating point operations in real-time tasks 
     by calculating a sine in a real time tasks that preempts a user process
     carrying out floating point operations.
 
-jitter_free_sw: NTASKS realtime tasks running periodically in oneshot mode,
+jitter_free_sw: NTASKS realtime tasks running periodically in oneshot mode, 
                 produce a rectangular wave on the parallel port. It anticipates
                 the square wave transition times, then keeps polling on the
                 timer to get a very precise switch.
@@ -33,20 +33,20 @@ netrpc: a few examples to demonstrate netrpc usage.
 
 pqueue: posix queues at work as just another generic RTAI buffered IPC.
 
-prempstress: test to verify that a fast high priority task preempts a long
-	     lasting lower priority one (use of rt_busy_sleep to make a
-	     compute intensive long task) combined with the latency calibration
-	     in testsuite aimed at verifying that the schedulers do well under
+prempstress: test to verify that a fast high priority task preempts a long 
+	     lasting lower priority one (use of rt_busy_sleep to make a 
+	     compute intensive long task) combined with the latency calibration 
+	     in testsuite aimed at verifying that the schedulers do well under 
 	     intense load.
 
 prioinhr: demonstrates how priority inheritance works in the case of the
           standard low/medium/high priority tasks.
 
-res-mtx_sem: demonstrates priority inheritance and priority queueing when
+res-mtx_sem: demonstrates priority inheritance and priority queueing when 
 	     resource semaphores are used.
 
-resumefromintr: shows two ways for waking up real time tasks directly from
-                interrupt handlers, using both semaphore wait/signal and
+resumefromintr: shows two ways for waking up real time tasks directly from 
+                interrupt handlers, using both semaphore wait/signal and 
                 rt_task_resume.
 
 rndrob: shows the working of Round Robin (RR) scheduling.
@@ -55,14 +55,14 @@ rwlocks: RTAI reader-writers locks at work.
 
 sem_clock: use of semaphores to implement a digital clock.
 
-sound: uses a real time task and not an interrupt handler to produce sound on
+sound: uses a real time task and not an interrupt handler to produce sound on 
        the PC speaker.
 
 splocks: RTAI recursive spinlock usable by tasks.
 
-sysreq: interrupt handler to simulate a higher tick for a Linux process
-        communicating with RTAI by using full two way rtai system requests.
-        It is similar to rt_process2 in fastick directory but does not need
+sysreq: interrupt handler to simulate a higher tick for a Linux process 
+        communicating with RTAI by using full two way rtai system requests. 
+        It is similar to rt_process2 in fastick directory but does not need 
         to use fifos.
 tasklets: a couple of examples to show RTAI tasklets/timers usage.
 

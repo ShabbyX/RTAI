@@ -10,7 +10,7 @@ LXRT_CFLAGS = $(shell rtai-config --lxrt-cflags)
 
 all:: display
 
-ifneq ($(findstring 2.6.,$(shell rtai-config --linux-version 2>/dev/null)),)
+ifneq ($(findstring 3.,$(shell rtai-config --linux-version 2>/dev/null)),)
 
 LINUX_DIR = $(shell rtai-config --linux-dir)
 
@@ -22,15 +22,23 @@ clean::
 
 else
 
-MODULE_CFLAGS = $(shell rtai-config --module-cflags)
+LINUX_DIR = $(shell rtai-config --linux-dir)
 
-all:: sysreq.o
-
-sysreq.o: sysreq.c
-	$(CC) $(MODULE_CFLAGS) -c $<
+all::
+	$(MAKE) -C $(LINUX_DIR) CC=$(CC) SUBDIRS=$$PWD V=$(V) modules
 
 clean::
-	$(RM) *.o
+	$(RM) $(LINUX_DIR)/.tmp_versions/*_rt.mod *.o *.ko *.mod.c .*.cmd
+
+#MODULE_CFLAGS = $(shell rtai-config --module-cflags)
+
+#all:: sysreq.o
+
+#sysreq.o: sysreq.c
+#	$(CC) $(MODULE_CFLAGS) -c $<
+
+#clean::
+#	$(RM) *.o
 
 endif
 

@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 	RT_TASK *clt;
 	char msg[512], rep[512];
 
-	// Give a lower priority than SRV and proxy.
+	// Give a lower priority than SRV and proxy.	
  	if (!(clt = rt_task_init_schmod(clt_name, 1, 0, 0, SCHED_FIFO, 0x1))) {
 		PRINTF("CANNOT INIT CLIENT TASK\n");
 		exit(3);

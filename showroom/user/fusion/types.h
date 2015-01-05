@@ -27,16 +27,16 @@
 #define SEM_TIMOUT  (0xFFFE)
 #define MSG_ERR     ((void *)0x3FFFFFFF)
 
-#define PRIO_Q    0
-#define FIFO_Q    4
+#define PRIO_Q    0 
+#define FIFO_Q    4 
 #define RES_Q     3
 
-#define BIN_SEM   1
-#define CNT_SEM   2
+#define BIN_SEM   1 
+#define CNT_SEM   2 
 #define RES_SEM   3
 
-#define RT_SCHED_FIFO  0
-#define RT_SCHED_RR    1
+#define RT_SCHED_FIFO  0 
+#define RT_SCHED_RR    1 
 
 typedef unsigned long long RTIME;
 

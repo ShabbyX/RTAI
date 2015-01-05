@@ -17,7 +17,7 @@
 */
 
 
-/*
+/* 
  * RtnetTest core module
  */
 #include <linux/kernel.h>
@@ -30,10 +30,17 @@
 #include <rtai_mbx.h>
 #include </usr/rtnet/include/rtnet.h>
 
+#define USESEL    0
 #define UDPPORT 55555
 #define WORKCYCLE 100000
 #define CPU 1
 #define STKSIZ 8192
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)
+#define __FD_ZERO__ __FD_ZERO
+#define __FD_SET__ __FD_SET
+#define __FD_ISSET__ __FD_ISSET
+#endif
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Bernhard Pfund <bernhard@chapter7.ch>");
@@ -67,12 +74,14 @@ static void receiver(long nothing)
 	rt_printk("RtnetTest: Receiver task initialised\n");
 
 	while(!end) {
-		FD_ZERO(&rxfds);
-		FD_SET(sock, &rxfds);
+#if USESEL
+		__FD_ZERO__(&rxfds);
+		__FD_SET__(sock, &rxfds);
 		ready = 0;
 
 		ready = rt_dev_select(sock + 1, &rxfds, NULL, NULL, timeout);
-		if (ready > 0 && FD_ISSET(sock, &rxfds)) {
+#endif
+		if (!USESEL || (ready > 0 && __FD_ISSET__(sock, &rxfds))) {
 
 			rlen = rt_dev_recvfrom(sock, buffer_in, sizeof(buffer_in), 0, (struct sockaddr*) &rx_addr, &fromlen);
 
@@ -135,7 +144,6 @@ static void sender(long nothing)
 static int _init(void)
 {
 	int broadcast = 1;
-	int64_t timeout = -1;
 
 	rt_printk("RtnetTest: Module initialisation started\n");
 
@@ -167,7 +175,10 @@ static int _init(void)
 		goto close_socks;
 	}
 
-	rt_dev_ioctl(sock, RTNET_RTIOC_TIMEOUT, &timeout);
+	if (USESEL) {
+		int64_t timeout = -1;
+		rt_dev_ioctl(sock, RTNET_RTIOC_TIMEOUT, &timeout);
+	}
 
 	if (rt_dev_bind(sock, (struct sockaddr *) &loc_addr, sizeof(struct sockaddr_in)) < 0) {
 		rt_printk("RtnetTest: Can't bind the network socket");
@@ -192,10 +203,12 @@ static int _init(void)
 		goto close_socks;
 	}
 
+#if 1
 	if (rt_task_resume(&rx_task) < 0) {
 		rt_printk("RtnetTest: Can't start the receiver task");
 		goto close_socks;
 	}
+#endif
 
 	rt_printk("RtnetTest: Module initialisation completed\n");
 	return 0;

@@ -43,10 +43,10 @@ void fun1(long t)
 {
 	int msg;
 	if (t & 1) {
-		RT_PRINTK("TASK %d BLOCKS TIMED RECEIVING ON MBX\n", t);
+		RT_PRINTK("TASK %d BLOCKS TIMED RECEIVING ON MBX\n", t); 
 		RT_PRINTK("TASK %d UNBLOCKS RECEIVING ON MBX %d BYTES\n", t, rt_mbx_receive_timed(&mbx, &msg, sizeof(msg), 2000000000));
 	} else {
-		RT_PRINTK("TASK %d BLOCKS RECEIVING ON MBX\n", t);
+		RT_PRINTK("TASK %d BLOCKS RECEIVING ON MBX\n", t); 
 		RT_PRINTK("TASK %d UNBLOCKS RECEIVING ON MBX %d BYTES\n", t, rt_mbx_receive(&mbx, &msg, sizeof(msg)));
 	}
         atomic_inc(&cleanup);
@@ -54,7 +54,7 @@ void fun1(long t)
 
 void fun2(long t)
 {
-	RT_PRINTK("ANOTHER TASK DELETES THE MBX AND ...\n");
+	RT_PRINTK("ANOTHER TASK DELETES THE MBX AND ...\n"); 
 	rt_mbx_delete(&mbx);
         atomic_inc(&cleanup);
 }

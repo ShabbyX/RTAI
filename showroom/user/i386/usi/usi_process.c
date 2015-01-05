@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 2002-2008  Paolo Mantegazza (mantegazza@aero.polimi.it)
+COPYRIGHT (C) 2002-2013  Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #define TIMEOUT    100000000  // to watch, or not to watch, overruns (MP only)
 
 static SEM *dspsem;
-static volatile int ovr, intcnt;
+static volatile int ovr, intcnt, maxcnt;
 
 #include "check_flags.h"
 
@@ -46,7 +46,7 @@ static void *timer_handler(void *args)
 {
 	RT_TASK *handler;
 
- 	if (!(handler = rt_task_init_schmod(nam2num("HANDLR"), 0, 0, 0, SCHED_FIFO, 0xF))) {
+ 	if (!(handler = rt_thread_init(nam2num("HANDLR"), 0, 0, SCHED_FIFO, 0xF))) {
 		printf("CANNOT INIT HANDLER TASK > HANDLR <\n");
 		exit(1);
 	}
@@ -58,17 +58,19 @@ static void *timer_handler(void *args)
 	rtc_start(TIMER_FRQ);
 	rtc_enable_irq(TIMER_IRQ, TIMER_FRQ);
 	rtai_cli();
-	while (ovr != RT_IRQ_TASK_ERR) {
+	while (ovr != RT_IRQ_TASK_ERR && intcnt < maxcnt) {
 		CHECK_FLAGS();
 		do {
 			ovr = rt_irq_wait_timed(TIMER_IRQ, nano2count(TIMEOUT));
 			if (ovr == RT_IRQ_TASK_ERR) break;
-			if (ovr > 0) {
+			if (ovr > 0) {	
 				/* overrun processing, if any, goes here */
 				rt_sem_signal(dspsem);
 			}
+			do {
 			/* normal processing goes here */
-			intcnt++;
+				++intcnt;
+			} while(0);
 			rt_sem_signal(dspsem);
 		} while (ovr > 0);
 		rtc_enable_irq(TIMER_IRQ, TIMER_FRQ);
@@ -85,7 +87,6 @@ int main(void)
 {
         RT_TASK *maint;
 	pthread_t thread;
-	int maxcnt;
 
 	printf("GIVE THE NUMBER OF INTERRUPTS YOU WANT TO COUNT: ");
 	scanf("%d", &maxcnt);
@@ -105,8 +106,6 @@ int main(void)
 		rt_sem_wait(dspsem);
 		printf("OVERRUNS %d, INTERRUPT COUNT %d\n", ovr, intcnt);
 	}
-	rtc_stop();
-	rt_release_irq_task(TIMER_IRQ);
 	rt_thread_join(thread);
 	rt_task_delete(maint);
 	rt_sem_delete(dspsem);

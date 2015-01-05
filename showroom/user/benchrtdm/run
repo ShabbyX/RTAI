@@ -13,10 +13,7 @@ echo "*** A METTLEY OF LATENCY MEASUREMENTs (user, kernel, kernel timers) ***"
 echo "Press <enter> to load modules:"
 read junk
 cd ..; ./ldmod; cd -
-#if (`rtai-config --linux-version | grep -q 2.6`);
-#then insmod $MODULES/rtai_tasklets.ko;
-#else insmod $MODULES/rtai_tasklets.o; fi
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod $MODULES/rtai_rtdm.ko; insmod ./timerbench_rt.ko
 else insmod $MODULES/rtai_rtdm.o; insmod ./timerbench.o; fi
 sync

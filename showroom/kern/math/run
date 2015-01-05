@@ -1,0 +1,18 @@
+#!/bin/sh
+
+prefix=`rtai-config --prefix`
+arch=`rtai-config --arch`
+insmod=/sbin/insmod
+
+if [ "$prefix" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+MODULES=$prefix/modules
+
+$insmod $MODULES/rtai_hal.ko;
+$insmod $MODULES/rtai_sched.ko;
+$insmod $MODULES/rtai_math.ko;
+insmod ./fp_rt.ko
+./rem

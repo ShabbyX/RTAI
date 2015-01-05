@@ -79,7 +79,7 @@ static int go;
 static int rtc_handler(rtdm_irq_t *none)
 {
  	CMOS_READ(RTC_INTR_FLAGS);
-	if (go) {
+	if (go) {	
 		rt_task_resume(&thread);
 	}
 	return 0;
@@ -135,7 +135,7 @@ static void thread_fun(long dummy)
 	RT_TASK *task;
 	RTIME t0 = 0, t;
 	long count = RTC_FREQ, jit, maxj = 0, echo = 0;
-
+	
 	task = rt_receive(NULL, (unsigned long *)&jit);
 	if (task != (void *)jit) {
 		rt_printk("INCONSISTENT RECEIVE %p %p\n", task, (void *)jit);

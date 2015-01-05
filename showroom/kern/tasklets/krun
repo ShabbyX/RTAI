@@ -19,7 +19,7 @@ echo
 echo "Now start the realtime process <enter> and wait for its end."
 read junk
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod $MODULES/rtai_tasklets.ko; insmod ./ktest_rt.ko;
 else insmod $MODULES/rtai_tasklets.o; insmod ./ktest.o; fi
 echo

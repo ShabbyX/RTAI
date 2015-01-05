@@ -47,7 +47,7 @@ static void timer_tick(void)
 			rt_times.linux_time += rt_times.linux_tick;
 		}
 		rt_pend_linux_irq(TIMER_8254_IRQ);
-	}
+	} 
 	if (run) {
 		if (rt_waiting_return(tasknode, taskport)) {
 			overuns++;
@@ -70,10 +70,10 @@ static void sup_fun(long none)
 		switch(run) {
 			case 1: RT_sem_signal(tasknode, -taskport, rmt_sem);
 				break;
-			case 2:
+			case 2: 
 				RT_task_resume(tasknode, -taskport, rmt_task);
 				break;
-			case 3:
+			case 3: 
 				RT_send_if(tasknode, -taskport, rmt_task, run);
 				break;
 		}

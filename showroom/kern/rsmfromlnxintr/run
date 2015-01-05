@@ -12,7 +12,7 @@ read junk
 sync
 sync
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./rsmfromlnxintr_rt.ko;
 else insmod ./rsmfromlnxintr.o; fi
 echo

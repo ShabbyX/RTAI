@@ -80,7 +80,7 @@ static void *intr_handler(void *args)
 	while(1) {
 		if (!rt_mbx_receive_if(mbx, &data, 1)) {
 			data = filter(data);
-			temp = inb(PORT_ADR);
+			temp = inb(PORT_ADR);            
 			temp &= 0xfd;
 			temp |= (data & 1) << 1;
 			outb(temp, PORT_ADR);
@@ -89,7 +89,7 @@ static void *intr_handler(void *args)
 		if ((master = rt_receive_if(0, &msg))) {
 			rt_return(master, msg);
 			break;
-		}
+		} 
 	}
 
 	rt_make_soft_real_time();
@@ -131,14 +131,14 @@ int main(void)
 	thread = rt_thread_create(intr_handler, NULL, 10000);
 	rt_mbx_receive(mbx, &data, 1);
 
-	while (!end) {
+	while (!end) {	
 		lseek(player, 0, SEEK_SET);
 		while(!end && (cnt = read(player, &data, BUFSIZE)) > 0) {
 			rt_mbx_send(mbx, data, cnt);
 		}
 	}
 
-	rt_rpc(rt_get_adr(nam2num("SOUND")), msg, &msg);
+	rt_rpc(rt_get_adr(nam2num("SOUND")), msg, &msg); 
 	while (rt_get_adr(nam2num("SOUND"))) {
 		rt_sleep(nano2count(1000000));
 	}

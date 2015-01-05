@@ -54,7 +54,7 @@ unsigned int daqnode, daqport;
 
 static int init_board(void)
 {
-	dev = RT_comedi_open(daqnode, daqport, "/dev/comedi0");
+	dev = RT_comedi_open(daqnode, daqport, "/dev/comedi0");		
 	printf("Comedi device (6071) handle: %p.\n", dev);
 	if (!dev){
 		printf("Unable to open (6071) %s.\n", "/dev/comedi0");
@@ -77,7 +77,7 @@ int do_cmd(void)
 	comedi_cmd cmd;
 	unsigned int chanlist[NCHAN];
 	unsigned int buf_read[NCHAN] = { 2, 3, 4, 5, 6 };
-
+  
 	memset(&cmd, 0, sizeof(cmd));
 	for (i = 0; i < NCHAN; i++) {
 		chanlist[i] = CR_PACK(buf_read[i], AI_RANGE, AREF_GROUND);
@@ -90,7 +90,7 @@ int do_cmd(void)
 	cmd.start_arg = 0;
 
 	cmd.scan_begin_src = TRIG_TIMER;
-	cmd.scan_begin_arg = SAMP_TIME;
+	cmd.scan_begin_arg = SAMP_TIME; 
 
 	cmd.convert_src = TRIG_TIMER;
 	cmd.convert_arg = 2000;
@@ -100,13 +100,13 @@ int do_cmd(void)
 
 	cmd.stop_src = TRIG_NONE;
 	cmd.stop_arg = 0;
-
+	
 	cmd.chanlist = chanlist;
 	cmd.chanlist_len = NCHAN;
 
 	ret = RT_comedi_command_test(daqnode, daqport, dev, &cmd);
 	printf("1st comedi_command_test returned: %d.\n", ret);
-	ret = RT_comedi_command_test(daqnode, daqport, dev, &cmd);
+	ret = RT_comedi_command_test(daqnode, daqport, dev, &cmd);		
 	printf("2nd comedi_command_test returned: %d.\n", ret);
 	printf("CONVERT ARG: %d\n", cmd.convert_arg);
 

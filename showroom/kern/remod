@@ -26,6 +26,8 @@ $rmmod rtai_smp
 $rmmod rtai_mup
 $rmmod rtai_up
 else
+$rmmod rtai_sched
+$rmmod rtai_lxrt
 $rmmod rtai_up
 fi
 sync

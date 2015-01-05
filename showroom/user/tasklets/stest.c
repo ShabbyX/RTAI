@@ -56,7 +56,7 @@ void seqh(unsigned long data)
 				if (poloops == 1) {
 					rt_printk("- SEQUENCER BEGINS FAST POLLING\n");
 				}
-			} else {
+			} else {	
 				rt_printk("- SEQUENCER FAST POLLING ENDED, TIMED FOR A LATER FINAL OPERATION\n");
 				rt_set_timer_firing_time(seqt, rt_get_time() + nano2count(50000000));
 				opcod = 2;
@@ -92,11 +92,11 @@ void prh(unsigned long data)
 		}
 		for (i = 0; i < 100; i++) {
 			a[i] = i + 1;
-		}
+		}	
 		s = 0;
 		for (i = 1; i < 100; i++) {
 			s += (a[i - 1]*a[i]);
-		}
+		}	
 	} else {
 		rt_printk("+ PERIODIC COMPUTATIONAL TASKLET ENDED\n");
 		rt_remove_timer(prt);
@@ -113,7 +113,7 @@ int main(void)
 		puts(" ERROR IN SETTING THE SCHEDULER UP");
 		perror("errno");
 		exit(0);
- 	}
+ 	}       
 	rt_grow_and_lock_stack(20000);
 
 #ifdef ONE_SHOT

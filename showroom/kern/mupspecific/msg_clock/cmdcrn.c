@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #include <linux/interrupt.h>
 #include <linux/delay.h>
 
-#include <asm/system.h>
 #include <asm/fixmap.h>
 #include <asm/smp.h>
 #include <asm/io.h>
@@ -100,7 +99,7 @@ static void CommandChrono_task(long t)
 				ackn += command;
 				break;
 		}
-	}
+	} 
 	rt_return(put, command);
 	rt_return(get, command);
 
@@ -113,7 +112,7 @@ static void CommandChrono_task(long t)
 					buffered = 0;
 				} else {
 					rt_receive(put, &command);
-				}
+				}	
 				Chronostatus = running;
 				break;
 			case running:

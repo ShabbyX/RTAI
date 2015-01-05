@@ -28,9 +28,9 @@ cd ../; ./ldmod; cd -
 echo
 echo "Now start the realtime process <enter>:"
 read junk
-if (`rtai-config --linux-version | grep -q 2.6`);
-then insmod $MODULES/rtai_signal.ko; insmod mtest_rt.ko;
-else insmod $MODULES/rtai_signal.o; insmod mtest.o; fi
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
+then insmod mtest_rt.ko;
+else insmod mtest.o; fi
 echo
 echo "Done. Press <enter> to remove the modules."
 read junk
