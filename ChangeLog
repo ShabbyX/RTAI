@@ -1,3 +1,10 @@
+2015-01-05 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-x86/rtai_lxrt_32.h and rtai_lxrt_64.h: update 
+	  caring of the Linux version when manupulating the fpu_counter in
+	  contet switches.
+	* base/sched/sched.c: care of Linux version in setting need_resched.
+
 2014-05-13 Pierangelo Masarati <masarati@aero.polimi.it>
 
 	* base/sched/{GNUmakefile.am,sched.c}: use MODULE_ALIAS()
