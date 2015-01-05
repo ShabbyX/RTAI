@@ -37,7 +37,7 @@ def fun0(null1, null2) :
 		print "FUN0 RESUMED WITH BITS MASK ", hex(rt_get_bits(bits))
 	rt_make_soft_real_time()
 	rt_task_delete(task)
-	return
+	return 
 
 def fun1(null1, null2) :
 	resulting_mask = c_ulong(0)

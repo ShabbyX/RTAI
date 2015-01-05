@@ -20,13 +20,13 @@ echo
 echo "Now start the realtime process <enter>, <ctrl-C> to end it."
 read junk
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
-then
-insmod $MODULES/rtai_hal.ko;
+if (`rtai-config --linux-version | grep -q 3.`);
+then 
+insmod $MODULES/rtai_hal.ko; 
 insmod ./sysreq_rt.ko;
-else
-insmod $MODULES/rtai_hal.o;
-insmod ./sysreq.o;
+else 
+insmod $MODULES/rtai_hal.o; 
+insmod ./sysreq.o; 
 fi
 ./display
 echo

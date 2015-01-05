@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 	while(1) {
 		if (len) {
 			data = filter(buf[i++]);
-			temp = inb(PORT_ADR);
+			temp = inb(PORT_ADR);            
 			temp &= 0xfd;
 			temp |= (data & 1) << 1;
 			outb(temp, PORT_ADR);
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 				rt_returnx(plrtsk, &len, sizeof(int));
 				if (len == sizeof(int) && ((int *)buf)[0] == 0xFFFFFFFF) {
 					break;
-				}
+				} 
 				i = 0;
 			}
 		}

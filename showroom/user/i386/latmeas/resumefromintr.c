@@ -22,7 +22,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  *
- * This is an extensive rewrite for carrying out the same test on a generic
+ * This is an extensive rewrite for carrying out the same test on a generic 
  * PC, by Paolo Mantegazza (mantegazza@aero.polimi.it).
  *
  */
@@ -63,7 +63,7 @@ int main(void)
 	int timer_period, timer_freq, h_timer_freq, thread;
 	int count, perns, pervar, maxpervar = 0;
 	RTIME tp, t;
-
+	
 	rt_allow_nonroot_hrt();
         thread = rt_thread_create(endt, NULL, 10000);
 	iopl(3);
@@ -77,7 +77,7 @@ int main(void)
 		rt_task_delete(rtask);
 		return 1;
 	}
-
+	
 //	rt_make_hard_real_time();
 	tmr_get_setup(timer, &timer_period, &timer_freq);
 	h_timer_freq = timer_freq/2;

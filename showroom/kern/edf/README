@@ -2,10 +2,11 @@
 
 This example features NTASKS realtime tasks running periodically in EDF mode.
 The task are given a priority ordered in such a way that low numbered tasks
-have the lowest priority. However the tasks execute for a duration proportional
+have the lowest priority. However the tasks execute for a duration proportional 
 to their number so that, under EDF, the lowest priority tasks run first.
 So if they appear increasingly ordered on the screen EDF should be working.
 
 To run the example, type:
 
-$ make run
+make
+run

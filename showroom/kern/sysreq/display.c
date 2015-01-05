@@ -28,9 +28,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 #define PRINT_FREQ 1
 
-static int end;
+static volatile int end;
 
-static void endme (int dummy) { end = 1; }
+static void endme(int dummy) { end = 1; }
 
 int main(void)
 {
@@ -47,7 +47,7 @@ int main(void)
 		puts(" ERROR IN SETTING THE SCHEDULER UP");
 		perror( "errno" );
 		exit( 0 );
- 	}
+ 	}       
 
 	srq = rtai_open_srq(0xcacca);
 	rtai_srq(srq, (unsigned long)&time0);
@@ -59,7 +59,7 @@ int main(void)
 		scount = rtai_srq(srq, 2);
 		rtai_srq(srq, (unsigned long)&time);
 		if (++tcount > tnextcount) {
-			tnextcount += trepeat;
+			tnextcount += 1; //trepeat;
 			printf("# %d > TICK: %d, TIME: %lld, DTOT: %lld;\n", tnextcount, tick, time - time0, time - dt);
 			dt = time;
 			if (scount) {

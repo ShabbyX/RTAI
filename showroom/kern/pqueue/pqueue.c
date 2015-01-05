@@ -85,7 +85,7 @@ mqd_t rx_q = INVALID_PQUEUE, tx_q = INVALID_PQUEUE;
     rt_printk("There are %d messages on the queue\n", nMsgs);
 
     while(nMsgs-- > 0) {
-      n = mq_receive(rx_q, inBuf, sizeof(inBuf), &priority);
+      n = mq_receive(rx_q, inBuf, sizeof(inBuf), &priority);  
       inBuf[n] = '\0';
 
       //Report what happened
@@ -98,12 +98,12 @@ mqd_t rx_q = INVALID_PQUEUE, tx_q = INVALID_PQUEUE;
   my_mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP;
   my_attrs.mq_maxmsg = 10;
   my_attrs.mq_msgsize = 50;
-
+  
   qId[1] = tx_q = mq_open("my_queue2", my_oflags, my_mode, &my_attrs);
 
   //Now send parent a message on this queue
   if (tx_q > 0) {
-    n = mq_send(tx_q, myMsg[0].str, strlen(myMsg[0].str), myMsg[0].prio);
+    n = mq_send(tx_q, myMsg[0].str, strlen(myMsg[0].str), myMsg[0].prio); 
   } else {
     rt_printk("ERROR: child could not create my_queue2\n");
   }
@@ -139,7 +139,7 @@ static const char str1[23] = "Test string number one\0";
 static const char str2[28] = "This is test string num 2!!\0";
 static const char str3[22] = "Test string number 3!\0";
 static const char str4[34] = "This is test string number four!!\0";
-
+ 
 #define nMsgs 4
 
 static const struct Msg myMsgs[nMsgs] =
@@ -152,7 +152,7 @@ static const struct Msg myMsgs[nMsgs] =
 
 mqd_t tx_q = INVALID_PQUEUE, rx_q = INVALID_PQUEUE;
 
-#ifdef STEP_TRACE
+#ifdef STEP_TRACE 
   //Wait for the debugger to say GO!
   while(!zdbg) {
 	rt_task_wait_period();
@@ -168,7 +168,7 @@ mqd_t tx_q = INVALID_PQUEUE, rx_q = INVALID_PQUEUE;
   my_mode = S_IRUSR | S_IWUSR | S_IRGRP;
   my_attrs.mq_maxmsg = 10;
   my_attrs.mq_msgsize = 50;
-
+  
   qId[0] = tx_q = mq_open("my_queue1", my_oflags, my_mode, &my_attrs);
 
   if (tx_q > 0) {
@@ -176,7 +176,7 @@ mqd_t tx_q = INVALID_PQUEUE, rx_q = INVALID_PQUEUE;
     for(i = 0; i <  nMsgs ; i++) {
 
       //Put message on queue
-      n = mq_send(tx_q, myMsgs[i].str, myMsgs[i].str_size, myMsgs[i].prio);
+      n = mq_send(tx_q, myMsgs[i].str, myMsgs[i].str_size, myMsgs[i].prio); 
 
       //Report how much was sent
       rt_printk("Parent sent message %d of %d bytes to child at priority %d\n",
@@ -199,11 +199,11 @@ mqd_t tx_q = INVALID_PQUEUE, rx_q = INVALID_PQUEUE;
   //Now open the receive queue to read what kiddy has to say
   rx_q = mq_open("my_queue2", my_oflags, 0, 0);
   rt_printk("parent: mq_open returned %ld\n", rx_q);
-
-  n = mq_receive(rx_q, inBuf, sizeof(inBuf), &priority);
+  
+  n = mq_receive(rx_q, inBuf, sizeof(inBuf), &priority);  
   if (n > 0) {
     inBuf[n] = '\0';
-    rt_printk("Parent got >%s< from child on queue %d\n", inBuf, (int)rx_q);
+    rt_printk("Parent got >%s< from child on queue %d\n", inBuf, (int)rx_q); 
   }
 
   //Tidy-up...

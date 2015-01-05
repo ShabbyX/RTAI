@@ -102,14 +102,14 @@ int main(void)
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
 	rt_make_hard_real_time();
-
+	
 #ifdef ONE_SHOT
 	rt_set_oneshot_mode();
 #endif
 	firing_time = rt_get_time() + nano2count(100000000);
 	period = nano2count(TICK_PERIOD);
 	start_rt_timer(period);
-
+	
 	res = rt_create_timers(2);
 	prt = rt_get_timer(res);
 	rt_insert_timer(prt, 1, firing_time, period, prh, 0xAAAAAAAA, 1);

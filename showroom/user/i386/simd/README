@@ -1,9 +1,9 @@
 This test is simply latency_calibration with the use of some SIMD instructions
-imported from SSE3Dnow.h, copied from project ATLAS.
+imported from SSE3Dnow.h, copied from project ATLAS. 
 It serves to verify if SIMD calculations can be safely used within LXRT.
 Since kernel space RTAI tasks have the same floating point support SIMD should
 be usable there too.
-The making of this directory does not happen by default, you must do it
-explicitly from within here. The default setting is for PIII/SSE, as defined
-by the SSE macro in rt_process.c. If you have an AMD ATHLON just comment it
+The making of this directory does not happen by default, you must do it 
+explicitly from within here. The default setting is for PIII/SSE, as defined 
+by the SSE macro in rt_process.c. If you have an AMD ATHLON just comment it 
 out before making.

@@ -21,7 +21,7 @@ Alternatively use your own insmod/rmmod after make.
 Then toggling the 'f' key you will put the floating point support on and off
 and verify that the calculations carried out in "check" are accordingly right
 or wrong. Type ^C to exit.
-Note that the above is not true when working with the SMP scheduler as it
+Note that the above is not true when working with the SMP scheduler as it 
 always save/restores the FP environments to be safe against task CPU migration.
 Under the MUP scheduler the check can work only if it happens that rt_process
 and check are on the same CPU, a purely randomly controlled situation since

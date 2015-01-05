@@ -9,7 +9,7 @@ sync
 echo
 echo "Now start the realtime process <enter>."
 read junk
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./mqtest_rt.ko;
 else insmod ./mqtest.o; fi
 echo

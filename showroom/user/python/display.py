@@ -8,14 +8,14 @@ from rtai_sem import *
 TEST_POLL = False
 
 class SAMP(Structure) :
-	_fields_ = [("min", c_longlong),
+	_fields_ = [("min", c_longlong), 
 	            ("max", c_longlong),
 		    ("index", c_int),
 		    ("ovrn", c_int)]
 samp = SAMP(0, 0, 0, 0)
 
 class POLL(Structure) :
-	_fields_ = [("max", c_int),
+	_fields_ = [("max", c_int), 
 	            ("min", c_int)]
 ufds = POLL(0, 1)
 

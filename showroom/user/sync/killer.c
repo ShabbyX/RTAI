@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
 int main (void)
-{
+{ 
 	long *worst_lat;
         struct pollfd ufds = { 0, POLLIN, };
 
@@ -46,5 +46,5 @@ int main (void)
 	}
         rt_shm_free(nam2num("WSTLAT"));
 	rt_task_delete(NULL);
-	return 0;
+	return 0; 
 }

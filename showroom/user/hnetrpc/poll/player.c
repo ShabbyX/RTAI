@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	printf("\nPLAYER TASK RUNNING\n\n(TYPE ENTER TO END EVERYTHING)\n");
 
-	while (!end) {
+	while (!end) {	
 		int ret;
 		lseek(player, 0, SEEK_SET);
 		while(!end && (msg = read(player, data, BUFSIZE)) > 0) {
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	RT_rpc(spknode, spkport, spktsk, msg, &msg);
+	RT_rpc(spknode, spkport, spktsk, msg, &msg); 
 	RT_named_mbx_delete(spknode, spkport, mbx);
 	rt_release_port(spknode, spkport);
 	rt_make_soft_real_time();

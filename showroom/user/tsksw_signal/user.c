@@ -75,7 +75,7 @@ int main(void)
 	rt_release_signal(SWITCH_SIGNAL, task);
 
 	rt_make_soft_real_time();
-	stop_rt_timer();
+	stop_rt_timer();	
 	rt_task_delete(task);
 
 	return 0;

@@ -67,7 +67,7 @@ int init_module(void)
 	rt_set_oneshot_mode();
 #endif
 	for (i = 0; i < NTASKS; i++) {
-		rt_task_init(&thread[i], fun, i, STACK_SIZE, NTASKS - i - 1, 0, 0);
+		rt_task_init_cpuid(&thread[i], fun, i, STACK_SIZE, NTASKS - i - 1, 0, 0, 0);
 	}
 	tick_period = start_rt_timer(nano2count(TICK_PERIOD));
 	now = rt_get_time() + NTASKS*tick_period;

@@ -48,9 +48,9 @@
 #define PREEMPT_ALWAYS_GEN		18
 #define GET_TIME_NS			19
 #define GET_CPU_TIME_NS			20
-#define SET_RUNNABLE_ON_CPUS		21
-#define SET_RUNNABLE_ON_CPUID		22
-#define GET_TIMER_CPU			23
+#define SET_RUNNABLE_ON_CPUS		21 
+#define SET_RUNNABLE_ON_CPUID		22	 
+#define GET_TIMER_CPU			23	 
 #define START_RT_APIC_TIMERS		24
 #define PREEMPT_ALWAYS_CPUID		25
 #define COUNT2NANO_CPUID		26
@@ -91,7 +91,7 @@
 #define RWL_RDLOCK_IF 			59
 #define RWL_RDLOCK_UNTIL 		60
 #define RWL_RDLOCK_TIMED 		61
-#define RWL_WRLOCK 			62
+#define RWL_WRLOCK 			62	
 #define RWL_WRLOCK_IF	 		63
 #define RWL_WRLOCK_UNTIL		64
 #define RWL_WRLOCK_TIMED		65
@@ -100,7 +100,7 @@
 #define SPL_DELETE			68
 #define NAMED_SPL_INIT 			69
 #define NAMED_SPL_DELETE		70
-#define SPL_LOCK 			71
+#define SPL_LOCK 			71	
 #define SPL_LOCK_IF	 		72
 #define SPL_LOCK_TIMED			73
 #define SPL_UNLOCK 			74
@@ -175,7 +175,7 @@
 #define RT_NAME_LOCATE                 132
 
 // bits
-#define BITS_INIT          	       133
+#define BITS_INIT          	       133	
 #define BITS_DELETE        	       134
 #define NAMED_BITS_INIT    	       135
 #define NAMED_BITS_DELETE  	       136
@@ -183,7 +183,7 @@
 #define BITS_RESET         	       138
 #define BITS_SIGNAL        	       139
 #define BITS_WAIT          	       140
-#define BITS_WAIT_IF       	       141
+#define BITS_WAIT_IF       	       141		
 #define BITS_WAIT_UNTIL    	       142
 #define BITS_WAIT_TIMED   	       143
 
@@ -236,7 +236,7 @@
 #define DDN2NL			       181
 #define SET_THIS_NODE		       182
 #define FIND_ASGN_STUB		       183
-#define REL_STUB		       184
+#define REL_STUB		       184	
 #define WAITING_RETURN		       185
 
 // a semaphore extension
@@ -259,8 +259,8 @@
 #define SUSPEND_IF		       199
 #define SUSPEND_UNTIL	 	       200
 #define SUSPEND_TIMED		       201
-#define IRQ_WAIT		       202
-#define IRQ_WAIT_IF		       203
+#define IRQ_WAIT		       202	
+#define IRQ_WAIT_IF		       203	
 #define IRQ_WAIT_UNTIL		       204
 #define IRQ_WAIT_TIMED		       205
 #define IRQ_SIGNAL		       206
@@ -274,8 +274,8 @@
 
 #define MAX_LXRT_FUN                   215
 
-// not recovered yet
-// Qblk's
+// not recovered yet 
+// Qblk's 
 #define RT_INITTICKQUEUE		69
 #define RT_RELEASETICKQUEUE     	70
 #define RT_QDYNALLOC            	71

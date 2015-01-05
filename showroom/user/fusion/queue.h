@@ -73,7 +73,7 @@ static inline void *rt_global_heap_open(void)
 			if ((adr = mmap(0, size, PROT_WRITE | PROT_READ, MAP_SHARED | MAP_LOCKED, hook, 0)) == (void *)-1) {;
 				rtai_lxrt(BIDX, sizeof(unsigned long), SHM_FREE, &arg.name);
 				adr = 0;
-			}
+			} 
 			arg.arg = (unsigned long)adr;
 			rtai_lxrt(BIDX, SIZARG, HEAP_SET, &arg);
 		} else {
@@ -108,7 +108,7 @@ static inline int rt_queue_create(RT_QUEUE *q, const char *name, size_t poolsize
 		q->heap = rt_global_heap_open();
 		rt_release_waiters(arg.msgq);
 		return 0;
-	}
+	} 
 	return -ENOMEM;
 }
 
@@ -173,7 +173,7 @@ static inline ssize_t rt_queue_recv(RT_QUEUE *q, void **buf, RTIME timeout)
 	}
 	if (size) {
 		return size;
-	}
+	} 
 	buf[0] += (unsigned long)(q->heap + sizeof(void *));
 	return ((int *)buf[0])[-1];
 }

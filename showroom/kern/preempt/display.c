@@ -39,7 +39,7 @@ int main(int argc,char *argv[])
 	int fd0;
 	char nm[RTF_NAMELEN+1];
 	struct sample { long min, max, avrg, jitters[2]; } samp;
-
+	
 	if ((fd0 = open(rtf_getfifobyminor(0,nm,sizeof(nm)), O_RDONLY)) < 0) {
 		fprintf(stderr, "Error opening %s\n",nm);
 		exit(1);

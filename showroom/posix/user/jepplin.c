@@ -50,11 +50,11 @@ static void *task_code(int task_no)
 	pthread_barrier_wait(&barrier);
 	for (i = 0; i < 5; ++i) {
 		sem_wait(&sems[task_no]);
-		PRINT_LOCK;
+		PRINT_LOCK; 
 		DISPLAY(strs[task_no]);
 		PRINT_UNLOCK;
 		if (task_no == (NUM_TASKS - 1)) {
-			PRINT_LOCK;
+			PRINT_LOCK; 
 			DISPLAY("\n");
 			PRINT_UNLOCK;
 		}
@@ -62,7 +62,7 @@ static void *task_code(int task_no)
 	}
 	sem_post(&sync_sem);
 	sem_wait(&prio_sem);
-	PRINT_LOCK;
+	PRINT_LOCK; 
 	DISPLAY(strs[task_no]);
 	PRINT_UNLOCK;
 	t = (struct timespec) { 1, 0 };
@@ -77,7 +77,7 @@ static void *task_code(int task_no)
 
 	/* message queue stuff */
 	mq_receive(mq_in, buf, sizeof(buf), &i);
-	PRINT_LOCK;
+	PRINT_LOCK; 
 	DISPLAY("\nreceived by task %d ", task_no);
 	DISPLAY(buf);
 	PRINT_UNLOCK;
@@ -117,7 +117,7 @@ static void *start_task_code(void *arg)
 	for (i = 0; i < NUM_TASKS; ++i) {
 		sem_init(&sems[i], 0, 0);
 		pthread_create(&thread[i], NULL, (void *)task_code, (void *)i);
-	}
+	}	
 	/* create the sync semaphore */
 	sem_init(&sync_sem, 0, 0);
 	/* create the priority-test semaphore */
@@ -131,7 +131,7 @@ static void *start_task_code(void *arg)
 	for (i = 0; i < NUM_TASKS; ++i) {
 		sem_wait(&sync_sem);
 	}
-	PRINT_LOCK;
+	PRINT_LOCK; 
 	DISPLAY(sync_str);
 	PRINT_UNLOCK;
 	/* post the priority-test semaphore -- the tasks should then run */
@@ -139,13 +139,13 @@ static void *start_task_code(void *arg)
 	for (i = 0; i < NUM_TASKS; ++i) {
 		sem_post(&prio_sem);
 	}
-	PRINT_LOCK;
+	PRINT_LOCK; 
 	DISPLAY("\n");
 	PRINT_UNLOCK;
 	for (i = 0; i < NUM_TASKS; ++i) {
 		sem_wait(&sync_sem);
 	}
-	PRINT_LOCK;
+	PRINT_LOCK; 
 	DISPLAY(sync_str);
 
 	/* now, test message queues */
@@ -156,14 +156,14 @@ static void *start_task_code(void *arg)
 	}
 	for (i = 0; i < NUM_TASKS; ++i) {
 		mq_receive(mq_out, buf, sizeof(buf), &k);
-		PRINT_LOCK;
+		PRINT_LOCK; 
 		DISPLAY("\nreceived from mq_out: %s", buf);
 		PRINT_UNLOCK;
 	}
 	for (i = 0; i < NUM_TASKS; ++i) {
 		sem_post(&sync_sem);
 	}
-	PRINT_LOCK;
+	PRINT_LOCK; 
 	DISPLAY("\n");
 	PRINT_UNLOCK;
 

@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
 /*
- * This program does nothing but verifying the RTAI netrpc interface
+ * This program does nothing but verifying the RTAI netrpc interface 
  * to COMEDI services in terms of passing call and return parameters.
  */
 
@@ -63,7 +63,7 @@ static unsigned int daqnode, daqport;
 
 static int test_init_board(void)
 {
-	dev = RT_comedi_open(daqnode, daqport, "/dev/comedi");
+	dev = RT_comedi_open(daqnode, daqport, "/dev/comedi");		
 	PRINT("Comedi device handle: %p.\n", dev);
 
 	subdevai = RT_comedi_find_subdevice_by_type(daqnode, daqport, dev, COMEDI_SUBD_AI, 0);
@@ -91,7 +91,7 @@ int test_cmd(void)
 	comedi_cmd cmd;
 	unsigned int chanlist[NCHAN];
 	unsigned int buf_read[NCHAN] = { 2, 3, 4, 5, 6 };
-
+  
 	memset(&cmd, 0, sizeof(cmd));
 	for (i = 0; i < NCHAN; i++) {
 		chanlist[i] = CR_PACK(buf_read[i], AI_RANGE, AREF_GROUND);
@@ -104,7 +104,7 @@ int test_cmd(void)
 	cmd.start_arg = 0;
 
 	cmd.scan_begin_src = TRIG_TIMER;
-	cmd.scan_begin_arg = SAMP_TIME;
+	cmd.scan_begin_arg = SAMP_TIME; 
 
 	cmd.convert_src = TRIG_TIMER;
 	cmd.convert_arg = 2000;
@@ -114,7 +114,7 @@ int test_cmd(void)
 
 	cmd.stop_src = TRIG_NONE;
 	cmd.stop_arg = 0;
-
+	
 	cmd.chanlist = chanlist;
 	cmd.chanlist_len = NCHAN;
 
@@ -124,7 +124,7 @@ int test_cmd(void)
 	}
 
 	cmd.scan_begin_src = TRIG_TIMER;
-	cmd.scan_begin_arg = SAMP_TIME;
+	cmd.scan_begin_arg = SAMP_TIME; 
 
 	cmd.convert_src = TRIG_TIMER;
 	cmd.convert_arg = 2000;
@@ -134,7 +134,7 @@ int test_cmd(void)
 
 	cmd.stop_src = TRIG_NONE;
 	cmd.stop_arg = 0;
-
+	
 	cmd.chanlist = chanlist;
 	cmd.chanlist_len = NCHAN;
 
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
 
 	RT_comedi_register_callback(daqnode, daqport, dev, subdevai, COMEDI_CB_EOS, NULL, task);
 	PRINT("Comedi analog input registered a call back.\n");
-
+	
 	test_cmd();
 
 	val = COMEDI_CB_EOS;

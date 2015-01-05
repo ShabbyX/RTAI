@@ -420,7 +420,7 @@ static inline ssize_t rt_dev_sendmsg(int fd, const struct msghdr *msg, int flags
 	return RTDM_RTAI_LXRT(RTDM_INDX, SIZARG, __rtdm_sendmsg, &arg);
 }
 
-static inline ssize_t rt_dev_recvfrom(int fd, void *buf, size_t len, int flags,
+static inline ssize_t rt_dev_recvfrom(int fd, void *buf, size_t len, int flags, 
 				      struct sockaddr *from, socklen_t *fromlen)
 {
 	struct iovec iov;

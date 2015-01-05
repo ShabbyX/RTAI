@@ -14,7 +14,7 @@ prefix=`rtai-config --prefix`
 arch=`rtai-config --arch`
 insmod=/sbin/insmod
 
-if [ "$prefix" == "" ]; then
+if [ "$prefix" == "" ]; then 
 echo "ERROR: please set your PATH variable to <rtai-install>/bin"
 exit
 fi
@@ -24,17 +24,12 @@ MODULES=$prefix/modules
 #sync paranoia might be useful
 
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
-then
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
+then 
 
 $insmod $MODULES/rtai_hal.ko IsolCpusMask=0;
 sync
-if [ "$arch" = "i386" ]; then
-#$insmod $MODULES/rtai_lxrt.ko;
-$insmod $MODULES/rtai_ksched.ko;
-else
-$insmod $MODULES/rtai_up.ko;
-fi
+$insmod $MODULES/rtai_sched.ko;
 sync
 $insmod $MODULES/rtai_sem.ko;
 sync
@@ -56,14 +51,7 @@ else
 
 $insmod $MODULES/rtai_hal.o
 sync
-if [ "$arch" = "i386" ]; then
-$insmod $MODULES/rtai_lxrt.o;
-#$insmod $MODULES/rtai_up.o;
-#$insmod $MODULES/rtai_smp.o;
-#$insmod $MODULES/rtai_mup.o;
-else
-$insmod $MODULES/rtai_up.o;
-fi
+$insmod $MODULES/rtai_sched.o;
 sync
 $insmod $MODULES/rtai_sem.o;
 sync

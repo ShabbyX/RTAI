@@ -40,10 +40,10 @@ static double dot(double *a, double *b, int n)
 }
 
 int main (int argc, char **argv)
-{
+{ 
 	volatile double s, a[MAXDIM], b[MAXDIM];
 	long *worst_lat, msg;
-	RTIME period, wait_delay, sync_time, aim_time;
+	RTIME period, wait_delay, sync_time, aim_time; 
 
 	for(msg = 0; msg < MAXDIM; msg++) {
 		a[msg] = b[msg] = 3.141592;
@@ -54,19 +54,19 @@ int main (int argc, char **argv)
 	worst_lat = rt_shm_alloc(nam2num("WSTLAT"), sizeof(RTIME), USE_VMALLOC);
 	*worst_lat = -2000000000;
 	rt_task_init_schmod(nam2num("LOOPER"), 0, 0, 0, SCHED_FIFO, 0x2);
-	wait_delay = nano2count(WAIT_DELAY);
-	period     = nano2count(PERIOD);
+	wait_delay = nano2count(WAIT_DELAY); 
+	period     = nano2count(PERIOD); 
 
 	rt_make_hard_real_time();
 	rtai_cli();
 	aim_time  = rt_get_time();
-	sync_time = aim_time + wait_delay;
-	aim_time += period;
+	sync_time = aim_time + wait_delay; 
+	aim_time += period; 
 	while (!rt_receive_if(NULL, &msg)) {
 		WAIT_AIM_TIME();
-		sync_time = rt_get_time();
+		sync_time = rt_get_time(); 
 		msg = abs((long)(sync_time - aim_time));
-		sync_time = aim_time + wait_delay;
+		sync_time = aim_time + wait_delay; 
 		aim_time  += period;
 		if (msg > *worst_lat) {
 			*worst_lat = msg;
@@ -81,5 +81,5 @@ int main (int argc, char **argv)
 	stop_rt_timer();
 	rt_shm_free(nam2num("WSTLAT"));
 	rt_task_delete(NULL);
-	return 0;
+	return 0; 
 }

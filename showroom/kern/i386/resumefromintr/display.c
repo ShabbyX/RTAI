@@ -41,7 +41,7 @@ int main(void)
 	puts(" ERROR IN SETTING THE SCHEDULER UP");
 	perror( "errno" );
 	exit( 0 );
- 	}
+ 	}       
 #endif
 	signal(SIGINT, endme);
 	if ((cmd = open("/dev/rtf0", O_RDONLY)) < 0) {

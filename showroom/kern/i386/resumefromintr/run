@@ -9,7 +9,7 @@ echo
 echo "Now start the realtime process <enter>, <ctrl-C> to end it."
 read junk
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./resumefromintr_rt.ko Mode=1;
 else insmod ./resumefromintr.o; fi
 ./display

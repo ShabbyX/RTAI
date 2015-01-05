@@ -82,11 +82,11 @@ static void mfun(long t)
 		if ((itime = rt_get_cpu_time_ns() - time) > maxt) {
 			rt_printk("TASK: %d, MAXWAITIME: %d.\n", t, maxt = itime);
 		}
-		meant[t] = (itime + meant[t]) >> 1;
+		meant[t] = (itime + meant[t]) >> 1; 
 		rt_sleep(nano2count(SLEEP_TIME));
 	}
 
-prem:
+prem: 
 	premature = PREMATURE;
 	rt_printk("TASK # %d ENDS PREMATURELY\n", t);
 }
@@ -158,3 +158,4 @@ void cleanup_module(void)
 		printk("\n\nPREMATURE END\n");
 	}
 }
+

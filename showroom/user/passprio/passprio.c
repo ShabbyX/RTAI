@@ -1,6 +1,7 @@
 #include <sys/mman.h>
 
 #include <rtai_sem.h>
+#include <rtai_msg.h>
 
 #define NTASKS        15
 #define RESEMT        RESEM_BINSEM // RESEM_BINSEM, RESEM_CHEKWT, RESEM_RECURS

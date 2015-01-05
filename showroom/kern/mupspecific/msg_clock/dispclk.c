@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #include <linux/interrupt.h>
 #include <linux/delay.h>
 
-#include <asm/system.h>
 #include <asm/fixmap.h>
 #include <asm/smp.h>
 #include <asm/io.h>
@@ -98,8 +97,8 @@ void MenageHmsh_PlusNSeconds(int n, MenageHmsh_tHour *h)
 
 void MenageHmsh_PlusOneUnit(MenageHmsh_tHour *h, BOOLEAN *reportSeconds)
 {
-	h->hundredthes = (h->hundredthes + 1)%100;
-	*reportSeconds = h->hundredthes == 0;
+	h->hundredthes = (h->hundredthes + 1)%100; 
+	*reportSeconds = h->hundredthes == 0; 
 	if (*reportSeconds) {
 		MenageHmsh_PlusOneSecond(h);
 	}
@@ -168,7 +167,7 @@ void Display_Get(MenageHmsh_tChain11 *chain, Display_tDest *receiver)
 	}
 	rt_receive(&Display, &msg);
 	*chain = *((MenageHmsh_tChain11 *)msg);
-	*receiver = chain->chain[0] == 't' ? destChrono : destClock;
+	*receiver = chain->chain[0] == 't' ? destChrono : destClock; 
 }
 
 int cpu_used[NR_RT_CPUS];

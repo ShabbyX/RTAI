@@ -19,13 +19,13 @@ echo "Press <enter> to load modules:"
 read junk
 cd ../..; ./ldmod; cd -
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod $MODULES/rtai_netrpc.ko ThisNode="127.0.0.1";
 else insmod $MODULES/rtai_netrpc.o ThisNode="127.0.0.1"; fi
 echo
 echo "Now start the realtime process <enter>."
 read junk
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./handler_rt.ko TaskNode="127.0.0.1";
 else insmod ./handler.o TaskNode="127.0.0.1"; fi
 $SUDO ./resumefromintr HdlNode="127.0.0.1"

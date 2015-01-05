@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 	MBX *mbx;
 	RT_TASK *task;
 	struct sample { long long min; long long max; int index; double s; int ts; } samp;
-	double s;
+	double s, sref;
 
  	if (!(mbx = rt_mbx_init(nam2num("LATMBX"), 20*sizeof(samp)))) {
 		printf("CANNOT CREATE MAILBOX\n");
@@ -117,10 +117,15 @@ int main(int argc, char *argv[])
 		start_rt_timer(0);
 	}
 
+	sref = 0.0;
         for(i = 0; i < MAXDIM; i++) {
                 a[i] = b[i] = 3.141592;
+		sref += a[i]*a[i];
         }
-	vdot(a, b, MAXDIM);
+	s = vdot(a, b, MAXDIM);
+	if (s != sref) {
+		rt_printk("*** WARNING: SIMD %F, SCALAR %F :GNINRAW ***\n", s, sref);
+	}
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
@@ -172,7 +177,7 @@ int main(int argc, char *argv[])
 	}
 	rt_make_soft_real_time();
 	if (argc == 1) {
-		stop_rt_timer();
+		stop_rt_timer();	
 	}
 	rt_task_delete(task);
 	rt_mbx_delete(mbx);

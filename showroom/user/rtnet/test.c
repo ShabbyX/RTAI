@@ -19,7 +19,7 @@
 */
 
 /*
- This example might appear a bit bloated as, being based on threads, it
+ This example might appear a bit bloated as, being based on threads, it 
  could have shared anything. We have elected to not use global data just
  to show a few more RTAI services working together, e.g.: synchronization
  and timing through intertask messages and objects handles through registered
@@ -236,17 +236,17 @@ int main(void)
 	}
 
 	sender_thread = rt_thread_create(sender, NULL, 0);
-	rt_return(rt_receive(NULL, &cnt), 0UL);
+	rt_return(rt_receive(NULL, &cnt), 0UL); 
 
 	receiver_thread = rt_thread_create(receiver, NULL, 0);
-	rt_return(rt_receive(NULL, &cnt), 0UL);
+	rt_return(rt_receive(NULL, &cnt), 0UL); 
 
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
 	rt_make_hard_real_time();
 
 #if USEMBX
-	while (!end) {
+	while(!end) {
 		if (!(misd = rt_mbx_receive(mbx, (void *)&frombx, sizeof(frombx)))) {
 			ECHO("MAIN FROM MBX %lu-%lu %lld %lld\n", ++cnt, frombx.cnt, frombx.tx/1000, frombx.rx/1000);
 		} else {
@@ -258,8 +258,8 @@ int main(void)
 #endif
 
 	rt_task_masked_unblock(rt_get_adr(nam2num("RXTSK")), ~RT_SCHED_READY);
-	rt_rpc(rt_get_adr(nam2num("RXTSK")), 0UL, &cnt);
-	rt_rpc(rt_get_adr(nam2num("TXTSK")), 0UL, &cnt);
+	rt_rpc(rt_get_adr(nam2num("RXTSK")), 0UL, &cnt); 
+	rt_rpc(rt_get_adr(nam2num("TXTSK")), 0UL, &cnt); 
 	rt_thread_join(sender_thread);
 	rt_thread_join(receiver_thread);
 

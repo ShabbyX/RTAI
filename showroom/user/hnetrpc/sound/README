@@ -1,5 +1,5 @@
 This test shows the use of RTAI distributed processing in user space.
-It implements the sound example, found both in kernel space examples and in
+It implements the sound example, found both in kernel space examples and in 
 LXRT, on one/two machines. So you can have it played everywhere under control
 of a remote process. The sound track is passed between tasks by using a mailbox.
 See example usoundmsg for an implementation based on extended RTAI messages.
@@ -10,6 +10,6 @@ make
 ./run
 ./rem, after ending it by pressing ENTER.
 
-To run it on different machines comment out the line executing the process to
-be run on onother node, in file run, and set the appropriate dotted decimal
+To run it on different machines comment out the line executing the process to 
+be run on onother node, in file run, and set the appropriate dotted decimal 
 notation IP address of the speaker task on its command line.

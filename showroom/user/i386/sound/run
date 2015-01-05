@@ -11,7 +11,7 @@ export LD_LIBRARY_PATH=$libpath:$LD_LIBRARY_PATH
 
 if [ $UID != 0 ]; then SUDO="sudo "; else SUDO=""; fi
 echo
-echo "*** SOUND USING MBXes (user) ***"
+echo "*** SOUND USING MBXes (user) ***" 
 echo "Press <enter> to load LXRT modules:"
 read junk
 cd ../..; ./ldmod; cd -

@@ -89,7 +89,7 @@ void *CommandChrono_task(void *args)
 				ackn += command;
 				break;
 		}
-	}
+	} 
 	rt_return(put, command);
 	rt_return(get, command);
 
@@ -101,7 +101,7 @@ void *CommandChrono_task(void *args)
 					buffered = 0;
 				} else {
 					rt_receive(put, &command);
-				}
+				}	
 				Chronostatus = running;
 				break;
 			case running:

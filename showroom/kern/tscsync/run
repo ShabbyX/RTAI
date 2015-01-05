@@ -7,7 +7,7 @@ read junk
 sync
 sync
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./testscsync_rt.ko;
 else insmod ./testscsync.o; fi
 echo

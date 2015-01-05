@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 #include <linux/kernel.h>
 #include <linux/module.h>
+#include <linux/kthread.h>
 
 #include <rtai.h>
 #include <rtai_schedcore.h>
@@ -34,10 +35,10 @@ MODULE_LICENSE("GPL");
 /*
 THIS IS A BIT CRYPTIC AND REQUIRES SOME CARE, QUITE GENERAL THOUGH.
 MAKING IT EASIER TO USE IS JUST A MATTER OF APPROPRIATE WRAPPERS.
-NONE HAS SHOWN INTEREST IN SUCH A THING, SO LET"S KEEP THE TRUE MAGIC
-FOR THE TRUE RTAI MAGICIANS ONLY.
+NONE HAS SHOWN INTEREST IN SUCH A THING, SO LET"S KEEP THE TRUE MAGIC 
+FOR THE TRUE RTAI MAGICIANS ONLY. 
 */
-
+  
 int get_min_tasks_cpuid(void);
 int set_rtext(RT_TASK *, int, int, void(*)(void), unsigned int, void *);
 int clr_rtext(RT_TASK *);
@@ -73,14 +74,16 @@ static void thread_fun(RT_TASK *task)
 		((void (*)(long))task->fun_args[1])(task->fun_args[2]);
 	}
 }
+
+static int end;
 static int soft_kthread_init(RT_TASK *task, long fun, long arg, int priority)
 {
 	task->magic = task->state = 0;
 	(task->fun_args = (long *)(task + 1))[1] = fun;
 	task->fun_args[2] = arg;
 	task->fun_args[3] = priority;
-	if (kernel_thread((void *)thread_fun, task, 0) > 0) {
-		while (task->state != (RT_SCHED_READY | RT_SCHED_SUSPENDED)) {
+	if (kthread_run((void *)thread_fun, task, "LINUX-KTASK") > 0) {
+		while (task->state != (RT_SCHED_READY | RT_SCHED_SUSPENDED) && !end) {
 			current->state = TASK_INTERRUPTIBLE;
 			schedule_timeout(HZ/10);
 		}
@@ -96,7 +99,8 @@ static int soft_kthread_delete(RT_TASK *task)
 	} else {
 		struct task_struct *lnxtsk = task->lnxtsk;
 		lnxtsk->state = TASK_INTERRUPTIBLE;
-		kill_proc(lnxtsk->pid, SIGTERM, 0);
+		end = 1;
+//		kill_proc(lnxtsk->pid, SIGTERM, 0);
 	}
 	return 0;
 }
@@ -108,7 +112,7 @@ static int soft_kthread_delete(RT_TASK *task)
 struct msg_s { char test[8]; int cnt; };
 
 /*
-try playing the game even with BUFSIZ < sizeof(struct msg_s), down to a
+try playing the game even with BUFSIZ < sizeof(struct msg_s), down to a 
 single byte buffer. It's fun, not effcient though.
 */
 #define BUFSIZ (10*sizeof(struct msg_s))
@@ -212,3 +216,4 @@ void cleanup_module(void)
 	rt_sem_delete(&linux_sem);
 	rt_mbx_delete(&mbx);
 }
+

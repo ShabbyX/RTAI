@@ -9,7 +9,7 @@ echo
 echo "Now start the realtime process <enter> and wait for its end."
 read junk
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./pqueue_rt.ko; insmod ./mod_stuff_rt.ko;
 else insmod ./pqueue_rt.o; insmod ./mod_stuff_rt.o; fi
 echo

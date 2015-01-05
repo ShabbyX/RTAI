@@ -32,7 +32,7 @@
 
 /*
  * This module serves to verify the RTAI netrpc interface to COMEDI
- * services in terms of passing call and return parameters.
+ * services in terms of passing call and return parameters. 
  */
 
 #include <linux/module.h>
@@ -162,13 +162,13 @@ static inline int __rt_comedi_command_data_wread(void *dev, unsigned int subdev,
 		rt_get_user(mask, cbmaskarg);
 	}
 	switch (waitmode) {
-		case WAIT:
+		case WAIT: 
 			retval = rt_comedi_wait(&cbmask);
 			break;
-		case WAITIF:
+		case WAITIF: 
 			retval = rt_comedi_wait_if(&cbmask);
 			break;
-		case WAITUNTIL:
+		case WAITUNTIL: 
 			retval = _rt_comedi_wait_until(&cbmask, until);
 			break;
 		default: // useless, just to avoid compiler warnings
@@ -212,13 +212,13 @@ RTAI_SYSCALL_MODE long _rt_comedi_command_data_wread_timed(void *dev, unsigned i
 RTAI_SYSCALL_MODE long RT_comedi_command_data_wread(void *dev, unsigned int subdev, long nchans, lsampl_t *data, unsigned int *cbmask, unsigned int datalen, RTIME time)
 {
 	switch (nchans & 0x3) {
-		case 0:
+		case 0: 
 			return rt_comedi_command_data_wread(dev, subdev, nchans >> 2, data, cbmask);
-		case 1:
+		case 1: 
 			return rt_comedi_command_data_wread_if(dev, subdev, nchans >> 2, data, cbmask);
-		case 2:
+		case 2: 
 			return _rt_comedi_command_data_wread_until(dev, subdev, nchans >> 2, data, cbmask, time);
-		case 3:
+		case 3: 
 			return _rt_comedi_command_data_wread_timed(dev, subdev, nchans >> 2, data, cbmask, time);
 	}
 	return 0;
@@ -396,7 +396,7 @@ RTAI_SYSCALL_MODE int RT_comedi_do_insnlist(void *dev, long n_insns, struct insn
 	lsampl_t *data           = RT_INSN_ADR(data_ofst);
 	comedi_insn insn[2]; // 2 instances, a safe room for 64 getting into 32
 	for (i = 0; i < n_insns; i ++) {
-		memcpy(insn, insns, ofstlens->insn_len);
+		memcpy(insn, insns, ofstlens->insn_len);	
 		insn[0].data     = data + data_ofsts[i];
 		insn[0].subdev   = RT_INSN(subdev_ofst);
 		insn[0].chanspec = RT_INSN(chanspec_ofst);
@@ -491,19 +491,19 @@ static RTAI_SYSCALL_MODE int _comedi_unmap(void *dev, unsigned int subdev)
 }
 
 static inline int __rt_comedi_wait(RTIME until, unsigned int *cbmask, int waitmode)
-{
+{ 
 	if (cbmask) {
 		long retval;
 		RT_TASK *task = _rt_whoami();
 		switch (waitmode) {
-			case WAIT:
+			case WAIT: 
 				rt_printk("COMEDI WAIT WARNING: REACHED AND SKIPPED.\n");
 				rt_task_suspend_timed(task, nano2count(100000));
 				break;
-			case WAITIF:
+			case WAITIF: 
 				rt_task_suspend_if(task);
 				break;
-			case WAITUNTIL:
+			case WAITUNTIL: 
 				rt_task_suspend_until(task, until);
 				break;
 			default: // useless, just to avoid compiler warnings
@@ -523,13 +523,13 @@ static inline int __rt_comedi_wait(RTIME until, unsigned int *cbmask, int waitmo
 }
 
 RTAI_SYSCALL_MODE long rt_comedi_wait(unsigned int *cbmask)
-{
+{ 
 	rt_printk("COMEDI WAIT: cbmask = %x.\n", *cbmask);
 	return __rt_comedi_wait((RTIME)0, cbmask, WAIT);
 }
 
 RTAI_SYSCALL_MODE long rt_comedi_wait_if(unsigned int *cbmask)
-{
+{ 
 	rt_printk("COMEDI WAIT IF: cbmask = %x.\n", *cbmask);
 	return __rt_comedi_wait((RTIME)0, cbmask, WAITIF);
 }
@@ -570,8 +570,8 @@ static struct rt_fun_entry rtai_comedi_fun[] = {
  ,[_KCOMEDI_TRIGGER    ]           = { 0, rt_comedi_trigger }
  ,[_KCOMEDI_DATA_WRITE]            = { 0, _comedi_data_write}
  ,[_KCOMEDI_DATA_READ]             = { 0, _comedi_data_read }
- ,[_KCOMEDI_DATA_READ_DELAYED]     = { 1, _comedi_data_read_delayed } // type 1 for this test only
- ,[_KCOMEDI_DATA_READ_HINT]        = { 0, _comedi_data_read_hint }
+ ,[_KCOMEDI_DATA_READ_DELAYED]     = { 1, _comedi_data_read_delayed } // type 1 for this test only      
+ ,[_KCOMEDI_DATA_READ_HINT]        = { 0, _comedi_data_read_hint }          
  ,[_KCOMEDI_DIO_CONFIG]            = { 0, _comedi_dio_config }
  ,[_KCOMEDI_DIO_READ]              = { 0, _comedi_dio_read }
  ,[_KCOMEDI_DIO_WRITE]             = { 0, _comedi_dio_write }

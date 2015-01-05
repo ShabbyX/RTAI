@@ -80,15 +80,15 @@ void *child_func(void *arg)
 	my_mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP;
 	my_attrs.mq_maxmsg = 10;
 	my_attrs.mq_msgsize = 50;
-
+  
 	tx_q = mq_open("my_queue2", my_oflags, my_mode, &my_attrs);
 
 	//Now send parent a message on this queue
 	if (tx_q > 0) {
 		clock_gettime(CLOCK_MONOTONIC, &timeout);
 		timeout.tv_sec++;
-		n = mq_timedsend(tx_q, myMsg[0].str, myMsg[0].str_size, myMsg[0].prio, &timeout);
-//		n = mq_send(tx_q, myMsg[0].str, myMsg[0].str_size, myMsg[0].prio);
+		n = mq_timedsend(tx_q, myMsg[0].str, myMsg[0].str_size, myMsg[0].prio, &timeout); 
+//		n = mq_send(tx_q, myMsg[0].str, myMsg[0].str_size, myMsg[0].prio); 
 		DISPLAY("Child sent >%s< to parent on queue %d\n", myMsg[0].str, tx_q);
 	} else {
 		DISPLAY("ERROR: child could not create my_queue2\n");
@@ -139,14 +139,14 @@ void *parent_func(void *arg)
 	my_mode = S_IRUSR | S_IWUSR | S_IRGRP;
 	my_attrs.mq_maxmsg = 10;
 	my_attrs.mq_msgsize = 50;
-
+  
 	tx_q = mq_open("my_queue1", my_oflags, my_mode, &my_attrs);
 
 	if (tx_q > 0) {
 		DISPLAY("Parent sending %d messages on queue %d\n", nMsgs, tx_q);
 		for (i = 0; i <  nMsgs ; i++) {
 			//Put message on queue
-			n = mq_send(tx_q, myMsgs[i].str, myMsgs[i].str_size, myMsgs[i].prio);
+			n = mq_send(tx_q, myMsgs[i].str, myMsgs[i].str_size, myMsgs[i].prio); 
 			//Report how much was sent
 			DISPLAY("Parent sent >%s<, %d bytes at priority %d\n", myMsgs[i].str, n, myMsgs[i].prio);
 		}
@@ -168,9 +168,9 @@ void *parent_func(void *arg)
 //	n = mq_receive(rx_q, inBuf, sizeof(inBuf), &priority);
 	if (n > 0) {
 		inBuf[n] = '\0';
-		DISPLAY("Parent got >%s< from child on queue %d\n", inBuf, (int)rx_q);
+		DISPLAY("Parent got >%s< from child on queue %d\n", inBuf, (int)rx_q); 
 	} else {
-		DISPLAY("Parent got no message from child on queue %d, error %d\n", (int)rx_q, n);
+		DISPLAY("Parent got no message from child on queue %d, error %d\n", (int)rx_q, n); 
 	}
 
 	//Tidy-up...

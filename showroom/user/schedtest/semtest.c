@@ -39,7 +39,7 @@ void task1(void)
 	rt_grow_and_lock_stack(STACK_SIZE - 10000);
 #ifdef MAKE_HARD
 	MAKE_HARD();
-#endif
+#endif	
 	rt_make_hard_real_time();
 	rt_printk("TASK1 TID = %d : ", rt_gettid());
 
@@ -61,7 +61,7 @@ void task2(void)
 	rt_grow_and_lock_stack(STACK_SIZE - 10000);
 #ifdef MAKE_HARD
 	MAKE_HARD();
-#endif
+#endif	
 	rt_printk("TASK2 TID = %d.\n\n", rt_gettid());
 
 	rt_printk("TESTING FAILING WAIT IF ......");
@@ -105,8 +105,8 @@ int main(void)
 	rt_thread_init(nam2num("MNTSK"), 100, 0, SCHED_FIFO, 0x1);
 	rt_printk("\nTESTING THE SCHEDULER WITH SEMs [%d LOOPs].\n", LOOPS);
 
-	sem1 = rt_sem_init(nam2num("SEM1"), 0);
-	sem2 = rt_sem_init(nam2num("SEM2"), 0);
+	sem1 = rt_sem_init(nam2num("SEM1"), 0);    
+	sem2 = rt_sem_init(nam2num("SEM2"), 0);    
 
 	thread1 = rt_thread_create(task1, NULL, STACK_SIZE);
 	poll(NULL, 0, 100);
@@ -117,8 +117,8 @@ int main(void)
 	rt_sem_signal(sem1);
 	rt_thread_join(thread1);
 
-	rt_sem_delete(sem1);
-	rt_sem_delete(sem2);
+	rt_sem_delete(sem1);    
+	rt_sem_delete(sem2);    
 
         rt_task_delete(NULL);
 	rt_printk("END SCHEDULER TEST WITH SEMs.\n\n");

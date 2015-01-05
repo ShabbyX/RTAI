@@ -1,5 +1,5 @@
 /*
-COPYRIGHT (C) 2001  Paolo Mantegazza (mantegazza@aero.polimi.it)
+COPYRIGHT (C) 2001-2013 Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -27,9 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #include <rtai_sched.h>
 #include <rtai_sem.h>
 
-#define RT_STACK 2000
-
-#define DEFAULT_TICK_PERIOD 1000000
+#define RT_STACK 2048
 
 #define T_BUFFER_SIZE 256
 
@@ -42,7 +40,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //#define MUTEX_LOCK  rt_sem_wait(&test_op.lock)
 #define MUTEX_LOCK  rt_sem_wait_timed(&test_op.lock, 2000000000)
 
-#define RT_PRINTK rt_printk
+#define RT_PRINTK printk
 
 struct op_buffer {
 	int t_buffer_data[T_BUFFER_SIZE];
@@ -59,24 +57,24 @@ void task_func(long tid)
 	int i;
 
 	task = rt_whoami();
-  	RT_PRINTK("task: %d, priority: %d\n", tid, task->priority);
+  	RT_PRINTK("task: %ld, priority: %d\n", tid, task->priority);
 	for (i = 0; i < NESTING; i++) {
 		MUTEX_LOCK;
 	}
 	for (i = 0; i < 5; i++) {
-		RT_PRINTK("task: %d, loop count %d\n", tid, i);
+		RT_PRINTK("task: %ld, loop count %d\n", tid, i);
 		test_op.t_buffer_data[test_op.t_buffer_pos] = tid + i;
 		test_op.t_buffer_tid[test_op.t_buffer_pos] = tid;
 		test_op.t_buffer_pos++;
 	}
-  	RT_PRINTK("task: %d, priority raised to: %d (nesting: %d)\n", tid, task->priority, test_op.lock.type);
+  	RT_PRINTK("task: %ld, priority raised to: %d (nesting: %d)\n", tid, task->priority, test_op.lock.type);
 	for (i = 0; i < (NESTING - 1); i++) {
 		rt_sem_signal(&test_op.lock);
 	}
-	RT_PRINTK("task: %d, about to unlock mutex (nesting left: %d).\n", tid, test_op.lock.type);
+	RT_PRINTK("task: %ld, about to unlock mutex (nesting left: %d).\n", tid, test_op.lock.type);
 	rt_sem_signal(&test_op.lock);
-	RT_PRINTK("task: %d, priority should now be back to original.\n", tid);
-	RT_PRINTK("task: %d, priority back to %d.\n", tid, task->priority);
+	RT_PRINTK("task: %ld, priority should now be back to original.\n", tid);
+	RT_PRINTK("task: %ld, priority back to %d.\n", tid, task->priority);
 	rt_task_suspend(task);
 }
 
@@ -88,7 +86,7 @@ void control_func(long tid)
 	RT_TASK *task;
 
 	task = rt_whoami();
-	RT_PRINTK("task: %d, priority: %d\n", tid, task->priority);
+	RT_PRINTK("task: %ld, priority: %d\n", tid, task->priority);
 
 	rt_typed_sem_init(&test_op.lock, 1, RES_SEM);
 	test_op.t_buffer_pos = 0;
@@ -106,16 +104,16 @@ void control_func(long tid)
 	}
 	for (i = 0; i < NUM_TASKS; i++) {
 		rt_task_resume(&tasks[i]);
-		RT_PRINTK("task: %d, priority raised to: %d\n", tid, task->priority);
+		RT_PRINTK("task: %ld, priority raised to: %d\n", tid, task->priority);
 	}
-	RT_PRINTK("task: %d, priority finally raised to: %d (nesting: %d)\n", tid, task->priority, test_op.lock.type);
+	RT_PRINTK("task: %ld, priority finally raised to: %d (nesting: %d)\n", tid, task->priority, test_op.lock.type);
 	for (i = 0; i < (NESTING - 1); i++) {
 		rt_sem_signal(&test_op.lock);
 	}
-	RT_PRINTK("task: %d, about to unlock mutex (nesting left: %d).\n", tid, test_op.lock.type);
+	RT_PRINTK("task: %ld, about to unlock mutex (nesting left: %d).\n", tid, test_op.lock.type);
 	rt_sem_signal(&test_op.lock);
-	RT_PRINTK("task: %d, priority should now be back to original.\n", tid);
-	RT_PRINTK("task: %d, priority back to %d.\n", tid, task->priority);
+	RT_PRINTK("task: %ld, priority should now be back to original.\n", tid);
+	RT_PRINTK("task: %ld, priority back to %d.\n", tid, task->priority);
 	rt_task_suspend(task);
 }
 
@@ -123,7 +121,7 @@ static RT_TASK control_task;
 
 int init_module(void)
 {
-	start_rt_timer(nano2count(DEFAULT_TICK_PERIOD));
+	start_rt_timer(0);
 	printk("resource semaphores priority inheritance test program.\n");
 // Create a control pthread.
 	if (rt_task_init(&control_task, control_func, TID, RT_STACK, 1000, 0, 0)) {

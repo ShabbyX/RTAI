@@ -1,0 +1,29 @@
+#!/bin/sh
+./rem
+
+prefix=`rtai-config --prefix`
+arch=`rtai-config --arch`
+insmod=/sbin/insmod
+
+if [ "$prefix" == "" ]; then
+echo "ERROR: please set your PATH variable to <rtai-install>/bin"
+exit
+fi
+
+MODULES=$prefix/modules
+
+echo
+echo "*** RTAI HAL TEST ***"
+echo "Press <enter> to load modules:"
+read junk
+echo
+echo "Now start the realtime process <enter>, <ctrl-C> to end it."
+echo "Press <enter> to remove the modules."
+read junk
+sync
+insmod $MODULES/rtai_hal.ko; 
+#insmod $MODULES/rtai_sched.ko; 
+insmod ./sysreqwt_rt.ko;
+insmod ./lnxshintr_rt.ko;
+./display
+./rem

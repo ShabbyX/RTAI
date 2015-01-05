@@ -1,6 +1,7 @@
 #define BUFSIZE     139
 #define SLEEP_TIME  100000
 
+#if 0
 // see: Computing Practices, ACM, vol. 31, n. 10, 1988, pgs 1192-1201.
 
 #define TWOPWR31M1 2147483647  // 2^31 - 1
@@ -22,6 +23,7 @@ static inline long next_rand(long rand)
 	}
 	return rand;
 }
+#endif
 
 #ifdef __KERNEL__
 static unsigned long randu(unsigned long range)

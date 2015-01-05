@@ -10,7 +10,7 @@ echo "Now start the realtime the fifo based fast ticking <enter>,"
 echo "<ctrl-C> to end it:>"
 read junk
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./latency_rt.ko;
 else insmod ./latency.o; fi
 ./display

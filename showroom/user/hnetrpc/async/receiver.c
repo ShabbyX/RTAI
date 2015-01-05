@@ -47,7 +47,7 @@ static void *async_fun(void *args)
 		exit(1);
 	}
 	mlockall(MCL_CURRENT | MCL_FUTURE);
-	while (!end) {
+	while (!end) {	
 if (SERVER) {
 		unsigned long long retval;
 		int i1, i2, l1, l2;
@@ -59,7 +59,7 @@ if (SERVER) {
 			break;
 		}
 } else {
-		rt_sleep(nano2count(100000000));
+		rt_sleep(nano2count(100000000)); 
 }
 	}
 	rt_task_delete(asynctsk);
@@ -106,14 +106,14 @@ int main(int argc, char *argv[])
 	printf("\nRECEIVER TASK RUNNING\n");
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 
-	while (!end) {
+	while (!end) {	
 		r = RT_mbx_receive(sndnode, -sndport, sndmbx, &i, sizeof(long));
 		rt_printk("RECEIVE %ld %ld\n", r, i);
 if (SERVER) {
-		rt_sleep(nano2count(100000000));
+		rt_sleep(nano2count(100000000)); 
 } else {
 		while (!end && rt_waiting_return(sndnode, sndport)) {
-			rt_sleep(nano2count(1000000));
+			rt_sleep(nano2count(1000000)); 
 		}
 		if (!end) {
 			unsigned long long retval;

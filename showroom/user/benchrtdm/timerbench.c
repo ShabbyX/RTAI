@@ -75,9 +75,6 @@ static inline long long slldiv(long long s, unsigned d)
 
 static void eval_inner_loop(struct rt_tmbench_context *ctx, long dt)
 {
-	if (ctx->date <= ctx->start_time)
-		ctx->curr.overruns++;
-
 	if (dt > ctx->curr.max)
 		ctx->curr.max = dt;
 	if (dt < ctx->curr.min)
@@ -96,6 +93,14 @@ static void eval_inner_loop(struct rt_tmbench_context *ctx, long dt)
 
 	if (!ctx->warmup && ctx->histogram_size)
 		add_histogram(ctx, ctx->histogram_avg, dt);
+
+	/* Evaluate overruns and adjust next release date.
+	   Beware of signedness! */
+	while (dt > 0 && (unsigned long)dt > ctx->period) {
+		ctx->curr.overruns++;
+		ctx->date += ctx->period;
+		dt -= ctx->period;
+	}
 }
 
 static void eval_outer_loop(struct rt_tmbench_context *ctx)
@@ -169,18 +174,21 @@ static void timer_proc(rtdm_timer_t *timer)
 {
 	struct rt_tmbench_context *ctx =
 	    container_of(timer, struct rt_tmbench_context, timer);
+	int err;
 
-	eval_inner_loop(ctx, (long)(rtdm_clock_read_monotonic() - ctx->date));
+	do {
+		eval_inner_loop(ctx, (long)(rtdm_clock_read_monotonic() - 
+					    ctx->date));
 
-	ctx->start_time = rtdm_clock_read_monotonic();
-	rtdm_timer_start_in_handler(&ctx->timer, ctx->date, 0,
-				    RTDM_TIMERMODE_ABSOLUTE);
+		ctx->start_time = rtdm_clock_read_monotonic();
+		err = rtdm_timer_start_in_handler(&ctx->timer, ctx->date, 0,
+				        	  RTDM_TIMERMODE_ABSOLUTE);
 
-	if (++ctx->curr.test_loops < ctx->samples_per_sec)
-		return;
-
-	ctx->curr.test_loops = 0;
-	eval_outer_loop(ctx);
+		if (++ctx->curr.test_loops >= ctx->samples_per_sec) {
+			ctx->curr.test_loops = 0;
+			eval_outer_loop(ctx);
+		}
+	} while (err);
 }
 
 static int rt_tmbench_open(struct rtdm_dev_context *context,
@@ -190,8 +198,7 @@ static int rt_tmbench_open(struct rtdm_dev_context *context,
 
 	ctx = (struct rt_tmbench_context *)context->dev_private;
 
-	ctx->mode = -1;
-//	init_MUTEX(&ctx->nrt_mutex);
+	ctx->mode = RTTST_TMBENCH_INVALID;
 	sema_init(&ctx->nrt_mutex, 1);
 
 	return 0;
@@ -209,7 +216,7 @@ static int rt_tmbench_close(struct rtdm_dev_context *context,
 	if (ctx->mode >= 0) {
 		if (ctx->mode == RTTST_TMBENCH_TASK)
 			rtdm_task_destroy(&ctx->timer_task);
-		else
+		else if (ctx->mode == RTTST_TMBENCH_HANDLER)
 			rtdm_timer_destroy(&ctx->timer);
 
 		rtdm_event_destroy(&ctx->result_event);
@@ -217,7 +224,7 @@ static int rt_tmbench_close(struct rtdm_dev_context *context,
 		if (ctx->histogram_size)
 			kfree(ctx->histogram_min);
 
-		ctx->mode = -1;
+		ctx->mode = RTTST_TMBENCH_INVALID;
 		ctx->histogram_size = 0;
 	}
 
@@ -285,15 +292,17 @@ static int rt_tmbench_start(struct rtdm_dev_context *context,
 	ctx->curr.max = -10000000;
 	ctx->curr.avg = 0;
 	ctx->curr.overruns = 0;
+	ctx->mode = RTTST_TMBENCH_INVALID;
 
 	rtdm_event_init(&ctx->result_event, 0);
 
 	if (config->mode == RTTST_TMBENCH_TASK) {
 		if (!test_bit(RTDM_CLOSING, &context->context_flags)) {
-			ctx->mode = RTTST_TMBENCH_TASK;
 			err = rtdm_task_init(&ctx->timer_task, "timerbench",
 					     timer_task_proc, ctx,
 					     config->priority, 0);
+			if (!err)
+				ctx->mode = RTTST_TMBENCH_TASK;
 		}
 	} else {
 		rtdm_timer_init(&ctx->timer, timer_proc,
@@ -304,13 +313,15 @@ static int rt_tmbench_start(struct rtdm_dev_context *context,
 		if (!test_bit(RTDM_CLOSING, &context->context_flags)) {
 			ctx->mode = RTTST_TMBENCH_HANDLER;
 
-			/* first event: one millisecond from now. */
-			ctx->date = rtdm_clock_read_monotonic() + 1000000;
-
 			RTDM_EXECUTE_ATOMICALLY(
 				ctx->start_time = rtdm_clock_read_monotonic();
-				rtdm_timer_start(&ctx->timer, ctx->date, 0,
-						 RTDM_TIMERMODE_ABSOLUTE);
+
+				/* first event: one millisecond from now. */
+				ctx->date = ctx->start_time + 1000000;
+
+				err =
+				    rtdm_timer_start(&ctx->timer, ctx->date, 0,
+						     RTDM_TIMERMODE_ABSOLUTE);
 			);
 		}
 	}
@@ -335,12 +346,12 @@ static int rt_tmbench_stop(struct rt_tmbench_context *ctx,
 
 	if (ctx->mode == RTTST_TMBENCH_TASK)
 		rtdm_task_destroy(&ctx->timer_task);
-	else
+	else if (ctx->mode == RTTST_TMBENCH_HANDLER)
 		rtdm_timer_destroy(&ctx->timer);
 
 	rtdm_event_destroy(&ctx->result_event);
 
-	ctx->mode = -1;
+	ctx->mode = RTTST_TMBENCH_INVALID;
 
 	ctx->result.overall.avg =
 	    slldiv(ctx->result.overall.avg,
@@ -498,7 +509,8 @@ static int __init __timerbench_init(void)
 	int err;
 
 	do {
-		snprintf(device.device_name, RTDM_MAX_DEVNAME_LEN, "rttest%d",
+		snprintf(device.device_name, RTDM_MAX_DEVNAME_LEN,
+			 "rttest-timerbench%d",
 			 start_index);
 		err = rtdm_dev_register(&device);
 

@@ -1,6 +1,7 @@
-/usr/rtnet/sbin/rtifconfig rtlo down
+/usr/rtnet/sbin/rtifconfig rtlo down 
 rmmod rt_loopback.ko
 rmmod rtpacket.ko
+rmmod rtudp
 rmmod rtipv4.ko
 rmmod rtnet.ko
 unlink /dev/rtnet

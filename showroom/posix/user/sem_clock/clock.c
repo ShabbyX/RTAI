@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 #include "clock.h"
 
-#define TICK_PERIOD     100000LL    /*  0.1 msec (  1  tick) */
+#define TICK_PERIOD     100000LL    /*  0.1 msec (  1  tick) */ 
 #define POLLING_DELAY  1000000LL    /*    1 msec ( 10 ticks) */
 #define ONE_UNIT      10000000LL    /*   10 msec (100 ticks) */
 #define FIVE_SECONDS  5000000000LL
@@ -135,11 +135,11 @@ void *ClockChrono_Clock(void *args)
 				rt_fractionated_sleep(OneUnit);
 				MenageHmsh_PlusOneUnit(&hour, &display);
 				break;
-			case 'T':
+			case 'T': 
 				MenageHmsh_InitialiseHundredthes(&hour);
 				display = FALSE;
 				break;
-			case 'H':
+			case 'H': 
 				MenageHmsh_AdvanceHours(&hour);
 				display = TRUE;
 				break;
@@ -171,7 +171,7 @@ end:
 void *ClockChrono_Chrono(void *args)
 {
 	RT_TASK *mytask /*, *keybrd */;
-	MenageHmsh_tHour times;
+	MenageHmsh_tHour times;			
 	MenageHmsh_tChain11 timesChain;
 	BOOLEAN Intermediatetimes = FALSE;
 	MenageHmsh_tHour endIntermediateTimes;
@@ -210,7 +210,7 @@ void *ClockChrono_Chrono(void *args)
 			case 'I':
 				Intermediatetimes = TRUE;
 				endIntermediateTimes = times;
-				MenageHmsh_PlusNSeconds(3,
+				MenageHmsh_PlusNSeconds(3, 
 							&endIntermediateTimes);
 				display = TRUE;
 				hundredthes = TRUE;
@@ -300,27 +300,27 @@ int main(int argc, char* argv[])
 	printf("\nINIT MASTER TASK %p.\n", mytask);
 
 	OneUnit = nano2count(ONE_UNIT);
-	start_rt_timer((int)nano2count(TICK_PERIOD));
+	start_rt_timer(0);
 
-	if (!(Read = rt_thread_create(ClockChrono_Read, NULL, 10000))) {
+	if (!(Read = rt_thread_create(ClockChrono_Read, NULL, 10000))) { 
 		printf("ERROR IN CREATING ClockChrono_Read\n");
 		exit(1);
- 	}
+ 	}       
 
-	if (!(Chrono = rt_thread_create(ClockChrono_Chrono, NULL, 10000))) {
+	if (!(Chrono = rt_thread_create(ClockChrono_Chrono, NULL, 10000))) { 
 		printf("ERROR IN CREATING ClockChrono_Chrono\n");
 		exit(1);
- 	}
+ 	}       
 
-	if (!(Clock = rt_thread_create(ClockChrono_Clock, NULL, 10000))) {
+	if (!(Clock = rt_thread_create(ClockChrono_Clock, NULL, 10000))) { 
 		printf("ERROR IN CREATING ClockChrono_Clock\n");
 		exit(1);
- 	}
+ 	}       
 
 	if (!(Write = rt_thread_create(ClockChrono_Write, NULL, 10000))) {
 		printf("ERROR IN CREATING ClockChrono_Write\n");
 		exit(1);
- 	}
+ 	}       
 
 	rt_task_suspend(mytask);
 

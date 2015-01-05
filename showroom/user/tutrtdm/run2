@@ -25,7 +25,7 @@ echo "*** HARD USER SPACE CLIENT/SERVER THROUGH A KERNEL AGENT ***"
 echo "Press <enter> to load modules:"
 read junk
 cd ..; ./ldmod; cd -
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then
 insmod $MODULES/rtai_rtdm.ko
 else
@@ -35,7 +35,7 @@ echo
 echo "Now start the realtime process <enter> and wait for its end."
 read junk
 sync
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./tut02-skeleton-drv_rt.ko;
 else insmod ./tut02-skeleton-drv.o; fi
 $SUDO ./tut02-skeleton-app "0123456789-abcdefghijklmnopqrstuvwxyz"

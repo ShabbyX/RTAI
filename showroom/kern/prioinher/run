@@ -13,7 +13,7 @@ echo "Now start the realtime process <enter>,"
 read junk
 echo "Example 1, type <return> to continue"
 read junk
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./prioinher1_rt.ko $semtype;
 else insmod ./prioinher1.o $semtype; fi
 echo " "
@@ -23,7 +23,7 @@ rmmod prioinher1_rt
 rmmod prioinher1
 echo "Example 2, type <return> to continue"
 read junk
-if (`rtai-config --linux-version | grep -q 2.6`);
+if [`rtai-config --linux-version | grep -q 2.6` -o `rtai-config --linux-version | grep -q 3.`];
 then insmod ./prioinher2_rt.ko $semtype;
 else insmod ./prioinher2.o $semtype; fi
 echo " "

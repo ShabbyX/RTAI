@@ -44,7 +44,7 @@ int main(void)
 	rt_grow_and_lock_stack(100000);
 #ifdef MAKE_HARD
 	MAKE_HARD();
-#endif
+#endif	
 
 	for (i = 0; i < LOOPS; i++) {
 		rtai_srq(srq, (unsigned long)nano2count(DELAY));

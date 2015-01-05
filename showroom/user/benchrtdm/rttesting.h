@@ -61,7 +61,7 @@
 
 #include <rtdm/rtdm.h>
 
-#define RTTST_PROFILE_VER		1
+#define RTTST_PROFILE_VER		2
 
 typedef struct rttst_bench_res {
 	long long avg;
@@ -84,6 +84,7 @@ typedef struct rttst_overall_bench_res {
 	void *__padding;	/* align to dwords on 32-bit archs */
 } rttst_overall_bench_res_t;
 
+#define RTTST_TMBENCH_INVALID           -1 /* internal use only */
 #define RTTST_TMBENCH_TASK		0
 #define RTTST_TMBENCH_HANDLER		1
 
@@ -119,13 +120,15 @@ typedef struct rttst_irqbench_stats {
 	unsigned long long irqs_acknowledged;
 } rttst_irqbench_stats_t;
 
-#define RTTST_SWTEST_FPU		0x1
-#define RTTST_SWTEST_USE_FPU		0x2 /* Only for kernel-space tasks. */
-
 struct rttst_swtest_task {
 	unsigned index;
 	unsigned flags;
 };
+
+/* Possible values for struct rttst_swtest_task::flags. */
+#define RTTST_SWTEST_FPU                0x1
+#define RTTST_SWTEST_USE_FPU            0x2 /* Only for kernel-space tasks. */
+#define RTTST_SWTEST_FREEZE             0x4 /* Only for kernel-space tasks. */
 
 struct rttst_swtest_dir {
 	unsigned from;
@@ -137,6 +140,10 @@ struct rttst_swtest_error {
 	unsigned fp_val;
 };
 
+#define RTTST_RTDM_NORMAL_CLOSE         0
+#define RTTST_RTDM_DEFER_CLOSE_HANDLER  1
+#define RTTST_RTDM_DEFER_CLOSE_CONTEXT  2
+
 #define RTIOC_TYPE_TESTING		RTDM_CLASS_TESTING
 
 /*!
@@ -145,6 +152,7 @@ struct rttst_swtest_error {
 #define RTDM_SUBCLASS_TIMERBENCH	0
 #define RTDM_SUBCLASS_IRQBENCH		1
 #define RTDM_SUBCLASS_SWITCHTEST	2
+#define RTDM_SUBCLASS_RTDMTEST          3
 /** @} */
 
 /*!

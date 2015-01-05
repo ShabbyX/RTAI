@@ -129,7 +129,7 @@ void fun(long t)
 int init_module(void)
 {
 	int period;
-
+	
 	if (!(shm = rt_shm_alloc(nam2num("MEM"), (SHMSIZE + 2)*sizeof(int), SUPRT))) {
 		printk("ERROR IN SHM ALLOC\n");
 		return 0;

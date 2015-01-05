@@ -27,7 +27,7 @@ MODULE_LICENSE("GPL");
 #include <rtai_malloc.h>
 #include "rtai_signal.h"
 
-#define NTASKS       4
+#define NTASKS       5
 #define SMLTN        5
 #define CPUMAP       1
 
@@ -35,7 +35,7 @@ MODULE_LICENSE("GPL");
 #define RESUME_SIGNAL  0
 #define END_SIGNAL     1
 
-#define NLOOP     1000
+#define NLOOP     10000
 #define PERIOD    1000000
 #define WAISTIME  PERIOD/(2*NTASKS)
 #define STKSZ     4000
@@ -91,7 +91,6 @@ static void task_fun(long taskidx)
 	rt_return(rt_receive(0, &loop), 0);
 	rt_sem_wait_barrier(&barrier);
 	rt_printk("TASK %d ENDs\n", taskidx + 1);
-	rt_task_suspend(0);
 }
 
 static void master_fun(long arg)

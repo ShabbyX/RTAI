@@ -75,7 +75,7 @@ pci.ids database, ICH5-M ?)
 */
 
 #define DEVFN        0xf8 /* device 31, function 0 */
-
+    
 #define PMBASE_B0    0x40
 #define PMBASE_B1    0x41
 
@@ -150,7 +150,7 @@ void rthal_smi_disable(void)
 	}
 }
 
-static unsigned short __devinit get_smi_en_addr(struct pci_dev *dev)
+static unsigned short get_smi_en_addr(struct pci_dev *dev)
 {
 	u_int8_t byte0, byte1;
 
@@ -159,7 +159,7 @@ static unsigned short __devinit get_smi_en_addr(struct pci_dev *dev)
 	return SMI_CTRL_ADDR + (((byte1 << 1) | (byte0 >> 7)) << 7); //bits 7-15
 }
 
-int __devinit rthal_smi_init(void)
+int rthal_smi_init(void)
 {
 	struct pci_dev *dev = NULL;
 	struct pci_device_id *id;
@@ -194,7 +194,7 @@ int init_module(void)
 	return retval;
 }
 
-void cleanup_module(void)
+void cleanup_module(void)         
 {
 	if (smiReset) {
 		rthal_smi_restore();
@@ -246,7 +246,7 @@ MODULE_LICENSE("GPL");
 
    page 492, 493: USB EHCI legacy support and SPECIAL SMI, i.e Intel Specific
        USB 2.0 SMI register.
-
+       
    page 520, SMBus
        may be disabled by clearing register HOSTC, bit SMB_SMI_EN
        register used by Linux driver drivers/i2c/busses/i2c-i801.c

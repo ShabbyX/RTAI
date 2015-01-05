@@ -1,6 +1,6 @@
 ****** SEM_CLOCK EXAMPLE ******
 
-This example demonstrates the use of semaphores. It implements a digital wrist
+This example demonstrates the use of semaphores. It implements a digital wrist 
 clock in the way detailed in: Andre' Schiper, Programmation Concurrent,
 Presses Polytechnique et Universitaires Romandes, Geneve.
 

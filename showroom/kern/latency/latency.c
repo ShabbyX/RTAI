@@ -100,12 +100,12 @@ static double dot(double *a, double *b, int n)
 }
 #endif
 
-/*
+/* 
  *	/proc/rtai/latency_calibrate entry
  */
 
 #ifdef CONFIG_PROC_FS
-static int proc_read(char *page, char **start, off_t off,
+static int proc_read(char *page, char **start, off_t off, 
                      int count, int *eof, void *data)
 {
 	PROC_PRINT_VARS;
@@ -123,9 +123,9 @@ static int proc_read(char *page, char **start, off_t off,
 
 
 /*
- *	Periodic realtime thread
+ *	Periodic realtime thread 
  */
-
+ 
 void
 fun(long thread)
 {
@@ -199,8 +199,8 @@ fun(long thread)
 
 
 /*
- *	Initialisation. We have to select the scheduling mode and start
- *      our periodical measurement task.
+ *	Initialisation. We have to select the scheduling mode and start 
+ *      our periodical measurement task.  
  */
 
 static int
@@ -261,7 +261,7 @@ __latency_init(void)
 
 
 /*
- *	Cleanup
+ *	Cleanup 
  */
 
 static void

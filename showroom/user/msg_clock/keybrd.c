@@ -76,7 +76,7 @@ int main(void)
 		execl("./screen", "./screen", NULL);
 	}
 	sleep(1);
-
+	
  	if (!(mytask = rt_task_init_schmod(nam2num("KBRTSK"), 10, 0, 0, SCHED_FIFO, 0xF))) {
 		printf("CANNOT INIT KEYBOARD TASK\n");
 		exit(1);

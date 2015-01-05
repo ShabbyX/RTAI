@@ -118,8 +118,8 @@ int init_module(void)
 {
 	printk("TESTING RTDM SEMs [LOOPs %d, TIMEOUTs %d (ns)].\n", LOOPS, DELAY);
 	start_rt_timer(0);
-	rtdm_sem_init(&sem1, 0);
-	rtdm_sem_init(&sem2, 0);
+	rtdm_sem_init(&sem1, 0);    
+	rtdm_sem_init(&sem2, 0);    
 	rtdm_task_init_cpuid(&stask1, "task1", task1, NULL, 0, 0, 0);
 	rtdm_task_init_cpuid(&stask2, "task2", task2, NULL, 1, 0, 0);
 	return 0;
@@ -130,7 +130,7 @@ void cleanup_module(void)
 {
 	rtdm_task_destroy(&stask1);
 	rtdm_task_destroy(&stask2);
-	rtdm_sem_destroy(&sem1);
-	rtdm_sem_destroy(&sem2);
+	rtdm_sem_destroy(&sem1);    
+	rtdm_sem_destroy(&sem2);    
 	stop_rt_timer();
 }

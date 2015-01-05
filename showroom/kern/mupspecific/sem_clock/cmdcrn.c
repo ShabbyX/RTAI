@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #include <linux/interrupt.h>
 #include <linux/delay.h>
 
-#include <asm/system.h>
 #include <asm/fixmap.h>
 #include <asm/smp.h>
 #include <asm/io.h>
@@ -66,7 +65,7 @@ void CommandChrono_Get(char *command)
 {
 	switch (Chronostatus) {
 		case stoppedInitial:
-			if (buffered) {
+			if (buffered) { 
 				buffered = FALSE;
 			} else {
 				rt_sem_wait(&notEmpty);

@@ -50,7 +50,7 @@ void *thread_fun(void *arg)
 
 	mytask_indx = *((int *)arg);
 	mytask_name = taskname(mytask_indx);
-	cpus_allowed = 1 - cpus_allowed;
+	cpus_allowed = 1 - cpus_allowed; 
  	if (!(mytask = rt_task_init_schmod(mytask_name, 1, 0, 0, SCHED_FIFO, 1 << cpus_allowed))) {
 		printf("CANNOT INIT TASK %lu\n", mytask_name);
 		exit(1);
@@ -108,7 +108,7 @@ void endme(int dummy)
 
 int main(void)
 {
-	int i, indx[NTASKS];
+	int i, indx[NTASKS];       
 	unsigned long mytask_name = nam2num("MASTER");
 
 	signal(SIGINT, endme);
@@ -119,7 +119,7 @@ int main(void)
 	}
 	printf("MASTER INIT: name = %lu, address = %p.\n", mytask_name, mytask);
 
-	sem = rt_sem_init(10000, 0);
+	sem = rt_sem_init(10000, 0); 
 	rt_set_oneshot_mode();
 //	rt_set_periodic_mode();
 	start_rt_timer(0);
@@ -129,8 +129,8 @@ int main(void)
 		if (!(task[i] = rt_thread_create(thread_fun, &indx[i], 10000))) {
 			printf("ERROR IN CREATING THREAD %d\n", indx[i]);
 			exit(1);
- 		}
- 	}
+ 		}       
+ 	}       
 
 	for (i = 0; i < ntasks; i++) {
 		while (!rt_get_adr(taskname(i))) {

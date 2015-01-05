@@ -22,11 +22,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 #define SIZE 100000
 
-int *gh;
+int *gh;	
 
 int init_module(void)
 {
-	int *vm, *km, *ka, *kd, i;
+	int *vm, *km, *ka, *kd, i;	
 	unsigned long s;
 	vm = rt_shm_alloc(nam2num("VM"), SIZE*sizeof(int), USE_VMALLOC);
 	km = rt_shm_alloc(nam2num("KM"), SIZE*sizeof(int), USE_GFP_KERNEL);
