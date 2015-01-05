@@ -135,7 +135,10 @@ static inline void _lxrt_context_switch (struct task_struct *prev, struct task_s
    math_restore do a "clts" before orring TS_USEDFPU in status ?????          */
 	if (task_thread_info(prev)->status & TS_USEDFPU) clts();
 #endif
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,18)
+#if LINUX_VERSION_CODE > KERNEL_VERSION(3,13,0)
+        prev->thread.fpu_counter = 0;
+#endif
+#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,19) && LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
 	prev->fpu_counter = 0;
 #endif
 	context_switch(NULL, prev, next);
