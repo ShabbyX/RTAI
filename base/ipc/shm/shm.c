@@ -138,7 +138,7 @@ static RTAI_SYSCALL_MODE int rt_shm_alloc_usp(unsigned long name, int size, int 
 	TRACE_RTAI_SHM(TRACE_RTAI_EV_SHM_MALLOC, name, size, current->pid);
 
 	if (_rt_shm_alloc(name, size, suprt)) {
-		current->rtai_tskext(TSKEXT1) = (void *)name;
+		rtai_tskext(current, TSKEXT1) = (void *)name;
 		return abs(rt_get_type(name));
 	}
 	return 0;
@@ -240,8 +240,8 @@ static int rtai_shm_f_mmap(struct file *file, struct vm_area_struct *vma)
 	if (!vma->vm_ops) {
 		vma->vm_ops = &rtai_shm_vm_ops;
 		vma->vm_flags |= VM_LOCKED;
-		name = (unsigned long)(vma->vm_private_data = current->rtai_tskext(TSKEXT1));
-		current->rtai_tskext(TSKEXT1) = current->rtai_tskext(TSKEXT0) ? current : NULL;
+		name = (unsigned long)(vma->vm_private_data = rtai_tskext(current, TSKEXT1));
+		rtai_tskext(current, TSKEXT1) = rtai_tskext(current, TSKEXT0) ? current : NULL;
 		return (size = rt_get_type(name)) < 0 ? rkmmap(ALIGN2PAGE(rt_get_adr(name)), -size, vma) : rvmmap(rt_get_adr(name), size, vma);
 	}
 	return -EFAULT;
@@ -387,7 +387,7 @@ void rt_named_free(void *adr)
 #define RTAI_TASK(return_instr) \
 do { \
 	if (!(task = _rt_whoami())->is_hard) { \
-		if (!(task = current->rtai_tskext(TSKEXT0))) { \
+		if (!(task = rtai_tskext_t(current, TSKEXT0))) { \
 			return_instr; \
 		} \
 	} \

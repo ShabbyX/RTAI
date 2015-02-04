@@ -1889,7 +1889,7 @@ extern RT_TASK * rt_find_task_by_pid(pid_t);
 static inline struct rt_task_struct *pid2rttask(long pid)
 {
 	struct task_struct *lnxtsk = find_task_by_pid(pid);
-	return lnxtsk ? lnxtsk->rtai_tskext(TSKEXT0) : rt_find_task_by_pid(pid);
+	return lnxtsk ? rtai_tskext(lnxtsk, TSKEXT0) : rt_find_task_by_pid(pid);
 }
 
 static inline long rttask2pid(struct rt_task_struct * task)
@@ -2138,7 +2138,7 @@ RTAI_SYSCALL_MODE pid_t rt_Trigger(pid_t pid)
 RTAI_SYSCALL_MODE pid_t rt_Name_attach(const char *argname)
 {
 	RT_TASK *task;
-	task = current->rtai_tskext(TSKEXT0) ? (RT_TASK *)current->rtai_tskext(TSKEXT0) : _rt_whoami();
+	task = rtai_tskext(current, TSKEXT0) ? rtai_tskext_t(current, TSKEXT0) : _rt_whoami();
 	if (current->comm[0] != 'U' && current->comm[1] != ':') {
 	    	rt_strncpy_from_user(task->task_name, argname, RTAI_MAX_NAME_LENGTH);
 	} else {

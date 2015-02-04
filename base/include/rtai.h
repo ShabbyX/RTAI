@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright (C) 1999-2015 Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,6 +26,7 @@
 #include <rtai_sanity.h>
 #include <asm/rtai.h>
 
+#ifdef __KERNEL__
 // see: Computing Practices, ACM, vol. 31, n. 10, 1988, pgs 1192-1201.
 
 #define TWOPWR31M1 2147483647  // 2^31 - 1
@@ -56,5 +57,6 @@ static inline long irandu(unsigned long range)
 	seed = next_rand(seed);
 	return rtai_imuldiv(seed, range, m);
 }
+#endif /* __KERNEL__ */
 
 #endif /* !_RTAI_RTAI_H */

@@ -19,28 +19,10 @@
 #ifndef _RTAI_ASM_I386_ATOMIC_H
 #define _RTAI_ASM_I386_ATOMIC_H
 
-#ifdef __KERNEL__
+#ifndef __KERNEL__
 
-#include <linux/bitops.h>
-#include <asm/atomic.h>
-//#include <asm/system.h>
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-
-#define atomic_cmpxchg(v, old, new)  ((int)cmpxchg(&((v)->counter), old, new))
-#define atomic_xchg(v, new)          (xchg(&((v)->counter), new))
-
-#endif
-
-#else /* !__KERNEL__ */
-
-#ifndef likely
-#if __GNUC__ == 2 && __GNUC_MINOR__ < 96
-#define __builtin_expect(x, expected_value) (x)
-#endif
 #define likely(x)	__builtin_expect(!!(x), 1)
 #define unlikely(x)	__builtin_expect(!!(x), 0)
-#endif /* !likely */
 
 #ifdef CONFIG_SMP
 #define LOCK_PREFIX "lock ; "

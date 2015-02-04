@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2003 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright (C) 1999-2015 Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,5 +16,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifndef _RTAI_ASM_RTAI_H
+#define _RTAI_ASM_RTAI_H
+
 #include <rtai_config.h>
 #include <asm/rtai_hal.h>
+
+#endif /* !_RTAI_ASM_RTAI_H */

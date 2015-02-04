@@ -124,6 +124,10 @@ Naturally you can set RTAI "IsolCpusMask" even without setting the Linux
 will not be as good as with the complete isolation setting described
 previously.
 
+Starting from RTAI-4.1 rtai_hal.ko can inheredit the cpu isolation mask from
+the kernel. So there is nomore the need to set IsolCpuMask at the insmoding of 
+rtai_hal.ko. Nonetheless if IsolCpuMask is not null it will supersede the one
+assigned by Linux at boot time.
 
 3. Cpusets & CPU hotplug
 ------------------------

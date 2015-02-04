@@ -23,6 +23,7 @@
 #ifndef _RTAI_XNSTUFF_H
 #define _RTAI_XNSTUFF_H
 
+#include <linux/compat.h>
 #include <linux/version.h>
 #include <linux/proc_fs.h>
 #include <asm/uaccess.h>
@@ -55,8 +56,8 @@
   of specific assertions we care of.
  */
 
-#define xnpod_root_p()          (!current->rtai_tskext(TSKEXT0) || !((RT_TASK *)(current->rtai_tskext(TSKEXT0)))->is_hard)
-#define xnshadow_thread(t)      ((xnthread_t *)current->rtai_tskext(TSKEXT0))
+#define xnpod_root_p()          (!rtai_tskext(current, TSKEXT0) || !rtai_tskext_t(current, TSKEXT0)->is_hard)
+#define xnshadow_thread(t)      ((xnthread_t *)rtai_tskext(current, TSKEXT0))
 #define rthal_local_irq_test()  (!rtai_save_flags_irqbit())
 #define rthal_local_irq_enable  rtai_sti 
 #define rthal_domain rtai_domain
@@ -64,7 +65,7 @@
 ({                                                              \
         unsigned long __flags, __ret;                           \
         local_irq_save_hw_smp(__flags);                         \
-        __ret = ipipe_test_pipeline_from(&rthal_domain);        \
+        __ret = ipipe_test_head();			        \
         local_irq_restore_hw_smp(__flags);                      \
         __ret;                                                  \
 })
@@ -98,10 +99,10 @@ typedef unsigned long phys_addr_t;
 
 #define nklock (*((xnlock_t *)rtai_cpu_lock))
 
-#define XNARCH_LOCK_UNLOCKED  (xnlock_t) { { 0, 0 } }
+#define XNARCH_LOCK_UNLOCKED  { { { 0, __ARCH_SPIN_LOCK_UNLOCKED } } }
 
 typedef unsigned long spl_t;
-typedef struct { volatile unsigned long lock[2]; } xnlock_t;
+typedef struct { struct global_lock lock[1]; } xnlock_t;
 
 #ifndef list_first_entry
 #define list_first_entry(ptr, type, member) \
@@ -110,8 +111,8 @@ typedef struct { volatile unsigned long lock[2]; } xnlock_t;
 
 #ifndef local_irq_save_hw_smp
 #ifdef CONFIG_SMP
-#define local_irq_save_hw_smp(flags)    local_irq_save_hw(flags)
-#define local_irq_restore_hw_smp(flags) local_irq_restore_hw(flags)
+#define local_irq_save_hw_smp(flags)    do { (flags) = hard_local_irq_save(); } while(0)
+#define local_irq_restore_hw_smp(flags) hard_local_irq_restore(flags)
 #else /* !CONFIG_SMP */
 #define local_irq_save_hw_smp(flags)    do { (void)(flags); } while (0)
 #define local_irq_restore_hw_smp(flags) do { } while (0)
@@ -127,15 +128,17 @@ typedef struct { volatile unsigned long lock[2]; } xnlock_t;
 
 static inline void xnlock_init(xnlock_t *lock)
 {
-	*lock = XNARCH_LOCK_UNLOCKED;
+//	lock->lock[0].mask = 0;
+//	lock->lock[0].lock = (arch_spinlock_t)__ARCH_SPIN_LOCK_UNLOCKED;
+	lock->lock[0] = (struct global_lock) { 0, __ARCH_SPIN_LOCK_UNLOCKED };
 }
 
 static inline void xnlock_get(xnlock_t *lock)
 {
 	barrier();
 	rtai_cli();
-	if (!test_and_set_bit(hal_processor_id(), &lock->lock[0])) {
-		rtai_spin_glock(&lock->lock[0]);
+	if (!test_and_set_bit(hal_processor_id(), &lock->lock[0].mask)) {
+		rt_spin_lock(&lock->lock[0].lock);
 	}
 	barrier();
 }
@@ -144,8 +147,8 @@ static inline void xnlock_put(xnlock_t *lock)
 {
 	barrier();
 	rtai_cli();
-	if (test_and_clear_bit(hal_processor_id(), &lock->lock[0])) {
-		rtai_spin_gunlock(&lock->lock[0]);
+	if (test_and_clear_bit(hal_processor_id(), &lock->lock[0].mask)) {
+		rt_spin_unlock(&lock->lock[0].lock);
 	}
 	barrier();
 }
@@ -156,8 +159,8 @@ static inline spl_t __xnlock_get_irqsave(xnlock_t *lock)
 
 	barrier();
 	flags = rtai_save_flags_irqbit_and_cli();
-	if (!test_and_set_bit(hal_processor_id(), &lock->lock[0])) {
-		rtai_spin_glock(&lock->lock[0]);
+	if (!test_and_set_bit(hal_processor_id(), &lock->lock[0].mask)) {
+		rt_spin_lock(&lock->lock[0].lock);
 		barrier();
 		return flags | 1;
 	}

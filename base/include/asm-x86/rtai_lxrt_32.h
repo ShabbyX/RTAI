@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1999-2013 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright (C) 1999-2015 Paolo Mantegazza <mantegazza@aero.polimi.it>
  * extensions for user space modules are jointly copyrighted (2000) with:
  *		Pierre Cloutier <pcloutier@poseidoncontrols.com>,
  *		Steve Papacharalambous <stevep@zentropix.com>.
@@ -21,11 +21,11 @@
 #ifndef _RTAI_ASM_I386_LXRT_H
 #define _RTAI_ASM_I386_LXRT_H
 
-#include <linux/version.h>
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
-#define RTAI_SYSCALL_NR  0x70000000
-
-#if defined(__KERNEL__) && LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,25)
+#ifdef __KERNEL__
 
 #define RT_REG_ORIG_AX        orig_ax
 #define RT_REG_SP             sp
@@ -48,117 +48,37 @@
 #define LINUX_SYSCALL_RETREG  ax
 #define LINUX_SYSCALL_FLAGS   RT_REG_FLAGS
 
-#else
+/*
+ *  From Linux lib/usercopy.c.
+ */
 
-#define RT_REG_ORIG_AX           orig_eax
-#define RT_REG_SP                esp
-#define RT_REG_FLAGS             eflags
-#define RT_REG_IP                eip
-#define RT_REG_CS                xcs
-#define RT_REG_BP                ebp
-
-#define RTAI_SYSCALL_CODE     ebx
-#define RTAI_SYSCALL_ARGS     ecx
-#define RTAI_SYSCALL_RETPNT   edx
-
-#define LINUX_SYSCALL_NR      RT_REG_ORIG_AX
-#define LINUX_SYSCALL_REG1    ebx
-#define LINUX_SYSCALL_REG2    ecx
-#define LINUX_SYSCALL_REG3    edx
-#define LINUX_SYSCALL_REG4    esi
-#define LINUX_SYSCALL_REG5    edi
-#define LINUX_SYSCALL_REG6    RT_REG_BP
-#define LINUX_SYSCALL_RETREG  eax
-#define LINUX_SYSCALL_FLAGS   RT_REG_FLAGS
-
-#endif
-
-#define LOW  0
-#define HIGH 1
-
-#ifdef CONFIG_X86_LOCAL_APIC
-
-#define TIMER_NAME        "APIC"
-#define TIMER_TYPE  1
-#define HRT_LINUX_TIMER_NAME  "lapic"
-#define FAST_TO_READ_TSC
-#define TIMER_FREQ        RTAI_FREQ_APIC
-#define TIMER_LATENCY     RTAI_LATENCY_APIC
-#define TIMER_SETUP_TIME  RTAI_SETUP_TIME_APIC
-#define ONESHOT_SPAN      (CPU_FREQ/(CONFIG_RTAI_CAL_FREQS_FACT + 2)) //(0x7FFFFFFFLL*(CPU_FREQ/TIMER_FREQ))
-#ifdef CONFIG_GENERIC_CLOCKEVENTS
-#define USE_LINUX_TIMER
-#define update_linux_timer(cpuid) \
-	do { hal_pend_uncond(LOCAL_TIMER_IPI, cpuid); } while (0)
-#else /* !CONFIG_GENERIC_CLOCKEVENTS */
-#define update_linux_timer(cpuid)
-#endif /* CONFIG_GENERIC_CLOCKEVENTS */
-
-#else /* !CONFIG_X86_LOCAL_APIC */
-
-#define USE_LINUX_TIMER
-#define TIMER_NAME        "8254-PIT"
-#define TIMER_TYPE  0
-#define HRT_LINUX_TIMER_NAME  "pit"
-#define TIMER_FREQ        RTAI_FREQ_8254
-#define TIMER_LATENCY     RTAI_LATENCY_8254
-#define TIMER_SETUP_TIME  RTAI_SETUP_TIME_8254
-#define ONESHOT_SPAN      ((0x7FFF*(CPU_FREQ/TIMER_FREQ))/(CONFIG_RTAI_CAL_FREQS_FACT + 1)) //(0x7FFF*(CPU_FREQ/TIMER_FREQ))
-#define update_linux_timer(cpuid) \
-	do { hal_pend_uncond(TIMER_8254_IRQ, cpuid); } while (0)
-
-#endif /* CONFIG_X86_LOCAL_APIC */
-
-union rtai_lxrt_t { RTIME rt; int i[2]; void *v[2]; };
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-#ifdef __KERNEL__
-
-static inline void _lxrt_context_switch (struct task_struct *prev, struct task_struct *next, int cpuid)
-{
-	extern void context_switch(void *, void *, void *);
-#if LINUX_VERSION_CODE > KERNEL_VERSION(3,13,0)
-	prev->thread.fpu_counter = 0;
-#endif
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,19) && LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
-	prev->fpu_counter = 0;
-#endif
-	context_switch(0, prev, next);
-}
-
-#include <linux/slab.h>
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#define rt_copy_from_user     __copy_from_user
-#define rt_copy_to_user       __copy_to_user
-#define rt_strncpy_from_user  strncpy_from_user
-#else
-#define rt_copy_from_user(a, b, c)  \
-	( { int ret = __copy_from_user_inatomic(a, b, c); ret; } )
-#define rt_copy_to_user(a, b, c)  \
-	( { int ret = __copy_to_user_inatomic(a, b, c); ret; } )
-#define rt_strncpy_from_user(a, b, c)  \
-	( { int ret = strncpy_from_user(a, b, c); ret; } )
-#endif
-#define rt_put_user  __put_user
-#define rt_get_user  __get_user
-
-#else /* !__KERNEL__ */
-
-#include <sys/syscall.h>
-#include <unistd.h>
-
-static inline union rtai_lxrt_t rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
-{
-	union rtai_lxrt_t ret;
-	syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret);
-	return ret;
-}
-
-#define rtai_iopl()  do { extern int iopl(int); iopl(3); } while (0)
+#define __do_strncpy_from_user(dst, src, count, res)			   \
+do {									   \
+	int __d0, __d1, __d2;						   \
+	__asm__ __volatile__(						   \
+		"	testl %1,%1\n"					   \
+		"	jz 2f\n"					   \
+		"0:	lodsb\n"					   \
+		"	stosb\n"					   \
+		"	testb %%al,%%al\n"				   \
+		"	jz 1f\n"					   \
+		"	decl %1\n"					   \
+		"	jnz 0b\n"					   \
+		"1:	subl %1,%0\n"					   \
+		"2:\n"							   \
+		".section .fixup,\"ax\"\n"				   \
+		"3:	movl %5,%0\n"					   \
+		"	jmp 2b\n"					   \
+		".previous\n"						   \
+		".section __ex_table,\"a\"\n"				   \
+		"	.align 4\n"					   \
+		"	.long 0b,3b\n"					   \
+		".previous"						   \
+		: "=&d"(res), "=&c"(count), "=&a" (__d0), "=&S" (__d1),	   \
+		  "=&D" (__d2)						   \
+		: "i"(-EFAULT), "0"(count), "1"(count), "3"(src), "4"(dst) \
+		: "memory");						   \
+} while (0)
 
 #endif /* __KERNEL__ */
 

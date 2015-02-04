@@ -1,3 +1,109 @@
+2015-02-04 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal.c: got rid of all old timer request/free.
+	  base/sched/sched.c: got rid of all old start/stop_rt_timer and
+	  likes. Added fastcall hook.
+
+2015-02-02 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-x86/rtai_hal.h: macro rtai_tskext modified so to 
+	  include the related LINUX task, and to use either ptd in task_struct
+	  and thread_info.
+	* base/ipc/msg/msg.c; 
+	  base/ipc/shm/shm.c; 
+	  addons/rtdm/xn.h;
+	  base/sched/api.c, sched.c, sys.c: use the new macro rtai_tskext, 
+	  modified so to include the related LINUX task.
+
+2015-02-01 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: force oneshot mode ALWAYS, through a bad, but 
+	  temporary, hack.
+	
+2015-01-31 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-x86/rtai_lxrt.h: gather the common parts of 32-64 
+	  bits archs, unify the definition of union union rtai_lxrt_t.
+	* base/include/asm-x86/rtai_lxrt_32.h: keap only the 32 bits specific 
+	  definitions and services, required copying __do_strncpy_from_user 
+	  from LINUX, as for 64 bits.
+	* base/include/asm-x86/rtai_lxrt_64.h: keap only the 64 bits specific
+          definitions and services.
+	* base/include/asm-x86/rtai_fpu.h: gather the common parts of 32-64 
+	* base/include/asm-x86/rtai_fpu_32.h and rtai_fpu_64.h: keap only the 
+	  32-64 bits specific bits archs.
+
+2015-01-31 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal.c: significantly refurbished, x86-32-64 
+	  unified, patch's hard timers services; from now on only the oneshot
+	  mode must be used.
+
+2015-01-27 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm/rtai_hal.h: unify 32-64 bits independent code here
+	  and revise real time spin locks and global lock.
+	* base/include/asm/rtai_hal_32.h and rtai_hal_64.h: left with only 
+	  32-64 bits arch specific code.
+	* base/sched/sched.c: use non rtai_cli protected global lock get and 
+	  release from rtai_hal.h.
+	* base/arch/x86/hal/hal_32.c: redefine rtai_cpu_lock according to the 
+	  global lock structure.
+	* addons/rtdm/xn.h: make xnlock_t comply with the new global_lock 
+	  structure declaration.
+
+2015-01-24 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal_32.c: exploit oneshot hardware timing setting 
+	  from the modified patch, working but still to be finished along with
+	  some cleaning more.
+	* base/include/asm-x86/rtai_hal_32.h: optionally set the oneshot delay 
+	  by optionally using ipipe_timer_set if X86_FEATURE_TSC_DEADLINE_TIMER.
+	* base/sched/sched.c: do not provide rt_linux_hrt_set_mode any more, 
+	  use the one found of rtai_hal.c.
+
+2015-01-22 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: serialize symultaneous uses of steal_from_linux
+	  on the same cpu, directly pass fast_schedule as a migration_hook for
+	  the patch; removed rt_daemonize stuff.
+	* base/sched/sys.c: removed rt_daemonize stuff.
+
+2015-01-18 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* addons/rtdm/rtdm_driver.h and xn.h: a few changes to work also
+	  without legacy constraints.
+	* base/arch/x86/hal/hal_32.c and hal_64.c: a series of changes to work 
+	  also without legacy constraints and some cleaning.
+	* base/include/rtai_hal_names.h: cleaned up, also in relation to a few 
+	  changes to work also without legacy constraints.
+	* base/include/rtai_hal_schecore.h: a few changes to work also without
+          legacy constraints.
+	* base/include/asm-x86/rtai_hal_32.h: a few changes to work also without
+          legacy constraints.
+	* base/sched/sys.c: grant zeroing of ptd and use the patch support 
+	* base/sched/sched.c: some cleaning and changes to work also without
+          legacy constraints.
+
+2015-01-09 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal, hal_32.c and hal_64.c : if IsolCpusMask is 
+	  null use that of Linux, so that there is nomore the need to set it
+	  in RTAI.
+
+2015-01-08 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal_32.c and hal_64.c : avoid reprogramming the 
+          apic timer mode when tsc-deadline is available.
+
+2015-01-07 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-x86/rtai_hal_32.h and rtai_hal_64.h: reworked 
+	  rt_set_timer_delay.
+	* base/include/asm-x86/rtai_hal.h: reorder a set of declarations.
+	* base/sched/sched.c: avoid multiple oneshot delay units conversion,
+	  unified in rt_set_timer_delay.
+
 2015-01-05 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/include/asm-x86/rtai_lxrt_32.h and rtai_lxrt_64.h: update 

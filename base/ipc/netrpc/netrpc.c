@@ -340,11 +340,11 @@ static inline long long soft_rt_genfun_call(RT_TASK *task, void *fun, void *args
 	return task->retval;
 }
 
-extern void rt_daemonize(void);
+//extern void rt_daemonize(void);
 static void thread_fun(RT_TASK *task)
 {
 	if (!set_rtext(task, task->fun_args[3], 0, 0, get_min_tasks_cpuid(), 0)) {
-		rt_daemonize();
+//		rt_daemonize();
 		sigfillset(&current->blocked);
 		rtai_set_linux_task_priority(current, SCHED_FIFO, MIN_LINUX_RTPRIO);
 		soft_rt_fun_call(task, rt_task_suspend, task);

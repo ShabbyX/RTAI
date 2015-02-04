@@ -1515,7 +1515,7 @@ static inline int get_type(unsigned long name)
 
 unsigned long is_process_registered(struct task_struct *lnxtsk)
 {
-	void *adr = lnxtsk->rtai_tskext(TSKEXT0);
+	void *adr = rtai_tskext(lnxtsk, TSKEXT0);
 	return adr ? hash_find_adr(adr, lxrt_list, max_slots, 0) : 0;
 }
 

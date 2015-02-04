@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 Paolo Mantegazza <mantegazza@aero.polimi.it>
+ * Copyright 2015 Paolo Mantegazza <mantegazza@aero.polimi.it>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,10 +22,12 @@
 
 #include <linux/version.h>
 
-#define TSKEXT0  (HAL_ROOT_NPTDKEYS - 4)
-#define TSKEXT1  (HAL_ROOT_NPTDKEYS - 3)
-#define TSKEXT2  (HAL_ROOT_NPTDKEYS - 2)
-#define TSKEXT3  (HAL_ROOT_NPTDKEYS - 1)
+//#define IPIPE_ROOT_NPTDKEYS  4
+
+#define TSKEXT0  0 // (HAL_ROOT_NPTDKEYS - 4)
+#define TSKEXT1  1 // (HAL_ROOT_NPTDKEYS - 3)
+#define TSKEXT2  2 // (HAL_ROOT_NPTDKEYS - 2)
+#define TSKEXT3  3 // (HAL_ROOT_NPTDKEYS - 1)
 
 #define HAL_VERSION_STRING   IPIPE_VERSION_STRING
 
@@ -37,35 +39,17 @@
 #define HAL_APIC_HIGH_VECTOR  IPIPE_HRTIMER_VECTOR //IPIPE_SERVICE_VECTOR3
 #define HAL_APIC_LOW_VECTOR   IPIPE_RESCHEDULE_VECTOR //IPIPE_SERVICE_VECTOR2
 
-#define HAL_SCHEDULE_HEAD     IPIPE_EVENT_SCHEDULE
-#define HAL_SCHEDULE_TAIL     (IPIPE_FIRST_EVENT - 2)  // safely unused, cared
-#define HAL_SYSCALL_PROLOGUE  IPIPE_EVENT_SYSCALL
-#define HAL_SYSCALL_EPILOGUE  1000000 // invalid for sure, will be rejected, OK
-#define HAL_EXIT_PROCESS      IPIPE_EVENT_EXIT
-#define HAL_KICK_PROCESS      IPIPE_EVENT_SIGWAKE
-
 #define hal_pipeline        __ipipe_pipeline
 #define hal_domain_struct   ipipe_domain 
 #define hal_root_domain     ipipe_root_domain 
 
-// temporary fix for using PPC
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,17) || (defined(CONFIG_PPC) && LINUX_VERSION_CODE > KERNEL_VERSION(2,6,13))
 #define hal_current_domain(cpuid)  per_cpu(ipipe_percpu_domain, cpuid) 
-#else
-#define hal_current_domain(cpuid)  (ipipe_percpu_domain[cpuid])
-#endif
 
 #define hal_propagate_irq   ipipe_propagate_irq
 #define hal_schedule_irq    ipipe_schedule_irq
 
 #define hal_critical_enter  ipipe_critical_enter
 #define hal_critical_exit   ipipe_critical_exit
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,22)
-#define hal_clear_irq   __ipipe_clear_irq
-#else
-#define hal_clear_irq(a, b)
-#endif
 
 #define hal_lock_irq    __ipipe_lock_irq
 #define hal_unlock_irq  __ipipe_unlock_irq
@@ -88,51 +72,15 @@
 
 #define INTERCEPT_WAKE_UP_TASK(data)  ((struct task_struct *)data)
 
-#define FIRST_LINE_OF_RTAI_DOMAIN_ENTRY  static void rtai_domain_entry(void) { if (1)
-#define LAST_LINE_OF_RTAI_DOMAIN_ENTRY   }
-
-#define hal_suspend_domain()  break
-
 #define hal_alloc_irq       ipipe_alloc_virq
 #define hal_free_irq        ipipe_free_virq
 
-#if !defined(CONFIG_PPC) && (LINUX_VERSION_CODE < KERNEL_VERSION(2,4,32) || (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,14)))
-#define hal_virtualize_irq  ipipe_virtualize_irq
-#define hal_irq_hits_pp(irq, domain, cpuid) \
-do { \
-	domain->cpudata[cpuid].irq_hits[irq]++; \
-} while (0)
-#else
-#define hal_virtualize_irq(d, n, h, a, m) \
-	ipipe_virtualize_irq(d, n, (void *)h, NULL, a, m)
-#define hal_irq_hits_pp(irq, domain, cpuid) \
-do { \
-/*	domain->cpudata[cpuid].irq_counters[irq].total_hits++; REMIND ME TOO */\
-	domain->cpudata[cpuid].irq_counters[irq].pending_hits++; \
-} while (0)
-#endif
-
 #define hal_sysinfo_struct         ipipe_sysinfo
-#define hal_attr_struct            ipipe_domain_attr
-#define hal_init_attr              ipipe_init_attr
-#define hal_register_domain        ipipe_register_domain
-#define hal_unregister_domain      ipipe_unregister_domain
-#define hal_catch_event            ipipe_catch_event
-#define hal_event_handler          ipipe_event_handler
-#define hal_event_handler_fun(e)   legacy.handlers[e] //evhand[e]
 
 #define hal_set_printk_sync   ipipe_set_printk_sync
 #define hal_set_printk_async  ipipe_set_printk_async
 
-#define hal_schedule_back_root(prev) \
-do { \
-	if ((prev)->rtai_tskext(HAL_ROOT_NPTDKEYS - 1)) { \
-		ipipe_reenter_root((prev)->rtai_tskext(HAL_ROOT_NPTDKEYS - 1), (prev)->policy, (prev)->rt_priority); \
-		(prev)->rtai_tskext(HAL_ROOT_NPTDKEYS - 1) = NULL; \
-	} else { \
-		ipipe_reenter_root(prev, (prev)->policy, (prev)->rt_priority); \
-	} \
-} while (0)
+#define hal_schedule_back_root(prev)  __ipipe_reenter_root() 
 
 #define hal_processor_id  ipipe_processor_id
 
@@ -147,20 +95,10 @@ do { \
 
 #define hal_unstall_pipeline_from  ipipe_unstall_pipeline_from
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18)
-#define hal_ack_system_irq  __ipipe_ack_system_irq
-#else
 #define hal_ack_system_irq  __ipipe_ack_apic
-#endif
 
 #define hal_irq_handler     rtai_irq_handler
 
 #define hal_tskext  ptd
-
-#define hal_set_linux_task_priority  ipipe_setscheduler_root
-
-#if defined(IPIPE_ROOT_NPTDKEYS) && TSKEXT0 < 0
-#error *** TSKEXTs WILL CAUSE MEMORY LEAKS, CHECK BOUNDS IN HAL PATCHES ***
-#endif
 
 #endif
