@@ -88,12 +88,12 @@ do { \
 		printk("*** ABORT, NO VIRQ AVAILABLE FOR THE WAKING UP SRQ. ***\n"); \
 		return -1; \
 	} \
-	hal_virtualize_irq(hal_root_domain, wake_up_srq[0].srq, wake_up_srq_handler, NULL, IPIPE_HANDLE_FLAG); \
+	ipipe_request_irq(hal_root_domain, wake_up_srq[0].srq, (void *)wake_up_srq_handler, NULL, NULL); \
 } while (0)
 
 #define RELEASE_RESUME_SRQs_STUFF() \
 do { \
-	hal_virtualize_irq(hal_root_domain, wake_up_srq[0].srq, NULL, NULL, 0); \
+	ipipe_free_irq(hal_root_domain, wake_up_srq[0].srq); \
 	hal_free_irq(wake_up_srq[0].srq); \
 } while (0)
 

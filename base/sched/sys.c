@@ -209,7 +209,7 @@ static inline RT_TASK* __task_init(unsigned long name, int prio, int stack_size,
 	void *msg_buf0, *msg_buf1;
 	RT_TASK *rt_task;
 
-	if ((rt_task = current->rtai_tskext(TSKEXT0))) {
+	if ((rt_task = rtai_tskext_t(current, TSKEXT0))) {
 		if (num_online_cpus() > 1 && cpus_allowed) {
 	    		cpus_allowed = hweight32(cpus_allowed) > 1 ? get_min_tasks_cpuid() : ffnz(cpus_allowed);
 		} else {
@@ -250,16 +250,11 @@ static inline RT_TASK* __task_init(unsigned long name, int prio, int stack_size,
 		rt_task->max_msg_size[1] = max_msg_size;
 		if (rt_register(name, rt_task, IS_TASK, 0)) {
 			rt_task->state = 0;
-#ifdef __IPIPE_FEATURE_ENABLE_NOTIFIER
 			ipipe_enable_notifier(current);
-#else
-			current->flags |= PF_EVNOTIFY;
-#endif
-#if (defined VM_PINNED) && (defined CONFIG_MMU)
-			ipipe_disable_ondemand_mappings(current);
+#ifdef CONFIG_MMU
+			__ipipe_disable_ondemand_mappings(current);
 #endif
 			RTAI_OOM_DISABLE();
-
 			rt_set_task_pid(rt_task);
 			return rt_task;
 		} else {
@@ -281,7 +276,7 @@ static int __task_delete(RT_TASK *rt_task)
 	if (current != (lnxtsk = rt_task->lnxtsk)) {
 		return -EPERM;
 	}
-	lnxtsk->rtai_tskext(TSKEXT0) = lnxtsk->rtai_tskext(TSKEXT1) = 0;
+	rtai_tskext(lnxtsk, TSKEXT0) = rtai_tskext(lnxtsk, TSKEXT1) = 0;
 	if (rt_task->is_hard > 0) {
 		give_back_to_linux(rt_task, 0);
 	}
@@ -307,8 +302,6 @@ static int __task_delete(RT_TASK *rt_task)
 #define SYSW_DIAG_MSG(x)
 #endif
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,28)
-
 #include <linux/cred.h>
 static inline void set_lxrt_perm(int perm)
 {
@@ -318,19 +311,6 @@ static inline void set_lxrt_perm(int perm)
 		commit_creds(cred);
 	}
 }
-
-#else /* LINUX_VERSION_CODE <= 2.6.28 */
-
-static inline void set_lxrt_perm(int perm)
-{
-#ifdef current_cap
-	cap_raise(current_cap(), perm);
-#else
-	cap_raise(current->cap_effective, perm);
-#endif
-}
-
-#endif /* LINUX_VERSION_CODE > 2.6.28 */
 
 void rt_make_hard_real_time(RT_TASK *task)
 {
@@ -564,7 +544,7 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 		}
 
 		case RT_BUDDY: {
-			arg0.rt_task = task && current->rtai_tskext(TSKEXT1) == current ? task : NULL;
+			arg0.rt_task = task && rtai_tskext(current, TSKEXT1) == current ? task : NULL;
 			return arg0.ll;
 		}
 
@@ -619,7 +599,7 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
                 }
 
 		case IS_HARD: {
-			arg0.i = arg0.rt_task || (arg0.rt_task = current->rtai_tskext(TSKEXT0)) ? arg0.rt_task->is_hard : 0;
+			arg0.i = arg0.rt_task || (arg0.rt_task = rtai_tskext_t(current, TSKEXT0)) ? arg0.rt_task->is_hard : 0;
 			return arg0.ll;
 		}
 		case GET_EXECTIME: {
@@ -728,7 +708,7 @@ long long rtai_lxrt_invoke (unsigned int lxsrq, void *arg)
 {
 	RT_TASK *task;
 
-	if (likely((task = current->rtai_tskext(TSKEXT0)) != NULL)) {
+	if (likely((task = rtai_tskext_t(current, TSKEXT0)) != NULL)) {
 		long long retval;
 		check_to_soften_harden(task);
 		retval = handle_lxrt_request(lxsrq, arg, task);
@@ -808,14 +788,14 @@ void linux_process_termination(void)
 				break;
 		}
 	}
-	if ((task2delete = current->rtai_tskext(TSKEXT0))) {
+	if ((task2delete = rtai_tskext_t(current, TSKEXT0))) {
 		if (!clr_rtext(task2delete)) {
 			rt_drg_on_adr(task2delete); 
 			rt_printk("LXRT releases PID %d (ID: %s).\n", current->pid, current->comm);
 			rt_free(task2delete->msg_buf[0]);
 			rt_free(task2delete->msg_buf[1]);
 			rt_free(task2delete);
-			current->rtai_tskext(TSKEXT0) = current->rtai_tskext(TSKEXT1) = 0;
+			rtai_tskext(current, TSKEXT0) = rtai_tskext(current, TSKEXT0) = 0;
 		}
 	}
 }
@@ -865,7 +845,6 @@ long kernel_calibrator_spv(long period, long loops, RT_TASK *task)
 }
 
 #if 0
-void rt_daemonize(void);
 
 struct thread_args { void *fun; long data; int priority; int policy; int cpus_allowed; RT_TASK *task; struct semaphore *sem; };
 
@@ -873,7 +852,6 @@ static void kthread_fun(struct thread_args *args)
 {
 	int linux_rt_priority;
 
-	rt_daemonize();
         if (args->policy == SCHED_NORMAL) {
                 linux_rt_priority = 0;
         } else if ((linux_rt_priority = MAX_RT_PRIO - 1 - args->priority) < 1) {
@@ -931,7 +909,6 @@ RT_TASK *rt_thread_init(unsigned long name, int priority, int max_msg_size, int 
                 linux_rt_priority = 1;
 	}
 	rtai_set_linux_task_priority(current, policy, linux_rt_priority);
-//	rt_daemonize();
 	if ((task = __task_init(name ? name : rt_get_name(NULL), priority, 0, max_msg_size, cpus_allowed))) {
 		rt_make_hard_real_time(task);
 	} 

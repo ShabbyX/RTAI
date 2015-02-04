@@ -14235,7 +14235,7 @@ index 515e212..8328320 100644
   * thread's register state.
   */
 -static inline void
-+int
++static int
  context_switch(struct rq *rq, struct task_struct *prev,
  	       struct task_struct *next)
  {
@@ -14385,17 +14385,15 @@ index 515e212..8328320 100644
  
  	if (running)
  		p->sched_class->set_curr_task(rq);
-@@ -4559,6 +4597,9 @@ void do_set_cpus_allowed(struct task_str
+@@ -4559,6 +4597,7 @@ void do_set_cpus_allowed(struct task_str
   * task must not exit() & deallocate itself prematurely. The
   * call is not atomic; no spinlocks may be held.
   */
 +
-+int rtai_sched_affinity;
-+EXPORT_SYMBOL_GPL(rtai_sched_affinity);
  int set_cpus_allowed_ptr(struct task_struct *p, const struct cpumask *new_mask)
  {
  	unsigned long flags;
-@@ -4579,10 +4620,13 @@ int set_cpus_allowed_ptr(struct task_str
+@@ -4579,10 +4618,13 @@ int set_cpus_allowed_ptr(struct task_str
  	do_set_cpus_allowed(p, new_mask);
  
  	/* Can the task run on the task's current CPU? If so, we're done */
@@ -14410,7 +14408,15 @@ index 515e212..8328320 100644
  	if (p->on_rq) {
  		struct migration_arg arg = { p, dest_cpu };
  		/* Need help from migration thread: drop lock and wait. */
-@@ -8014,3 +8058,42 @@ void dump_cpu_task(int cpu)
+@@ -5577,6 +5619,7 @@ cpu_attach_domain(struct sched_domain *s
+ 
+ /* cpus with isolated domains */
+ static cpumask_var_t cpu_isolated_map;
++EXPORT_SYMBOL_GPL(cpu_isolated_map);
+ 
+ /* Setup the mask of cpus configured for isolated domains */
+ static int __init isolated_cpu_setup(char *str)
+@@ -8014,3 +8057,42 @@ void dump_cpu_task(int cpu)
  	pr_info("Task dump for CPU %d:\n", cpu);
  	sched_show_task(cpu_curr(cpu));
  }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Paolo Mantegazza <mantegazza@aero.polimi.it>.
+ * Copyright (C) 2007-2015 Paolo Mantegazza <mantegazza@aero.polimi.it>.
  * Copyright (C) 2003 Philippe Gerum <rpm@xenomai.org>.
  *
  * This program is free software; you can redistribute it and/or
@@ -20,20 +20,7 @@
 #ifndef _RTAI_ASM_X86_64_ATOMIC_H
 #define _RTAI_ASM_X86_64_ATOMIC_H
 
-#ifdef __KERNEL__
-
-#include <linux/bitops.h>
-#include <asm/atomic.h>
-//#include <asm/system.h>
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-
-#define atomic_xchg(ptr, v)        xchg(ptr, v)
-#define atomic_cmpxchg(ptr, o, n)  cmpxchg((unsigned long *)(ptr), o, n)
-
-#endif
-
-#else /* !__KERNEL__ */
+#ifndef __KERNEL__
 
 #ifdef CONFIG_SMP
 #define LOCK_PREFIX "lock ; "
@@ -42,8 +29,6 @@
 #endif
 
 typedef struct { volatile int counter; } atomic_t;
-
-//#define atomic_t long
 
 struct __rtai_xchg_dummy { unsigned long a[100]; };
 #define __rtai_xg(x) ((struct __rtai_xchg_dummy *)(x))

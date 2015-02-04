@@ -22,7 +22,7 @@
  * original idea of an RTAI own header file for the FPU stuff:
  * Copyright (C) 2000 Pierre Cloutier <pcloutier@PoseidonControls.com>,
  * this final rewrite and cleanup:
- * Copyright (C) 2005 Paolo Mantegazza <mantegazza@aero.polimi.it>.
+ * Copyright (C) 2005-2015 Paolo Mantegazza <mantegazza@aero.polimi.it>.
  */
 
 #ifndef _RTAI_ASM_I386_FPU_H
@@ -104,98 +104,11 @@ typedef union thread_xstate FPU_ENV;
 	} \
 } while (0)
 
-// FPU MANAGEMENT DRESSED FOR IN KTHREAD/THREAD/PROCESS FPU USAGE FROM RTAI
-
 // Macros used for RTAI own kernel space tasks, where it uses the FPU env union
-#define init_fpenv(fpenv)  do { __init_fpenv(&(fpenv)); } while (0)
-#define save_fpenv(fpenv)  do { __save_fpenv(&(fpenv)); } while (0)
-#define restore_fpenv(fpenv)  do { __restore_fpenv(&(fpenv)); } while (0)
-
-// Macros used for user space, where Linux might use eother a pointer or the FPU env union
-#define init_hard_fpu(lnxtsk)  do { \
-	init_hard_fpenv(); \
-	set_lnxtsk_uses_fpu(lnxtsk); \
-	set_lnxtsk_using_fpu(lnxtsk); \
-} while (0)
-
-#define init_fpu(lnxtsk)  do { \
-	__init_fpenv(TASK_FPENV(lnxtsk)); \
-	set_lnxtsk_uses_fpu(lnxtsk); \
-} while (0)
-
-#define restore_fpu(lnxtsk)  do { \
-	enable_fpu(); \
-	__restore_fpenv(TASK_FPENV(lnxtsk)); \
-	set_lnxtsk_using_fpu(lnxtsk); \
-} while (0)
-
-#else /* !CONFIG_RTAI_FPU_SUPPORT */
-
-#define enable_fpu()
-#define save_fpcr_and_enable_fpu(fpcr)
-#define restore_fpcr(fpcr)
-#define init_hard_fpenv()
-#define init_fpenv(fpenv)
-#define save_fpenv(fpenv)
-#define restore_fpenv(fpenv)
-#define init_hard_fpu(lnxtsk)
-#define init_fpu(lnxtsk)
-#define restore_fpu(lnxtsk)
+#define init_fpenv(fpenv)	do { __init_fpenv(&(fpenv)); } while (0)
+#define save_fpenv(fpenv)	do { __save_fpenv(&(fpenv)); } while (0)
+#define restore_fpenv(fpenv)	do { __restore_fpenv(&(fpenv)); } while (0)
 
 #endif /* CONFIG_RTAI_FPU_SUPPORT */
-
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-
-#define set_lnxtsk_uses_fpu(lnxtsk) \
-	do { (lnxtsk)->used_math = 1; } while(0)
-#define clear_lnxtsk_uses_fpu(lnxtsk) \
-	do { (lnxtsk)->used_math = 0; } while(0)
-#define lnxtsk_uses_fpu(lnxtsk)  ((lnxtsk)->used_math)
-
-#define set_lnxtsk_using_fpu(lnxtsk) \
-	do { (lnxtsk)->flags |= PF_USEDFPU; } while(0)
-
-#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0) */
-
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-
-#define set_lnxtsk_uses_fpu(lnxtsk) \
-	do { (lnxtsk)->used_math = 1; } while(0)
-#define clear_lnxtsk_uses_fpu(lnxtsk) \
-	do { (lnxtsk)->used_math = 0; } while(0)
-#define lnxtsk_uses_fpu(lnxtsk)  ((lnxtsk)->used_math)
-
-#define set_lnxtsk_using_fpu(lnxtsk) \
-	do { task_thread_info(lnxtsk)->status |= TS_USEDFPU; } while(0)
-//	do { (lnxtsk)->thread_info->status |= TS_USEDFPU; } while(0)
-
-#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0) && LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11) */
-
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,11)
-
-#define set_lnxtsk_uses_fpu(lnxtsk) \
-	do { set_stopped_child_used_math(lnxtsk); } while(0)
-#define clear_lnxtsk_uses_fpu(lnxtsk) \
-	do { clear_stopped_child_used_math(lnxtsk); } while(0)
-#define lnxtsk_uses_fpu(lnxtsk)  (tsk_used_math(lnxtsk))
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
-#undef init_fpu
-#include <asm/i387.h>
-#include <asm/fpu-internal.h>
-#define rtai_set_fpu_used(lnxtsk) __thread_set_has_fpu(lnxtsk)
-#else
-#define rtai_set_fpu_used(lnxtsk) do { task_thread_info(lnxtsk)->status |= TS_USEDFPU; } while(0)
-#endif
-
-#define set_lnxtsk_using_fpu(lnxtsk) \
-	do { rtai_set_fpu_used(lnxtsk); } while(0)
-//	do { (lnxtsk)->thread_info->status |= TS_USEDFPU; } while(0)
-
-#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,11) */
-
 
 #endif /* !_RTAI_ASM_I386_FPU_H */

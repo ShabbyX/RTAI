@@ -6,7 +6,7 @@
  *   the original RTAI layer for x86.
  *
  *   Original RTAI/x86 layer implementation: \n
- *   Copyright &copy; 2000-2013 Paolo Mantegazza, \n
+ *   Copyright &copy; 2000-2015 Paolo Mantegazza, \n
  *   Copyright &copy; 2000      Steve Papacharalambous, \n
  *   Copyright &copy; 2000      Stuart Hughes, \n
  *   and others.
@@ -15,7 +15,7 @@
  *   Copyright &copy 2002 Philippe Gerum.
  *
  *   Porting to x86_64 architecture:
- *   Copyright &copy; 2005-2013 Paolo Mantegazza, \n
+ *   Copyright &copy; 2005-2015 Paolo Mantegazza, \n
  *   Copyright &copy; 2005 Daniele Gasperini \n
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@
  *
  *@{*/
 
-
+#if 0
 #include <linux/version.h>
 #include <linux/slab.h>
 #include <linux/errno.h>
@@ -95,18 +95,22 @@ static void rtai_release_tickdev(void);
 
 static inline void rtai_setup_periodic_apic (unsigned count, unsigned vector)
 {
+if (!this_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER)) {
 	apic_read(APIC_LVTT);
 	apic_write(APIC_LVTT, APIC_LVT_TIMER_PERIODIC | vector);
 	apic_read(APIC_TMICT);
 	apic_write(APIC_TMICT, count);
 }
+}
 
 static inline void rtai_setup_oneshot_apic (unsigned count, unsigned vector)
 {
+if (!this_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER)) {
 	apic_read(APIC_LVTT);
 	apic_write(APIC_LVTT, vector);
 	apic_read(APIC_TMICT);
 	apic_write(APIC_TMICT, count);
+}
 }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
@@ -202,7 +206,7 @@ RTAI_MODULE_PARM(IsolCpusMask, ulong);
 int rt_request_irq (unsigned irq, int (*handler)(unsigned irq, void *cookie), void *cookie, int retmode)
 {
         int ret;
-         ret = ipipe_virtualize_irq(&rtai_domain, irq, (void *)handler, cookie, NULL, IPIPE_HANDLE_MASK | IPIPE_WIRED_MASK);
+         ret = ipipe_request_irq(&rtai_domain, irq, (void *)handler, cookie, NULL);
         if (!ret) {
                 rtai_realtime_irq[irq].retmode = retmode ? 1 : 0;
                 if (IsolCpusMask && irq < IPIPE_NR_XIRQS) {
@@ -214,9 +218,8 @@ int rt_request_irq (unsigned irq, int (*handler)(unsigned irq, void *cookie), vo
 
 int rt_release_irq (unsigned irq)
 {
-        int ret;
-        ret = ipipe_virtualize_irq(&rtai_domain, irq, NULL, NULL, NULL, 0);
-        if (!ret && IsolCpusMask && irq < IPIPE_NR_XIRQS) {
+        ipipe_free_irq(&rtai_domain, irq);
+        if (IsolCpusMask && irq < IPIPE_NR_XIRQS) {
                 rt_assign_irq_to_cpu(irq, rtai_realtime_irq[irq].cpumask);
         }
         return 0;
@@ -1265,7 +1268,7 @@ RTAI_MODULE_PARM(PrintFpuTrap, int);
 static int PrintFpuInit = 0;
 RTAI_MODULE_PARM(PrintFpuInit, int);
 
-static int rtai_trap_fault (unsigned event, void *evdata)
+static int rtai_trap_fault (unsigned event, struct pt_regs *evdata)
 {
 #ifdef HINT_DIAG_TRAPS
 	static unsigned long traps_in_hard_intr = 0;
@@ -1371,7 +1374,7 @@ EXPORT_SYMBOL(rtai_usrq_dispatcher);
 
 #include <asm/rtai_usi.h>
 
-static int intercept_syscall_prologue(unsigned long event, struct pt_regs *regs)
+static int hal_intercept_syscall(struct pt_regs *regs)
 {
         if (likely(regs->LINUX_SYSCALL_NR >= RTAI_SYSCALL_NR)) {
                 unsigned long srq = regs->LINUX_SYSCALL_REG1;
@@ -1392,10 +1395,12 @@ static unsigned long hal_request_apic_freq(void);
 #include <linux/clockchips.h>
 #include <linux/ipipe_tickdev.h>
 
+extern int (*rtai_syscall_hook)(struct pt_regs *);
+
 static void rtai_install_archdep (void)
 {
 	ipipe_select_timers(cpu_active_mask);
-        hal_catch_event(hal_root_domain, HAL_SYSCALL_PROLOGUE, (void *)intercept_syscall_prologue);
+	rtai_syscall_hook = hal_intercept_syscall;
 
 	if (rtai_cpufreq_arg == 0) {
 		struct hal_sysinfo_struct sysinfo;
@@ -1421,7 +1426,7 @@ static void rtai_install_archdep (void)
 static void rtai_uninstall_archdep(void)
 {
 	ipipe_timers_release();
-	hal_catch_event(hal_root_domain, HAL_SYSCALL_PROLOGUE, NULL);
+	rtai_syscall_hook = NULL;
 }
 
 int rtai_calibrate_8254 (void)
@@ -1449,14 +1454,13 @@ static int errno;
 static inline _syscall3(int, sched_setscheduler, pid_t,pid, int,policy, struct sched_param *,param)
 #endif
 
-extern void *sys_call_table[];
-
 void rtai_set_linux_task_priority (struct task_struct *task, int policy, int prio)
 {
-        hal_set_linux_task_priority(task, policy, prio);
-        if (task->rt_priority != prio || task->policy != policy) {
-                printk("RTAI[hal]: sched_setscheduler(policy = %d, prio = %d) failed, (%s -- pid = %d)\n", policy, prio, task->comm, task->pid);
-        }
+	struct sched_param param = { .sched_priority = prio };
+	sched_setscheduler(task, policy, &param);
+	if (task->rt_priority != prio || task->policy != policy) {
+		printk("RTAI[hal]: sched_setscheduler(policy = %d, prio = %d) failed, (%s -- pid = %d)\n", policy, prio, task->comm, task->pid);
+	}
 }
 
 #ifdef CONFIG_PROC_FS
@@ -1560,23 +1564,6 @@ static void rtai_proc_unregister (void)
 
 #endif /* CONFIG_PROC_FS */
 
-FIRST_LINE_OF_RTAI_DOMAIN_ENTRY
-{
-	{
-//		rt_printk(KERN_INFO "RTAI[hal]: <%s> mounted over %s %s.\n", PACKAGE_VERSION, HAL_TYPE, HAL_VERSION_STRING);
-		rt_printk(KERN_INFO "RTAI[hal]: compiled with %s.\n", CONFIG_RTAI_COMPILER);
-	}
-	for (;;) hal_suspend_domain();
-}
-LAST_LINE_OF_RTAI_DOMAIN_ENTRY
-
-long rtai_catch_event (struct hal_domain_struct *from, unsigned long event, int (*handler)(unsigned long, void *))
-{
-	return (long)hal_catch_event(from, event, (void *)handler);
-}
-
-extern void *hal_irq_handler;
-
 #undef ack_bad_irq
 void ack_bad_irq(unsigned int irq)
 {
@@ -1590,48 +1577,34 @@ void ack_bad_irq(unsigned int irq)
 
 extern struct ipipe_domain ipipe_root;
 void free_isolcpus_from_linux(void *);
+extern unsigned long cpu_isolated_map; 
+extern void (*rtai_irq_handler)(int);
+extern int (*rtai_trap_hook)(unsigned, struct pt_regs *);
 
 int __rtai_hal_init (void)
 {
-	int trapnr, halinv = 0;
-	struct hal_attr_struct attr;
-
-	ipipe_catch_event(hal_root_domain, 0, 0);
-	for (halinv = trapnr = 0; trapnr < HAL_NR_EVENTS; trapnr++) {
-		if (hal_root_domain->legacy.handlers[trapnr] && hal_root_domain->legacy.handlers[trapnr] != hal_root_domain->legacy.handlers[0]) {
-			halinv = 1;
-			printk("EVENT %d INVALID %p.\n", trapnr, hal_root_domain->legacy.handlers[trapnr]);
-		}
-	}
-	if (halinv) {
-		printk(KERN_ERR "RTAI[hal]: HAL IMMEDIATE EVENT DISPATCHING BROKEN.\n");
-	}
+	int i, ret = 0;
 
 	if (num_online_cpus() > RTAI_NR_CPUS) {
 		printk("RTAI[hal]: RTAI CONFIGURED WITH LESS THAN NUM ONLINE CPUS.\n");
-		halinv = 1;
+		ret = 1;
 	}
 
 	if (!(rtai_sysreq_virq = hal_alloc_irq())) {
 		printk(KERN_ERR "RTAI[hal]: NO VIRTUAL INTERRUPT AVAILABLE.\n");
-		halinv = 1;
+		ret = 1;
 	}
 
-	if (halinv) {
+	if (ret) {
 		return -1;
 	}
 
-        for (trapnr = 0; trapnr < RTAI_NR_IRQS; trapnr++) {
-		rtai_domain.irqs[trapnr].ackfn = (void *)hal_root_domain->irqs[trapnr].ackfn;
+        for (i = 0; i < RTAI_NR_IRQS; i++) {
+		rtai_domain.irqs[i].ackfn = (void *)hal_root_domain->irqs[i].ackfn;
         }
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,22)
-        for (trapnr = 0; trapnr < num_online_cpus(); trapnr++) {
-                ipipe_root_status[trapnr] = &hal_root_domain->cpudata[trapnr].status;
-        }
-#endif
 
-	ipipe_virtualize_irq(hal_root_domain, rtai_sysreq_virq, (void *)rtai_lsrq_dispatcher, NULL, NULL, IPIPE_HANDLE_MASK);
-	hal_irq_handler = rtai_hirq_dispatcher;
+	ipipe_request_irq(hal_root_domain, rtai_sysreq_virq, (void *)rtai_lsrq_dispatcher, NULL, NULL);
+	rtai_irq_handler = (void *)rtai_hirq_dispatcher;
 
 	rtai_install_archdep();
 
@@ -1639,23 +1612,21 @@ int __rtai_hal_init (void)
 	rtai_proc_register();
 #endif
 
-	hal_init_attr(&attr);
-	attr.name     = "RTAI";
-	attr.domid    = RTAI_DOMAIN_ID;
-	attr.entry    = (void *)rtai_domain_entry;
-	attr.priority = IPIPE_HEAD_PRIORITY;
-	hal_register_domain(&rtai_domain, &attr);
-	for (trapnr = 0; trapnr < HAL_NR_FAULTS; trapnr++) {
-		ipipe_catch_event(hal_root_domain, trapnr, (void *)rtai_trap_fault);
-	}
-	rtai_init_taskpri_irqs();
+	ipipe_register_head(&rtai_domain, "RTAI");
+	rtai_trap_hook = rtai_trap_fault;
 
 #ifdef CONFIG_SMP
+	if (IsolCpusMask && (IsolCpusMask != cpu_isolated_map)) {
+		printk("\nWARNING: IsolCpusMask (%lu) does not match cpu_isolated_map (%lu) set at boot time.\n", IsolCpusMask, cpu_isolated_map);
+	}
+	if (!IsolCpusMask) {
+		IsolCpusMask = cpu_isolated_map;
+	}
 	if (IsolCpusMask) {
-		for (trapnr = 0; trapnr < IPIPE_NR_XIRQS; trapnr++) {
-			rtai_orig_irq_affinity[trapnr] = rt_assign_irq_to_cpu(trapnr, ~IsolCpusMask);
+		for (i = 0; i < IPIPE_NR_XIRQS; i++) {
+			rtai_orig_irq_affinity[i] = rt_assign_irq_to_cpu(i, ~IsolCpusMask);
 		}
-		free_isolcpus_from_linux(&IsolCpusMask);
+//		free_isolcpus_from_linux(&IsolCpusMask);
 	}
 #else
 	IsolCpusMask = 0;
@@ -1677,28 +1648,25 @@ printk("RTAI_APIC_TIMER_IPI: RTAI DEFINED %d, VECTOR %d; LINUX_APIC_TIMER_IPI: R
 printk("TIMER NAME: %s; VARIOUSLY FOUND APIC FREQs: %lu, %lu, %u\n", ipipe_timer_name(), hal_request_apic_freq(), hal_request_apic_freq(), apic_read(APIC_TMICT)*HZ);
 #endif
 }
-
 	return 0;
 }
 
 void __rtai_hal_exit (void)
 {
-	int trapnr;
+	int i;
 #ifdef CONFIG_PROC_FS
 	rtai_proc_unregister();
 #endif
-	hal_irq_handler = NULL;
-	hal_unregister_domain(&rtai_domain);
-	for (trapnr = 0; trapnr < HAL_NR_FAULTS; trapnr++) {
-		hal_catch_event(hal_root_domain, trapnr, NULL);
-	}
-        hal_virtualize_irq(hal_root_domain, rtai_sysreq_virq, NULL, NULL, 0);
-        hal_free_irq(rtai_sysreq_virq);
-        rtai_uninstall_archdep();
+	ipipe_unregister_head(&rtai_domain);
+	rtai_irq_handler = NULL;
+	rtai_trap_hook = NULL;
+	ipipe_free_irq(hal_root_domain, rtai_sysreq_virq);
+	ipipe_free_virq(rtai_sysreq_virq);
+	rtai_uninstall_archdep();
 	
 	if (IsolCpusMask) {
-		for (trapnr = 0; trapnr < IPIPE_NR_XIRQS; trapnr++) {
-			rt_reset_irq_to_sym_mode(trapnr);
+		for (i = 0; i < IPIPE_NR_XIRQS; i++) {
+			rt_reset_irq_to_sym_mode(i);
 		}
 	}
 
@@ -1732,7 +1700,7 @@ asmlinkage int rt_sync_printk(const char *fmt, ...)
         va_start(args, fmt);
         vsnprintf(buf, VSNPRINTF_BUF, fmt, args);
         va_end(args);
-        hal_set_printk_sync(&rtai_domain);
+        ipipe_prepare_panic();
         return printk("%s", buf);
 }
 
@@ -1787,7 +1755,6 @@ EXPORT_SYMBOL(rt_smp_times);
 
 EXPORT_SYMBOL(rt_printk);
 EXPORT_SYMBOL(rt_sync_printk);
-EXPORT_SYMBOL(rtai_catch_event);
 
 EXPORT_SYMBOL(rt_scheduling);
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,22)
@@ -1907,3 +1874,4 @@ static void hal_request_apic_freq(unsigned long *apic_freq) { return; }
 
 EXPORT_SYMBOL(rt_linux_hrt_set_mode);
 EXPORT_SYMBOL(rt_linux_hrt_next_shot);
+#endif
