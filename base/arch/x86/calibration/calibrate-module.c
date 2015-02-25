@@ -27,6 +27,7 @@
 
 MODULE_LICENSE("GPL");
 
+#if 0
 #define COUNT               0xFFFFFFFFU
 
 static struct params_t params = { 0, SETUP_TIME_8254, LATENCY_8254, 0, LATENCY_APIC, SETUP_TIME_APIC, CALIBRATED_APIC_FREQ, 0, CALIBRATED_CPU_FREQ, CLOCK_TICK_RATE, LATCH };
@@ -221,3 +222,4 @@ void cleanup_module(void)
 	rtf_destroy(0);
 	return;
 }
+#endif

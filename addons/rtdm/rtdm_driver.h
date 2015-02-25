@@ -1131,7 +1131,7 @@ static inline int rtdm_task_sleep(nanosecs_rel_t delay)
                 return 0;
         }
         if (delay < 0) {
-                delay = RT_TIME_END;
+                delay = RTAI_TIME_LIMIT;
         }
         if (rt_sleep(nano2count(delay)) && _rt_whoami()->unblocked) {
                 return -EINTR;

@@ -1818,7 +1818,8 @@ case $RTAI_TARGET_ARCH in
 	# 2009-03-23
 	# `-msse2' temporarily removed by Pierangelo Masarati
 	# as suggested by Paul <paul_c AT tuxcnc DOT org>
-	RTAI_TARGET_ARCH_OPTS="$RTAI_TARGET_ARCH_OPTS -msse"
+	# RTAI_TARGET_ARCH_OPTS="$RTAI_TARGET_ARCH_OPTS -msse"
+	RTAI_TARGET_ARCH_OPTS="$RTAI_TARGET_ARCH_OPTS -msse -mpreferred-stack-boundary=4"
         ;;
    esac
    ;;
@@ -1962,6 +1963,9 @@ if test x$CONFIG_KBUILD = xy; then
    AC_CONFIG_LINKS(testsuite/kern/latency/Makefile:testsuite/kern/latency/Makefile.kbuild)
    AC_CONFIG_LINKS(testsuite/kern/preempt/Makefile:testsuite/kern/preempt/Makefile.kbuild)
    AC_CONFIG_LINKS(testsuite/kern/switches/Makefile:testsuite/kern/switches/Makefile.kbuild)
+   AC_CONFIG_LINKS(testsuite/kthreads/latency/Makefile:testsuite/kthreads/latency/Makefile.kbuild)
+   AC_CONFIG_LINKS(testsuite/kthreads/preempt/Makefile:testsuite/kthreads/preempt/Makefile.kbuild)
+   AC_CONFIG_LINKS(testsuite/kthreads/switches/Makefile:testsuite/kthreads/switches/Makefile.kbuild)
 fi
 
 dnl
@@ -2111,6 +2115,10 @@ if test -d $srcdir/testsuite; then
 	testsuite/kern/latency/GNUmakefile \
 	testsuite/kern/preempt/GNUmakefile \
 	testsuite/kern/switches/GNUmakefile \
+	testsuite/kthreads/GNUmakefile \
+	testsuite/kthreads/latency/GNUmakefile \
+	testsuite/kthreads/preempt/GNUmakefile \
+	testsuite/kthreads/switches/GNUmakefile \
 	testsuite/user/GNUmakefile \
 	testsuite/user/latency/GNUmakefile \
 	testsuite/user/preempt/GNUmakefile \

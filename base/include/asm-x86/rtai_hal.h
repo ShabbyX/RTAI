@@ -38,9 +38,11 @@
 #endif /* CONFIG_SMP */
 
 struct calibration_data {
-	unsigned long cpu_freq;
-	unsigned long apic_freq;
-	int latency;
+	unsigned long clock_freq;
+	unsigned long timer_freq;
+	int linux_timer_irq;
+	int timer_irq;
+	int sched_latency;
 	int kern_latency_busy_align_ret_delay;
 	int user_latency_busy_align_ret_delay;
 	int setup_time_TIMER_CPUNIT;
@@ -71,38 +73,49 @@ struct rtai_realtime_irq_s {
         unsigned long cpumask;
 };
 
-#define RTAI_DOMAIN_ID  0x9ac15d93  // nam2num("rtai_d")
-#define RTAI_NR_TRAPS   HAL_NR_FAULTS
+// da portare in config
+#define CONFIG_RTAI_SCHED_LATENCY  CONFIG_RTAI_SCHED_APIC_LATENCY
+
+#define RTAI_NR_TRAPS   IPIPE_NR_FAULTS //HAL_NR_FAULTS
 #define RTAI_NR_SRQS    32
 
-#define RTAI_APIC_TIMER_VECTOR    RTAI_APIC_HIGH_VECTOR
-#define RTAI_APIC_TIMER_IPI       RTAI_APIC_HIGH_IPI
-#define RTAI_SMP_NOTIFY_VECTOR    RTAI_APIC_LOW_VECTOR
-#define RTAI_SMP_NOTIFY_IPI       RTAI_APIC_LOW_IPI
+#define RTAI_TIMER_NAME        (ipipe_timer_name())
+#define RTAI_LINUX_TIMER_IRQ   (rtai_tunables.linux_timer_irq)
+#define RTAI_CLOCK_FREQ        (rtai_tunables.clock_freq)
+#define RTAI_TIMER_FREQ        (rtai_tunables.timer_freq)
 
-#define RTAI_TIMER_8254_IRQ       0
-#define RTAI_FREQ_8254            1193182UL
-#define RTAI_APIC_ICOUNT          ((RTAI_FREQ_APIC + HZ/2)/HZ)
-#define RTAI_COUNTER_2_LATCH      0xfffe
-#define RTAI_LATENCY_8254         CONFIG_RTAI_SCHED_8254_LATENCY
-#define RTAI_SETUP_TIME_8254      2011
+#define RTAI_RESCHED_IRQ       IPIPE_RESCHEDULE_IPI
+#define RTAI_SCHED_LATENCY     CONFIG_RTAI_SCHED_LATENCY
 
-#define RTAI_CALIBRATED_APIC_FREQ 0
-#define RTAI_FREQ_APIC            (rtai_tunables.apic_freq)
-#define RTAI_LATENCY_APIC         CONFIG_RTAI_SCHED_APIC_LATENCY
-#define RTAI_SETUP_TIME_APIC      1000
+#if 0
+//#define RTAI_APIC_TIMER_VECTOR    RTAI_APIC_HIGH_VECTOR
+//#define RTAI_APIC_TIMER_IPI       (rtai_tunables.timer_irq) RTAI_APIC_HIGH_IPI
+//#define RTAI_SMP_NOTIFY_VECTOR    RTAI_APIC_LOW_VECTOR
+//#define RTAI_SMP_NOTIFY_IPI         RTAI_APIC_LOW_IPI
 
-#define RTAI_CALIBRATED_CPU_FREQ   0
-#define RTAI_CPU_FREQ              (rtai_tunables.cpu_freq)
+//#define RTAI_TIMER_8254_IRQ       0
+//#define RTAI_FREQ_8254            (rtai_tunables.timer_freq)
+//#define RTAI_APIC_ICOUNT          ((RTAI_FREQ_APIC + HZ/2)/HZ)
+//#define RTAI_COUNTER_2_LATCH      0xfffe
+//#define RTAI_LATENCY_8254         CONFIG_RTAI_SCHED_8254_LATENCY
+//#define RTAI_SETUP_TIME_8254      2011
 
-#define RTAI_TIME_LIMIT            0x7000000000000000LL
+//#define RTAI_CALIBRATED_APIC_FREQ 0
+//#define RTAI_FREQ_APIC            (rtai_tunables.timer_freq)
+//#define RTAI_LATENCY_APIC         CONFIG_RTAI_SCHED_APIC_LATENCY
+//#define RTAI_SETUP_TIME_APIC      1000
+
+//#define RTAI_CALIBRATED_CPU_FREQ   0
+#endif
+
+#define RTAI_TIME_LIMIT  0x7000000000000000LL
 
 #define RTAI_IFLAG  9
 
-#define rtai_cpuid()      ipipe_processor_id()
+#define rtai_cpuid()  ipipe_processor_id()
 
 #if 0
-#define rtai_tskext(tsk, i)   ((tsk)->ptd[i])
+#define rtai_tskext(tsk, i)   ((tsk)->ptd[i])  // old (legacy) way
 #else
 #define rtai_tskext(tsk, i)   ((&task_thread_info(tsk)->ipipe_data)->ptd[i])
 #endif
@@ -113,14 +126,6 @@ struct rtai_realtime_irq_s {
 #define rtai_save_flags_and_cli(x)  do { x = hard_local_irq_save_notrace(); } while(0)
 #define rtai_restore_flags(x)       hard_local_irq_restore_notrace(x)
 #define rtai_save_flags(x)          do { x = hard_local_save_flags(); } while(0)
-
-#if 1 // !!! to be substituted with what above !!!
-#define rtai_hw_cli                  rtai_cli
-#define rtai_hw_sti                  rtai_sti
-#define rtai_hw_save_flags_and_cli   rtai_save_flags_and_cli
-#define rtai_hw_restore_flags        rtai_restore_flags
-#define rtai_hw_save_flags           rtai_save_flags
-#endif
 
 static inline unsigned long rtai_save_flags_irqbit(void)
 {
@@ -176,75 +181,12 @@ static inline void rt_spin_unlock_irqrestore(unsigned long flags, spinlock_t *lo
         rtai_restore_flags(flags);
 }
 
-#if 1 // !!! to be substituted with what above !!!
-#define rt_spin_lock_hw_irq           rt_spin_lock_irq
-#define rt_spin_unlock_hw_irq         rt_spin_unlock_irq
-#define rt_spin_lock_hw_irqsave       rt_spin_lock_irqsave
-#define rt_spin_unlock_hw_irqrestore  rt_spin_unlock_irqrestore
-#endif
-
 extern struct global_lock rtai_cpu_lock[];
-
-#if 0
-#if RTAI_NR_CPUS > 0
-
-// taken from Linux, see the related code there for an explanation
-
-static inline void rtai_spin_glock(volatile unsigned long *lock)
-{
- short inc = 0x0100;
- __asm__ __volatile__ (
- LOCK_PREFIX "xaddw %w0, %1\n"
- "1:\t"
- "cmpb %h0, %b0\n\t"
- "je 2f\n\t"
- "rep; nop\n\t"
- "movb %1, %b0\n\t"
- "jmp 1b\n"
- "2:"
- :"+Q" (inc), "+m" (lock[1])
- :
- :"memory", "cc");
-}
-
-#if defined(CONFIG_X86_OOSTORE) || defined(CONFIG_X86_PPRO_FENCE)
-# define UNLOCK_LOCK_PREFIX LOCK_PREFIX
-#else
-# define UNLOCK_LOCK_PREFIX
-#endif
-
-static inline void rtai_spin_gunlock(volatile unsigned long *lock)
-{
- __asm__ __volatile__(
- UNLOCK_LOCK_PREFIX "incb %0"
- :"+m" (lock[1])
- :
- :"memory", "cc");
-}
-
-#else
-
-static inline void rtai_spin_glock(volatile unsigned long *lock)
-{
-        while (test_and_set_bit(31, lock)) {
-                cpu_relax();
-        }
-        barrier();
-}
-
-static inline void rtai_spin_gunlock(volatile unsigned long *lock)
-{
-        test_and_clear_bit(31, lock);
-        cpu_relax();
-}
-
-#endif
-#endif
 
 static inline void __rt_get_global_lock(void)
 {
         barrier();
-        if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0].mask)) {
+        if (!test_and_set_bit(rtai_cpuid(), &rtai_cpu_lock[0].mask)) {
                 rt_spin_lock(&rtai_cpu_lock[0].lock);
         }
         barrier();
@@ -253,7 +195,7 @@ static inline void __rt_get_global_lock(void)
 static inline void __rt_release_global_lock(void)
 {
         barrier();
-        if (test_and_clear_bit(hal_processor_id(), &rtai_cpu_lock[0].mask)) {
+        if (test_and_clear_bit(rtai_cpuid(), &rtai_cpu_lock[0].mask)) {
                 rt_spin_unlock(&rtai_cpu_lock[0].lock);
         }
         barrier();
@@ -316,7 +258,7 @@ static inline int rt_global_save_flags_and_cli(void)
 
         barrier();
         flags = rtai_save_flags_irqbit_and_cli();
-        if (!test_and_set_bit(hal_processor_id(), &rtai_cpu_lock[0].mask)) {
+        if (!test_and_set_bit(rtai_cpuid(), &rtai_cpu_lock[0].mask)) {
                 rt_spin_lock(&rtai_cpu_lock[0].lock);
                 barrier();
                 return flags | 1;
@@ -336,7 +278,7 @@ static inline void rt_global_save_flags(unsigned long *flags)
 {
         unsigned long hflags = rtai_save_flags_irqbit_and_cli();
 
-        *flags = test_bit(hal_processor_id(), &rtai_cpu_lock[0].mask) ? hflags : hflags | 1;
+        *flags = test_bit(rtai_cpuid(), &rtai_cpu_lock[0].mask) ? hflags : hflags | 1;
         if (hflags) {
                 rtai_sti();
         }
@@ -403,8 +345,8 @@ static inline unsigned long rt_global_save_flags_and_cli(void)
 
 #ifdef CONFIG_SMP
 
-#define SCHED_VECTOR  RTAI_SMP_NOTIFY_VECTOR
-#define SCHED_IPI     RTAI_SMP_NOTIFY_IPI
+//#define SCHED_VECTOR  RTAI_SMP_NOTIFY_VECTOR
+//#define SCHED_IPI     RTAI_RESCHED_IRQ
 
 #if 0 // *** Let's try the patch version ***
 #define _send_sched_ipi(dest) \
@@ -415,7 +357,7 @@ do { \
 } while (0)
 #else
 #define _send_sched_ipi(dest) \
-        do { ipipe_send_ipi(SCHED_IPI, *((cpumask_t *)&dest)); } while (0)
+        do { ipipe_send_ipi(RTAI_RESCHED_IRQ, *((cpumask_t *)&dest)); } while (0)
 #endif
 
 #else /* !CONFIG_SMP */
@@ -688,11 +630,11 @@ static inline void previous_rt_set_timer_delay(int delay)
 		if (this_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER)) {
 			wrmsrl(MSR_IA32_TSC_DEADLINE, rtai_rdtsc() + delay);
 		} else {
-			delay = rtai_imuldiv(delay, rtai_tunables.apic_freq, rtai_tunables.cpu_freq);
+			delay = rtai_imuldiv(delay, rtai_tunables.timer_freq, rtai_tunables.clock_freq);
 			apic_write(APIC_TMICT, delay);
 		}
 #else /* !CONFIG_X86_LOCAL_APIC */
-		delay = rtai_imuldiv(delay, RTAI_FREQ_8254, rtai_tunables.cpu_freq);
+		delay = rtai_imuldiv(delay, RTAI_TIMER_FREQ, rtai_tunables.clock_freq);
 		outb(delay & 0xff,0x40);
 		outb(delay >> 8,0x40);
 #endif /* CONFIG_X86_LOCAL_APIC */

@@ -400,7 +400,7 @@ static inline void wake_up_timed_tasks(int cpuid)
 	                        } else {
         	                        enq_ready_task(task);
                 	        }
-#if defined(CONFIG_RTAI_BUSY_TIME_ALIGN) && CONFIG_RTAI_BUSY_TIME_ALIGN
+#if CONFIG_RTAI_SCHED_LATENCY && CONFIG_RTAI_BUSY_TIME_ALIGN
 				task->busy_time_align = oneshot_timer;
 #endif
         	        }
@@ -631,7 +631,7 @@ static inline void rtai_cleanup_features (void) {
 
 int rt_check_current_stack(void);
 
-int rt_kthread_init(RT_TASK *task,
+int rt_kthread_init_old(RT_TASK *task,
 		    void (*rt_thread)(long),
 		    long data,
 		    int stack_size,

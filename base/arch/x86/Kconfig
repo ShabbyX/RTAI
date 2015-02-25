@@ -263,79 +263,97 @@ config RTAI_LONG_TIMED_LIST
 	If you have many tens or even hundred(s) of timed tasks then it is 
 	likely that it might be worth enabling this option.
 
-config RTAI_SCHED_8254_LATENCY
-	string "8254 tuning latency (ns)"
-	default 4700
-	help
-	The anticipation time to be used to program the hard timer, in oneshot
-	mode, for the next scheduling shot in order to compensate for the
-	programming overhead needed to determine the right firing time.
-	This parameter has no effect when the periodic mode is used.
-	It should be determined with the calibration support provided by RTAI, 
-	starting from a tentative configuration; better if set to zero
-	for the very first calibration. 
-	The same value is used as a compromise for both kernel and 
-	user space tasks. Which means that for an on time user space task there 
-	could be some anticipation, i.e. a negative latency, for a kernel space
-	task. The busy alignment option should be used in such a case to
-	provide a compromised on time scheduling for both, albeit at a 
-	negligible added cost.
+#config RTAI_SCHED_8254_LATENCY
+#	string "8254 tuning latency (ns)"
+#	default 4700
+#	help
+#	The anticipation time to be used to program the hard timer, in oneshot
+#	mode, for the next scheduling shot in order to compensate for the
+#	programming overhead needed to determine the right firing time.
+#	This parameter has no effect when the periodic mode is used.
+#	It should be determined with the calibration support provided by RTAI, 
+#	starting from a tentative configuration; better if set to zero
+#	for the very first calibration. 
+#	The same value is used as a compromise for both kernel and 
+#	user space tasks. Which means that for an on time user space task there 
+#	could be some anticipation, i.e. a negative latency, for a kernel space
+#	task. The busy alignment option should be used in such a case to
+#	provide a compromised on time scheduling for both, albeit at a 
+#	negligible added cost.
 
 config RTAI_SCHED_APIC_LATENCY
-	string "APIC tuning latency (ns)"
-	default 3944
+	string "Scheduling latency (ns)"
+	default 0
         help
-        The anticipation time to be used to program the hard timer, in oneshot
-        mode, for the next scheduling shot in order to compensate for the
-        programming overhead needed to determine the right firing time.
-	This parameter has no effect when the periodic mode is used.
-	It should be determined with the calibration support provided by RTAI, 
-	starting from a tentative configuration; better if set to zero
-	for the very first calibration. 
-	The same value is used as a compromise for both kernel and 
-	user space tasks. Which means that for an on time user space task there 
-	could be some anticipation, i.e. a negative latency, for a kernel space
-	task. The busy alignment option could be used in such a case to
-	provide a compromised on time scheduling for both, albeit at a 
-	negligible added cost.
+        The anticipation time to be used to program the hard timer mode for
+	the next scheduling shot, in order to compensate for the programming
+	overhead determing the right firing time.
+	It could be determined with the calibration support provided by RTAI, 
+	starting from a tentative configuration; better if set to zero for
+	the first calibration, i.e. the default value available at the very 
+	first config-making. 
+	The same value is used for both kernel and user space tasks. Which
+	means that, for an appropriate on time user space task, there could be 
+	some anticipation for a kernel space task, i.e. a negative latency. 
+	In such a case, the busy alignment option could be used to provide a 
+	compromised on time scheduling for both, albeit at a negligible added 
+	cost for kernel tasks.
+	It should be remarked that if such a value is left to zero at the
+	very first config, RTAI will self calibrate in user space, resetting 
+	the related configuration files with the new values. The user can 
+	then further tune such values at will. 
+	In such a vew the self calibration will:
+	- set the scheduler latency;
+	- enable a busy wait alignment, see the related config parameter;
+	- set an appropriate busy wait anticipation for kernel space; see 
+	  the related config parameter;
+	- set a negative appropriate busy wait anticipation for user space, 
+	  the adoption of a negative value will impede the alignment, while
+	  its absolute value will be an appropriate indication of what 
+	  should be used if also a user space alignment is desired; see the 
+	  related config parameter. It should nonetheless be remarked that,
+	  because of the calibration in user space, there should be no need
+	  to align. 
 
 config RTAI_BUSY_TIME_ALIGN
 	bool "Busy wait to ensure resume time alignment"
 	default n
 	help
-	In oneshot mode there is a calibrated anticipation of the timer
-	firing to compensate for the time overhead consumed in scheduling. 
+	As explained for the scheduling latency parameter, RTAI has a 
+	calibrated anticipation of the timer firing, to compensate for
+	the time overhead consumed in scheduling. 
 	Sometimes, either because of a bad calibration or purposely, it is
-	possible to anticipate the scheduling by setting a slightly larger than 
-	needed anticipation. In such cases with this option one can be sure to
-	achieve the desired scheduling time at the expense of waisting some
-	processor time. Useful to achieve both more precise scheduled deadlines
-	and non negative latency values.
-	Do not set it if a hard periodic timer is to be used.
-	Since a user space task has a higher scheduling latency, it can be
-	usefully set to allow achieving better deadlines for kernel tasks, when
-	the scheduling latency is calibrated for user space tasks.
-	For more precise results see the following options.
+	possible to anticipate the scheduling by setting a slightly larger 
+	than needed anticipation, followed by a busy wait of the right 
+	syncronized time. In such cases, with this option, one can be sure to
+	achieve the desired scheduling time at the expense of wasting a 
+	negligeable processor time. Useful to achieve more precise scheduling
+	deadlines and non negative latency values.
+	Usually, since a user space calibration is preferred, the latency 
+	value will results in being higher than needed for RTAI kernel tasks.
+	Then setting this option will allow to achieve sharper deadlines 
+	for kernel tasks, avoiding their anticipated schedules.
+	Enabling this parameter will have no effect if the specific 
+	kernel/user space alignment time is not set to a positive value.
+	See the related parameters help.
 
 config RTAI_KERN_BUSY_ALIGN_RET_DELAY
 	string "  Delay to return to a switched in timed kernel task (ns)"
 	default 0
 	depends on RTAI_BUSY_TIME_ALIGN
 	help
-	The average time to return to the timed call function after switching 
-	back to a kernel space task switch. 
+	The average time to return to the timed calling function after 
+	switching back to a kernel space task. 
 	It is subtracted from the resume time of a timed task to avoid 
 	a delayed return when a busy wait to align to the resume time is 
-	requested.
-	To calibrate it enable RTAI_BUSY_TIME_ALIGN and set this and the 
-	following option to one, then run the calibration helper available 
-	in RTAI.
-	A zero value will skip the busy alignment, as if RTAI_BUSY_TIME_ALIGN
-	was not set. Useful to allow the alignment application just to kernel 
-	or user tasks. For example when a precise calibration for user space 
-	is used, a kernel task will anticipate its timed resumption; so setting
-	a positive value here and a zero for the corresponding option 
-	below will allow applying the busy wait just to kernel tasks.
+	assigned.
+	A <= 0 value will skip the busy alignment, as if RTAI_BUSY_TIME_ALIGN
+	was not set. Useful to allow the alignment application just for kernel 
+	tasks. For example when a precise calibration for user space is used, 
+	a kernel task will anticipate its timed resumption; so setting a 
+	positive value here and a <= 0 busy wait time for the corresponding 
+	user space option will allow applying the busy wait just to kernel 
+	tasks.
 
 config RTAI_USER_BUSY_ALIGN_RET_DELAY
 	string "  Delay to return to a switched in timed user task (ns)"
@@ -343,16 +361,13 @@ config RTAI_USER_BUSY_ALIGN_RET_DELAY
 	depends on RTAI_BUSY_TIME_ALIGN
 	help
 	The average time to return to the timed call function after switching 
-	back to a user space task switch. 
+	back to a user space task. 
 	It is subtracted from the resume time of a timed task to avoid 
 	a delayed return when a busy wait to align to the resume time is
 	requested.
-	To calibrate it enable RTAI_BUSY_TIME_ALIGN and set this and the 
-	previous option to one, then run the calibration helper available 
-	in RTAI.
-	A zero value will skip the busy alignment, as if RTAI_BUSY_TIME_ALIGN
+	A <= 0 value will skip the busy alignment, as if RTAI_BUSY_TIME_ALIGN
 	was not set. Useful to allow the alignment application just to kernel
-        or user tasks.
+	space tasks.
 
 config RTAI_SCHED_LXRT_NUMSLOTS
 	string "Number of registrable RTAI objects"

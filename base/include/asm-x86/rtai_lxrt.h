@@ -32,22 +32,42 @@
 #define LOW  0
 union rtai_lxrt_t { RTIME rt; long i[2]; void *v[2]; };
 
-#ifdef CONFIG_X86_LOCAL_APIC
+#ifdef __KERNEL__
 
-#define TIMER_NAME        "APIC"
-#define TIMER_TYPE  1
-#define HRT_LINUX_TIMER_NAME  "lapic"
-#define FAST_TO_READ_TSC
-#define TIMER_FREQ        RTAI_FREQ_APIC
-#define TIMER_LATENCY     RTAI_LATENCY_APIC
-#define TIMER_SETUP_TIME  RTAI_SETUP_TIME_APIC
-#define ONESHOT_SPAN      (CPU_FREQ/(CONFIG_RTAI_CAL_FREQS_FACT + 2)) //(0x7FFFFFFFLL*(CPU_FREQ/TIMER_FREQ))
-#ifdef CONFIG_GENERIC_CLOCKEVENTS
+#define TIMER_NAME     RTAI_TIMER_NAME
+#define TIMER_FREQ     RTAI_TIMER_FREQ
+#define SCHED_LATENCY  RTAI_SCHED_LATENCY
+
 #define USE_LINUX_TIMER
 #define update_linux_timer(cpuid) \
-        do { hal_pend_uncond(LOCAL_TIMER_IPI, cpuid); } while (0)
+        do { hal_pend_uncond(RTAI_LINUX_TIMER_IRQ, cpuid); } while (0)
+
+#ifdef CONFIG_X86_LOCAL_APIC
+#define MAX_TIMER_COUNT  0x7FFFFFFFLL 
+#else
+#define MAX_TIMER_COUNT  0x7FFLL
+#endif
+#define ONESHOT_SPAN \
+	(((MAX_TIMER_COUNT*(RTAI_CLOCK_FREQ/TIMER_FREQ)) <= INT_MAX) ? \
+	(MAX_TIMER_COUNT*(RTAI_CLOCK_FREQ/TIMER_FREQ)) : (INT_MAX))
+
+#if 0
+#ifdef CONFIG_X86_LOCAL_APIC
+
+//#define TIMER_NAME        "APIC"
+//#define TIMER_TYPE  1
+//#define HRT_LINUX_TIMER_NAME  "lapic"
+//#define FAST_TO_READ_TSC
+//#define TIMER_FREQ        RTAI_FREQ_APIC
+//#define TIMER_LATENCY     RTAI_LATENCY_APIC
+//#define TIMER_SETUP_TIME  RTAI_SETUP_TIME_APIC
+//#define ONESHOT_SPAN      (RTAI_CLOCK_FREQ/(CONFIG_RTAI_CAL_FREQS_FACT + 2)) //(0x7FFFFFFFLL*(CPU_FREQ/TIMER_FREQ))
+#if 0 //def CONFIG_GENERIC_CLOCKEVENTS
+#define USE_LINUX_TIMER
+#define update_linux_timer(cpuid) \
+        do { hal_pend_uncond(RTAI_LINUX_TIMER_IRQ, cpuid); } while (0)
 #else /* !CONFIG_GENERIC_CLOCKEVENTS */
-#define update_linux_timer(cpuid)
+//#define update_linux_timer(cpuid)
 #endif /* CONFIG_GENERIC_CLOCKEVENTS */
 
 #else /* !CONFIG_X86_LOCAL_APIC */
@@ -59,13 +79,12 @@ union rtai_lxrt_t { RTIME rt; long i[2]; void *v[2]; };
 #define TIMER_FREQ        RTAI_FREQ_8254
 #define TIMER_LATENCY     RTAI_LATENCY_8254
 #define TIMER_SETUP_TIME  RTAI_SETUP_TIME_8254
-#define ONESHOT_SPAN      ((0x7FFF*(CPU_FREQ/TIMER_FREQ))/(CONFIG_RTAI_CAL_FREQS_FACT + 1)) //(0x7FFF*(CPU_FREQ/TIMER_FREQ))
+#define ONESHOT_SPAN      ((0x7FFF*(RTAI_CLOCK_FREQ/TIMER_FREQ))/(CONFIG_RTAI_CAL_FREQS_FACT + 1)) //(0x7FFF*(CPU_FREQ/TIMER_FREQ))
 #define update_linux_timer(cpuid) \
         do { hal_pend_uncond(TIMER_8254_IRQ, cpuid); } while (0)
 
 #endif /* CONFIG_X86_LOCAL_APIC */
-
-#ifdef __KERNEL__
+#endif
 
 static inline void _lxrt_context_switch (struct task_struct *prev, struct task_struct *next, int cpuid)
 {
@@ -80,8 +99,6 @@ static inline void _lxrt_context_switch (struct task_struct *prev, struct task_s
 #endif
         context_switch(NULL, prev, next);
 }
-
-//#include <linux/slab.h>
 
 #define rt_copy_from_user(a, b, c)  \
         ( { int ret = __copy_from_user_inatomic(a, b, c); ret; } )

@@ -204,7 +204,7 @@ typedef struct rt_task_struct {
 	void *system_data_ptr;
 	struct rt_task_struct *nextp, *prevp;
 
-	RT_TRAP_HANDLER task_trap_handler[HAL_NR_FAULTS];
+	RT_TRAP_HANDLER task_trap_handler[RTAI_NR_TRAPS];
 
 	long unblocked;
 	void *rt_signals;
@@ -260,6 +260,13 @@ int rt_task_init_cpuid(struct rt_task_struct *task,
 		       int uses_fpu,
 		       void(*signal)(void),
 		       unsigned run_on_cpu);
+
+void rt_thread_create(void *fun, void *args, struct task_struct **thread);
+
+RT_TASK *rt_thread_init(unsigned long name, int priority, int make_hard, int policy, int cpus_allowed);
+
+int rt_thread_delete(RT_TASK *rt_task);
+
 
 int rt_kthread_init(struct rt_task_struct *task,
 		    void (*rt_thread)(long),

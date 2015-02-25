@@ -449,7 +449,7 @@ EXPORT_SYMBOL(rtdm_task_join_nrt);
  */
 void rtdm_task_busy_sleep(nanosecs_rel_t delay)
 {
-        xnticks_t wakeup = rtai_rdtsc() + llimd(delay, tuned.cpu_freq, 1000000000);
+        xnticks_t wakeup = rtai_rdtsc() + rtai_llimd(delay, rtai_tunables.clock_freq, 1000000000);
         while ((xnticks_t)(rtai_rdtsc() - wakeup) < 0)
                 cpu_relax();
 }

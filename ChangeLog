@@ -1,7 +1,126 @@
+2015-02-22 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sys.c: avoid waiting on a Linux sem when a kthread 
+	  creation is requested from hard real; the Linux task structure 
+	  address is returned through a call argument.
+
+2015-02-21 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* testsuite/kthreads/latency/display.c and latency-module.c,
+	  testsuite/kthreads/preempt/display.c and preempt-module.c,
+	  testsuite/kthreads/switches/switches-module.c: set of examples
+	  showing the usage of RTAI enabled soft-hardened Linux kthreads.
+	* base/sched/sys.c: added a Linux kthread server, to allow creating 
+	  hadr-soft RTAI Linux kernel threads from RTAI own kernel tasks and
+	  Linux real time hardened kernel thread, without loosing hard real
+	  time execution; it implies a revision of what prviously committed.
+	* base/sched/sched.c: run and termininate, at init-exiting the Linux
+	  kthread server.
+
+2015-02-19 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/calibrate/calibrate.c: do not self calibrate if 
+	  SCHED_LATENCY is set already; update also .rtai-config.
+	* base/sched/sched.c: do not convert negative kern-user busy waits.
+	* base/arch/x86/Kconfig: display kern busy wait again.
+
+2015-02-18 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c and sys.c: busy timed sync waits only if there 
+	  is a sched_latency.
+	* base/sched/sys.c: set sched_latency also when sched_latency is zero.
+	* base/include/rtai_schedcore.h: enable timed sync busy waits at wake
+	  up only if there is a sched_latency. 
+	* base/arch/x86/calibrate/calibrate.c: recoded for use within the 
+          make self tuning.
+
+2015-02-16 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/include/asm-x86/rtai_fpu_64.h: cleaned legacy oldnames. 
+
+2015-02-15 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sys.c: rt_thread_create returns an error when called from
+	  an RTAI own kernel task; use a wrapper function and a LINUX kernel 
+	  sem to grant the new kthread is running before retunring,
+	  substitutes the previous polled wait for an RTAI enabled new khread.
+
+2015-02-14 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* addons/drivers/serial/serial.c and serialP.h: cleaned legacy
+	  oldnames.
+	* addons/rtdm/drvlib.c, module.c, rtdm_driver.h and xn.h: cleaned 
+	  legacy oldnames, aligned with renewed variable and structure names.
+	* base/arch/x86/Kconfig: prepared for a few next config changes.
+	* base/arch/x86/hal/hal/c: cleaned legacy oldnames and macros, aligned
+	  with renewed variable and structure names.
+	* base/include/rtai_hal_names.h: reduced to what is still needed with 
+	  the latest patches and a more direct use of its raw names.
+	* base/include/asm-x86/rtai_hal.h: redefined struct calibration_data,
+	  cleaned legacy oldnames, messy redundant macros and unused parts of 
+	  code; defined new macros, aligned with renewed variable and structure 
+	  names.	  
+	* base/include/asm-x86/rtai_lxrt.h: cleaned legacy oldnames, messy
+	  redundant macros and unused parts of code; defined new macros, 
+	  aligned with renewed variable and structure names.
+	* base/include/asm-x86/rtai_vectors.h: cleaned of vectors and ipis
+	  macros definition, introduced a reminder of what in use now.
+	* base/sched/api.c: cleaned legacy oldnames and cared of the no more 
+	  used rt_times tunables, now rt_smp_times[0].
+	* base/sched/sched.c: cleaned legacy oldnames, messy redundant macros; 
+	  aligned with renewed variable, macros and structure names; cared of
+	  the no more used rt_times tunables, now rt_smp_times[0].
+	* base/sched/sys.c: cleaned legacy oldnames, aligned with renewed
+	  variable and structure names. 
+	* base/tasklets/tasklets.c: cleaned legacy oldnames, aligned with 
+	  renewed variable and structure names.
+	* base/wd/wd.c: cleaned legacy oldnames, aligned with renewed variable 
+	  and structure names.
+	* testsuite/kern/latency/latency-module.c, 
+	  testsuite/kern/preempt/preempt-module.c,
+	  testsuite/kern/switches/switches-module.c: cleaned legacy oldnames,
+	  aligned with renewed variable and structure names.
+	
+2015-02-11 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal.c: got rid of rt_times variable, beware
+	  just the variable, not of the structure with the same name.
+
+2015-02-08 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sys.c: rt_thread_create poll waits till the created 
+	  thread is rtai enabled.
+
+2015-02-07 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: added the possibility of testing different ways
+	  to set active_mm for kernel threads.
+
+2015-02-06 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/sched/sched.c: avoid loosing the active_mm stolen for kernel
+	  threads working in hard real time, by incrementing its mm_count 
+	  when it is acquired in fast_schedule, then mmdrop active_mm any 
+	  time they are returned to soft mode in give_back_to_linux.
+
+2015-02-05 Paolo Mantegazza <mantegazza@aero.polimi.it>
+	
+	* base/include/rtai_sched.h: added the new declaration for 
+	  rt_kthread_init, hiding the old one. Still to be cleaned a bit.
+	* base/include/rtai_schedcore.h: hided the old declaration of 
+	  rt_kthread_init. Awaiting some cleaning.
+	* base/sched/sched.c: made fast_schedule support hard transitions 
+          for kernel threads, without touching the context switch in use.
+	* base/sched/sys.c: reinstated support for hard-soft kernel threads, 
+	  emulating the scheme used in kernel space. Beware of the way of 
+	  calling RTAI services in the case of soft threads. See 
+	  soft calling functions. The legacy RESERVOIR option awaits a new 
+	  helper module. TBD: the releated testsuite.
+
 2015-02-04 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/arch/x86/hal/hal.c: got rid of all old timer request/free.
-	  base/sched/sched.c: got rid of all old start/stop_rt_timer and
+	* base/sched/sched.c: got rid of all old start/stop_rt_timer and
 	  likes. Added fastcall hook.
 
 2015-02-02 Paolo Mantegazza <mantegazza@aero.polimi.it>
@@ -23,7 +142,7 @@
 2015-01-31 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/include/asm-x86/rtai_lxrt.h: gather the common parts of 32-64 
-	  bits archs, unify the definition of union union rtai_lxrt_t.
+	  bits archs, unify the definition of union rtai_lxrt_t.
 	* base/include/asm-x86/rtai_lxrt_32.h: keap only the 32 bits specific 
 	  definitions and services, required copying __do_strncpy_from_user 
 	  from LINUX, as for 64 bits.

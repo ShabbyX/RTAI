@@ -137,7 +137,7 @@ static inline void xnlock_get(xnlock_t *lock)
 {
 	barrier();
 	rtai_cli();
-	if (!test_and_set_bit(hal_processor_id(), &lock->lock[0].mask)) {
+	if (!test_and_set_bit(rtai_cpuid(), &lock->lock[0].mask)) {
 		rt_spin_lock(&lock->lock[0].lock);
 	}
 	barrier();
@@ -147,7 +147,7 @@ static inline void xnlock_put(xnlock_t *lock)
 {
 	barrier();
 	rtai_cli();
-	if (test_and_clear_bit(hal_processor_id(), &lock->lock[0].mask)) {
+	if (test_and_clear_bit(rtai_cpuid(), &lock->lock[0].mask)) {
 		rt_spin_unlock(&lock->lock[0].lock);
 	}
 	barrier();
@@ -159,7 +159,7 @@ static inline spl_t __xnlock_get_irqsave(xnlock_t *lock)
 
 	barrier();
 	flags = rtai_save_flags_irqbit_and_cli();
-	if (!test_and_set_bit(hal_processor_id(), &lock->lock[0].mask)) {
+	if (!test_and_set_bit(rtai_cpuid(), &lock->lock[0].mask)) {
 		rt_spin_lock(&lock->lock[0].lock);
 		barrier();
 		return flags | 1;

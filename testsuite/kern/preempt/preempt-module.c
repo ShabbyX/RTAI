@@ -52,7 +52,7 @@ static RT_TASK Fast_Task;
 static int period, slowjit, fastjit;
 static RTIME expected;
 
-static int cpu_used[NR_RT_CPUS];
+static int cpu_used[RTAI_NR_CPUS];
 
 static void Slow_Thread(long dummy)
 {
@@ -64,7 +64,7 @@ static void Slow_Thread(long dummy)
 		svt = t;
 		if (jit) { jit = - jit; }
 		if (jit > slowjit) { slowjit = jit; }
-		cpu_used[hard_cpu_id()]++;
+		cpu_used[rtai_cpuid()]++;
                 rt_busy_sleep(SLOWMUL/2*TICK_TIME);
                 rt_task_wait_period();                                        
         }
@@ -80,7 +80,7 @@ static void Fast_Thread(long dummy)
 		svt = t;
 		if (jit) { jit = - jit; }
 		if (jit > fastjit) { fastjit = jit; }
-		cpu_used[hard_cpu_id()]++;
+		cpu_used[rtai_cpuid()]++;
                 rt_busy_sleep(FASTMUL/2*TICK_TIME);
                 rt_task_wait_period();                                        
         }                      
@@ -105,7 +105,7 @@ static void fun(long thread) {
 
 		svt = rt_get_cpu_time_ns();
 		for (skip = 0; skip < NAVRG; skip++) {
-			cpu_used[hard_cpu_id()]++;
+			cpu_used[rtai_cpuid()]++;
 			expected += period;
 			rt_task_wait_period();
 
@@ -164,7 +164,7 @@ static void __preempt_exit(void)
 	rt_task_delete(&Fast_Task);
 	rtf_destroy(FIFO);
 	printk("\n\nCPU USE SUMMARY\n");
-	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {
+	for (cpuid = 0; cpuid < RTAI_NR_CPUS; cpuid++) {
 		printk("# %d -> %d\n", cpuid, cpu_used[cpuid]);
 	}
 	printk("END OF CPU USE SUMMARY\n\n");

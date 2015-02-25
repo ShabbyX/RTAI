@@ -86,7 +86,7 @@ struct sample {
 } samp;
 double dotres;
 
-static int cpu_used[NR_RT_CPUS];
+static int cpu_used[RTAI_NR_CPUS];
 
 #define MAXDIM 10
 
@@ -156,7 +156,7 @@ fun(long thread)
 		average = 0;
 
 		for (i = 0; i < loops; i++) {
-			cpu_used[hard_cpu_id()]++;
+			cpu_used[rtai_cpuid()]++;
 			expected += period_counts;
 
 			if (!rt_task_wait_period()) {
@@ -237,7 +237,7 @@ __latency_init(void)
 		} else {
 			rt_set_oneshot_mode();
 		}
-		rt_assign_irq_to_cpu(TIMER_8254_IRQ, TIMER_TO_CPU);
+//		rt_assign_irq_to_cpu(TIMER_8254_IRQ, TIMER_TO_CPU);
 		period_counts = start_rt_timer(nano2count(period));
 	} else {
 		period_counts = nano2count(period);
@@ -264,7 +264,7 @@ __latency_exit(void)
 
 	/* If we started the timer we have to revert this now. */
 	if (start_timer) {
-		rt_reset_irq_to_sym_mode(TIMER_8254_IRQ);
+//		rt_reset_irq_to_sym_mode(TIMER_8254_IRQ);
 		stop_rt_timer();
 	}
 
@@ -279,7 +279,7 @@ __latency_exit(void)
 
 	/* Output some statistics about CPU usage */
 	printk("\n\nCPU USE SUMMARY\n");
-	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {
+	for (cpuid = 0; cpuid < RTAI_NR_CPUS; cpuid++) {
 		printk("# %d -> %d\n", cpuid, cpu_used[cpuid]);
 	}
 	printk("END OF CPU USE SUMMARY\n\n");

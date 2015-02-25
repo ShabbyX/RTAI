@@ -35,22 +35,26 @@
 #include <rtai_hal_names.h>
 #include <rtai_config.h>
 
-#ifdef CONFIG_X86_LOCAL_APIC
-#define RTAI_APIC_HIGH_VECTOR  HAL_APIC_HIGH_VECTOR
-#define RTAI_APIC_LOW_VECTOR   HAL_APIC_LOW_VECTOR
-#else 
-#define RTAI_APIC_HIGH_VECTOR  0xff
-#define RTAI_APIC_LOW_VECTOR   0xff
+#if 0  // reminder of what we are using from hal-linux patches
+#ifdef CONFIG_SMP
+// to force inter cpus atomic sections
+#define IPIPE_CRITICAL_VECTOR    0xf1
+#define IPIPE_CRITICAL_IPI     
+
+// to schedule a task remotely awoken
+#define IPIPE_RESCHEDULE_VECTOR  0xee
+#define IPIPE_RESCHEDULE_IPI
 #endif
 
-#ifdef ipipe_apic_vector_irq /* LINUX_VERSION_CODE > KERNEL_VERSION(2,6,19) */
-#define RTAI_APIC_HIGH_IPI     ipipe_apic_vector_irq(RTAI_APIC_HIGH_VECTOR)
-#define RTAI_APIC_LOW_IPI      ipipe_apic_vector_irq(RTAI_APIC_LOW_VECTOR)
-#define LOCAL_TIMER_IPI        ipipe_apic_vector_irq(LOCAL_TIMER_VECTOR)
-#else
-#define RTAI_APIC_HIGH_IPI     (RTAI_APIC_HIGH_VECTOR - FIRST_EXTERNAL_VECTOR)
-#define RTAI_APIC_LOW_IPI      (RTAI_APIC_LOW_VECTOR - FIRST_EXTERNAL_VECTOR)
-#define LOCAL_TIMER_IPI        (LOCAL_TIMER_VECTOR - FIRST_EXTERNAL_VECTOR)
+// not used by RTAI, right now
+#define IPIPE_HRTIMER_VECTOR     0xf0
+#define IPIPE_HRTIMER_IPI
+
+// for the devices to be programmed to pace RTAI timing,
+// usually shared by RTAI and Linux
+// RTAI has to pend the related interrupt when it comes from Linux
+#define LOCAL_TIMER_VECTOR       0xef
+#define IPIPE_LOCAL_TIMER_IPI    __ipipe_hrtimer_irq
 #endif
 
 #endif

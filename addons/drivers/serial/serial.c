@@ -776,12 +776,12 @@ static int rt_spisr(int irq, struct rt_spct_t *pp)
 			p->txthrs = 0;
 			todo[i].txs = 1;
 		}
-		hard_sti();
+		rtai_sti();
 		if (!(p = p->next)) {
 			break;
 		}
 		i++;
-		hard_cli();
+		rtai_cli();
 	}
 }	
 	ENABLE_SP(irq);
