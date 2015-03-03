@@ -4,6 +4,6 @@ EXTRA_CFLAGS += -I$(rtai_srctree)/base/include \
 		$(rtai_extradef) \
 		-D__IN_RTAI__
 
-obj-m += preempt_rt.o
+obj-m += kthreads_preempt_rt.o
 
-preempt_rt-objs := $(rtai_objs)
+kthreads_preempt_rt-objs := $(rtai_objs)

@@ -1,1 +1,1 @@
-latency:sched+fifos:push latency_rt;./display;popall:control_c
+latency:sched+fifos:push kthreads_latency_rt;./display;popall:control_c

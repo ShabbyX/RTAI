@@ -1,3 +1,12 @@
+2015-02-27 Pierangelo Masarati <pierangelo.masarati@polimi.it>
+
+	* configure.in, configure, testsuite/kthreads/*/GNUmakefile.*,
+	  testsuite/kthreads/*/Makefile.kbuild: add prefix kthreads_ to 
+	  modules testsuite/kthreads, showing the use of hardened Linux 
+	  kernel threads in the same way as user space threads.
+	* base/arch/x86/calibration/GNUmakefile.*: module rtai_calibrate.ko
+	  no longer built; build calibrate instead.
+
 2015-02-22 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/sched/sys.c: avoid waiting on a Linux sem when a kthread 

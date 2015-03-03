@@ -8,8 +8,8 @@ CROSS_COMPILE = @CROSS_COMPILE@
 liblatency_rt_a_SOURCES = latency-module.c
 
 if CONFIG_KBUILD
-latency_rt.ko: @RTAI_KBUILD_ENV@
-latency_rt.ko: $(liblatency_rt_a_SOURCES)
+kthreads_latency_rt.ko: @RTAI_KBUILD_ENV@
+kthreads_latency_rt.ko: $(liblatency_rt_a_SOURCES)
 	@RTAI_KBUILD_TOP@ \
 	@RTAI_KBUILD_CMD@ rtai_extradef="@RTAI_FP_CFLAGS@" rtai_extraopt="@RTAI_TARGET_ARCH_OPTS@" \
 	@RTAI_KBUILD_BOTTOM@
@@ -27,7 +27,7 @@ liblatency_rt_a_CPPFLAGS = \
 	-I$(top_srcdir)/base/include \
 	-I../../../base/include
 
-latency_rt.o: liblatency_rt.a
+kthreads_latency_rt.o: liblatency_rt.a
 	$(CROSS_COMPILE)ld --whole-archive $< -r -o $@
 endif
 
@@ -40,9 +40,9 @@ display_CPPFLAGS = \
 	-I$(top_srcdir)/base/include \
 	-I../../../base/include
 
-all-local: latency_rt$(modext)
+all-local: kthreads_latency_rt$(modext)
 
-install-exec-local: latency_rt$(modext)
+install-exec-local: kthreads_latency_rt$(modext)
 	$(mkinstalldirs) $(DESTDIR)$(moduledir)
 	$(INSTALL_DATA) $^ $(DESTDIR)$(moduledir)
 

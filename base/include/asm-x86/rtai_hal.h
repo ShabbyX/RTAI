@@ -74,8 +74,6 @@ struct rtai_realtime_irq_s {
 };
 
 // da portare in config
-#define CONFIG_RTAI_SCHED_LATENCY  CONFIG_RTAI_SCHED_APIC_LATENCY
-
 #define RTAI_NR_TRAPS   IPIPE_NR_FAULTS //HAL_NR_FAULTS
 #define RTAI_NR_SRQS    32
 
@@ -102,7 +100,7 @@ struct rtai_realtime_irq_s {
 
 //#define RTAI_CALIBRATED_APIC_FREQ 0
 //#define RTAI_FREQ_APIC            (rtai_tunables.timer_freq)
-//#define RTAI_LATENCY_APIC         CONFIG_RTAI_SCHED_APIC_LATENCY
+//#define RTAI_LATENCY_APIC         CONFIG_RTAI_SCHED_LATENCY
 //#define RTAI_SETUP_TIME_APIC      1000
 
 //#define RTAI_CALIBRATED_CPU_FREQ   0

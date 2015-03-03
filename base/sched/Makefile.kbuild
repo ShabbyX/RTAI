@@ -6,6 +6,8 @@ EXTRA_CFLAGS += -I$(rtai_srctree)/base/include \
 
 obj-m += $(rtai_target).o
 
+rtai_tmpsched-objs := $(rtai_objs)
+
 rtai_sched-objs := $(rtai_objs)
 
 rtai_lxrt-objs := $(rtai_objs)

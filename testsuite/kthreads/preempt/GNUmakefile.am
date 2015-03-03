@@ -8,8 +8,8 @@ CROSS_COMPILE = @CROSS_COMPILE@
 libpreempt_rt_a_SOURCES = preempt-module.c
 
 if CONFIG_KBUILD
-preempt_rt.ko: @RTAI_KBUILD_ENV@
-preempt_rt.ko: $(libpreempt_rt_a_SOURCES)
+kthreads_preempt_rt.ko: @RTAI_KBUILD_ENV@
+kthreads_preempt_rt.ko: $(libpreempt_rt_a_SOURCES)
 	@RTAI_KBUILD_TOP@ \
 	@RTAI_KBUILD_CMD@ rtai_extradef="@RTAI_FP_CFLAGS@" \
 	@RTAI_KBUILD_BOTTOM@
@@ -26,7 +26,7 @@ libpreempt_rt_a_CPPFLAGS = \
 	-I$(top_srcdir)/base/include \
 	-I../../../base/include
 
-preempt_rt.o: libpreempt_rt.a
+kthreads_preempt_rt.o: libpreempt_rt.a
 	$(CROSS_COMPILE)ld --whole-archive $< -r -o $@
 endif
 
@@ -39,9 +39,9 @@ display_CPPFLAGS = \
 	-I$(top_srcdir)/base/include \
 	-I../../../base/include
 
-all-local: preempt_rt$(modext)
+all-local: kthreads_preempt_rt$(modext)
 
-install-exec-local: preempt_rt$(modext)
+install-exec-local: kthreads_preempt_rt$(modext)
 	$(mkinstalldirs) $(DESTDIR)$(moduledir)
 	$(INSTALL_DATA) $^ $(DESTDIR)$(moduledir)
 

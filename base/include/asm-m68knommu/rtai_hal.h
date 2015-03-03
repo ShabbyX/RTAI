@@ -171,7 +171,7 @@ static inline int ext_irq_vector(int irq)
 
 #define RTAI_CALIBRATED_APIC_FREQ 0
 #define RTAI_FREQ_APIC            (rtai_tunables.apic_freq)
-#define RTAI_LATENCY_APIC         CONFIG_RTAI_SCHED_APIC_LATENCY
+#define RTAI_LATENCY_APIC         CONFIG_RTAI_SCHED_LATENCY
 #define RTAI_SETUP_TIME_APIC      1000
 
 #define RTAI_TIME_LIMIT            0x7000000000000000LL

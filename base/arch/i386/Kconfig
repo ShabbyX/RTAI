@@ -320,7 +320,7 @@ config RTAI_SCHED_8254_LATENCY
 	programming overhead needed to determine the right firing time.
 	This parameter has no effect when the periodic mode is used.
 
-config RTAI_SCHED_APIC_LATENCY
+config RTAI_SCHED_LATENCY
 	string "APIC tuning latency (ns)"
 	default 3944
         help

@@ -113,7 +113,6 @@ am__installdirs = "$(DESTDIR)$(calibrationdir)"
 PROGRAMS = $(calibration_PROGRAMS)
 am_calibrate_OBJECTS = calibrate-calibrate.$(OBJEXT)
 calibrate_OBJECTS = $(am_calibrate_OBJECTS)
-calibrate_LDADD = $(LDADD)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -385,10 +384,14 @@ libsmi_rt_a_SOURCES = smi-module.c
 calibrate_SOURCES = calibrate.c calibrate.h
 calibrate_CPPFLAGS = \
 	@RTAI_REAL_USER_CFLAGS@ \
-	-DKERNEL_HELPER_PATH="\"$(calibrationdir)/rtai_calibrate$(modext)\"" \
-	-DUSER_HELPER_PATH="\"$(calibrationdir)/calibration_helper\"" \
+	-DHAL_SCHED_PATH="\"$(DESTDIR)$(moduledir)\"" \
+	-DHAL_SCHED_MODEXT="\"$(modext)\"" \
 	-I$(top_srcdir)/base/include \
 	-I../../../include
+
+calibrate_LDADD = \
+	../../../sched/liblxrt/liblxrt.la \
+	-lpthread
 
 calibration_helper_SOURCES = calibration_helper.c
 calibration_helper_CPPFLAGS = \
@@ -402,7 +405,7 @@ calibration_helper_LDADD = \
 	../../../sched/liblxrt/liblxrt.la \
 	-lpthread
 
-RT_MODULES = rtai_calibrate$(modext) rtai_smi$(modext)
+RT_MODULES = rtai_smi$(modext)
 calibrate_DEPENDENCIES = liblxrt.la
 EXTRA_DIST = runinfo README.SMI Makefile.kbuild
 DISTCLEANFILES = Makefile
@@ -727,8 +730,8 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-@CONFIG_KBUILD_FALSE@clean-local:
 @CONFIG_KBUILD_FALSE@distclean-local:
+@CONFIG_KBUILD_FALSE@clean-local:
 clean: clean-am
 
 clean-am: clean-calibrationPROGRAMS clean-generic clean-libtool \
@@ -820,12 +823,6 @@ uninstall-am: uninstall-calibrationPROGRAMS
 	uninstall-calibrationPROGRAMS
 
 
-@CONFIG_KBUILD_TRUE@rtai_calibrate.ko: @RTAI_KBUILD_ENV@
-@CONFIG_KBUILD_TRUE@rtai_calibrate.ko: $(libcalibrate_rt_a_SOURCES)
-@CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_TOP@ \
-@CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_CMD@ \
-@CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_BOTTOM@
-
 @CONFIG_KBUILD_TRUE@rtai_smi.ko: @RTAI_KBUILD_ENV@
 @CONFIG_KBUILD_TRUE@rtai_smi.ko: $(libsmi_rt_a_SOURCES)
 @CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_TOP@ \
@@ -838,13 +835,10 @@ uninstall-am: uninstall-calibrationPROGRAMS
 @CONFIG_KBUILD_TRUE@distclean-local:
 @CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_DISTCLEAN@
 
-@CONFIG_KBUILD_FALSE@rtai_calibrate.o: libcalibrate_rt.a
-@CONFIG_KBUILD_FALSE@	$(CROSS_COMPILE)$(LD) --whole-archive $< -r -o $@
-
 @CONFIG_KBUILD_FALSE@rtai_smi.o: libsmi_rt.a
 @CONFIG_KBUILD_FALSE@	$(CROSS_COMPILE)$(LD) --whole-archive $< -r -o $@
 
-all-local: rtai_calibrate$(modext) rtai_smi$(modext)
+all-local: rtai_smi$(modext)
 liblxrt.la:
 	@(cd ../../../sched/liblxrt && make liblxrt.la)
 

@@ -5,6 +5,6 @@ EXTRA_CFLAGS += -I$(rtai_srctree)/base/include \
 		$(rtai_extraopt) \
 		-D__IN_RTAI__
 
-obj-m += latency_rt.o
+obj-m += kthreads_latency_rt.o
 
-latency_rt-objs := $(rtai_objs)
+kthreads_latency_rt-objs := $(rtai_objs)

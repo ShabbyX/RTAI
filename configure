@@ -16427,17 +16427,17 @@ $as_echo_n "checking for APIC tuning latency... " >&6; }
 # Check whether --enable-sched-apic-latency was given.
 if test "${enable_sched_apic_latency+set}" = set; then :
   enableval=$enable_sched_apic_latency; case "$enableval" in
- 	[0-9]*) CONFIG_RTAI_SCHED_APIC_LATENCY=$enableval ;;
+ 	[0-9]*) CONFIG_RTAI_SCHED_LATENCY=$enableval ;;
  	*) as_fn_error $? "Bad argument to option: --enable-sched-apic-latency=<nanoseconds>" "$LINENO" 5 ;;
 	esac
 fi
 
-if test x$CONFIG_RTAI_SCHED_APIC_LATENCY = x ; then
+if test x$CONFIG_RTAI_SCHED_LATENCY = x ; then
   # Use a reasonable default if unset
-  CONFIG_RTAI_SCHED_APIC_LATENCY=3944
+  CONFIG_RTAI_SCHED_LATENCY=0
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $CONFIG_RTAI_SCHED_APIC_LATENCY" >&5
-$as_echo "$CONFIG_RTAI_SCHED_APIC_LATENCY" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $CONFIG_RTAI_SCHED_LATENCY" >&5
+$as_echo "$CONFIG_RTAI_SCHED_LATENCY" >&6; }
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for user busy align ret delay" >&5
 $as_echo_n "checking for user busy align ret delay... " >&6; }
@@ -19010,7 +19010,7 @@ _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define CONFIG_RTAI_SCHED_APIC_LATENCY $CONFIG_RTAI_SCHED_APIC_LATENCY
+#define CONFIG_RTAI_SCHED_LATENCY $CONFIG_RTAI_SCHED_LATENCY
 _ACEOF
 
 

@@ -281,7 +281,7 @@ config RTAI_LONG_TIMED_LIST
 #	provide a compromised on time scheduling for both, albeit at a 
 #	negligible added cost.
 
-config RTAI_SCHED_APIC_LATENCY
+config RTAI_SCHED_LATENCY
 	string "Scheduling latency (ns)"
 	default 0
         help

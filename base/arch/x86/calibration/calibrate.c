@@ -19,6 +19,9 @@
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <getopt.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include <rtai_sem.h>
 #include <rtai_lxrt.h>
@@ -42,7 +45,7 @@ static inline RTIME rt_get_time_in_usrspc(void)
 #endif
 }
 
-#define RTAI_CONFIG_PATH  "/home/rtai-cvs/magma/rtai_config.h"
+#define RTAI_CONFIG_PATH  "../../../../rtai_config.h"
 
 static void latency_calibrated(void)
 {
@@ -53,9 +56,9 @@ static void latency_calibrated(void)
 	si = fopen(RTAI_CONFIG_PATH, "r");
 
 	while (getline(&line, &len, si) > 0) {
-		if (!strncmp(line, "#define CONFIG_RTAI_SCHED_APIC_LATENCY", sizeof("#define CONFIG_RTAI_SCHED_APIC_LATENCY") - 1)) {
-			int sched_latency = atoi(line + sizeof("#define CONFIG_RTAI_SCHED_APIC_LATENCY"));
-			if (sched_latency) {
+		if (!strncmp(line, "#define CONFIG_RTAI_SCHED_LATENCY", sizeof("#define CONFIG_RTAI_SCHED_LATENCY") - 1)) {
+			int sched_latency = atoi(line + sizeof("#define CONFIG_RTAI_SCHED_LATENCY"));
+			if (sched_latency > 1) {
 				printf("* SCHED_LATENCY IS CALIBRATED: %d (ns). *\n",sched_latency); 
 				exit(1);
 			}
@@ -68,10 +71,11 @@ static void latency_calibrated(void)
 	return;
 }
 
-#define DOT_RTAI_CONFIG_PATH  "/home/rtai-cvs/magma/.rtai_config"
+#define DOT_RTAI_CONFIG_PATH  "../../../../.rtai_config"
 
-static void set_calibrated_macros(int sched_latency, int ret_time)
+static void set_calibrated_macros(int sched_latency, int ret_time, int argc)
 {
+if (argc == 1) {
 	FILE *si, *so;
 	char *line = NULL;
 	size_t len = 0;
@@ -82,14 +86,14 @@ static void set_calibrated_macros(int sched_latency, int ret_time)
 	so = fopen("tmp", "w+");
 
 	while (getline(&line, &len, si) > 0) {
-		if (!strncmp(line, "#define CONFIG_RTAI_SCHED_APIC_LATENCY", sizeof("#define CONFIG_RTAI_SCHED_APIC_LATENCY") - 1)) {
-			fprintf(so, "#define CONFIG_RTAI_SCHED_APIC_LATENCY %d\n", sched_latency);
+		if (!strncmp(line, "#define CONFIG_RTAI_SCHED_LATENCY", sizeof("#define CONFIG_RTAI_SCHED_LATENCY") - 1)) {
+			fprintf(so, "#define CONFIG_RTAI_SCHED_LATENCY %d\n", sched_latency);
 			goto cont1;
 		}  
 		if (!strncmp(line, "#define CONFIG_RTAI_BUSY_TIME_ALIGN", sizeof("#define CONFIG_RTAI_BUSY_TIME_ALIGN") - 1)) {
 			fprintf(so, "#define CONFIG_RTAI_BUSY_TIME_ALIGN 1\n");
 			goto cont1;
-		}  
+		}
 		if (!strncmp(line, "#define CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY", sizeof("#define CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY") - 1)) {
 			fprintf(so, "#define CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY %d\n", ret_time/2);
 			goto cont1;
@@ -114,11 +118,12 @@ cont1:
 	so = fopen("tmp", "w+");
 
 	while (getline(&line, &len, si) > 0) {
-		if (!strncmp(line, "CONFIG_RTAI_SCHED_APIC_LATENCY", sizeof("CONFIG_RTAI_SCHED_APIC_LATENCY") - 1)) {
-			fprintf(so, "CONFIG_RTAI_SCHED_APIC_LATENCY=\"%d\"\n", sched_latency);
+		if (!strncmp(line, "CONFIG_RTAI_SCHED_LATENCY", sizeof("CONFIG_RTAI_SCHED_LATENCY") - 1)) {
+			fprintf(so, "CONFIG_RTAI_SCHED_LATENCY=\"%d\"\n", sched_latency);
 			goto cont2;
 		}  
-		if (!strncmp(line, "CONFIG_RTAI_BUSY_TIME_ALIGN", sizeof("CONFIG_RTAI_BUSY_TIME_ALIGN") - 1)) {
+//		if (!strncmp(line, "CONFIG_RTAI_BUSY_TIME_ALIGN", sizeof("CONFIG_RTAI_BUSY_TIME_ALIGN") - 1)) {
+		if (strstr(line, "CONFIG_RTAI_BUSY_TIME_ALIGN")) {
 			fprintf(so, "CONFIG_RTAI_BUSY_TIME_ALIGN=y\n");
 			goto cont2;
 		}  
@@ -139,6 +144,9 @@ cont2:
 	fclose(si);
 	fclose(so);
 	system("mv tmp "DOT_RTAI_CONFIG_PATH);
+} else {
+	printf("SUMMARY %d %d %d\n", sched_latency, ret_time/2, -ret_time);
+}
 
 	return;
 }
@@ -179,10 +187,27 @@ int main(int argc, char *argv[])
 	int loops, UserLatency = cal_tol;
 	RTIME tret, t = 0;
 
-	latency_calibrated();
+	if (argc > 1) {
+		int len;
+		char *cmd;
+		const char *module_path = argv[1];
+		// struct stat st;
+		// stat(argv[1], &st);
+		// by now, we assume it's alright
 
-	system("/sbin/insmod \"" HAL_SCHED_PATH "\"/rtai_hal" HAL_SCHED_MODEXT " >/dev/null 2>&1");
-	system("/sbin/insmod \"" HAL_SCHED_PATH "\"/rtai_sched" HAL_SCHED_MODEXT " >/dev/null 2>&1");
+		len = sizeof("/sbin/insmod /rtai_hal" HAL_SCHED_MODEXT " >/dev/null 2>&1") + strlen(module_path);
+		cmd = malloc(len + 1);
+		snprintf(cmd, len + 1, "/sbin/insmod %s/rtai_hal" HAL_SCHED_MODEXT " >/dev/null 2>&1", module_path);
+		system(cmd);
+		free(cmd);
+		system("/sbin/insmod ./rtai_tmpsched" HAL_SCHED_MODEXT " >/dev/null 2>&1");
+
+	} else {
+		latency_calibrated();
+
+		system("/sbin/insmod \"" HAL_SCHED_PATH "\"/rtai_hal" HAL_SCHED_MODEXT " >/dev/null 2>&1");
+		system("/sbin/insmod \"" HAL_SCHED_PATH "\"/rtai_sched" HAL_SCHED_MODEXT " >/dev/null 2>&1");
+	}
 
  	if (!(calmng = rt_thread_init(nam2num("CALMNG"), 10, 0, SCHED_FIFO, 0xF)) ) {
 		printf("*** CANNOT INIT CALIBRATION TASK ***\n");
@@ -225,11 +250,17 @@ int main(int argc, char *argv[])
 	rt_thread_delete(NULL);
 	printf("\n");
 
-	system("/sbin/rmmod rtai_sched >/dev/null 2>&1");
+	if (argc > 1) {
+		system("/sbin/rmmod rtai_tmpsched >/dev/null 2>&1");
+	} else {
+		system("/sbin/rmmod rtai_sched >/dev/null 2>&1");
+	}
 	system("/sbin/rmmod rtai_hal >/dev/null 2>&1");
 
 	if (max_cal_iterations > 1) {
-		set_calibrated_macros(UserLatency, tret);
+		set_calibrated_macros(UserLatency, tret, argc);
+	} else {
+		exit(1);
 	}
 
 	return 0;

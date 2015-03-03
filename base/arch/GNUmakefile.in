@@ -674,7 +674,9 @@ uninstall-am:
 rtai_hal$(modext):
 	@(cd $(ARCHDIR)/hal && make rtai_hal$(modext))
 
-#EXTRA_DIST = x86/patches
+@CONFIG_X86_TRUE@calibrate:
+@CONFIG_X86_TRUE@	@(cd $(ARCHDIR)/calibration && make calibrate)
+@CONFIG_X86_FALSE@	echo "*** calibration is x86 only for now ***"
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

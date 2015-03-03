@@ -12,9 +12,11 @@ builtins = @RTAI_BUILTIN_MODLIST@
 if CONFIG_KBUILD
 builtins_srclist = $(wildcard $(foreach mod,$(builtins),$(patsubst %,$(top_srcdir)/base/%/*.[chS],$(mod))))
 
+CLEANFILES = calibration_placeholder.c tmp_*
 clean-local:
 	@RTAI_KBUILD_CLEAN@
-	@$(RM) -f $(foreach src,$(builtins_srclist),$(notdir $(src)))
+	@$(RM) -f $(foreach src,$(builtins_srclist),$(notdir $(src))) 
+
 else # CONFIG_KBUILD
 builtins_objlist = $(foreach mod,$(builtins),$(patsubst %,../%/rtai_$(notdir $(mod)).o,$(mod)))
 endif # CONFIG_KBUILD
@@ -22,13 +24,29 @@ endif # CONFIG_KBUILD
 # SCHED
 #if !CONFIG_X86_64
 libsched_sched_a_SOURCES = sched.c sys.c api.c signal.c
-
+nodist_libsched_sched_a_SOURCES = calibration_placeholder.c
 rtai_sched_extradef = -DUSE_RTAI_TASKS=1
 
 if CONFIG_KBUILD
-rtai_sched.ko: @RTAI_KBUILD_ENV@
-rtai_sched.ko: $(libsched_sched_a_SOURCES) $(builtins_srclist)
-	@(cd ../arch && $(MAKE) rtai_hal$(modext))
+calibration_placeholder.c: rtai_tmpsched$(modext)
+
+libsched_tmpsched_a_SOURCES = sched.c sys.c api.c signal.c
+rtai_tmpsched_extradef = -DUSE_RTAI_TASKS=1
+
+rtai_target_arch=@RTAI_TARGET_ARCH@
+
+rtai_tmpsched$(modext): @RTAI_KBUILD_ENV@
+rtai_tmpsched$(modext): $(libsched_tmpsched_a_SOURCES) $(builtins_srclist)
+	@(cd ../arch && $(MAKE) rtai_hal$(modext) calibrate)
+	@RTAI_KBUILD_TOP@ \
+	@RTAI_KBUILD_CMD@ rtai_extradef="$(rtai_sched_extradef)" \
+	@RTAI_KBUILD_BOTTOM@
+	./selfcalibrate.sh $(rtai_target_arch)
+	@(touch calibration_placeholder.c)
+
+rtai_sched$(modext): @RTAI_KBUILD_ENV@
+rtai_sched$(modext): $(libsched_sched_a_SOURCES) $(nodist_libsched_sched_a_SOURCES) $(builtins_srclist)
+	@(cd ../arch && $(MAKE) rtai_hal$(modext) calibrate)
 	@RTAI_KBUILD_TOP@ \
 	@RTAI_KBUILD_CMD@ rtai_extradef="$(rtai_sched_extradef)" \
 	@RTAI_KBUILD_BOTTOM@
@@ -56,8 +74,8 @@ schedulers += rtai_sched$(modext)
 ###rtai_lxrt_extradef = -DUSE_RTAI_TASKS=0 # -D__RTAI_LXRT__
 ###
 ###if CONFIG_KBUILD
-###rtai_lxrt.ko: @RTAI_KBUILD_ENV@
-###rtai_lxrt.ko: $(libsched_lxrt_a_SOURCES) $(builtins_srclist)
+###rtai_lxrt$(modext): @RTAI_KBUILD_ENV@
+###rtai_lxrt$(modext): $(libsched_lxrt_a_SOURCES) $(builtins_srclist)
 ###	@RTAI_KBUILD_TOP@ \
 ###	@RTAI_KBUILD_CMD@ rtai_extradef="$(rtai_lxrt_extradef)" \
 ###	@RTAI_KBUILD_BOTTOM@
@@ -94,4 +112,4 @@ install-exec-local: $(schedulers)
 # liblxrt is always built
 SUBDIRS = liblxrt
 
-EXTRA_DIST = Makefile.kbuild
+EXTRA_DIST = Makefile.kbuild selfcalibrate.sh

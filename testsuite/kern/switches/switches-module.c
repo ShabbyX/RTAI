@@ -50,7 +50,7 @@ int stack_size = 4096;
 RTAI_MODULE_PARM(stack_size, int);
 MODULE_PARM_DESC(stack_size, "Task stack size in bytes (default: 2000)");
 
-#undef DISTRIBUTE /* Define this to have tasks distributed among CPUs */
+//#define DISTRIBUTE /* Define this to have tasks distributed among CPUs */
 
 #define SEM_TYPE (CNT_SEM | FIFO_Q)
 

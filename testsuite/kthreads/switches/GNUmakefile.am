@@ -8,8 +8,8 @@ CROSS_COMPILE = @CROSS_COMPILE@
 libswitches_rt_a_SOURCES = switches-module.c
 
 if CONFIG_KBUILD
-switches_rt.ko: @RTAI_KBUILD_ENV@
-switches_rt.ko: $(libswitches_rt_a_SOURCES)
+kthreads_switches_rt.ko: @RTAI_KBUILD_ENV@
+kthreads_switches_rt.ko: $(libswitches_rt_a_SOURCES)
 	@RTAI_KBUILD_TOP@ \
 	@RTAI_KBUILD_CMD@ rtai_extradef="@RTAI_FP_CFLAGS@" \
 	@RTAI_KBUILD_BOTTOM@
@@ -26,13 +26,13 @@ libswitches_rt_a_CPPFLAGS = \
 	-I$(top_srcdir)/base/include \
 	-I../../../base/include
 
-switches_rt.o: libswitches_rt.a
+kthreads_switches_rt.o: libswitches_rt.a
 	$(CROSS_COMPILE)ld --whole-archive $< -r -o $@
 endif
 
-all-local: switches_rt$(modext)
+all-local: kthreads_switches_rt$(modext)
 
-install-exec-local: switches_rt$(modext)
+install-exec-local: kthreads_switches_rt$(modext)
 	$(mkinstalldirs) $(DESTDIR)$(moduledir)
 	$(INSTALL_DATA) $^ $(DESTDIR)$(moduledir)
 

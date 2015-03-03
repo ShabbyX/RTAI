@@ -33,4 +33,9 @@ modext = @RTAI_MODULE_EXT@
 rtai_hal$(modext):
 	@(cd $(ARCHDIR)/hal && make rtai_hal$(modext))
 
-#EXTRA_DIST = x86/patches
+if CONFIG_X86
+calibrate:
+	@(cd $(ARCHDIR)/calibration && make calibrate)
+else
+	echo "*** calibration is x86 only for now ***"
+endif
