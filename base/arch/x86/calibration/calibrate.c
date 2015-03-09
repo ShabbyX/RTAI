@@ -90,10 +90,12 @@ if (argc == 1) {
 			fprintf(so, "#define CONFIG_RTAI_SCHED_LATENCY %d\n", sched_latency);
 			goto cont1;
 		}  
+#if 0
 		if (!strncmp(line, "#define CONFIG_RTAI_BUSY_TIME_ALIGN", sizeof("#define CONFIG_RTAI_BUSY_TIME_ALIGN") - 1)) {
 			fprintf(so, "#define CONFIG_RTAI_BUSY_TIME_ALIGN 1\n");
 			goto cont1;
 		}
+#endif
 		if (!strncmp(line, "#define CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY", sizeof("#define CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY") - 1)) {
 			fprintf(so, "#define CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY %d\n", ret_time/2);
 			goto cont1;
@@ -122,11 +124,13 @@ cont1:
 			fprintf(so, "CONFIG_RTAI_SCHED_LATENCY=\"%d\"\n", sched_latency);
 			goto cont2;
 		}  
+#if 0
 //		if (!strncmp(line, "CONFIG_RTAI_BUSY_TIME_ALIGN", sizeof("CONFIG_RTAI_BUSY_TIME_ALIGN") - 1)) {
 		if (strstr(line, "CONFIG_RTAI_BUSY_TIME_ALIGN")) {
 			fprintf(so, "CONFIG_RTAI_BUSY_TIME_ALIGN=y\n");
 			goto cont2;
 		}  
+#endif
 		if (!strncmp(line, "CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY", sizeof("CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY") - 1)) {
 			fprintf(so, "CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY=\"%d\"\n", ret_time/2);
 			goto cont2;

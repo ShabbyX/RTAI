@@ -78,7 +78,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@CONFIG_KBUILD_FALSE@am__append_1 = libsched_sched.a
+@CONFIG_RTAI_SCHED_LATENCY_SELFCALIBRATE_TRUE@am__append_1 = calibration_placeholder.c
+@CONFIG_KBUILD_FALSE@am__append_2 = libsched_sched.a
 subdir = base/sched
 DIST_COMMON = $(srcdir)/GNUmakefile.in $(srcdir)/GNUmakefile.am \
 	$(top_srcdir)/base/config/autoconf/mkinstalldirs \
@@ -105,8 +106,8 @@ libsched_sched_a_LIBADD =
 am_libsched_sched_a_OBJECTS = libsched_sched_a-sched.$(OBJEXT) \
 	libsched_sched_a-sys.$(OBJEXT) libsched_sched_a-api.$(OBJEXT) \
 	libsched_sched_a-signal.$(OBJEXT)
-nodist_libsched_sched_a_OBJECTS =  \
-	libsched_sched_a-calibration_placeholder.$(OBJEXT)
+@CONFIG_RTAI_SCHED_LATENCY_SELFCALIBRATE_TRUE@am__objects_1 = libsched_sched_a-calibration_placeholder.$(OBJEXT)
+nodist_libsched_sched_a_OBJECTS = $(am__objects_1)
 libsched_sched_a_OBJECTS = $(am_libsched_sched_a_OBJECTS) \
 	$(nodist_libsched_sched_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -399,7 +400,7 @@ top_srcdir = @top_srcdir@
 moduledir = @RTAI_MODULE_DIR@
 modext = @RTAI_MODULE_EXT@
 schedulers = rtai_sched$(modext)
-noinst_LIBRARIES = $(am__append_1)
+noinst_LIBRARIES = $(am__append_2)
 builtins = @RTAI_BUILTIN_MODLIST@
 @CONFIG_KBUILD_TRUE@builtins_srclist = $(wildcard $(foreach mod,$(builtins),$(patsubst %,$(top_srcdir)/base/%/*.[chS],$(mod))))
 @CONFIG_KBUILD_TRUE@CLEANFILES = calibration_placeholder.c tmp_*
@@ -408,7 +409,7 @@ builtins = @RTAI_BUILTIN_MODLIST@
 # SCHED
 #if !CONFIG_X86_64
 libsched_sched_a_SOURCES = sched.c sys.c api.c signal.c
-nodist_libsched_sched_a_SOURCES = calibration_placeholder.c
+nodist_libsched_sched_a_SOURCES = $(am__append_1)
 rtai_sched_extradef = -DUSE_RTAI_TASKS=1
 @CONFIG_KBUILD_TRUE@libsched_tmpsched_a_SOURCES = sched.c sys.c api.c signal.c
 @CONFIG_KBUILD_TRUE@rtai_tmpsched_extradef = -DUSE_RTAI_TASKS=1
@@ -872,7 +873,7 @@ uninstall-am:
 
 @CONFIG_KBUILD_TRUE@rtai_sched$(modext): @RTAI_KBUILD_ENV@
 @CONFIG_KBUILD_TRUE@rtai_sched$(modext): $(libsched_sched_a_SOURCES) $(nodist_libsched_sched_a_SOURCES) $(builtins_srclist)
-@CONFIG_KBUILD_TRUE@	@(cd ../arch && $(MAKE) rtai_hal$(modext) calibrate)
+@CONFIG_KBUILD_TRUE@	@(cd ../arch && $(MAKE) rtai_hal$(modext))
 @CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_TOP@ \
 @CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_CMD@ rtai_extradef="$(rtai_sched_extradef)" \
 @CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_BOTTOM@

@@ -1,3 +1,22 @@
+2015-03-06 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal.c: type rtai_hirq_dispatcher as void, no
+	  return value used by the function calling it.
+	* base/sched/sched.c: removed the unused code related to the old way
+	  of using a list of tasks to transition to hardmode
+	  (lxrt_intercept_schedule_tail).
+
+2015-03-04 Pierangelo Masarati <pierangelo.masarati@polimi.it>
+
+	* configure.in, configure: revised to support self calibration and
+	  revised configuration paraeters.
+	* base/sched/selfcalibrate.sh: added to support self calibration.
+	* base/arch/x86/Kconfig: restructured calibration parameters structure
+	  names and help, both to clean no more used names and to support self 
+	  calibration.
+	* base/arch/x86/calibration/calibrate.c: modified to be usable both 
+	  for self and user guided calibrations.
+	
 2015-02-27 Pierangelo Masarati <pierangelo.masarati@polimi.it>
 
 	* configure.in, configure, testsuite/kthreads/*/GNUmakefile.*,

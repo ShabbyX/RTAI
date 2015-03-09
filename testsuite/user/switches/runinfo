@@ -1,1 +1,1 @@
-switches:lxrt+sem+msg:!./switches;popall:control_c
+switches:sched+sem+msg:!./switches;popall:control_c

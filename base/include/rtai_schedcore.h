@@ -400,7 +400,7 @@ static inline void wake_up_timed_tasks(int cpuid)
 	                        } else {
         	                        enq_ready_task(task);
                 	        }
-#if CONFIG_RTAI_SCHED_LATENCY && CONFIG_RTAI_BUSY_TIME_ALIGN
+#if CONFIG_RTAI_SCHED_LATENCY && ((CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY > 0 || CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY > 0))
 				task->busy_time_align = oneshot_timer;
 #endif
         	        }

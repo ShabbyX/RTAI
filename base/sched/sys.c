@@ -658,7 +658,7 @@ static inline long long handle_lxrt_request (unsigned int lxsrq, long *arg, RT_T
 
 		case KERNEL_CALIBRATOR: {
 			struct arg { long period, loops, Latency; };
-#if !CONFIG_RTAI_SCHED_LATENCY || !CONFIG_RTAI_BUSY_TIME_ALIGN
+#if CONFIG_RTAI_SCHED_LATENCY <= 1 || (RTAI_KERN_BUSY_ALIGN_RET_DELAY >= 0) || (RTAI_USER_BUSY_ALIGN_RET_DELAY >= 0) 
 			extern int rt_smp_half_tick[];
 			int cpu;
 			rtai_tunables.sched_latency = rtai_imuldiv(abs((int)larg->Latency), rtai_tunables.clock_freq, 1000000000);

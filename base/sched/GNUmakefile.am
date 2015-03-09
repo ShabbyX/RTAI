@@ -24,7 +24,10 @@ endif # CONFIG_KBUILD
 # SCHED
 #if !CONFIG_X86_64
 libsched_sched_a_SOURCES = sched.c sys.c api.c signal.c
-nodist_libsched_sched_a_SOURCES = calibration_placeholder.c
+nodist_libsched_sched_a_SOURCES = 
+if CONFIG_RTAI_SCHED_LATENCY_SELFCALIBRATE
+nodist_libsched_sched_a_SOURCES += calibration_placeholder.c
+endif
 rtai_sched_extradef = -DUSE_RTAI_TASKS=1
 
 if CONFIG_KBUILD
@@ -46,7 +49,7 @@ rtai_tmpsched$(modext): $(libsched_tmpsched_a_SOURCES) $(builtins_srclist)
 
 rtai_sched$(modext): @RTAI_KBUILD_ENV@
 rtai_sched$(modext): $(libsched_sched_a_SOURCES) $(nodist_libsched_sched_a_SOURCES) $(builtins_srclist)
-	@(cd ../arch && $(MAKE) rtai_hal$(modext) calibrate)
+	@(cd ../arch && $(MAKE) rtai_hal$(modext))
 	@RTAI_KBUILD_TOP@ \
 	@RTAI_KBUILD_CMD@ rtai_extradef="$(rtai_sched_extradef)" \
 	@RTAI_KBUILD_BOTTOM@

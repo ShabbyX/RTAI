@@ -34,9 +34,6 @@
 #undef CONFIG_RTAI_BUILD_STRING
 
 /* Kconfig */
-#undef CONFIG_RTAI_BUSY_TIME_ALIGN
-
-/* Kconfig */
 #undef CONFIG_RTAI_CAL_FREQS_FACT
 
 /* Kconfig */
@@ -80,9 +77,6 @@
 
 /* Kconfig */
 #undef CONFIG_RTAI_HAL_PREEMPT
-
-/* Kconfig */
-#undef CONFIG_RTAI_HARD_SOFT_TOGGLER
 
 /* Host system alias */
 #undef CONFIG_RTAI_HOST_STRING
