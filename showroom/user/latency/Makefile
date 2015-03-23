@@ -20,7 +20,7 @@ checker: checker.c
 	$(CC) $(LXRT_CFLAGS) -o $@ $< $(LXRT_LDFLAGS)
 
 makesoft: makesoft.c
-	$(CC) $(LXRT_CFLAGS) -o $@ $< $(LXRT_LDFLAGS)
+	$(CC) -o $@ $<
 
 clean:
 	rm -f *.o latency display makesoft checker

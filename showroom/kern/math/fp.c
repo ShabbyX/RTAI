@@ -73,9 +73,9 @@ static void tskfun(long task)
 			printk("- ASINF(1000) = %s, FPKERR %d, KERRNO %d.\n", str, fpkerr(r), kerrno); 
 		break;
 		case 6:
-			d2str(r = cos(-1), DGT, str); 
+			d2str(r = acos(-1), DGT, str); 
 			printk("- ACOS(-1) %s, FPKERR %d, KERRNO %d.\n", str, fpkerr(r), kerrno); 
-			d2str(r = cosf(-1), DGT, str); 
+			d2str(r = acosf(-1), DGT, str); 
 			printk("- ACOSF(-1) %s, FPKERR %d, KERRNO %d.\n", str, fpkerr(r), kerrno); 
 		break;
 		case 7:
