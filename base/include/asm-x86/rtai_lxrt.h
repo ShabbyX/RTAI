@@ -120,8 +120,12 @@ count)
 
 static inline union rtai_lxrt_t rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
 {
-        union rtai_lxrt_t ret;
-        syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret);
+	union rtai_lxrt_t ret;
+	long rep = 0;
+	syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret, &rep);
+	if (rep) {
+	        syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret, &rep);
+	}
         return ret;
 }
 

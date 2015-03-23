@@ -179,6 +179,14 @@ config RTAI_LXRT_STATIC_INLINE
 
 endchoice
 
+config RTAI_FORTIFY_SOURCE
+        string "Fortify source"
+        default ""
+        help
+	empty: use kernel's value; 0, 1, 2: value assigned to
+	_FORTIFY_SOURCE cpp macro; see glibc's man page, or for example
+	http://www.linuxfromscratch.org/hints/downloads/files/ssp.txt
+
 endmenu
 
 menu "Machine (x86)"

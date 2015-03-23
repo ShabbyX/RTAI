@@ -1760,7 +1760,18 @@ AC_LANG_RESTORE)
 if [[ $ac_cv_gcc33 = no ]]; then
   AC_MSG_RESULT([no])
 else
-  RTAI_FP_CFLAGS="-D_FORTIFY_SOURCE=0"
+  if test x"$CONFIG_RTAI_FORTIFY_SOURCE" != x ; then
+  case "$CONFIG_RTAI_FORTIFY_SOURCE" in
+    0|1|2)
+      dnl undef first, in case it is already defined
+      RTAI_FP_CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=$CONFIG_RTAI_FORTIFY_SOURCE"
+      ;;
+    *)
+      AC_MSG_ERROR([invalid _FORTIFY_SOURCE value $RTAI_FORTIFY_SOURCE])
+      ;;
+  esac
+  dnl else use value set for the kernel
+  fi
   AC_MSG_RESULT([ok])
 fi
 

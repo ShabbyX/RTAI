@@ -1015,7 +1015,7 @@ sched_soft:
 			}
 #endif
 
-			hal_test_and_fast_flush_pipeline(cpuid);
+			hal_test_and_fast_flush_pipeline();
 			schedule();
 			rt_global_cli();
 			rt_current->state = (rt_current->state & ~RT_SCHED_SFTRDY) | RT_SCHED_READY;
@@ -2037,25 +2037,19 @@ static int lxrt_handle_trap(int vec, int signo, struct pt_regs *regs, void *dumm
 	return 0;
 }
 
-static inline void rt_signal_wake_up(RT_TASK *task)
-{
-	struct task_struct *lnxtsk;
-	if ((lnxtsk = task->lnxtsk) && task->state && task->state != RT_SCHED_READY && lnxtsk->state & TASK_HARDREALTIME) {
-		task->unblocked = 1;
-		rt_task_masked_unblock(task, ~RT_SCHED_READY);
-	} else {
-		task->unblocked = -1;
-	}
-}
 
-
+int _rt_task_masked_unblock(RT_TASK *, unsigned long);
 struct sig_wakeup_t { struct task_struct *task; };
 static int lxrt_intercept_sig_wakeup(struct task_struct *lnxtsk)
 {
 	RT_TASK *task;
 	if ((task = rtai_tskext_t(lnxtsk, TSKEXT0))) {
-		rt_signal_wake_up(task);
-		return 1;
+		rt_global_cli();
+		task->unblocked = 1;
+		if (task->state && task->state != RT_SCHED_READY) {
+			_rt_task_masked_unblock(task, ~RT_SCHED_READY);
+		}
+		rt_global_sti();
 	}
 	return 0;
 }
@@ -2093,13 +2087,11 @@ static int lxrt_intercept_kevents(int kevent, void *data)
 	return 0;
 }
 
-extern long long rtai_lxrt_invoke (unsigned long, void *);
+extern long long rtai_lxrt_invoke (unsigned long, void *, RT_TASK *);
 
-static int lxrt_intercept_syscall_prologue(struct pt_regs *regs)
+static int lxrt_intercept_linux_syscall(struct pt_regs *regs, RT_TASK *task)
 {
-	RT_TASK *task;
-
-	if ((task = rtai_tskext_t(current, TSKEXT0))) { // ???	if (regs->LINUX_SYSCALL_NR < NR_syscalls && (task = current->rtai_tskext(TSKEXT0))) {
+	if (task) {
 		if (task->is_hard > 0) {
 			if (task->linux_syscall_server) {
 				rt_exec_linux_syscall(task, ((RT_TASK *)task->linux_syscall_server)->linux_syscall_server, regs);
@@ -2112,6 +2104,7 @@ static int lxrt_intercept_syscall_prologue(struct pt_regs *regs)
 			give_back_to_linux(task, -1);
 		}
 	}
+	hal_test_and_fast_flush_pipeline();
 	return 0;
 }
 
@@ -2121,51 +2114,40 @@ extern long long rtai_usrq_dispatcher (unsigned long, unsigned long);
 
 static int lxrt_intercept_syscall(struct pt_regs *regs)
 {
+	RT_TASK *task;
 	if (likely(regs->LINUX_SYSCALL_NR >= RTAI_SYSCALL_NR)) {
 		unsigned long srq  = regs->LINUX_SYSCALL_REG1;
 		IF_IS_A_USI_SRQ_CALL_IT(srq, regs->LINUX_SYSCALL_REG2, (long long *)regs->LINUX_SYSCALL_REG3, regs->LINUX_SYSCALL_FLAGS, 1);
-		*((long long *)regs->LINUX_SYSCALL_REG3) = srq > RTAI_NR_SRQS ?  rtai_lxrt_invoke(srq, (void *)regs->LINUX_SYSCALL_REG2) : rtai_usrq_dispatcher(srq, regs->LINUX_SYSCALL_REG2);
-		if (!in_hrt_mode(srq = rtai_cpuid())) {
-			hal_test_and_fast_flush_pipeline(srq);
+		if ((task = rtai_tskext_t(current, TSKEXT0)) && unlikely(task->unblocked)) {
+			if (task->is_hard > 0) {
+				give_back_to_linux(task, -1);
+			}
+			task->unblocked = 0;
+			*((long *)regs->LINUX_SYSCALL_REG4) = 1;
+		} else {
+			*((long long *)regs->LINUX_SYSCALL_REG3) = srq > RTAI_NR_SRQS ?  rtai_lxrt_invoke(srq, (void *)regs->LINUX_SYSCALL_REG2, task) : rtai_usrq_dispatcher(srq, regs->LINUX_SYSCALL_REG2);
+		}
+		if (!in_hrt_mode(rtai_cpuid())) {
+			hal_test_and_fast_flush_pipeline();
 			return 0;
 		}
 		return 1;
 	}
-	return lxrt_intercept_syscall_prologue(regs);
+	return lxrt_intercept_linux_syscall(regs, rtai_tskext_t(current, TSKEXT0));
 }
 
 static int lxrt_intercept_fastcall(struct pt_regs *regs)
 {
 	unsigned long srq  = regs->LINUX_SYSCALL_REG1;
 	IF_IS_A_USI_SRQ_CALL_IT(srq, regs->LINUX_SYSCALL_REG2, (long long *)regs->LINUX_SYSCALL_REG3, regs->LINUX_SYSCALL_FLAGS, 1);
-	*((long long *)regs->LINUX_SYSCALL_REG3) = srq > RTAI_NR_SRQS ?  rtai_lxrt_invoke(srq, (void *)regs->LINUX_SYSCALL_REG2) : rtai_usrq_dispatcher(srq, regs->LINUX_SYSCALL_REG2);
-	if (!in_hrt_mode(srq = rtai_cpuid())) {
-		hal_test_and_fast_flush_pipeline(srq);
+	*((long long *)regs->LINUX_SYSCALL_REG3) = srq > RTAI_NR_SRQS ?  rtai_lxrt_invoke(srq, (void *)regs->LINUX_SYSCALL_REG2, rtai_tskext_t(current, TSKEXT0)) : rtai_usrq_dispatcher(srq, regs->LINUX_SYSCALL_REG2);
+	if (!in_hrt_mode(rtai_cpuid())) {
+		hal_test_and_fast_flush_pipeline();
 		return 0;
 	}
 	return 1;
 }
 
-#if 0
-static int lxrt_intercept_syscall_epilogue(unsigned long event, void *nothing)
-{
-	RT_TASK *task;
-	if ((task = (RT_TASK *)current->rtai_tskext(TSKEXT0))) {
-		if (task->system_data_ptr) {
-			struct pt_regs *r = task->system_data_ptr;
-			r->LINUX_SYSCALL_RETREG = -ERESTARTSYS;
-			r->LINUX_SYSCALL_NR = RTAI_SYSCALL_NR;
-			task->system_data_ptr = NULL;
-		} else if (task->is_hard < 0) {
-			SYSW_DIAG_MSG(rt_printk("GOING BACK TO HARD (SYSLXRT), PID = %d.\n", current->pid););
-			steal_from_linux(task);
-			SYSW_DIAG_MSG(rt_printk("GONE BACK TO HARD (SYSLXRT),  PID = %d.\n", current->pid););
-			return 1;
-		}
-	}
-	return 0;
-}
-#endif
 
 /* ++++++++++++++++++++++++++ SCHEDULER PROC FILE +++++++++++++++++++++++++++ */
 

@@ -694,32 +694,30 @@ static inline void check_to_soften_harden(RT_TASK *task)
 		} else {
 			task->is_hard = 0;
 		}
-		task->unblocked = task->force_soft = 0;
+		task->force_soft = 0;
 		task->usp_flags &= ~FORCE_SOFT;
 	} else if (unlikely(task->is_hard < 0)) {
 		SYSW_DIAG_MSG(rt_printk("GOING BACK TO HARD (SYSLXRT, DIRECT), PID = %d.\n", current->pid););
 		steal_from_linux(task);
 		SYSW_DIAG_MSG(rt_printk("GONE BACK TO HARD (SYSLXRT),  PID = %d.\n", current->pid););
-	} else if (unlikely(task->unblocked)) {
-		if (task->is_hard > 0) {
-			give_back_to_linux(task, -1);
-		}
-		task->unblocked = 0;
 	}
 }
 
-long long rtai_lxrt_invoke (unsigned int lxsrq, void *arg)
+long long rtai_lxrt_invoke (unsigned int lxsrq, void *arg, RT_TASK *task)
 {
-	RT_TASK *task;
-
-	if (likely((task = rtai_tskext_t(current, TSKEXT0)) != NULL)) {
+	if (likely(task)) {
 		long long retval;
 		check_to_soften_harden(task);
 		retval = handle_lxrt_request(lxsrq, arg, task);
 		check_to_soften_harden(task);
+		if (unlikely(task->unblocked)) {
+			if (task->is_hard > 0) {
+				give_back_to_linux(task, -1);
+			}
+			task->unblocked = 0;
+		}
 		return retval;
 	} 
-
 	return handle_lxrt_request(lxsrq, arg, NULL);
 }
 

@@ -558,7 +558,7 @@ static void rtai_hirq_dispatcher(int irq)
 		}
 	}
 	rtai_sti();
-	hal_fast_flush_pipeline(cpuid);
+	hal_fast_flush_pipeline();
 	return;
 }
 
@@ -683,8 +683,7 @@ static int hal_intercept_syscall(struct pt_regs *regs)
 		unsigned long srq = regs->LINUX_SYSCALL_REG1;
 		IF_IS_A_USI_SRQ_CALL_IT(srq, regs->LINUX_SYSCALL_REG2, (long long *)regs->LINUX_SYSCALL_REG3, regs->LINUX_SYSCALL_FLAGS, 1);
 		*((long long *)regs->LINUX_SYSCALL_REG3) = rtai_usrq_dispatcher(srq, regs->LINUX_SYSCALL_REG2);
-		hal_test_and_fast_flush_pipeline(rtai_cpuid());
-		return 1;
+		hal_test_and_fast_flush_pipeline();
 	}
 	return 0;
 }

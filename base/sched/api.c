@@ -1044,16 +1044,9 @@ RTAI_SYSCALL_MODE int rt_sleep_until(RTIME time)
 	return RTE_TMROVRN;
 }
 
-RTAI_SYSCALL_MODE int rt_task_masked_unblock(RT_TASK *task, unsigned long mask)
+int _rt_task_masked_unblock(RT_TASK *task, unsigned long mask)
 {
-	unsigned long flags;
-
-	if (task->magic != RT_TASK_MAGIC) {
-		return -EINVAL;
-	}
-
 	if (task->state && task->state != RT_SCHED_READY) {
-		flags = rt_global_save_flags_and_cli();
 		if (mask & RT_SCHED_DELAYED) {
 			rem_timed_task(task);
 		}
@@ -1067,10 +1060,24 @@ RTAI_SYSCALL_MODE int rt_task_masked_unblock(RT_TASK *task, unsigned long mask)
 				RT_SCHEDULE(task, rtai_cpuid());
 			}
 		}
-		rt_global_restore_flags(flags);
 		return RTE_UNBLKD;
 	}
 	return 0;
+}
+
+RTAI_SYSCALL_MODE int rt_task_masked_unblock(RT_TASK *task, unsigned long mask)
+{
+	unsigned long flags;
+	int ret;
+
+	if (task->magic != RT_TASK_MAGIC) {
+		return -EINVAL;
+	}
+
+	flags = rt_global_save_flags_and_cli();
+	ret = _rt_task_masked_unblock(task, mask);
+	rt_global_restore_flags(flags);
+	return ret;
 }
 
 int rt_nanosleep(struct timespec *rqtp, struct timespec *rmtp)

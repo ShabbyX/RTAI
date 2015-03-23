@@ -2023,7 +2023,7 @@ RTAI_SYSCALL_MODE pid_t rt_Receive(pid_t pid, void *msg, size_t maxsize, size_t 
 {
 	RT_TASK *task;
 	MSGCB *cb;
-	if ((task = rt_receive(pid ? pid2rttask(pid) : 0, (void *)&cb))) {
+	if ((task = rt_receive(pid ? pid2rttask(pid) : 0, (void *)&cb)) > (RT_TASK *)RTE_HIGERR) {
 		if ((pid = rttask2pid(task))) {
 			*msglen = maxsize <= cb->sbytes ? maxsize : cb->sbytes; 
 			if (*msglen) {

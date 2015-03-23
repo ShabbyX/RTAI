@@ -19785,7 +19785,16 @@ if [ $ac_cv_gcc33 = no ]; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 else
-  RTAI_FP_CFLAGS="-D_FORTIFY_SOURCE=0"
+  if test x"$CONFIG_RTAI_FORTIFY_SOURCE" != x ; then
+  case "$CONFIG_RTAI_FORTIFY_SOURCE" in
+    0|1|2)
+            RTAI_FP_CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=$CONFIG_RTAI_FORTIFY_SOURCE"
+      ;;
+    *)
+      as_fn_error $? "invalid _FORTIFY_SOURCE value $RTAI_FORTIFY_SOURCE" "$LINENO" 5
+      ;;
+  esac
+    fi
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
 fi
