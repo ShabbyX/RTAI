@@ -1,26 +1,47 @@
-Porting Guide
-=============
+Introduction
+============
+
+This Guide
+----------
 
 This guide shows the way how I'm doing the porting to new hardware and/or
 kernel versions. It doesn't mean that this is the best way but maybe it gives
 you a few ideas how to start with your own port. Any ideas to add or for
 changes or productive criticism are very welcome!
 
-Supported boards:
+Supported Boards
+----------------
 
 So, if you already have a RTAI/kernel patch for your board you're almost done.
 You need to get the kernel, maybe a board-specific patch and the RTAI stuff.
 Apply the patches and compile both the kernel and RTAI (RTAI needs to be
 compiled against the used kernel).
 
+Configuration, Compilation and first Tests
+------------------------------------------
+
 Just like in any other RTAI installation you'll need the compiled RTAI libs and
 modules installed on your board.
+
+Here are, in short, the commands which I'm using to configure and compile the
+Linux kernel and RTAI:
+
+host:<kernel>/ > make ARCH=arm CROSS_COMPILE=arm-linux- da850_omapl138_defconfig
+host:<kernel>/ > make ARCH=arm CROSS_COMPILE=arm-linux- -j2 uImage modules
+
+host:<RTAI>/ > LINUXDIR="/mnt/tmpfs/linux-davinci/"
+host:<RTAI>/ > RTAIOPTIONS="--enable-lxrt-use-linux-syscall --with-lxrt-inline=static --prefix=/tmp/rootfs/install/"
+host:<RTAI>/ > ARCH=arm CROSS_COMPILE=arm-linux- ./configure --host=arm-linux --with-linux-dir=${LINUXDIR} ${RTAIOPTIONS}
+host:<RTAI>/ > make
 
 First tests can be done with the tools which are provided with RTAI
 (<RTAI>/testsuite/*). Code examples are also available in the showroom
 (cvs -d:pserver:anonymous@cvs.gna.org:/cvs/rtai co showroom).
 
-Porting RTAI:
+
+
+Porting RTAI
+============
 
 Basically you'll have two possible ways to port RTAI to your board:
 
@@ -36,9 +57,13 @@ Basically you'll have two possible ways to port RTAI to your board:
   board/processor/core and start there by following the next steps. This way
   probably needs more time than the first way but it should be simpler.
 
-Porting steps:
+
+
+Porting Steps
+=============
 
 Motivation & overview (or: why are we doing what?)
+--------------------------------------------------
 
     We want that RTAI is running on our board and most preferably on a recent
     kernel. That's the final goal. And now the question: how do we get there?
@@ -107,6 +132,7 @@ Motivation & overview (or: why are we doing what?)
           running on a recent kernel.
 
 1   Choose a linux kernel with Adeos/IPIPE/RTAI support for ARM
+---------------------------------------------------------------
 
     You should prefer a kernel which supports your ARM core. Choose 2.6.7 for
     imx or 2.6.20 for at91 for example. If you have a board which is already
@@ -120,6 +146,7 @@ Motivation & overview (or: why are we doing what?)
     already working with RTAI on ARM.
 
 2   First the board then RTAI
+-----------------------------
 
     If you have to do the port for your processor or core, you should start
     with backporting your board to the chosen kernel (In this step without
@@ -137,6 +164,7 @@ Motivation & overview (or: why are we doing what?)
     to reduce compile time and to avoid compiling of unneeded code.
 
 3   Port the existing Adeos/IPIPE/RTAI support to your core/processor/board
+---------------------------------------------------------------------------
 
     Use the existing RTAI patches in this step. Read the patches, try to
     understand what they are patching, divide them into the Adeos/IPIPE and
@@ -147,6 +175,7 @@ Motivation & overview (or: why are we doing what?)
     and some other things to RTAI in this step too.
 
 3.1 Apply the IPIPE patch to the backported kernel
+--------------------------------------------------
 
     To configure (and compile) RTAI it's mandatory to have an IPIPE-patched and
     compiled kernel. So let's apply the IPIPE patch to the already backported
@@ -169,6 +198,7 @@ Motivation & overview (or: why are we doing what?)
     - kernel/sched.c
 
 3.2 Prepare RTAI for the new ARM subarchitecture
+------------------------------------------------
 
     RTAI must support the new subarchitecture. If the subarchitecture isn't
     supported the configure script ends with the error message: 'Unsupported
@@ -197,6 +227,7 @@ Motivation & overview (or: why are we doing what?)
     - base/include/asm-arm/arch-<subarch>/rtai_timer.h
 
 3.3 Compiling RTAI against the IPIPE-enabled kernel
+---------------------------------------------------
 
     Modified files:
     - base/arch/arm/hal/hal.c
@@ -206,6 +237,7 @@ Motivation & overview (or: why are we doing what?)
     - base/include/asm-arm/rtai_hal.h
 
 3.4 Implementing code in the dummy functions - The real porting work
+--------------------------------------------------------------------
 
     Finally we have to implement functional code in the dummy functions and the
     defines have to be set to correct values. The better part of it should be
@@ -219,6 +251,7 @@ Motivation & overview (or: why are we doing what?)
     After all that's done, we are prepared to run RTAI on the new board!
 
 4   Port to a recent kernel version
+-----------------------------------
 
     After you succeeded in step 3 you can think of a port to a current kernel
     version. You'd start with a running RTAI on your board but with an ancient
@@ -227,12 +260,6 @@ Motivation & overview (or: why are we doing what?)
 
 
 
-This guide isn't finished! Especially step 3 'll be explained in much more
-detail soon.
-
-
-
--------
-
+-------------------------------------
 T. Koschorrek <devel@koschorrek.com>
 Copyright (C) 2015 Torsten Koschorrek
