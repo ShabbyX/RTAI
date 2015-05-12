@@ -868,7 +868,7 @@ uninstall-am:
 @CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_TOP@ \
 @CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_CMD@ rtai_extradef="$(rtai_sched_extradef)" \
 @CONFIG_KBUILD_TRUE@	@RTAI_KBUILD_BOTTOM@
-@CONFIG_KBUILD_TRUE@	./selfcalibrate.sh $(rtai_target_arch)
+@CONFIG_KBUILD_TRUE@	$(top_srcdir)/base/sched/selfcalibrate.sh $(rtai_target_arch)
 @CONFIG_KBUILD_TRUE@	@(touch calibration_placeholder.c)
 
 @CONFIG_KBUILD_TRUE@rtai_sched$(modext): @RTAI_KBUILD_ENV@

@@ -1,3 +1,23 @@
+2015-05-09 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/addons/rtdm/rtdm_driver.h, xn.h: support changing, deprecated 
+	  and not, smp_mb__before_atomic versions.
+
+2015-04-18 Paul Corner <paul_c@tuxcnc.org>
+
+	* base/scripts/rtai-config.in: added datarootdir; applied and checked 
+	  by Pierangelo (Masarati).
+
+2015-04-13 Paolo Mantegazza <mantegazza@aero.polimi.it>
+
+	* base/arch/x86/hal/hal.c: if CONFIG_SMP is not defined set up an
+	  internal declaration for it.
+
+2015-04-07 Pierangelo Masarati <pierangelo.masarati@polimi.it>
+
+	* base/include/GNUmakefile.am: make selfcalibration work also
+	  for VPATH builds
+
 2015-04-03 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/include/rtai.h: insert dummy rt_mount_rtai and rt_umount_rtai 

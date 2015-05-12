@@ -187,7 +187,7 @@ CCASFLAGS =
 CCDEPMODE = depmode=gcc3
 CFLAGS = 
 COMEDI_DIR = 
-CONFIG_RTAI_LINUXDIR = /lib/modules/3.8-1-rtai.x86-686-pae/build
+CONFIG_RTAI_LINUXDIR = /lib/modules/3.16.7-rtai+/build
 CPP = cc -E
 CPPFLAGS = 
 CROSSCOMPILE_TEST = 
@@ -260,11 +260,11 @@ RANLIB = ranlib
 RTAI_BUILD_STRING = i686-pc-linux-gnu
 RTAI_BUILTIN_MODLIST =  malloc
 RTAI_COMPAT_CPPFLAGS = 
-RTAI_FP_CFLAGS = -D_FORTIFY_SOURCE=0 -ffast-math -mhard-float
+RTAI_FP_CFLAGS =  -ffast-math -mhard-float
 RTAI_HOST_STRING = i686-pc-linux-gnu
 RTAI_KBUILD_BOTTOM = 
 RTAI_KBUILD_CLEAN = rm -f *.ko *.mod.c .*.cmd *.o Module.symvers Module.markers modules.order && rm -Rf .tmp_versions
-RTAI_KBUILD_CMD = for src in $^; do if test \! -r `basename $$src`; then $(LN_S) $$src; fi; done; 		    rm -f /lib/modules/3.8-1-rtai.x86-686-pae/build/.tmp_versions/rtai_*.mod /lib/modules/3.8-1-rtai.x86-686-pae/build/.tmp_versions/*_rt.mod;                     $(MAKE) -C /lib/modules/3.8-1-rtai.x86-686-pae/build CROSS_COMPILE=$(CROSS_COMPILE) CC=cc ARCH=x86 		    SUBDIRS=$$PWD M=$$PWD rtai_srctree=`cd $(top_srcdir) && pwd` rtai_srcdir=`cd $(srcdir) && pwd` V=$(V) modules 		    rtai_objs='$(call src2obj,c,$^) $(call src2obj,S,$^) $(call src2obj,cc,$^) $(call src2obj,cpp,$^)' rtai_target=$(basename $@)
+RTAI_KBUILD_CMD = for src in $^; do if test \! -r `basename $$src`; then $(LN_S) $$src; fi; done; 		    rm -f /lib/modules/3.16.7-rtai+/build/.tmp_versions/rtai_*.mod /lib/modules/3.16.7-rtai+/build/.tmp_versions/*_rt.mod;                     $(MAKE) -C /lib/modules/3.16.7-rtai+/build CROSS_COMPILE=$(CROSS_COMPILE) CC=cc ARCH=x86 		    SUBDIRS=$$PWD M=$$PWD rtai_srctree=`cd $(top_srcdir) && pwd` rtai_srcdir=`cd $(srcdir) && pwd` V=$(V) modules 		    rtai_objs='$(call src2obj,c,$^) $(call src2obj,S,$^) $(call src2obj,cc,$^) $(call src2obj,cpp,$^)' rtai_target=$(basename $@)
 RTAI_KBUILD_DISTCLEAN = 
 RTAI_KBUILD_ENV = src2obj = $(patsubst %.$(1),%.o,$(filter %.$(1),$(call notdir,$(2))))
 RTAI_KBUILD_TOP = @if test \! -r Module.symvers ; then $(LN_S) -f "`cd $(top_builddir) && pwd`/Module.symvers" . ; fi;
@@ -272,8 +272,8 @@ RTAI_KMOD_APP_CFLAGS =
 RTAI_KMOD_APP_CXXFLAGS =  -fno-rtti -fno-exceptions -fno-strength-reduce -pipe -fno-use-cxa-atexit
 RTAI_KMOD_CFLAGS =  -D__IN_RTAI__
 RTAI_KMOD_CXXFLAGS =  -fno-rtti -fno-exceptions -fno-strength-reduce -pipe -fno-use-cxa-atexit -D__IN_RTAI__
-RTAI_LINUX_DIR = /lib/modules/3.8-1-rtai.x86-686-pae/build
-RTAI_LINUX_VERSION = 3.8.13
+RTAI_LINUX_DIR = /lib/modules/3.16.7-rtai+/build
+RTAI_LINUX_VERSION = 3.16.7
 RTAI_LXRT_LDADD = 
 RTAI_MATH_LIBM = 
 RTAI_MAYBE_DOCDIR = doc
@@ -281,12 +281,12 @@ RTAI_MAYBE_SIMDIR =
 RTAI_MODULE_DIR = ${exec_prefix}/modules
 RTAI_MODULE_EXT = .ko
 RTAI_POSIX_WRAP =  -Wl,--wrap -Wl,timer_create -Wl,--wrap -Wl,timer_delete -Wl,--wrap -Wl,timer_getoverrun -Wl,--wrap -Wl,timer_gettime -Wl,--wrap -Wl,timer_settime -Wl,--wrap -Wl,clock_getres -Wl,--wrap -Wl,clock_gettime -Wl,--wrap -Wl,clock_settime -Wl,--wrap -Wl,clock_nanosleep -Wl,--wrap -Wl,nanosleep -Wl,--wrap -Wl,pthread_barrier_init -Wl,--wrap -Wl,pthread_barrier_destroy -Wl,--wrap -Wl,pthread_barrier_wait -Wl,--wrap -Wl,pthread_barrierattr_init -Wl,--wrap -Wl,pthread_barrierattr_destroy -Wl,--wrap -Wl,pthread_barrierattr_getpshared -Wl,--wrap -Wl,pthread_barrierattr_setpshared -Wl,--wrap -Wl,pthread_cond_init -Wl,--wrap -Wl,pthread_cond_destroy -Wl,--wrap -Wl,pthread_cond_signal -Wl,--wrap -Wl,pthread_cond_broadcast -Wl,--wrap -Wl,pthread_cond_wait -Wl,--wrap -Wl,pthread_cond_timedwait -Wl,--wrap -Wl,pthread_condattr_init -Wl,--wrap -Wl,pthread_condattr_destroy -Wl,--wrap -Wl,pthread_condattr_getpshared -Wl,--wrap -Wl,pthread_condattr_setpshared -Wl,--wrap -Wl,pthread_condattr_getclock -Wl,--wrap -Wl,pthread_condattr_setclock -Wl,--wrap -Wl,pthread_mutex_init -Wl,--wrap -Wl,pthread_mutex_destroy -Wl,--wrap -Wl,pthread_mutex_lock -Wl,--wrap -Wl,pthread_mutex_timedlock -Wl,--wrap -Wl,pthread_mutex_trylock -Wl,--wrap -Wl,pthread_mutex_unlock -Wl,--wrap -Wl,pthread_mutexattr_init -Wl,--wrap -Wl,pthread_mutexattr_destroy -Wl,--wrap -Wl,pthread_mutexattr_getpshared -Wl,--wrap -Wl,pthread_mutexattr_setpshared -Wl,--wrap -Wl,pthread_mutexattr_settype -Wl,--wrap -Wl,pthread_mutexattr_gettype -Wl,--wrap -Wl,pthread_rwlock_init -Wl,--wrap -Wl,pthread_rwlock_destroy -Wl,--wrap -Wl,pthread_rwlock_rdlock -Wl,--wrap -Wl,pthread_rwlock_tryrdlock -Wl,--wrap -Wl,pthread_rwlock_timedrdlock -Wl,--wrap -Wl,pthread_rwlock_wrlock -Wl,--wrap -Wl,pthread_rwlock_trywrlock -Wl,--wrap -Wl,pthread_rwlock_timedwrlock -Wl,--wrap -Wl,pthread_rwlock_unlock -Wl,--wrap -Wl,pthread_rwlockattr_init -Wl,--wrap -Wl,pthread_rwlockattr_destroy -Wl,--wrap -Wl,pthread_rwlockattr_getpshared -Wl,--wrap -Wl,pthread_rwlockattr_setpshared -Wl,--wrap -Wl,pthread_rwlockattr_getkind_np -Wl,--wrap -Wl,pthread_rwlockattr_setkind_np -Wl,--wrap -Wl,pthread_spin_init -Wl,--wrap -Wl,pthread_spin_destroy -Wl,--wrap -Wl,pthread_spin_lock -Wl,--wrap -Wl,pthread_spin_trylock -Wl,--wrap -Wl,pthread_spin_unlock -Wl,--wrap -Wl,sem_open -Wl,--wrap -Wl,sem_close -Wl,--wrap -Wl,sem_unlink -Wl,--wrap -Wl,sem_init -Wl,--wrap -Wl,sem_destroy -Wl,--wrap -Wl,sem_wait -Wl,--wrap -Wl,sem_trywait -Wl,--wrap -Wl,sem_timedwait -Wl,--wrap -Wl,sem_post -Wl,--wrap -Wl,sem_getvalue
-RTAI_REAL_USER_CFLAGS = -O2 -I/lib/modules/3.8-1-rtai.x86-686-pae/build/include  -Wall -Wstrict-prototypes -pipe -D__IN_RTAI__
+RTAI_REAL_USER_CFLAGS = -O2  -Wall -Wstrict-prototypes -pipe -D__IN_RTAI__
 RTAI_TARGET_ARCH = x86
 RTAI_TARGET_ARCH_OPTS = 
 RTAI_TARGET_SUBARCH = 32
-RTAI_USER_APP_CFLAGS = -O2 -I/lib/modules/3.8-1-rtai.x86-686-pae/build/include  -Wall -Wstrict-prototypes -pipe
-RTAI_USER_CFLAGS = -I/usr/src/linux-headers-3.8-1-common-rtai.x86/include -O2 -I/lib/modules/3.8-1-rtai.x86-686-pae/build/include  -Wall -Wstrict-prototypes -pipe -D__IN_RTAI__
+RTAI_USER_APP_CFLAGS = -O2  -Wall -Wstrict-prototypes -pipe
+RTAI_USER_CFLAGS = -I/lib/modules/3.16.7-rtai+/build/include -O2  -Wall -Wstrict-prototypes -pipe -D__IN_RTAI__
 SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/bash

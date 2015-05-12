@@ -403,9 +403,13 @@ int xnintr_enable (xnintr_t *intr);
 int xnintr_disable (xnintr_t *intr);
 
 /* Atomic operations are already serializing on x86 */
-#define xnarch_before_atomic_dec()  smp_mb__before_atomic_dec()
+#ifdef smp_mb__before_atomic_dec
+#define xnarch_before_atomic_dec()   smp_mb__before_atomic_dec()
+#else
+#define xnarch_before_atomic_dec()   smp_mb__before_atomic()
+#endif
 #define xnarch_after_atomic_dec()    smp_mb__after_atomic_dec()
-#define xnarch_before_atomic_inc()  smp_mb__before_atomic_inc()
+#define xnarch_before_atomic_inc()   smp_mb__before_atomic_inc()
 #define xnarch_after_atomic_inc()    smp_mb__after_atomic_inc()
 
 #define xnarch_memory_barrier()      smp_mb()

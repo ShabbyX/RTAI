@@ -44,7 +44,7 @@ rtai_tmpsched$(modext): $(libsched_tmpsched_a_SOURCES) $(builtins_srclist)
 	@RTAI_KBUILD_TOP@ \
 	@RTAI_KBUILD_CMD@ rtai_extradef="$(rtai_sched_extradef)" \
 	@RTAI_KBUILD_BOTTOM@
-	./selfcalibrate.sh $(rtai_target_arch)
+	$(top_srcdir)/base/sched/selfcalibrate.sh $(rtai_target_arch)
 	@(touch calibration_placeholder.c)
 
 rtai_sched$(modext): @RTAI_KBUILD_ENV@

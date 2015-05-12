@@ -810,8 +810,12 @@ static void rtai_proc_unregister (void)
 
 #endif /* CONFIG_PROC_FS */
 
-extern struct ipipe_domain ipipe_root;
+#ifdef CONFIG_SMP
 extern unsigned long cpu_isolated_map; 
+#else
+static unsigned long cpu_isolated_map; 
+#endif
+extern struct ipipe_domain ipipe_root;
 extern void (*dispatch_irq_head)(unsigned int);
 extern int (*rtai_trap_hook)(unsigned, struct pt_regs *);
 
