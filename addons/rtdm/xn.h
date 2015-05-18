@@ -137,7 +137,7 @@ static inline void xnlock_get(xnlock_t *lock)
 {
 	barrier();
 	rtai_cli();
-	if (!test_and_set_bit(hal_processor_id(), &lock->lock[0].mask)) {
+	if (!test_and_set_bit(rtai_cpuid(), &lock->lock[0].mask)) {
 		rt_spin_lock(&lock->lock[0].lock);
 	}
 	barrier();
@@ -147,7 +147,7 @@ static inline void xnlock_put(xnlock_t *lock)
 {
 	barrier();
 	rtai_cli();
-	if (test_and_clear_bit(hal_processor_id(), &lock->lock[0].mask)) {
+	if (test_and_clear_bit(rtai_cpuid(), &lock->lock[0].mask)) {
 		rt_spin_unlock(&lock->lock[0].lock);
 	}
 	barrier();
@@ -159,7 +159,7 @@ static inline spl_t __xnlock_get_irqsave(xnlock_t *lock)
 
 	barrier();
 	flags = rtai_save_flags_irqbit_and_cli();
-	if (!test_and_set_bit(hal_processor_id(), &lock->lock[0].mask)) {
+	if (!test_and_set_bit(rtai_cpuid(), &lock->lock[0].mask)) {
 		rt_spin_lock(&lock->lock[0].lock);
 		barrier();
 		return flags | 1;
@@ -403,9 +403,13 @@ int xnintr_enable (xnintr_t *intr);
 int xnintr_disable (xnintr_t *intr);
 
 /* Atomic operations are already serializing on x86 */
-#define xnarch_before_atomic_dec()  smp_mb__before_atomic_dec()
+#ifdef smp_mb__before_atomic_dec
+#define xnarch_before_atomic_dec()   smp_mb__before_atomic_dec()
+#else
+#define xnarch_before_atomic_dec()   smp_mb__before_atomic()
+#endif
 #define xnarch_after_atomic_dec()    smp_mb__after_atomic_dec()
-#define xnarch_before_atomic_inc()  smp_mb__before_atomic_inc()
+#define xnarch_before_atomic_inc()   smp_mb__before_atomic_inc()
 #define xnarch_after_atomic_inc()    smp_mb__after_atomic_inc()
 
 #define xnarch_memory_barrier()      smp_mb()

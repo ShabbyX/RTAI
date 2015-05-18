@@ -737,35 +737,20 @@ AC_ARG_ENABLE(long-timed-lists,
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_LONG_TIMED_LIST:-no})
 
-AC_MSG_CHECKING(for 8254 tuning latency)
-AC_ARG_ENABLE(sched-8254-latency,
-	[ --enable-sched-8254-latency	Set 8254 tuning latency],
+AC_MSG_CHECKING(for tuning latency)
+AC_ARG_ENABLE(sched-latency,
+	[ --enable-sched-latency	Set tuning latency],
 	[case "$enableval" in
  changequote(,)dnl
-	[0-9]*) CONFIG_RTAI_SCHED_8254_LATENCY=$enableval ;;
+	[0-9]*) CONFIG_RTAI_SCHED_LATENCY=$enableval ;;
  changequote([,])dnl
-	*) AC_MSG_ERROR([Bad argument to option: --enable-8254-latency=<nanoseconds>]) ;;
+	*) AC_MSG_ERROR([Bad argument to option: --enable-sched-latency=<nanoseconds>]) ;;
 	esac])
-if test x$CONFIG_RTAI_SCHED_8254_LATENCY = x ; then
+if test x$CONFIG_RTAI_SCHED_LATENCY = x ; then
   # Use a reasonable default if unset
-  CONFIG_RTAI_SCHED_8254_LATENCY=4700
+  CONFIG_RTAI_SCHED_LATENCY=0
 fi
-AC_MSG_RESULT($CONFIG_RTAI_SCHED_8254_LATENCY)
-
-AC_MSG_CHECKING(for APIC tuning latency)
-AC_ARG_ENABLE(sched-apic-latency,
-	[ --enable-sched-apic-latency	Set APIC tuning latency],
-	[case "$enableval" in
- changequote(,)dnl
-	[0-9]*) CONFIG_RTAI_SCHED_APIC_LATENCY=$enableval ;;
- changequote([,])dnl
-	*) AC_MSG_ERROR([Bad argument to option: --enable-sched-apic-latency=<nanoseconds>]) ;;
-	esac])
-if test x$CONFIG_RTAI_SCHED_APIC_LATENCY = x ; then
-  # Use a reasonable default if unset
-  CONFIG_RTAI_SCHED_APIC_LATENCY=3944
-fi
-AC_MSG_RESULT($CONFIG_RTAI_SCHED_APIC_LATENCY)
+AC_MSG_RESULT($CONFIG_RTAI_SCHED_LATENCY)
 
 AC_MSG_CHECKING(for user busy align ret delay)
 AC_ARG_ENABLE(user-busy-align-ret-delay,
@@ -880,14 +865,14 @@ AC_ARG_ENABLE(task-switch-signal,
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_TASK_SWITCH_SIGNAL:-no})
 
-AC_MSG_CHECKING(for hard-soft toggler)
-AC_ARG_ENABLE(hard-soft-toggler,
-	      [ --enable-hard-soft-toggler		Enable RTAI hard-soft toggler],
-	[case "$enableval" in
-	y | yes) CONFIG_RTAI_HARD_SOFT_TOGGLER=y ;;
-	*) unset CONFIG_RTAI_HARD_SOFT_TOGGLER ;;
-	esac])
-AC_MSG_RESULT(${CONFIG_RTAI_HARD_SOFT_TOGGLER:-no})
+dnl AC_MSG_CHECKING(for hard-soft toggler)
+dnl AC_ARG_ENABLE(hard-soft-toggler,
+dnl 	      [ --enable-hard-soft-toggler		Enable RTAI hard-soft toggler],
+dnl 	[case "$enableval" in
+dnl 	y | yes) CONFIG_RTAI_HARD_SOFT_TOGGLER=y ;;
+dnl 	*) unset CONFIG_RTAI_HARD_SOFT_TOGGLER ;;
+dnl 	esac])
+dnl AC_MSG_RESULT(${CONFIG_RTAI_HARD_SOFT_TOGGLER:-no})
 
 AC_MSG_CHECKING(for Linux task priority alignment to RTAI)
 AC_ARG_ENABLE(align-priority,
@@ -1514,7 +1499,7 @@ esac
 test \! x$CONFIG_RTAI_RTDM = x && AC_DEFINE(CONFIG_RTAI_RTDM,1,[Kconfig])
 test \! x$CONFIG_RTAI_ALIGN_LINUX_PRIORITY = x && AC_DEFINE(CONFIG_RTAI_ALIGN_LINUX_PRIORITY,1,[Kconfig])
 test \! x$CONFIG_RTAI_TASK_SWITCH_SIGNAL = x && AC_DEFINE(CONFIG_RTAI_TASK_SWITCH_SIGNAL,1,[Kconfig])
-test \! x$CONFIG_RTAI_HARD_SOFT_TOGGLER = x && AC_DEFINE(CONFIG_RTAI_HARD_SOFT_TOGGLER,1,[Kconfig])
+dnl test \! x$CONFIG_RTAI_HARD_SOFT_TOGGLER = x && AC_DEFINE(CONFIG_RTAI_HARD_SOFT_TOGGLER,1,[Kconfig])
 test \! x$CONFIG_RTAI_STARTUP_LOAD = x && AC_DEFINE(CONFIG_RTAI_STARTUP_LOAD,1,[Kconfig])
 
 test x$CONFIG_RTAI_MATH = xy && AC_DEFINE(CONFIG_RTAI_MATH_BUILTIN,1,[Kconfig])
@@ -1536,7 +1521,7 @@ test x$CONFIG_RTAI_SCHED_ISR_LOCK = xy && AC_DEFINE(CONFIG_RTAI_SCHED_ISR_LOCK,1
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_RTC_FREQ,$CONFIG_RTAI_RTC_FREQ,[Kconfig])
 test x$CONFIG_RTAI_LONG_TIMED_LIST = xy && AC_DEFINE(CONFIG_RTAI_LONG_TIMED_LIST,1,[Kconfig])
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_SCHED_8254_LATENCY,$CONFIG_RTAI_SCHED_8254_LATENCY,[Kconfig])
-AC_DEFINE_UNQUOTED(CONFIG_RTAI_SCHED_APIC_LATENCY,$CONFIG_RTAI_SCHED_APIC_LATENCY,[Kconfig])
+AC_DEFINE_UNQUOTED(CONFIG_RTAI_SCHED_LATENCY,$CONFIG_RTAI_SCHED_LATENCY,[Kconfig])
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_SCHED_LXRT_NUMSLOTS,$CONFIG_RTAI_SCHED_LXRT_NUMSLOTS,[Kconfig])
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_RTDM_FD_MAX,$CONFIG_RTAI_RTDM_FD_MAX,[Kconfig])
 test x$CONFIG_RTAI_RTDM_SHIRQ = xy && AC_DEFINE(CONFIG_RTAI_RTDM_SHIRQ,1,[Kconfig])
@@ -1591,11 +1576,6 @@ AC_DEFINE_UNQUOTED(CONFIG_RTAI_ONE_SHOT,$CONFIG_RTAI_ONE_SHOT,[Kconfig])
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_MATH_LIBM_TO_USE,$CONFIG_RTAI_MATH_LIBM_TO_USE,[Kconfig])
 test x$CONFIG_RTAI_MATH_KCOMPLEX = xy && AC_DEFINE(CONFIG_RTAI_MATH_KCOMPLEX,1,[Kconfig])
 
-case $CONFIG_RTAI_BUSY_TIME_ALIGN in
-	y) CONFIG_RTAI_BUSY_TIME_ALIGN=1 ;;
-	n|*) CONFIG_RTAI_BUSY_TIME_ALIGN=0 ;;
-esac
-AC_DEFINE_UNQUOTED(CONFIG_RTAI_BUSY_TIME_ALIGN,$CONFIG_RTAI_BUSY_TIME_ALIGN,[Kconfig])
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY,$CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY,[Kconfig])
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY,$CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY,[Kconfig])
 
@@ -1766,6 +1746,9 @@ AM_CONDITIONAL(CONFIG_RTAI_OLD_FASHIONED_BUILD,[test "$CONFIG_RTAI_OLD_FASHIONED
 
 AM_CONDITIONAL(CONFIG_RTAI_QUIET,[test "$CONFIG_RTAI_QUIET" = quiet_])
 
+dnl self-calibrate latency
+AM_CONDITIONAL(CONFIG_RTAI_SCHED_LATENCY_SELFCALIBRATE,[test "$CONFIG_RTAI_SCHED_LATENCY_SELFCALIBRATE" = y])
+
 dnl
 dnl Define arch-specific CFLAGS and links
 dnl
@@ -1832,7 +1815,18 @@ AC_LANG_RESTORE)
 if [[ $ac_cv_gcc33 = no ]]; then
   AC_MSG_RESULT([no])
 else
-  RTAI_FP_CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0"
+  if test x"$CONFIG_RTAI_FORTIFY_SOURCE" != x ; then
+  case "$CONFIG_RTAI_FORTIFY_SOURCE" in
+    0|1|2)
+      dnl undef first, in case it is already defined
+      RTAI_FP_CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=$CONFIG_RTAI_FORTIFY_SOURCE"
+      ;;
+    *)
+      AC_MSG_ERROR([invalid _FORTIFY_SOURCE value $RTAI_FORTIFY_SOURCE])
+      ;;
+  esac
+  dnl else use value set for the kernel
+  fi
   AC_MSG_RESULT([ok])
 fi
 
@@ -2016,6 +2010,9 @@ if test x$CONFIG_KBUILD = xy; then
    AC_CONFIG_LINKS(testsuite/kern/latency/Makefile:testsuite/kern/latency/Makefile.kbuild)
    AC_CONFIG_LINKS(testsuite/kern/preempt/Makefile:testsuite/kern/preempt/Makefile.kbuild)
    AC_CONFIG_LINKS(testsuite/kern/switches/Makefile:testsuite/kern/switches/Makefile.kbuild)
+   AC_CONFIG_LINKS(testsuite/kthreads/latency/Makefile:testsuite/kthreads/latency/Makefile.kbuild)
+   AC_CONFIG_LINKS(testsuite/kthreads/preempt/Makefile:testsuite/kthreads/preempt/Makefile.kbuild)
+   AC_CONFIG_LINKS(testsuite/kthreads/switches/Makefile:testsuite/kthreads/switches/Makefile.kbuild)
 fi
 
 dnl
@@ -2166,6 +2163,10 @@ if test -d $srcdir/testsuite; then
 	testsuite/kern/latency/GNUmakefile \
 	testsuite/kern/preempt/GNUmakefile \
 	testsuite/kern/switches/GNUmakefile \
+	testsuite/kthreads/GNUmakefile \
+	testsuite/kthreads/latency/GNUmakefile \
+	testsuite/kthreads/preempt/GNUmakefile \
+	testsuite/kthreads/switches/GNUmakefile \
 	testsuite/user/GNUmakefile \
 	testsuite/user/latency/GNUmakefile \
 	testsuite/user/preempt/GNUmakefile \

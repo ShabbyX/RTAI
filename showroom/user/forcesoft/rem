@@ -1,1 +1,3 @@
+killall -9 spv
+killall -9 rt_task
 ../remod

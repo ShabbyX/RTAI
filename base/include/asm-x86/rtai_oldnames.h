@@ -29,6 +29,7 @@
  *   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#if 0
 #ifndef _RTAI_ASM_X86_OLDNAMES_H
 #define _RTAI_ASM_X86_OLDNAMES_H
 
@@ -106,3 +107,4 @@ static inline unsigned long get_cr2 (void) {
 #endif /* !__RTAI_HAL__ */
 
 #endif /* !_RTAI_ASM_X86_OLDNAMES_H */
+#endif

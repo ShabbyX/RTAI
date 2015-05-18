@@ -9,12 +9,6 @@ libcalibrate_rt_a_SOURCES = calibrate-module.c calibrate.h
 libsmi_rt_a_SOURCES = smi-module.c
 
 if CONFIG_KBUILD
-rtai_calibrate.ko: @RTAI_KBUILD_ENV@
-rtai_calibrate.ko: $(libcalibrate_rt_a_SOURCES)
-	@RTAI_KBUILD_TOP@ \
-	@RTAI_KBUILD_CMD@ \
-	@RTAI_KBUILD_BOTTOM@
-
 rtai_smi.ko: @RTAI_KBUILD_ENV@
 rtai_smi.ko: $(libsmi_rt_a_SOURCES)
 	@RTAI_KBUILD_TOP@ \
@@ -36,9 +30,6 @@ libcalibrate_rt_a_CPPFLAGS = \
 	-I$(top_srcdir)/base/include \
 	-I../../../include
 
-rtai_calibrate.o: libcalibrate_rt.a
-	$(CROSS_COMPILE)$(LD) --whole-archive $< -r -o $@
-
 libsmi_rt_a_AR = $(CROSS_COMPILE)ar cru
 
 libsmi_rt_a_CPPFLAGS = \
@@ -50,18 +41,20 @@ rtai_smi.o: libsmi_rt.a
 	$(CROSS_COMPILE)$(LD) --whole-archive $< -r -o $@
 endif
 
-calibration_PROGRAMS = calibrate
-
-calibration_PROGRAMS += calibration_helper
+calibration_PROGRAMS = calibrate calibration_helper
 
 calibrate_SOURCES = calibrate.c calibrate.h
 
 calibrate_CPPFLAGS = \
 	@RTAI_REAL_USER_CFLAGS@ \
-	-DKERNEL_HELPER_PATH="\"$(calibrationdir)/rtai_calibrate$(modext)\"" \
-	-DUSER_HELPER_PATH="\"$(calibrationdir)/calibration_helper\"" \
+	-DHAL_SCHED_PATH="\"$(DESTDIR)$(moduledir)\"" \
+	-DHAL_SCHED_MODEXT="\"$(modext)\"" \
 	-I$(top_srcdir)/base/include \
 	-I../../../include
+
+calibrate_LDADD = \
+	../../../sched/liblxrt/liblxrt.la \
+	-lpthread
 
 calibration_helper_SOURCES = calibration_helper.c
 
@@ -76,9 +69,9 @@ calibration_helper_LDADD = \
 	../../../sched/liblxrt/liblxrt.la \
 	-lpthread
 
-all-local: rtai_calibrate$(modext) rtai_smi$(modext)
+all-local: rtai_smi$(modext)
 
-RT_MODULES = rtai_calibrate$(modext) rtai_smi$(modext)
+RT_MODULES = rtai_smi$(modext)
 
 calibrate_DEPENDENCIES = liblxrt.la
 liblxrt.la:

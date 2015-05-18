@@ -83,15 +83,7 @@ MODULE_LICENSE("GPL");
 MODULE_LICENSE("GPL");
 #endif
 
-static unsigned long rtai_cpufreq_arg = RTAI_CALIBRATED_CPU_FREQ;
-RTAI_MODULE_PARM(rtai_cpufreq_arg, ulong);
-
 #define RTAI_NR_IRQS  IPIPE_NR_IRQS
-
-#ifdef CONFIG_X86_LOCAL_APIC
-static unsigned long rtai_apicfreq_arg = RTAI_CALIBRATED_APIC_FREQ;
-RTAI_MODULE_PARM(rtai_apicfreq_arg, ulong);
-#endif /* CONFIG_X86_LOCAL_APIC */
 
 struct { volatile int locked, rqsted; } rt_scheduling[RTAI_NR_CPUS];
 
@@ -125,8 +117,6 @@ static volatile int rtai_sync_level;
 static atomic_t rtai_sync_count = ATOMIC_INIT(1);
 
 static RT_TRAP_HANDLER rtai_trap_handler;
-
-struct rt_times rt_times;
 
 struct rt_times rt_smp_times[RTAI_NR_CPUS];
 
@@ -386,9 +376,9 @@ void rt_pend_linux_srq (unsigned srq)
 void rt_linux_hrt_set_mode(enum clock_event_mode mode, struct clock_event_device *hrt_dev)
 {
 	if (mode == CLOCK_EVT_MODE_ONESHOT || mode == CLOCK_EVT_MODE_SHUTDOWN) {
-		rt_times.linux_tick = 0;
+		rt_smp_times[0].linux_tick = 0;
 	} else if (mode == CLOCK_EVT_MODE_PERIODIC) {
-		rt_times.linux_tick = rtai_llimd((1000000000 + HZ/2)/HZ, rtai_tunables.cpu_freq, 1000000000);
+		rt_smp_times[0].linux_tick = rtai_llimd((1000000000 + HZ/2)/HZ, rtai_tunables.clock_freq, 1000000000);
 	}
 }
 
@@ -397,7 +387,7 @@ EXPORT_SYMBOL(rt_linux_hrt_next_shot);
 
 int _rt_linux_hrt_next_shot(unsigned long delay, struct clock_event_device *hrt_dev)
 {
-	rt_times.linux_time = rt_times.tick_time + rtai_llimd(delay, TIMER_FREQ, 1000000000);
+	rt_smp_times[0].linux_time = rt_smp_times[0].tick_time + rtai_llimd(delay, TIMER_FREQ, 1000000000);
 	return 0;
 }
 
@@ -423,18 +413,17 @@ int rt_request_timers(void *rtai_time_handler)
 		if (ret == CLOCK_EVT_MODE_ONESHOT || ret == CLOCK_EVT_MODE_UNUSED) {
 			rtimes->linux_tick = 0;
 		} else {
-			rt_times.linux_tick = rtai_llimd((1000000000 + HZ/2)/HZ, rtai_tunables.cpu_freq, 1000000000);
+			rt_smp_times[0].linux_tick = rtai_llimd((1000000000 + HZ/2)/HZ, rtai_tunables.clock_freq, 1000000000);
 		}			
 		rtimes->tick_time  = rtai_rdtsc();
                 rtimes->intr_time  = rtimes->tick_time + rtimes->linux_tick;
                 rtimes->linux_time = rtimes->tick_time + rtimes->linux_tick;
 		rtimes->periodic_tick = rtimes->linux_tick;
 	}
-	rt_times = rt_smp_times[0];
 #if 0 // #ifndef CONFIG_X86_LOCAL_APIC, for calibrating 8254 with our set delay
 	rtai_cli();
 	outb(0x30, 0x43);
-	rt_set_timer_delay(rtai_tunables.cpu_freq/50000);
+	rt_set_timer_delay(rtai_tunables.clock_freq/50000);
 	rtai_sti();
 #endif
 	return 0;
@@ -554,7 +543,7 @@ EXPORT_SYMBOL(rtai_isr_sched);
 	do {                       } while (0)
 #endif /* CONFIG_RTAI_SCHED_ISR_LOCK */
 
-static int rtai_hirq_dispatcher(int irq)
+static void rtai_hirq_dispatcher(int irq)
 {
 	unsigned long cpuid;
 	if (rtai_domain.irqs[irq].handler) {
@@ -565,12 +554,12 @@ static int rtai_hirq_dispatcher(int irq)
 		RTAI_SCHED_ISR_UNLOCK();
 		HAL_UNLOCK_LINUX();
 		if (rtai_realtime_irq[irq].retmode || test_bit(IPIPE_STALL_FLAG, ROOT_STATUS_ADR(cpuid))) {
-			return 0;
+			return;
 		}
 	}
 	rtai_sti();
-	hal_fast_flush_pipeline(cpuid);
-	return 0;
+	hal_fast_flush_pipeline();
+	return;
 }
 
 //#define HINT_DIAG_ECHO
@@ -694,8 +683,7 @@ static int hal_intercept_syscall(struct pt_regs *regs)
 		unsigned long srq = regs->LINUX_SYSCALL_REG1;
 		IF_IS_A_USI_SRQ_CALL_IT(srq, regs->LINUX_SYSCALL_REG2, (long long *)regs->LINUX_SYSCALL_REG3, regs->LINUX_SYSCALL_FLAGS, 1);
 		*((long long *)regs->LINUX_SYSCALL_REG3) = rtai_usrq_dispatcher(srq, regs->LINUX_SYSCALL_REG2);
-		hal_test_and_fast_flush_pipeline(rtai_cpuid());
-		return 1;
+		hal_test_and_fast_flush_pipeline();
 	}
 	return 0;
 }
@@ -738,10 +726,10 @@ static int PROC_READ_FUN(rtai_read_proc)
 	PROC_PRINT_VARS;
 
 	PROC_PRINT("\n** RTAI/x86:\n\n");
-	PROC_PRINT("    CPU   Frequency: %lu (Hz)\n", rtai_tunables.cpu_freq);
+	PROC_PRINT("    CPU   Frequency: %lu (Hz)\n", rtai_tunables.clock_freq);
 	PROC_PRINT("    TIMER Frequency: %lu (Hz)\n", TIMER_FREQ);
-	PROC_PRINT("    TIMER Latency: %d (ns)\n", rtai_imuldiv(rtai_tunables.latency, 1000000000, rtai_tunables.cpu_freq));
-	PROC_PRINT("    TIMER Setup: %d (ns)\n", rtai_imuldiv(rtai_tunables.setup_time_TIMER_CPUNIT, 1000000000, rtai_tunables.cpu_freq));
+	PROC_PRINT("    TIMER Latency: %d (ns)\n", rtai_imuldiv(rtai_tunables.sched_latency, 1000000000, rtai_tunables.clock_freq));
+	PROC_PRINT("    TIMER Setup: %d (ns)\n", rtai_imuldiv(rtai_tunables.setup_time_TIMER_CPUNIT, 1000000000, rtai_tunables.clock_freq));
     
 	none = 1;
 	PROC_PRINT("\n** Real-time IRQs used by RTAI: ");
@@ -822,8 +810,12 @@ static void rtai_proc_unregister (void)
 
 #endif /* CONFIG_PROC_FS */
 
-extern struct ipipe_domain ipipe_root;
+#ifdef CONFIG_SMP
 extern unsigned long cpu_isolated_map; 
+#else
+static unsigned long cpu_isolated_map; 
+#endif
+extern struct ipipe_domain ipipe_root;
 extern void (*dispatch_irq_head)(unsigned int);
 extern int (*rtai_trap_hook)(unsigned, struct pt_regs *);
 
@@ -867,19 +859,12 @@ int __rtai_hal_init (void)
 
 	ipipe_select_timers(cpu_active_mask);
 	rtai_syscall_hook = hal_intercept_syscall;
+
 	hal_get_sysinfo(&sysinfo);
-
-	if (rtai_cpufreq_arg == 0) {
-		rtai_cpufreq_arg = (unsigned long)sysinfo.sys_cpu_freq;
-	}
-	rtai_tunables.cpu_freq = rtai_cpufreq_arg;
-
-#ifdef CONFIG_X86_LOCAL_APIC
-	if (rtai_apicfreq_arg == 0) {
-		rtai_apicfreq_arg = sysinfo.sys_hrtimer_freq;
-	}
-	rtai_tunables.apic_freq = rtai_apicfreq_arg;
-#endif
+	rtai_tunables.clock_freq      = sysinfo.sys_cpu_freq;
+	rtai_tunables.timer_freq      = sysinfo.sys_hrtimer_freq;
+	rtai_tunables.timer_irq       = sysinfo.sys_hrtimer_irq;
+	rtai_tunables.linux_timer_irq = __ipipe_hrtimer_irq;
 
 #ifdef CONFIG_PROC_FS
 	rtai_proc_register();
@@ -890,7 +875,7 @@ int __rtai_hal_init (void)
 
 #ifdef CONFIG_SMP
 	if (IsolCpusMask && (IsolCpusMask != cpu_isolated_map)) {
-		printk("\nWARNING: IsolCpusMask (%lu) does not match cpu_isolated_map (%lu) set at boot time.\n", IsolCpusMask, cpu_isolated_map);
+		printk("\nWARNING: IsolCpusMask (%lx) does not match cpu_isolated_map (%lx) set at boot time.\n", IsolCpusMask, cpu_isolated_map);
 	}
 	if (!IsolCpusMask) {
 		IsolCpusMask = cpu_isolated_map;
@@ -904,13 +889,13 @@ int __rtai_hal_init (void)
 	IsolCpusMask = 0;
 #endif
 
-	printk(KERN_INFO "RTAI[hal]: mounted (%s, IMMEDIATE (INTERNAL IRQs %s), ISOL_CPUS_MASK: %lx).\n", HAL_TYPE, CONFIG_RTAI_DONT_DISPATCH_CORE_IRQS ? "VECTORED" : "DISPATCHED", IsolCpusMask);
+	printk(KERN_INFO "RTAI[hal]: mounted. ISOL_CPUS_MASK: %lx, LINUX CPU ISOLATED MAP: %lx).\n", IsolCpusMask, cpu_isolated_map);
 
 #if defined(CONFIG_SMP) && defined(CONFIG_RTAI_DIAG_TSC_SYNC)
 	init_tsc_sync();
 #endif
 
-	printk("SYSINFO - # CPUs: %d, TIMER NAME: '%s', TIMER IRQ: %d, TIMER FREQ: %llu, CLOCK NAME: '%s', CLOCK FREQ: %llu, CPU FREQ: %llu.\n", sysinfo.sys_nr_cpus, ipipe_timer_name(), sysinfo.sys_hrtimer_irq, sysinfo.sys_hrtimer_freq, ipipe_clock_name(), sysinfo.sys_hrclock_freq, sysinfo.sys_cpu_freq); 
+	printk("SYSINFO - # CPUs: %d, TIMER NAME: '%s', TIMER IRQ: %d, TIMER FREQ: %lu, CLOCK NAME: '%s', CLOCK FREQ: %lu, CPU FREQ: %llu, LINUX TIMER IRQ: %d.\n", sysinfo.sys_nr_cpus, ipipe_timer_name(), rtai_tunables.timer_irq, rtai_tunables.timer_freq, ipipe_clock_name(), rtai_tunables.clock_freq, sysinfo.sys_cpu_freq, __ipipe_hrtimer_irq); 
 
 	return 0;
 }
@@ -978,7 +963,7 @@ int rtai_calibrate_hard_timer(void)
         RTIME t;
 	int i, delay, dt;
 
-	delay = rtai_tunables.cpu_freq/50000;
+	delay = rtai_tunables.clock_freq/50000;
         flags = rtai_critical_enter(NULL);
 	rt_set_timer_delay(delay);
         t = rtai_rdtsc();
@@ -987,7 +972,7 @@ int rtai_calibrate_hard_timer(void)
         }
 	dt = (int)(rtai_rdtsc() - t);
 	rtai_critical_exit(flags);
-	return rtai_imuldiv((dt + CAL_LOOPS/2)/CAL_LOOPS, 1000000000, rtai_tunables.cpu_freq);
+	return rtai_imuldiv((dt + CAL_LOOPS/2)/CAL_LOOPS, 1000000000, rtai_tunables.clock_freq);
 }
 
 EXPORT_SYMBOL(rtai_calibrate_hard_timer);
@@ -1028,7 +1013,6 @@ EXPORT_SYMBOL(rtai_proc_root);
 EXPORT_SYMBOL(rtai_tunables);
 EXPORT_SYMBOL(rtai_cpu_lock);
 EXPORT_SYMBOL(rtai_cpu_realtime);
-EXPORT_SYMBOL(rt_times);
 EXPORT_SYMBOL(rt_smp_times);
 
 EXPORT_SYMBOL(rt_printk);
@@ -1081,7 +1065,7 @@ static void sync_master(void *arg)
 {
 	unsigned long flags, lflags, i;
 
-	if ((unsigned long)arg != hal_processor_id()) {
+	if ((unsigned long)arg != rtai_cpuid()) {
 		return;
 	}
 

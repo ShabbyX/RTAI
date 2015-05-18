@@ -1,5 +1,5 @@
-killall sender
-killall receiver
+killall -9 sender
+killall -9 receiver
 rmmod agent_rt
 rmmod rt_agent
 ../remod

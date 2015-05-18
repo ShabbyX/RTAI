@@ -75,13 +75,15 @@ int main(int argc, char *argv[])
 		if (max < samp.max) max = samp.max;
 		if (min > samp.min) min = samp.min;
 		printf("* min: %lld/%lld, max: %lld/%lld average: %d (%d) <Hit [RETURN] to stop> *\n", samp.min, min, samp.max, max, samp.index, samp.ovrn);
-	        if (poll(&ufds, 1, 1)) {
+	        if (poll(&ufds, 1, 1) > 0) {
 			ch = getchar();
 			break;
 		}
 	}
 
-	rt_rpc(rt_get_adr(nam2num("LATCAL")), msg, &msg);
+	if (rt_get_adr(nam2num("LATCAL"))) {
+		rt_rpc(rt_get_adr(nam2num("LATCAL")), msg, &msg);
+	}
 	rt_task_delete(task);
 	exit(0);
 }

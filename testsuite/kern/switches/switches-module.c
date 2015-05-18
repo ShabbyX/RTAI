@@ -50,13 +50,13 @@ int stack_size = 4096;
 RTAI_MODULE_PARM(stack_size, int);
 MODULE_PARM_DESC(stack_size, "Task stack size in bytes (default: 2000)");
 
-#undef DISTRIBUTE /* Define this to have tasks distributed among CPUs */
+//#define DISTRIBUTE /* Define this to have tasks distributed among CPUs */
 
 #define SEM_TYPE (CNT_SEM | FIFO_Q)
 
 static RT_TASK *thread, task;
 
-static int cpu_used[NR_RT_CPUS];
+static int cpu_used[RTAI_NR_CPUS];
 
 static SEM sem;
 
@@ -77,7 +77,7 @@ static void pend_task (long t)
 				rt_return(rt_receive(NULL, &msg), 0);
 				break;
 		}
-		cpu_used[hard_cpu_id()]++;
+		cpu_used[rtai_cpuid()]++;
 	}
 }
 
@@ -86,49 +86,49 @@ static void sched_task(long t) {
 	unsigned long msg;
 
 	change = 0;
-	t = rdtsc();
+	t =rtai_rdtsc();
 	for (i = 0; i < loops; i++) {
 		for (k = 0; k < ntasks; k++) {
 			rt_task_resume(thread + k);
 		}
 	}
-	t = rdtsc() - t;
+	t = rtai_rdtsc() - t;
 	rt_printk("\n\nFOR %d TASKS: ", ntasks);
-	rt_printk("TIME %d (ms), SUSP/RES SWITCHES %d, ", (int)llimd(t, 1000, CPU_FREQ), 2*ntasks*loops);
+	rt_printk("TIME %d (ms), SUSP/RES SWITCHES %d, ", (int)rtai_llimd(t, 1000, RTAI_CLOCK_FREQ), 2*ntasks*loops);
 	rt_printk("SWITCH TIME%s %d (ns)\n", use_fpu ? " (INCLUDING FULL FP SUPPORT)":"",
-	       (int)llimd(llimd(t, 1000000000, CPU_FREQ), 1, 2*ntasks*loops));
+	       (int)rtai_llimd(rtai_llimd(t, 1000000000, RTAI_CLOCK_FREQ), 1, 2*ntasks*loops));
 
 	change = 1;
 	for (k = 0; k < ntasks; k++) {
 		rt_task_resume(thread + k);
 	}
-	t = rdtsc();
+	t = rtai_rdtsc();
 	for (i = 0; i < loops; i++) {
 		for (k = 0; k < ntasks; k++) {
 			rt_sem_signal(&sem);
 		}
 	}
-	t = rdtsc() - t;
+	t = rtai_rdtsc() - t;
 	rt_printk("\nFOR %d TASKS: ", ntasks);
-	rt_printk("TIME %d (ms), SEM SIG/WAIT SWITCHES %d, ", (int)llimd(t, 1000, CPU_FREQ), 2*ntasks*loops);
+	rt_printk("TIME %d (ms), SEM SIG/WAIT SWITCHES %d, ", (int)rtai_llimd(t, 1000, RTAI_CLOCK_FREQ), 2*ntasks*loops);
 	rt_printk("SWITCH TIME%s %d (ns)\n", use_fpu ? " (INCLUDING FULL FP SUPPORT)":"",
-	       (int)llimd(llimd(t, 1000000000, CPU_FREQ), 1, 2*ntasks*loops));
+	       (int)rtai_llimd(rtai_llimd(t, 1000000000, RTAI_CLOCK_FREQ), 1, 2*ntasks*loops));
 
 	change = 2;
 	for (k = 0; k < ntasks; k++) {
 		rt_sem_signal(&sem);
 	}
-	t = rdtsc();
+	t = rtai_rdtsc();
 	for (i = 0; i < loops; i++) {
 		for (k = 0; k < ntasks; k++) {
 			rt_rpc(thread + k, 0, &msg);
 		}
 	}
-	t = rdtsc() - t;
+	t = rtai_rdtsc() - t;
 	rt_printk("\nFOR %d TASKS: ", ntasks);
-	rt_printk("TIME %d (ms), RPC/RCV-RET SWITCHES %d, ", (int)llimd(t, 1000, CPU_FREQ), 2*ntasks*loops);
+	rt_printk("TIME %d (ms), RPC/RCV-RET SWITCHES %d, ", (int)rtai_llimd(t, 1000, RTAI_CLOCK_FREQ), 2*ntasks*loops);
 	rt_printk("SWITCH TIME%s %d (ns)\n\n", use_fpu ? " (INCLUDING FULL FP SUPPORT)":"",
-	       (int)llimd(llimd(t, 1000000000, CPU_FREQ), 1, 2*ntasks*loops));
+	       (int)rtai_llimd(rtai_llimd(t, 1000000000, RTAI_CLOCK_FREQ), 1, 2*ntasks*loops));
 }
 
 static int __switches_init(void)
@@ -144,7 +144,7 @@ static int __switches_init(void)
 #ifdef DISTRIBUTE
 		e = rt_task_init_cpuid(thread + i, pend_task, i, stack_size, 0, use_fpu, 0,  i%2);
 #else
-		e = rt_task_init_cpuid(thread + i, pend_task, i, stack_size, 0, use_fpu, 0,  hard_cpu_id());
+		e = rt_task_init_cpuid(thread + i, pend_task, i, stack_size, 0, use_fpu, 0,  rtai_cpuid());
 #endif
 		if (e < 0) {
 		task_init_has_failed:
@@ -154,7 +154,7 @@ static int __switches_init(void)
 		    return -1;
 		}
 	}
-	e = rt_task_init_cpuid(&task, sched_task, i, stack_size, 1, use_fpu, 0, hard_cpu_id());
+	e = rt_task_init_cpuid(&task, sched_task, i, stack_size, 1, use_fpu, 0, rtai_cpuid());
 	if (e < 0)
 	    goto task_init_has_failed;
 	rt_task_resume(&task);
@@ -172,7 +172,7 @@ static void __switches_exit(void)
 	rt_task_delete(&task);
         kfree(thread);
 	printk("\nCPU USE SUMMARY\n");
-	for (i = 0; i < NR_RT_CPUS; i++) {
+	for (i = 0; i < RTAI_NR_CPUS; i++) {
 		printk("# %d -> %d\n", i, cpu_used[i]);
 	}
 	printk("END OF CPU USE SUMMARY\n\n");

@@ -1512,7 +1512,7 @@ RTAI_SYSCALL_MODE int rt_spl_lock_timed(SPL *spl, unsigned long ns)
 	} else {
 		RTIME end_time;
 		long locked;
-		end_time = rtai_rdtsc() + imuldiv(ns, tuned.cpu_freq, 1000000000);
+		end_time = rtai_rdtsc() + rtai_imuldiv(ns, rtai_tunables.clock_freq, 1000000000);
 		while ((locked = (long)cmpxchg(&spl->owndby, 0L, rt_current)) && rtai_rdtsc() < end_time);
 		if (locked) {
 			rtai_restore_flags(flags);

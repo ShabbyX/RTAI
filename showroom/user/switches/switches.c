@@ -1,6 +1,6 @@
 /*
-COPYRIGHT (C) 2000  Emanuele Bianchi (bianchi@aero.polimi.it)
-                    Paolo Mantegazza (mantegazza@aero.polimi.it)
+COPYRIGHT (C) 2000       Emanuele Bianchi (bianchi@aero.polimi.it)
+              2000-2015  Paolo Mantegazza (mantegazza@aero.polimi.it)
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -33,9 +33,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 #include <rtai_sem.h>
 #include <rtai_msg.h>
 
-#define LOOPS  2000
-#define NR_RT_TASKS 20
-#define CPUMSK 0x1
+#define LOOPS  10000
+#define NR_RT_TASKS 10
+#define DISTRIBUTED 0  // 1 half/half, 0 same cpu, -1 same cpu but the resumer
+#define RESUME_DELAY 1000
 #define taskname(x) (1000 + (x))
 
 #define RT_MAKE_HARD_REAL_TIME() rt_make_hard_real_time()
@@ -52,19 +53,19 @@ static int indx[NR_RT_TASKS];
 
 static void *thread_fun(void *arg)
 {
-	int mytask_indx;
+	int mytask_indx, mytask_mask;
 	unsigned long msg;
 
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 	mytask_indx = ((int *)arg)[0];
-	if (!(mytask[mytask_indx] = rt_thread_init(taskname(mytask_indx), 0, 0,
-SCHED_FIFO, CPUMSK))) {
+	mytask_mask = DISTRIBUTED > 0 ? 1 << mytask_indx%2 : 1;
+	if (!(mytask[mytask_indx] = rt_thread_init(taskname(mytask_indx), 0, 0, SCHED_FIFO, mytask_mask))) {
 		printf("CANNOT INIT TASK %u\n", taskname(mytask_indx));
 		exit(1);
 	}
-
 	mlockall(MCL_CURRENT | MCL_FUTURE);
 	RT_MAKE_HARD_REAL_TIME();
+
 	hrt[mytask_indx] = 1;
 	while (!end) {
 		switch (change) {
@@ -90,27 +91,23 @@ SCHED_FIFO, CPUMSK))) {
 	return (void*)0;
 }
 
-static void msleep(int ms)
-{
-	poll(NULL, 0, ms);
-}
-
 int main(void)
 {
-	RTIME tsr, tss, tsm, trpc;
+	RTIME tsr, tss, tsm, trpc, slp;
 	RT_TASK *mainbuddy;
 	int i, k, s;       
 	unsigned long msg;
 
 	printf("\n\nWait for it ...\n");
-	if (!(mainbuddy = rt_thread_init(nam2num("MASTER"), 1000, 0, SCHED_FIFO, CPUMSK))) {
+	start_rt_timer(0);
+	slp = nano2count(RESUME_DELAY);
+	if (!(mainbuddy = rt_thread_init(nam2num("MASTER"), 1, 0, SCHED_FIFO, DISTRIBUTED < 0 ? 2 : 1))) {
 		printf("CANNOT INIT TASK %lu\n", nam2num("MASTER"));
 		exit(1);
 	}
 
 	sem = rt_sem_init(nam2num("SEMAPH"), 1); 
 	change =  0;
-	
 	for (i = 0; i < NR_RT_TASKS; i++) {
 		indx[i] = i;
 		if (!(thread[i] = rt_thread_create(thread_fun, indx + i, 0))) {
@@ -118,66 +115,72 @@ int main(void)
 			exit(1);
  		}       
  	} 
-
+	rt_sleep(nano2count(50000000));
 	do {
-		msleep(50);
 		s = 0;	
 		for (i = 0; i < NR_RT_TASKS; i++) {
 			s += hrt[i];
 		}
 	} while (s != NR_RT_TASKS);
 	mlockall(MCL_CURRENT | MCL_FUTURE);
-	
 	RT_MAKE_HARD_REAL_TIME();
+
 	tsr = rt_get_cpu_time_ns();
 	for (i = 0; i < LOOPS; i++) {
 		for (k = 0; k < NR_RT_TASKS; k++) {
 			rt_task_resume(mytask[k]);
+			rt_sleep(slp);
 		} 
 	} 
-	tsr = rt_get_cpu_time_ns() - tsr;
+	tsr = rt_get_cpu_time_ns() - tsr - LOOPS*NR_RT_TASKS*RESUME_DELAY;
 
 	change = 1;
 
 	for (k = 0; k < NR_RT_TASKS; k++) {
 		rt_task_resume(mytask[k]);
+		rt_sleep(slp);
 	} 
 
 	tss = rt_get_cpu_time_ns();
 	for (i = 0; i < LOOPS; i++) {
 		for (k = 0; k < NR_RT_TASKS; k++) {
 	        	rt_sem_signal(sem);
+			rt_sleep(slp);
 		}
 	}
-	tss = rt_get_cpu_time_ns() - tss;
+	tss = rt_get_cpu_time_ns() - tss - LOOPS*NR_RT_TASKS*RESUME_DELAY;
 
 	change = 2;
 
 	for (k = 0; k < NR_RT_TASKS; k++) {
 		rt_sem_signal(sem);
+		rt_sleep(slp);
 	}
 
 	tsm = rt_get_cpu_time_ns();
 	for (i = 0; i < LOOPS; i++) {
 		for (k = 0; k < NR_RT_TASKS; k++) {
 			rt_send(mytask[k], 0);
+			rt_sleep(slp);
 		}
 	}
-	tsm = rt_get_cpu_time_ns() - tsm;
+	tsm = rt_get_cpu_time_ns() - tsm - LOOPS*NR_RT_TASKS*RESUME_DELAY;
 
 	change = 3;
 
 	for (k = 0; k < NR_RT_TASKS; k++) {
 		rt_send(mytask[k], 0);
+		rt_sleep(slp);
 	}
 
 	trpc = rt_get_cpu_time_ns();
 	for (i = 0; i < LOOPS; i++) {
 		for (k = 0; k < NR_RT_TASKS; k++) {
 			rt_rpc(mytask[k], 0, &msg);
+			rt_sleep(slp);
 		}
 	}
-	trpc = rt_get_cpu_time_ns() - trpc;
+	trpc = rt_get_cpu_time_ns() - trpc - LOOPS*NR_RT_TASKS*RESUME_DELAY;
 
 	rt_make_soft_real_time();
 
@@ -202,9 +205,11 @@ int main(void)
 	end = 1;
 	for (i = 0; i < NR_RT_TASKS; i++) {
 		rt_rpc(mytask[i], 0, &msg);
+//rt_sleep(slp);
 	} 
+
+	rt_sleep(nano2count(50000000));
 	do {
-		msleep(50);
 		s = 0;	
 		for (i = 0; i < NR_RT_TASKS; i++) {
 			s += hrt[i];
@@ -216,6 +221,7 @@ int main(void)
 	for (i = 0; i < NR_RT_TASKS; i++) {
 		rt_thread_join(thread[i]);
 	}
+	stop_rt_timer();
 	
 	return 0;
 }

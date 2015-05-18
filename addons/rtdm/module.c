@@ -695,7 +695,7 @@ extern struct epoch_struct boot_epoch;
 #endif
 
 static struct rtdm_timer_struct timers_list[NUM_CPUS] =
-{ { &timers_list[0], &timers_list[0], RT_SCHED_LOWEST_PRIORITY, 0, RT_TIME_END, 0LL, NULL, 0UL,
+{ { &timers_list[0], &timers_list[0], RT_SCHED_LOWEST_PRIORITY, 0, RTAI_TIME_LIMIT, 0LL, NULL, 0UL,
 #ifdef  CONFIG_RTAI_LONG_TIMED_LIST
 { NULL } 
 #endif
@@ -852,7 +852,7 @@ static void rt_timers_manager(long cpuid)
 	timer_manager = &timers_manager[LIST_CPUID];
 	timerl = &timers_list[LIST_CPUID];
 	lock = &timers_lock[LIST_CPUID];
-	timer_tol = tuned.timers_tol[LIST_CPUID];
+	timer_tol = rtai_tunables.timers_tol[LIST_CPUID];
 
 	while (1) {
 		rt_sleep_until((timerl->next)->firing_time);

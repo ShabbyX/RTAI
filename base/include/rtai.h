@@ -59,4 +59,8 @@ static inline long irandu(unsigned long range)
 }
 #endif /* __KERNEL__ */
 
+// To make COMEDY happy.
+#define rt_mount_rtai()   do { } while (0)
+#define rt_umount_rtai()  do { } while (0)
+
 #endif /* !_RTAI_RTAI_H */

@@ -47,7 +47,7 @@ RTAI_SYSCALL_MODE void rt_set_sched_policy(RT_TASK *task, int policy, int rr_qua
 #ifdef CONFIG_SMP
 			task->rr_quantum = rt_smp_times[task->runnable_on_cpus].linux_tick;
 #else
-			task->rr_quantum = rt_times.linux_tick;
+			task->rr_quantum =  rt_smp_times[0].linux_tick;
 #endif
 		}
 		task->rr_remaining = task->rr_quantum;
@@ -654,8 +654,8 @@ static inline void _rt_get_boot_epoch(volatile RTIME time_orig[])
 	t = rtai_rdtsc();
 	rt_spin_unlock_irqrestore(flags, &boot_epoch.lock);
 
-	time_orig[0] = tv.tv_sec*(RTIME)tuned.cpu_freq + imuldiv(tv.tv_usec, tuned.cpu_freq, 1000000) - t;
-	time_orig[1] = tv.tv_sec*1000000000ULL + tv.tv_usec*1000ULL - llimd(t, 1000000000, tuned.cpu_freq);
+	time_orig[0] = tv.tv_sec*(RTIME)rtai_tunables.clock_freq + rtai_imuldiv(tv.tv_usec, rtai_tunables.clock_freq, 1000000) - t;
+	time_orig[1] = tv.tv_sec*1000000000ULL + tv.tv_usec*1000ULL - rtai_llimd(t, 1000000000, rtai_tunables.clock_freq);
 }
 
 void rt_get_boot_epoch(void)
@@ -823,7 +823,7 @@ int rt_task_wait_period(void)
 #ifdef CONFIG_SMP
 		rt_smp_times[cpuid].tick_time;
 #else
-		rt_times.tick_time;
+		rt_smp_times[0].tick_time;
 #endif
 	} else if ((rt_current->periodic_resume_time += rt_current->period) > rt_time_h) {
 		void *blocked_on;
@@ -953,7 +953,7 @@ RTAI_SYSCALL_MODE RTIME rt_task_next_period(void)
 RTAI_SYSCALL_MODE void rt_busy_sleep(int ns)
 {
 	RTIME end_time;
-	end_time = rtai_rdtsc() + llimd(ns, tuned.cpu_freq, 1000000000);
+	end_time = rtai_rdtsc() + rtai_llimd(ns, rtai_tunables.clock_freq, 1000000000);
 	while (rtai_rdtsc() < end_time);
 }
 
@@ -1044,16 +1044,9 @@ RTAI_SYSCALL_MODE int rt_sleep_until(RTIME time)
 	return RTE_TMROVRN;
 }
 
-RTAI_SYSCALL_MODE int rt_task_masked_unblock(RT_TASK *task, unsigned long mask)
+int _rt_task_masked_unblock(RT_TASK *task, unsigned long mask)
 {
-	unsigned long flags;
-
-	if (task->magic != RT_TASK_MAGIC) {
-		return -EINVAL;
-	}
-
 	if (task->state && task->state != RT_SCHED_READY) {
-		flags = rt_global_save_flags_and_cli();
 		if (mask & RT_SCHED_DELAYED) {
 			rem_timed_task(task);
 		}
@@ -1067,10 +1060,24 @@ RTAI_SYSCALL_MODE int rt_task_masked_unblock(RT_TASK *task, unsigned long mask)
 				RT_SCHEDULE(task, rtai_cpuid());
 			}
 		}
-		rt_global_restore_flags(flags);
 		return RTE_UNBLKD;
 	}
 	return 0;
+}
+
+RTAI_SYSCALL_MODE int rt_task_masked_unblock(RT_TASK *task, unsigned long mask)
+{
+	unsigned long flags;
+	int ret;
+
+	if (task->magic != RT_TASK_MAGIC) {
+		return -EINVAL;
+	}
+
+	flags = rt_global_save_flags_and_cli();
+	ret = _rt_task_masked_unblock(task, mask);
+	rt_global_restore_flags(flags);
+	return ret;
 }
 
 int rt_nanosleep(struct timespec *rqtp, struct timespec *rmtp)

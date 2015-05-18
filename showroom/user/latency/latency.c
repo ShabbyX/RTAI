@@ -29,13 +29,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 #include <rtai_mbx.h>
 #include <rtai_msg.h>
+//#include <rtai_usp_tscnt_conv.h>
 
 #define AVRGTIME    1
-#define PERIOD      100000
+#define PERIOD      25000
 #define TIMER_MODE  0
 #define SOLO        0
 
-#define SMPLSXAVRG ((1000000000*AVRGTIME)/PERIOD)/100
+#define SMPLSXAVRG ((1000000000*AVRGTIME)/PERIOD)/1000
 
 #define MAXDIM 10
 static double a[MAXDIM], b[MAXDIM];
@@ -78,17 +79,19 @@ int main(int argc, char *argv[])
 	struct sample { long long min; long long max; int index, ovrn; } samp;
 	double s = 0.0, sref;
 	long long max = -1000000000, min = 1000000000;
+	unsigned int cpu_freq = rt_get_cpu_freq();
 
+	signal(SIGHUP,  endme);
 	signal(SIGINT, endme);
 	signal(SIGKILL, endme);
 	signal(SIGTERM, endme);
 
  	if (!(mbx = rt_mbx_init(nam2num("LATMBX"), 20*sizeof(samp)))) {
-		printf("CANNOT CREATE MAILBOX\n");
+		//printf("CANNOT CREATE MAILBOX\n");
 		exit(1);
 	}
 
- 	if (!(task = rt_task_init_schmod(nam2num("LATCAL"), 0, 0, 0, SCHED_FIFO, 0xF))) {
+ 	if (!(task = rt_task_init_schmod(nam2num("LATCAL"), 0, 0, 0, SCHED_FIFO, 0x2))) {
 		printf("CANNOT INIT MASTER LATENCY TASK\n");
 		exit(1);
 	}
@@ -107,9 +110,9 @@ int main(int argc, char *argv[])
 		} else {
 			rt_set_oneshot_mode();
 		}
-		period = start_rt_timer(nano2count(PERIOD));
+		period = start_rt_timer(nanos2tscnts(PERIOD, cpu_freq));
 	} else {
-		period = nano2count(PERIOD);
+		period = nanos2tscnts(PERIOD, cpu_freq);
 	}
 
         for(i = 0; i < MAXDIM; i++) {
@@ -137,7 +140,7 @@ int main(int argc, char *argv[])
 					diff = (int) ((t = rt_get_cpu_time_ns()) - svt - PERIOD);
 					svt = t;
 				} else {
-					diff = (int) count2nano(rt_get_time() - expected);
+					diff = (int) tscnts2nanos(rt_get_time() - expected, cpu_freq);
 				}
 			} else {
 				samp.ovrn++;
@@ -179,7 +182,7 @@ int main(int argc, char *argv[])
 	}
 
 	while (rt_get_adr(nam2num("LATCHK"))) {
-		rt_sleep(nano2count(1000000));
+		rt_sleep(nanos2tscnts(1000000, cpu_freq));
 	}
 	rt_make_soft_real_time();
 	if (!hard_timer_running) {

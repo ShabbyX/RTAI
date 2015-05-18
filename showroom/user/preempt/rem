@@ -1,1 +1,3 @@
+killall -9 preempt
+killall -9 display
 ../remod

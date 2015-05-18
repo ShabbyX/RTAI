@@ -61,10 +61,10 @@ typedef union thread_xstate FPU_ENV;
 #define restore_fpcr(fpcr)  do { \
 	if (fpcr & 8) { \
 		unsigned long flags; \
-		rtai_hw_save_flags_and_cli(flags); \
+		rtai_save_flags_and_cli(flags); \
 		fpcr = read_cr0(); \
 		write_cr0(8 | fpcr); \
-		rtai_hw_restore_flags(flags); \
+		rtai_restore_flags(flags); \
 	} \
 } while (0)
 

@@ -46,7 +46,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 #define SHMSIZE 4000
 
-static int cpu_used[NR_RT_CPUS];
+static int cpu_used[RTAI_NR_CPUS];
 
 RT_TASK agentask;
 
@@ -62,14 +62,14 @@ void fun(long t)
 	unsigned long i, chksum, msg;
 
 	while (!rt_get_adr(nam2num("STSK")) || !rt_get_adr(nam2num("RTSK"))) {
-		cpu_used[hard_cpu_id()]++;
+		cpu_used[rtai_cpuid()]++;
 		CHECK_FLAGS;
 		rt_task_wait_period();
 	}
 	op = 4;
 
 	while(shm[0]) {
-		cpu_used[hard_cpu_id()]++;
+		cpu_used[rtai_cpuid()]++;
 		CHECK_FLAGS;
 		/* here do any periodic real time job, then act as agent*/
 		switch (op) {
@@ -116,7 +116,7 @@ void fun(long t)
 	}
 //	printk("AGENT TASK EXITED LOOP ON NULL SHM, WAITS TO BE RPCED\n");
 	while(!(msgtsk = rt_receive_if(0, &msg))) {
-		cpu_used[hard_cpu_id()]++;
+		cpu_used[rtai_cpuid()]++;
 		CHECK_FLAGS;
 //		printk("AGENT TASK NOT RPCED YET\n");
 		rt_task_wait_period();
@@ -159,7 +159,7 @@ void cleanup_module(void)
 	rt_task_delete(&agentask);
 //	rt_shm_free(nam2num("MEM"));
 	printk("\n\nCPU USE SUMMARY\n");
-	for (cpuid = 0; cpuid < NR_RT_CPUS; cpuid++) {
+	for (cpuid = 0; cpuid < RTAI_NR_CPUS; cpuid++) {
 		printk("# %d -> %d\n", cpuid, cpu_used[cpuid]);
 	}
 	printk("END OF CPU USE SUMMARY\n\n");

@@ -72,3 +72,8 @@ doc/doxygen/api
 doc/docbook/catalog
 doc/docbook/custom-stylesheets/xsl/html/chunk.xsl
 doc/doxygen/Doxyfile
+
+# Built files from master branch
+base/scripts/rtai-config-kernel
+base/config/kconfig/zconf.hash.c
+base/config/kconfig/zconf.lex.c

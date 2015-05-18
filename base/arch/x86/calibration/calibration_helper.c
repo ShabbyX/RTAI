@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 
 		kern_latency = (kern_latency + loops/2)/loops;
 		kern_latency = sign(kern_latency)*count2nano(abs(kern_latency));
-#if CONFIG_RTAI_BUSY_TIME_ALIGN
+#if (CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY > 0 || CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY > 0)
 		printf("* KERNEL SPACE RETURN DELAY: %d (ns), ADD TO THE ONE CONFIGURED. *\n", kern_latency);
 #else
 		printf("* KERNEL SPACE SCHED LATENCY: %d (ns), ADD TO THE ONE CONFIGURED. *\n", kern_latency);
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
 
 		KernLatency += kern_latency;
 		printf("* KERNEL SPACE LATENCY: %d. *\n", KernLatency);
-	}	while (abs(kern_latency) > tol && !CONFIG_RTAI_BUSY_TIME_ALIGN);
+	}	while (abs(kern_latency) > tol && (CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY == 0 && CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY == 0));
 
 	printf("\n* USER SPACE. *\n");
 	do {
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
 #endif
 		UserLatency += user_latency;
 		printf("* USER SPACE LATENCY: %d. *\n", UserLatency);
-	}	while (abs(user_latency) > tol && !CONFIG_RTAI_BUSY_TIME_ALIGN);
+	}	while (abs(user_latency) > tol && (CONFIG_RTAI_USER_BUSY_ALIGN_RET_DELAY == 0 && CONFIG_RTAI_KERN_BUSY_ALIGN_RET_DELAY == 0));
 
 	stop_rt_timer();
 	rt_thread_delete(NULL);

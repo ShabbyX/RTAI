@@ -20,11 +20,11 @@ from rtai_def import *
 # lxrt services
 
 
-rtai.nam2num.argstype = [c_void_p]
+rtai.nam2num.argtypes = [c_void_p]
 rtai.nam2num.restype  = c_ulong
 nam2num = rtai.nam2num
 
-rtai.num2nam.argstype = [c_ulong, c_void_p]
+rtai.num2nam.argtypes = [c_ulong, c_void_p]
 num2nam = rtai.num2nam
 
 rtai.rt_get_adr.argtypes = [c_ulong]

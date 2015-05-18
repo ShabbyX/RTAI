@@ -29,13 +29,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 #ifdef CONFIG_SMP
 static DEFINE_SPINLOCK(splock); 
-#define chip_atomic_bgn(flags)  do { rtai_hw_save_flags_and_cli(flags); rt_spin_lock(&splock); } while (0)
-#define chip_atomic_end(flags)  do { rt_spin_unlock(&splock); rtai_hw_restore_flags(flags); } while (0)
+#define chip_atomic_bgn(flags)  do { rtai_save_flags_and_cli(flags); rt_spin_lock(&splock); } while (0)
+#define chip_atomic_end(flags)  do { rt_spin_unlock(&splock); rtai_restore_flags(flags); } while (0)
 #define buf_atomic_bgn(flags, mbx)  do { flags = rt_spin_lock_irqsave(&(mbx)->lock); } while (0)
 #define buf_atomic_end(flags, mbx)  do { rt_spin_unlock_irqrestore(flags, &(mbx)->lock); } while (0)
 #else
-#define chip_atomic_bgn(flags)  do { rtai_hw_save_flags_and_cli(flags); } while (0)
-#define chip_atomic_end(flags)  do { rtai_hw_restore_flags(flags); } while (0)
+#define chip_atomic_bgn(flags)  do { rtai_save_flags_and_cli(flags); } while (0)
+#define chip_atomic_end(flags)  do { rtai_restore_flags(flags); } while (0)
 #define buf_atomic_bgn(flags, mbx)  do { rtai_save_flags_and_cli(flags); } while (0)
 #define buf_atomic_end(flags, mbx)  do { rtai_restore_flags(flags); } while (0)
 #endif

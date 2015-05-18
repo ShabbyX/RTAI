@@ -48,6 +48,9 @@ xrtailab_LDFLAGS = \
 	$(efltk_ldflags) \
 	@GL_LIBS@
 
+xrtailab_LDADD = \
+	$(top_srcdir)/base/sched/liblxrt/liblxrt.la
+
 SUBDIRS = matlab matrixx scilab scicoslab
 
 EXTRA_DIST = icons INSTALL scilab5 scicoslab README README.scilab README_X64

@@ -92,7 +92,7 @@
  * 5. Keeps a record of bad tasks (apart from those that have been killed) that 
  *    can be examined via a /proc interface. (/proc/rtai/watchdog)
  * 
- * ID: @(#)$Id: wd.c,v 1.15 2014/02/16 14:20:52 mante Exp $
+ * ID: @(#)$Id: wd.c,v 1.16 2015/02/14 23:12:04 mante Exp $
  *
  *******************************************************************************/
 
@@ -140,7 +140,7 @@ static BAD_RT_TASK bad_task_pool[BAD_TASK_MAX];
 #endif
 
 // The current version number
-static char version[] = "$Revision: 1.15 $";
+static char version[] = "$Revision: 1.16 $";
 static char ver[10];
 
 // User friendly policy names
@@ -149,9 +149,9 @@ static char *policy_name[] =
 
 // Private data
 static int	    num_wdogs;		// Number of watchdogs (and task lists)
-static RT_TASK 	    wdog[NR_RT_CPUS];	// Watchdog tasks (1 per CPU)
-static RT_TASK 	   *tlists[NR_RT_CPUS];	// Scheduler's RT task lists
-static BAD_RT_TASK *bad_tl[NR_RT_CPUS]; // Bad task lists (1 per watchdog)
+static RT_TASK 	    wdog[RTAI_NR_CPUS];	// Watchdog tasks (1 per CPU)
+static RT_TASK 	   *tlists[RTAI_NR_CPUS];	// Scheduler's RT task lists
+static BAD_RT_TASK *bad_tl[RTAI_NR_CPUS]; // Bad task lists (1 per watchdog)
 
 // -------------------------- CONFIGURABLE PARAMETERS --------------------------
 // Module parameters
@@ -354,7 +354,7 @@ static void smpproof_task_delete(RT_TASK *t)
 static void stretch_badtask(RT_TASK *t, BAD_RT_TASK *bt, int cpuid)
 {
     // Stretch the task's period and ask scheduler to resync frame time
-    t->period      += llimd(bt->orig_period, Stretch, 100);
+    t->period      += rtai_llimd(bt->orig_period, Stretch, 100);
     t->resync_frame = 1;
     DBUG( "...by %d%% to %uns\n", 
 	  Stretch, (int)count2nano_cpuid(t->period, cpuid));
@@ -364,7 +364,7 @@ static void start_slipping_badtask(RT_TASK *t, BAD_RT_TASK *bt, int cpuid)
 {
     // Mark task as slipping and work out how many watchdog ticks to suspend it
     bt->slipping  = 1;
-    bt->countdown = llimd( llimd(count2nano_cpuid(t->period, cpuid), Slip, 100), 
+    bt->countdown = rtai_llimd(rtai_llimd(count2nano_cpuid(t->period, cpuid), Slip, 100), 
 	    		   1, 
 			   TickPeriod);
     DBUG( "Suspending task 0x%X for %d ticks (slip %d)\n", 
@@ -475,8 +475,8 @@ static void watch_looper(int cpuid, void *self, BAD_RT_TASK *bt)
 {
 	extern RT_TASK rt_smp_linux_task[];
 	extern RT_TASK *lxrt_prev_task[];
-	static RT_TASK *prev_task[NR_RT_CPUS];     // task we preempted
-	static int     prev_task_cnt[NR_RT_CPUS];  // count the same preempted
+	static RT_TASK *prev_task[RTAI_NR_CPUS];     // task we preempted
+	static int     prev_task_cnt[RTAI_NR_CPUS];  // count the same preempted
 	RT_TASK *prev = lxrt_prev_task[cpuid];
 	if (prev == prev_task[cpuid] && prev != &rt_smp_linux_task[cpuid] && prev != self && !prev->resync_frame && !prev->period) {
 		if (++prev_task_cnt[cpuid] == LooperLimit) {
@@ -551,7 +551,7 @@ static void watchdog(long wd)
 
 	    // Check for overrun and decide what to do (ignore other watchdogs)
 	    overrun = now - task->resume_time;
-	    if (overrun >= llimd(task->period, Grace, GraceDiv)) {
+	    if (overrun >= rtai_llimd(task->period, Grace, GraceDiv)) {
 		if (another--) {
 		    WDLOG("WARNING: Watchdog %d is overrunning\n", another);
 		} else {
@@ -603,7 +603,7 @@ static int PROC_READ_FUN(wdog_read_proc)
     PROC_PRINT(  "--------------------\n");
     PROC_PRINT("%d Watchdog task%s running @ %dHz in %s mode\n", 
 	       num_wdogs, num_wdogs > 1 ? "s" : "",
-	       (int)imuldiv(NSECS_PER_SEC, 1, TickPeriod), 
+	       (int)rtai_imuldiv(NSECS_PER_SEC, 1, TickPeriod), 
 	       wd_OneShot ? "oneshot" : "periodic");
 #ifdef MY_ALLOC
     PROC_PRINT("Using static memory management (%d entries)\n", BAD_TASK_MAX);
@@ -655,10 +655,10 @@ static int PROC_READ_FUN(wdog_read_proc)
 		    strcpy(action, policy_name[bt->policy]);
 		}
 		cpuid = task->runnable_on_cpus;
-		osec  = ulldiv( count2nano_cpuid(bt->orig_period, cpuid),
+		osec  = rtai_ulldiv( count2nano_cpuid(bt->orig_period, cpuid),
 			        NSECS_PER_SEC, 
 			        &onsec);
-		asec  = ulldiv( count2nano_cpuid(task->period, cpuid),
+		asec  = rtai_ulldiv( count2nano_cpuid(task->period, cpuid),
 			        NSECS_PER_SEC, 
 			        &ansec);
 		PROC_PRINT( "0x%08lx %-2d "
@@ -714,7 +714,7 @@ int __rtai_wd_init(void)
     // Some parameters have to be forced
     if (Policy <= WD_STRETCH) Grace  = GraceDiv = 1;
     if (Policy == WD_DEBUG)   Safety = Limit = -1;
-    LooperLimit = llimd(LooperTimeLimit, 1000000, TickPeriod);
+    LooperLimit = rtai_llimd(LooperTimeLimit, 1000000, TickPeriod);
 
     // Deduce number of watchdogs needed from scheduler type
     num_wdogs = num_online_cpus();
@@ -765,7 +765,7 @@ int __rtai_wd_init(void)
     WDLOG( "loaded.\n");
     WDLOG( "%d Watchdog task%s running @ %dHz in %s mode\n", 
 	   num_wdogs, num_wdogs > 1 ? "s" : "",
-	   imuldiv(NSECS_PER_SEC, 1, TickPeriod), 
+	   rtai_imuldiv(NSECS_PER_SEC, 1, TickPeriod), 
 	   wd_OneShot ? "oneshot" : "periodic");
 #ifdef MY_ALLOC
     WDLOG( "Using static memory management (%d entries)\n", BAD_TASK_MAX);

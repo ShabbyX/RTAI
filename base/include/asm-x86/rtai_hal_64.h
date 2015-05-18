@@ -87,12 +87,4 @@ static inline unsigned long long rtai_rdtsc(void)
 #define rtai_rdtsc() ({ unsigned long long t; ipipe_read_tsc(t); t; })
 #endif
 
-#endif /* __KERNEL__ && !__cplusplus */
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
-#endif /* __KERNEL__ */
-
 #endif /* !_RTAI_ASM_X86_64_HAL_H */

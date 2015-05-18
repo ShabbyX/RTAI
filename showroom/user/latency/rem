@@ -1,2 +1,3 @@
-killall latency
+killall -9 latency
+killall -9 display
 ../remod

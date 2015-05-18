@@ -579,7 +579,7 @@ static inline void rtdm_context_unlock(struct rtdm_dev_context *context)
 {
 	RTAI_ASSERT(RTDM, CONTEXT_IS_LOCKED(context),
 		    /* just warn if context was a dangling pointer */);
-	smp_mb__before_atomic_dec();
+	xnarch_before_atomic_dec();
 	if (unlikely(atomic_dec_and_test(&context->close_lock_count)))
 		rthal_apc_schedule(rtdm_apc);
 }
@@ -1131,7 +1131,7 @@ static inline int rtdm_task_sleep(nanosecs_rel_t delay)
                 return 0;
         }
         if (delay < 0) {
-                delay = RT_TIME_END;
+                delay = RTAI_TIME_LIMIT;
         }
         if (rt_sleep(nano2count(delay)) && _rt_whoami()->unblocked) {
                 return -EINTR;
