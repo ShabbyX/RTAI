@@ -2462,7 +2462,7 @@ static int __rtai_lxrt_init(void)
 {
 	int cpuid, retval;
 	
-	if (tuned.cpu_freq == 0)
+	if (tuned.clock_freq == 0)
 	{
 		retval = -EINVAL;
 		printk(KERN_INFO "RTAI[sched]: TimeBase freq \"0\" is invalid\n");
