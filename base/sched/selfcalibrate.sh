@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if test "x$1" = "x"; then
 	echo "need arch"
@@ -12,8 +12,13 @@ OLD_LATENCY=`grep 'CONFIG_RTAI_SCHED_LATENCY' ../../rtai_config.h | sed -e 's/.*
 # echo "arch:$ARCH latency:$OLD_LATENCY"
 
 if test $OLD_LATENCY -eq 0 ; then
-	../arch/"$ARCH"/calibration/calibrate ../arch/"$ARCH"/hal | tee tmp_output
-	RC=$?
+	if test "$UID" -eq 0 ; then
+		../arch/"$ARCH"/calibration/calibrate ../arch/"$ARCH"/hal | tee tmp_output
+	else
+		echo "Note: Running the calibration tool requires root permissions"
+		sudo ../arch/"$ARCH"/calibration/calibrate ../arch/"$ARCH"/hal | tee tmp_output
+	fi
+	RC=${PIPESTATUS[0]}
 	if test $RC != 0 ; then
 		exit $RC
 	fi
