@@ -749,7 +749,7 @@ RTAI_PROTO(int, rtf_set_async_sig,(int fd, int signum))
  * Based on ideas from Stuart Hughes and David Schleef
  */
 
-RTAI_PROTO_ALWAYS_INLINE(char *, rtf_getfifobyminor,(int minor, char *buf, int len))
+RTAI_PROTO(char *, rtf_getfifobyminor,(int minor, char *buf, int len))
 {
     snprintf(buf,len,CONFIG_RTAI_FIFOS_TEMPLATE,minor);
     return buf;

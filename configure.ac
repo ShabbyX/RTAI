@@ -16,17 +16,17 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_PROG_INSTALL
+AC_PROG_CC
 
-AC_ARG_WITH(CC,
-    [  --with-cc=compiler      use specific C compiler],
-    [
-	case "$withval" in
-	"" | y | ye | yes | n | no)
-	    AC_MSG_ERROR([You must supply an argument to --with-cc.])
-	  ;;
-	esac
-	CC="$withval"
-    ])
+dnl Save CC for kernel module builds
+KCC=$CC
+
+AC_PROG_CC_C99
+AC_PROG_CXX
+
+# Make sure C99 is available
+AS_IF([test x"$ac_cv_prog_cc_c99" = xno],
+  [AC_MSG_ERROR([C99 support is required])])
 
 dnl set only if undefined
 if test x"$CROSS_COMPILE" = x ; then
@@ -46,20 +46,6 @@ case "$host" in
 esac
 AC_MSG_CHECKING([for CROSS_COMPILE])
 AC_MSG_RESULT([$CROSS_COMPILE])
-
-AC_PROG_CC
-CFLAGS=""
-
-AC_ARG_WITH(CXX,
-    [  --with-cxx=compiler      use specific C++ compiler],
-    [ case "$withval" in
-	"" | y | ye | yes | n | no)
-	    AC_MSG_ERROR([You must supply an argument to --with-cxx.])
-	  ;;
-	esac
-	CXX="$withval" ])
-AC_PROG_CXX
-CXXFLAGS=""
 
 AC_DEFINE_UNQUOTED(CONFIG_RTAI_BUILD_STRING,"$build",[Build system alias])
 RTAI_BUILD_STRING="$build"
@@ -956,9 +942,6 @@ AC_ARG_ENABLE(16550a,
 	esac])
 AC_MSG_RESULT(${CONFIG_RTAI_DRIVERS_16550A:-no})
 
-dnl Set default inline mode for LXRT as specified from
-dnl Kconfig. Defaults to conditional inlining.
-
 if test x$CONFIG_RTAI_16550A_PIO = xy; then
    CONFIG_RTAI_16550A_HAM=1
 elif test x$CONFIG_RTAI_16550A_MMIO = xy; then
@@ -1282,33 +1265,6 @@ else
    LATEX_MODE=batchmode
 fi
 
-dnl Set default inline mode for LXRT as specified from
-dnl Kconfig. Defaults to conditional inlining.
-
-if test x$CONFIG_RTAI_LXRT_STATIC_INLINE = xy; then
-   CONFIG_RTAI_LXRT_INLINE=1
-elif test x$CONFIG_RTAI_LXRT_NO_INLINE = xy; then
-   CONFIG_RTAI_LXRT_INLINE=3
-else
-   CONFIG_RTAI_LXRT_INLINE=2
-fi
-
-AC_MSG_CHECKING(for LXRT inlining)
-AC_ARG_WITH(lxrt-inline,
-	[ --with-lxrt-inline	Set LXRT inlining mode (static|extern|none)],
-	[case "$withval" in
-	static) CONFIG_RTAI_LXRT_INLINE=1 ;;
-	extern) CONFIG_RTAI_LXRT_INLINE=2 ;;
-	none) CONFIG_RTAI_LXRT_INLINE=3 ;;
-	*) AC_MSG_ERROR([Bad argument to option: --with-lxrt-inline=<static|extern|none>]) ;;
-	esac])
-case "$CONFIG_RTAI_LXRT_INLINE" in
-  1) inline_type=static ;;
-  2) inline_type=extern ;;
-  3) inline_type=none ;;
-esac
-AC_MSG_RESULT([$inline_type])
-
 AC_MSG_CHECKING(for debug symbols in kernel modules)
 AC_ARG_ENABLE(module-debug,
 	[ --enable-module-debug	Enable debug information in kernel modules],
@@ -1605,24 +1561,13 @@ else
 fi
 
 test x$arch_supports_leds = xy && AC_DEFINE(CONFIG_RTAI_INTERNAL_LEDS_SUPPORT,1,[Kconfig])
-AC_DEFINE_UNQUOTED(CONFIG_RTAI_INTERNAL_LXRT_INLINE,$CONFIG_RTAI_LXRT_INLINE,[Kconfig])
 
-AH_VERBATIM(CONFIG_RTAI_LXRT_INLINE,[
-#ifndef CONFIG_RTAI_LXRT_INLINE
-#define CONFIG_RTAI_LXRT_INLINE CONFIG_RTAI_INTERNAL_LXRT_INLINE
-#endif /* !CONFIG_RTAI_LXRT_INLINE */
-#define __hidefun(name) name ## _hidden_inline
-#if CONFIG_RTAI_LXRT_INLINE == 1
-#define RTAI_PROTO(type,name,arglist) static inline type name arglist
-#elif CONFIG_RTAI_LXRT_INLINE == 2
-#define RTAI_PROTO(type,name,arglist) extern inline type name arglist
-#elif CONFIG_RTAI_LXRT_INLINE == 3
-#define RTAI_PROTO(type,name,arglist) type name arglist; static inline type __hidefun(name) arglist
-#else
-#define RTAI_PROTO(type,name,arglist) type name arglist
-#endif /* CONFIG_RTAI_LXRT_INLINE */
-#define RTAI_PROTO_ALWAYS_INLINE(type,name,arglist) static inline type name arglist
-#define RTAI_PROTO_NEVER_INLINE(type,name,arglist) type name arglist; static inline type __hidefun(name) arglist
+AH_VERBATIM(CONFIG_RTAI_LXRT_EXTERN_INLINE,[
+#ifndef CONFIG_RTAI_LXRT_EXTERN_INLINE /* the usual case */
+#define RTAI_PROTO(type,name,arglist) inline type name arglist
+#else /* only used by RTAI itself to provide external linkage for inline functions */
+#define RTAI_PROTO(type,name,arglist) extern inline type name arglist; inline type name arglist
+#endif /* CONFIG_RTAI_LXRT_EXTERN_INLINE */
 ])
 
 dnl CAUTION: We need to have the CONFIG_RTAI_XX symbols always defined when
@@ -1780,10 +1725,10 @@ else
    RTAI_KBUILD_BOTTOM=
    RTAI_KBUILD_CMD="for src in \$^; do if test \\! -r \`basename \$\$src\`; then \$(LN_S) \$\$src; fi; done; \
 		    rm -f $RTAI_LINUX_DIR/.tmp_versions/rtai_*.mod $RTAI_LINUX_DIR/.tmp_versions/*_rt.mod; \
-                    \$(MAKE) -C $RTAI_LINUX_DIR CROSS_COMPILE=\$(CROSS_COMPILE) CC=$CC ARCH=$RTAI_TARGET_ARCH_NAME \
+                    \$(MAKE) -C $RTAI_LINUX_DIR CROSS_COMPILE=\$(CROSS_COMPILE) CC='$KCC' ARCH=$RTAI_TARGET_ARCH_NAME \
 		    SUBDIRS=\$\$PWD M=\$\$PWD rtai_srctree=\`cd \$(top_srcdir) && pwd\` rtai_srcdir=\`cd \$(srcdir) && pwd\` V=\$(V) modules \
 		    rtai_objs='\$(call src2obj,c,\$^) \$(call src2obj,S,\$^) \$(call src2obj,cc,\$^) \$(call src2obj,cpp,\$^)' rtai_target=\$(basename \$@)"
-   RTAI_KBUILD_CLEAN="\$(MAKE) -C $RTAI_LINUX_DIR CC=$CC ARCH=$RTAI_TARGET_ARCH_NAME \
+   RTAI_KBUILD_CLEAN="\$(MAKE) -C $RTAI_LINUX_DIR CC='$KCC' ARCH=$RTAI_TARGET_ARCH_NAME \
                      SUBDIRS=\$\$PWD M=\$\$PWD rtai_srctree=\`cd \$(top_srcdir) && pwd\` rtai_srcdir=\`cd \$(srcdir) && pwd\` V=\$(V) clean \
                      rtai_objs='\$(call src2obj,c,\$^) \$(call src2obj,S,\$^) \$(call src2obj,cc,\$^) \$(call src2obj,cpp,\$^)' rtai_target=\$(basename \$@)"
    if test x$CONFIG_RTAI_QUIET = xquiet_ ; then
@@ -1937,27 +1882,10 @@ if [[ $ac_cv_accepts_cxa_atexit = yes ]]; then
    RTAI_KMOD_CXXFLAGS="$RTAI_KMOD_CXXFLAGS -fno-use-cxa-atexit"
 fi
 
-dnl Ok, the following isn't pretty, but required to process the
-dnl various inlining modes correctly. This boils down to:
-dnl - if mode == "none", then we will always need -llxrt to be
-dnl   tackled on the library deps for user-space programs.
-dnl - if mode == "eager/static", then we will never need -llxrt
-dnl - if mode == "conditional/extern", then we will not need -llxrt
-dnl   unless the optimizer has been switched off, i.e. when the
-dnl   debugging mode has been switched on.
-
-if test $CONFIG_RTAI_LXRT_INLINE = 3; then
-   RTAI_LXRT_LDADD=-llxrt
+if test x$CONFIG_RTAI_USER_DEBUG = xy; then
+  RTAI_REAL_USER_CFLAGS="-g $RTAI_REAL_USER_CFLAGS"
 else
-   RTAI_LXRT_LDADD=
-   if test x$CONFIG_RTAI_USER_DEBUG = xy; then
-      RTAI_REAL_USER_CFLAGS="-g $RTAI_REAL_USER_CFLAGS"
-      if test $CONFIG_RTAI_LXRT_INLINE = 2; then
-         RTAI_LXRT_LDADD="-llxrt"
-      fi
-   else
-      RTAI_REAL_USER_CFLAGS="-O2 $RTAI_REAL_USER_CFLAGS"
-   fi
+  RTAI_REAL_USER_CFLAGS="-O2 $RTAI_REAL_USER_CFLAGS"
 fi
 
 RTAI_KMOD_APP_CFLAGS=$RTAI_KMOD_CFLAGS
@@ -2049,7 +1977,6 @@ AC_SUBST(RTAI_REAL_USER_CFLAGS)
 AC_SUBST(RTAI_KMOD_APP_CFLAGS)
 AC_SUBST(RTAI_KMOD_APP_CXXFLAGS)
 AC_SUBST(RTAI_USER_APP_CFLAGS)
-AC_SUBST(RTAI_LXRT_LDADD)
 AC_SUBST(RTAI_FP_CFLAGS)
 AC_SUBST(RTAI_LINUX_DIR)
 AC_SUBST(RTAI_LINUX_VERSION)

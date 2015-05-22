@@ -139,24 +139,15 @@ static inline void kthread_fun_long_jump(struct task_struct *lnxtsk) { }
 
 #define RTAI_SRQ_SYSCALL_NR 0x70000000
 
-static inline long long _rtai_lxrt(long srq, void *args)
+inline union rtai_lxrt_t rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
 {
-	long long retval;
-#ifdef USE_LINUX_SYSCALL
-        syscall(RTAI_SRQ_SYSCALL_NR, srq, args, &retval);
-#else
-#warning "RTAI_DO_SWI is not working yet. Please configure RTAI with --enable-lxrt-use-linux-syscall."
-	retval = RTAI_DO_SWI(RTAI_SYS_VECTOR, (srq), (args));
-#endif
-	return retval;
-}
-
-static inline union rtai_lxrt_t
-rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
-{
-    union rtai_lxrt_t retval;
-    retval.rt = _rtai_lxrt(ENCODE_LXRT_REQ(dynx, srq, lsize), arg);
-    return retval;
+	union rtai_lxrt_t ret;
+	long rep = 0;
+	syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret, &rep);
+	if (rep) {
+	        syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret, &rep);
+	}
+        return ret;
 }
 
 #define rtai_iopl()  do { /* nop */ } while (0)

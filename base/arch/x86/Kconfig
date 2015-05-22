@@ -6,26 +6,6 @@ menu "General"
 
 source "base/arch/Kconfig.general"
 
-choice
-	prompt "Inlining mode of user-space services"
-	help
-	Allows choosing among:
-	- Never inline:         i.e. user-space services are linked to 
-	  programs against the appropriate support library (e.g. liblxrt.a 
-	  for user space RTAI syscall services).
-	- Eager inlining:       i.e. static inline, always inline regardless 
-	  of compiler's optimization switch;
-
-config RTAI_LXRT_STATIC_INLINE
-	bool "Eager inlining"
-	help
-
-config RTAI_LXRT_NO_INLINE
-	bool "No inlining"
-	help
-
-endchoice
-
 config RTAI_FORTIFY_SOURCE
         string "Fortify source"
         default ""

@@ -46,7 +46,7 @@ lib_LIBRARIES    = libkcomedilxrt.a
 
 libkcomedilxrt_a_CFLAGS = \
 	@RTAI_REAL_USER_CFLAGS@ \
-	-DCONFIG_RTAI_LXRT_INLINE=0 \
+	-DCONFIG_RTAI_LXRT_EXTERN_INLINE \
 	-D_GNU_SOURCE -D_REENTRANT \
 	-I$(top_srcdir)/base/include \
 	-I../../base/include \

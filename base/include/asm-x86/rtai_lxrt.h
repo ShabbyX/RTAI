@@ -118,7 +118,7 @@ count)
 
 #include <unistd.h>
 
-static inline union rtai_lxrt_t rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
+inline union rtai_lxrt_t rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
 {
 	union rtai_lxrt_t ret;
 	long rep = 0;

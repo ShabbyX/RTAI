@@ -51,9 +51,6 @@ index 0000000..759515a
 +# CONFIG_RTAI_KMOD_DEBUG is not set
 +# CONFIG_RTAI_USER_DEBUG is not set
 +# CONFIG_RTAI_MAINTAINER is not set
-+# CONFIG_RTAI_LXRT_STATIC_INLINE is not set
-+CONFIG_RTAI_LXRT_EXTERN_INLINE=y
-+# CONFIG_RTAI_LXRT_NO_INLINE is not set
 +
 +#
 +# Machine (m68knommu)

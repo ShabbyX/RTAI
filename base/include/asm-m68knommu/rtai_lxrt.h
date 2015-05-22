@@ -185,20 +185,15 @@ static inline void kthread_fun_long_jump(struct task_struct *lnxtsk)
 
 #define mlockall(asd) do {} while (0)
 
-static union rtai_lxrt_t _rtai_lxrt(int srq, void *arg)
+inline union rtai_lxrt_t rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
 {
-	union rtai_lxrt_t retval;
-#ifdef USE_LINUX_SYSCALL
-	syscall(RTAI_SYSCALL_NR, srq, arg, &retval);
-#else 
-	RTAI_DO_TRAP_SYS(&retval.rt, srq, (unsigned long)arg);
-#endif
-	return retval;
-}
-
-static inline union rtai_lxrt_t rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
-{
-	return _rtai_lxrt(ENCODE_LXRT_REQ(dynx, srq, lsize), arg);
+	union rtai_lxrt_t ret;
+	long rep = 0;
+	syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret, &rep);
+	if (rep) {
+	        syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret, &rep);
+	}
+        return ret;
 }
 
 #define rtai_iopl()  do { extern int iopl(int);/* iopl(3); */ } while (0)

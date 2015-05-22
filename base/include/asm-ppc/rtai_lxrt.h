@@ -166,7 +166,7 @@ static inline void kthread_fun_long_jump(struct task_struct *lnxtsk)
 #include <sys/syscall.h>
 #include <unistd.h>
 
-static inline union rtai_lxrt_t __rtai_lxrt(unsigned long arg0, unsigned long arg1, unsigned long arg2)
+inline union rtai_lxrt_t __rtai_lxrt(unsigned long arg0, unsigned long arg1, unsigned long arg2)
 { 
 	union rtai_lxrt_t __sc_ret;
 	{
@@ -193,20 +193,15 @@ static inline union rtai_lxrt_t __rtai_lxrt(unsigned long arg0, unsigned long ar
 	return __sc_ret;
 }
 
-static union rtai_lxrt_t _rtai_lxrt(long srq, void *arg)
+inline union rtai_lxrt_t rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
 {
-	union rtai_lxrt_t retval;
-#if 1 //def USE_LINUX_SYSCALL
-	syscall(RTAI_SYSCALL_NR, srq, arg, &retval);
-#else
-	retval = __rtai_lxrt(RTAI_SYSCALL_NR, srq, arg);
-#endif
-	return retval;
-}
-
-static inline union rtai_lxrt_t rtai_lxrt(long dynx, long lsize, long srq, void *arg)
-{
-	return _rtai_lxrt(ENCODE_LXRT_REQ(dynx, srq, lsize), arg);
+	union rtai_lxrt_t ret;
+	long rep = 0;
+	syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret, &rep);
+	if (rep) {
+	        syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret, &rep);
+	}
+        return ret;
 }
 
 #define rtai_iopl()  do { } while (0)

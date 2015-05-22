@@ -562,6 +562,15 @@ void reset_rt_fun_ext_index(struct rt_fun_entry *fun,
 
 #else /* !__KERNEL__ */
 
+/*
+ * make sure a C99 compliant compiler is used.  This is due to differences
+ * in semantics for inline functions between gnu89, where inline was a GNU
+ * extension and C99 where it was standardized.
+ */
+#if __STDC_VERSION__ < 199901L
+#error A C99-compliant compiler is required.  Try giving -std=gnu99 to gcc.
+#endif
+
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <sched.h>
@@ -698,49 +707,6 @@ RTAI_PROTO(int, rt_thread_join, (long thread))
 	return pthread_join((pthread_t)thread, NULL);
 }
 
-#ifndef __SUPPORT_LINUX_SERVER__
-#define __SUPPORT_LINUX_SERVER__
-
-#include <unistd.h>
-#include <sys/mman.h>
-
-static void linux_syscall_server_fun(struct linux_syscalls_list *list)
-{
-	struct linux_syscalls_list syscalls;
-
-	syscalls = *list;
-	syscalls.serv = &syscalls;
-	if ((syscalls.serv = rtai_lxrt(BIDX, sizeof(struct linux_syscalls_list), LINUX_SERVER, &syscalls).v[LOW])) {
-		long *args;
-		struct linux_syscall *todo;
-		struct linux_syscall calldata[syscalls.nr];
-		syscalls.syscall = calldata;
-		memset(calldata, 0, sizeof(calldata));
-                mlockall(MCL_CURRENT | MCL_FUTURE);
-		list->serv = &syscalls;
-		rtai_lxrt(BIDX, sizeof(RT_TASK *), RESUME, &syscalls.task);
-		while (abs(rtai_lxrt(BIDX, sizeof(RT_TASK *), SUSPEND, &syscalls.serv).i[LOW]) < RTE_LOWERR) {
-			if (syscalls.syscall[syscalls.out].mode != LINUX_SYSCALL_CANCELED) {
-				todo = &syscalls.syscall[syscalls.out];
-				args = todo->args;
-				todo->retval = syscall(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
-				todo->id = -todo->id;
-				if (todo->mode == SYNC_LINUX_SYSCALL) {
-					rtai_lxrt(BIDX, sizeof(RT_TASK *), RESUME, &syscalls.task);
-				} else if (syscalls.cbfun) {
-					todo->cbfun(args[0], todo->retval);
-				}
-			}
-			if (++syscalls.out >= syscalls.nr) {
-				syscalls.out = 0;
-			}
-		}
-        }
-	rtai_lxrt(BIDX, sizeof(RT_TASK *), LXRT_TASK_DELETE, &syscalls.serv);
-}
-
-#endif /* __SUPPORT_LINUX_SERVER__ */
-
 RTAI_PROTO(int, rt_set_linux_syscall_mode, (int mode, void (*cbfun)(long, long)))
 {
 	struct { long mode; void (*cbfun)(long, long); } arg = { mode, cbfun };
@@ -810,6 +776,7 @@ RTAI_PROTO(int, rt_linux_syscall_cancel, (struct linux_syscalls_list *syscalls, 
 	return 0;
 }
 
+void rtai_linux_syscall_server_fun(struct linux_syscalls_list *list);
 RTAI_PROTO(void *, rt_create_linux_syscall_server, (RT_TASK *task, int mode, void (*cbfun)(long, long), int nr_bufd_async_calls))
 {
 	if ((task || (task = (RT_TASK *)rtai_lxrt(BIDX, sizeof(RT_TASK *), RT_BUDDY, &task).v[LOW])) && nr_bufd_async_calls > 0) {
@@ -820,7 +787,7 @@ RTAI_PROTO(void *, rt_create_linux_syscall_server, (RT_TASK *task, int mode, voi
 		syscalls.nr    = nr_bufd_async_calls + 1;
 		syscalls.mode  = mode;
 		syscalls.serv  = NULL;
-		if (rt_thread_create((void *)linux_syscall_server_fun, &syscalls, RT_THREAD_STACK_MIN + syscalls.nr*sizeof(struct linux_syscall))) {
+		if (rt_thread_create((void *)rtai_linux_syscall_server_fun, &syscalls, RT_THREAD_STACK_MIN + syscalls.nr*sizeof(struct linux_syscall))) {
 			rtai_lxrt(BIDX, sizeof(RT_TASK *), SUSPEND, &task);
 			return syscalls.serv;
 		}

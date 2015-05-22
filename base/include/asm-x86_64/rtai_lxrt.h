@@ -287,26 +287,18 @@ __attribute__((regparm(3))) void do_notify_resume(struct pt_regs *regs, void *_u
 
 #else /* !__KERNEL__ */
 
-/* NOTE: Keep the following routines unfold: this is a compiler
-   compatibility issue. */
-
 #include <sys/syscall.h>
 #include <unistd.h>
 
-static union rtai_lxrt_t _rtai_lxrt(long srq, void *arg)
+inline union rtai_lxrt_t rtai_lxrt(short int dynx, short int lsize, int srq, void *arg)
 {
-	union rtai_lxrt_t retval;
-#if 1 //def USE_LINUX_SYSCALL
-	syscall(RTAI_SYSCALL_NR, srq, arg, &retval);
-#else
-	RTAI_DO_TRAP(RTAI_SYS_VECTOR, retval, srq, arg);
-#endif
-	return retval;
-}
-
-static inline union rtai_lxrt_t rtai_lxrt(long dynx, long lsize, long srq, void *arg)
-{
-	return _rtai_lxrt(ENCODE_LXRT_REQ(dynx, srq, lsize), arg);
+	union rtai_lxrt_t ret;
+	long rep = 0;
+	syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret, &rep);
+	if (rep) {
+	        syscall(RTAI_SYSCALL_NR, ENCODE_LXRT_REQ(dynx, srq, lsize), arg, &ret, &rep);
+	}
+        return ret;
 }
 
 #define rtai_iopl()  do { extern int iopl(int); iopl(3); } while (0)
