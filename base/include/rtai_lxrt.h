@@ -565,9 +565,9 @@ void reset_rt_fun_ext_index(struct rt_fun_entry *fun,
 /*
  * make sure a C99 compliant compiler is used.  This is due to differences
  * in semantics for inline functions between gnu89, where inline was a GNU
- * extension and C99 where it was standardized.
+ * extension and C99 where it was standardized.  C++ works ok.
  */
-#if __STDC_VERSION__ < 199901L
+#if __STDC_VERSION__ < 199901L && !defined(__cplusplus)
 #error A C99-compliant compiler is required.  Try giving -std=gnu99 to gcc.
 #endif
 
