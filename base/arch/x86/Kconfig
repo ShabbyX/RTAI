@@ -6,7 +6,7 @@ config MODULES
 
 config RTAI_VERSION
 	string
-	default "3.8 (vulcano)"
+	default "5.0 (vulcano)"
 
 menu "General"
 
@@ -294,7 +294,11 @@ config RTAI_SCHED_LATENCY_SELFCALIBRATE
 	default y
 	help
 	Enable the self calibration of the scheduling latency when the RTAI
-	scheduler is compiled with RTAI_SCHED_LATENCY set to 0.ù
+	scheduler is compiled with RTAI_SCHED_LATENCY set to 0.
+
+	NOTE: you must run make as the superuser, as this option loads
+	modules and tries to execute tasks.
+
 	See also: RTAI_SCHED_LATENCY, RTAI_KERN_BUSY_ALIGN_RET_DELAY, 
 	          RTAI_USER_BUSY_ALIGN_RET_DELAY.
 
@@ -744,11 +748,14 @@ config RTAI_MATH
 	for the use of libc within the kernel.
 
 config RTAI_MATH_LIBM_TO_USE
-	string "1 - NEWLIB (default), 2 - UCLIB, 3 - GLIBC"
+	string "1 - NEWLIB (default), 2 - uCLIB, 3 - GLIBC"
 	depends on RTAI_MATH
 	default 1
 	help
-	Your libm.a of choice.
+	Your libm.a of choice. GLIBC works as it is for x86_32, so it 
+	should be preferred for such an arch. NEWLIB and uCLIB are to
+	be used for x86_64 and the choice of which one to use is up 
+	to you. See ./base/math/README.KLIBM for a few make suggestions.
 
 config RTAI_MATH_LIBM_DIR
 	depends on RTAI_MATH
@@ -760,7 +767,8 @@ config RTAI_MATH_KCOMPLEX
 	depends on RTAI_MATH
 	default n
 	help
-	This parameter allows the inclusion of complex support functions,		ignored for uClibc.
+	This parameter allows the inclusion of complex support functions.
+	Ignored for uClibc.
 
 #config RTAI_MATH_C99
 #	bool "C99 standard support"
@@ -923,13 +931,13 @@ config RTAI_COMEDI_DIR
 	string "COMEDI installation directory"
 	default "/usr/local"
 	help
-	You may need the COMEDI support for data acquisition to build your
-	applications, such as RTAILab.
-	You can set the path to COMEDI installation directory here. 
-	It will be found either in Linux, since 2.6.29 (circa), see README
-	in "addons/comedi" for what to do in such a case, or by getting 
-        kcomedi from www.comedi.org, in which case RTAI needs the file 
-	linux/comedilib.h also.
+	Since COMEDI support for data acquisition to build your
+	applications, such as for RTAILab, has been chosen, you 
+	must set the path to your COMEDI installation directory 
+	here. Notice that RTAI support for COMEDI is based on 
+	the comedi.git repository found at "www.comedi.org". 
+	RTAI requires also comedilib.h found in the comedilib.git 
+	repository at the sime site.
 
 config RTAI_USE_COMEDI_LOCK
 	depends on RTAI_COMEDI_LXRT

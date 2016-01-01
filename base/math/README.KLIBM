@@ -71,15 +71,15 @@ to the number set for the argument "dgt" used in calling any of them.
 Summing up:
 * i386 can use:
 - glibc-libm.a as it is;
-- newlib with, e.g: ./configure --prefix=/myinstalldir --disable-shared 
---host=i386-pc-sysv CFLAGS="-O2", make; see its README for more;
+- newlib with, e.g: ./configure --prefix=/myinstalldir --disable-shared --disable-multilib --host=i386-pc-sysv CFLAGS="-O2",
+  make; see its README for more;
 - uClibc with: make menuconfig, disable PIC, enable static making; 
   multithreads and C99 support, make.
 
 * x86_64 can use:
 - no glibc-libm.a, unless you are willing to patch its making;
-- newlib with, e.g: ./configure --prefix=/myinstalldir --disable-shared 
-  --host=x86_64-pc-none CFLAGS="-O2 -mcmodel=kernel",
+- newlib with, e.g: ./configure --prefix=/myinstalldir --disable-shared --disable-multilib --host=x86_64-pc-none CFLAGS="-O2 -mcmodel=kernel",
+  make; see its README for more;
 - uClibc with: make menuconfig, disable PIC, enable static making;
   multithreads and C99 support, make.
 

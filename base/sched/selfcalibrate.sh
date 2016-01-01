@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if test "x$1" = "x"; then
 	echo "need arch"
@@ -12,9 +12,25 @@ OLD_LATENCY=`grep 'CONFIG_RTAI_SCHED_LATENCY' ../../rtai_config.h | sed -e 's/.*
 # echo "arch:$ARCH latency:$OLD_LATENCY"
 
 if test $OLD_LATENCY -eq 0 ; then
+	if ! test $EUID -eq 0 ; then
+		echo "must be root to self calibrate (current EUID=$EUID, must be 0)"
+		exit 1
+	fi
+
+	if ! test -f ../arch/"$ARCH"/calibration/calibrate ; then
+		echo "../arch/$ARCH/calibration/calibrate does not exist"
+		exit 1
+	fi
+
+	if ! test -x ../arch/"$ARCH"/calibration/calibrate ; then
+		echo "../arch/$ARCH/calibration/calibrate not executable"
+		exit 1
+	fi
+
 	../arch/"$ARCH"/calibration/calibrate ../arch/"$ARCH"/hal | tee tmp_output
-	RC=$?
+	RC=${PIPESTATUS[0]}
 	if test $RC != 0 ; then
+		echo "self-calibration failed; ../arch/"$ARCH"/calibration/calibrate returned $RC"
 		exit $RC
 	fi
 
