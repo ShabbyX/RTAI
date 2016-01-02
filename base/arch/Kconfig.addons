@@ -16,13 +16,13 @@ config RTAI_COMEDI_DIR
 	string "COMEDI installation directory"
 	default "/usr/local"
 	help
-	You may need the COMEDI support for data acquisition to build your
-	applications, such as RTAILab.
-	You can set the path to COMEDI installation directory here.
-	It will be found either in Linux, since 2.6.29 (circa), see README
-	in "addons/comedi" for what to do in such a case, or by getting
-	kcomedi from www.comedi.org, in which case RTAI needs the file
-	linux/comedilib.h also.
+	Since COMEDI support for data acquisition to build your
+	applications, such as for RTAILab, has been chosen, you 
+	must set the path to your COMEDI installation directory 
+	here. Notice that RTAI support for COMEDI is based on 
+	the comedi.git repository found at "www.comedi.org". 
+	RTAI requires also comedilib.h found in the comedilib.git 
+	repository at the sime site.
 
 config RTAI_USE_COMEDI_LOCK
 	depends on RTAI_COMEDI_LXRT

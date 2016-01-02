@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
 	RTIME tret, t = 0;
 
 	if (argc > 1) {
-		int len;
+		int len, rc;
 		char *cmd;
 		const char *module_path = argv[1];
 		// struct stat st;
@@ -204,9 +204,18 @@ int main(int argc, char *argv[])
 		len = sizeof("/sbin/insmod /rtai_hal" HAL_SCHED_MODEXT " >/dev/null 2>&1") + strlen(module_path);
 		cmd = malloc(len + 1);
 		snprintf(cmd, len + 1, "/sbin/insmod %s/rtai_hal" HAL_SCHED_MODEXT " >/dev/null 2>&1", module_path);
-		system(cmd);
+		rc = system(cmd);
+		if (rc != 0) {
+			printf("system(%s)=%d failed\n", cmd, rc);
+			return (rc == -1 ? -1 : WEXITSTATUS(rc));
+		}
 		free(cmd);
-		system("/sbin/insmod ./rtai_tmpsched" HAL_SCHED_MODEXT " >/dev/null 2>&1");
+		cmd = "/sbin/insmod ./rtai_tmpsched" HAL_SCHED_MODEXT " >/dev/null 2>&1";
+		rc = system(cmd);
+		if (rc != 0) {
+			printf("system(%s)=%d failed\n", cmd, rc);
+			return (rc == -1 ? -1 : WEXITSTATUS(rc));
+		}
 
 	} else {
 		latency_calibrated();

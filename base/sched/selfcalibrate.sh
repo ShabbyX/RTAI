@@ -12,7 +12,17 @@ OLD_LATENCY=`grep 'CONFIG_RTAI_SCHED_LATENCY' ../../rtai_config.h | sed -e 's/.*
 # echo "arch:$ARCH latency:$OLD_LATENCY"
 
 if test $OLD_LATENCY -eq 0 ; then
-	if test "$UID" -eq 0 ; then
+	if ! test -f ../arch/"$ARCH"/calibration/calibrate ; then
+		echo "../arch/$ARCH/calibration/calibrate does not exist"
+		exit 1
+	fi
+
+	if ! test -x ../arch/"$ARCH"/calibration/calibrate ; then
+		echo "../arch/$ARCH/calibration/calibrate not executable"
+		exit 1
+	fi
+
+	if test $EUID -eq 0 ; then
 		../arch/"$ARCH"/calibration/calibrate ../arch/"$ARCH"/hal | tee tmp_output
 	else
 		echo "Note: Running the calibration tool requires root permissions"
@@ -20,6 +30,7 @@ if test $OLD_LATENCY -eq 0 ; then
 	fi
 	RC=${PIPESTATUS[0]}
 	if test $RC != 0 ; then
+		echo "self-calibration failed; ../arch/"$ARCH"/calibration/calibrate returned $RC"
 		exit $RC
 	fi
 

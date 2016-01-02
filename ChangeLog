@@ -1,3 +1,11 @@
+2015-10-28 Pierangelo Masarati <pierangelo.masarati@polimi.it>
+
+	* RTAI 5.0
+
+2015-09-24 Pierangelo Masarati <pierangelo.masarati@polimi.it>
+
+	* RTAI 4.1.1 (4.1 closure release)
+
 2015-05-09 Paolo Mantegazza <mantegazza@aero.polimi.it>
 
 	* base/addons/rtdm/rtdm_driver.h, xn.h: support changing, deprecated 

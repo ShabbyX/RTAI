@@ -33,11 +33,14 @@ config RTAI_MATH
 	for the use of libc within the kernel.
 
 config RTAI_MATH_LIBM_TO_USE
-	string "1 - NEWLIB (default), 2 - UCLIB, 3 - GLIBC"
+	string "1 - NEWLIB (default), 2 - uCLIB, 3 - GLIBC"
 	depends on RTAI_MATH
 	default 1
 	help
-	Your libm.a of choice.
+	Your libm.a of choice. GLIBC works as it is for x86_32, so it 
+	should be preferred for such an arch. NEWLIB and uCLIB are to
+	be used for x86_64 and the choice of which one to use is up 
+	to you. See ./base/math/README.KLIBM for a few make suggestions.
 
 config RTAI_MATH_LIBM_DIR
 	depends on RTAI_MATH
@@ -49,7 +52,8 @@ config RTAI_MATH_KCOMPLEX
 	depends on RTAI_MATH
 	default n
 	help
-	This parameter allows the inclusion of complex support functions, ignored for uClibc.
+	This parameter allows the inclusion of complex support functions.
+	Ignored for uClibc.
 
 config RTAI_MALLOC
 	tristate "Real-time malloc support"

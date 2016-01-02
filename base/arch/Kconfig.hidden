@@ -8,4 +8,4 @@ config MODULES
 
 config RTAI_VERSION
 	string
-	default "4.0.0 (unofficial)"
+	default "5.0 (unofficial)"

@@ -35,7 +35,11 @@ config RTAI_SCHED_LATENCY_SELFCALIBRATE
 	default y
 	help
 	Enable the self calibration of the scheduling latency when the RTAI
-	scheduler is compiled with RTAI_SCHED_LATENCY set to 0.ù
+	scheduler is compiled with RTAI_SCHED_LATENCY set to 0.
+
+	NOTE: superuser access will be asked for, as this option loads
+	modules and tries to execute tasks.
+
 	See also: RTAI_SCHED_LATENCY, RTAI_KERN_BUSY_ALIGN_RET_DELAY, 
 	          RTAI_USER_BUSY_ALIGN_RET_DELAY.
 
